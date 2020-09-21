@@ -1,0 +1,5 @@
+<?
+$MESS["CRM_COMPONENT_ERROR_ENTITY_NOT_FOUND"] = "Objet introuvable";
+$MESS["CRM_COMPONENT_ERROR_GENERAL"] = "Erreur générale.";
+$MESS["CRM_COMPONENT_ERROR_PERMISSION_DENIED"] = "Accès refusé";
+?>

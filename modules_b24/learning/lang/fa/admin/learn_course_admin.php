@@ -1,0 +1,4 @@
+<?
+$MESS["LEARNING_ADMIN_TITLE"] = "دوره ها";
+$MESS["LEARNING_LESSON_TITLE"] = "دروس";
+?>

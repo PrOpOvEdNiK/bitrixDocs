@@ -1,0 +1,31 @@
+<?
+$MESS["IBLOCK_ENTITY_ACTIVE_FIELD"] = "Aktywne";
+$MESS["IBLOCK_ENTITY_BIZPROC_FIELD"] = "Użyj w procesie biznesowym";
+$MESS["IBLOCK_ENTITY_CANONICAL_PAGE_URL_FIELD"] = "Klasyczny URL elementu";
+$MESS["IBLOCK_ENTITY_CODE_FIELD"] = "Kod symboliczny";
+$MESS["IBLOCK_ENTITY_DESCRIPTION_FIELD"] = "Opis";
+$MESS["IBLOCK_ENTITY_DESCRIPTION_TYPE_FIELD"] = "Rodzaj opisu";
+$MESS["IBLOCK_ENTITY_DETAIL_PAGE_URL_FIELD"] = "URL strony szczegółów";
+$MESS["IBLOCK_ENTITY_EDIT_FILE_AFTER_FIELD"] = "Plik zawiera element edycji formularza";
+$MESS["IBLOCK_ENTITY_EDIT_FILE_BEFORE_FIELD"] = "Włączenie elementu edycji pliku do aktualizacji pól przed zapisaniem";
+$MESS["IBLOCK_ENTITY_IBLOCK_TYPE_ID_FIELD"] = "Typ Bloku Informacji";
+$MESS["IBLOCK_ENTITY_ID_FIELD"] = "ID";
+$MESS["IBLOCK_ENTITY_INDEX_ELEMENT_FIELD"] = "Dodaj przedmiot do indeksu wyszukiwania";
+$MESS["IBLOCK_ENTITY_INDEX_SECTION_FIELD"] = "Dodaj sekcję do indeksu wyszukiwania";
+$MESS["IBLOCK_ENTITY_LAST_CONV_ELEMENT_FIELD"] = "Ostatni konwertowany element";
+$MESS["IBLOCK_ENTITY_LIST_MODE_FIELD"] = "Tryb wyświetlania sekcji i elementu";
+$MESS["IBLOCK_ENTITY_LIST_PAGE_URL_FIELD"] = "URL strony bloku informacji";
+$MESS["IBLOCK_ENTITY_NAME_FIELD"] = "Nazwa";
+$MESS["IBLOCK_ENTITY_PICTURE_FIELD"] = "Obraz";
+$MESS["IBLOCK_ENTITY_RIGHTS_MODE_FIELD"] = "Tryb uprawnienia dostępu";
+$MESS["IBLOCK_ENTITY_SECTION_CHOOSER_FIELD"] = "Kontrola podłączania elementu do sekcji";
+$MESS["IBLOCK_ENTITY_SECTION_PAGE_URL_FIELD"] = "URL strony sekcji";
+$MESS["IBLOCK_ENTITY_SECTION_PROPERTY_FIELD"] = "Posiada prywatne ustawienia";
+$MESS["IBLOCK_ENTITY_SOCNET_GROUP_ID_FIELD"] = "Grupa sieci społecznościowej";
+$MESS["IBLOCK_ENTITY_SORT_FIELD"] = "Sortuj";
+$MESS["IBLOCK_ENTITY_TIMESTAMP_X_FIELD"] = "Zmodyfikowany";
+$MESS["IBLOCK_ENTITY_TMP_ID_FIELD"] = "Tymczasowe ID";
+$MESS["IBLOCK_ENTITY_VERSION_FIELD"] = "Ustawienia właściwości schowka";
+$MESS["IBLOCK_ENTITY_WORKFLOW_FIELD"] = "Włącz workflow dokumentu";
+$MESS["IBLOCK_ENTITY_XML_ID_FIELD"] = "Zewnętrzne ID";
+?>

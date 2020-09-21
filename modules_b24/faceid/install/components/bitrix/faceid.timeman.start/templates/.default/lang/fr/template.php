@@ -1,0 +1,40 @@
+<?
+$MESS["FACEID_TMS_START_ADV_1"] = "Utilise la reconnaissance faciale pour identifier vos employés";
+$MESS["FACEID_TMS_START_ADV_2"] = "Démarre et termine une journée de travail";
+$MESS["FACEID_TMS_START_ADV_3"] = "Suit les heures de travail";
+$MESS["FACEID_TMS_START_DESCR_NEW"] = "Surveiller le temps de travail des employés est une tâche de gestion essentiel qui ne doit pas être négligée. Profitez de ce service de contrôle du temps facile à utiliser qui ne nécessite pas qu'un employé soit connecté à Bitrix24.";
+$MESS["FACEID_TMS_START_DONE"] = "Vous êtes paré !";
+$MESS["FACEID_TMS_START_DO_1"] = "Installez l'application <a href='https://play.google.com/store/apps/details?id=com.bitrix.facetracker' target='_blank'>Bitrix24.Time</a> sur votre appareil Android";
+$MESS["FACEID_TMS_START_DO_2"] = "Dans l'application, connectez-vous en tant qu'utilisateur avec accès intégral aux fonctions de gestion du temps de travail. Ce genre d'accès est le plus courant pour les administrateurs Bitrix24 et les PDG.";
+$MESS["FACEID_TMS_START_DO_3"] = "Si l'OTP est activé : ";
+$MESS["FACEID_TMS_START_DO_31"] = "- ouvrez la page \"Mots de passe des applications\" et recevez un mot de passe.";
+$MESS["FACEID_TMS_START_DO_32"] = "- saisissez votre identifiant et le mot de passe fourni dans le formulaire d'authentification de l'application.";
+$MESS["FACEID_TMS_START_DO_4"] = "Si l'OTP est désactivé : ";
+$MESS["FACEID_TMS_START_DO_41"] = "- saisissez votre identifiant et votre mot de passe dans le formulaire d'authentification de l'application.";
+$MESS["FACEID_TMS_START_DO_5"] = "Cliquez sur 'Essayer gratuitement' pour démarrer l'indexation des photos de profil des employés et utiliser l'application";
+$MESS["FACEID_TMS_START_DO_5_NEW"] = "Cliquez sur 'Essayer gratuitement' pour démarrer la reconnaissance des photos de profil des employés et utiliser l'application";
+$MESS["FACEID_TMS_START_DO_5_NO_TIMEMAN"] = "Cliquez sur \"Activer\" pour démarrer le service et l'application de reconnaissance faciale.";
+$MESS["FACEID_TMS_START_DO_START"] = "Connecter";
+$MESS["FACEID_TMS_START_DO_TRY"] = "Essayer gratuitement";
+$MESS["FACEID_TMS_START_DO_TRY_NO_TIMEMAN"] = "Activer";
+$MESS["FACEID_TMS_START_ENABLE_TM_CLOSE"] = "Fermer";
+$MESS["FACEID_TMS_START_ENABLE_TM_TEXT"] = "La Gestion du temps de travail est désactivée dans les paramètres de votre compte Bitrix24. Pour démarrer l'application Bitrix24.Time, veuillez activer la gestion du temps de travail dans la <a href='/settings/configs/'>page des paramètres</a>.";
+$MESS["FACEID_TMS_START_ENABLE_TM_TITLE"] = "Gestion du temps de travail";
+$MESS["FACEID_TMS_START_HOW"] = "Comment se connecter";
+$MESS["FACEID_TMS_START_HOW_1"] = "Placez la tablette exécutant l'application <a href='https://play.google.com/store/apps/details?id=com.bitrix.facetracker' target='_blank'>Bitrix24.Time</a> à un endroit facilement accessible par tous les employés.";
+$MESS["FACEID_TMS_START_HOW_2"] = "Quand un employé arrive au boulot, il ou elle touche l'écran de la tablette, sourit devant la caméra et tapote sur le bouton \"Pointage en arrivant\".";
+$MESS["FACEID_TMS_START_HOW_3"] = "De même, quand un employé est sur le point de partie à la fin de sa journée de travail ou au moment d'une pause, il ou elle tapote sur le bouton \"Pointage en partant\" ou \"Pause\".
+";
+$MESS["FACEID_TMS_START_HOW_4"] = "Le système consigne la durée de la journée de travail de chaque employé dans la section \"Gestion du temps et rapports\" de votre Bitrix24.";
+$MESS["FACEID_TMS_START_INDEX_PHOTOS"] = "Indexation des photos";
+$MESS["FACEID_TMS_START_INDEX_PROCESS"] = "Indexation des photos de profil des employés";
+$MESS["FACEID_TMS_START_INDEX_PROCESS_NEW"] = "Indexation des photos de profil des employés";
+$MESS["FACEID_TMS_START_NAME"] = "Bitrix24.Time";
+$MESS["FACEID_TMS_START_NAME_SERVICE"] = "Service Bitrix24.Time";
+$MESS["FACEID_TMS_START_PLAN_UPGRADE_TEXT"] = "Bitrix24.Time complète le service de Gestion du temps de travail. Il est disponible avec l'offre Bitrix24 Professional.<br><br>Notez que le service de reconnaissance faciale est un service autonome et payé séparément.";
+$MESS["FACEID_TMS_START_PLAN_UPGRADE_TITLE"] = "Bitrix24.Time n'est disponible que pour les utilisateurs de l'offre Bitrix24 Professional.";
+$MESS["FACEID_TMS_START_SMILE"] = "Démarrez votre journée de travail avec un sourire.";
+$MESS["FACEID_TMS_START_WARN"] = "L'application Bitrix24.Time utilise le module de gestion du temps de travail de Bitrix24 et est disponible avec les offres suivantes : ";
+$MESS["FACEID_TMS_START_WARN_2"] = "- <a href='T_URL'>Bitrix24 Professionel</a>. Vous recevez gratuitement les 1000 reconnaissances faciales initiales pour pouvoir essayer le service. Les reconnaissances suivantes devront être achetées séparément.";
+$MESS["FACEID_TMS_START_WELCOME"] = "Démarrez votre journée avec un sourire ! ";
+?>

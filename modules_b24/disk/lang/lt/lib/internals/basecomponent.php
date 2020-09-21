@@ -1,0 +1,4 @@
+<?
+$MESS["DISK_BASE_COMPONENT_ERROR_REQUIRED_PARAMETER"] = "Parametras #PARAM# yra būtinas.";
+$MESS["DISK_BASE_COMPONENT_ERROR_ACCESS_DENIED"] = "Prieiga uždrausta";
+?>

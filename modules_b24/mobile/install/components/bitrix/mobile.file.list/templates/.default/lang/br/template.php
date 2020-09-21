@@ -1,0 +1,7 @@
+<?
+$MESS["MOBILE_MFU_CONFIRM_MESSAGE"] = "Excluir imagem carregada?";
+$MESS["MOBILE_MFU_CONFIRM_NO"] = "Não";
+$MESS["MOBILE_MFU_CONFIRM_TITLE"] = "Aviso";
+$MESS["MOBILE_MFU_CONFIRM_YES"] = "Sim";
+$MESS["MOBILE_MFU_DELETE"] = "Excluir";
+?>

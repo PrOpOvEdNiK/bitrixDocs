@@ -1,0 +1,74 @@
+<div class="sidepanel detail detail-password view" ng-controller="ShowPassCtrl" ng-show="visible">
+    <div class="js-baron wrapper wrapper-right">
+        <div class="scroller" style="height: 500px;">
+            <div class="rel">
+                <table class="table sidepanel-header">
+                    <thead>
+                    <tr>
+                        <th><span class="favicon" favicon="entity.CRYPTED.URL"><img src="<?= KEYRIGHTS_PATH_STATIC; ?>/images/no-icon.ico" alt="" class="no-icon"></span> <span class="one-line" title="{{entity.NAME}}">{{entity.NAME}}</span></th>
+                        <th class="edit-link"><a href="javascript:void(0);" ng-click="edit()" ng-show="canEditRights"><?= $this->t('EDIT'); ?></a></th>
+                    </tr>
+                    </thead>
+                </table>
+                <table class="table pass-info">
+                    <tbody>
+                    <tr>
+                        <td><?= $this->t('LOGIN'); ?></td>
+                        <td>
+                            {{entity.CRYPTED.LOGIN}}
+                            <i class="icon-file js-login" title="<?= $this->t('COPY'); ?>"
+                               ng-show="entity.CRYPTED.LOGIN" id="copy-login-{{entity.ID}}"
+                               data-clipboard-text="{{entity.CRYPTED.LOGIN}}"
+                               popover="<?= $this->t('LOGIN') . ' ' . $this->t('COPIED'); ?>" popover-placement="left" popover-append-to-body="false">&nbsp;</i>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><?= $this->t('PASS'); ?></td>
+                        <td>
+                            <i class="icon-eye"
+                               ng-click="togglePasswordType()"
+                               ng-class="{'opened': passInputType === 'text'}"></i>
+                            <span class="password {{passInputType}}">{{entity.CRYPTED.PASSWORD | asterisk:passInputType }}</span>
+                            <i class="icon-file js-pass" ng-show="entity.CRYPTED.PASSWORD"
+                               title="<?= $this->t('COPY'); ?>"
+                               id="copy-pass-{{entity.ID}}" data-clipboard-text="{{entity.CRYPTED.PASSWORD}}"
+                               popover="<?= $this->t('PASS') . ' ' . $this->t('COPIED'); ?>" popover-placement="left" popover-append-to-body="false">&nbsp;</i>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>URL</td>
+                        <td>
+                            {{entity.CRYPTED.URL}}
+                            <i class="icon-file js-url" title="<?= $this->t('COPY'); ?>"
+                               ng-show="entity.CRYPTED.URL"
+                               id="copy-url-{{entity.ID}}" data-clipboard-text="{{entity.CRYPTED.URL}}"
+                               popover="<?= $this->t('URL') . ' ' . $this->t('COPIED'); ?>" popover-placement="left" popover-append-to-body="false">&nbsp;</i>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <!--div class="alert alert-danger">
+                                <i class="glyphicon glyphicon-exclamation-sign"></i> Пароль истекает
+                                <strong>12.06.2014</strong> в <strong>14:15</strong>
+                            </div-->
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <div class="note" ng-show="entity.CRYPTED.NOTE && entity.CRYPTED.NOTE.length">
+                    <div class="note-header"><?= $this->t('NOTE'); ?>:</div>
+                    <span class="note-output">{{entity.CRYPTED.NOTE}}</span>
+                </div>
+                <!--div ng-controller="PassFileCtrl" class="note">
+                    <div class="note-header">Файлы:</div>
+                    <p ng-repeat="file in files"><a href="javascript:void(0);">{{file.NAME}}</a></p>
+                </div-->
+
+                <?= $this->render('panel-right-rights.phtml'); ?>
+            </div>
+        </div>
+        <div class="scroller-bar-wrapper">
+            <div class="scroller-bar"></div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,3 @@
+<?
+$MESS["LEARNING_TRANSCRIPT_NAME"] = "نام";
+?>

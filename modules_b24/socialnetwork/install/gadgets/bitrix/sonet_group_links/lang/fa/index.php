@@ -1,0 +1,18 @@
+<?
+$MESS["GD_SONET_GROUP_LINKS_ACT_BAN"] = "فهرست مسدود شده";
+$MESS["GD_SONET_GROUP_LINKS_ACT_DELETE"] = "حذف گروه";
+$MESS["GD_SONET_GROUP_LINKS_ACT_EDIT"] = "ویرایش گروه";
+$MESS["GD_SONET_GROUP_LINKS_ACT_USER"] = "ویرایش اعضا";
+$MESS["GD_SONET_GROUP_LINKS_ACT_MOD"] = "ویرایش مدیران";
+$MESS["GD_SONET_GROUP_LINKS_ACT_FEAT"] = "ویرایش تنظیمات";
+$MESS["GD_SONET_GROUP_LINKS_ACT_VREQU_OUT"] = "دعوتنامه های گروه";
+$MESS["GD_SONET_GROUP_LINKS_ACT_REQU"] = "دعوت به گروه";
+$MESS["GD_SONET_GROUP_LINKS_ACT_JOIN"] = "پیوستن به گروه";
+$MESS["GD_SONET_GROUP_LINKS_ACT_EXIT"] = "ترک گروه";
+$MESS["GD_SONET_GROUP_LINKS_ACT_USER1"] = "اعضا";
+$MESS["GD_SONET_GROUP_LINKS_ACT_MOD1"] = "مدیران";
+$MESS["GD_SONET_GROUP_LINKS_ACT_SUBSCRIBE"] = "اشتراک";
+$MESS["GD_SONET_GROUP_LINKS_ACT_VREQU"] = "مشاهده درخواستهای عضویت";
+$MESS["GD_SONET_GROUP_LINKS_SEND_MESSAGE_GROUP_TITLE"] = "ارسال پیغام به اعضای گروه";
+$MESS["GD_SONET_GROUP_LINKS_SEND_MESSAGE_GROUP"] = "نوشتن پیغام";
+?>

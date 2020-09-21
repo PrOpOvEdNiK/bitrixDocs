@@ -1,0 +1,36 @@
+<?
+$MESS["IBLOCK_TYPE_TIP"] = "Pasirinkite vieną iš esamų informacijos blokų tipų sąraše ir spustelėkite <b>Gerai</ b>. Tai padės įkelti pasirinkto tipo informacijos blokus. Tačiau šiam komponentui šis parametras yra neprivalomas.";
+$MESS["IBLOCK_ID_TIP"] = "Pasirinkite vieną iš esamų informacijos blokų. Jeigu jūs pasirinksite <b><i>(kitą)</i></b>, jūs turėsite nurodyti informacijos bloko ID šalimame lauke.";
+$MESS["DOCS_COUNT_TIP"] = "Nurodo elementų skaičių puslapyje.";
+$MESS["SORT_BY1_TIP"] = "Pasirinkite čia lauką, pagal kurį dokumentų objektai turi būti rūšiuojami. Jūs galite pasirinkti <b><i>(kitą)</i></b> ir nurodyti lauko ID šalimame lauke.";
+$MESS["SORT_ORDER1_TIP"] = "Didėjančia arba mažėjančia tvarka.";
+$MESS["SORT_BY2_TIP"] = "Pasirinkite čia lauką, pagal kurį dokumentų objektai turi būti rūšiuojami antroje eilėje. Jūs galite pasirinkti <b><i>(kitą)</i></b> ir nurodyti lauko ID šalimame lauke.";
+$MESS["SORT_ORDER2_TIP"] = "Didėjančia arba mažėjančia tvarka.";
+$MESS["FILTER_NAME_TIP"] = "Kintamojo, kuriame bus perduodami filtro nustatymai, pavadinimas. Jūs galite palikti lauką tuščią, jei norite naudoti numatytąjį pavadinimą.";
+$MESS["FIELD_CODE_TIP"] = "Čia jūs galite pasirinkti reikiamų inofrmacijos bloko elementų laukus, kuriems gali būti taikomas filtras. Jūs galite pridėti pasirinktinius laukus kaip kodą įvesties laukuose žemiau .";
+$MESS["PROPERTY_CODE_TIP"] = "Pasirinkite informacijos blokų savybės, kurias jūs norite rodyti filtre. Taip pat galite pridėti savo laukus į žemiau esančius laukelius.";
+$MESS["DETAIL_URL_TIP"] = "Detalios peržiūros puslapio URL. Pavyzdžiui: <b>doc_detail.php?ID=#ELEMENT_ID#</b>";
+$MESS["PREVIEW_TRUNCATE_LEN_TIP"] = "Jei informacijoss bloko peržiūros būdas yra tekstas, čia jūs galite nurodyti maksimalų simbolių skaičių. Bet tekstas už šios ribos bus sutrumpintas.";
+$MESS["ACTIVE_DATE_FORMAT_TIP"] = "Pasirinkite čia nustatytos datos formatą. Jeigu jūs pasirinksite  <i><b>kitą</b></i>, jūs galite sukurti savo formatą naudojantis <i><b>datos</b></i> PHP funcija.";
+$MESS["DISPLAY_PANEL_TIP"] = "Jei pažymėta, redaktoraius mygtukai bus rodomi svetainės redagavimo režimu valdymo skydo įrankių juostoje ir sudėtinės įrankių juostos srityje.";
+$MESS["SET_TITLE_TIP"] = "Šios parinkties pažymėjimas nustatys esančio informacijos bloko pavadinimo antraštę.";
+$MESS["INCLUDE_IBLOCK_INTO_CHAIN_TIP"] = "Jei pažymėta, informacijos bloko pavadinimas bus pridėtas prie navigacijos grandinės.";
+$MESS["ADD_SECTIONS_CHAIN_TIP"] = "Jei parinktis yra aktyvuota ir informacijos blokas turi skyrius, jų pavadinimai bus rodomi navigacijos grandinėje. ";
+$MESS["HIDE_LINK_WHEN_NO_DETAIL_TIP"] = "Nurodo paslėpti nuorodą, jei objekti detalės nėra žinomos, arba jei naydootojas turi nepakankamai leidimo.";
+$MESS["PARENT_SECTION_TIP"] = "Nurodo pagrindinio skyriaus ID, kuris gali būti naudojamas tikslu apriboti pasirinktus elementus į tą skyrių.";
+$MESS["CACHE_TYPE_TIP"] = "<i>Auto</i>: talpykla galioja metu, iš anksto nurodytu laikinojoje nustatymuose; <br /><i>Talpykla</i>: visada išsaugoti laikotarpiui, nurodytam kitame lauke; <br /><i>Neišsaugotu</i>: išsaugojimas neatliktas.";
+$MESS["CACHE_TIME_TIP"] = "Nurodykite čia laikotarpį, per kurį galioja talpykla.";
+$MESS["CACHE_FILTER_TIP"] = "Jei pažymėta, sistema i6saugos kiekvieno filtro rezultatą. Tai gali būti naudinga, jei daug lankytojų dažnai naudoja tuos pačius filtro nustatymus.";
+$MESS["DISPLAY_TOP_PAGER_TIP"] = "Jei pažymėta, elementų navigacijos nuorodos bus rodomos puslapio viršuje.";
+$MESS["DISPLAY_BOTTOM_PAGER_TIP"] = "Jei pažymėta, elementų navigacijos nuorodos bus rodomos puslapio apačioje.";
+$MESS["PAGER_TITLE_TIP"] = "Navigacijos elemento vienetų pavadinimas. Pavyzdžiui: puslapis, skyrius ir tt.";
+$MESS["PAGER_SHOW_ALWAYS_TIP"] = "Jei nepažymėta, džiūvėselių navigacijos nuorodos nebus pateiktos, jei visi objektai telpa viename puslapyje. Priešingu atveju, navigacijos nuorodos bus visada rodomos.";
+$MESS["PAGER_TEMPLATE_TIP"] = "Džiūvėsėlių navigacijos šablono pavadinimas. Jūs galite palikti lauką tuščią, jei norite naudoti numatytąjį šabloną (<b> <i>.numatytasis </i></b>). (Sistema pateikia alternatyvų šabloną: <i>oranžinis </ i>.)";
+$MESS["PAGER_DESC_NUMBERING_TIP"] = "Naudokite šią parinktį, jei norite, kad nauji elementai būtų talpinami viršuje. Taigi, yra keičiamas tik paskutinis džiūvėsėlių navigacijos puslapis. Visi kiti puslapiai gali būti paslėpti labai ilgam laikui.";
+$MESS["PAGER_DESC_NUMBERING_CACHE_TIME_TIP"] = "Nurodo puslapių saugojimo laiką (sekundėmis), naudojant atgalinę navigaciją.";
+$MESS["AJAX_MODE_TIP"] = "Įjungia AJAX komponente.";
+$MESS["AJAX_OPTION_SHADOW_TIP"] = "Nurodo užtamsinti modifikuojamus plotus per AJAX moduliaciją.";
+$MESS["AJAX_OPTION_JUMP_TIP"] = "Nurodo susukti komponentą, kai baigta AJAX moduliacija.";
+$MESS["AJAX_OPTION_STYLE_TIP"] = "Nurodo parsisiųsti ir apdoroti komponento CSS stylius per AJAX moduliaciją.";
+$MESS["AJAX_OPTION_HISTORY_TIP"] = "Leidžia naršyklės mygtukus \"Grįžti\" ir \"Į priekį\" AJAX moduliacijai. ";
+?>

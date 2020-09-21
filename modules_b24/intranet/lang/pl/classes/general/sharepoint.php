@@ -1,0 +1,31 @@
+<?
+$MESS["SP_ERROR_CLASS_NOT_EXISTS"] = "Klasa obsługi nie istnieje.";
+$MESS["SP_ERROR_IBLOCK_EXISTS"] = "Blok informacji jest już połączony z listą SharePoint.";
+$MESS["SP_ERROR_LIST_EXISTS"] = "Lista programu SharePoint jest już połączona z blokiem informacji.";
+$MESS["SP_ERROR_MAX_ERRORS"] = "Przekroczono możliwy maksymalny błąd usługi";
+$MESS["SP_ERROR_METHOD_NOT_EXISTS"] = "klient #CLASS# nie obsługuje metody #METHOD#.";
+$MESS["SP_ERROR_MODULE_NOT_INSTALLED"] = "moduł nie jest zainstalowany.";
+$MESS["SP_ERROR_WRONG_IBLOCK_ID"] = "Nieprawidłowy blok informacji.";
+$MESS["SP_ERROR_WRONG_SP_LIST_ID"] = "Lista nieprawidłowych identyfikatorów.";
+$MESS["SP_ERROR_WRONG_URL"] = "Nieprawidłowy SharePoint server URL.";
+$MESS["SP_IGNORE"] = "(nie określone)";
+$MESS["SP_LIST_FIELD_ACTIVE_FROM"] = "Aktywne od";
+$MESS["SP_LIST_FIELD_ACTIVE_TO"] = "Aktywny do";
+$MESS["SP_LIST_FIELD_CREATED_BY"] = "Utworzony przez";
+$MESS["SP_LIST_FIELD_CREATE_NONE"] = "(wybierz typ pola)";
+$MESS["SP_LIST_FIELD_DATE_CREATE"] = "Utworzony";
+$MESS["SP_LIST_FIELD_DETAIL_PICTURE"] = "Szczegółowy obraz";
+$MESS["SP_LIST_FIELD_DETAIL_TEXT"] = "Szczegółowy tekst";
+$MESS["SP_LIST_FIELD_E"] = "Wiąż z obiektami CRM";
+$MESS["SP_LIST_FIELD_F"] = "Plik";
+$MESS["SP_LIST_FIELD_G"] = "Powiąż z Sekcjami";
+$MESS["SP_LIST_FIELD_L"] = "Lista";
+$MESS["SP_LIST_FIELD_MODIFIED_BY"] = "Zmodyfikowane przez";
+$MESS["SP_LIST_FIELD_N"] = "Liczba";
+$MESS["SP_LIST_FIELD_NAME"] = "Nazwa";
+$MESS["SP_LIST_FIELD_PREVIEW_PICTURE"] = "Miniatura";
+$MESS["SP_LIST_FIELD_PREVIEW_TEXT"] = "Podgląd Tekstu";
+$MESS["SP_LIST_FIELD_S"] = "Ciąg";
+$MESS["SP_LIST_FIELD_SORT"] = "Sortowanie";
+$MESS["SP_LIST_FIELD_TIMESTAMP_X"] = "Zmodyfikowany";
+?>

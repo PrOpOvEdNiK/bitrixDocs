@@ -1,0 +1,30 @@
+<?
+$MESS["LEARNING_SITE_PATH_SITE"] = "Modèles des Chemins pour le site &quot;#SITE#&quot;";
+$MESS["MAIN_OPT_APPLY"] = "Appliquer";
+$MESS["MAIN_OPT_APPLY_TITLE"] = "Enregistrer les modifications et rester dans la forme";
+$MESS["MAIN_OPT_CANCEL"] = "Annuler";
+$MESS["MAIN_OPT_CANCEL_TITLE"] = "Ne pas enregistrer les modifications et retourner";
+$MESS["MAIN_OPT_SAVE_TITLE"] = "Enregistrer les modifications et revenir";
+$MESS["TASKS_COMMENTS_ALLOW_EDIT_REMOVE"] = "Les utilisateurs peuvent éditer et supprimer les commentaires";
+$MESS["TASKS_COMMENTS_FORUM"] = "Forum pour commentaires";
+$MESS["TASKS_HTML_SANITIZE_LEVEL"] = "Le nettoyage HTML dans la description de tâches";
+$MESS["TASKS_HTML_SANITIZE_LEVEL_HIGH"] = "Augmenté";
+$MESS["TASKS_HTML_SANITIZE_LEVEL_LOW"] = "Bas";
+$MESS["TASKS_HTML_SANITIZE_LEVEL_MIDDLE"] = "Moyen";
+$MESS["TASKS_HTML_SANITIZE_LEVEL_NONE"] = "Ne pas utiliser le filtrage";
+$MESS["TASKS_LIST_ALLOW_SORT_FILTER_UF"] = "Activer le tri et le filtrage par champs personnalisés dans la liste des tâches";
+$MESS["TASKS_OPTION_PATHS"] = "Liens";
+$MESS["TASKS_PATHS_TASK_GROUP"] = "Image du lien à la liste de tâches du groupe";
+$MESS["TASKS_PATHS_TASK_GROUP_ACTION"] = "Modèle du lien pour aller à la tâche du groupe";
+$MESS["TASKS_PATHS_TASK_GROUP_EDIT"] = "Modèle du lien pour l'édition de la tâche du groupe";
+$MESS["TASKS_PATHS_TASK_GROUP_ENTRY"] = "Modèle du lien pour l'aperçu de la tâche du groupe";
+$MESS["TASKS_PATHS_TASK_USER"] = "Modèle de chemin d'accès à la page des tâches de l'utilisateur";
+$MESS["TASKS_PATHS_TASK_USER_ACTION"] = "Modèle du lien sur la tâche d'utilisateur";
+$MESS["TASKS_PATHS_TASK_USER_EDIT"] = "Le modèle du lien à la rédaction de la tâche de l'utilisateur";
+$MESS["TASKS_PATHS_TASK_USER_ENTRY"] = "Modèle de lien pour afficher les tâches d'utilisateur";
+$MESS["TASKS_PATHS_USER"] = "Modèle d'un lien au profil d'utilisateur";
+$MESS["TASKS_RESTORE_DEFAULTS"] = "Par défaut";
+$MESS["TASKS_SETTINGS"] = "Réglage du module des tâches";
+$MESS["TASKS_SETTINGS_TITLE"] = "Réglages globaux du module tâches";
+$MESS["TASKS_SUBTAB_TITLE_SITE"] = "Réglages pour le site";
+?>

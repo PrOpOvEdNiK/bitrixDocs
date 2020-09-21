@@ -1,0 +1,17 @@
+<?
+$MESS["SALE_BASKET_ENTITY_BASKET"] = "Pirkinių krepšelis";
+$MESS["SALE_BASKET_ENTITY_ID"] = "Įrašo ID";
+$MESS["SALE_BASKET_ENTITY_FUSER_ID"] = "Lankytojo ID";
+$MESS["SALE_BASKET_ENTITY_DATE_INSERT"] = "Prekė pridėta";
+$MESS["SALE_BASKET_ENTITY_DATE_UPDATE"] = "Prekė pakeista";
+$MESS["SALE_BASKET_ENTITY_DATE_INS"] = "Prekė pridėta";
+$MESS["SALE_BASKET_ENTITY_DATE_UPD"] = "Prekė pakeista";
+$MESS["SALE_BASKET_ENTITY_PRODUCT_ID"] = "Prekės ID";
+$MESS["SALE_BASKET_ENTITY_NAME"] = "Prekės pavadinimas";
+$MESS["SALE_BASKET_ENTITY_ORDER_ID"] = "Užsakymo ID";
+$MESS["SALE_BASKET_ENTITY_PRICE"] = "Kaina";
+$MESS["SALE_BASKET_ENTITY_QUANTITY"] = "Kiekis";
+$MESS["SALE_BASKET_ENTITY_SUMMARY_PRICE"] = "Iš viso prekių";
+$MESS["SALE_BASKET_ENTITY_SUBSCRIBE"] = "Ši prekė turi prenumeratą";
+$MESS["SALE_BASKET_ENTITY_N_SUBSCRIBE"] = "Prenumeratos";
+?>

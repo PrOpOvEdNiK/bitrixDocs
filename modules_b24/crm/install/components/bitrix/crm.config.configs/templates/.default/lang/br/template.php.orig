@@ -1,0 +1,29 @@
+<?
+$MESS["CRM_TAB_ACTIVITY_CONFIG"] = "Atividade";
+$MESS["CRM_TAB_ACTIVITY_CONFIG_TITLE"] = "Parâmetros da Atividade";
+$MESS["CRM_TAB_CONFIG"] = "Envio de e-mail";
+$MESS["CRM_TAB_CONFIG_TITLE"] = "Configurar Parâmetros de Envio de e-mail";
+$MESS["CRM_TAB_DEAL_CONFIG"] = "Negócios";
+$MESS["CRM_TAB_DEAL_CONFIG_TITLE"] = "Parâmetros de Negócio";
+$MESS["CRM_TAB_DUPLICATE_CONTROL"] = "Controle de Duplicatas";
+$MESS["CRM_TAB_DUPLICATE_CONTROL_TITLE"] = "Duplicar Parâmetros de Controle";
+$MESS["CRM_TAB_FORMAT"] = "Formato";
+$MESS["CRM_TAB_FORMAT_TITLE"] = "Parâmetros de Formato";
+$MESS["CRM_TAB_GENERAL"] = "Geral";
+$MESS["CRM_TAB_GENERAL_TITLE"] = "Parâmetros Comuns";
+$MESS["CRM_TAB_HISTORY"] = "Histórico";
+$MESS["CRM_TAB_HISTORY_TITLE"] = "Configurações do Histórico";
+$MESS["CRM_TAB_INVNUM"] = "Números da Fatura";
+$MESS["CRM_TAB_INVNUM_TITLE"] = "Template de Números da Fatura";
+$MESS["CRM_TAB_LIVEFEED"] = "Fluxo de Atividades";
+$MESS["CRM_TAB_LIVEFEED_TITLE"] = "Configurações do Fluxo de Atividades";
+$MESS["CRM_TAB_QUOTENUM"] = "ID's dos Orçamentos";
+$MESS["CRM_TAB_QUOTENUM_TITLE"] = "Formato de Numeração do ID do Orçamento";
+$MESS["CRM_TAB_RECYCLE_BIN_CONFIG"] = "Lixeira";
+$MESS["CRM_TAB_REST"] = "Aplicativos";
+$MESS["CRM_TAB_REST_TITLE"] = "Configurações de Aplicativo";
+$MESS["CRM_TAB_STATUS_CONFIG"] = "Dicionários";
+$MESS["CRM_TAB_STATUS_CONFIG_TITLE"] = "Configurações de Dicionário";
+$MESS["CRM_TAB_TAB_OUTGOING_EMAIL"] = "Mensagens de Saída";
+$MESS["CRM_TAB_TAB_OUTGOING_EMAIL_TITLE"] = "Parâmetros de Saída de e-mail";
+?>

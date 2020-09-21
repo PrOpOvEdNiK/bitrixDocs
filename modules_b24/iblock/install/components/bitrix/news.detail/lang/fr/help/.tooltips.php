@@ -1,0 +1,31 @@
+<?
+$MESS["ACTIVE_DATE_FORMAT_TIP"] = "Sélectionnez ici le format de la date requise. Si vous sélectionnez <i><b>autres</b></i>, vous pouvez créer votre propre format en utilisant le <i><b>date</b></i> fonction PHP.";
+$MESS["ADD_ELEMENT_CHAIN_TIP"] = "Si l'option est cochée, la dénomination de l'élément sera ajoutée dans la chaîne de navigation.";
+$MESS["ADD_SECTIONS_CHAIN_TIP"] = "Si l'option est installée et les sections du bloc info sont créées, au cours du passage par sections ces noms seront ajoutés dans la chaîne de la navigation.";
+$MESS["AJAX_MODE_TIP"] = "Inclusion pour le composant du mode AJAX.";
+$MESS["AJAX_OPTION_HISTORY_TIP"] = "Lorsqu'un utilisateur effectue les transitions AJAX, alors si l'option est cochée, vous pouvez utiliser les boutons 'Retour' et 'Suivant' du navigateur.";
+$MESS["AJAX_OPTION_JUMP_TIP"] = "Si l'utilisateur effectue la transition AJAX, alors après l'achèvement du chargement le défilement vers le début du composant aura lieu.";
+$MESS["AJAX_OPTION_SHADOW_TIP"] = "Au cours du passage l'espace qui doit être modifié sera ombré.";
+$MESS["AJAX_OPTION_STYLE_TIP"] = "Lors des transitions AJAX le chargement et le traitement de la liste de styles provoqués par le composant auront lieu.";
+$MESS["CACHE_TIME_TIP"] = "Veuillez indiquer la période de temps durant laquelle la mémoire cache reste valide.";
+$MESS["CACHE_TYPE_TIP"] = "<i>Auto</i>: cache est valide pendant un temps prédéterminé dans les paramètres;<br /><i>Mettre en cache</i>: pour la mise en cache il faut déterminer seulement le temps de la mise en cache;<br /><i>Ne pas mettre en cache</i>: pas de mise en cache en tout cas.";
+$MESS["CHECK_DATES_TIP"] = "L'option sert à afficher uniquement les éléments actifs du bloc d'information.";
+$MESS["DISPLAY_BOTTOM_PAGER_TIP"] = "Avec l'option marquée la navigation par pages sera affichée au-dessous de la page.";
+$MESS["DISPLAY_PANEL_TIP"] = "Avec une option marquée, les boutons seront affichés en régime de rédaction du site sur le panneau administratif et dans l'inventaire des boutons de l'espace de rédaction de ce composant.";
+$MESS["DISPLAY_TOP_PAGER_TIP"] = "Si cette option est sélectionnée, la navigation de pages sera affichée en haut de la page.";
+$MESS["ELEMENT_ID_TIP"] = "Ce champ est utilisé pour spécifier les actualités ID. Il peut être ajouté explicitement ou peut être transféré à partir d'un tableau _REQUEST. Par défaut, le champ contient <b>={\$_REQUEST['Id']}</b>";
+$MESS["FIELD_CODE_TIP"] = "Sélectionnez ici les champs que vous souhaitez afficher dans une page de détails de l'élément. Si vous sélectionnez <i><b>pas</b></i> et ne définit pas les expressions de champ ci-dessous, les champs par défaut seront affichés.";
+$MESS["GROUP_PERMISSIONS_TIP"] = "Sont affichés les groupes d'utilisateurs parmi lesquels il est possible de choisir ceux qui peuvent voir l'information détaillée.";
+$MESS["IBLOCK_ID_TIP"] = "Tous les blocs d'informations crées pour le type spécifié sont affichés dans la liste. Vous pouvez sélectionner un des blocs d'informations ou cliquer sur <i>autre</i>, alors dans le champ à côté, vous devez indiquer le code du bloc d'information, par exemple: <b>={\$_REQUEST['Id']}</b>.";
+$MESS["IBLOCK_TYPE_TIP"] = "Sélectionnez ici l'un des types de blocs d'information existants. Cliquez sur <b><i>OK</i></b> pour charger des blocs d'information du type sélectionné.";
+$MESS["IBLOCK_URL_TIP"] = "Il est indiqué l'adresse de la page avec la liste d'éléments du bloc d'information. Par défaut le champ contient <b>news.php?ID=#IBLOCK_ID#</b>";
+$MESS["INCLUDE_IBLOCK_INTO_CHAIN_TIP"] = "Si l'option est cochée, alors le nom de l'élément du bloc d'information sera ajouté au fil de la navigation.";
+$MESS["META_DESCRIPTION_TIP"] = "Dans la liste déroulante il y a toutes les propriétés définies pour ce bloc d'information. Parmi elles on sélectionne celle qui contient la description.";
+$MESS["META_KEYWORDS_TIP"] = "La liste déroulante affiche toutes les propriétés définies pour ce bloc d'information. Parmi elles on choisi la propriété qui contient les mots-clés.";
+$MESS["PAGER_TEMPLATE_TIP"] = "Le nom du modèle de navigation fil d'Ariane. Vous pouvez laisser le champ vide pour utiliser le modèle par défaut (<b><i>.default</i></b>). (Le système fournit un autre modèle:. <i>Orange</i>)";
+$MESS["PAGER_TITLE_TIP"] = "Indique le nom d'une unité de l'article pour la navigation. Par exemple: la page, chapitre, etc.";
+$MESS["PROPERTY_CODE_TIP"] = "Sélectionnez ici propriétés que vous voulez afficher dans une page de détails de l'élément. Si vous sélectionnez <i><b>pas</b></i> et ne définit pas les expressions de champ ci-dessous, les propriétés ne seront pas affichées.";
+$MESS["SET_BROWSER_TITLE_TIP"] = "Si elle est sélectionnée, un titre d'information d'élément de bloc (ou le titre de SEO si actif) seront utilisés comme titre de la fenêtre du navigateur.";
+$MESS["SET_TITLE_TIP"] = "L'option étant sélectionnée, la dénomination de l'élément visualisé en détail sera affichée comme titre de la page.";
+$MESS["USE_PERMISSIONS_TIP"] = "L'option permet de limiter l'accès à l'information détaillée des éléments du bloc d'information.";
+?>

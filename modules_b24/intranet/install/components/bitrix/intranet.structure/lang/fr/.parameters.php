@@ -1,0 +1,29 @@
+<?
+$MESS["INTR_IS_GROUP_FILTER"] = "Paramètres du filtre";
+$MESS["INTR_IS_PARAM_DATE_FORMAT"] = "Format d'affichage de la date";
+$MESS["INTR_IS_PARAM_DATE_FORMAT_NO_YEAR"] = "Format d'affichage de la date sans indication de l'année";
+$MESS["INTR_IS_PARAM_DATE_TIME_FORMAT"] = "Format d'affichage de la date et de l'heure";
+$MESS["INTR_IS_PARAM_DETAIL_URL"] = "Modèle d'un lien au profil d'utilisateur";
+$MESS["INTR_IS_PARAM_FILTER_1C_USERS"] = "N'afficher que les utilisateurs qui sont synchronisés avec 1C";
+$MESS["INTR_IS_PARAM_FILTER_NAME"] = "Nom du filtre (pour les formulaires extérieurs de filtrage)";
+$MESS["INTR_IS_PARAM_FILTER_SECTION_CURONLY"] = "Filtre par service";
+$MESS["INTR_IS_PARAM_FILTER_SECTION_CURONLY_VALUE_N"] = "Récurrent";
+$MESS["INTR_IS_PARAM_FILTER_SECTION_CURONLY_VALUE_Y"] = "direct";
+$MESS["INTR_IS_PARAM_NAME_TEMPLATE"] = "Affichage du nom";
+$MESS["INTR_IS_PARAM_NAME_TEMPLATE_DEFAULT"] = "#NOBR##NAME# #LAST_NAME##/NOBR#";
+$MESS["INTR_IS_PARAM_NAV_TITLE"] = "Signature de la pagination";
+$MESS["INTR_IS_PARAM_NAV_TITLE_DEFAULT"] = "Employés";
+$MESS["INTR_IS_PARAM_PATH_TO_CONPANY_DEPARTMENT"] = "Modèle de chemin d'accès à la page d'une section";
+$MESS["INTR_IS_PARAM_PM_URL"] = "Page de l'envoi du message privé";
+$MESS["INTR_IS_PARAM_SEARCH_URL"] = "Page de Recherche des collaborateurs";
+$MESS["INTR_IS_PARAM_SHOW_ERROR_ON_NULL"] = "Afficher la notification quand la liste est vide";
+$MESS["INTR_IS_PARAM_SHOW_LOGIN"] = "Afficher le nom d'utilisateur si le nom n'est pas spécifié";
+$MESS["INTR_IS_PARAM_SHOW_NAV_BOTTOM"] = "Afficher la navigation page par page au-dessous de la liste";
+$MESS["INTR_IS_PARAM_SHOW_NAV_TOP"] = "Afficher la navigation page par page au-dessus de la liste";
+$MESS["INTR_IS_PARAM_SHOW_UNFILTERED_LIST"] = "Afficher la liste quand le filtre est vide";
+$MESS["INTR_IS_PARAM_SHOW_YEAR"] = "Afficher l'année de naissance";
+$MESS["INTR_IS_PARAM_SHOW_YEAR_VALUE_M"] = "seulement aux hommes";
+$MESS["INTR_IS_PARAM_SHOW_YEAR_VALUE_N"] = "personne";
+$MESS["INTR_IS_PARAM_SHOW_YEAR_VALUE_Y"] = "tous";
+$MESS["INTR_IS_PARAM_USERS_PER_PAGE"] = "Nombre d'utilisateurs par page";
+?>

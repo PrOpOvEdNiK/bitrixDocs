@@ -1,0 +1,35 @@
+<?
+$MESS["BT_UT_AUTOCOMPLETE_SYM_GRID"] = "#";
+$MESS["BT_UT_AUTOCOMPLETE_SYM_OTHER"] = "inne";
+$MESS["BT_UT_AUTOCOMPLETE_SYM_SPACE"] = "spacja";
+$MESS["BT_UT_AUTOCOMPLETE_SYM_STAR"] = "*";
+$MESS["BT_UT_AUTOCOMPLETE_SYM_UNDERLINE"] = "_";
+$MESS["BT_UT_EAUTOCOMPLETE_DESCR"] = "Link-do-elementu samowypełniające się okienko tekstowe";
+$MESS["BT_UT_EAUTOCOMPLETE_MESS_CHOOSE_ELEMENT"] = "Lista";
+$MESS["BT_UT_EAUTOCOMPLETE_MESS_CHOOSE_ELEMENT_DESCR"] = "Pojedyńcza lista wyboru";
+$MESS["BT_UT_EAUTOCOMPLETE_MESS_CHOOSE_ELEMENT_MULTI_DESCR"] = "Lista wielokrotnego wyboru";
+$MESS["BT_UT_EAUTOCOMPLETE_MESS_ELEMENT_EDIT"] = "Otwórz pozycje do edycji";
+$MESS["BT_UT_EAUTOCOMPLETE_MESS_INVITE"] = "wpisz tekst tutaj";
+$MESS["BT_UT_EAUTOCOMPLETE_MESS_LIST_INVITE"] = "(wpisz tekst)";
+$MESS["BT_UT_EAUTOCOMPLETE_MESS_NEW_ELEMENT"] = "Dodaj pozycję";
+$MESS["BT_UT_EAUTOCOMPLETE_MESS_NEW_ELEMENT_DESCR"] = "Dodaj nowy element i wybierz go";
+$MESS["BT_UT_EAUTOCOMPLETE_MESS_NO_SEARCH_RESULT_TEXT"] = "brak sugestii";
+$MESS["BT_UT_EAUTOCOMPLETE_MESS_SEARCH_ELEMENT"] = "...";
+$MESS["BT_UT_EAUTOCOMPLETE_MESS_SEARCH_ELEMENT_DESCR"] = "Pojedyńczy wybór okna wyszukiwania";
+$MESS["BT_UT_EAUTOCOMPLETE_MESS_SEARCH_ELEMENT_MULTI_DESCR"] = "Wielokrotny wybór okna wyszukiwania";
+$MESS["BT_UT_EAUTOCOMPLETE_SETTING_BAN_SYMBOLS"] = "Wymień niedozwolone znaki";
+$MESS["BT_UT_EAUTOCOMPLETE_SETTING_COMMENT_MAX_HEIGHT"] = "px";
+$MESS["BT_UT_EAUTOCOMPLETE_SETTING_COMMENT_MAX_WIDTH"] = "px";
+$MESS["BT_UT_EAUTOCOMPLETE_SETTING_COMMENT_MIN_HEIGHT"] = "px";
+$MESS["BT_UT_EAUTOCOMPLETE_SETTING_IBLOCK_MESS"] = "Użyj tytułu elementu bloku iinformacji dla tekstu przycisku";
+$MESS["BT_UT_EAUTOCOMPLETE_SETTING_MAX_HEIGHT"] = "Maksymalna wysokość pola (dla wielu właściwości)";
+$MESS["BT_UT_EAUTOCOMPLETE_SETTING_MAX_WIDTH"] = "Maksymalna szerokość pola, pix. (0 - nieograniczona)";
+$MESS["BT_UT_EAUTOCOMPLETE_SETTING_MIN_HEIGHT"] = "Minimalna wysokość pola (dla wielu właściwości)";
+$MESS["BT_UT_EAUTOCOMPLETE_SETTING_REP_SYMBOL"] = "Pokaż niedozwolone znaki jako";
+$MESS["BT_UT_EAUTOCOMPLETE_SETTING_SHOW_ADD"] = "Pokaż przycisk dodaj pozycję";
+$MESS["BT_UT_EAUTOCOMPLETE_SETTING_TITLE"] = "Parametry funkcji autouzupełniania";
+$MESS["BT_UT_EAUTOCOMPLETE_SETTING_VIEW"] = "Kontole UI";
+$MESS["BT_UT_EAUTOCOMPLETE_VIEW_AUTO"] = "Pole tekstowe autokompletne";
+$MESS["BT_UT_EAUTOCOMPLETE_VIEW_ELEMENT"] = "Autokompletne pole tekstowe i okno wyszukiwania";
+$MESS["BT_UT_EAUTOCOMPLETE_VIEW_TREE"] = "Autokompletne pole tekstowe i pole listy";
+?>

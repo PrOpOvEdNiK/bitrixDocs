@@ -1,0 +1,35 @@
+<?
+$MESS["TM_CALENDAR_CHOOSE"] = "Seleccionar Calendario";
+$MESS["TM_CONFIRM_LATE_OPEN"] = "Está seguro que desea con el reloj en menos  #TIME#?";
+$MESS["TM_DAY_CLOSED_ADMIN"] = "El día laboral ha sido cerrado por el supervisor.";
+$MESS["TM_IN"] = "en";
+$MESS["TM_TASK_ACCOMPLICES"] = "Participante";
+$MESS["TM_TASK_ACCOMPLICES_PL"] = "Participantes";
+$MESS["TM_TASK_AUDITORS"] = "Observador";
+$MESS["TM_TASK_AUDITORS_PL"] = "Observadores";
+$MESS["TM_TASK_CREATED_BY"] = "Creador";
+$MESS["TM_TASK_CREATED_BY_PL"] = "Creadores";
+$MESS["TM_TASK_CREATED_DATE"] = "Creado en";
+$MESS["TM_TASK_DATE_END"] = "Final";
+$MESS["TM_TASK_DATE_START"] = "Inicio";
+$MESS["TM_TASK_DEADLINE"] = "Fecha límite";
+$MESS["TM_TASK_RESPONSIBLE_ID"] = "Persona Responsable";
+$MESS["TM_TASK_RESPONSIBLE_ID_PL"] = "Personas Responsables";
+$MESS["TM_TASK_SET_STATUS_2"] = "Resumen";
+$MESS["TM_TASK_SET_STATUS_2_1"] = "Aceptar";
+$MESS["TM_TASK_SET_STATUS_3"] = "Iniciar Ejecución";
+$MESS["TM_TASK_SET_STATUS_4"] = "Finalizar";
+$MESS["TM_TASK_SET_STATUS_6"] = "Diferir";
+$MESS["TM_TASK_SET_STATUS_7"] = "Declinar";
+$MESS["TM_TASK_STATUS"] = "Estado";
+$MESS["TM_TASK_STATUS_-1"] = "Atrasado";
+$MESS["TM_TASK_STATUS_-2"] = "Nuevo";
+$MESS["TM_TASK_STATUS_1"] = "Nuevo";
+$MESS["TM_TASK_STATUS_2"] = "Aceptado";
+$MESS["TM_TASK_STATUS_3"] = "En progreso";
+$MESS["TM_TASK_STATUS_4"] = "Finalizado";
+$MESS["TM_TASK_STATUS_5"] = "Cerrado";
+$MESS["TM_TASK_STATUS_6"] = "Diferir";
+$MESS["TM_TASK_STATUS_7"] = "Declinar";
+$MESS["TM_TILL"] = "#today# hasta #time#";
+?>

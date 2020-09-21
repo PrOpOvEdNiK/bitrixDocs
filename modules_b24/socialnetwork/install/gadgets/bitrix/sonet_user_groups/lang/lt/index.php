@@ -1,0 +1,8 @@
+<?
+$MESS["GD_SONET_USER_GROUPS_ALL_GROUPS"] = "Visos grupės";
+$MESS["GD_SONET_USER_GROUPS_NO_GROUPS"] = "Grupių nėra.";
+$MESS["GD_SONET_USER_GROUPS_GR_UNAVAIL"] = "Grupių sąrašo nėra.";
+$MESS["GD_SONET_USER_GROUPS_CREATE_GROUP"] = "Kurti grupę";
+$MESS["GD_SONET_USER_GROUPS_SEARCH_GROUP"] = "Ieškoti grupių";
+$MESS["GD_SONET_USER_GROUPS_LOG"] = "Atnaujinimai";
+?>

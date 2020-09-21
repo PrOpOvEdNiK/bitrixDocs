@@ -1,0 +1,67 @@
+<?
+$MESS["CRM_CONFIGS_TAB_WHERE_TO_BEGIN"] = "Pradžios taškas";
+$MESS["CRM_CONFIGS_TAB_SETTINGS_FORMS_AND_REPORTS"] = "Formos ir ataskaitos parametrai";
+$MESS["CRM_CONFIGS_TAB_CREATION_ON_THE_BASIS"] = "Generuoti";
+$MESS["CRM_CONFIGS_TAB_PRINTED_FORMS_OF_DOCUMENTS"] = "Mokėjimo informacija";
+$MESS["CRM_CONFIGS_TAB_PS_LIST"] = "Mokėjimo savybės";
+$MESS["CRM_CONFIGS_TAB_RIGHTS"] = "Prieigos teisės";
+$MESS["CRM_CONFIGS_TAB_AUTOMATION"] = "Automatizavimas";
+$MESS["CRM_CONFIGS_TAB_WORK_WITH_MAIL"] = "El. paštas";
+$MESS["CRM_CONFIGS_TAB_INTEGRATION"] = "Integracija";
+$MESS["CRM_CONFIGS_TAB_OTHER"] = "Kita";
+$MESS["CRM_CONFIGS_STATUS"] = "Statusai ir išskleidžiamieji sąrašai";
+$MESS["CRM_CONFIGS_CURRENCY"] = "Valiuta";
+$MESS["CRM_CONFIGS_TAX"] = "Mokėščiai";
+$MESS["CRM_CONFIGS_PS"] = "Apmokėjimo būdai";
+$MESS["CRM_CONFIGS_LOCATIONS"] = "Vietos";
+$MESS["CRM_CONFIGS_PERMS"] = "Prieigos teisės";
+$MESS["CRM_CONFIGS_BP"] = "Verslo procesai";
+$MESS["CRM_CONFIGS_AUTOMATION_LEAD"] = "Lead'ai";
+$MESS["CRM_CONFIGS_AUTOMATION_DEAL"] = "Sandoriai";
+$MESS["CRM_CONFIGS_FIELDS"] = "Naudotojo laukai";
+$MESS["CRM_CONFIGS_CONFIG"] = "Kiti nustatymai";
+$MESS["CRM_CONFIGS_FACE_TRACER"] = "Veido atpažinimas ";
+$MESS["CRM_CONFIGS_SENDSAVE"] = "Pašto integracija";
+$MESS["CRM_CONFIGS_MEASURE"] = "Matavimo vienetai";
+$MESS["CRM_CONFIGS_EXTERNAL_SALE"] = "Interneto parduotuvė";
+$MESS["CRM_CONFIGS_EXTERNAL_SALE_BX"] = "1C-Bitrix";
+$MESS["CRM_CONFIGS_SMS"] = "SMS pranešimai klientams ir darbuotojams";
+$MESS["CRM_CONFIGS_SMS_PROVIDER"] = "SMS pranešimai per #PROVIDER#";
+$MESS["CRM_CONFIGS_SMS_MARKETPLACE"] = "SMS programos";
+$MESS["CRM_CONFIGS_EXCH1C"] = "Integracija su \"1C: Enterprise\"";
+$MESS["CRM_CONFIGS_MAIL_TRACKER"] = "CRM el.pašto paskyros (personal&nbsp;email)";
+$MESS["CRM_CONFIGS_MAIL_TRACKER_SH"] = "CRM el.pašto paskyros (company&nbsp;email)";
+$MESS["CRM_CONFIGS_MAIL_TEMPLATES"] = "Pašto šablonai";
+$MESS["CRM_CONFIGS_PRODUCT_PROPS"] = "Prekės savybės";
+$MESS["CRM_CONFIGS_PRESET"] = "Klientų rekvizitų šablonai";
+$MESS["CRM_CONFIGS_MYCOMPANY"] = "Įmonės duomenys";
+$MESS["CRM_CONFIGS_MYCOMPANY1"] = "Mano įmonės duomenys";
+$MESS["CRM_CONFIGS_SLOT"] = "Analitinės ataskaitos";
+$MESS["CRM_CONFIGS_REFERENCE"] = "Informacija";
+$MESS["CRM_CONFIGS_LEAD"] = "Iniciatyva";
+$MESS["CRM_CONFIGS_DEAL"] = "Sondoris";
+$MESS["CRM_CONFIGS_QOUTE"] = "Pasiūlymas";
+$MESS["CRM_CONFIGS_CONTACT"] = "Kontaktas";
+$MESS["CRM_CONFIGS_COMPANY"] = "Įmonė";
+$MESS["CRM_CONFIGS_INVOICE"] = "Sąskaitos faktūros";
+$MESS["CRM_CONFIGS_DESCRIPTION_WHERE_TO_BEGIN"] = "Pradiniai nustatymai leidžia jums parengti CRM darbui su jūsų verslu. Sukurkite savo žodynus; prekių matavimo vienetus; mokesčius; valiutas ir kiti parametrus.";
+$MESS["CRM_CONFIGS_DESCRIPTION_SETTINGS_FORMS_AND_REPORTS"] = "Sukurkite savo naudotojo laukus CRM savybėms. Pasirinkite laukus, kuriuos norite įtraukti į analitines ataskaitas.";
+$MESS["CRM_CONFIGS_DESCRIPTION_PRINTED_FORMS_OF_DOCUMENTS"] = "Rekvizitai, jūsų įmonės logotipas, antspaudas, parašas, visa tai galima nustatyti skyriuje mokėjimo būdai.";
+$MESS["CRM_CONFIGS_DESCRIPTION_RIGHTS"] = "Prieš pradėdant: įsitikinkite, kad visi vadybininkai, kurie dirba su klientais turi tinkamai sukonfigūruotas prieigos teises, norint pasiekti klientų įrašus.";
+$MESS["CRM_CONFIGS_DESCRIPTION_AUTOMATION"] = "Automatizuokite darbo su klientais procesus: automatizuotas naujų iniciatyvų, kontaktų, sandorių, užduočių tvarkymas, visa tai gali būti lengvai išspręsta verslo procesų pagalba.";
+$MESS["CRM_CONFIGS_DESCRIPTION_WORK_WITH_MAIL"] = "Elektroninių laiškų apdorojimas, prijunkite savo įmonės pašto dėžutę prie CRM. Visi įeinantys pranešimai bus pristatomi atitinkamiems kontaktams, įmonėms ir iniciatyvoms; užduotys bus automatiškai sukurtos ir priskiriamos pardavimo atstovams.";
+$MESS["CRM_CONFIGS_DESCRIPTION_INTEGRATION"] = "Jei turite Bitrix sukurta internetinę parduotuvę, galite nustatyti duomenų keitimo tvarką. Visi nauji užsakymai bus automatiškai eksportuojami į Bitrix24 kaip sandoriai.";
+$MESS["CRM_CONFIGS_DESCRIPTION_CREATION_ON_THE_BASIS"] = "Naujos savybės sukūriamos automatiškai iš esamų išsaugant visą esminę informaciją. Informacijos paskirstymui, pasirinkite laukų atitikmenis ir išsaugokite savo nustatymus.";
+$MESS["CRM_CONFIGS_DESCRIPTION_OTHER"] = "Atidarykite šį puslapį, atlikite kitus CRM nustatymus.";
+$MESS["CRM_CONFIGS_TAB_APPS"] = "Programos";
+$MESS["CRM_CONFIGS_CRM_APPLICATION"] = "CRM programos";
+$MESS["CRM_CONFIGS_MIGRATION_OTHER_CRM"] = "Migracija iš kitų CRM";
+$MESS["CRM_CONFIGS_DESCRIPTION_APP"] = "<b>Perkelti duomenis iš kitų CRM</b><br>
+Naudojote kitą CRM? Išsaugokite savo informaciją, saugiai ją perkėlus į Bitrix24: leiskite programoms tai padaryti už jus.<br><br>
+<b>CRM programos</b><br>
+Išplėskite savo Bitrix24 funkcionalumą naudingų įrankių pagalba, kurie padės jums parduoti dar daugiau. Pridėti tarnybas valdančias naujienlaiškius, nukreipimo puslapius, pokalbius, skambučius; apskaičiuoti KPI ir dar daugiau. Programų asortimentas auga kiekvieną dieną.";
+$MESS["CRM_CONFIGS_NO_ACCESS_ERROR"] = "Prieiga uždrausta.";
+$MESS["CRM_CONFIGS_DEAL_CATEGORY"] = "Sandorio kanalai";
+$MESS["CRM_CONFIGS_SMS_LIMITS"] = "SMS limitai";
+$MESS["CRM_CONFIGS_TRACKER"] = "Seklio nustatymai";
+?>

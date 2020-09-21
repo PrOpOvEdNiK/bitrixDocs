@@ -1,0 +1,4 @@
+<?
+$MESS["IDEA_STATISTIC_TOTAL_TITLE"] = "Visos idėjos";
+$MESS["IDEA_STATISTIC_NO_STATUS_TITLE"] = "Nėra statuso";
+?>

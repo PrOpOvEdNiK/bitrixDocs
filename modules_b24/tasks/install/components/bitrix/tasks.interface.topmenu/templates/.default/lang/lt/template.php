@@ -1,0 +1,10 @@
+<?
+$MESS["TASKS_PANEL_TAB_EMPLOYEE_PLAN"] = "Prieinamumas";
+$MESS["TASKS_PANEL_TAB_PROJECTS"] = "Projektai";
+$MESS["TASKS_PANEL_TAB_MANAGE"] = "Priežiūra";
+$MESS["TASKS_PANEL_TAB_TRASH"] = "Šiukšliadėžė";
+$MESS["TASKS_PANEL_TAB_REPORTS"] = "Ataskaitos";
+$MESS["TASKS_PANEL_TAB_APPLICATIONS"] = "Programėlės";
+$MESS["TASKS_PANEL_TAB_TEMPLATES"] = "Šablonai";
+$MESS["TASKS_PANEL_TAB_ALL"] = "Visi";
+?>

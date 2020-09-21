@@ -1,0 +1,8 @@
+<?
+$MESS["CRM_PRODUCT_PE_PROP_TYPE_E"] = "Powiąż z elementem";
+$MESS["CRM_PRODUCT_PE_PROP_TYPE_F"] = "Plik";
+$MESS["CRM_PRODUCT_PE_PROP_TYPE_G"] = "Powiąż z sekcją";
+$MESS["CRM_PRODUCT_PE_PROP_TYPE_L"] = "Lista";
+$MESS["CRM_PRODUCT_PE_PROP_TYPE_N"] = "Liczba";
+$MESS["CRM_PRODUCT_PE_PROP_TYPE_S"] = "String";
+?>

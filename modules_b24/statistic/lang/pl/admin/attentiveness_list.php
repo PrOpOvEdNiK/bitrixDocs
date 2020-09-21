@@ -1,0 +1,30 @@
+<?
+$MESS["STAT_AH_1"] = "1 trafienie";
+$MESS["STAT_AH_10_13"] = "10 do 13 trafień";
+$MESS["STAT_AH_14_17"] = "14 do 17 trafień";
+$MESS["STAT_AH_18_21"] = "18 do 21 trafień";
+$MESS["STAT_AH_22_25"] = "22 do 25 trafień";
+$MESS["STAT_AH_26_29"] = "26 do 29 trafień";
+$MESS["STAT_AH_2_5"] = "2 do 5 trafień";
+$MESS["STAT_AH_30_33"] = "30 do 33 trafień";
+$MESS["STAT_AH_34"] = "ponad 34 trafienia";
+$MESS["STAT_AH_6_9"] = "6 do 9 trafień";
+$MESS["STAT_AM_1"] = "mniej niż 1 min.";
+$MESS["STAT_AM_12_15"] = "12 do 15 min.";
+$MESS["STAT_AM_15_18"] = "15 do 18 min.";
+$MESS["STAT_AM_18_21"] = "18 do 21 min.";
+$MESS["STAT_AM_1_3"] = "2 do 3 min.";
+$MESS["STAT_AM_21_24"] = "21 do 24 min.";
+$MESS["STAT_AM_24"] = "więcej niż 24 min.";
+$MESS["STAT_AM_3_6"] = "3 do 6 min.";
+$MESS["STAT_AM_6_9"] = "6 do 9 min.";
+$MESS["STAT_AM_9_12"] = "9 do 12 min.";
+$MESS["STAT_F_PERIOD"] = "Okres";
+$MESS["STAT_F_SITE"] = "Strona";
+$MESS["STAT_HITS_DIAGRAM"] = "Wykres kołowy liczby trafień w sesji";
+$MESS["STAT_HITS_GRAPH"] = "Wykres średniej liczby trafień w sesji";
+$MESS["STAT_NOT_ENOUGH_DATA"] = "Brak wystarczającej ilości danych dla wykresu";
+$MESS["STAT_PAGE_TITLE"] = "Uwagi gości";
+$MESS["STAT_TIME_DIAGRAM"] = "Wykres kołowy trawania sesji";
+$MESS["STAT_TIME_GRAPH"] = "Wykres średniego trwania sesji (min)";
+?>

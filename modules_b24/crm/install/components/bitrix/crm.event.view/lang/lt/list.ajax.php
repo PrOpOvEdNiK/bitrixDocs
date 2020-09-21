@@ -1,0 +1,3 @@
+<?
+$MESS["CRM_EVENT_VIEW_ROW_COUNT"] = "Viso: #ROW_COUNT#";
+?>

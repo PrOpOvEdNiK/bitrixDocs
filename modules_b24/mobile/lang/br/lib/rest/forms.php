@@ -1,0 +1,30 @@
+<?
+$MESS["ACCOUNT"] = "Conta";
+$MESS["ACCOUNT_CHANGE_NOTE"] = "A senha principal é necessária para atualizar a conta.";
+$MESS["DEPARTMENTS"] = "Departamentos";
+$MESS["EMAIL"] = "E-mail";
+$MESS["EXTRA"] = "Mais";
+$MESS["FEMALE"] = "feminino";
+$MESS["FIRST_NAME"] = "Nome";
+$MESS["GROUP_ID"] = "Grupo";
+$MESS["LAST_NAME"] = "Sobrenome";
+$MESS["MAIN"] = "Geral";
+$MESS["MALE"] = "masculino";
+$MESS["PASSWORD"] = "Senha";
+$MESS["PERSONAL_BIRTHDAY"] = "Data de nascimento";
+$MESS["PERSONAL_CITY"] = "Cidade";
+$MESS["PERSONAL_GENDER"] = "Sexo";
+$MESS["PERSONAL_MOBILE"] = "Celular";
+$MESS["PERSONAL_WWW"] = "Site";
+$MESS["SAVE"] = "Salvar";
+$MESS["SECOND_NAME"] = "Nome do meio";
+$MESS["TIME_ZONE"] = "Fuso horário";
+$MESS["UF_FACEBOOK"] = "Facebook";
+$MESS["UF_LINKEDIN"] = "LinkedIn";
+$MESS["UF_PHONE_INNER"] = "Número de ramal";
+$MESS["UF_SKYPE"] = "Skype";
+$MESS["UF_TWITTER"] = "Twitter";
+$MESS["UF_XING"] = "Xing";
+$MESS["WORK_PHONE"] = "Telefone de trabalho";
+$MESS["WORK_POSITION"] = "Cargo";
+?>

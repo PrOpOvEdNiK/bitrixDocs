@@ -1,0 +1,33 @@
+<?
+$MESS["BC_DATE_TIME_FORMAT"] = "Format d'affichage de la date et de l'heure";
+$MESS["BPC_ALLOW_IMAGE_UPLOAD"] = "Autoriser le chargement des images";
+$MESS["BPC_ALLOW_IMAGE_UPLOAD_A"] = "A tous";
+$MESS["BPC_ALLOW_IMAGE_UPLOAD_N"] = "Personne";
+$MESS["BPC_ALLOW_IMAGE_UPLOAD_R"] = "Aux utilisateurs autorisés";
+$MESS["BPC_ALLOW_VIDEO"] = "Autoriser l'insertion d'un vidéo";
+$MESS["BPC_COMMENT_ID_VAR"] = "Nom d'une variable pour l'identifiant du commentaire";
+$MESS["BPC_ID"] = "Identificateur du message";
+$MESS["BPC_IMAGE_MAX_HEIGHT"] = "Hauteur maximale de l'image";
+$MESS["BPC_IMAGE_MAX_WIDTH"] = "Largeur maximale de l'image";
+$MESS["BPC_NO_URL_IN_COMMENTS"] = "Interdire l'insertion des liens";
+$MESS["BPC_NO_URL_IN_COMMENTS_A"] = "Pour les utilisateurs anonymes";
+$MESS["BPC_NO_URL_IN_COMMENTS_AUTHORITY"] = "Autorité minimale permettant aux utilisateurs d'insérer des liens";
+$MESS["BPC_NO_URL_IN_COMMENTS_L"] = "A tous";
+$MESS["BPC_NO_URL_IN_COMMENTS_N"] = "Personne";
+$MESS["BPC_PAGE_VAR"] = "Nom de la variable pour la page";
+$MESS["BPC_PATH_TO_BLOG"] = "Modèle de chemin d'accès à la page des messages";
+$MESS["BPC_PATH_TO_SMILE"] = "Chemin vers le dossier avec les smileys par rapport à la racine du site";
+$MESS["BPC_PATH_TO_USER"] = "Modèle de chemin d'accès au profil de l'utilisateur";
+$MESS["BPC_POST_VAR"] = "Nom de la variable pour l'identificateur du message";
+$MESS["BPC_SHOW_SPAM"] = "Montrer aux administrateurs tous les commentaires d'un utilisateur";
+$MESS["BPC_USER_VAR"] = "Nom de la variable pour le code d'utilisateur";
+$MESS["B_VARIABLE_ALIASES"] = "Alias des variables";
+$MESS["RATING_TYPE"] = "Vue des boutons de rating";
+$MESS["RATING_TYPE_CONFIG"] = "ordinaire";
+$MESS["RATING_TYPE_LIKE_GRAPHIC"] = "J'aime (graphique)";
+$MESS["RATING_TYPE_LIKE_TEXT"] = "J'aime (textuel)";
+$MESS["RATING_TYPE_STANDART_GRAPHIC"] = "J'aime / Je n'aime pas (graphique)";
+$MESS["RATING_TYPE_STANDART_TEXT"] = "J'aime / Je n'aime pas (textuel)";
+$MESS["SHOW_RATING"] = "Activer le classement";
+$MESS["SHOW_RATING_CONFIG"] = "ordinaire";
+?>

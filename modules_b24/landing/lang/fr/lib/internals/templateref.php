@@ -1,0 +1,6 @@
+<?
+$MESS["LANDING_TABLE_FIELD_AREA"] = "Zone #";
+$MESS["LANDING_TABLE_FIELD_ENTITY_ID"] = "ID d'entité";
+$MESS["LANDING_TABLE_FIELD_ENTITY_TYPE"] = "Type d'entité";
+$MESS["LANDING_TABLE_FIELD_LANDING_ID"] = "ID de destination";
+?>

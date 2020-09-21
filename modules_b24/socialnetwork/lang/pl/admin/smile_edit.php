@@ -1,0 +1,37 @@
+<?
+$MESS["ERROR_ADD_SMILE"] = "Błąd w trakcie tworzenia emotikony.";
+$MESS["ERROR_COPY_IMAGE"] = "Błąd ładowania obrazu (niewystarczające uprawnienia do zapisu?)";
+$MESS["ERROR_EDIT_SMILE"] = "Błąd w trakcie modyfikacji emotikony.";
+$MESS["ERROR_EXISTS_IMAGE"] = "Obraz o tej nazwie już istnieje.";
+$MESS["ERROR_NO_IMAGE"] = "Obraz emotikony nie został określony.";
+$MESS["ERROR_NO_MIN_NUM_POSTS"] = "Minimalna liczba postów dla tej rangi nie jest określona.";
+$MESS["ERROR_NO_NAME"] = "Tytuł emotikony nie jest określony w";
+$MESS["ERROR_NO_TYPE"] = "Rodzaj emotikony nie został określony.";
+$MESS["FSE_ERROR_EXT"] = "Rozszerzenie pliku obrazu jest nieprawidłowe.";
+$MESS["FSE_ICON"] = "Ikona";
+$MESS["FSE_SMILE"] = "Emotikona";
+$MESS["FSN_2FLIST"] = "Emotikony";
+$MESS["FSN_DELETE_SMILE"] = "Usuń emotikonę";
+$MESS["FSN_DELETE_SMILE_CONFIRM"] = "Na pewno chcesz usunąć tę emotikonę?";
+$MESS["FSN_NEW_SMILE"] = "Nowa emotikona";
+$MESS["FSN_TAB_SMILE"] = "Emotikona sieci społecznościowej";
+$MESS["FSN_TAB_SMILE_DESCR"] = "Emotikona sieci społecznościowej";
+$MESS["SONET_ADD"] = "Dodawanie";
+$MESS["SONET_APPLY"] = "Zastosuj";
+$MESS["SONET_CODE"] = "Kod";
+$MESS["SONET_CODE_LEN"] = "List";
+$MESS["SONET_DESCR"] = "Opis";
+$MESS["SONET_EDIT_RECORD"] = "Edytuj emotikonę N#ID#";
+$MESS["SONET_IMAGE"] = "Obraz emotikony";
+$MESS["SONET_IMAGE_NOTE"] = "(zalecane wymiary emotikony: 16x16, ikona: 15x15)";
+$MESS["SONET_NAME"] = "Tytuł";
+$MESS["SONET_NEW_RECORD"] = "Nowa emotikona";
+$MESS["SONET_PT_PROPS"] = "Parametry";
+$MESS["SONET_RECORDS_LIST"] = "Emotikony";
+$MESS["SONET_RESET"] = "Anuluj";
+$MESS["SONET_SAVE"] = "Zapisz";
+$MESS["SONET_SORT"] = "Sortuj";
+$MESS["SONET_TYPE"] = "Rodzaj emotikony";
+$MESS["SONET_TYPING"] = "Wpisywanie emotikony";
+$MESS["SONET_TYPING_NOTE"] = "(oddziel wielowierszowe wpisy spacją)";
+?>

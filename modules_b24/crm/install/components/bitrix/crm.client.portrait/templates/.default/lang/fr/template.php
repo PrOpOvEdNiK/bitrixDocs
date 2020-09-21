@@ -1,0 +1,31 @@
+<?
+$MESS["CRM_CLIENT_PORTRAIT_INFO_COMMENTS"] = "Commentaire";
+$MESS["CRM_CLIENT_PORTRAIT_INFO_COMMENTS_HIDE"] = "masquer";
+$MESS["CRM_CLIENT_PORTRAIT_INFO_COMMENTS_SHOW"] = "afficher";
+$MESS["CRM_CLIENT_PORTRAIT_INFO_COMPANY"] = "Entreprise";
+$MESS["CRM_CLIENT_PORTRAIT_INFO_COMPANY_TYPE"] = "Type d'entreprise";
+$MESS["CRM_CLIENT_PORTRAIT_INFO_CONVERSION"] = "Conversion";
+$MESS["CRM_CLIENT_PORTRAIT_INFO_EMAIL"] = "E-mail";
+$MESS["CRM_CLIENT_PORTRAIT_INFO_INDUSTRY"] = "Industrie";
+$MESS["CRM_CLIENT_PORTRAIT_INFO_PHONE"] = "Téléphone";
+$MESS["CRM_CLIENT_PORTRAIT_INFO_POST"] = "Fonction";
+$MESS["CRM_CLIENT_PORTRAIT_INFO_RESPONSIBLE"] = "Personne responsable";
+$MESS["CRM_CLIENT_PORTRAIT_INFO_WEB"] = "Site web";
+$MESS["CRM_CLIENT_PORTRAIT_INFO_WON_DEALS"] = "Valeur des transactions conclues";
+$MESS["CRM_CLIENT_PORTRAIT_LOAD_CONFIG_AUTO"] = "Auto";
+$MESS["CRM_CLIENT_PORTRAIT_LOAD_CONFIG_CANCEL"] = "Annuler";
+$MESS["CRM_CLIENT_PORTRAIT_LOAD_CONFIG_DESCRIPTION"] = "La charge maximum préférable est le nombre d'activités par transaction qui est acceptable pour votre entreprise.";
+$MESS["CRM_CLIENT_PORTRAIT_LOAD_CONFIG_HELP"] = "La valeur de la charge maximum préférable peut être spécifiée explicitement, ou calculée automatiquement en effectuant la moyenne du nombre d'activités par transaction.";
+$MESS["CRM_CLIENT_PORTRAIT_LOAD_CONFIG_MANUAL"] = "Manuel";
+$MESS["CRM_CLIENT_PORTRAIT_LOAD_CONFIG_SAVE"] = "Enregistrer";
+$MESS["CRM_CLIENT_PORTRAIT_LOAD_CONFIG_TITLE"] = "Charge maximum préférable";
+$MESS["CRM_CLIENT_PORTRAIT_LOAD_ITEM_CRITICAL"] = "Critique";
+$MESS["CRM_CLIENT_PORTRAIT_LOAD_ITEM_DESIRABLE"] = "Maximum souhaitable";
+$MESS["CRM_CLIENT_PORTRAIT_LOAD_ITEM_HIGH"] = "Élevé";
+$MESS["CRM_CLIENT_PORTRAIT_LOAD_ITEM_IDEAL"] = "Idéal";
+$MESS["CRM_CLIENT_PORTRAIT_LOAD_ITEM_LOW"] = "Faible";
+$MESS["CRM_CLIENT_PORTRAIT_LOAD_ITEM_VERY_HIGH"] = "Très élevé";
+$MESS["CRM_CLIENT_PORTRAIT_LOAD_ITEM_VERY_LOW"] = "Très faible";
+$MESS["CRM_CLIENT_PORTRAIT_LOAD_PIE_TITLE"] = "Charge par canal";
+$MESS["CRM_CLIENT_PORTRAIT_LOAD_SHOW_DEAL_CATEGORIES"] = "afficher les pipelines";
+?>

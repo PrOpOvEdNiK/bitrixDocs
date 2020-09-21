@@ -1,0 +1,7 @@
+<?
+$MESS["MFP_COMMENT_TEXTAREA_TITLE"] = "Treść Komentarza";
+$MESS["MPF_COMMENT_CANCEL"] = "Anuluj";
+$MESS["MPF_COMMENT_SEND"] = "Wyślij";
+$MESS["MPF_COMMENT_TABLE_CANCEL"] = "Zamknij";
+$MESS["MPF_COMMENT_TABLE_OK"] = "wybierz";
+?>

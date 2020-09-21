@@ -1,0 +1,8 @@
+<?
+$MESS["CRM_FIELD_CX_ENTITY_ID"] = "ID Typu";
+$MESS["CRM_FIELD_CX_ENTITY_LIST"] = "URL Typów List";
+$MESS["CRM_FIELD_CX_FIELDS_LIST"] = "URL Listy Pól";
+$MESS["CRM_FIELD_CX_FIELD_EDIT"] = "URL Edytora Pól";
+$MESS["CRM_FIELD_CX_FIELD_ID"] = "ID Pola";
+$MESS["CRM_FIELD_CX_MODE"] = "ID Trybu";
+?>

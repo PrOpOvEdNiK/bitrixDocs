@@ -1,0 +1,32 @@
+<?
+$MESS["BPWC_WLC_NEED_FIRST_SYNC1"] = "Importer doit être exécuté manuellement pour la première fois.";
+$MESS["BPWC_WLC_NEED_FIRST_SYNC1_DO"] = "Lancer l'importation";
+$MESS["BPWC_WLC_NEED_FIRST_SYNC2"] = "Fonctionne";
+$MESS["BPWC_WLC_NEED_FIRST_SYNC3"] = "Erreur d'importation";
+$MESS["BPWC_WNCT_2LIST"] = "Liste de boutiques en ligne";
+$MESS["BPWC_WNCT_2SYNC"] = "Charger";
+$MESS["BPWC_WNCT_ACTIVE"] = "Actif(ve)";
+$MESS["BPWC_WNCT_DATA_SYNC_PERIOD"] = "Période de synchronisation (en minutes, 0 - désactiver)";
+$MESS["BPWC_WNCT_DATE_CREATE"] = "Créé le";
+$MESS["BPWC_WNCT_DATE_UPDATE"] = "Date de la dernière modification";
+$MESS["BPWC_WNCT_DO_SELECT"] = "Choisir";
+$MESS["BPWC_WNCT_IMPORT_GROUP_ID"] = "Groupe pour les notifications";
+$MESS["BPWC_WNCT_IMPORT_PERIOD"] = "Au premier téléchargement sélectionnez les données pour les derniers (jours)";
+$MESS["BPWC_WNCT_IMPORT_PREFIX"] = "Préfixe de la dénomination de la transaction";
+$MESS["BPWC_WNCT_IMPORT_PROBABILITY"] = "Probabilité de la transaction par défaut, %";
+$MESS["BPWC_WNCT_IMPORT_PUBLIC"] = "La transaction est disponible pour tous (par défaut)";
+$MESS["BPWC_WNCT_IMPORT_RESPONSIBLE"] = "Responsable de la transaction (par défaut)";
+$MESS["BPWC_WNCT_LABEL"] = "Date de la dernière commande chargée";
+$MESS["BPWC_WNCT_LAST_STATUS_DATE"] = "Date de la synchronisation la plus récente";
+$MESS["BPWC_WNCT_LOGIN"] = "Connexion";
+$MESS["BPWC_WNCT_NAME"] = "Dénomination";
+$MESS["BPWC_WNCT_NOTE_HINT"] = "Il faut indiquer le mot d'utilisateur et le mot de passe de l'utilisateur du e-commerce qui a le droit d'éditer les commandes dans tous les statut et auquel l'exportation est autorisée";
+$MESS["BPWC_WNCT_PASSWORD"] = "Mot de passe";
+$MESS["BPWC_WNCT_SIZE"] = "Nombre de commandes chargées par une étape";
+$MESS["BPWC_WNCT_STATUS"] = "Statut télécommunications";
+$MESS["BPWC_WNCT_TAB1"] = "Boutique";
+$MESS["BPWC_WNCT_TAB1T"] = "Modifier les paramètres";
+$MESS["BPWC_WNCT_TAB2"] = "Paramètres";
+$MESS["BPWC_WNCT_TAB2T"] = "Paramètres avancés";
+$MESS["BPWC_WNCT_URL"] = "URL";
+?>

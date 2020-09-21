@@ -1,0 +1,35 @@
+<?
+$MESS["TASKS_ADD_QUICK_TASK"] = "Crear tarea rápida";
+$MESS["TASKS_AJAX_EMPTY_TEMPLATES"] = "No hay plantillas de tarea";
+$MESS["TASKS_AJAX_ERROR_LOAD_TEMPLATES"] = "Error al cargar la lista de plantillas";
+$MESS["TASKS_AJAX_LOAD_TEMPLATES"] = "Cargando lista...";
+$MESS["TASKS_BTN_ADD_TASK"] = "Nueva tarea";
+$MESS["TASKS_BTN_ADD_TASK_BY_TEMPLATE"] = "Nueva tarea usando la plantilla";
+$MESS["TASKS_BTN_EXPORT"] = "Exportar lista";
+$MESS["TASKS_BTN_EXPORT_EXCEL"] = "a Microsoft Excel";
+$MESS["TASKS_BTN_GROUP_BY_SUBTASKS"] = "Agrupar por subtareas";
+$MESS["TASKS_BTN_GROUP_SELECT"] = "Seleccionar...";
+$MESS["TASKS_BTN_GROUP_WO"] = "No hay proyecto";
+$MESS["TASKS_BTN_IMPORT"] = "Lista de importación";
+$MESS["TASKS_BTN_IMPORT_CSV"] = "de CSV";
+$MESS["TASKS_BTN_LIST_TASK_TEMPLATE"] = "Todas las plantillas";
+$MESS["TASKS_BTN_SORT_ALLOW_TIME_TRACKING"] = "Seguimiento del tiempo utilizado";
+$MESS["TASKS_BTN_SORT_CHANGED_DATE"] = "Modificado el";
+$MESS["TASKS_BTN_SORT_CLOSED_DATE"] = "Cerrado el ";
+$MESS["TASKS_BTN_SORT_CREATED_DATE"] = "Creado el";
+$MESS["TASKS_BTN_SORT_DEADLINE"] = "Fecha límite";
+$MESS["TASKS_BTN_SORT_DIR_ASC"] = "Ascendente";
+$MESS["TASKS_BTN_SORT_DIR_DESC"] = "Descendente";
+$MESS["TASKS_BTN_SORT_ID"] = "ID";
+$MESS["TASKS_BTN_SORT_MARK"] = "Calificación";
+$MESS["TASKS_BTN_SORT_ORIGINATOR_NAME"] = "Creado por ";
+$MESS["TASKS_BTN_SORT_PRIORITY"] = "Prioridad";
+$MESS["TASKS_BTN_SORT_RESPONSIBLE_NAME"] = "Persona responsable";
+$MESS["TASKS_BTN_SORT_SORTING"] = "Mi clasificación";
+$MESS["TASKS_BTN_SORT_TIME_ESTIMATE"] = "Tiempo estimado requerido";
+$MESS["TASKS_BTN_SORT_TITLE"] = "Nombre";
+$MESS["TASKS_BTN_SYNC"] = "Sincronizar lista";
+$MESS["TASKS_BTN_SYNC_OUTLOOK"] = "con Microsoft Outlook";
+$MESS["TASKS_SPOTLIGHT_ADD_TASK"] = "Use este botón para crear una tarea";
+$MESS["TASKS_USER_SORT"] = "Clasificar";
+?>

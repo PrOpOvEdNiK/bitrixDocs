@@ -1,0 +1,9 @@
+<?
+$MESS["CRM_FIELDS_ENTITY_LIST"] = "Typy";
+$MESS["CRM_FIELDS_LIST_ACTION_MENU_DELETE"] = "Usuń";
+$MESS["CRM_FIELDS_LIST_ACTION_MENU_DELETE_CONF"] = "Na pewno chcesz usunąć to pole?";
+$MESS["CRM_FIELDS_LIST_ACTION_MENU_EDIT"] = "Edytuj";
+$MESS["CRM_FIELDS_LIST_TITLE_EDIT"] = "Pola: #NAME#";
+$MESS["CRM_MODULE_NOT_INSTALLED"] = "Moduł CRM nie jest zainstalowany.";
+$MESS["CRM_PERMISSION_DENIED"] = "Odmowa dostępu";
+?>

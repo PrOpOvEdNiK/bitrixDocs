@@ -1,0 +1,32 @@
+<?
+$MESS["CRM_DEL_BTN_TTL"] = "Kliknij, aby usunąć";
+$MESS["CRM_EDIT_BTN_TTL"] = "Kliknij, aby edytować";
+$MESS["CRM_FF_ADD"] = "Dodaj produkty";
+$MESS["CRM_FF_CANCEL"] = "Anuluj";
+$MESS["CRM_FF_CHANGE"] = "Edytuj";
+$MESS["CRM_FF_CHOISE"] = "Wybierz produkty";
+$MESS["CRM_FF_CHOOSE"] = "Wybierz";
+$MESS["CRM_FF_CLOSE"] = "Zamknij";
+$MESS["CRM_FF_CREATE"] = "Nowy produkt";
+$MESS["CRM_FF_LAST"] = "Ostatnie";
+$MESS["CRM_FF_NO_RESULT"] = "Niestety twoje wyszukiwanie nie przyniosło wyników.";
+$MESS["CRM_FF_OK"] = "Wybierz";
+$MESS["CRM_FF_SEARCH"] = "Szukaj";
+$MESS["CRM_INVALID_REQUEST_ERROR"] = "Żądane dane sa nieprawidłowe lub uszkodzone. Proszę spróbować ponownie.";
+$MESS["CRM_PERMISSION_DENIED_ERROR"] = "Odmowa dostępu";
+$MESS["CRM_PRODUCT_ROW_COL_SUBTTL_PRICE"] = "Suma częściowa";
+$MESS["CRM_PRODUCT_ROW_COL_TTL_DISCOUNT"] = "Upust";
+$MESS["CRM_PRODUCT_ROW_COL_TTL_NAME"] = "Nazwa";
+$MESS["CRM_PRODUCT_ROW_COL_TTL_PRICE"] = "Cena";
+$MESS["CRM_PRODUCT_ROW_COL_TTL_QUANTITY"] = "Ilość";
+$MESS["CRM_PRODUCT_ROW_COL_TTL_VAT_RATE"] = "Stawka VAT";
+$MESS["CRM_PRODUCT_ROW_DELETION_CONFIRM"] = "Na pewno chcesz usunąć ten produkt?";
+$MESS["CRM_PRODUCT_ROW_DELIVERY"] = "Dostawa";
+$MESS["CRM_PRODUCT_ROW_DISCOUNT"] = "Upust";
+$MESS["CRM_PRODUCT_SUM_TOTAL"] = "Kwota łączna";
+$MESS["CRM_PRODUCT_SUM_TOTAL_WT"] = "Suma przed opodatkowaniem";
+$MESS["CRM_PRODUCT_SUM_TOTAL_WV"] = "Suma przed dodaniem VAT";
+$MESS["CRM_PRODUCT_TAX_INCLUDING"] = "zawiera";
+$MESS["CRM_PRODUCT_TAX_VALUE"] = "Podatek";
+$MESS["CRM_PRODUCT_VAT_VALUE"] = "Stawka VAT";
+?>

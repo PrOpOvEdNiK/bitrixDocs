@@ -1,0 +1,33 @@
+<?
+$MESS["customrank_add"] = "Ajouter";
+$MESS["customrank_add_title"] = "Cliquez pour ajouter une nouvelle règle de rang";
+$MESS["customrank_all"] = "(partout)";
+$MESS["customrank_applied"] = "Traité";
+$MESS["customrank_continue"] = "Continuer";
+$MESS["customrank_delete"] = "Supprimer";
+$MESS["customrank_delete_confirm"] = "tes-vous sûr de supprimer cette règle ?";
+$MESS["customrank_edit"] = "Date de modification";
+$MESS["customrank_edit_error"] = "Erreur de modification de l'enregistrement : ";
+$MESS["customrank_error_delete"] = "Erreur de suppression règle.";
+$MESS["customrank_find"] = "Trouver";
+$MESS["customrank_find_title"] = "Veuillez saisir la phrase à rechercher";
+$MESS["customrank_id"] = "ID";
+$MESS["customrank_module"] = "Module";
+$MESS["customrank_no"] = "(non)";
+$MESS["customrank_no_rule"] = "exclut pas trouvé";
+$MESS["customrank_of"] = "de";
+$MESS["customrank_param1"] = "Paramètre 1";
+$MESS["customrank_param2"] = "Paramètre 2";
+$MESS["customrank_param3"] = "Paramètre 3";
+$MESS["customrank_progress"] = "Mise à jour de l'index de recherche.";
+$MESS["customrank_rules"] = "Règles";
+$MESS["customrank_save_note"] = "Après la modification ou la suppression des règles il faut cliquer sur la bouton 'Mise à jour' pour que les modifications prennent effet.";
+$MESS["customrank_saved"] = "Règles enregistrés.";
+$MESS["customrank_site"] = "Site";
+$MESS["customrank_sort"] = "Poids";
+$MESS["customrank_step1"] = "tape 1. la gestion des règles de classement.";
+$MESS["customrank_step2"] = "tape 2. de mise à jour de l'index de recherche.";
+$MESS["customrank_stop"] = "Arrêter";
+$MESS["customrank_title"] = "Tri liste des règles";
+$MESS["customrank_update"] = "Mettre à jour";
+?>

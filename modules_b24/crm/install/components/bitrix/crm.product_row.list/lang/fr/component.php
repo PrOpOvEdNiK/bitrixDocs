@@ -1,0 +1,31 @@
+<?
+$MESS["CRM_BUTTON_CANCEL_TITLE"] = "Annuler";
+$MESS["CRM_BUTTON_CREATE_TITLE"] = "Ajouter";
+$MESS["CRM_CURRENCY_IS_NOT_FOUND"] = "Impossible de trouver la devise avec ID #CURRENCY_ID#.";
+$MESS["CRM_FIELD_ACTIVE"] = "Actif(ve)";
+$MESS["CRM_FIELD_CURRENCY"] = "Devise";
+$MESS["CRM_FIELD_DESCRIPTION"] = "Description";
+$MESS["CRM_FIELD_MEASURE"] = "Unité de mesure";
+$MESS["CRM_FIELD_PRICE"] = "Prix";
+$MESS["CRM_FIELD_PRODUCT_NAME"] = "Dénomination";
+$MESS["CRM_FIELD_SECTION"] = "Section";
+$MESS["CRM_FIELD_SORT"] = "Trier";
+$MESS["CRM_FIELD_VAT_ID"] = "Taux de TVA";
+$MESS["CRM_FIELD_VAT_INCLUDED"] = "La TVA est incluse dans le prix";
+$MESS["CRM_MEASURE_NOT_SELECTED"] = "[non indiqué]";
+$MESS["CRM_MODULE_NOT_INSTALLED"] = "Le module du CRM n'a pas été installé.";
+$MESS["CRM_PERMISSION_DENIED"] = "Accès interdit.";
+$MESS["CRM_PRODUCT_CREATE"] = "Création d'une nouvelle marchandise";
+$MESS["CRM_PRODUCT_CREATE_AJAX_ERR"] = "Erreur de traitement de la demande pour la création de la marchandise<br>";
+$MESS["CRM_PRODUCT_CREATE_WAIT"] = "Création d'une marchandise...";
+$MESS["CRM_PRODUCT_FIELD_DETAIL_PICTURE"] = "Image détaillée";
+$MESS["CRM_PRODUCT_FIELD_PREVIEW_PICTURE"] = "Image de l'annonce";
+$MESS["CRM_PRODUCT_FILE_DOWNLOAD"] = "Télécharger";
+$MESS["CRM_PRODUCT_FILE_ENLARGE"] = "Faire agrandir";
+$MESS["CRM_PRODUCT_PROP_ADD_BUTTON"] = "Ajouter";
+$MESS["CRM_PRODUCT_PROP_CHOOSE_ELEMENT"] = "Sélectionner dans la liste";
+$MESS["CRM_PRODUCT_PROP_NO_SEARCH_RESULT_TEXT"] = "rien n'a été trouvé";
+$MESS["CRM_PRODUCT_PROP_NO_VALUE"] = "(non installé)";
+$MESS["CRM_PRODUCT_PROP_START_TEXT"] = "(saisir le nom)";
+$MESS["CRM_UNSUPPORTED_OWNER_TYPE"] = "Le type du propriétaire spécifié: '#OWNER_TYPE#' n'est pas soutenu.";
+?>

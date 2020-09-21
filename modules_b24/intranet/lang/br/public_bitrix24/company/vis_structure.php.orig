@@ -1,0 +1,5 @@
+<?
+$MESS["EDIT"] = "Editar Estrutura";
+$MESS["TITLE"] = "Estrutura da Empresa";
+$MESS["TITLE2"] = "Estrutura da Empresa";
+?>

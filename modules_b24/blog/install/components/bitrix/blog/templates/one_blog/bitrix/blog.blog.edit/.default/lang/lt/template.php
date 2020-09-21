@@ -1,0 +1,31 @@
+<?
+$MESS["BLOG_TITLE"] = "Tinklaraščio pavadinimas:";
+$MESS["BLOG_DESCR"] = "Tinklaraščio aprašymas:";
+$MESS["BLOG_URL"] = "Pseudonimas (lotyniškomis raidėmis)";
+$MESS["BLOG_URL_TITLE"] = "Nurodykite pseudonimą jūsų tinklaraščiui (lotyniškomis raidėmis). Pseudonimas bus naudojamas nuorodai į jūsų tinklaraštį sukurti  <nobr>http://this-site.com/blog/[tinklaraščio pavadinimas]</nobr>";
+$MESS["BLOG_GRP"] = "Tinklaraščio grupė:";
+$MESS["BLOG_AUTO_MSG"] = "Automatiniai pranešimai:";
+$MESS["BLOG_AUTO_MSG_TITLE"] = "Naudoti apsauga nuo automatinio pranešimo";
+$MESS["BLOG_CAPTHA"] = "Reikalauti įvesti CAPTCHA kodą neautorizuotiems naudotojams";
+$MESS["BLOG_OPENED_GRPS"] = "Atviros grupės:";
+$MESS["BLOG_OPENED_TITLE"] = "Nurodykite grupes į kurias gali patekti visi naudotojai be jūsų patvirtinimo";
+$MESS["BLOG_DEF_PERMS"] = "Prieiga pagal nutylėjimą:";
+$MESS["BLOG_GROUPS"] = "grupės";
+$MESS["BLOG_MESSAGES"] = "pranešimai";
+$MESS["BLOG_COMMENTS"] = "komentarai";
+$MESS["BLOG_ALL_USERS"] = "Visi naudotojai";
+$MESS["BLOG_REGISTERED"] = "Registruoti naudotojai";
+$MESS["BLOG_GROUP_ADD"] = "Pridėti >>";
+$MESS["BLOG_SAVE"] = "Išsaugoti";
+$MESS["BLOG_CREATE"] = "Sukurti tinklaraštį";
+$MESS["BLOG_APPLY"] = "Taikyti";
+$MESS["BLOG_CANCEL"] = "Atšaukti";
+$MESS["BLOG_EMAIL_NOTIFY"] = "Pranešimai";
+$MESS["BLOG_EMAIL_NOTIFY_TITLE"] = "Siųsti pranešimus paštu";
+$MESS["BLOG_EMAIL_NOTIFY_HELP"] = "Jei įjungta - į jūsų tinklapį ateis pranešimai apie naujus komentarus ir naujus pranešimus jūsų tinklaraštyje.";
+$MESS["STOF_REQUIED_FIELDS_NOTE"] = "Būtini laukai yra pažymėti žvaigždute (<font color=\"#FF0000\">*</font>).";
+$MESS["BLOG_NEED_AUTH"] = "Prašome autorizuotis tinklapyje";
+$MESS["BLOG_CONFIRM_DELETE"] = "Šioje grupėje yra naudotojai. Ar tikrai norite ištrinti grupę?";
+$MESS["BLOG_GROUP_DELETE"] = "Ištrinti";
+$MESS["BLOG_NAME_CHANGE"] = "Redaguoti";
+?>

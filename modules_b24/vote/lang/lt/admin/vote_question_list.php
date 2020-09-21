@@ -1,0 +1,35 @@
+<?
+$MESS["VOTE_ADD_QUESTION"] = "Pridėti klausimą";
+$MESS["VOTE_VOTE_LIST"] = "Apklausų sąrašas";
+$MESS["VOTE_F_ACTIVE"] = "Aktyvus:";
+$MESS["VOTE_F_DIAGRAM"] = "Ptrauktas į diagramą:";
+$MESS["VOTE_F_QUESTION"] = "Klausimas:";
+$MESS["VOTE_PAGES"] = "Klausimai";
+$MESS["VOTE_TIMESTAMP_X"] = "Atnaujinta";
+$MESS["VOTE_C_SORT"] = "Rūšiavimas";
+$MESS["VOTE_DIAGRAM"] = "Giagrama.";
+$MESS["VOTE_QUESTION"] = "Klausimas";
+$MESS["VOTE_CONFIRM_DEL_QUESTION"] = "Ar tikrai norite pašalinti ši klausimą?";
+$MESS["VOTE_FLT_ID"] = "Klausimo ID";
+$MESS["VOTE_FLT_ACTIVE"] = "Aktyvus:";
+$MESS["VOTE_FLT_DIAGRAM"] = "Įtraukti į diagramą:";
+$MESS["VOTE_DELETE"] = "šalinti";
+$MESS["VOTE_ACTIVATE"] = "aktyvuoti";
+$MESS["VOTE_DEACTIVATE"] = "dezaktyvuoti";
+$MESS["VOTE_SAVE_ERROR"] = "Klaida įrašant į duomenų bazę";
+$MESS["VOTE_NOT_FOUND"] = "Neteisingas apklausos ID";
+$MESS["VOTE_YES"] = "Taip";
+$MESS["VOTE_NO"] = "Ne";
+$MESS["VOTE_ALL"] = "(visi)";
+$MESS["VOTE_EXACT_MATCH"] = "Naudoti tiklsų atitikimą";
+$MESS["VOTE_CREATE"] = "Sukurti";
+$MESS["VOTE_ACTIVE"] = "Aktivi";
+$MESS["SAVE_ERROR"] = "Įvyko klaida išsaugant objektą.";
+$MESS["DELETE_ERROR"] = "Įvyko klaida šalinant objektą.";
+$MESS["VOTE_FLT_REQUIRED"] = "Privalomas klausimas";
+$MESS["VOTE_F_REQUIRED"] = "Privaloma";
+$MESS["VOTE_REQUIRED"] = "Privaloma";
+$MESS["VOTE_PAGE_TITLE"] = "Klausimų sąrašas";
+$MESS["VOTE_BACK_TO_VOTE"] = "Eiti į apklausą";
+$MESS["VOTE_IMAGE_ID"] = "Apklausos vaizdas";
+?>

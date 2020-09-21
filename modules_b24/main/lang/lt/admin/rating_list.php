@@ -1,0 +1,32 @@
+<?
+$MESS["RATING_NAME"] = "Pavadinimas";
+$MESS["RATING_CREATED"] = "Sukurtas";
+$MESS["RATING_LAST_MODIFIED"] = "Pakeistas";
+$MESS["RATING_LAST_CALCULATED"] = "Paskaičiuotas";
+$MESS["RATING_ACTIVE"] = "Aktyvus";
+$MESS["RATING_STATUS"] = "Statusas";
+$MESS["RATING_ENTITY_ID"] = "Susiejama";
+$MESS["RATING_LIST_NAV"] = "Reitingai";
+$MESS["RATING_ACTIVE_YES"] = "Taip";
+$MESS["RATING_ACTIVE_NO"] = "Ne";
+$MESS["RATING_STATUS_DONE"] = "apskaičiuota";
+$MESS["RATING_STATUS_WORKING"] = "atnaujinama";
+$MESS["RATING_STATUS_WAITING"] = "laukiama atnaujinimo";
+$MESS["RATING_LIST_EDIT"] = "Redaguoti reitingo parametrus";
+$MESS["RATING_LIST_RECALCULATE"] = "Perskaičiuoti reitingą";
+$MESS["RATING_LIST_DEL"] = "Pašalinti reitingą";
+$MESS["RATING_LIST_DEL_CONF"] = "Pašalinti reitingą?";
+$MESS["RATING_LIST_ADD"] = "Naujas  reitingas";
+$MESS["RATING_LIST_ADD_TITLE"] = "Pridėti naują reitingą";
+$MESS["RATING_LIST_FLT_NAME"] = "Pavadinimas";
+$MESS["RATING_LIST_FLT_ACTIVE"] = "aktyvus";
+$MESS["RATING_LIST_FLT_ID"] = "ID";
+$MESS["RATING_LIST_FLT_ENTITY_ID"] = "Subjektas";
+$MESS["RATING_LIST_FLT_find"] = "Paieška:";
+$MESS["RATING_LIST_FLT_ALL"] = "(visi)";
+$MESS["RATING_LIST_FLT_INACTIVE"] = "neaktyvus";
+$MESS["RATING_LIST_ERR_EDIT"] = "Klaida atnaujinant įrašą.";
+$MESS["RATING_LIST_ERR_DEL"] = "Klaida šalinant reitingą.";
+$MESS["RATING_LIST_ERR_CAL"] = "Klaida perskaičiuojant reitingą.";
+$MESS["MAIN_RATING_LIST"] = "Reintingas";
+?>

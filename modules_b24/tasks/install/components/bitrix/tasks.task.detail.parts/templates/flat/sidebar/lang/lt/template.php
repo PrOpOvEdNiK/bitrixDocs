@@ -1,0 +1,36 @@
+<?
+$MESS["TASKS_SIDEBAR_STATUS"] = "Statusas";
+$MESS["TASKS_SIDEBAR_START_DATE"] = "nuo";
+$MESS["TASKS_SIDEBAR_START"] = "Pradžia";
+$MESS["TASKS_SIDEBAR_FINISH"] = "Pabaiga";
+$MESS["TASKS_SIDEBAR_DURATION"] = "Trukmė";
+$MESS["TASKS_SIDEBAR_IN_REPORT"] = "Ataskaitoje";
+$MESS["TASKS_SIDEBAR_IN_REPORT_YES"] = "Taip";
+$MESS["TASKS_SIDEBAR_IN_REPORT_NO"] = "Ne";
+$MESS["TASKS_SIDEBAR_REPEAT"] = "Periodinė";
+$MESS["TASKS_SIDEBAR_TEMPLATE"] = "šablonas";
+$MESS["TASKS_SIDEBAR_CHANGE"] = "pakeisti";
+$MESS["TASKS_SIDEBAR_ACCOMPLICES"] = "Dalyviai";
+$MESS["TASKS_SIDEBAR_AUDITORS"] = "Stebėtojai";
+$MESS["TASKS_SIDEBAR_ADD_ACCOMPLICES"] = "Pridėti dalyvius";
+$MESS["TASKS_SIDEBAR_ADD_AUDITORS"] = "Pridėti stebėtojus";
+$MESS["TASKS_SIDEBAR_DEADLINE_NO"] = "Ne";
+$MESS["TASKS_SIDEBAR_STOP_WATCH_CONFIRM"] = "Ar tikrai nebenorite stebėti šią užduotį?";
+$MESS["TASKS_SIDEBAR_CREATED_DATE"] = "Sukūrimo data";
+$MESS["TASKS_SIDEBAR_REMINDER"] = "Priminimas";
+$MESS["TASKS_SIDEBAR_TIME_SPENT_IN_LOGS"] = "Trukmė";
+$MESS["TASKS_SIDEBAR_TIME_ESTIMATE"] = "Skirta";
+$MESS["TASKS_SIDEBAR_REGULAR_TASK"] = "Reguliari užduotis";
+$MESS["TASKS_SIDEBAR_TASK_REPEATS"] = "Užduotis kartojama";
+$MESS["TASKS_SIDEBAR_TASK_OVERDUE"] = "Užduotis pradelsta!";
+$MESS["TASKS_SIDEBAR_TASK_CREATED_BY_TEMPLATE"] = "Užduotis buvo automatiškai sukurta naudojant šabloną";
+$MESS["TASKS_SIDEBAR_TEMPLATE_NOT_ACCESSIBLE"] = "Užduotis kartojama, šablonas neprieinamas peržiūrai";
+$MESS["TASKS_TTDP_TEMPLATE_USER_VIEW_RESPONSIBLE"] = "Atsakingas asmuo";
+$MESS["TASKS_TTDP_TEMPLATE_USER_VIEW_ORIGINATOR"] = "Sukūrė";
+$MESS["TASKS_TTDP_TEMPLATE_USER_VIEW_AUDITORS"] = "Stebėtojai";
+$MESS["TASKS_TTDP_TEMPLATE_USER_VIEW_ACCOMPLICES"] = "Dalyviai";
+$MESS["TASKS_TTDP_TEMPLATE_USER_VIEW_ENTER_AUDITOR"] = "stebėti";
+$MESS["TASKS_TTDP_TEMPLATE_USER_VIEW_LEAVE_AUDITOR"] = "nestebėti";
+$MESS["TASKS_TTDP_TEMPLATE_USER_VIEW_LEAVE_AUDITOR_CONFIRM"] = "Jūs negalite peržiūrėti užduoties, kadangi nebesate stebėtojas. Ar norite pašalinti savo stebėtojo vaidmenį?";
+$MESS["TASKS_TTDP_TEMPLATE_COPY_CURRENT_URL"] = "Kopijuoti užduoties nuorodą į mainų sritį";
+?>

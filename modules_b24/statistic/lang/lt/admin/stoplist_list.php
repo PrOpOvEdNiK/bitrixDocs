@@ -1,0 +1,37 @@
+<?
+$MESS['STAT_STOP_PAGES'] = 'Įrašymas';
+$MESS['STAT_F_LOGIC'] = 'Logika tarp laukų';
+$MESS['STAT_GREEN_LAMP'] = 'Įrašas aktyvus';
+$MESS['STAT_RED_LAMP'] = 'Įrašas neaktyvus';
+$MESS['STAT_LAMP_ACTIVE'] = 'Įrašas aktyvus.';
+$MESS['STAT_LAMP_NOT_ACTIVE'] = 'Įrašas neaktyvus.';
+$MESS['STAT_COMMENT'] = 'Komentarai';
+$MESS['STAT_MESSAGE'] = 'Pranešimas';
+$MESS['STAT_REDIRECT'] = 'Peradresuoti (URL)';
+$MESS['STAT_F_DATE_START'] = 'Pradžios data ';
+$MESS['STAT_DATE_START'] = 'Pradžia';
+$MESS['STAT_F_DATE_END'] = 'Pabaigos data';
+$MESS['STAT_DATE_END'] = 'Pabaiga';
+$MESS['STAT_RECORDS_LIST'] = 'stop-sąrašas';
+$MESS['STAT_F_ID'] = 'ID';
+$MESS['STAT_RECORD_STATUS'] = 'Aktyvumo statusas';
+$MESS['STAT_F_ACTIVE'] = 'Aktyvus';
+$MESS['STAT_F_STATISTIC'] = 'Pridėti į statistiką';
+$MESS['STAT_F_IP'] = 'IP adresas';
+$MESS['STAT_F_USER_AGENT'] = 'UserAgent';
+$MESS['STAT_F_FROM'] = 'Iš kur';
+$MESS['STAT_ACTIVE'] = 'Aktyvus';
+$MESS['STAT_STAT'] = 'Stat.';
+$MESS['STAT_IP'] = 'IP adresas';
+$MESS['STAT_MASK'] = 'Tinklo kaukė';
+$MESS['STAT_USER_AGENT'] = 'UserAgent';
+$MESS['STAT_REFERER'] = 'Iš kur';
+$MESS['STAT_CONFIRM_DEL_STOP'] = 'Ar tikrai norite redaguoti įrašus?';
+$MESS['STAT_URL_TO'] = 'Kur';
+$MESS['STAT_F_SITE'] = 'Tinklapis';
+$MESS['STAT_F_TO'] = 'Kur';
+$MESS['STAT_F_REDIRECT'] = 'Peradresuoti';
+$MESS['STAT_F_COMMENTS'] = 'Komentarai';
+$MESS['STAT_F_MESSAGE'] = 'Pranešimas';
+$MESS['SAVE_ERROR'] = 'Klaida išsaugant įrašą #';
+?>

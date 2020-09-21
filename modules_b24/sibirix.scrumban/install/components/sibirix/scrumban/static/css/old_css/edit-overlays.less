@@ -1,0 +1,2966 @@
+/**
+ * Оверлей
+ */
+#kanban.overlayOpened .frameInner {
+    overflow: hidden;
+    position: fixed;
+    height: 100% !important;
+    width: 100% !important;
+}
+
+#kanban.overlayOpened .frameHoverOverlay {
+    position: fixed;
+    background: rgba(0, 0, 0, 0.85);
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    z-index: 200;
+}
+.ie8 #kanban.overlayOpened .frameHoverOverlay {
+    background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAABtJREFUeNpi5GFnvslABGBiIBKMKqSOQoAAAwCM7AEDfZRRNgAAAABJRU5ErkJggg==") 0 0 repeat;
+}
+.ie6 #kanban.overlayOpened .frameHoverOverlay, .ie7 #kanban.overlayOpened .frameHoverOverlay { background-color: #000; }
+
+#kanban .frameHover {
+    display: none;
+    text-align: left;
+    position: absolute;
+    width: 100%;
+    z-index: 500;
+    padding: 125px 0 0;
+}
+#kanban.overlayOpened .frameHover { display: block; padding: 125px 0 0; }
+#kanban.smallDisplay .frameHover { padding: 50px 0 0; }
+#kanban.overlayOpened.smallDisplay .frameHover { padding: 50px 0 0; }
+#kanban.smallDisplay .frameHover .taskDetails { padding-bottom: 10px; }
+
+#kanban .frameHover .inner {
+    width: 1060px;
+    margin: 0 auto;
+}
+
+#kanban .frameHover .taskInfo    .handle,
+#kanban .frameHover .taskDetails .handle {
+    height: 3px;
+    border-bottom: 1px solid #959BA3;
+    background-color: #959BA3;
+}
+#kanban .frameHover.priority-low .taskInfo .handle,
+#kanban .frameHover.priority-low .taskDetails .handle {
+    border-color: #95C634;
+    background-color: #95C634;
+}
+#kanban .frameHover.priority-high .taskInfo .handle,
+#kanban .frameHover.priority-high .taskDetails .handle {
+    border-color: #f33;
+    background-color: #f33;
+}
+#kanban .frameHover .body {
+    padding: 0 0 5px 0;
+    background: #fff;
+    -webkit-backface-visibility: hidden;
+}
+
+#kanban .frameHover .taskInfo {
+    position: fixed;
+    z-index: 500;
+    width: 280px;
+    float: left;
+}
+#kanban .frameHover .taskDetails {
+    width: 770px;
+    float: right;
+    margin-left: 290px;
+    position: absolute;
+}
+#kanban .frameHover .taskDetails .black {
+    height: 100px;
+    width: 770px;
+    background-color: #252525;
+    position: absolute;
+    z-index: 100000;
+}
+#kanban .frameHover .taskDetails .black.disabled { background-color: transparent; }
+
+#kanban .closePopup {
+    cursor: pointer;
+    position: absolute;
+    top: -35px;
+    right: -35px;
+    width: 34px;
+    height: 34px;
+    background: url("@{pathImages}sprite-icons.png") -350px -30px no-repeat;
+}
+#kanban .closePopup:hover {
+    -moz-transition: opacity 0.4s ease;
+    -webkit-transition: opacity 0.4s ease;
+    -o-transition: opacity 0.4s ease;
+    transition: opacity 0.4s ease;
+    opacity: 0.8;
+}
+
+#kanban .frameHover .taskDetails .feed-post-menu-but { z-index: 1100; }
+
+#kanban .taskDetailsPanel .popup.taskAddPopup,
+#kanban .taskInfo .popup.taskAddPopup {
+    display: none;
+    padding: 10px;
+}
+#kanban .taskDetailsPanel .popup.taskAddPopup:before, #kanban .taskDetailsPanel .popup.taskAddPopup:after,
+#kanban .taskInfo .popup.taskAddPopup:before, #kanban .taskInfo .popup.taskAddPopup:after { border-top: none; }
+#kanban .taskInfo .popup.taskAddPopup li, #kanban .taskDetailsPanel .popup.taskAddPopup li {
+    margin: 6px 8px;
+    line-height: 14px;
+}
+
+/* Попап на панели информации о задаче */
+#kanban .taskDetails .popup,
+#kanban .taskDetailsPanel .popup,
+#kanban .planningTaskList .popup,
+#kanban .grid-taskType-popup.popup,
+#kanban .taskInfo .popup {
+    display: none;
+    position: absolute;
+    z-index: 310;
+    padding: 7px 15px;
+    border: 1px solid #cbdbde;
+    background: #fff;
+    min-width: 120px;
+    max-width: 590px;
+    margin: 37px 0 0 -63px;
+    font: normal 12px/14px Arial, sans-serif;
+    color: #666;
+    cursor: default;
+}
+#kanban .taskInfo .popup.taskMenuPopup {
+    margin-left: -55px;
+}
+#kanban .planningTaskList .usersPopup .popup {
+    padding: 5px;
+    margin-left: -57px;
+    margin-top: 45px;
+}
+#kanban .planningTaskList .usersPopup .chzn-container .chzn-results {
+    max-height: 180px;
+}
+
+#kanban .task.edit .popup:after, #kanban .task.edit .popup:before,
+#kanban .taskDetails .popup:after, #kanban .taskDetails .popup:before,
+#kanban .taskDetailsPanel .popup:after, #kanban .taskDetailsPanel .popup:before,
+#kanban .planningTaskList .popup:after, #kanban .planningTaskList .popup:before,
+#kanban .taskInfo .popup:after, #kanban .taskInfo .popup:before {
+    content: "";
+    display: block;
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-left: 10px solid rgba(255, 255, 255, 0.01);
+    border-right: 10px solid rgba(255, 255, 255, 0.01); /* FF bugfix */
+    border-bottom: 10px solid #cbdbde;
+    border-top: none;
+    left: 60px;
+    top: -10px;
+}
+#kanban .planningTaskList .popup:after, #kanban .planningTaskList .popup:before {
+    border-top: 10px solid #cbdbde;
+    border-bottom: none;
+    left: 60px;
+    top: 100%;
+
+}
+#kanban .task.edit .popup:after,
+#kanban .taskDetails .popup:after,
+#kanban .taskDetailsPanel .popup:after,
+#kanban .planningTaskList .popup:after,
+#kanban .taskInfo .popup:after {
+    left: 61px;
+    border-left: 9px solid transparent;
+    border-right: 9px solid transparent;
+    border-left: 9px solid rgba(255, 255, 255, 0.01);
+    border-right: 9px solid rgba(255, 255, 255, 0.01); /* FF bugfix */
+    border-bottom: 9px solid #fff;
+    top: -9px;
+}
+#kanban .planningTaskList .popup:after {
+    left: 61px;
+    top: 100%;
+    border-top: 9px solid #fff;
+    border-bottom: none;
+}
+
+#kanban .popup.on-top:before,
+#kanban .frameInner .popup.on-top:before {
+    border-top: 10px solid #cbdbde;
+    border-bottom: none;
+    top: 100%;
+}
+#kanban .popup.on-top:after,
+#kanban .frameInner .popup.on-top:after  {
+    border-top: 9px solid #fff;
+    border-bottom: none;
+    top: 100%;
+}
+
+#kanban .taskInfo .createdDate,
+#kanban .planningTaskDetailEditor .createdDate {
+    font: normal 11px/16px Arial, sans-serif;
+    float: right;
+    margin: 12px 22px 0 0;
+    color: #999;
+}
+#kanban .planningTaskDetailEditor .createdDate {
+    margin-top: 17px;
+}
+
+#kanban .taskDetailsPanel .popup ul,
+#kanban .planningTaskList .popup ul,
+#kanban .grid-taskType-popup.popup ul,
+#kanban .taskInfo .popup ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+#kanban .taskDetailsPanel .popup li,
+#kanban .planningTaskList .popup li,
+#kanban .taskInfo .popup li {
+    line-height: 15px;
+}
+#kanban .taskInfo .line.status .popup li { line-height: 21px; }
+#kanban .taskInfo .line.status .popup li span { height: 17px; }
+
+#kanban .planningTaskDetailEditor .priority .popup,
+#kanban .taskInfo .priority .popup {
+    margin: 37px 0 0 -11px;
+    padding: 5px 0;
+    min-width: 100px;
+    width: 100px;
+}
+#kanban .planningTaskDetailEditor .priority .popup:after,
+#kanban .taskInfo .priority .popup:after {
+    left: 42px;
+}
+#kanban .planningTaskDetailEditor .priority .popup:before,
+#kanban .taskInfo .priority .popup:before {
+    left: 41px;
+}
+#kanban .taskInfo .priority .popup li { line-height: 23px; padding-left: 10px; }
+
+#kanban .taskInfo .responsibles .add:hover u,
+.ie6 #kanban .taskInfo .responsibles .add:hover u,
+.ie7 #kanban .taskInfo .responsibles .add:hover u,
+.ie8 #kanban .taskInfo .responsibles .add:hover u {
+    background: transparent;
+}
+#kanban .task .icons .responsible .popup { margin-top: -48px; }
+
+#kanban .taskInfo .dateSelectorOpener {
+    border: none;
+    background: none;
+    padding: 0;
+    margin: 0;
+    height: 25px;
+}
+#kanban .taskInfo .dateSelectorOpener input {
+    text-align: left;
+    background: transparent;
+}
+#kanban .taskInfo .properties .value span.dateSelectorOpener  {
+    height: 21px;
+    width: 145px;
+}
+#kanban .taskInfo .dateSelectorOpener input.time {
+    width: 40px;
+}
+#kanban .fuckup .taskInfo .body {
+    padding: 3px;
+    background-color: #f00;
+}
+#kanban .fuckup .taskInfo .body > .border {
+    background-color: #fff;
+}
+#kanban .fuckup .taskInfo .properties .line { padding: 0 7px 0 15px; }
+#kanban .taskInfo .problem {
+    display: none;
+}
+#kanban .taskInfo .problem .cancelLink {
+    color: #fff;
+    border-bottom-color: #fff;
+}
+
+#kanban .taskInfo .problem .cancelLink:hover {
+    border-bottom-color: transparent;
+}
+
+#kanban .taskInfo .problem.edit textarea {
+    width: 242px;
+}
+
+#kanban .taskInfo .label-add {
+    z-index: 1;
+    position: absolute;
+    left: 0;
+}
+#kanban .taskInfo .label-add .add {
+    font-family: Arial, sans-serif;
+    color: #9da1a4;
+    background: url('@{pathImages}sprite-icons.png') -343px -430px no-repeat;
+    margin-left: -41px;
+    width: 24px;
+    height: 39px;
+    display: block;
+    cursor: pointer;
+    padding-left: 17px;
+    line-height: 39px;
+    font-size: 30px;
+}
+
+#kanban .taskInfo .label-add .add:after {
+    content: "";
+    z-index: -1;
+    display: block;
+    top: 5px;
+    right: 0;
+    position: absolute;
+    width: 29px;
+    height: 30px;
+    background: url("@{pathImages}sprite-icons.png") 9px -253px no-repeat;
+}
+
+
+#kanban .taskInfo .label-add .popup {
+    padding-bottom: 4px;
+    margin-left: -86px;
+    padding-left: 7px;
+}
+#kanban .taskInfo .label-add .popup .markerItem i {
+    width: 20px;
+    height: 20px;
+    margin: 0;
+}
+#kanban .taskInfo .label-add:hover .add {
+    opacity: 0.8;
+    -moz-transition: opacity 0.3s ease;
+    -webkit-transition: opacity 0.3s ease;
+    -o-transition: opacity 0.3s ease;
+    transition: opacity 0.3s ease;
+}
+
+#kanban .taskInfo .labels {
+    margin-top: 44px;
+    margin-left: -13px;
+    z-index: -1;
+    position: absolute;
+}
+
+#kanban .fuckup .taskInfo .problem {
+    color: #fff;
+    padding: 8px 11px 4px;
+    font: normal 12px/16px Arial, sans-serif;
+    overflow: hidden;
+    display: block;
+}
+#kanban .fuckup .taskInfo .problem a {
+    color: #eee;
+}
+#kanban .fuckup .taskInfo .scrumbanTextEditor { min-height: 100px; }
+
+#kanban .fuckup .taskInfo .problem i {
+    visibility: hidden;
+    display: block;
+    width: 28px;
+    height: 30px;
+    float: right;
+    margin: -7px -10px -10px -10px;
+    cursor: pointer;
+    background: url("data:image/gif;base64,R0lGODlhCAAKAIABAP+zs////yH5BAEAAAEALAAAAAAIAAoAAAIRjA1wmMr9UnQKsuDe2qt5UAAAOw==") 50% 50% no-repeat;
+    text-indent: -9999px;
+    opacity: 0.5;
+}
+#kanban .fuckup .taskInfo .problem:hover i { visibility: visible; }
+#kanban .fuckup .taskInfo .problem i:hover {
+    opacity: 0.6;
+}
+
+#kanban .planningTaskDetailsPanel .line,
+#kanban .taskInfo .properties .line {
+    min-height: 39px;
+    font: normal 14px/39px Arial, sans-serif;
+    color: #999;
+    padding: 0 10px 0 18px;
+}
+#kanban .planningTaskDetailsPanel .line {
+    border-top: 1px solid #e6e6e6;
+    padding-left: 0;
+}
+/*#kanban .planningTaskDetailsPanel .line.timeUsed { position: relative; }*/
+#kanban .planningTaskDetailsPanel .line.status .value span { border-bottom-color: transparent; cursor: default; }
+
+#kanban .taskInfo .properties .line + .line { border-top: 1px solid #eee; }
+#kanban .taskInfo .properties .line .taskType {
+    padding: 3px 0 0 2px;
+}
+#kanban .planningTaskDetailsPanel .line .title,
+#kanban .taskInfo .properties .title {
+    width: 84px;
+    display: inline-block;
+}
+#kanban .taskInfo .line.responsibles .title {
+    width: 115px;
+    vertical-align: top;
+    padding-top: 13px;
+}
+
+#kanban .taskInfo .properties .wideData .title,
+#kanban .taskDetailsPanel .properties .wideData .title {
+    color: #333;
+    width: 120px;
+    white-space: nowrap;
+}
+#kanban .boardDetailsEditor .taskInfo .properties .title {
+    width: auto;
+    display: block;
+}
+#kanban .boardDetailsEditor .taskInfo select {
+    width: 247px;
+}
+
+#kanban .planningTaskDetailsPanel .line .title a,
+#kanban .taskInfo .properties .title a {
+    color: #333;
+    border-bottom: 1px dotted #999;
+    height: 19px;
+    text-decoration: none;
+}
+#kanban .planningTaskDetailsPanel .line .title a:hover,
+#kanban .taskInfo .properties .title a:hover { border-bottom-color: transparent; text-decoration: none; }
+
+
+#kanban .taskInfo .properties a.cancelLink {
+    color: #999;
+    text-decoration: none;
+    border-bottom: 1px dotted #999;
+}
+#kanban .planningTaskDetailsPanel a.cancelLink {
+    color: #999;
+}
+#kanban .planningTaskDetailsPanel a.cancelLink:hover,
+#kanban .taskInfo .properties a.cancelLink:hover {
+    border-bottom-color: transparent;
+    text-decoration: none;
+}
+
+#kanban .planningTaskDetailsPanel .line .value,
+#kanban .taskInfo .properties .value {
+    color: #333;
+    display: inline-block;
+    vertical-align: bottom;
+}
+#kanban .taskInfo .properties .value.responsible {
+    height: 59px;
+}
+#kanban .planningTaskDetailsPanel .line .value > i,
+#kanban .taskInfo .properties .value > i,
+#kanban .popup i {
+    width: 11px;
+    height: 11px;
+    display: block;
+    float: left;
+    margin: 14px 6px 11px 0;
+}
+#kanban .popup i { margin: 5px 10px 1px -1px; }
+
+#kanban .taskInfo .properties .value span {
+    cursor: pointer;
+    border-bottom: 1px dotted #999;
+    height: 26px;
+    display: inline-block;
+}
+#kanban .taskInfo .properties .noEdit .value span {
+    cursor: default;
+    border-color: transparent;
+}
+#kanban .taskInfo .properties .line.status.noEdit .value i { display: block; }
+
+#kanban .planningTaskDetailsPanel .line .value span {
+    cursor: pointer;
+    border: 0 none;
+    margin: 0;
+    padding: 0;
+    border-bottom: 1px dotted #999;
+    height: 26px;
+    display: inline-block;
+}
+#kanban .planningTaskDetailsPanel .line .value span > span { border: 0 none; }
+
+#kanban .planningTaskDetailsPanel .line .value .popup li {
+    line-height: 24px;
+    padding-left: 10px;
+}
+
+#kanban .planningTaskDetailsPanel .line .value .popup span,
+#kanban .taskInfo .properties .value .popup span { height: 19px; }
+
+#kanban .planningTaskDetailsPanel .line .value span:hover,
+#kanban .taskInfo .properties .value span:hover { border-bottom-color: transparent; }
+
+#kanban .taskInfo .properties .elapsedTimer label {
+    font-size: 13px;
+    color: #808080;
+}
+
+#kanban .taskInfo .properties .value .timer-wrapper {
+    display: inline-block;
+    margin-left: 5px;
+}
+
+#kanban .taskInfo .properties .value .timer-wrapper.hidden {
+    display: none;
+}
+
+#kanban .taskInfo .properties .value .timer {
+    margin: 0;
+    vertical-align: middle;
+}
+
+#kanban .planningTaskDetailsPanel .line .status .value span {
+    border-bottom-color: transparent;
+    cursor: default;
+}
+
+#kanban i.priority,
+#kanban .priority .value > i {
+    display: block;
+    border-radius: 7px;
+}
+#kanban .detailPriorityPopup .priority,
+#kanban .taskDetailsPanel .priority .value > i,
+#kanban .kanbanTaskDetailEditor .priority .value > i {
+    width: 13px;
+    height: 13px;
+}
+#kanban .taskDetailsPanel .priority .value > i,
+#kanban .kanbanTaskDetailEditor .priority .value > i {
+    margin: 13px 6px 11px 0;
+}
+#kanban .detailPriorityPopup .priority-low,
+#kanban .priority-low .priority .value > i {
+    background-color: #95c634;
+}
+#kanban .detailPriorityPopup .priority-med,
+#kanban .priority-med .priority .value > i {
+    background-color: #959BA3;
+}
+#kanban .detailPriorityPopup .priority-high,
+#kanban .priority-high .priority .value > i {
+    background-color: #e33;
+}
+
+#kanban .planningTaskDetailsPanel .properties .deadline i,
+#kanban .taskInfo .properties .deadline i {
+    background: url("@{pathImages}sprite-task.png") -220px -144px no-repeat;
+    width: 13px;
+    height: 14px;
+    margin-top: 12px;
+}
+#kanban .planningTaskDetailsPanel .properties .deadline.now i,
+#kanban .taskInfo .properties .deadline.now i {
+    background-position: -240px -144px;
+}
+#kanban .planningTaskDetailsPanel .properties .timePlanned i,
+#kanban .taskInfo .properties .timePlanned i {
+    background: url("@{pathImages}sprite-task.png") -200px -125px no-repeat;
+}
+#kanban .planningTaskDetailsPanel .properties .timeUsed i,
+#kanban .taskInfo .properties .timeUsed i {
+    background: url("@{pathImages}sprite-task.png") -220px -5px no-repeat;
+}
+#kanban .planningTaskDetailsPanel .properties .finish i,
+#kanban .taskInfo .properties .finish i {
+    background: url("@{pathImages}sprite-task.png") -220px -40px no-repeat;
+}
+
+#kanban .taskInfo .properties .timeUsed .value {
+    height: 28px;
+    vertical-align: top;
+}
+
+#kanban .timeUsed .addingTime {
+    border: 0;
+    margin-left: 5px;
+    position: absolute;
+    display: inline-block;
+    font-weight: normal;
+}
+
+#kanban .timeUsed .addingTime.animate {
+    opacity: 0;
+    margin-top: -200px;
+    -moz-transition: margin-top 2s, opacity 1.5s;
+    -webkit-transition: margin-top 2s, opacity 1.5s;
+    -o-transition: margin-top 2s, opacity 1.5s;
+    transition: margin-top 2s, opacity 1.5s;
+}
+
+#kanban .properties .status i { background: url("@{pathImages}sprite-task.png") -200px -203px no-repeat; }
+#kanban .properties .status i.step-accepted { background: url("@{pathImages}sprite-task.png") -200px -203px no-repeat; }
+#kanban .properties .status i.step-accept-wait { background-position: -200px -224px; }
+#kanban .properties .status i.step-rejected { background-position: -219px -245px; }
+#kanban .properties .status i.step-control-wait { background-position: -200px -264px; }
+#kanban .properties .status i.step-inprogress { background-position: -200px -284px; width: 13px; margin-right: 4px; }
+#kanban .properties .status i.step-paused { background-position: -198px -304px; }
+#kanban .properties .status i.step-finished { background-position: -200px -325px; }
+#kanban .properties .status .popup i.step-inprogress { margin-right: 8px; }
+
+#kanban .taskInfo .responsibles p,
+#kanban .taskInfo .responsiblesBlock p {
+    font: normal 18px/52px Arial, sans-serif;
+}
+
+#kanban .taskInfo .responsiblesBlock {
+    border-top: 1px solid #ededed;
+    padding: 0 5px 0 15px;
+    box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.1);
+}
+#kanban .taskInfo .responsiblesList {
+    max-height: 300px;
+    width: 272px;
+}
+#kanban .taskInfo .responsiblesList .jspVerticalBar {
+    right: 12px;
+}
+#kanban .taskInfo .responsiblesList .item i {
+    width: 34px;
+    height: 34px;
+    margin: 0 8px 8px 0;
+    display: inline-block;
+    cursor: pointer;
+}
+#kanban .detailEditCommonData .responsiblesList .item {
+    float: left;
+    width: 37px;
+    height: 37px;
+    margin: 0 5px 5px 0;
+    cursor: pointer;
+    background: #ddd no-repeat 50% 50%;
+    background-size: cover;
+}
+#kanban .taskInfo .responsiblesList span {
+    display: block;
+    position: relative;
+    width: 37px;
+    height: 8px;
+    margin-top: 29px;
+    margin-bottom: -37px;
+}
+#kanban .taskInfo .responsiblesList .online span {
+    background: url("@{pathImages}sprite-task.png") -92px -20px #98c837;
+}
+#kanban .taskInfo .responsiblesList .admin span {
+    background: url("@{pathImages}sprite-task.png") -92px -28px #f90;
+}
+
+#kanban .taskDetails .anchors {
+    position: absolute;
+    float: right;
+    margin-right: -31px;
+    width: 31px;
+    right: 0;
+    padding-top: 84px;
+}
+#kanban .taskDetails .anchors .inner {
+    position: fixed;
+    width: 31px;
+}
+#kanban .taskDetails .anchors .anchor {
+    cursor: pointer;
+    width: 33px;
+    height: 39px;
+    display: block;
+    margin-bottom: 10px;
+    background: url("@{pathImages}sprite-icons.png") 50px 50px no-repeat;
+    -moz-transition: background-position 0.3s ease, width 0.3s ease;
+    -webkit-transition: background-position 0.3s ease, width 0.3s ease;
+    -o-transition: background-position 0.3s ease, width 0.3s ease;
+    transition: background-position 0.3s ease, width 0.3s ease;
+}
+#kanban .taskDetails .anchors .mainData { background-position: -10px -430px; }
+#kanban .taskDetails .anchors .additional { background-position: -160px -430px; }
+#kanban .taskDetails .anchors .subtasks { background-position: -260px -430px; }
+#kanban .taskDetails .anchors .checklist { background-position: -60px -430px; }
+#kanban .taskDetails .anchors .files { background-position: -110px -430px; }
+#kanban .taskDetails .anchors .comments { background-position: -310px -430px; }
+#kanban .taskDetails .anchors .userfields { background-position: -410px -430px; }
+#kanban .taskDetails .anchors .budget { background-position: -460px -430px; }
+#kanban .taskDetails .anchors .suppose { background-position: -511px -430px; }
+
+#kanban .taskDetails .anchors .anchor:hover { width: 43px; }
+#kanban .taskDetails .anchors .mainData:hover { background-position: 0 -430px; }
+#kanban .taskDetails .anchors .additional:hover { background-position: -150px -430px; }
+#kanban .taskDetails .anchors .subtasks:hover { background-position: -250px -430px; }
+#kanban .taskDetails .anchors .checklist:hover { background-position: -50px -430px; }
+#kanban .taskDetails .anchors .files:hover { background-position: -100px -430px; }
+#kanban .taskDetails .anchors .comments:hover { background-position: -300px -430px; }
+#kanban .taskDetails .anchors .userfields:hover { background-position: -400px -430px; }
+#kanban .taskDetails .anchors .budget:hover { background-position: -450px -430px; }
+#kanban .taskDetails .anchors .suppose:hover { background-position: -501px -430px; }
+
+#kanban .taskDetails .anchors .anchor.hide { width: 20px; }
+#kanban .taskDetails .anchors .mainData.hide { background-position: -23px -430px; }
+#kanban .taskDetails .anchors .additional.hide { background-position: -173px -430px; }
+#kanban .taskDetails .anchors .subtasks.hide { background-position: -273px -430px; }
+#kanban .taskDetails .anchors .checklist.hide { background-position: -73px -430px; }
+#kanban .taskDetails .anchors .files.hide { background-position: -123px -430px; }
+#kanban .taskDetails .anchors .comments.hide { background-position: -323px -430px; }
+#kanban .taskDetails .anchors .userfields.hide { background-position: -423px -430px; }
+#kanban .taskDetails .anchors .budget.hide { background-position: -473px -430px; }
+#kanban .taskDetails .anchors .suppose.hide { background-position: -524px -430px; }
+
+#kanban .taskDetails .anchors .scrollTop {
+    width: 31px;
+    margin-top: 50px;
+    background: url("data:image/gif;base64,R0lGODlhEAATAIABAJ2hpP///yH5BAEAAAEALAAAAAAQABMAAAIqjB8AyKja2HvR0ATbtfls330OJEpTNaJqumJdNb3m4kafWG4lt+ygPyoAADs=") 6px 50% no-repeat rgba(109, 118, 129, 0.6);
+    -moz-transition: all 0.3s ease;
+    -webkit-transition: all 0.3s ease;
+    -o-transition: all 0.3s ease;
+    transition: all 0.3s ease;
+    opacity: 0;
+    cursor: default;
+}
+#kanban .taskDetails .anchors .scrollTop:hover { background-position: 16px 50%; }
+#kanban .taskDetails .anchors .scrollTop.visible {
+    opacity: 1;
+    cursor: pointer;
+}
+
+#kanban .taskDetails .menuIcon,
+#kanban .taskInfo .menuIcon {
+    top: -1px;
+    right: 9px;
+    cursor: pointer;
+}
+#kanban .taskDetails .body {
+    min-height: 420px;
+    box-shadow: 0 450px #fff;
+}
+
+#kanban .taskDetails .block .header {
+    height: 63px;
+    min-height: 63px;
+}
+#kanban .taskDetails .block .header .hide {
+    margin-left: 10px;
+    display: none;
+}
+#kanban .taskDetails .block .header .activity-tabs {
+    float: right;
+    height: 25px;
+    margin: 10px 12px 0 -38px;
+    position: relative;
+}
+#kanban .taskDetails .block .header .activity-tabs .sort-activity {
+    background: url("@{pathImages}sprite-icons.png") -400px -30px;
+    width: 26px;
+    height: 26px;
+    position: absolute;
+    left: -30px;
+    top: 0;
+    border: none;
+    padding: 0;
+}
+#kanban .taskDetails .block .header .activity-tabs .sort-activity:hover {
+    background-position: -458px -30px;
+    top: 1px;
+    left: -29px;
+}
+#kanban .taskDetails .block .header .activity-tabs .sort-activity.desc {
+    -webkit-transform: rotate(180deg);
+    -moz-transform: rotate(180deg);
+    -ms-transform: rotate(180deg);
+    -o-transform: rotate(180deg);
+    transform: rotate(180deg);
+}
+#kanban .taskDetails .block .header .activity-tab {
+    color: #000;
+    font-size: 14px;
+    padding: 4px;
+    margin-right: 4px;
+    text-decoration: none;
+    float: left;
+    line-height: 18px;
+}
+#kanban .taskDetails .block .header .activity-tab span {
+    border-bottom: 1px dotted #000;
+}
+#kanban .taskDetails .block .header .activity-tab.active {
+    background-color: #8ab027;
+    margin-left: 0;
+    color: #fff;
+}
+#kanban .taskDetails .block .header .activity-tab.active span {
+    border: none;
+}
+#kanban .taskDetails .block .header .activity-tab:hover span {
+    border: none;
+}
+#kanban .taskDetails .block .header:hover .hide { display: inline-block; }
+#kanban .taskDetails .block .header .hide:after {
+    content: attr(data-hide-text);
+
+    text-decoration: none;
+    display: inline-block;
+    height: 15px;
+    font: normal 14px Arial, sans-serif;
+    color: #999;
+    border-bottom: 1px dotted #999;
+}
+
+#kanban .taskDetails .block .header .hide:hover:after { border-bottom-color: transparent; text-decoration: none; }
+#kanban .taskDetails .block .content {
+    padding: 0 20px 30px 74px;
+}
+
+#kanban .taskDetails .block .inner {
+    padding: 14px 20px 10px 13px;
+    width: auto;
+    border-top: 1px solid #ededed;
+}
+#kanban .taskDetails .block:first-child .inner { border-top: none; }
+
+#kanban .taskDetails .header .inner > i {
+    width: 48px;
+    height: 48px;
+    margin-right: 13px;
+    display: block;
+    float: left;
+    background: url("@{pathImages}sprite-icons.png") 0 -350px no-repeat;
+}
+#kanban .planningTaskDetailsPanel .header .inner {
+    line-height: 48px;
+}
+#kanban .planningTaskDetailsPanel .header .inner > i {
+    width: 34px;
+    height: 34px;
+    background-position: 0 -300px;
+    margin: 6px 12px 0 0;
+}
+#kanban .taskDetails .header h3 {
+    display: inline-block;
+    font: normal 18px/46px Arial, sans-serif;
+    color: #000;
+}
+
+#kanban .taskDetails .mainData .header {
+    height: auto;
+    padding-top: 5px;
+}
+#kanban .taskDetails .mainData .inner {
+    padding-top: 10px;
+    box-shadow: none;
+}
+#kanban .taskDetails .mainData .header h3 {
+    overflow-x: hidden;
+    line-height: 25px;
+    margin: 0 0 0 60px;
+    display: block;
+    cursor: pointer;
+    text-overflow: ellipsis;
+}
+#kanban .planningTaskDetailsPanel .mainData h3.title {
+    overflow-x: hidden;
+    cursor: pointer;
+    text-overflow: ellipsis;
+    border-bottom: 1px solid #e6e6e6;
+    padding: 10px 0 15px;
+    margin: 0 20px;
+    font: normal 18px/18px Arial, sans-serif;
+    color: #000;
+}
+#kanban .taskDetails .mainData .header .title input {
+    width: 535px;
+    padding: 0 5px;
+}
+#kanban .taskDetails .mainData .thin-green-button,
+#kanban .taskDetails .mainData .cancelLink {
+    vertical-align: top;
+    margin-left: 12px;
+}
+#kanban .taskDetails .mainData .cancelLink {
+    color: #999 !important;
+}
+
+#kanban .jsTextEdit { display: none; }
+#kanban .jsDescription .jsTextEdit { display: block; }
+#kanban .content .bxlhe-frame {
+    border: 1px solid #dcdde5;
+    margin-bottom: 10px;
+}
+
+#kanban .person {
+    width: 48px;
+    height: 48px;
+    display: block;
+    float: left;
+    background: 50% 50% no-repeat;
+    text-align: center;
+    color: #fff;
+    font: bold 18px/48px Arial, sans-serif;
+}
+#kanban .person span {
+    display: block;
+    position: relative;
+    width: 48px;
+    height: 8px;
+    margin-top: 40px;
+    margin-bottom: -48px;
+}
+
+#kanban .person.mini {
+    width: 38px;
+    height: 38px;
+}
+#kanban .person.mini span {
+    width: 37px;
+    margin-top: 29px;
+    margin-bottom: -37px;
+}
+#kanban .person.online span { background: url("@{pathImages}sprite-task.png") -85px -20px #98c837; }
+#kanban .person.admin span { background: url("@{pathImages}sprite-task.png") -85px -28px #f90; }
+#kanban .person.mini.online span { background: url("@{pathImages}sprite-task.png") -91px -20px #98c837; }
+#kanban .person.mini.admin span { background: url("@{pathImages}sprite-task.png") -91px -28px #f90; }
+#kanban .task.dropPeopleOver .person.mini span { display: none; }
+
+#kanban .taskDetails .additional .header i { background-position: -50px -350px; }
+#kanban .taskDetails .subtasks   .header i { background-position: -100px -350px; }
+#kanban .taskDetails .checklist  .header i { background-position: -150px -350px; }
+#kanban .taskDetails .files      .header i { background-position: -200px -350px; }
+#kanban .taskDetails .comments   .header i { background-position: -250px -350px; }
+#kanban .taskDetails .boardData  .header i { background-position: -300px -350px; }
+#kanban .taskDetails .labels     .header i { background-position: -350px -350px; }
+#kanban .taskDetails .suppose    .header i { background-position: -400px -350px; }
+
+/* Иконки на редактировании задачи в планнинге */
+#kanban .planningTaskDetailsPanel .additional .header i { background-position: -40px  -300px; }
+#kanban .planningTaskDetailsPanel .subtasks   .header i { background-position: -40px  -300px; }
+#kanban .planningTaskDetailsPanel .checklist  .header i { background-position: -120px -300px; }
+#kanban .planningTaskDetailsPanel .files      .header i { background-position: -160px -300px; }
+#kanban .planningTaskDetailsPanel .comments   .header i { background-position: -200px -300px; }
+#kanban .planningTaskDetailsPanel .boardData  .header i { background-position: -40px  -300px; }
+#kanban .planningTaskDetailsPanel .labels     .header i { background-position: -40px  -300px; }
+
+#kanban .frameHover .taskType .popupOpener { cursor: pointer; }
+
+#kanban .taskDetails .block.additional .content { padding-bottom: 17px; }
+
+#kanban .planningTaskDetailsPanel .taskType span.task-code,
+#kanban .frameHover .taskType span.task-code {
+    font: bold 11px/17px Arial, sans-serif;
+    color: #333;
+    border-bottom: 1px dashed #666;
+    display: inline-block;
+    height: 14px;
+}
+#kanban .planningTaskDetailsPanel .taskType span.task-code:hover,
+#kanban .frameHover .taskType span.task-code:hover { border-bottom-color: transparent; }
+
+#kanban .planningTaskDetailsPanel .taskType > i,
+#kanban .frameHover .taskType > i {
+    width: 17px;
+    height: 17px;
+    display: inline-block;
+    position: relative;
+    background: url("@{pathImages}sprite-task.png") -40px 0 no-repeat;
+    margin: 0 5px 0 0;
+    vertical-align: middle;
+    text-indent: -9999px;
+}
+#kanban .planningTaskDetailsPanel .type-task     > i, #kanban .frameHover .type-task     > i { background-position: -20px 0; }
+#kanban .planningTaskDetailsPanel .type-feature  > i, #kanban .frameHover .type-feature  > i { background-position: -20px -20px; }
+#kanban .planningTaskDetailsPanel .type-bug      > i, #kanban .frameHover .type-bug      > i { background-position: -20px -40px; }
+#kanban .planningTaskDetailsPanel .type-info     > i, #kanban .frameHover .type-info     > i { background-position: -20px -60px; }
+#kanban .planningTaskDetailsPanel .type-lead     > i, #kanban .frameHover .type-lead     > i { background-position: -20px -80px; }
+#kanban .planningTaskDetailsPanel .type-contract > i, #kanban .frameHover .type-contract > i { background-position: -20px -100px; }
+#kanban .planningTaskDetailsPanel .type-project  > i, #kanban .frameHover .type-project  > i { background-position: -20px -120px; }
+#kanban .planningTaskDetailsPanel .type-epic      > i, #kanban .frameHover .type-epic      > i { background-position: -20px -140px; }
+#kanban .planningTaskDetailsPanel .type-request   > i, #kanban .frameHover .type-request   > i { background-position: -20px -160px; }
+#kanban .planningTaskDetailsPanel .type-userstory > i, #kanban .frameHover .type-userstory > i { background-position: -20px -180px; }
+
+#kanban .planningTaskDetailsPanel .taskType .popupOpener { cursor: pointer; }
+
+/* Попап выбора типа задачи при её редактировании */
+#kanban .taskDetails .mainData .author {
+    width: 48px;
+    height: 48px;
+    margin: 0 13px 0 0;
+    display: block;
+    float: left;
+    background: 50% 50% no-repeat;
+    text-align: center;
+    color: #fff;
+    font: bold 18px/48px Arial,sans-serif;
+}
+#kanban .taskDetails .mainData .author span {
+    display: block;
+    position: relative;
+    width: 48px;
+    height: 8px;
+    margin-top: 40px;
+    margin-bottom: -48px;
+    text-indent: -9999px;
+    overflow: hidden;
+}
+#kanban .taskDetails .mainData .author.online span {
+    background: url("@{pathImages}sprite-task.png") -85px -20px #98c837;
+}
+#kanban .taskDetails .mainData .author.admin span {
+    background: url("@{pathImages}sprite-task.png") -85px -28px #f90;
+}
+
+#kanban .panelDetailsBody  .taskAddPopup.taskTypePopup {
+    margin: 45px 0 0 47px;
+    padding: 10px;
+}
+
+#kanban .frameHover .taskAddPopup.taskTypePopup {
+    margin: 25px 0 0 -15px;
+    padding: 10px;
+}
+#kanban .frameHover .taskAddPopup.taskTypePopup ul { margin: 0; }
+
+#kanban .task.edit .taskTypePopup.popup { margin: 25px 0 0 -15px; }
+#kanban .frameHover .taskInfo .taskAddPopup.taskTypePopup.popup { margin-top: 37px; }
+#kanban .task.edit .taskTypePopup.popup:before,
+#kanban .frameHover .taskInfo .taskTypePopup.popup:before { left: 12px; }
+#kanban .task.edit .taskTypePopup.popup:after,
+#kanban .frameHover .taskInfo .taskTypePopup.popup:after { left: 13px; }
+
+#kanban .taskDetails .taskAddPopup.taskTypePopup:after,
+#kanban .taskDetails .taskAddPopup.taskTypePopup:before {
+    left: 12px;
+    top: -10px;
+    border-top: 0 none;
+    border-bottom: 10px solid #cbdbde;
+}
+#kanban .taskDetails .taskAddPopup.taskTypePopup:after {
+    left: 13px;
+    top: -9px;
+    border-top: 0 none;
+    border-bottom: 9px solid #fff;
+}
+#kanban  .taskDetails .taskAddPopup .grid-task-rank .type-task i {
+    background-position: -20px 0;
+    margin-right: 5px;
+}
+
+#kanban .taskDetails .mainData .content {
+    cursor: pointer;
+    overflow-x: hidden;
+    width: 676px;
+}
+#kanban .taskDetails .mainData .content .thin-green-button { position: relative; }
+#kanban .taskDetailsPanel .thin-green-button:after,
+#kanban .taskDetailsPanel .thin-green-button:before {
+    position: static;
+    margin: 0 0 -25px -17px;
+}
+#kanban .taskDetailsPanel .thin-green-button:after { margin: -25px -35px -25px 32px; }
+
+#kanban .taskDetails .mainData .content a { text-decoration: underline; }
+#kanban .taskDetails .mainData .content a:hover { text-decoration: none; }
+
+#kanban .taskDetails .mainData .content p + ul,
+#kanban .taskDetails .mainData .content p + p,
+#kanban .taskDetails .mainData .content ul + ul,
+#kanban .taskDetails .mainData .content ul + p {
+    margin-top: 1em;
+}
+#kanban .taskDetails .mainData .content h1 { font: bold 28px/42px Arial,sans-serif; margin: 0.6em 0; }
+#kanban .taskDetails .mainData .content h2 { font: bold 21px/30px Arial,sans-serif; margin: 0.8em 0; }
+#kanban .taskDetails .mainData .content h3 { font: bold 16px/24px Arial,sans-serif; margin: 1em 0; }
+#kanban .taskDetails .mainData .content h4 { font: bold 14px/21px Arial,sans-serif; margin: 1.3em 0; }
+#kanban .taskDetails .mainData .content h5 { font: bold 12px/18px Arial,sans-serif; margin: 1.5em 0; }
+#kanban .taskDetails .mainData .content h6 { font: bold 11px/16px Arial,sans-serif; margin: 2em 0; }
+#kanban .taskDetails .mainData .content pre { display: block; font-family: monospace; white-space: pre; margin: 1em 0; }
+#kanban .taskDetails .mainData .content address { font-style: italic; }
+
+
+
+
+#kanban .taskDetails .mainData .content img {
+    max-width: 100%;
+}
+
+#kanban .taskDetails .mainData .content.edit {
+    margin-top: -53px;
+    text-align: right;
+    padding: 0 20px 30px 0;
+}
+#kanban .taskDetails .mainData .content.edit textarea {
+    width: 686px;
+    height: 200px;
+}
+
+#kanban .taskDetails .mainData .content.edit button { float: right; }
+
+#kanban .taskDetails .propList {
+    display: block;
+}
+#kanban .taskDetails .propList + .propList {
+}
+#kanban .taskDetails .propList dt {
+    font: normal 14px/30px Arial, sans-serif;
+    color: #999;
+    width: 108px;
+    height: 30px;
+    float: left;
+    padding: 5px 0;
+}
+#kanban .taskDetails .propList dd {
+    display: inline-block;
+    margin-left: 7px;
+    height: 30px;
+    line-height: 30px;
+    padding: 5px 0;
+    color: #999;
+}
+
+#kanban .taskDetails .propList:first-child dd,
+#kanban .taskDetails .propList:first-child dt {
+    padding-top: 0;
+}
+
+#kanban .taskDetails .propList.accomplices { padding-top: 4px; }
+
+#kanban .taskDetails .propList.watchers { padding-top: 8px; }
+
+#kanban .taskDetails .iWantWatchTask {
+    display: block;
+    margin-left: 111px !important;
+    padding: 10px 7px;
+    color: #999;
+}
+
+#kanban .taskDetails .propList dd .hoverArea a:not(.chzn-single),
+#kanban .taskDetails .propList dd > a:not(.chzn-single) {
+    color: #333;
+    border-bottom: 1px dotted #999;
+}
+#kanban .taskDetails .propList dd a:not(.chzn-single):hover { border-bottom-color: transparent; text-decoration: none; }
+#kanban .taskDetails .block .content > label { margin-left: -21px; }
+
+#kanban .taskDetails .dateSelectorOpener:first-child { margin-left: -6px; }
+
+#kanban .taskDetails .propList .tags select { height: 30px; }
+#kanban .taskDetails .propList .tags .chzn-choices {
+    margin-top: 6px;
+    line-height: 25px;
+    margin-left: -6px;
+    border-color: #cecece;
+}
+#kanban .taskDetails .propList .tags.detailTagEditor { cursor: pointer; height: auto; }
+#kanban .taskDetails .propList .tags.detailTagEditor i { font-style: normal; }
+#kanban .taskDetails .propList .tags input {
+    width: 100%;
+    color: #333;
+    height: 25px;
+    line-height: 27px !important;
+    border: 1px solid #ccc;
+    padding: 0 6px;
+    margin: -1px 5px 0 -6px;
+    cursor: pointer;
+}
+#kanban .taskDetails .propList .tags .chzn-drop {
+    border: 1px solid #cecece !important;
+    margin-left: -6px;
+    width: 575px !important;
+    overflow: hidden;
+}
+#kanban .taskDetails .tags .search-choice { margin: 5px; }
+
+#kanban .taskDetails input.short {
+    width: 15px;
+    padding: 0 5px;
+    font: normal 14px Arial, sans-serif;
+    margin: 7px 7px -13px -6px;
+}
+
+#kanban .taskDetails .block.subtasks .menuIcon {
+    display: none;
+    top: auto;
+    left: auto;
+    right: auto;
+    margin: 10px 0 0 -41px;
+    border: 10px solid #fff;
+}
+#kanban .taskDetails .block.subtasks .menuIcon.pinned { display: block !important; }
+
+#kanban .taskDetails .checklist .content {
+    margin-top: -1px;
+    padding-bottom: 7px;
+}
+
+#kanban .taskDetails .checklist .progressBar {
+    height: 10px;
+    padding: 1px;
+    border: 1px solid #ccc;
+    margin-bottom: 22px;
+}
+    #kanban .taskDetails .checklist .progressBar .filler {
+        height: 6px;
+        max-width: 100%;
+        background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAAGCAYAAAAc2cSCAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAXElEQVQY02Occ86oloGBoYGBgYGJAQmI8SgwEAJM5GqEaSZL46svD8jXyMDAwMDy5+/ff/8ZGJjEeRUY/vz7S1Djy88P4GyW779+NYnzydf9+P2TiZDGF58eovAB3qYed/cPFu4AAAAASUVORK5CYII=') repeat-x;
+        margin: 0;
+    }
+    #kanban .taskDetails .checklist .progressBar .filler:after {
+        display: none;
+    }
+    #kanban .taskDetails .checklist .progressBar .filler:before {
+        display: none;
+    }
+
+#kanban .taskDetails .checklist .dod-group-title {
+    font: normal 17px/20px Arial, sans-serif;
+    color: #000;
+    border-bottom: 1px dotted #666;
+    display: inline-block;
+    cursor: pointer;
+    margin-bottom: 5px;
+}
+
+#kanban .taskDetails .checklist .dod-group-title:hover {
+    border-bottom-color: transparent;
+}
+
+#kanban .taskDetails .checklist .task-group {
+    margin-top: 11px;
+    padding-top: 20px;
+    border-top: 1px solid #ccc;
+    min-height: 35px;
+}
+#kanban .taskDetails .checklist .task-group.no-border {
+    border-top-color: transparent;
+    padding-top: 0;
+}
+#kanban .taskDetails .checklist .task-group.no-border .group-progress {
+    top: 5px;
+}
+
+#kanban .taskDetails .checklist .dod-group {
+    padding-bottom: 5px;
+}
+
+#kanban .taskDetails .checklist .task-group,
+#kanban .taskDetails .checklist .dod-group {
+    position: relative;
+}
+
+#kanban .taskDetails .checklist .group-progress {
+    width: 96px;
+    height: 6px;
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAAAKCAYAAABCHPt+AAAACXBIWXMAAAsTAAALEwEAmpwYAAAAd0lEQVRIx+3RwQ0CIRQG4Xlkz3CFWJF1bGJRJnb0iuCiyxVowIs9gMn/lTBj7n4HXkBBVrqA09z9k3MuMUYlWWiMQWvtCoBmbOD3oASl2MsBEIK+aIhoyN8MMTOV2GhIm3PmlJJqLNR7B2gHcNZan8BNWZZ6A48vEcUcdeirHaoAAAAASUVORK5CYII=');
+    position: absolute;
+    right: 0;
+    top: 5px;
+    padding: 2px;
+}
+#kanban .taskDetails .checklist .task-group .group-progress {
+    top: 25px;
+}
+#kanban .taskDetails .checklist .group-progress.hidden {
+    display: none;
+}
+    #kanban .taskDetails .checklist .progress-bar {
+        height: 6px;
+        width: 0;
+        max-width: 100%;
+        background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAAGCAYAAAAc2cSCAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAXElEQVQY02Occ86oloGBoYGBgYGJAQmI8SgwEAJM5GqEaSZL46svD8jXyMDAwMDy5+/ff/8ZGJjEeRUY/vz7S1Djy88P4GyW779+NYnzydf9+P2TiZDGF58eovAB3qYed/cPFu4AAAAASUVORK5CYII=') repeat-x;
+    }
+
+#kanban .taskDetails .checklist input.error {
+    border-color: #ff9797;
+}
+#kanban .taskDetails .checklist .checkitem {
+    display: block;
+    font: normal 14px/30px Arial, sans-serif;
+    color: #333;
+}
+
+#kanban .taskDetails .checklist .addCheckItem .checkitem {
+    height: 34px;
+}
+
+#kanban .taskDetails .checklist .add {
+    margin-top: 4px;
+    line-height: 16px;
+    float: left;
+    border-bottom: 1px dotted #999;
+    margin-left: 25px;
+    cursor: pointer;
+    display: block;
+}
+
+#kanban .taskDetails .checklist .add i {
+    height: 13px;
+    width: 13px;
+    top: 2px;
+    margin-left: -25px;
+    margin-bottom: -15px;
+    display: block;
+    background: url("@{pathImages}sprite-task.png") -241px -2px;
+}
+#kanban .taskDetails .checklist .add:hover {
+    border-bottom-color: transparent;
+}
+
+#kanban .taskDetails .ui-sortable {
+    margin-left: -25px;
+    padding: 0 0 5px 0;
+}
+#kanban .taskDetails .jsColumns .ui-sortable {
+    margin-left: 0;
+}
+
+#kanban .taskDetails .ui-sortable .checkitem {
+    padding-left: 25px;
+    position: relative;
+}
+#kanban .taskDetails .block.checklist .content > label { padding-left: 21px; }
+
+#kanban .taskDetails .checklist .checkitem b {
+    display: none;
+    width: 18px;
+    height: 18px;
+    margin: 4px 0 -4px 10px;
+    background: url("@{pathImages}sprite-icons.png") -150px -210px no-repeat;
+}
+#kanban .taskDetails .checklist .checkitem .edit { display: none; }
+#kanban .taskDetails .checklist .checkitem.edit { height: 28px; padding-right: 20px; }
+#kanban .taskDetails .checklist .checkitem.edit .add { display: none; }
+#kanban .taskDetails .checklist .checkitem.edit .edit {
+    display: block;
+    height: 24px;
+    margin: 6px 0 0 18px;
+    width: 100%;
+    padding-right: 140px;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    position: relative;
+}
+
+#kanban .taskDetails .checklist .checkitem.edit .view { display: none; }
+#kanban .taskDetails .checklist .checkitem:hover b { display: inline-block; }
+#kanban .taskDetails .checklist .placeholder {
+    border: 1px dashed #999;
+    display: inline-block;
+    width: 90%;
+    overflow: hidden;
+    height: 28px;
+}
+#kanban .taskDetails .checklist .checkitem .view span {
+    max-width: 645px;
+    vertical-align: top;
+    cursor: pointer;
+}
+#kanban .taskDetails .checklist .checkitem:hover .view span {
+    border-bottom: 1px dotted #999;
+}
+#kanban .taskDetails .checklist .checkitem.item-checked .view span {
+    text-decoration: line-through;
+    color: #999;
+}
+#kanban .taskDetails .checklist .checkitem .view label {
+    float: left;
+}
+#kanban .taskDetails .checklist .checkitem .view .desc-wrapper {
+    padding-left: 20px;
+    /*position: relative;*/
+    cursor: pointer;
+}
+#kanban .taskDetails .checkitem .view {
+    margin-left: -15px;
+    padding-left: 15px;
+}
+#kanban .taskDetails .checklist .checkitem .edit,
+#kanban .taskDetails .checklist .checkitem .delete,
+#kanban .taskDetails .checklist .checkitem .convert { cursor: pointer; }
+
+#kanban .taskDetails .checklist .checkitem .edit { background-position: -200px -210px; }
+#kanban .taskDetails .checklist .checkitem .delete { background-position: -150px -230px; }
+#kanban .taskDetails .checklist .checkitem .convert { background-position: -200px -230px; }
+
+#kanban .taskDetails .checklist .checkitem .edit:hover { background-position: -220px -210px; }
+#kanban .taskDetails .checklist .checkitem .delete:hover { background-position: -170px -230px; }
+#kanban .taskDetails .checklist .checkitem .convert:hover { background-position: -220px -230px; }
+#kanban .taskDetails .checklist .checkitem .move {
+    background-position: -150px -210px;
+    width: 18px;
+    height: 18px;
+    margin: 6px 2px -4px -24px;
+    cursor: move;
+    float: left;
+}
+
+#kanban .taskDetails .checklist .checkitem .item-buttons {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: #fff;
+    background: -webkit-linear-gradient(left, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 17%);
+    background: -moz-linear-gradient(left, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 17%);
+    background: -ms-linear-gradient(left, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 17%);
+    background: -o-linear-gradient(left, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 17%);
+    background: linear-gradient(left, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 17%);
+}
+
+#kanban .taskDetails .checklist .thin-green-button {
+    vertical-align: top;
+    margin-left: 10px;
+    position: absolute;
+    right: 65px;
+}
+#kanban .taskDetails .checklist .cancelLink {
+    vertical-align: top;
+    margin-left: 10px;
+    line-height: 14px;
+    position: absolute;
+    right: 3px;
+    top: 0;
+    padding: 0;
+}
+
+#kanban .taskDetails .checklist .checkitem .move:hover { background-position: -170px -210px; }
+#kanban .taskDetails button.ok, #kanban .taskDetails button.cancel {
+    vertical-align: top;
+    float: none;
+    display: inline-block;
+    margin-left: 10px;
+}
+#kanban .taskDetails .checklist input[type="text"] {
+    height: 23px;
+    font-weight: normal;
+    padding: 0 6px;
+    width: 100%;
+}
+
+#kanban .taskDetails .files .inner {
+    overflow: hidden;
+}
+#kanban .taskDetails .files .content {
+    padding-top: 5px;
+    padding-bottom: 2px;
+}
+#kanban .taskDetails .files .upload {
+    float: right;
+    position: relative;
+    height: 25px;
+    margin: 13px 2px -38px;
+    width: 161px;
+}
+#kanban .taskDetails .files .upload.noFlash {
+    width: auto;
+    margin: 10px 0 0 0;
+}
+#kanban .taskDetails .files .upload.noFlash .uploadify-queue {
+    width: 160px;
+    float: right;
+}
+#kanban .taskDetails .files .upload.noFlash input {
+    display: inline;
+    float:none;
+    background: none;
+    border: 0 none;
+    position: relative;
+    cursor: pointer;
+    opacity: 0;
+    height: 23px;
+}
+#kanban .taskDetails .files .upload.noFlash input:hover ~ .uploadify-button {
+    color: #808080;
+    border-color: #dadada;
+    background: url("data:image/gif;base64,R0lGODlhAQAXAMQAAO3t7erq6vT09PHx8f7+/u7u7vv7+/j4+Ojo6PX19eXl5fn5+fPz8+Pj4/39/evr6/b29ubm5vDw8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAAAAAAALAAAAAABABcAAAUTIOEYywElzCAVwBMgkdJEjyRAIQA7") 0 100% repeat-x;
+    background: -webkit-gradient(linear, 0% 0%, 0% 100%, color-stop(0%, #ffffff), color-stop(77%, #e3e3e3), color-stop(95%, #f6f6f6));
+    background: -webkit-linear-gradient(top, #ffffff 0%, #e3e3e3 77%, #f6f6f6 95%);
+    background: -moz-linear-gradient(top, #ffffff 0%, #e3e3e3 77%, #f6f6f6 95%);
+    background: -o-linear-gradient(top, #ffffff 0%, #e3e3e3 77%, #f6f6f6 95%);
+    background: -ms-linear-gradient(top, #ffffff 0%, #e3e3e3 77%, #f6f6f6 95%);
+    background: linear-gradient(top, #ffffff 0%, #e3e3e3 77%, #f6f6f6 95%);
+}
+
+
+#kanban .taskDetails .files .file {
+    width: 140px;
+    margin: 0 28px 18px 26px;
+    font: normal 12px Arial, sans-serif;
+    float: left;
+}
+#kanban .taskDetails .files .file i {
+    width: 20px;
+    height: 20px;
+    position: relative;
+    margin: 0 0 -20px -26px;
+    display: block;
+    background: url("@{pathImages}sprite-icons.png") 500px 500px no-repeat;
+}
+#kanban .taskDetails .files .file:hover b {
+    display: block;
+    background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAALhJREFUeNpi/P//PwMlgImBQsACY4SFhYGoCiCWA+IsHOonAPE7IG4CcVatWoUwAKq5HYmfhUVzPhK/Cd0LikjsTCCeiUczSC0ziheAIB1Kp6HR39E0LwDiFCD+i24APkOwasYVCyBDZmERx9CMLxq/YxH7ja4ZlwHoAQYDqWgBi9WACVgCbDYSPw3dEBYCmmF+/o8lYNPRXfART4ChB+w7bC6oh9Jy2EIbKYpBmithgowDnhsBAgwAIGMyKbF9LtkAAAAASUVORK5CYII=") 50% 50% no-repeat;
+    width: 16px;
+    height: 16px;
+    position: absolute;
+    margin: 0 0 0 123px;
+    opacity: 0.5;
+    cursor: pointer;
+}
+#kanban .taskDetails .files .file b:hover {
+    opacity: 0.8;
+}
+
+#kanban .taskDetails .files .file a {
+    display: block;
+    color: #369;
+    overflow: hidden;
+    white-space: nowrap;
+    text-decoration: underline;
+    position: relative;
+}
+#kanban .taskDetails .files .file:hover a { width: 120px; }
+#kanban .taskDetails .files .file > a:after {
+    content: "";
+    display: block;
+    width: 10px;
+    height: 15px;
+    top: 0;
+    right: 0;
+    position: absolute;
+    background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAABCAYAAADn9T9+AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAACNJREFUeNpi/P//PwMQCACxOBBLA7EcECsAsTyUDRITBwgwAIQAA+5fOYskAAAAAElFTkSuQmCC") 100% 0 repeat-y;
+}
+#kanban .taskDetails .files .file a:hover { text-decoration: none; }
+#kanban .taskDetails .files .file span {
+    color: #999;
+    font-size: 10px;
+    line-height: 24px;
+}
+#kanban .taskDetails .files .file .image {
+    border: 1px solid #ccc;
+    padding: 5px;
+    width: 112px;
+}
+#kanban .taskDetails .files .file .image a { display: block; }
+#kanban .taskDetails .files .file .image div {
+    width: 112px;
+    height: 112px;
+    background: 50% 50% no-repeat;
+    background-size: cover;
+}
+#kanban .taskDetails .files .file.ico i { background-position: -150px -400px; }
+
+#kanban .taskDetails .files .file.ico-image i,
+#kanban .taskDetails .files .file.ico-jpg i,
+#kanban .taskDetails .files .file.ico-jpeg i,
+#kanban .taskDetails .files .file.ico-gif i,
+#kanban .taskDetails .files .file.ico-png i,
+#kanban .taskDetails .files .file.ico-tiff i,
+#kanban .taskDetails .files .file.ico-svg i,
+#kanban .taskDetails .files .file.ico-bmp i { background-position: 0 -400px; }
+#kanban .taskDetails .files .file.ico-docx i,
+#kanban .taskDetails .files .file.ico-doc i { background-position: -30px -400px; }
+#kanban .taskDetails .files .file.ico-csv i,
+#kanban .taskDetails .files .file.ico-xlsx i,
+#kanban .taskDetails .files .file.ico-xls i { background-position: -90px -400px; }
+#kanban .taskDetails .files .file.ico-pptx i,
+#kanban .taskDetails .files .file.ico-ppt i { background-position: -60px -400px; }
+#kanban .taskDetails .files .file.ico-pdf i { background-position: -120px -400px; }
+
+#kanban .taskDetails .files .file.ico-psd i { background-position: -210px -400px; }
+
+#kanban .taskDetails .files .file.ico-as i,
+#kanban .taskDetails .files .file.ico-js i,
+#kanban .taskDetails .files .file.ico-css i,
+#kanban .taskDetails .files .file.ico-c i,
+#kanban .taskDetails .files .file.ico-h i,
+#kanban .taskDetails .files .file.ico-cpp i,
+#kanban .taskDetails .files .file.ico-cs i,
+#kanban .taskDetails .files .file.ico-java i,
+#kanban .taskDetails .files .file.ico-php i,
+#kanban .taskDetails .files .file.ico-php4 i,
+#kanban .taskDetails .files .file.ico-php5 i,
+#kanban .taskDetails .files .file.ico-tpl i,
+#kanban .taskDetails .files .file.ico-ini i,
+#kanban .taskDetails .files .file.ico-sql i,
+#kanban .taskDetails .files .file.ico-src i,
+#kanban .taskDetails .files .file.ico-xls i,
+#kanban .taskDetails .files .file.ico-vbs i,
+#kanban .taskDetails .files .file.ico-vb i { background-position: -180px -400px; }
+
+#kanban .taskDetails .files .file.ico-7z i,
+#kanban .taskDetails .files .file.ico-zip i,
+#kanban .taskDetails .files .file.ico-tar i,
+#kanban .taskDetails .files .file.ico-gz i,
+#kanban .taskDetails .files .file.ico-rar i { background-position: -240px -400px; }
+
+#kanban .taskDetails .block.comments .content {
+    padding-bottom: 0;
+    position: relative;
+}
+
+#kanban .taskDetails .block.comments .header h3 {
+    float: left;
+}
+#kanban .taskDetails .block.comments .content .commentContent .time-logged {
+    float: right;
+    margin-top: 9px;
+    margin-right: 20px;
+    margin-bottom: -40px;
+}
+#kanban .taskDetails .block.comments .content .commentContent .time-logged i {
+    width: 11px;
+    height: 11px;
+    display: block;
+    float: left;
+    margin: 7px 10px 7px 0;
+    background: url("@{pathImages}sprite-task.png") -235px -26px no-repeat;
+}
+#kanban .taskDetails .block.comments .time-logged .worklog-ph {
+    border-bottom: 1px dotted #000;
+    line-height: 25px;
+}
+#kanban .taskDetails .block.comments .time-logged .worklog-ph:hover {
+    border-color: transparent;
+}
+#kanban .taskDetails .block.comments .time-logged input {
+    width: 56px;
+    height: 19px;
+    padding: 2px 5px;
+    display: none;
+    border: 1px solid #ccc;
+}
+#kanban .taskDetails .block.comments .content .commentContent textarea {
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    border: 0 none;
+    height: 79px;
+}
+
+#kanban .taskDetails .comments .delete,
+#kanban .taskDetails .comments .edit {
+    display: none;
+    width: 20px;
+    height: 20px;
+    float: right;
+    margin: 0 0 0 10px;
+    opacity: 0.5;
+    cursor: pointer;
+}
+
+#kanban .taskDetails .comments .delete {
+    background: url("@{pathImages}sprite-task.png") -214px -241px no-repeat;
+}
+#kanban .taskDetails .comments .edit {
+    background: url("@{pathImages}sprite-task.png") -100px -80px no-repeat;
+}
+#kanban .taskDetails .comments .delete:hover,
+#kanban .taskDetails .comments .worklog-delete:hover,
+#kanban .taskDetails .comments .edit:hover {
+    opacity: 1;
+}
+#kanban .taskDetails .comments .comment:hover .delete,
+#kanban .taskDetails .comments .comment:hover .edit {
+    display: block;
+}
+#kanban .taskDetails .comments .time-logged:hover .worklog-delete {
+    display: block;
+}
+
+
+#kanban .taskDetails .comments .comment {
+    min-height: 48px;
+/*    max-width: 680px;*/
+    margin-bottom: 20px;
+}
+#kanban .taskDetails .comments .comment .thin-green-button,
+#kanban .taskDetails .comments .comment .cancelLink {
+    float: right;
+}
+#kanban .taskDetails .comments .comment .thin-green-button {
+    margin-left: 0;
+}
+#kanban .taskDetails .comments .comment .cancelLink {
+    padding-top: 3px;
+    margin-left: 15px;
+}
+#kanban .taskDetails .comments .comment + .comment {
+    padding-top: 20px;
+    border-top: 1px solid #e9e9e9;
+}
+#kanban .taskDetails .comments .button { float: right; padding: 0 23px; margin: 5px 0 0 0; width: 80px; }
+#kanban .taskDetails .comments .comment.addComment { margin-bottom: 0px; position:relative; }
+#kanban .taskDetails .comments .comment.addComment.sending:after {
+    content: '';
+    display: block;
+    position: absolute;
+    left: 0px;
+    right: 0px;
+    top: 0px;
+    bottom: 0px;
+    background-color: rgba(255, 255, 255, 0.3);
+}
+#kanban .taskDetails .comments .comment .comment-dropzone-toggler {
+    float: right;
+    color: #000;
+    font-size: 14px;
+    padding: 4px 4px 4px 30px;
+    margin-right: 20px;
+    text-decoration: none;
+    line-height: 18px;
+    position: relative;
+}
+#kanban .taskDetails .comments .comment.addComment .comment-dropzone-toggler {
+    margin-top: 5px;
+}
+#kanban .taskDetails .comments .comment .comment-dropzone-toggler.hide:before {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAALRJREFUeNpivHbtmjADA8NiIPYD4j8MuEE8EC9kgir2BOKTQMyCQ/FcIF4AxMuYoCafA2IjHJrmAXESEH8D4lYmqDPMcWgCKU6EKjYD4qswCZimk0iaLkPdDVfMgGY9uiYjdMUgwITm3j/IkkDwCIhvIitgwuLBWKjJN4BYAz0gkDXMR/OgLraAYEJSnIDmZmyhx8QEDYkEbB5E03QMiP+BrFkExO6gSEFTjKzJFKQYxAEIMACm5TrCbtPyhAAAAABJRU5ErkJggg==');
+    background-size: 12px;
+}
+#kanban .taskDetails .comments .comment .comment-dropzone-toggler:hover span {
+    border-bottom-color: transparent;
+}
+#kanban .taskDetails .comments .comment .comment-dropzone-toggler:before {
+    content: "";
+    background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABYAAAAOCAYAAAArMezNAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAORJREFUeNpivHfvHgMBEAXE2UCsB+VfAuKpQLwMnyZGPAZzAPFRIDbCIX8OiK2B+Ac2SSY8luIzlAEqdwzkOFIMjiBgKAwYAnE4KQbnMhAPcvEZDPJOIRDfBuKfQGxJgsHG2ARZoIYeAmIbAgYUADE7EHeiiYPEPkLZ24E4DYg/gQwuItLQiUh8dMP5oDQovN2BWAGU3EDeVyHBUBAow2I4MlgJMhgUpmwkGAoDJUDcjUPuCzEuZkCKYBD4T4TaL6BUMZOB+mAryMXEpgpiXfwBiBWZoArtoKmDUrASlCJAhgMEGAAVhjajQEBotgAAAABJRU5ErkJggg==') 0 0 no-repeat;
+    background-size: 22px 14px;
+    width: 22px;
+    height: 14px;
+    position: absolute;
+    left: 0;
+    top: 7px;
+}
+#kanban .taskDetails .comments .comment .comment-dropzone-toggler span {
+    border-bottom: 1px dotted #000;
+}
+#kanban .taskDetails .comments .comment .files {
+    margin-top: 15px;
+    margin-left: 58px;
+}
+#kanban .taskDetails .comments .comment .files .content {
+    padding-left: 0;
+}
+#kanban .taskDetails .comments .comment .files .upload {
+    background: url('@{pathImages}comment-drop-bg.png') 50% no-repeat #f5f5f5;
+    border: 1px dashed #dcdde5;
+    background-clip: border-box;
+    height: 80px;
+    width: auto;
+    float: none;
+    margin: 0;
+}
+#kanban .taskDetails .comment .files .uploadify-button {
+    border: none;
+    background: none;
+}
+#kanban .taskDetails .comments .person {
+    float: left;
+    margin-bottom: -48px;
+}
+#kanban .taskDetails .comments .person span { position: static; }
+
+#kanban .taskDetails .comments .commentContent {
+/*    max-width: 618px;*/
+    margin-left: 58px;
+    overflow-x: hidden;
+    position: relative;
+}
+#kanban .taskDetails .comments .commentContent.scrumbanTextEditor {
+    overflow-x: visible;
+}
+
+#kanban .taskDetails .comments .date {
+    font-size: 12px;
+    color: #999;
+    height: 20px;
+    line-height: 20px;
+    margin-bottom: 11px;
+}
+#kanban .taskDetails .comments .text img {
+    max-width: 100%;
+}
+#kanban .taskDetails .comments .name {
+    font: bold 14px/22px Arial, sans-serif;
+    color: #369;
+    margin: -3px 0 3px;
+    display: block;
+}
+#kanban .taskDetails .comments .loader {
+    margin: 0;
+    height: 60px;
+    padding-top: 20px;
+    text-align: center;
+}
+#kanban .taskDetails .comments .loader .loader-image {
+    background: url("@{pathImages}loader-white.gif") 50% 50% no-repeat;
+    width: 32px;
+    height: 32px;
+    margin: 0 auto;
+}
+
+#kanban .taskDetails .comments div.quote {
+    border: 1px solid #ccc;
+    background-color: #eee;
+    padding: 10px;
+}
+
+#kanban .taskDetails .comments #form-comment-0 { display: none; }
+#kanban .taskDetails .comments .lhe-smiles-tlbr-table { display: none; }
+#kanban .taskDetails .comments .task-comments-wrap { display: none; }
+#kanban .taskDetails .comments .task-comments-form {
+    border: 1px solid #dcdde5;
+}
+#kanban .taskDetails .lhe-resize-row { display: none; }
+
+#kanban .taskDetails .popup.sprintSelectPopup {
+    margin-top: 40px;
+    margin-left: -50px;
+    padding: 5px 2px;
+}
+#kanban .taskDetails .popup.sprintSelectPopup .chzn-search {
+    display: none;
+}
+
+#kanban .taskDetails .sprintSelectorPopup .hoverArea .reset {
+    display: none;
+    left: 20px;
+    top: -10px;
+    padding: 0;
+    float: none;
+    margin: 0;
+}
+#kanban .taskDetails .sprintSelectorPopup.notset .hoverArea:hover .reset {
+    display: none;
+}
+#kanban .taskDetails .sprintSelectorPopup .hoverArea:hover .reset {
+    display: inline-block;
+}
+#kanban .taskDetails .sprintSelectorPopup .hoverArea .reset i {
+    background: url('@{pathImages}sprite-task.png') -215px -244px no-repeat;
+}
+
+#kanban .taskDetails .block {
+    opacity: 1;
+    -moz-transition: opacity 0.3s ease;
+    -webkit-transition: opacity 0.3s ease;
+    -o-transition: opacity 0.3s ease;
+    transition: opacity 0.3s ease;
+    min-height: 77px;
+    background: #fff;
+}
+
+#kanban .taskDetails .block.hide {
+    opacity: 0;
+}
+
+#kanban .taskInfo .properties .line.notifications .title {
+    width: 215px;
+}
+#kanban .taskInfo .properties .line.noEdit span {
+    border-bottom: none;
+}
+#kanban .taskInfo .properties .line.noEdit i {
+    display: none;
+}
+#kanban .taskInfo .properties .line.noEdit .chzn-container i {
+    display: inline-block;
+}
+
+#kanban .taskInfo .properties .line.notifications .value {
+    width: auto;
+    float: right;
+    margin: 12px 5px;
+    vertical-align: top;
+    line-height: 15px;
+    height: 15px;
+}
+
+/* GRID для редактирования маркеров */
+#markersEditGrid {
+    border: 1px solid #dfdfdf;
+    word-wrap: break-word;
+}
+#markersEditGrid .xhdr { display: none; }
+#markersEditGrid .objbox { overflow-x: hidden !important; }
+
+#markersEditGrid .objbox .obj tr td {
+    font: normal 14px/20px Arial, sans-serif !important;
+    color: #333;
+    word-wrap: break-word;
+}
+#markersEditGrid .objbox .obj tr td.cellselected {
+    /*noinspection CssNegativeValue*/
+    box-shadow: inset 0 0 -2px #5292f7;
+    background-color: transparent !important;
+}
+#markersEditGrid .objbox .obj tr td.editable {
+    /*noinspection CssNegativeValue*/
+    box-shadow: inset 0 0 -2px #5292F7, 0 0 20px #CCC;
+    padding: 2px !important;
+}
+#markersEditGrid .objbox .obj tr td.cellselected,
+#markersEditGrid .objbox .obj tr td.editable {
+    background:
+        url("data:image/gif;base64,R0lGODlhAgACAIAAAFKS9wAAACH5BAAAAAAALAAAAAACAAIAAAIChFEAOw==") 0 0    repeat-x,
+        url("data:image/gif;base64,R0lGODlhAgACAIAAAFKS9wAAACH5BAAAAAAALAAAAAACAAIAAAIChFEAOw==") 0 100% repeat-x,
+        url("data:image/gif;base64,R0lGODlhAgACAIAAAFKS9wAAACH5BAAAAAAALAAAAAACAAIAAAIChFEAOw==") 0 0    repeat-y,
+        url("data:image/gif;base64,R0lGODlhAgACAIAAAFKS9wAAACH5BAAAAAAALAAAAAACAAIAAAIChFEAOw==") 100% 0 repeat-y,
+        #fff;
+}
+
+#markersEditGrid .objbox .obj tr td textarea {
+    display: block;
+    padding: 0 8px 0 8px;
+    border: 0 none;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    font: normal 14px/20px Arial, sans-serif;
+    outline: none;
+    resize: none;
+    width: 100%;
+}
+#markersEditGrid .objbox .obj tr td:first-child textarea {
+    margin: 21px 0 7px 0;
+    padding: 0 8px 0 37px;
+}
+
+#markersEditGrid .objbox .obj tr:first-child + tr td {
+    border-top: none;
+    border-bottom: none;
+}
+#markersEditGrid .objbox .obj tr + tr + tr td {
+    border-top: 1px solid #dfdfdf;
+    border-bottom: none;
+}
+#markersEditGrid .objbox .obj td:first-child {
+    border-right: none;
+    border-left: none;
+    padding: 14px 10px;
+}
+#markersEditGrid .objbox .obj td:first-child + td {
+    border-right: none;
+    border-left: 1px solid #e3b1b2;
+    padding: 10px;
+    vertical-align: middle;
+}
+#markersEditGrid div.gridbox table.obj tr.rowselected td { background-color: transparent; }
+
+#markersEditGrid .label-square {
+    height: 20px;
+    width: 20px;
+    background: url("@{pathImages}sprite-task.png") 0 0 no-repeat;
+}
+#markersEditGrid .label-1 { background-position: 0 0; }
+#markersEditGrid .label-2 { background-position: 0 -25px; }
+#markersEditGrid .label-3 { background-position: 0 -50px; }
+#markersEditGrid .label-4 { background-position: 0 -75px; }
+#markersEditGrid .label-5 { background-position: 0 -100px; }
+#markersEditGrid .label-6 { background-position: 0 -125px; }
+#markersEditGrid .label-7 { background-position: 0 -150px; }
+#markersEditGrid .label-8 { background-position: 0 -175px; }
+
+#kanban .taskDetails .block.boardData .header { height: 68px; }
+#kanban .taskDetails .block.boardData.attention .header { height: 90px; }
+#kanban .taskDetails .block.boardData.attention .header .attention-message { font-size: 14px; }
+
+#kanban .taskDetails .block.boardData .inner { box-shadow: none; }
+
+#kanban .taskDetails .block.boardData .content {
+    border-top: 1px solid #EDEDED;
+    box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.1);
+    padding: 0 10px;
+    overflow: hidden;
+    white-space: nowrap;
+}
+#kanban .taskDetails .block.boardData .content .container {
+    font-size: 0;
+    padding: 0 5px 15px;
+    width: 715px;
+}
+#kanban .taskDetails .block.boardData .content .container .jspPane { top: 0 !important; }
+
+#kanban .taskDetails .block.boardData .column {
+    display: inline-block;
+    width: 225px;
+    vertical-align: top;
+    padding-top: 29px;
+    cursor: pointer;
+}
+#kanban .taskDetails .block.boardData .column .shadow {
+    font-size: 14px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.25);
+    padding: 10px 15px;
+    width: 195px;
+    background-color: #fff;
+}
+#kanban .taskDetails .block.boardData .column.edit {
+    cursor: default;
+}
+#kanban .taskDetails .block.boardData .column:hover .close,
+#kanban .taskDetails .block.boardData .column.edit  .close {
+    position: relative;
+    height: 14px;
+    cursor: pointer;
+    float: right;
+    margin: -23px 0 5px 0;
+    color: #999;
+    font-size: 12px;
+    font-style: normal;
+    border-bottom: 1px dotted #999;
+    padding: 0;
+}
+#kanban .taskDetails .block.boardData .column:hover .close:hover {
+    border-bottom-color: transparent;
+}
+
+#kanban .taskDetails .block.boardData .column + .column {
+    margin: 0 0 0 20px;
+}
+#kanban .taskDetails .block.boardData .chzn-single { font-size: 14px; }
+#kanban .taskDetails .block.boardData .column.edit .shadow {
+    box-shadow: 0 5px 5px rgba(0, 0, 0, .15), 0 -1px 3px rgba(0, 0, 0, .15);
+    padding: 15px;
+    width: 190px;
+}
+
+#kanban .taskDetails .block.boardData .column .startEdit {
+    float: right;
+    right: 10px;
+    visibility: hidden;
+    display: block;
+    width: 28px;
+    height: 30px;
+    margin: -2px -20px -10px -10px;
+    cursor: pointer;
+    background: url("data:image/gif;base64,R0lGODlhCAAKAIABALy/xP///yH5BAEAAAEALAAAAAAIAAoAAAIRjA1wmMr9UnQKsuDe2qt5UAAAOw==") 50% 50% no-repeat;
+    text-indent: -9999px;
+    overflow: hidden;
+    position: relative;
+    z-index: 2;
+}
+#kanban .taskDetails .block.boardData .column:hover .startEdit { visibility: visible; }
+
+#kanban .taskDetails .block.boardData .column h3 {
+    font: normal 18px/24px Arial, sans-serif;
+    height: 29px;
+    white-space: nowrap;
+    overflow: hidden;
+    color: #999;
+    border-bottom: 1px solid #eee;
+    position: relative;
+    margin-bottom: 9px;
+}
+#kanban .taskDetails .block.boardData .column h3:after {
+    content: "";
+    display: block;
+    position: absolute;
+    z-index: 1;
+    width: 10px;
+    height: 24px;
+    background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAABCAYAAADn9T9+AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAACNJREFUeNpi/P//vwADA4M4EEsDsRwQKwCxPJQtDZUTAAgwAIfMA/539xA/AAAAAElFTkSuQmCC") 100% 0 repeat-y;
+    top: 0;
+    right: 0;
+}
+
+#kanban .taskDetails .block.boardData .column .miniblock { float: right; margin-right: 0; }
+
+#kanban .taskDetails .block.boardData .column .taskStats {
+    font: normal 10px/18px Arial, sans-serif;
+    color: #999;
+}
+#kanban .taskDetails .block.boardData .column .taskStats i {
+    width: 17px;
+    height: 18px;
+    display: inline-block;
+    margin-right: 5px;
+    background: url("@{pathImages}sprite-task.png") -40px 0 no-repeat;
+    vertical-align: top;
+}
+#kanban .taskDetails .block.boardData .column .dodsList label {
+    padding-top: 10px;
+    display: block;
+    clear: both;
+    overflow: hidden;
+}
+#kanban .taskDetails .block.boardData .column input.titleInput {
+    border: 1px solid #cecece;
+    width: 183px;
+    height: 24px;
+    font: normal 14px/18px Arial, sans-serif;
+    color: #333;
+    display: block;
+    max-height: 70px;
+    margin: 0 0 14px 0;
+}
+#kanban .taskDetails .block.boardData .column select {
+    width: 195px;
+}
+#kanban .taskDetails .block.boardData .column input {
+    float: none;
+    display: inline-block;
+    width: 26px;
+    padding: 0 5px;
+    margin: 0 3px;
+    font-weight: normal;
+    border-color: #cecece;
+    color: #333;
+}
+#kanban .taskDetails .block.boardData .column label + .checklist > .sortableHere > .checkitem:first-child { margin-top: 10px; }
+#kanban .taskDetails .block.boardData .column.edit .taskStats {
+    font: normal 14px/27px Arial, sans-serif;
+    margin: 0 0 15px 0;
+}
+#kanban .taskDetails .block.boardData .column .checklist input {
+    width: 131px;
+    margin: 0;
+}
+
+#kanban .taskDetails .block.boardData .jspCorner { display: none; }
+#kanban .taskDetails .block.boardData .jspVerticalBar { display: none; }
+#kanban .taskDetails .block.boardData .jspHorizontalBar .jspTrack {
+    margin: -10px 0 0 0;
+    background: transparent;
+}
+#kanban .taskDetails .block.boardData .jspHorizontalBar .jspDrag {
+    background: #d7d7d7;
+    background: rgba(0, 0, 0, 0.15);
+}
+#kanban .taskDetails .block.boardData .checklist .checkitem {
+    height: auto;
+    white-space: normal;
+    padding: 0;
+    color: #333;
+}
+#kanban .taskDetails .block.boardData .checklist .checkitem b {
+    display: inline-block;
+}
+#kanban .taskDetails .block.boardData .checklist .checkitem .add {
+    margin-top: 10px;
+    margin-bottom: 15px;
+}
+#kanban .taskDetails .block.boardData .checklist .checkitem .move   { margin: 7px 2px 0; }
+#kanban .taskDetails .block.boardData .checklist .checkitem .delete { margin-right: -15px; }
+#kanban .taskDetails .block.boardData .checklist .checkitem input ~ b { margin: -5px 0; }
+
+#kanban .taskDetails .block.boardData .chzn-search { display: none; }
+#kanban .taskDetails .block.boardData .chzn-drop {
+    margin-top: 0;
+}
+#kanban .taskDetails .block.boardData select,
+#kanban .taskDetails .block.boardData .chzn-container { margin-bottom: 15px; }
+
+#kanban .taskDetails .block.buttons {
+    width: 770px;
+    height: 55px;
+}
+#kanban .taskDetails .block.buttons .content {
+    width: 770px;
+    height: 45px;
+    position: fixed;
+    z-index: 10;
+    background-color: #252525;
+    border-bottom: 10px solid #252525;
+    bottom: 0;
+    box-shadow: 0 -2px 5px 0 rgba(0, 0, 0, 0.15);
+    padding: 0;
+}
+#kanban .taskDetails .block.buttons .black {
+    height: 25px;
+    width: 730px;
+    padding: 10px 20px;
+    background: #fff;
+}
+
+.ie8 #kanban .taskDetails .block.buttons .content,
+.ie7 #kanban .taskDetails .block.buttons .content {
+    border-top: 1px solid #ccc;
+}
+
+#kanban .taskDetails .block.buttons .black > * {
+    float: right;
+    margin-left: 20px;
+}
+#kanban .taskDetails .block.buttons .black > .thin-green-button {
+    line-height: 25px;
+}
+#kanban .task-dods-placeholder {
+    display: block;
+    border: 1px dashed #999;
+    width: 145px;
+    height: 23px;
+    margin: 10px 10px 10px 0;
+}
+#kanban .timeUsed input.editValue,
+#kanban .timePlanned input.editValue {
+    padding: 0 5px;
+    width: 73px;
+    height: 23px;
+    margin-top: 7px;
+    margin-right: 10px;
+    font-weight: normal;
+}
+#kanban .timeUsed.wideData .value i { display: none; }
+#kanban .timeUsed.wideData input.editValue { width: 50px; }
+
+#kanban .taskInfo .properties .line.notifications .value {
+
+}
+#kanban .taskInfo .properties .line.notifications .value i {
+    width: 15px;
+    height: 15px;
+    margin: 0;
+    float: none;
+    display: block !important;
+}
+#kanban .taskInfo .properties .line.notifications .value input {
+    width: 15px;
+    height: 15px;
+    visibility: visible;
+    opacity: 0.01;
+    cursor: pointer;
+}
+
+#kanban .taskInfo .properties .line.responsibleChange .value,
+#kanban .taskInfo .properties .line.defaultResponsible .value {
+    display: block;
+    margin: -10px 0 10px 0;
+}
+#kanban .taskInfo .properties .line.defaultResponsible .value .responsible {
+    width: 37px;
+    height: 37px;
+    margin: 0 5px 5px 0;
+    display: inline-block;
+    background: 50% 50% no-repeat;
+    cursor: pointer;
+}
+
+#kanban .taskInfo .properties .line.defaultResponsible .value .responsible .item {
+    width: 37px;
+    height: 37px;
+}
+
+
+#kanban .ui-datetimepicker-date {
+    display: inline-block;
+    width: 97px;
+    cursor: pointer;
+    font-size: 14px;
+}
+#kanban .ui-datetimepicker-time {
+    display: inline-block;
+    width: 40px;
+    cursor: pointer;
+    font-size: 14px;
+}
+.ui-timepicker-list { margin-left: -50px; }
+.ui-timepicker-list.noMargin { margin-left: 0; }
+
+#kanban .taskInfo .properties .value span.dateSelectorOpener {
+    border: 0;
+    cursor: default; /* исключение для данного поля, внутрь его забит контроллер ввода даты-времени, настраивать надо на нем */
+}
+#kanban .taskInfo .properties .value span.dateSelectorOpener > span { height: 20px; }
+#kanban .taskInfo .properties .value span.dateSelectorOpener > span > span {
+    border: 0;
+}
+
+#kanban .deadline .ui-datetimepicker-date,
+#kanban .deadline .ui-datetimepicker-time {
+    width: auto;
+
+}
+
+#kanban .frameHover .taskDetails .dateSelectorOpener {
+    padding: 0 30px 0 6px;
+    position: relative;
+}
+#kanban .frameHover  .taskDetails .dateSelectorOpener:after {
+    content: '';
+    background: url("@{pathImages}sprite-icons.png") -190px -68px no-repeat;
+    width: 25px;
+    height: 16px;
+    margin-top: 4px;
+    position: absolute;
+    right: 8px;
+    top: 1px;
+}
+
+#kanban .taskDetails .dateCreate {
+    font-size: 12px;
+    color: #ccc;
+}
+
+#kanban .hiddenCopyableText {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    text-indent: -9999px;
+    overflow: hidden;
+}
+
+#kanban .taskInfo .line *::selection,
+#kanban .taskInfo .problem::selection,
+#kanban .taskInfo .problem *::selection,
+#kanban .taskDetails .block .header h3::selection,
+#kanban .taskDetails .block .header h3 *::selection,
+#kanban .taskDetails .block .content .propList *::selection,
+#kanban .taskDetails .block .content.jsDescription::selection,
+#kanban .taskDetails .block .content.jsDescription *::selection,
+#kanban .taskDetails .block.checklist .content .view *::selection,
+#kanban .taskDetails .block.subtasks .content table *::selection,
+#kanban .taskDetails .block.files .content .file *::selection,
+#kanban .taskDetails .block.comments .content .jsCommentList .commentContent *::selection
+{ background: #094ab7; color: #fff; }
+
+#kanban .taskInfo .line *::-moz-selection,
+#kanban .taskInfo .problem::-moz-selection,
+#kanban .taskInfo .problem *::-moz-selection,
+#kanban .taskDetails .block .header h3::-moz-selection,
+#kanban .taskDetails .block .header h3 *::-moz-selection,
+#kanban .taskDetails .block .content .propList *::-moz-selection,
+#kanban .taskDetails .block .content.jsDescription::-moz-selection,
+#kanban .taskDetails .block .content.jsDescription *::-moz-selection,
+#kanban .taskDetails .block.checklist .content .view *::-moz-selection,
+#kanban .taskDetails .block.subtasks .content table *::-moz-selection,
+#kanban .taskDetails .block.files .content .file *::-moz-selection,
+#kanban .taskDetails .block.comments .content .jsCommentList .commentContent *::-moz-selection
+{ background: #094ab7; color: #fff; }
+
+#kanban .frameHover .taskDetails .block.buttons::selection,
+#kanban .frameHover .taskDetails .block .iWantWatchTask::selection,
+#kanban .frameHover .taskDetails .block .iWantWatchTask *::selection,
+#kanban .frameHover .taskDetails .block.buttons *::selection
+{ background: transparent; }
+
+#kanban .frameHover .taskDetails .block.buttons::-moz-selection,
+#kanban .frameHover .taskDetails .block .iWantWatchTask::-moz-selection,
+#kanban .frameHover .taskDetails .block .iWantWatchTask *::-moz-selection,
+#kanban .frameHover .taskDetails .block.buttons *::-moz-selection
+{ background: transparent; }
+
+#kanban .taskDetails .gridbox .dateCreate { display: inline-block; }
+
+
+#kanban .taskInfo .properties .projectNames {
+    border-bottom: 1px solid #EEE;
+    padding: 5px 10px 5px 18px;
+}
+#kanban .taskInfo .properties .projectNames.edit {
+    height: 70px;
+}
+#kanban .taskInfo .properties .projectNames.edit .browse {
+    margin-top: 0;
+}
+
+#kanban .taskInfo .properties .projectNames .projectCode {
+    height: 38px;
+    padding-left: 21px;
+    background: url("data:image/gif;base64,R0lGODlhEQARALMPAP39/ebm5s3Nzdvb2+jo6O/v79LS0tzc3NbW1u3t7fr6+urq6vf39/7+/szMzP///yH5BAEAAA8ALAAAAAARABEAAAR78MnHyDHCHMKmX4gjjg6yeE8gDoXSKMUgBtMiJg0KJOLJhAmUh4eoOAY50YP0AMgsjoJESXI8Co6LQ4GiWhUOjCO3tHofDUdmOzW7H2BNtF0eXbOEY9KtdDo4QGhCD0QdNg44OjwOJxIqRy0vMTMoIFUiJoMVFxkbHRMRADs=") 0 50% no-repeat;
+    cursor: pointer;
+    display: none;
+}
+#kanban .taskInfo .properties .projectNames .projectTitle {
+    height: 30px;
+    cursor: pointer;
+    padding-left: 21px;
+    background: url("data:image/gif;base64,R0lGODlhEQARALMPAP39/ebm5s3Nzdvb2+jo6O/v79LS0tzc3NbW1u3t7fr6+urq6vf39/7+/szMzP///yH5BAEAAA8ALAAAAAARABEAAAR78MnHyDHCHMKmX4gjjg6yeE8gDoXSKMUgBtMiJg0KJOLJhAmUh4eoOAY50YP0AMgsjoJESXI8Co6LQ4GiWhUOjCO3tHofDUdmOzW7H2BNtF0eXbOEY9KtdDo4QGhCD0QdNg44OjwOJxIqRy0vMTMoIFUiJoMVFxkbHRMRADs=") 0 50% no-repeat;
+}
+#kanban .taskInfo .properties .projectNames .projectTitle span {
+    display: inline-block;
+    height: 24px;
+    max-width: 175px;
+    border-bottom: 1px dotted #000;
+    overflow: hidden;
+    font: bold 16px/32px Arial, sans-serif;
+    color: #000;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+#kanban .taskInfo .properties .projectNames .projectTitle.noEdit {
+    cursor: default;
+}
+#kanban .taskInfo .properties .projectNames .projectTitle.noEdit span {
+    border-bottom-color: transparent;
+}
+
+#kanban .taskInfo .properties .projectNames span {
+    display: inline-block;
+    height: 25px;
+    font: bold 11px/38px Arial, sans-serif;
+    border-bottom: 1px dotted #999;
+    color: #333;
+}
+#kanban .taskInfo .properties .projectNames div:hover span { border-bottom-color: transparent; }
+#kanban .taskInfo .properties .projectNames div i {
+    display: inline-block;
+    width: 26px;
+    height: 20px;
+    margin: 5px 0 -5px 0;
+    background: url("data:image/gif;base64,R0lGODlhCAAKAIABAHmAif///yH5BAEAAAEALAAAAAAIAAoAAAIRjA1wmMr9UnQKsuDe2qt5UAAAOw==") 50% 50% no-repeat;
+    cursor: pointer;
+    opacity: 0.5;
+}
+#kanban .taskInfo .properties .projectNames .noEdit i { display: none; }
+
+#kanban .taskInfo .properties .projectNames div:hover i:hover {
+    opacity: 1;
+}
+
+#kanban .taskInfo .properties .projectCode input,
+#kanban .taskInfo .properties .projectTitle input {
+    width: 224px;
+    margin-bottom: 10px;
+    margin-left: 1px;
+}
+
+#kanban .taskInfo .properties .projectCode.edit {
+    background: transparent;
+    padding-left: 0;
+    height: auto;
+    padding-bottom: 10px;
+}
+#kanban .taskInfo .properties .projectCode input {
+    margin-top: 3px;
+
+}
+
+#kanban .taskInfo .properties .browse {
+    margin-top: -21px;
+    margin-right: 4px;
+}
+#kanban .taskInfo .properties .projectNames .browse {
+    margin-top: -26px;
+}
+#kanban .taskInfo .properties .line.projectTitle .value {
+    width: auto;
+    float: right;
+    margin: 10px 2px 0 0;
+}
+
+#kanban .browse {
+    float: right;
+    display: block;
+    padding: 0;
+    margin: 0;
+    border: 0 none;
+    width: 27px;
+    height: 21px;
+    background: url("@{pathImages}sprite-icons.png") -400px -60px no-repeat;
+}
+
+#kanban .browse:hover  { background-position: -430px -60px; }
+#kanban .browse:active { background-position: -460px -60px; }
+
+#kanban .boardDetailsEditor .taskInfo .responsiblesList .item {
+    text-align: center;
+    cursor: default;
+    color: #fff;
+    font: bold 14px/37px Arial, sans-serif;
+    &.add {
+        background: url('@{pathImages}sprite-icons.png') -300px -30px;
+        cursor: pointer;
+        &:hover {
+            background-color: #f0f0f0;
+        }
+    }
+}
+
+#kanban .taskDetails .dateSelectorOpener > span {
+    max-width: 140px;
+    display: inline-block;
+    white-space: nowrap;
+}
+
+
+#kanban .popup-menu {
+    position: absolute;
+    top: 210px;
+    left: 99px;
+}
+#kanban .taskDetailsPanel .popup-menu { top: 40px; z-index: 100; }
+#kanban .popup-menu .ui-widget-content:after {
+    left: 19px;
+    top: -8px;
+}
+#kanban .popup-menu .ui-widget-content:before {
+    left: 18px;
+    top: -9px;
+}
+#kanban .popup-menu .ui-menu .ui-menu-item:hover a {
+    color: #666;
+    border-bottom-color: transparent;
+}
+
+/* Модификации стилей для доски планирования */
+
+#kanban .planningTaskDetailsPanel {
+
+}
+#kanban .planningTaskDetailsPanel .taskDetails .block .header {
+    position: static;
+}
+#kanban .planningTaskDetailsPanel .feed-post-menu-but {
+    right: 19px;
+    top: -1px;
+    z-index: 200;
+    display: none;
+}
+#kanban .planningTaskDetailsPanel .feed-post-menu-but.pinned,
+#kanban .planningTaskDetailsPanel:hover .feed-post-menu-but {
+    display: block;
+}
+#kanban .planningTaskDetailsPanel .taskDetails .block.mainData .content {
+    width: 100%;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    padding: 14px 20px 20px;
+    line-height: 20px;
+}
+#kanban .planningTaskDetailsPanel .taskDetails .mainData .content.edit textarea {
+    width: 100%;
+}
+#kanban .planningTaskDetailsPanel .taskDetails .block.comments .activity-tabs {
+    margin-right: 30px;
+}
+#kanban .planningTaskDetailsPanel .thin .taskDetails .block.comments .activity-tabs { margin: -4px 0 4px 30px; }
+#kanban .planningTaskDetailsPanel .taskDetails .block .content { padding: 10px 20px 20px 20px; }
+#kanban .planningTaskDetailsPanel .taskDetails .block.checklist .content { padding-left: 30px; }
+
+#kanban .taskDetailsPanel .jspHorizontalBar { display: none; }
+#kanban .taskDetailsPanel .jspVerticalBar {
+    opacity: 0;
+    -moz-transition: opacity 0.3s ease;
+    -webkit-transition: opacity 0.3s ease;
+    -o-transition: opacity 0.3s ease;
+    transition: opacity 0.3s ease;
+}
+#kanban .taskDetailsPanel:hover .jspVerticalBar { opacity: 1; }
+#kanban .planningTaskDetailsPanel .jspVerticalBar {
+    right: 5px;
+}
+#kanban .panelBody .taskNotSelected {
+    font-weight: normal;
+    line-height: 40px;
+    padding: 150px 70px 65px;
+    color: #ccc;
+    font-size: 24px;
+    width: 260px;
+    margin: 0 auto;
+    text-align: center;
+    background: url("data:image/gif;base64,R0lGODlhfwAzALMPAPz8/OHh4e3t7djY2Onp6fn5+fT09Pj4+Nra2t3d3fHx8dTU1PDw8OXl5f///////yH5BAEAAA8ALAAAAAB/ADMAAAT/8Mnpqr046827/2AoOhM1nmiqrhlgAKXEznRNC8kRP3bv/xpAIkCKAY/I20BRLCWf0BAgEAA0TdGs9sIwVHbbsPgqG5uh4LP6mF67UwLvpf2ugwwDAoZu7wcDAwV7Rn6FGQoLAhl8hoUCVYuEjY0AgpFOk5kaOy4HVpqaOwYLAwENAgqeoGIGlhuiCwtDCQgIQwRxBQCfq0AHCIocYAkLAQcHBgKPtAO2AQRdqr00Uwium0YEsXoWlcgCBAEJA81U0LzTJ9pMHWB4DQvcQQAHDAINAbYH6SgHeR9gACAgoI2BiAIv+J0oQADdKyNTqjRYovBNGgIDdgGSU/FMmlFe/wrk49hxhq4RaQr8c3Bg3L6SLAwAc9iOUEQLBRpcg7kwQYKdHtpgdEWTp5SNJ9oooGh0BQABTFFK+iWPS7CmHgywSyrJARUN2hpiZdOVAIKXGAQUAzp2Bp2lWzEwGJCAZNOnbKViqlAAGAcDAQyOBTAxbgo+VIpWUNxR5ADBLPiYzdsCZjXIkbs6wGOXQ4MGaBV2scGn71UPUGe2PawZAC4RB7QlYMDYjoHQPRjtOgF4gWE/Txc0qK2CkQoXxM8AYACIAOXMe38oUPBcC+Fiv3Nr7iGbQEI1Amg/MV7DBaBSApLbKKBAvfboRw48grTY/Qj5gBB0Hr/9SKULBJxym0F9GOy2GCDPfKcFeU+4dp4tkLlwWwEUXpBMgOJUNaAZDEJRiQIBctQSObXQ50BqPp1CYBIdmlGAPeCExwtCJ/kRAQA7") 0 100% no-repeat;
+}
+#kanban .planningTaskDetailsPanel .taskDetails .mainData .content.edit {
+    margin-top: 0;
+    position: static;
+}
+
+#kanban .planningTaskDetailsPanel .taskDetails .propList.responsible {
+    padding-top: 4px;
+}
+
+#kanban .planningTaskDetailsPanel .taskDetails .propList.accomplices {
+    padding-top: 8px;
+}
+
+#kanban .planningTaskDetailsPanel .taskDetails .responsible div.peopleItem {
+    margin: 0;
+    padding: 0;
+}
+
+#kanban .planningTaskDetailsPanel .taskDetails .checklist .task-group {
+    border-top: none;
+}
+
+#kanban .thin .taskDetails .gridbox .dateCreate {
+    color: #666;
+    font-size: 11px;
+}
+
+#kanban .taskSiblings {
+    top: 453px;
+    bottom: 10px;
+    position: fixed;
+    width: 270px;
+    padding: 45px 5px 10px;
+    overflow: hidden;
+    background: #fff;
+    -webkit-backface-visibility: hidden;
+    -webkit-transform: translateZ(0);
+}
+#kanban.smallDisplay .taskSiblings { top: 378px; }
+
+#kanban .taskSiblings .taskList {
+    height: 100%;
+}
+#kanban .taskSiblings h3 {
+    font: normal 18px/18px Arial, sans-serif;
+    padding: 0 0 10px 13px;
+    position: relative;
+    margin-top: -28px;
+}
+#kanban .taskSiblings .taskList .task {
+    width: 245px;
+    margin-bottom: 3px;
+    margin-top: 7px;
+    margin-left: 15px;
+}
+#kanban .taskSiblings .taskList .task .labels { margin-left: 0; }
+#kanban .taskSiblings .taskList.jspScrollable .task { width: 230px; }
+#kanban .taskSiblings .jspVerticalBar { right: 5px; }
+#kanban .taskSiblings .taskList .task:first-child {
+    margin-top: 3px;
+}
+
+#kanban .frameHover .taskSiblings .task .inner {
+    width: auto;
+}
+#kanban .taskSiblings .taskList .task .timeline,
+#kanban .taskSiblings .taskList .task .menuIcon,
+#kanban .taskSiblings .taskList .task:hover .menuIcon,
+#kanban .taskSiblings .taskList .task .responsible u,
+#kanban .taskSiblings .taskList .task:hover .responsible u,
+#kanban .taskSiblings .taskList .task .startEdit,
+#kanban .taskSiblings .taskList .task:hover .startEdit {
+    display: none;
+}
+
+#kanban .taskSiblings .taskList .taskSibling.current {
+    -moz-box-shadow: 0 5px 5px rgba(0, 0, 0, .15);
+    -webkit-box-shadow: 0 5px 5px rgba(0, 0, 0, .15);
+    box-shadow: 0 5px 5px rgba(0, 0, 0, .15);
+}
+#kanban .taskSiblings .taskList .taskSibling .title {
+    cursor: pointer;
+}
+
+
+#kanban .taskDetails #sprintTaskList .objbox .obj tr.grid-task-add {
+    position: relative;
+    margin-bottom: 0;
+    z-index: 1;
+}
+
+#kanban .taskDetails #sprintTaskList {
+    padding-top: 0;
+    border-right: 1px solid #dfdfdf;
+    border-bottom: 1px solid #dfdfdf;
+    border-left: 1px solid #DFDFDF;
+    z-index: 0;
+    position: relative;
+}
+#kanban .subtasks .taskAddPopup li {
+    margin: 4px 0 5px 24px;
+}
+#kanban .subtasks #sprintTaskList .objbox .obj td.grid-task-rank .type-task i {
+    margin-right: 5px;
+}
+#kanban .taskDetails .tags > span {
+    max-width: 530px;
+    padding-right:20px;
+    position: relative;
+    height: 18px;
+    overflow: hidden;
+
+}
+#kanban .taskDetails .tags > span i {
+    position: absolute;
+    display: inline-block;
+    right: 1px;
+    top: 3px;
+}
+#kanban .taskSibling .tag {
+    overflow: hidden;
+    max-width: 195px;
+}
+#kanban .taskSibling .tag:before {
+    display: block;
+    content: "";
+    height: 18px;
+    width: 5px;
+    margin: 0 0 -18px -9px;
+    position: absolute;
+    background: url("data:image/gif;base64,R0lGODlhBQASALMAAJWfq/n6+s/T2be+xqGqtJiirfv7+87T2P///4GNmwAAAAAAAAAAAAAAAAAAAAAAACH5BAAAAAAALAAAAAAFABIAAAQiEMkwJDpJGpBvykbxeV/4JcKZECp7pqc5YqMs0ZpoYRYVAQA7") 0 0 no-repeat;
+}
+
+#kanban .taskInfo .taskTitle {
+    margin-bottom: 9px;
+    height: 16px;
+    display: block;
+    line-height: 16px;
+    overflow: hidden;
+    color: #333;
+}
+
+#kanban .taskMediaLibrary {
+    min-height: 200px;
+    min-width: 400px;
+}
+
+#kanban .taskMediaLibrary .files .file {
+    width: 124px;
+    margin: 0 18px 18px 0;
+    font: normal 12px Arial, sans-serif;
+    float: left;
+}
+
+#kanban .taskMediaLibrary .files .file .image {
+    border: 1px solid #CCC;
+    padding: 5px;
+    width: 112px;
+}
+#kanban .taskMediaLibrary .files .file .image div {
+    width: 112px;
+    height: 112px;
+    background: 50% 50% no-repeat;
+}
+
+#kanban .taskMediaLibrary .files .file .image:hover {
+    box-shadow: 0 1px 2px rgba(51,51,51, 0.3);
+    cursor: pointer;
+}
+#kanban .taskMediaLibrary .files {
+    max-height: 280px;
+}
+
+#kanban .frameQuestionOverlay.inviteProjects .question {
+    padding-bottom: 0;
+    padding-top: 0;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: 0 !important;
+    background: rgba(0,0,0, 0.01);
+}
+#kanban .frameQuestionOverlay.inviteProjects .body {
+    width: 100vw !important;
+    height: 100vh !important;
+    max-width: 100vw !important;;
+    max-height: 100vh !important;
+}
+
+#kanban .steel-demoboard-popup-bitrix .thin-green-button {
+    margin-top: 10px;
+}
+#kanban .steel-demoboard-popup-bitrix .form-section,
+#kanban .steel-demoboard-popup-bitrix .form-inputs {
+    float: none;
+}
+
+#kanban .steel-demoboard-popup-bitrix .fields-inputs .inputs-domain {
+    width: 100%;
+}
+#kanban .taskDetails .budgetBlock {
+    padding-bottom: 85px;
+}
+#kanban .taskDetails .budgetBlock .propList:before,
+#kanban .taskDetails .budgetBlock .propList:after {
+    content: '';
+    display: table;
+    clear: both;
+}
+#kanban .taskDetails .budgetBlock .propList .value {
+    font: normal 14px/25px Arial, sans-serif;
+    color: #333;
+    height: auto;
+}
+#kanban .taskDetails .budgetBlock .propList .value input.editValue {
+    padding: 0 5px;
+    width: 73px;
+    height: 23px;
+    margin-right: 10px;
+    font-weight: normal;
+}
+#kanban .taskDetails .budgetBlock .propList .value span {
+    cursor: pointer;
+    border-bottom: 1px dotted #999;
+    display: inline-block;
+    line-height: 16px;
+    vertical-align: top;
+    padding-top: 3px;
+}
+#kanban .taskDetails .budgetBlock .propList .value span:hover {
+    border-bottom-color: transparent;
+}
+#kanban .taskDetails .budgetBlock .propList dt {
+    line-height: 25px;
+    height: auto;
+    width: 250px;
+    text-align: right;
+    padding-right: 5px;
+}
+
+
+.bx-ie #kanban .objbox {
+    padding-bottom: 10px;
+}
+
+#kanban .taskDetails .suppose {
+    position: relative;
+}
+#kanban .taskDetails .suppose .loader {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, .15);
+    z-index: 1;
+}
+    #kanban .taskDetails .suppose .loader .shortLoader {
+        position: absolute;
+        top: -80px;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        margin: auto;
+    }
+
+#kanban .taskDetails .suppose label {
+    line-height: 15px;
+    color: #000;
+    width: 120px;
+    display: inline-block;
+}
+#kanban .taskDetails .suppose .measure {
+    position: relative;
+}
+#kanban .taskDetails .suppose .measure .miniblock.goal-reaches {
+    margin-left: 10px;
+}
+#kanban .taskDetails .suppose .measure .thumbsUp,
+#kanban .taskDetails .suppose .measure .thumbsDown {
+    position: static;
+    display: inline-block;
+    vertical-align: bottom;
+    margin: 0 10px 6px 0;
+}
+#kanban .taskDetails .suppose .measure label {
+    width: 90px;
+}
+
+#kanban .taskDetails .suppose .measure input[type="text"] {
+    width: 70px;
+}
+#kanban .taskDetails .suppose label i {
+    margin-right: 5px;
+}
+#kanban .taskDetails .suppose label input[type="text"] {
+    height: 14px;
+    line-height: 14px;
+    width: 134px;
+    padding: 5px 10px;
+}
+#kanban .taskDetails .suppose .source-switch label {
+    display: inline-block;
+    line-height: 15px;
+}
+#kanban .taskDetails .suppose .source-switch label i {
+    vertical-align: bottom;
+}
+#kanban .taskDetails .suppose .source-switch label input[disabled] + i + span {
+    -webkit-filter: grayscale(100%);
+    filter: grayscale(100%);
+    opacity: .6;
+}
+#kanban .taskDetails .suppose .source-switch .ga-label {
+    background: url("@{pathImages}sprite-icons.png") 0 -479px;
+    width: 54px;
+    height: 17px;
+    display: inline-block;
+}
+#kanban .taskDetails .suppose .source-switch .ym-label {
+    background: url("@{pathImages}sprite-icons.png") -56px -479px;
+    width: 45px;
+    height: 19px;
+    display: inline-block;
+}
+#kanban .taskDetails .suppose .source-switch a {
+    vertical-align: bottom;
+    line-height: 24px;
+}
+#kanban .taskDetails .suppose .counter select {
+    min-width: 200px;
+}
+#kanban .taskDetails .suppose .goal select {
+    min-width: 150px;
+}
+#kanban .taskDetails .suppose .chzn-container {
+    vertical-align: middle;
+}
+#kanban .suppose-chart .thumbsUp,
+#kanban .suppose-chart .thumbsDown {
+    top: 50px;
+    right: 50px;
+    z-index: 1;
+}
+
+#kanban .frameQuestionOverlay .user-fields {
+    padding-bottom: 0;
+    .field-row {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        width: 350px;
+        +.field-row {
+            margin-top: 10px;
+        }
+    }
+    label {
+        flex: 1;
+        margin-right: 10px;
+        padding: 6px 0 5px;
+        max-width: 85px;
+    }
+    .inp-wrapper {
+        flex: 3;
+        input[type="text"],
+        input[type="number"] {
+            width: 100%;
+            height: 27px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+        input[type="checkbox"] {
+            width: 15px;
+            height: 15px;
+            margin-top: 7px;
+        }
+    }
+
+    .button-wrapper {
+        margin-top: 25px;
+        text-align: center;
+    }
+
+    .dateSelectorOpener {
+        padding: 0 30px 0 6px;
+        position: relative;
+        margin: 0;
+        &:after {
+            content: '';
+            background: url('@{pathImages}sprite-icons.png') -190px -68px no-repeat;
+            width: 25px;
+            height: 16px;
+            margin-top: 4px;
+            position: absolute;
+            right: 8px;
+            top: 1px;
+        }
+    }
+
+    .ui-timepicker-list {
+        padding: 4px;
+        li {
+            padding: 3px 0 3px 5px;
+            margin-bottom: 0;
+        }
+    }
+}

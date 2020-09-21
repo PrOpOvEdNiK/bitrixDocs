@@ -1,0 +1,3 @@
+<?
+$MESS["IMBOT_PROPERTIES_SHOW_MORE"] = "Więcej";
+?>

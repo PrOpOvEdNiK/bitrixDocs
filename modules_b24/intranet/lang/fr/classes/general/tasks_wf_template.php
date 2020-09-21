@@ -1,0 +1,66 @@
+<?
+$MESS["INTASK_WF_TMPL_BP_NAME"] = "Modèle du flux des tâches de service";
+$MESS["INTASK_WF_TMPL_Closed"] = "Accompli";
+$MESS["INTASK_WF_TMPL_Completed"] = "Achevé(e)s";
+$MESS["INTASK_WF_TMPL_DESC"] = "Modèle du flux des tâches de service";
+$MESS["INTASK_WF_TMPL_Deferred"] = "Différé";
+$MESS["INTASK_WF_TMPL_FRAXR_Closed_ONINIT"] = "Le statut de la tâche a été changé en 'Fermée'.";
+$MESS["INTASK_WF_TMPL_FRAXR_Completed_ONINIT"] = "Le statut de la tâche a été changé en 'Terminée'.";
+$MESS["INTASK_WF_TMPL_FRAXR_Deferred_ONINIT"] = "Le Statut de tâche a été changé contre 'Ajournée'.";
+$MESS["INTASK_WF_TMPL_FRAXR_InProgress_ONINIT"] = "Le statut de la tâche a changé contre 'En cours de réalisation'.";
+$MESS["INTASK_WF_TMPL_FRAXR_NotAccepted_ONINIT"] = "La tâche a pour statut 'Non acceptée'.";
+$MESS["INTASK_WF_TMPL_FRAXR_NotStarted_ONINIT"] = "Le statut de la tâche a changé à 'N'a pas débuté'.";
+$MESS["INTASK_WF_TMPL_FRAXR_SetResponsibleEvent"] = "Le responsable de la tâche a été changé. Le nouveau responsable {=Document:PROPERTY_TaskAssignedTo_PRINTABLE}";
+$MESS["INTASK_WF_TMPL_FRAXR_Waiting_ONINIT"] = "Le statut de la tâche a été changé pour 'En attente'.";
+$MESS["INTASK_WF_TMPL_HEEA_T_ApproveEvent"] = "Accepter";
+$MESS["INTASK_WF_TMPL_HEEA_T_CloseEvent"] = "Fermer";
+$MESS["INTASK_WF_TMPL_HEEA_T_CompleteEvent"] = "Achever";
+$MESS["INTASK_WF_TMPL_HEEA_T_DeferredEvent"] = "Reporter";
+$MESS["INTASK_WF_TMPL_HEEA_T_InProgressEvent"] = "Commencer l'exécution";
+$MESS["INTASK_WF_TMPL_HEEA_T_NotStartedEvent"] = "N'a pas commencé";
+$MESS["INTASK_WF_TMPL_HEEA_T_SetResponsibleEvent"] = "Changer le responsable";
+$MESS["INTASK_WF_TMPL_HEEA_T_WaitingEvent"] = "Attend l'exécution";
+$MESS["INTASK_WF_TMPL_InProgress"] = "En cours";
+$MESS["INTASK_WF_TMPL_NAME"] = "Modèle du flux des tâches de service";
+$MESS["INTASK_WF_TMPL_NotAccepted"] = "Non accepté(e)";
+$MESS["INTASK_WF_TMPL_NotStarted"] = "N'a pas commencé";
+$MESS["INTASK_WF_TMPL_SLAXR_SetResponsibleEvent"] = "Le responsable pour la tâche '#TITLE#' a été changé.";
+$MESS["INTASK_WF_TMPL_SLAX_Closed_LOGTITLE"] = "Le statut de la tâche '#TITLE#' a été changé pour 'Fermée'.";
+$MESS["INTASK_WF_TMPL_SLAX_Completed_LOGTITLE"] = "Etat de la tâche '#TITLE#' changé en 'Terminé'.";
+$MESS["INTASK_WF_TMPL_SLAX_Deferred_LOGTITLE"] = "Le statut de la tâche '#TITLE#' a été changé à 'Reportée'.";
+$MESS["INTASK_WF_TMPL_SLAX_InProgress_LOGTITLE"] = "Etat de la tâche '#TITLE#' changé en 'Running'.";
+$MESS["INTASK_WF_TMPL_SLAX_LOGTEXT"] = "Niveau d'importance : {=Document:PROPERTY_TaskPriority}
+Date de début : {=Document:ACTIVE_FROM}
+Date de fin : {=Document:ACTIVE_TO}
+Responsable : {=Document:PROPERTY_TaskAssignedTo_PRINTABLE}";
+$MESS["INTASK_WF_TMPL_SLAX_NotAccepted_LOGTITLE"] = "Tâche '#TITLE#' dans le statut 'Non acceptée'.";
+$MESS["INTASK_WF_TMPL_SLAX_NotStarted_LOGTITLE"] = "Le statut de la tâche '#TITLE#' est remplacé par 'N'est pas commencée'.";
+$MESS["INTASK_WF_TMPL_SLAX_Waiting_LOGTITLE"] = "Le statut de la tâche '#TITLE#' a changé en 'Attente'.";
+$MESS["INTASK_WF_TMPL_SNMA95_MT_NotAccepted"] = "Message sur la création d'une tâche";
+$MESS["INTASK_WF_TMPL_SNMA95_M_NotAccepted"] = "Nouvelle tâche '[url={=Template:PathTemplate}]{=Document:NAME}[/url]' est créée.";
+$MESS["INTASK_WF_TMPL_SNMA_MT_ApproveEvent"] = "Groupe Acceptation Notification";
+$MESS["INTASK_WF_TMPL_SNMA_MT_CloseEvent"] = "Message sur la fermeture";
+$MESS["INTASK_WF_TMPL_SNMA_MT_CompleteEvent"] = "Notification d'achèvement des tâches";
+$MESS["INTASK_WF_TMPL_SNMA_MT_DeferredEvent"] = "Message sur le report";
+$MESS["INTASK_WF_TMPL_SNMA_MT_InProgressEvent"] = "Notification de début d'exécution";
+$MESS["INTASK_WF_TMPL_SNMA_MT_NotStartedEvent"] = "Message";
+$MESS["INTASK_WF_TMPL_SNMA_MT_SetResponsibleEvent"] = "Message sur le remplacement du responsable";
+$MESS["INTASK_WF_TMPL_SNMA_MT_WaitingEvent"] = "Groupe Suspension Notification";
+$MESS["INTASK_WF_TMPL_SNMA_M_ApproveEvent"] = "La tâche '[url = {= Modèle : PathTemplate}] {= Document : NAME} [/ url]' a été acceptée par responsable pour l'exécution.";
+$MESS["INTASK_WF_TMPL_SNMA_M_CloseEvent"] = "La tâche '[url={=Template:PathTemplate}] {=Document:NAME} [/url]' est fermée.";
+$MESS["INTASK_WF_TMPL_SNMA_M_CompleteEvent"] = "L'exécution de la tâche '[url={=Template:PathTemplate}]{=Document:NAME}[/url]' est achevée.";
+$MESS["INTASK_WF_TMPL_SNMA_M_DeferredEvent"] = "La tâche '[url={=Template:PathTemplate}]{=Document:NAME}[/url]' a été reportée.";
+$MESS["INTASK_WF_TMPL_SNMA_M_InProgressEvent"] = "L'exécution de la tâche '[url={=Template:PathTemplate}]{=Document:NAME}[/url]' a commencé.";
+$MESS["INTASK_WF_TMPL_SNMA_M_NotStartedEvent"] = "L'exécution de la tâche '[url={=Template:PathTemplate}]{=Document:NAME}[/url]' n'est pas commencée.";
+$MESS["INTASK_WF_TMPL_SNMA_M_SetResponsibleEvent"] = "Un nouveau responsable pour la tâche '[url = {= Modèle : PathTemplate}] {= Document : NAME} [/ url]' est déterminé";
+$MESS["INTASK_WF_TMPL_SNMA_M_WaitingEvent"] = "La tâche '[url={=Template:PathTemplate}]{=Document:NAME}[/url]' a été mise en état de veille.";
+$MESS["INTASK_WF_TMPL_SSA_S_ApproveEvent"] = "Mettre le statut 'Pas encore commencé'";
+$MESS["INTASK_WF_TMPL_SSA_S_CloseEvent"] = "Définir l'état 'Fermé'";
+$MESS["INTASK_WF_TMPL_SSA_S_CompleteEvent"] = "Set 'Terminé' Etat";
+$MESS["INTASK_WF_TMPL_SSA_S_DeferredEvent"] = "Mettre le statut 'Reportée'";
+$MESS["INTASK_WF_TMPL_SSA_S_InProgressEvent"] = "Mettre un statut 'En exécution'";
+$MESS["INTASK_WF_TMPL_SSA_S_NotStartedEvent"] = "Mettre le statut 'Pas encore commencé'";
+$MESS["INTASK_WF_TMPL_SSA_S_SetResponsibleEvent"] = "Mettre le statut 'Non reçue'";
+$MESS["INTASK_WF_TMPL_SSA_S_WaitingEvent"] = "Désigner le statut comme 'En attente'";
+$MESS["INTASK_WF_TMPL_Waiting"] = "Attend l'exécution";
+?>

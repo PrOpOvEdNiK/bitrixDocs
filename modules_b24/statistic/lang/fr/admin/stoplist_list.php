@@ -1,0 +1,37 @@
+<?
+$MESS["SAVE_ERROR"] = "Erreur de modification de note #";
+$MESS["STAT_ACTIVE"] = "Actif(ve)";
+$MESS["STAT_COMMENT"] = "Commentaire";
+$MESS["STAT_CONFIRM_DEL_STOP"] = "tes-vous sûr de vouloir supprimer cette entrée ?";
+$MESS["STAT_DATE_END"] = "Achèvement";
+$MESS["STAT_DATE_START"] = "Commencer";
+$MESS["STAT_F_ACTIVE"] = "Actif(ve)";
+$MESS["STAT_F_COMMENTS"] = "Commentaire";
+$MESS["STAT_F_DATE_END"] = "Date de clôture";
+$MESS["STAT_F_DATE_START"] = "A partir de la date";
+$MESS["STAT_F_FROM"] = "De";
+$MESS["STAT_F_ID"] = "ID";
+$MESS["STAT_F_IP"] = "Adresse IP";
+$MESS["STAT_F_LOGIC"] = "Logic entre les champs";
+$MESS["STAT_F_MESSAGE"] = "Lettre";
+$MESS["STAT_F_REDIRECT"] = "Rediriger";
+$MESS["STAT_F_SITE"] = "Site";
+$MESS["STAT_F_STATISTIC"] = "Ajouter les statistiques";
+$MESS["STAT_F_TO"] = "Dans";
+$MESS["STAT_F_USER_AGENT"] = "UserAgent";
+$MESS["STAT_GREEN_LAMP"] = "L'enregistrement est actif";
+$MESS["STAT_IP"] = "Adresse IP";
+$MESS["STAT_LAMP_ACTIVE"] = "Active record.";
+$MESS["STAT_LAMP_NOT_ACTIVE"] = "Enregistrez pas actif.";
+$MESS["STAT_MASK"] = "Masque Net";
+$MESS["STAT_MESSAGE"] = "Lettre";
+$MESS["STAT_RECORDS_LIST"] = "Stop-liste";
+$MESS["STAT_RECORD_STATUS"] = "Statut d'activité";
+$MESS["STAT_REDIRECT"] = "Rediriger (URL)";
+$MESS["STAT_RED_LAMP"] = "La note n'est pas active";
+$MESS["STAT_REFERER"] = "De";
+$MESS["STAT_STAT"] = "Stat.";
+$MESS["STAT_STOP_PAGES"] = "Enregistrement";
+$MESS["STAT_URL_TO"] = "Dans";
+$MESS["STAT_USER_AGENT"] = "UserAgent";
+?>

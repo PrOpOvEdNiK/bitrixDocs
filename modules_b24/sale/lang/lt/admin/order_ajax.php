@@ -1,0 +1,37 @@
+<?
+$MESS["SALE_OA_SHIPMENT_STATUS_ERROR"] = "Klaida";
+$MESS["SALE_OA_ERROR_HAPPENED"] = "Užklausos vykdymo metu įvyko klaida";
+$MESS["SALE_OA_ERROR_DELIVERY_SERVICE"] = "Pristatymo paslaugos neatitinka apribojimų";
+$MESS["SALE_OA_ERROR_PAY_SYSTEM_INFO"] = "Neteisingas mokėjimo sistemos atsakymas";
+$MESS["SALE_OA_ERROR_INCORRECT_DATE"] = "Neteisingas datos formatas";
+$MESS["SALE_OA_ERROR_PAYSYSTEM_SERVICE"] = "Mokėjimo sistemai apribojimai netaikomi.";
+$MESS["SALE_OA_ERROR_CANCEL_ORDER"] = "Nepakanka teisių užsakymo atšaukimui";
+$MESS["SALE_OA_ERROR_LOAD_ORDER"] = "Nepavyko rasti užsakymo ID #";
+$MESS["SALE_OA_ERROR_CANCEL_ORDER_ALREADY"] = "Užsakymas jau atšauktas.";
+$MESS["SALE_OA_ERROR_CANCEL_ORDER_NOT_YET"] = "Užsakymas dar neatšauktas.";
+$MESS["SALE_OA_ERROR_CREATE_ORDER"] = "Nepavyko sukurti užsakymo.";
+$MESS["SALE_OA_ERROR_ORDER_ID_WRONG"] = "Neteisingas užsakymo ID.";
+$MESS["SALE_OA_ERROR_SHIPMENT_ID_WRONG"] = "Neteisingas pristatymo ID.";
+$MESS["SALE_OA_ERROR_PAYMENT_ID_WRONG"] = "Neteisingas mokėjimo ID.";
+$MESS["SALE_OA_ERROR_UNMARK_RIGHTS"] = "Nepakankam teisių užsakymo žymei, kaip problematiško, pašalinti";
+$MESS["SALE_OA_ERROR_LOAD_PAYMENT"] = "Nepavyko rasti mokėjimą ID #";
+$MESS["SALE_OA_ERROR_LOAD_SHIPMENT"] = "Nepavyko rasti pristatymą ID #";
+$MESS["SALE_OA_ERROR_HAPPENED2"] = "Klaida apdorojant prašymą. Galimos priežastys: naudotojas neturi pakankamai teisių; PHP sesijos saugojimas vyksta su trukdžiais; POST užklausos trumpinamos dėl PHP arba serverio.";
+$MESS["SALE_OA_ERROR_DELETE_SHIPMENT_PERMISSION"] = "Jūs neturite leidimo ištrinti šią siuntą.";
+$MESS["SALE_OA_ERROR_DELETE_PAYMENT_PERMISSION"] = "Jūs neturite leidimo ištrinti šį mokėjimą.";
+$MESS["SALE_OA_PERMISSION"] = "Nepakankamos teisės.";
+$MESS["SALE_OA_ERROR_CONNECT_PAY_SYS"] = "Nepavyko prisijungti prie mokėjimo sistemos";
+$MESS["SALE_CASHBOX_SELECT_TYPE"] = "Pasirinkite kvito tipą";
+$MESS["CASHBOX_ADD_CHECK_INPUT_ORDER"] = "Įveskite užsakymo ID";
+$MESS["CASHBOX_ADD_CHECK_SELECT_PAYMENT"] = "Mokėjimo metodas";
+$MESS["CASHBOX_ADD_CHECK_SELECT_SHIPMENT"] = "Siuntimas";
+$MESS["CASHBOX_ADD_CHECK_SELECT_TYPE"] = "Pasirinkite kvito tipą";
+$MESS["CASHBOX_ADD_CHECK_NOT_SELECTED"] = "Nepasirinkta";
+$MESS["CASHBOX_CREATE_CHECK_ERROR_ORDER_ID"] = "Nepavyko sukurti kvitą, nes užsakymo ID yra neteisingas.";
+$MESS["CASHBOX_CREATE_CHECK_ERROR_EMPTY_PAYMENT"] = "Nepavyko sukurti kvitą, nes nepasirinktas mokėjimas.";
+$MESS["CASHBOX_CREATE_CHECK_ERROR_PAYMENT_ID"] = "Nepavyko sukurti kvitą, nes pasirinktas mokėjimas neteisingas.";
+$MESS["CASHBOX_CREATE_CHECK_ERROR_EMPTY_SHIPMENT"] = "Nepavyko sukurti kvitą, nes nepasirinktas siuntimas.";
+$MESS["CASHBOX_CREATE_CHECK_ERROR_SHIPMENT_ID"] = "Nepavyko sukurti kvitą, nes pasirinktas siuntimas yra neteisingas.";
+$MESS["CASHBOX_CREATE_CHECK_ERROR_TYPE"] = "Nepavyko sukurti kvitą, nes tipas yra neteisingas.";
+$MESS["CASHBOX_ADD_ZREPORT_WRONG_CHECKBOX"] = "Pasirinktas neteisingas kasos aparatas";
+?>

@@ -1,0 +1,9 @@
+<?
+$MESS["CRM_COLUMN_DEAL_CATEGORY_CREATED_DATE"] = "Creado el";
+$MESS["CRM_COLUMN_DEAL_CATEGORY_ID"] = "ID";
+$MESS["CRM_COLUMN_DEAL_CATEGORY_NAME"] = "Nombre";
+$MESS["CRM_COLUMN_DEAL_CATEGORY_SORT"] = "Clasificar";
+$MESS["CRM_DEAL_CATEGORY_DEFAULT_NAME"] = "Nueva pipeline";
+$MESS["CRM_MODULE_NOT_INSTALLED"] = "El módulo CRM no está instalado.";
+$MESS["CRM_PERMISSION_DENIED"] = "Acceso denegado";
+?>

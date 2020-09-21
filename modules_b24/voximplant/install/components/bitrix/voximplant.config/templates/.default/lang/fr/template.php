@@ -1,0 +1,32 @@
+<?
+$MESS["VI_CONFIG_BUY"] = "Louer un numéro de téléphone";
+$MESS["VI_CONFIG_BUY_DESC_1"] = "acheminer les appels à travers les employés";
+$MESS["VI_CONFIG_BUY_DESC_2"] = "enregistrer les appels";
+$MESS["VI_CONFIG_BUY_DESC_3"] = "intégration CRM complète";
+$MESS["VI_CONFIG_BUY_DESC_4"] = "tarifs compétitifs";
+$MESS["VI_CONFIG_BUY_DESC_5"] = "numéros de téléphone dans plus de 50 pays";
+$MESS["VI_CONFIG_LINK"] = "Connectez-vous à votre numéro";
+$MESS["VI_CONFIG_LINK_DESC_1"] = "appels sortants uniquement";
+$MESS["VI_CONFIG_LINK_DESC_2"] = "ne pas acheter de numéro de téléphone dans Bitrix24";
+$MESS["VI_CONFIG_LINK_DESC_3"] = "ajouter l'appel au journal du profil du client";
+$MESS["VI_CONFIG_LINK_DESC_4"] = "enregistrer les appels sortants";
+$MESS["VI_CONFIG_LINK_DESC_5"] = "supporte les rappels";
+$MESS["VI_CONFIG_NOTICE_NEW"] = "Sélectionnez le numéro d'appel sortant par défaut ici : '#LINK_CONFIG#'. Mettre en place l'extension numéros de téléphone ici : '#LINK_USERS#'.";
+$MESS["VI_CONFIG_OWN"] = "Connectez votre PBX";
+$MESS["VI_CONFIG_OWN_DESC_1"] = "acheminer les appels à travers les employés";
+$MESS["VI_CONFIG_OWN_DESC_2"] = "enregistrer les appels";
+$MESS["VI_CONFIG_OWN_DESC_3"] = "intégration CRM complète";
+$MESS["VI_CONFIG_OWN_DESC_4"] = "payer votre fournisseur de téléphonie";
+$MESS["VI_CONFIG_PAGE_CONFIG"] = "Autres Paramètres";
+$MESS["VI_CONFIG_PAGE_CONFIG_USERS"] = "Les utilisateurs de téléphonie";
+$MESS["VI_CONFIG_PARTNERS_TITLE"] = "Téléphonie partenaire";
+$MESS["VI_CONFIG_RENT"] = "Louer un certain nombre";
+$MESS["VI_CONFIG_RENT_2_DESC"] = "Connectez un numéro de téléphone, appelez et recevez des appels dans Bitrix24. Profitez d'un système pratique et payez moins !";
+$MESS["VI_CONFIG_RENT_DESC"] = "Louer un certain nombre de notre opérateur et accepter les appels directement à l'intérieur Bitrix24. Il est facile, pratique, et aide votre entreprise !";
+$MESS["VI_CONFIG_SET"] = "Connecter";
+$MESS["VI_CONFIG_SET_ACTIVE"] = "Connecté";
+$MESS["VI_CONFIG_SET_OTHER"] = "Connectez-vous via l'application marketplace";
+$MESS["VI_CONFIG_SIP"] = "Connectez SIP PBX";
+$MESS["VI_CONFIG_SIP_DESC"] = "Avez-vous votre propre PBX ? Branchez-le et appelez directement depuis Bitrix24.";
+$MESS["VI_CONFIG_WELCOME_MESSAGE"] = "Appelez vos clients depuis Bitrix24 à des tarifs abordables. Louez un numéro pour accepter les appels entrants. Enregistrez les conversations, ajoutez des évènements d'appels entrants au CRM, créez des contacts à partir des appels entrants et consultez les rapports d'appels avec Bitrix24.";
+?>

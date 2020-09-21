@@ -1,0 +1,30 @@
+<?
+$MESS["CRM_CH_TRACKER_WGT_ACTIVITY_DYNAMIC"] = "Visão geral de comunicação";
+$MESS["CRM_CH_TRACKER_WGT_AMOUNT_OF_SALE"] = "Total de vendas";
+$MESS["CRM_CH_TRACKER_WGT_ANIMATION_1"] = "Você pode ver o vídeo novamente ao clicar neste ícone.";
+$MESS["CRM_CH_TRACKER_WGT_ANIMATION_2"] = "Conecte mais canais de comunicação ao seu CRM Bitrix24: Telefonia, E-mail, Canais Abertos, Formulários de CRM.";
+$MESS["CRM_CH_TRACKER_WGT_ANIMATION_3_EMPLOYEE"] = "Use seu contador pessoal para avaliar seu desempenho: o CRM mantém controle de suas tarefas concluídas e restantes de hoje. Seu objetivo é não ter nenhuma tarefa inacabada no final do dia.";
+$MESS["CRM_CH_TRACKER_WGT_ANIMATION_3_SUPERVISOR"] = "Use contadores para visualizar o progresso atual dos seus funcionários: tarefas concluídas e restantes de hoje. Os seus funcionários trabalharam bem se não houver nenhuma tarefa restante no final do dia.";
+$MESS["CRM_CH_TRACKER_WGT_ANIMATION_4"] = "Você pode habilitar a exibição de demo a qualquer momento.";
+$MESS["CRM_CH_TRACKER_WGT_COMMUNICATION_DYNAMIC"] = "Carga de comunicação ";
+$MESS["CRM_CH_TRACKER_WGT_COMMUNICATION_DYNAMIC_EMAIL"] = "E-mail";
+$MESS["CRM_CH_TRACKER_WGT_COMMUNICATION_DYNAMIC_FORM"] = "Formulários de CRM";
+$MESS["CRM_CH_TRACKER_WGT_COMMUNICATION_DYNAMIC_OPENLINES"] = "Messengers e serviços sociais";
+$MESS["CRM_CH_TRACKER_WGT_COMMUNICATION_DYNAMIC_TELEPHONY"] = "Telefonia";
+$MESS["CRM_CH_TRACKER_WGT_DEAL_PROCESS_SUM"] = "Total do Negócios em andamento";
+$MESS["CRM_CH_TRACKER_WGT_DEAL_SUCCESS_SUM"] = "Valor de negócios ganhos";
+$MESS["CRM_CH_TRACKER_WGT_DEAL_SUCCESS_SUM_PER_DAY"] = "Vendas hoje";
+$MESS["CRM_CH_TRACKER_WGT_DEAL_SUCCESS_SUM_PER_MONTH"] = "Vendas deste mês";
+$MESS["CRM_CH_TRACKER_WGT_DEMO_TITLE"] = "Esta é uma exibição de demonstração. Ocultar para analisar seus dados.";
+$MESS["CRM_CH_TRACKER_WGT_MANAGERS_FAILS"] = "Contadores do gerente";
+$MESS["CRM_CH_TRACKER_WGT_MANAGERS_SUCCESSES"] = "Vendas do gerente";
+$MESS["CRM_CH_TRACKER_WGT_NEW_CLIENTS"] = "Novos clientes";
+$MESS["CRM_CH_TRACKER_WGT_NEW_CLIENTS_PER_DAY"] = "Novos clientes hoje";
+$MESS["CRM_CH_TRACKER_WGT_PERSONAL_LOAD"] = "Carga de trabalho do gerente";
+$MESS["CRM_CH_TRACKER_WGT_PERSONAL_LOAD_EMAIL"] = "E-mail";
+$MESS["CRM_CH_TRACKER_WGT_PERSONAL_LOAD_FORM"] = "Formulários de CRM";
+$MESS["CRM_CH_TRACKER_WGT_PERSONAL_LOAD_OPENLINES"] = "Messengers e serviços sociais";
+$MESS["CRM_CH_TRACKER_WGT_PERSONAL_LOAD_TELEPHONY"] = "Telefonia";
+$MESS["CRM_CH_TRACKER_WGT_RATING_BY_SUCCESSFUL_DEALS"] = "Classificação pelo valor de negócios ganhadas";
+$MESS["CRM_CH_TRACKER_WGT_SALE_TARGET"] = "Meta de Vendas";
+?>

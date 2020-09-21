@@ -1,0 +1,6 @@
+<?
+$MESS['LEARNING_COURSE_LIST_NAME'] = 'Kursų sąrašas';
+$MESS['LEARNING_COURSE_LIST_DESC'] = 'Kursų sąrašas';
+$MESS['LEARNING_SERVICE'] = 'Apmokymas';
+$MESS['LEARNING_COURSE_SERVICE'] = 'Kursai';
+?>

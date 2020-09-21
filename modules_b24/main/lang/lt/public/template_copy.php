@@ -1,0 +1,33 @@
+<?
+$MESS["comp_prop_close"] = "Uždaryti langą";
+$MESS["comp_prop_err_param"] = "Neteisingi įvesties parametrai.";
+$MESS["comp_prop_err_file"] = "Nepakanka leidimo pasiekti scenarijų, turinti komponentų skambutį.";
+$MESS["comp_prop_err_open"] = "Nepavyko atidaryti skripto, turinčio komponento iškvietimą.";
+$MESS["comp_prop_err_save"] = "Klaida išsaugant skripto failą. Pakeitimai neišsaugoti.";
+$MESS["comp_prop_name"] = "Pavadinimas";
+$MESS["comp_prop_desc"] = "Aprašymas";
+$MESS["comp_prop_path"] = "Komponento iškvietimo kelias";
+$MESS["comp_prop_save"] = "Išsaugoti";
+$MESS["comp_prop_save_title"] = "Išsaugoti komponento parametrus";
+$MESS["comp_prop_cancel"] = "Atšaukti";
+$MESS["comp_prop_cancel_title"] = "Uždaryti langą ir neišsaugoti pakeitimų";
+$MESS["comp_prop_close_w"] = "Uždaryti ";
+$MESS["comp_prop_err_comp"] = "Nepavyko rasti komponento iškvietimo kodą.";
+$MESS["comp_prop_template"] = "Šablonas";
+$MESS["comp_prop_template_sys"] = "Sistema";
+$MESS["comp_templ_template"] = "Komponento šablonas";
+$MESS["comp_templ_error_copy"] = "Klaida kopijuojant šabloną";
+$MESS["comp_templ_cur_site_template"] = "Naudojant svetainės šabloną:";
+$MESS["comp_templ_system"] = "sistemos šablonas";
+$MESS["comp_templ_cur_template"] = "Dabartinio komponento šablonas";
+$MESS["comp_templ_new_template"] = "Kopijuoti į svetainės šabloną";
+$MESS["comp_templ_new_tpl"] = "Naujo komponento šablono pavadinimas";
+$MESS["comp_templ_use"] = "Pritaikyti naują konponento šabloną";
+$MESS["comp_templ_edit"] = "Redaguoti šabloną";
+$MESS["template_copy_title"] = "Kopijuoti komponento šabloną";
+$MESS["template_copy_def"] = "numatytasis";
+$MESS["template_copy_cur"] = "dabartinis";
+$MESS["template_copy_sel"] = "pasirinktas:";
+$MESS["copy_comp_sys_templ"] = "Komponento sistemos šablonas turi būti nukopijuotas į svetainės šabloną, kad galėtumėte jį modifikuoti.";
+$MESS["comp_templ_def_templ"] = "Numatytasis šablonas";
+?>

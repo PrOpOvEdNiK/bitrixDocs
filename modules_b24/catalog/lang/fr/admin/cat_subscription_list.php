@@ -1,0 +1,32 @@
+<?
+$MESS["PSL_ACCESS_DENIED"] = "Accès refusé";
+$MESS["PSL_ACTION_ACTIVATE"] = "activer";
+$MESS["PSL_ACTION_DEACTIVATE"] = "désactiver";
+$MESS["PSL_ACTION_DELETE"] = "supprimer";
+$MESS["PSL_ACTION_DELETE_CONFIRM"] = "Cela supprimera toutes les informations liées à ce chapitre ! Continuer ?";
+$MESS["PSL_ACTIVE"] = "Actif";
+$MESS["PSL_CONTACT_TYPE"] = "Type de contact";
+$MESS["PSL_DATE_FROM"] = "Abonnement actif depuis";
+$MESS["PSL_DATE_TO"] = "Abonnement actif jusqu'à";
+$MESS["PSL_DELETE_SUBSCRIBE"] = "Supprimer";
+$MESS["PSL_FILTER_ACTIVE"] = "Actif";
+$MESS["PSL_FILTER_ANY"] = "(n'importe)";
+$MESS["PSL_FILTER_CONTACT_TYPE"] = "Type de contact";
+$MESS["PSL_FILTER_DATE_FROM"] = "Abonnement actif depuis";
+$MESS["PSL_FILTER_DATE_TO"] = "Abonnement actif jusqu'à";
+$MESS["PSL_FILTER_ID"] = "ID";
+$MESS["PSL_FILTER_ITEM_ID"] = "ID du produit";
+$MESS["PSL_FILTER_NO"] = "Non";
+$MESS["PSL_FILTER_USER_CONTACT"] = "Contact utilisateur";
+$MESS["PSL_FILTER_USER_ID"] = "Utilisateur";
+$MESS["PSL_FILTER_YES"] = "Oui";
+$MESS["PSL_ITEM_ID"] = "ID du produit";
+$MESS["PSL_LIST_CHECKED"] = "Marqué : ";
+$MESS["PSL_LIST_SELECTED"] = "Sélectionné : ";
+$MESS["PSL_PAGES"] = "page";
+$MESS["PSL_PAGE_TITLE"] = "Abonnements";
+$MESS["PSL_PRODUCT_NAME"] = "Nom du produit";
+$MESS["PSL_SITE_ID"] = "ID du site";
+$MESS["PSL_USER"] = "Utilisateur";
+$MESS["PSL_USER_CONTACT"] = "Contact utilisateur";
+?>

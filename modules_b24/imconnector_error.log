@@ -1,0 +1,84 @@
+
+------------------------
+2018.07.12 14:58:33
+Array
+(
+    [message] => 
+    [code] => LICENCE_ERROR
+    [params] => 
+    [file] => /home/bitrix/www/bitrix/modules/imconnector/lib/converter.php
+    [method] => 
+    [line] => 64
+)
+
+------------------------
+
+------------------------
+2018.07.12 14:58:33
+Array
+(
+    [message] => 
+    [code] => 910
+    [params] => 
+    [file] => /home/bitrix/www/bitrix/modules/imconnector/lib/converter.php
+    [method] => 
+    [line] => 64
+)
+
+------------------------
+
+------------------------
+2018.07.12 14:58:36
+Array
+(
+    [message] => 
+    [code] => LICENCE_ERROR
+    [params] => 
+    [file] => /home/bitrix/www/bitrix/modules/imconnector/lib/converter.php
+    [method] => 
+    [line] => 64
+)
+
+------------------------
+
+------------------------
+2018.07.12 14:58:36
+Array
+(
+    [message] => 
+    [code] => 910
+    [params] => 
+    [file] => /home/bitrix/www/bitrix/modules/imconnector/lib/converter.php
+    [method] => 
+    [line] => 64
+)
+
+------------------------
+
+------------------------
+2018.07.12 15:00:26
+Array
+(
+    [message] => 
+    [code] => LICENCE_ERROR
+    [params] => 
+    [file] => /home/bitrix/www/bitrix/modules/imconnector/lib/converter.php
+    [method] => 
+    [line] => 64
+)
+
+------------------------
+
+------------------------
+2018.07.12 15:00:26
+Array
+(
+    [message] => 
+    [code] => 910
+    [params] => 
+    [file] => /home/bitrix/www/bitrix/modules/imconnector/lib/converter.php
+    [method] => 
+    [line] => 64
+)
+
+------------------------

@@ -1,0 +1,20 @@
+<?
+$MESS["CRM_COMPANY_CREATE_TITLE"] = "Nowa Firma";
+$MESS["CRM_COMPANY_EDIT_DUP_CTRL_BANK_DETAIL_SUMMARY_TITLE"] = "według danych bankowych";
+$MESS["CRM_COMPANY_EDIT_DUP_CTRL_EMAIL_SUMMARY_TITLE"] = "Poprzez e-mail";
+$MESS["CRM_COMPANY_EDIT_DUP_CTRL_PHONE_SUMMARY_TITLE"] = "według telefonu";
+$MESS["CRM_COMPANY_EDIT_DUP_CTRL_REQUISITE_SUMMARY_TITLE"] = "według danych firmy";
+$MESS["CRM_COMPANY_EDIT_DUP_CTRL_SHORT_SUMMARY_TITLE"] = "znalezione";
+$MESS["CRM_COMPANY_EDIT_DUP_CTRL_SUMMARY_TITLE"] = "Znalezione dopasowania";
+$MESS["CRM_COMPANY_EDIT_DUP_CTRL_TTL_SUMMARY_TITLE"] = "Według nazwy";
+$MESS["CRM_COMPANY_EDIT_DUP_CTRL_WARNING_ACCEPT_BTN_TITLE"] = "Ignoruj i zachowaj";
+$MESS["CRM_COMPANY_EDIT_DUP_CTRL_WARNING_CANCEL_BTN_TITLE"] = "Anuluj";
+$MESS["CRM_COMPANY_EDIT_DUP_CTRL_WARNING_DLG_TITLE"] = "Możliwe klony";
+$MESS["CRM_COMPANY_EDIT_TITLE"] = "Firma ##ID# &mdash; #TITLE#";
+$MESS["CRM_TAB_1"] = "Firma";
+$MESS["CRM_TAB_1_TITLE"] = "Właściwości firmy";
+$MESS["CRM_TAB_2"] = "Zapis";
+$MESS["CRM_TAB_2_TITLE"] = "Log firmy";
+$MESS["CRM_TAB_3"] = "Proces Biznesowy";
+$MESS["CRM_TAB_3_TITLE"] = "Procesy biznesowe firmy";
+?>

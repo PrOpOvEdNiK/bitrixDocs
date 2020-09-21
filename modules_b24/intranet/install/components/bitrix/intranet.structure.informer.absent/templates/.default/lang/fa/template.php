@@ -1,0 +1,10 @@
+<?
+$MESS["INTR_ISIA_TPL_ALL"] = "همه";
+$MESS["INTR_ISIA_TPL_TODAY"] = "امروز";
+$MESS["INTR_ISIA_TPL_IN"] = "در";
+$MESS["INTR_ISIA_TPL_DAYS_1"] = "روز";
+$MESS["INTR_ISIA_TPL_DAYS_2_4"] = "روز";
+$MESS["INTR_ISIA_TPL_DAYS"] = "روز";
+$MESS["INTR_ISIA_TPL_FROM"] = "از";
+$MESS["INTR_ISIA_TPL_TILL"] = "تا";
+?>

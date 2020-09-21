@@ -1,0 +1,30 @@
+<?
+$MESS["IM_B24DISK"] = "Bitrix24.Drive";
+$MESS["IM_CAMERA_ROLL"] = "Tirar uma foto";
+$MESS["IM_CHOOSE_FILE_TITLE"] = "Arquivos";
+$MESS["IM_CHOOSE_PHOTO"] = "Selecionar da galeria";
+$MESS["IM_DIALOG_UNNAMED"] = "Carregando...";
+$MESS["IM_EMPTY_BUTTON"] = "Iniciar Conversa";
+$MESS["IM_EMPTY_OL_TEXT_1"] = "Gostaria de conversar com os seus clientes? Eles estão todos aqui.";
+$MESS["IM_EMPTY_OL_TEXT_2"] = "Você será notificado assim que um cliente postar uma mensagem em um Canal Aberto.";
+$MESS["IM_EMPTY_TEXT_1"] = "Iniciar Conversa Agora!";
+$MESS["IM_EMPTY_TEXT_2"] = "Toque no lápis no canto superior direito para criar uma conversa.";
+$MESS["IM_EMPTY_TEXT_2_2"] = "Toque no lápis no canto superior direito para selecionar um funcionário.";
+$MESS["IM_EMPTY_TEXT_ANDROID"] = "Clique no ícone de adição no canto inferior direito para criar um bate-papo ou selecione um funcionário.";
+$MESS["IM_EMPTY_TEXT_APPLE"] = "Clique no ícone de adição no canto superior direito para criar um bate-papo ou selecione um funcionário.";
+$MESS["IM_LIST_EMPTY"] = "Nenhuma conversa atual";
+$MESS["IM_M_MESSAGE_SEND"] = "Enviar";
+$MESS["IM_M_TEXTAREA"] = "Escrever mensagem...";
+$MESS["IM_REFRESH_TITLE"] = "Atualizando...";
+$MESS["IM_SCOPE_CHATS"] = "Bate-papos";
+$MESS["IM_SCOPE_DEPARTMENTS"] = "Departamentos";
+$MESS["IM_SCOPE_USERS"] = "Funcionários";
+$MESS["OL_LIST_EMPTY"] = "Não há conversas";
+$MESS["OL_SECTION_ANSWERED"] = "Respondido";
+$MESS["OL_SECTION_PIN"] = "Fixado";
+$MESS["OL_SECTION_WORK"] = "Não respondido";
+$MESS["SEARCH_RECENT"] = "PESQUISA RECENTE";
+$MESS["U_STATUS_OFFLINE"] = "Off-line";
+$MESS["U_STATUS_ONLINE"] = "On-line";
+$MESS["WIDGET_CHAT_CREATE_TITLE"] = "Novo Bate-Papo";
+?>

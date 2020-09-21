@@ -1,0 +1,6 @@
+<?
+$MESS["TASKS_TTDP_TEMPLATESELECTOR_CREATE_HINT"] = "Criar tarefa com base no modelo";
+$MESS["TASKS_TTDP_TEMPLATESELECTOR_EMPTY"] = "Nenhum modelo";
+$MESS["TASKS_TTDP_TEMPLATESELECTOR_NO_TEMPLATE"] = "Criar no modelo";
+$MESS["TASKS_TTDP_TEMPLATESELECTOR_TO_LIST"] = "Todos os modelos";
+?>

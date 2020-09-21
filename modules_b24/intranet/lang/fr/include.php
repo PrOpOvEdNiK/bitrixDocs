@@ -1,0 +1,35 @@
+<?
+$MESS["INTR_HIRED"] = "Accepté";
+$MESS["INTR_IBLOCK_REQUIRED"] = "Le module intranet ne peut pas fonctionner sans le module des blocs d'information.";
+$MESS["INTR_IBLOCK_TOP_SECTION_WARNING"] = "Dans la structure de l'entreprise il ne doit y avoir qu'une seule section de niveau supérieur.";
+$MESS["INTR_OUTLOOK_PREFIX_CONTACTS"] = "Intranet - portail d'entreprise";
+$MESS["INTR_OUTLOOK_TASK_NO_TITLE"] = "(sans nom)";
+$MESS["INTR_OUTLOOK_TITLE_CONTACTS"] = "Employés";
+$MESS["INTR_OUTLOOK_TITLE_CONTACTS_EXTRANET"] = "Contacts";
+$MESS["INTR_OUTLOOK_TITLE_TASKS"] = "Mes Tâches";
+$MESS["INTR_SET_BUT_HINT"] = "L'assistant d'ajustement du portail corporatif vous permettra d'ajuster le portail corporatif pour la deuxième fois.<br /><br />";
+$MESS["INTR_SET_BUT_HINT_CLEARING"] = "<b>Assistant de nettoyage</b> & mdash; outil de suppression des données de démo avant de remplir le contenu réel du portail.";
+$MESS["INTR_SET_BUT_HINT_EXTRANET"] = "<b>Assistant de configuration extranet</b> & mdash; mécanisme pour la création et le lancement du site extranet.<br /><br />";
+$MESS["INTR_SET_BUT_TEXT"] = "Assistant#BR#aux réglages";
+$MESS["INTR_SET_BUT_TITLE"] = "Démarrer l'assistant de modification du design et des réglages du portail";
+$MESS["INTR_SET_CLEAN_TEXT"] = "Assistant de nettoyage";
+$MESS["INTR_SET_CLEAN_TITLE"] = "Lancer l'assistant de nettoyage des données de démonstration";
+$MESS["INTR_SET_EXT_TEXT"] = "Assistant de configuration extranet";
+$MESS["INTR_SET_EXT_TITLE"] = "Lancer l'assistant au changement du design et au réglage de l'extranet";
+$MESS["INTR_SET_WIZ_TEXT"] = "Assistant de configuration de portail corporatif";
+$MESS["INTR_SET_WIZ_TITLE"] = "Démarrer l'assistant de modification du design et des réglages du portail";
+$MESS["INTR_SOCNET_LOG_ENTITY_MAIL"] = "la bande des nouvelles";
+$MESS["INTR_SOCNET_LOG_LIST_N_ALL"] = "Toutes les nouvelles";
+$MESS["INTR_SOCNET_LOG_N"] = "Bandes de nouvelles";
+$MESS["INTR_SOCNET_LOG_NEWS"] = "Eléments d'actualité";
+$MESS["INTR_SOCNET_LOG_NEWS_COMMENT_TITLE"] = "commentaire au fichier '#TITLE#'";
+$MESS["INTR_SOCNET_LOG_NEWS_COMMENT_TITLE_MAIL"] = "Dans le fil d'actualités '#ENTITY#' un commentaire à une actualité '#TITLE#' a été ajouté";
+$MESS["INTR_SOCNET_LOG_NEWS_SETTINGS"] = "Tous les évènements dans ce fil d'actualités";
+$MESS["INTR_SOCNET_LOG_NEWS_SETTINGS_1"] = "fil d'actualités #TITLE#";
+$MESS["INTR_SOCNET_LOG_NEWS_SETTINGS_2"] = "Messages du flux d'actualité #TITRE#";
+$MESS["INTR_SOCNET_LOG_NEWS_TITLE"] = "Actualité '#TITRE#' ajoutée ou modifiée : ";
+$MESS["INTR_SOCNET_LOG_NEWS_TITLE_MAIL"] = "La nouvelle : '#TITLE#' est ajoutée ou modifiée dans le fil d'actualités '#ENTITY#'";
+$MESS["INTR_SOCNET_LOG_XDI_N"] = "bandes de nouvelles";
+$MESS["INTR_SONET_ADD_COMMENT_SOURCE_ERROR"] = "Échec d'ajout du commentaire à la source de l'évènement.";
+$MESS["INTR_SONET_LOG_DATA_TITLE_IMPORTANT_24"] = "Important !";
+?>

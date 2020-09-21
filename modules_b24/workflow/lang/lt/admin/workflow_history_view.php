@@ -1,0 +1,30 @@
+<?
+$MESS["FLOW_DOCUMENT_LIST"] = "Dokumentų sąrašas";
+$MESS["FLOW_RECORD_NOT_FOUND"] = "Neteisingas įrašo ID, arba įrašas nerastas";
+$MESS["FLOW_PAGE_TITLE"] = "Įrašas # #ID#";
+$MESS["FLOW_PAGE_DIFF_TITLE"] = "Palyginti dokumentus  # #ID# ir # #PREV_ID#";
+$MESS["FLOW_HISTORY"] = "Istorija";
+$MESS["FLOW_STATUS"] = "Statusas:";
+$MESS["FLOW_FILENAME"] = "Failo pavadinimas:";
+$MESS["FLOW_TITLE"] = "Antraštė:";
+$MESS["FLOW_TEXT"] = "Tekstas";
+$MESS["FLOW_DOCUMENT_ID"] = "Dokumento ID:";
+$MESS["FLOW_DOCUMENT_FILENAME"] = "Failo pavadinimas:";
+$MESS["FLOW_DOCUMENT_TITLE"] = "Antraštė:";
+$MESS["FLOW_DOCUMENT_DATE_ENTER"] = "Sukurta:";
+$MESS["FLOW_DOCUMENT_DATE_MODIFY"] = "Pakeista:";
+$MESS["FLOW_DOCUMENT_DATE_LOCK"] = "Užrakinta:";
+$MESS["FLOW_DOCUMENT_STATUS"] = "Statusas:";
+$MESS["FLOW_CURRENT_SETTINGS"] = "Dabartiniai dokumentos nustatymai";
+$MESS["FLOW_RECORD_SETTINGS"] = "Įrašo nustatymai";
+$MESS["FLOW_TIMESTAMP"] = "Pakeista:";
+$MESS["FLOW_COMMENTS"] = "Komentaras:";
+$MESS["FLOW_HIST_VIEW_SITE"] = "Svetainė:";
+$MESS["FLOW_PAGE_PARAM_TITLE"] = "Dabartiniai dokumento nustatymai";
+$MESS["FLOW_BACK"] = "Grįžti į sąrašą";
+$MESS["FLOW_USER_ALT"] = "Peržiūrėti naudotojo informaciją";
+$MESS["FLOW_STATUS_ALT"] = "Peržiūrėti statuso informaciją";
+$MESS["FLOW_VIEW_DOC_ALT"] = "Peržiūrėti originalų dokumentą";
+$MESS["FLOW_VIEW_FILE_ALT"] = "Peržiūrėti  failą";
+$MESS["FLOW_SITE_ALT"] = "Peržiūrėti svetainės informaciją";
+?>

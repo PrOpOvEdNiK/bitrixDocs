@@ -1,0 +1,35 @@
+<?
+$MESS["MAIN_MAIL_CONFIRM_AJAX_ERROR"] = "Error al procesar la solicitud";
+$MESS["MAIN_MAIL_CONFIRM_AUTH"] = "Error de autenticación";
+$MESS["MAIN_MAIL_CONFIRM_BACK"] = "Volver";
+$MESS["MAIN_MAIL_CONFIRM_CANCEL"] = "Cancelar";
+$MESS["MAIN_MAIL_CONFIRM_CODE_HINT"] = "Se ha enviado un mensaje con el código de verificación a la dirección de correo electrónico especificada. Copie el código y péguelo en el campo a continuación.";
+$MESS["MAIN_MAIL_CONFIRM_CODE_PLACEHOLDER"] = "Ingrese el código de verificación";
+$MESS["MAIN_MAIL_CONFIRM_DELETE_SENDER_CONFIRM"] = "¿Está seguro de que desea eliminar el remitente?";
+$MESS["MAIN_MAIL_CONFIRM_EMAIL"] = "E-mail";
+$MESS["MAIN_MAIL_CONFIRM_EMAIL_HINT"] = "Ingrese su nombre y correo electrónico en los campos a continuación. Se enviará un mensaje con el código de verificación a esta dirección.";
+$MESS["MAIN_MAIL_CONFIRM_EMAIL_HINT_SMTP"] = "Ingrese su nombre y correo electrónico en los campos a continuación. Se enviará un mensaje con el código de verificación a esta dirección. Puede ingresar el código para verificar el correo electrónico, o <a href=\"#\" class=\"new-from-email-dialog-smtp-link\">proporcionar detalles del servidor SMTP</a>.";
+$MESS["MAIN_MAIL_CONFIRM_EMAIL_HINT_SMTP_2"] = "Introduzca nombre y correo electrónico (proporcione <a href=\"#\" class=\"new-from-email-dialog-smtp-link\">SMTP información del servidor</a> si es requerido). El sistema le enviará un mensaje de confirmación.";
+$MESS["MAIN_MAIL_CONFIRM_EMPTY_CODE"] = "Ingrese el código de verificación";
+$MESS["MAIN_MAIL_CONFIRM_EMPTY_EMAIL"] = "Introducir la dirección de correo electrónico";
+$MESS["MAIN_MAIL_CONFIRM_EMPTY_SMTP_LOGIN"] = "Ingrese al inicio de sesión del servidor SMTP";
+$MESS["MAIN_MAIL_CONFIRM_EMPTY_SMTP_PASSWORD"] = "Ingrese la contraseña del servidor SMTP";
+$MESS["MAIN_MAIL_CONFIRM_EMPTY_SMTP_PORT"] = "Ingrese al puerto del servidor SMTP";
+$MESS["MAIN_MAIL_CONFIRM_EMPTY_SMTP_SERVER"] = "Ingrese la dirección del servidor SMTP";
+$MESS["MAIN_MAIL_CONFIRM_GET_CODE"] = "Obtener código";
+$MESS["MAIN_MAIL_CONFIRM_INVALID_CODE"] = "Código de verificación incorrecto";
+$MESS["MAIN_MAIL_CONFIRM_INVALID_EMAIL"] = "Dirección de correo electrónico no válida";
+$MESS["MAIN_MAIL_CONFIRM_INVALID_SMTP_PORT"] = "El puerto del servidor SMTP no es válido";
+$MESS["MAIN_MAIL_CONFIRM_INVALID_SMTP_SERVER"] = "La dirección del servidor SMTP no es válida";
+$MESS["MAIN_MAIL_CONFIRM_MENU"] = "Agregar remitente";
+$MESS["MAIN_MAIL_CONFIRM_NAME"] = "Nombre";
+$MESS["MAIN_MAIL_CONFIRM_PUBLIC"] = "Disponible para todos";
+$MESS["MAIN_MAIL_CONFIRM_PUBLIC_HINT"] = "Esta dirección estará disponible para todos los empleados que usan CRM";
+$MESS["MAIN_MAIL_CONFIRM_SAVE"] = "Guardar";
+$MESS["MAIN_MAIL_CONFIRM_SMTP_LOGIN"] = "Usuario";
+$MESS["MAIN_MAIL_CONFIRM_SMTP_PASSWORD"] = "Contraseña";
+$MESS["MAIN_MAIL_CONFIRM_SMTP_SERVER"] = "Servidor";
+$MESS["MAIN_MAIL_CONFIRM_SMTP_WARNING"] = "¡Importante! Asegúrese de que los detalles del servidor SMTP que proporcionó sean correctos. De lo contrario, el correo no será entregado.";
+$MESS["MAIN_MAIL_CONFIRM_TITLE"] = "Agregar nueva dirección";
+$MESS["MAIN_MAIL_DELETE_SENDER_ERROR"] = "Error al borrar el remitente";
+?>

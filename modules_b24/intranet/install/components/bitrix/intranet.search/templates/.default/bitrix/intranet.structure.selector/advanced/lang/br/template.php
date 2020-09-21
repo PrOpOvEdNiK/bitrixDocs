@@ -1,0 +1,12 @@
+<?
+$MESS["INTR_ISS_BUTTON_CANCEL"] = "Cancelar";
+$MESS["INTR_ISS_BUTTON_SUBMIT"] = "Buscar";
+$MESS["INTR_ISS_PARAM_DEPARTMENT"] = "Departamento ";
+$MESS["INTR_ISS_PARAM_DEPARTMENT_MINE"] = "Apenas meu escritório";
+$MESS["INTR_ISS_PARAM_EMAIL"] = "E-mail";
+$MESS["INTR_ISS_PARAM_FIO"] = "Nome";
+$MESS["INTR_ISS_PARAM_KEYWORDS"] = "Palavras-Chave";
+$MESS["INTR_ISS_PARAM_PHONE_INNER"] = "Telefone interno";
+$MESS["INTR_ISS_PARAM_POST"] = "Cargo";
+$MESS["INTR_ISS_PARAM_WORK_COMPANY"] = "Empresa";
+?>

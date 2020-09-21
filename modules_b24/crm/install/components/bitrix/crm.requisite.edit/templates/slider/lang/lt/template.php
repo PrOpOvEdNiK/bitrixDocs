@@ -1,0 +1,4 @@
+<?
+$MESS["CRM_REQUISITE_EDIT_BUTTON_CANCEL"] = "Atšaukti";
+$MESS["CRM_REQUISITE_EDIT_BUTTON_SAVE"] = "Įrašyti";
+?>

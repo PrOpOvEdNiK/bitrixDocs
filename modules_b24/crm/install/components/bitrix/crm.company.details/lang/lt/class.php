@@ -1,0 +1,36 @@
+<?
+$MESS["CRM_MODULE_NOT_INSTALLED"] = "CRM modulis neįdiegtas.";
+$MESS["CRM_PERMISSION_DENIED"] = "Prieigos nėra";
+$MESS["CRM_COMPANY_CREATION_PAGE_TITLE"] = "Pridėti įmonę";
+$MESS["CRM_COMPANY_FIELD_TITLE"] = "Įmonės pavadinimas";
+$MESS["CRM_COMPANY_FIELD_ASSIGNED_BY_ID"] = "Atsakingas asmuo";
+$MESS["CRM_COMPANY_FIELD_LOGO"] = "Logotipas";
+$MESS["CRM_COMPANY_FIELD_COMPANY_TYPE"] = "Įmonės tipas";
+$MESS["CRM_COMPANY_FIELD_INDUSTRY"] = "Pramonė";
+$MESS["CRM_COMPANY_FIELD_EMPLOYEES"] = "Darbuotojai";
+$MESS["CRM_COMPANY_FIELD_REVENUE"] = "Metinės pajamos";
+$MESS["CRM_COMPANY_FIELD_COMMENTS"] = "Komentaras ";
+$MESS["CRM_COMPANY_FIELD_BANKING_DETAILS"] = "Banko duomenys";
+$MESS["CRM_COMPANY_FIELD_OPENED"] = "Prieinama visiems";
+$MESS["CRM_COMPANY_FIELD_IS_MY_COMPANY"] = "Pardavėjas";
+$MESS["CRM_COMPANY_SECTION_MAIN"] = "Apie įmonę";
+$MESS["CRM_COMPANY_SECTION_ADDITIONAL"] = "Daugiau";
+$MESS["CRM_COMPANY_TAB_INVOICES"] = "Sąskaitos faktūros";
+$MESS["CRM_COMPANY_TAB_EVENT"] = "Istorija";
+$MESS["CRM_COMPANY_TAB_QUOTE"] = "Pasiūlymai";
+$MESS["CRM_COMPANY_TAB_DEAL"] = "Sandoriai";
+$MESS["CRM_COMPANY_COPY_PAGE_TITLE"] = "Kopijuoti įmonę";
+$MESS["CRM_COMPANY_DUP_CTRL_EMAIL_SUMMARY_TITLE"] = "pagal el.paštą";
+$MESS["CRM_COMPANY_DUP_CTRL_PHONE_SUMMARY_TITLE"] = "pagal telefoną";
+$MESS["CRM_COMPANY_DUP_CTRL_TTL_SUMMARY_TITLE"] = "pagal pavadinimą";
+$MESS["CRM_COMPANY_FIELD_CONTACT"] = "Kontaktas";
+$MESS["CRM_COMPANY_FIELD_CONTACT_LEGEND"] = "Įmonės kontaktai";
+$MESS["CRM_COMPANY_FIELD_REQUISITES"] = "Detali informacija";
+$MESS["CRM_COMPANY_TAB_BIZPROC"] = "Darbo procesai";
+$MESS["CRM_COMPANY_TAB_PORTRAIT"] = "Profilis";
+$MESS["CRM_COMPANY_FIELD_ADDRESS"] = "Adresas";
+$MESS["CRM_COMPANY_FIELD_ADDRESS_LEGAL"] = "Juridinis adresas";
+$MESS["CRM_COMPANY_NOT_FOUND"] = "Įmonė nerasta.";
+$MESS["CRM_COMPANY_FIELD_ID"] = "ID";
+$MESS["CRM_COMPANY_TAB_TREE"] = "Priklausomybės";
+?>

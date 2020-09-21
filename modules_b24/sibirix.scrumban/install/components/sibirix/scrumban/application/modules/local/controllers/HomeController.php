@@ -1,0 +1,1 @@
+<? $GLOBALS['_858777205_']=Array(); ?><?php class Local_HomeController extends Core_Controller{public function preDispatch(){$this->view->headTitle($this->view->t('AUTH_TITLE'));$this->getHelper('layout')->setLayout('home');}public function indexAction(){}}

@@ -1,0 +1,9 @@
+<?
+$MESS["INTR_ISS_GROUP_FILTER"] = "Filtr parametrów";
+$MESS["INTR_ISS_PARAM_FILTER_DEPARTMENT_SINGLE"] = "Działy w filtrze";
+$MESS["INTR_ISS_PARAM_FILTER_DEPARTMENT_SINGLE_VALUE_N"] = "Powiel";
+$MESS["INTR_ISS_PARAM_FILTER_DEPARTMENT_SINGLE_VALUE_Y"] = "pojedyncze";
+$MESS["INTR_ISS_PARAM_FILTER_NAME"] = "Nazwa filtru";
+$MESS["INTR_ISS_PARAM_FILTER_SESSION"] = "Przechowuj filtry w sesji";
+$MESS["INTR_ISS_PARAM_LIST_URL"] = "Strona listy pracowników";
+?>

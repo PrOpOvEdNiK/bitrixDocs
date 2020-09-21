@@ -1,0 +1,35 @@
+<?
+$MESS["MAIN_KANBAN_NOTIFY_CHANGE_DEADLINE"] = "Termin zadania zmieniony na #date#";
+$MESS["MAIN_KANBAN_NOTIFY_REMOVE_DEADLINE"] = "Usunięto termin zadania";
+$MESS["MAIN_KANBAN_TITLE_PLACEHOLDER"] = "Imię #tag";
+$MESS["TASKS_KANBAN_DIABLE_SORT_TOOLTIP"] = "Nie masz uprawnień do edytowania preferencji projektu";
+$MESS["TASKS_KANBAN_ME_DISABLE_COMPLETE"] = "Zadanie zostało zamknięte. Powróć, by przenieść je do innej kolumny.";
+$MESS["TASKS_KANBAN_ME_DISABLE_DEADLINE"] = "Daty zadania nie mogą zostać zmienione bez modyfikacji deadline'u";
+$MESS["TASKS_KANBAN_ME_DISABLE_DEADLINE_PART"] = "Deadline ogranicza możliwy zakres czasowy zadania";
+$MESS["TASKS_KANBAN_ME_DISABLE_DEADLINE_PART2"] = "Nie można przenieść pozycji z powodu terminu zadania";
+$MESS["TASKS_KANBAN_ME_DISABLE_FROM_OVERDUE"] = "Zmień deadline zadania lub zamknij je przed przeniesieniem";
+$MESS["TASKS_KANBAN_MORE_USERS"] = "więcej";
+$MESS["TASKS_KANBAN_NOTIFY_BUTTON"] = "Wyślij wiadomość";
+$MESS["TASKS_KANBAN_NOTIFY_HEADER"] = "Niewystarczające uprawnienia do edytowania etapów.";
+$MESS["TASKS_KANBAN_NOTIFY_TEXT"] = "Tylko Twój administrator Bitrix24 lub manager projektu może utworzyć nowy etap. Poproś go o utworzenie etapów, których potrzebujesz.";
+$MESS["TASKS_KANBAN_NOTIFY_TITLE"] = "Niewystarczające uprawnienia";
+$MESS["TASKS_KANBAN_STATUS_COMPLETED"] = "Zakończono";
+$MESS["TASKS_KANBAN_STATUS_COMPLETED_SUPPOSEDLY"] = "Oczekuje na ocenę";
+$MESS["TASKS_KANBAN_STATUS_DEFERRED"] = "Odłożono";
+$MESS["TASKS_KANBAN_STATUS_NEW"] = "Nowe";
+$MESS["TASKS_KANBAN_STATUS_OVERDUE"] = "Po terminie";
+$MESS["TASKS_KANBAN_STATUS_PAUSE"] = "Wstrzymano";
+$MESS["TASKS_KANBAN_STATUS_PROGRESS"] = "W toku";
+$MESS["TASKS_KANBAN_TITLE_CHECKLIST"] = "Lista kontrolna (ukończono #complete# z #all#)";
+$MESS["TASKS_KANBAN_TITLE_COMMENTS"] = "Komentarze (#count#)";
+$MESS["TASKS_KANBAN_TITLE_COMPLETE"] = "Zakończ zadanie";
+$MESS["TASKS_KANBAN_TITLE_DEADLINE"] = "Deadline";
+$MESS["TASKS_KANBAN_TITLE_DEADLINE_SET"] = "Ustal deadline";
+$MESS["TASKS_KANBAN_TITLE_FILES"] = "Pliki (#count#)";
+$MESS["TASKS_KANBAN_TITLE_PAUSE"] = "Wstrzymaj zadanie";
+$MESS["TASKS_KANBAN_TITLE_START"] = "Start zadania";
+$MESS["TASKS_KANBAN_WO_GROUP_LABEL"] = "Grupa (projekt)";
+$MESS["TASKS_KANBAN_WO_GROUP_VALUE"] = "brak";
+$MESS["TASKS_TASK_CONFIRM_START_TIMER"] = "Już wykorzystujesz śledzenie czasu dla \"{{TITLE}}\". To zadanie zostanie zatrzymane. Kontynuować?";
+$MESS["TASKS_TASK_CONFIRM_START_TIMER_TITLE"] = "Śledzenie czasu jest teraz wykorzystywane przy innym zadaniu.";
+?>

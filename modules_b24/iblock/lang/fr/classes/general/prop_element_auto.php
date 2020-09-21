@@ -1,0 +1,35 @@
+<?
+$MESS["BT_UT_AUTOCOMPLETE_SYM_GRID"] = "#";
+$MESS["BT_UT_AUTOCOMPLETE_SYM_OTHER"] = "Autre";
+$MESS["BT_UT_AUTOCOMPLETE_SYM_SPACE"] = "Blanc";
+$MESS["BT_UT_AUTOCOMPLETE_SYM_STAR"] = "*";
+$MESS["BT_UT_AUTOCOMPLETE_SYM_UNDERLINE"] = "_";
+$MESS["BT_UT_EAUTOCOMPLETE_DESCR"] = "Lier à des éléments avec saisie automatique";
+$MESS["BT_UT_EAUTOCOMPLETE_MESS_CHOOSE_ELEMENT"] = "Liste";
+$MESS["BT_UT_EAUTOCOMPLETE_MESS_CHOOSE_ELEMENT_DESCR"] = "Choisir un l'élément de la liste";
+$MESS["BT_UT_EAUTOCOMPLETE_MESS_CHOOSE_ELEMENT_MULTI_DESCR"] = "Choix de quelques éléments de la liste";
+$MESS["BT_UT_EAUTOCOMPLETE_MESS_ELEMENT_EDIT"] = "Accéder à la Page d'Edition de la Section";
+$MESS["BT_UT_EAUTOCOMPLETE_MESS_INVITE"] = "veuillez saisir un texte";
+$MESS["BT_UT_EAUTOCOMPLETE_MESS_LIST_INVITE"] = "(saisir le nom)";
+$MESS["BT_UT_EAUTOCOMPLETE_MESS_NEW_ELEMENT"] = "Ajouter un élément";
+$MESS["BT_UT_EAUTOCOMPLETE_MESS_NEW_ELEMENT_DESCR"] = "Ajouter un nouvel élément et le sélectionner";
+$MESS["BT_UT_EAUTOCOMPLETE_MESS_NO_SEARCH_RESULT_TEXT"] = "rien n'a été trouvé";
+$MESS["BT_UT_EAUTOCOMPLETE_MESS_SEARCH_ELEMENT"] = "...";
+$MESS["BT_UT_EAUTOCOMPLETE_MESS_SEARCH_ELEMENT_DESCR"] = "Choix de l'élément dans la fenêtre de recherche";
+$MESS["BT_UT_EAUTOCOMPLETE_MESS_SEARCH_ELEMENT_MULTI_DESCR"] = "Affiliés multi-niveaux";
+$MESS["BT_UT_EAUTOCOMPLETE_SETTING_BAN_SYMBOLS"] = "Symboles remplacés au cours d'affichage";
+$MESS["BT_UT_EAUTOCOMPLETE_SETTING_COMMENT_MAX_HEIGHT"] = "px";
+$MESS["BT_UT_EAUTOCOMPLETE_SETTING_COMMENT_MAX_WIDTH"] = "px";
+$MESS["BT_UT_EAUTOCOMPLETE_SETTING_COMMENT_MIN_HEIGHT"] = "px";
+$MESS["BT_UT_EAUTOCOMPLETE_SETTING_IBLOCK_MESS"] = "Prendre la dénomination de la touche d'ajout à partir des réglages du bloc d'information lié";
+$MESS["BT_UT_EAUTOCOMPLETE_SETTING_MAX_HEIGHT"] = "Hauteur maximale du champ de saisie en pixels, si la propriété est multiple";
+$MESS["BT_UT_EAUTOCOMPLETE_SETTING_MAX_WIDTH"] = "Largeur maximale du champ de saisie en pixels (0 - ne pas limiter)";
+$MESS["BT_UT_EAUTOCOMPLETE_SETTING_MIN_HEIGHT"] = "La hauteur minimale de la zone de saisie en pixels, si la propriété est pluriel";
+$MESS["BT_UT_EAUTOCOMPLETE_SETTING_REP_SYMBOL"] = "Le symbole qui remplacera les caractères interdits lors de l'affichage";
+$MESS["BT_UT_EAUTOCOMPLETE_SETTING_SHOW_ADD"] = "Afficher le bouton d'addition des éléments";
+$MESS["BT_UT_EAUTOCOMPLETE_SETTING_TITLE"] = "Paramètres de liaison aux éléments avec la saisie semi-automatique";
+$MESS["BT_UT_EAUTOCOMPLETE_SETTING_VIEW"] = "Interface de l'affichage";
+$MESS["BT_UT_EAUTOCOMPLETE_VIEW_AUTO"] = "Ligne avec une saisie automatique";
+$MESS["BT_UT_EAUTOCOMPLETE_VIEW_ELEMENT"] = "Ligne de saisie automatique et choix depuis la fenêtre de recherche";
+$MESS["BT_UT_EAUTOCOMPLETE_VIEW_TREE"] = "Ligne avec remplissage automatique et choix sur la liste";
+?>

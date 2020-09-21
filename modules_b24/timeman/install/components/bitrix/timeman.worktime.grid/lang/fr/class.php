@@ -1,0 +1,16 @@
+<?
+$MESS["TM_GRID_FILTER_DEPARTMENTS_LABEL"] = "Services";
+$MESS["TM_GRID_HEADER_PERCENTAGE_OF_VIOLATIONS"] = "Problèmes";
+$MESS["TM_GRID_HEADER_TITLE_WORKED_DAYS"] = "Jours";
+$MESS["TM_GRID_HEADER_TITLE_WORKED_HOURS"] = "Heures";
+$MESS["TM_GRID_HEADER_USERS_LABEL"] = "Employés";
+$MESS["TM_SCHEDULE_LIST_ADD"] = "Ajouter un emploi du temps";
+$MESS["TM_SCHEDULE_PLAN_WORKSHIFT_ADD"] = "Ajouter une période";
+$MESS["TM_WORKTIME_GRID_RECORD_EXPIRED_TITLE"] = "expirée";
+$MESS["TM_WORKTIME_GRID_RECORD_INFO_TITLE"] = "Pointages en arrivant - en partant";
+$MESS["TM_WORKTIME_GRID_TODAY"] = "Aujourd'hui";
+$MESS["TM_WORKTIME_STATS_APPROVAL_REQUIRED"] = "Nécessite l'approbation du superviseur";
+$MESS["TM_WORKTIME_STATS_APPROVED"] = "Approuvé";
+$MESS["TM_WORKTIME_STATS_SHIFTPLANS"] = "Distribuer";
+$MESS["TM_WORKTIME_STATS_WARNING_TEXT"] = "Compte rendu";
+?>

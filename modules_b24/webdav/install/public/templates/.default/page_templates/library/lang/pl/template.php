@@ -1,0 +1,37 @@
+<?
+$MESS["library_wizard_comments"] = "ustawienia komentarzy";
+$MESS["library_wizard_comments_allow"] = "Zezwól na komentarze:";
+$MESS["library_wizard_forum"] = "Forum dla komentarzy";
+$MESS["library_wizard_forum_name"] = "Komentarze biblioteki dokumentów";
+$MESS["library_wizard_forum_new"] = "Utwórz nowe forum";
+$MESS["library_wizard_forum_select"] = "Wybierz istniejące forum";
+$MESS["library_wizard_group_select"] = "(wybierz grupę)";
+$MESS["library_wizard_iblock"] = "Blok informacji dokumentów:";
+$MESS["library_wizard_iblock_name_error1"] = "Nazwa biblioteki nie może zawierać następujących znaków: /\\:*?|{}%&~";
+$MESS["library_wizard_iblock_new"] = "Utwórz nowy blok informacji";
+$MESS["library_wizard_iblock_select"] = "Wybierz istniejący blok informacji";
+$MESS["library_wizard_iblock_type"] = "Typ bloku informacji:";
+$MESS["library_wizard_lib_name"] = "Nazwa biblioteki dokumentów:";
+$MESS["library_wizard_lib_name_val"] = "Dokumenty współdzielone";
+$MESS["library_wizard_lib_resource"] = "Źródło danych:";
+$MESS["library_wizard_lib_resource_folder"] = "Folder dysku głównego";
+$MESS["library_wizard_lib_resource_iblock"] = "Blok informacji";
+$MESS["library_wizard_name"] = "Biblioteka dokumentów";
+$MESS["library_wizard_path_to_folder"] = "Ścieżka folderu (w stosunku do katalogu głównego serwisu)";
+$MESS["library_wizard_path_to_folder_error1"] = "Ścieżka musi zaczynać się od '/'.";
+$MESS["library_wizard_path_to_folder_error2"] = "/bitrix/ nie może być folderem przechowywania.";
+$MESS["library_wizard_perm_add"] = "Dodaj grupę";
+$MESS["library_wizard_perm_bp"] = "Proces Biznesowy";
+$MESS["library_wizard_perm_folder"] = "Uprawnienia dostępu do folderu";
+$MESS["library_wizard_perm_forum"] = "Uprawnienia dostępu do forum komentarzy";
+$MESS["library_wizard_perm_forum_read"] = "Odczyt";
+$MESS["library_wizard_perm_forum_write"] = "Napisz";
+$MESS["library_wizard_perm_iblock"] = "Uprawnienia dostępu do bloku informacji";
+$MESS["library_wizard_perm_read"] = "Odczyt";
+$MESS["library_wizard_perm_write"] = "Napisz";
+$MESS["library_wizard_settings"] = "Ustawienia biblioteki dokumentów";
+$MESS["library_wizard_tags"] = "Chmura tagów";
+$MESS["library_wizard_tags_num"] = "Liczba tagów:";
+$MESS["library_wizard_tags_show"] = "Pokaż Tagi:";
+$MESS["library_wizard_title"] = "Sekcja biblioteki dokumentów (SEF)";
+?>

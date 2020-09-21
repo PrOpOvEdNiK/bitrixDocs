@@ -1,0 +1,31 @@
+<?
+$MESS["CRM_FE_DELETE_TITLE"] = "Excluir";
+$MESS["CRM_FE_ENUM_DEFAULT"] = "Valor padrão";
+$MESS["CRM_FE_ENUM_DEFAULTS"] = "Valores padrão";
+$MESS["CRM_FE_ENUM_IMPORT"] = "Importar como lista";
+$MESS["CRM_FE_ENUM_IMPORT_HINT"] = "Converter cada linha única para uma entrada na lista.";
+$MESS["CRM_FE_ENUM_NO_DEFAULT"] = "(Nenhum)";
+$MESS["CRM_FE_FIELD_COMMON_LABEL"] = "Nome";
+$MESS["CRM_FE_FIELD_IS_REQUIRED"] = "Obrigatório";
+$MESS["CRM_FE_FIELD_MULTIPLE"] = "Múltiplo";
+$MESS["CRM_FE_FIELD_NAME"] = "Nome";
+$MESS["CRM_FE_FIELD_SHOW_FILTER"] = "Mostrar no filtro";
+$MESS["CRM_FE_FIELD_SHOW_IN_LIST"] = "Mostrar na lista";
+$MESS["CRM_FE_FIELD_SORT"] = "Ordenando";
+$MESS["CRM_FE_FIELD_TYPE"] = "Tipo";
+$MESS["CRM_FE_FIELD_USE_MULTI_LANG_LABEL"] = "Determinar nomes em todas as línguas";
+$MESS["CRM_FE_LIST_ITEM_ADD"] = "Adicionar";
+$MESS["CRM_FE_SORT_DOWN_TITLE"] = "Para baixo";
+$MESS["CRM_FE_SORT_UP_TITLE"] = "Acima";
+$MESS["CRM_FE_TAB_EDIT"] = "Configurações";
+$MESS["CRM_FE_TAB_EDIT_TITLE"] = "Parâmetros gerais";
+$MESS["CRM_FE_TAB_LIST"] = "Lista";
+$MESS["CRM_FE_TAB_LIST_TITLE"] = "Valores de propriedade de lista";
+$MESS["CRM_FE_TOOLBAR_ADD"] = "Adicionar campo";
+$MESS["CRM_FE_TOOLBAR_ADD_TITLE"] = "Adicionar novo campo";
+$MESS["CRM_FE_TOOLBAR_DELETE"] = "Excluir campo";
+$MESS["CRM_FE_TOOLBAR_DELETE_TITLE"] = "Excluir um campo e abrir formulário de campos";
+$MESS["CRM_FE_TOOLBAR_DELETE_WARNING"] = "Tem certeza de que deseja excluir este campo?";
+$MESS["CRM_FE_TOOLBAR_FIELDS"] = "Campos";
+$MESS["CRM_FE_TOOLBAR_FIELDS_TITLE"] = "Visualizar campos disponíveis";
+?>

@@ -1,0 +1,29 @@
+<?
+$MESS["INTR_MAIL_CHOOSE"] = "Pasirinkite elektroninio pašto paslaugą, kurią naudosite savo intranete";
+$MESS["INTR_MAIL_STATUS"] = "Statusas";
+$MESS["INTR_MAIL_CHECK"] = "Tikrinti";
+$MESS["INTR_MAIL_CHECK_TEXT"] = "Paskutinis tikrinimas #DATE#";
+$MESS["INTR_MAIL_CHECK_JUST_NOW"] = "prieš sekundę";
+$MESS["INTR_MAIL_CHECK_TEXT_NA"] = "Nėra duomenų.";
+$MESS["INTR_MAIL_CHECK_SUCCESS"] = "Sėkmė";
+$MESS["INTR_MAIL_CHECK_ERROR"] = "Klaida";
+$MESS["INTR_MAIL_CHECK_NA"] = "Nėra";
+$MESS["INTR_MAIL_INP_PORT"] = "Portas";
+$MESS["INTR_MAIL_INP_ENCRYPT"] = "Naudoti SSL";
+$MESS["INTR_MAIL_INP_LOGIN"] = "Prisijingimo vardas";
+$MESS["INTR_MAIL_INP_PASS"] = "Slaptažodis";
+$MESS["INTR_MAIL_INP_ENCRYPT_YES"] = "Taip";
+$MESS["INTR_MAIL_INP_ENCRYPT_NO"] = "Ne";
+$MESS["INTR_MAIL_REMOVE_CONFIRM"] = "Pašalinti šios pašto dėžutės  ryšio parametrus?";
+$MESS["INTR_MAIL_CREATE"] = "Sujungti";
+$MESS["INTR_MAIL_UPDATE"] = "Išsaugoti";
+$MESS["INTR_MAIL_REMOVE"] = "Pašalinti";
+$MESS["INTR_MAIL_COMPLETE"] = "Paštas buvo sėkmingai integruotas.";
+$MESS["INTR_MAIL_REMOVE_COMPLETE"] = "Sujungimo ir prisijungimo parametrai buvo pašalinti.";
+$MESS["INTR_MAIL_SETUP_HINT"] = "Bet kuriuo metu naudokite savo profilį, norint integruoti paštą.";
+$MESS["INTR_MAIL_LINK"] = "Žiūrėti el.paštą";
+$MESS["INTR_MAIL_SETUP"] = "Pateikti IMAP ryšio parametrus";
+$MESS["INTR_MAIL_INP_SERVER"] = "IMAP serverio adresas";
+$MESS["INTR_MAIL_INP_LINK"] = "E-pašto serverio interneto sąsajos URL";
+$MESS["INTR_MAIL_SETUP_LINK"] = "Nustatyti naują ryšį";
+?>

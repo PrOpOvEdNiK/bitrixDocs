@@ -1,0 +1,29 @@
+<?
+$MESS["FORM_FORM_LIST"] = "Formos sąrašas";
+$MESS["FORM_NOT_FOUND"] = "Web forma nerasta";
+$MESS["FORM_ERROR"] = "Klaida!";
+$MESS["FORM_PAGE_TITLE"] = "Statuų sąrašas formos rezultatams # #ID#";
+$MESS["FORM_FORM_EDIT"] = "Formos parametrai";
+$MESS["FORM_EDIT_ALT"] = "Pakeisti formos parametrus ";
+$MESS["FORM_FORM_NAME"] = "Forma:";
+$MESS["FORM_F_ACTIVE"] = "Aktyvus:";
+$MESS["FORM_F_TITLE"] = "Antraštė:";
+$MESS["FORM_F_DESCRIPTION"] = "Aprašymas:";
+$MESS["FORM_F_RESULTS"] = "Rezultatas:";
+$MESS["FORM_PAGES"] = "Statusai";
+$MESS["FORM_TIMESTAMP"] = "Pakeista";
+$MESS["FORM_C_SORT"] = "Rūš.";
+$MESS["FORM_DESCRIPTION"] = "Aprašymas";
+$MESS["FORM_DELETE_STATUS_CONFIRM"] = "Ar tikrai norite pašalinti šį statusą?";
+$MESS["FORM_DEFAULT"] = "Numatytasis";
+$MESS["FORM_COPY_ALT"] = "Kopijuoti statusą ";
+$MESS["FORM_COPY"] = "Kopijuoti ";
+$MESS["FORM_RESULT_TITLE"] = "Atidaryti formos rezultatus";
+$MESS["FORM_FL_ID"] = "Statuso ID";
+$MESS["FORM_FL_ACTIVE"] = "Aktyvi";
+$MESS["FORM_FL_DESCR"] = "Aprašymas";
+$MESS["FORM_FL_RESULTS"] = "Rezultatų kiekis";
+$MESS["FORM_FORM_EDIT_TITLE"] = "Pakeisti formos parametrus";
+$MESS["FORM_STATUS_DELETE"] = "Pašalinti";
+$MESS["FORM_STATUS_DELETE_ALT"] = "Pašalinti statusą";
+?>

@@ -1,0 +1,5 @@
+<?
+$MESS["CRM_EXTERNAL_CHANNEL_ACTIVITY_TYPE_ACTIVITY"] = "Importer des documents";
+$MESS["CRM_EXTERNAL_CHANNEL_ACTIVITY_TYPE_ACTIVITY_FACE_CARD"] = "Reçu de Carte faciale 1C";
+$MESS["CRM_EXTERNAL_CHANNEL_ACTIVITY_TYPE_AGENT"] = "Importer des sociétés et des contacts";
+?>

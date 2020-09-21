@@ -1,0 +1,31 @@
+<?
+$MESS["PERFMON_MNU_CACHE_LIST"] = "Mise en cache";
+$MESS["PERFMON_MNU_CACHE_LIST_ALT"] = "Rapport des opérations liées au cache";
+$MESS["PERFMON_MNU_COMP_LIST"] = "Composants";
+$MESS["PERFMON_MNU_COMP_LIST_ALT"] = "Rapport par composants";
+$MESS["PERFMON_MNU_DB_SERVER"] = "Serveur de la base de données";
+$MESS["PERFMON_MNU_DB_SERVER_ALT"] = "Résumé de statistiques de performances du serveur de base de données.";
+$MESS["PERFMON_MNU_ERROR_LIST"] = "Erreurs PHP";
+$MESS["PERFMON_MNU_ERROR_LIST_ALT"] = "Journal d'enregistrement des erreurs PHP.";
+$MESS["PERFMON_MNU_HISTORY"] = "Historique";
+$MESS["PERFMON_MNU_HISTORY_ALT"] = "Historique des mesures effectuées dans le panneau de performance";
+$MESS["PERFMON_MNU_HIT_LIST"] = "Hits";
+$MESS["PERFMON_MNU_HIT_LIST_ALT"] = "Rapport de hit";
+$MESS["PERFMON_MNU_INDEXES"] = "Index";
+$MESS["PERFMON_MNU_INDEX_COMPLETE"] = "Liste d'index créée";
+$MESS["PERFMON_MNU_INDEX_COMPLETE_ALT"] = "Liste d'index créée";
+$MESS["PERFMON_MNU_INDEX_SUGGEST"] = "Analyse d'index";
+$MESS["PERFMON_MNU_INDEX_SUGGEST_ALT"] = "Recommandations pour la création d'index pour les requêtes SQL recueillies";
+$MESS["PERFMON_MNU_PAGES"] = "Au page";
+$MESS["PERFMON_MNU_PAGES_ALT"] = "Rapport par page avec paramètres finaux";
+$MESS["PERFMON_MNU_PANEL"] = "Panneau de performances";
+$MESS["PERFMON_MNU_PANEL_ALT"] = "Affichage des principales caractéristiques qui influencent les performances";
+$MESS["PERFMON_MNU_PHP"] = "PHP";
+$MESS["PERFMON_MNU_PHP_ALT"] = "Paramètres de PHP";
+$MESS["PERFMON_MNU_SECT"] = "Débogage";
+$MESS["PERFMON_MNU_SECT_TITLE"] = "Moniteur de rendement";
+$MESS["PERFMON_MNU_SQL_LIST2"] = "Demandes SQL";
+$MESS["PERFMON_MNU_SQL_LIST_ALT"] = "Le rapport sur les requêtes SQL";
+$MESS["PERFMON_MNU_TABLES"] = "Tableaux";
+$MESS["PERFMON_MNU_TABLES_ALT"] = "Affichage du contenu des tableaux";
+?>

@@ -1,0 +1,34 @@
+<?
+$MESS["CRM_MODULE_NOT_INSTALLED"] = "Модуль CRM не встановлено.";
+$MESS["CRM_QUOTE_NOT_FOUND"] = "Пропозицію не знайдено";
+$MESS["CRM_QUOTE_CREATION_PAGE_TITLE"] = "Створення пропозиції";
+$MESS["CRM_QUOTE_COPY_PAGE_TITLE"] = "Копіювання пропозиції";
+$MESS["CRM_QUOTE_FIELD_ID"] = "ID";
+$MESS["CRM_QUOTE_FIELD_TITLE"] = "Тема";
+$MESS["CRM_QUOTE_FIELD_NUMBER"] = "№ пропозиції";
+$MESS["CRM_QUOTE_FIELD_STATUS_ID"] = "Статус пропозиції";
+$MESS["CRM_QUOTE_FIELD_OPPORTUNITY_WITH_CURRENCY"] = "Сума і валюта";
+$MESS["CRM_QUOTE_FIELD_ASSIGNED_BY_ID"] = "Відповідальний";
+$MESS["CRM_QUOTE_FIELD_BEGINDATE"] = "Дата виставлення";
+$MESS["CRM_QUOTE_FIELD_CLOSEDATE"] = "Термін";
+$MESS["CRM_QUOTE_FIELD_LEAD_ID"] = "Лід";
+$MESS["CRM_QUOTE_FIELD_DEAL_ID"] = "Угода";
+$MESS["CRM_QUOTE_FIELD_OPENED"] = "Доступно для всіх";
+$MESS["CRM_QUOTE_FIELD_COMMENTS"] = "Коментар (не відобразиться в пропозиції)";
+$MESS["CRM_QUOTE_FIELD_CONTENT"] = "Зміст";
+$MESS["CRM_QUOTE_FIELD_TERMS"] = "Умови";
+$MESS["CRM_QUOTE_FIELD_CLIENT"] = "Клієнт";
+$MESS["CRM_QUOTE_FIELD_CONTACT_LEGEND"] = "Контакти, що беруть участь у пропозиції";
+$MESS["CRM_QUOTE_FIELD_LEAD"] = "Лід";
+$MESS["CRM_QUOTE_FIELD_DEAL"] = "Угода";
+$MESS["CRM_QUOTE_FIELD_MYCOMPANY"] = "Реквізити вашої компанії";
+$MESS["CRM_QUOTE_FIELD_PRODUCTS"] = "Товари";
+$MESS["CRM_QUOTE_SECTION_MAIN"] = "Про пропозицію";
+$MESS["CRM_QUOTE_SECTION_ADDITIONAL"] = "Додатково";
+$MESS["CRM_QUOTE_SECTION_PRODUCTS"] = "Товари";
+$MESS["CRM_QUOTE_TAB_PRODUCTS"] = "Товари";
+$MESS["CRM_QUOTE_TAB_TREE"] = "Зв'язки";
+$MESS["CRM_QUOTE_TAB_EVENT"] = "Історія";
+$MESS["CRM_QUOTE_FIELD_FILES"] = "Файли";
+$MESS["CRM_QUOTE_FIELD_UTM"] = "UTM-мітки";
+?>

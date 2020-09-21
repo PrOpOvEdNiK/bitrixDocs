@@ -1,0 +1,20 @@
+<?
+$MESS["CRM_PAYMENT_DELETE_ERROR"] = "Erro ao excluir pagamento";
+$MESS["CRM_PAYMENT_HEADER_ACCOUNT_NUMBER"] = "Pagamento No.";
+$MESS["CRM_PAYMENT_HEADER_CURRENCY"] = "Moeda";
+$MESS["CRM_PAYMENT_HEADER_DATE_BILL"] = "Criado em";
+$MESS["CRM_PAYMENT_HEADER_DATE_PAID"] = "Data de pagamento";
+$MESS["CRM_PAYMENT_HEADER_DATE_PAY_BEFORE"] = "Pagar antes de";
+$MESS["CRM_PAYMENT_HEADER_ID"] = "ID do pagamento";
+$MESS["CRM_PAYMENT_HEADER_ORDER_ID"] = "ID do pedido";
+$MESS["CRM_PAYMENT_HEADER_PAID"] = "Status";
+$MESS["CRM_PAYMENT_HEADER_PAYMENT_SUMMARY"] = "Pagamento";
+$MESS["CRM_PAYMENT_HEADER_PAY_SYSTEM_FULL"] = "Método de pagamento";
+$MESS["CRM_PAYMENT_HEADER_PAY_SYSTEM_NAME"] = "Sistema de pagamento";
+$MESS["CRM_PAYMENT_HEADER_PAY_VOUCHER_NUM"] = "Número do documento de pagamento";
+$MESS["CRM_PAYMENT_HEADER_RESPONSIBLE"] = "Pessoa responsável";
+$MESS["CRM_PAYMENT_HEADER_SUM"] = "Valor";
+$MESS["CRM_PAYMENT_HEADER_USER_ID"] = "Cliente";
+$MESS["CRM_PAYMENT_NAME"] = "Envio ##ACCOUNT_NUMBER# de #DATE_BILL#";
+$MESS["CRM_PERMISSION_DENIED"] = "Acesso negado";
+?>

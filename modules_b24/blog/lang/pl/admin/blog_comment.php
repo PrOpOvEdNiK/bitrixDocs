@@ -1,0 +1,36 @@
+<?
+$MESS["BLB_AUTHOR_ANONYM"] = "Anonimowy";
+$MESS["BLB_AUTHOR_EMAIL"] = "E-mail Autora";
+$MESS["BLB_AUTHOR_ID"] = "Autor";
+$MESS["BLB_AUTHOR_IP"] = "IP Autora";
+$MESS["BLB_AUTHOR_IP1"] = "IP1 Autora";
+$MESS["BLB_AUTHOR_NAME"] = "Nazwa Autora";
+$MESS["BLB_BLOG_ACTIVE"] = "Blog jest aktywny";
+$MESS["BLB_BLOG_GROUP_ID"] = "Blog Groupy";
+$MESS["BLB_BLOG_GROUP_SITE_ID"] = "Strona";
+$MESS["BLB_BLOG_ID"] = "Blog";
+$MESS["BLB_BLOG_OWNER_ID"] = "Właściciel Bloga";
+$MESS["BLB_BLOG_SOCNET_GROUP_ID"] = "Właściciel Bloga Grupy";
+$MESS["BLB_COMMENT"] = "Komentarz";
+$MESS["BLB_DATE_CREATE"] = "Utworzony";
+$MESS["BLB_DELETE_ALT"] = "Usuń";
+$MESS["BLB_DELETE_CONF"] = "Na pewno chcesz usunąć ten komentarz?";
+$MESS["BLB_DELETE_ERROR"] = "Błąd usuwania komentarza.";
+$MESS["BLB_F_ALL"] = "(Wszystko)";
+$MESS["BLB_GROUP_NAV"] = "Komentarze";
+$MESS["BLB_HIDE_ALT"] = "Ukryj";
+$MESS["BLB_HIDE_ERROR"] = "Błąd ukrycia komentarza.";
+$MESS["BLB_NO"] = "Nie";
+$MESS["BLB_POST_ID"] = "Wiadomość";
+$MESS["BLB_POST_TEXT"] = "Treść Komentarza";
+$MESS["BLB_PUBLISH_STATUS"] = "Opublikowany";
+$MESS["BLB_SHOW_ALT"] = "Pokaż";
+$MESS["BLB_SHOW_ERROR"] = "Błąd wyświetlenia komentarza.";
+$MESS["BLB_STOP_LIST"] = "zatrzymaj listę";
+$MESS["BLB_TITLE"] = "Komentarze";
+$MESS["BLB_VIEW_ALT"] = "Wyświetk komentarz na stronie";
+$MESS["BLB_YES"] = "Tak";
+$MESS["MAIN_ADMIN_LIST_CHECKED"] = "Zaznaczone:";
+$MESS["MAIN_ADMIN_LIST_DELETE"] = "Usuń";
+$MESS["MAIN_ADMIN_LIST_SELECTED"] = "Wybrany:";
+?>

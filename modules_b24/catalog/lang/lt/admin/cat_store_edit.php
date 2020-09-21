@@ -1,0 +1,31 @@
+<?
+$MESS["STORE_TITLE_UPDATE"] = "Redaguoti sandėlį #ID#";
+$MESS["STORE_TITLE_ADD"] = "Naujas sandėlis";
+$MESS["STORE_LIST"] = "Visi sandėlis ";
+$MESS["STORE_NEW"] = "Pridėti ";
+$MESS["STORE_DELETE"] = "Pašalinti";
+$MESS["STORE_DELETE_CONFIRM"] = "Ar tikrai norite pašalinti šį sandėlį?";
+$MESS["STORE_TAB"] = "Sandėliai";
+$MESS["STORE_TAB_DESCR"] = "Sandėlis";
+$MESS["STORE_TITLE"] = "Vardas";
+$MESS["STORE_E_USER_FIELDS_ADD_HREF"] = "Pridėt naudotojo lauką";
+$MESS["STORE_ADDRESS"] = "Adresas";
+$MESS["STORE_DESCR"] = "Aprašymas";
+$MESS["CVAT_SORT"] = "Rūšiuoti";
+$MESS["STORE_IMAGE"] = "Vaizdas";
+$MESS["STORE_GPS_N"] = "GPS platuma";
+$MESS["STORE_GPS_S"] = "GPS ilguma";
+$MESS["STORE_PHONE"] = "Telefonas";
+$MESS["STORE_SCHEDULE"] = "Darbo valandos";
+$MESS["STORE_ACTIVE"] = "Aktyvus";
+$MESS["ADDRESS_EMPTY"] = "Prašome pateikti sandėlio adresą.";
+$MESS["CSTORE_SORT"] = "Rūšiuoti";
+$MESS["SHIPPING_CENTER"] = "Pristatymo centras";
+$MESS["ISSUING_CENTER"] = "Paėmimo vieta";
+$MESS["STORE_SITE_ID"] = "Svetainė";
+$MESS["STORE_CODE"] = "Simbolinis kodas";
+$MESS["STORE_SELECT_SITE_ID"] = "Pasirinkti svetainę";
+$MESS["CAT_FEATURE_NOT_ALLOW"] = "Jūsų versija negali pasinaudoti šia paslauga.";
+$MESS["STORE_SAVE_ERROR"] = "Nepavyko išsaugoti sandėlio";
+$MESS["STORE_XML_ID"] = "Išorinis ID";
+?>

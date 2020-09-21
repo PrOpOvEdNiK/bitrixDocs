@@ -1,0 +1,6 @@
+<?
+$MESS["CRM_PRODUCT_EXP_COLUMN_CURRENCY_ID"] = "Moneda";
+$MESS["CRM_PRODUCT_EXP_COLUMN_DESCRIPTION_TYPE"] = "Formato de descripción";
+$MESS["CRM_PRODUCT_EXP_COLUMN_SECTION_ID"] = "Sección (level #LEVEL_NUM#)";
+$MESS["ERROR_PRODUCT_LIST_IS_EMPTY"] = "¡No hay productos!";
+?>

@@ -1,0 +1,6 @@
+<?
+$MESS["PHONE_ENTITY_ID_FIELD"] = "ID";
+$MESS["PHONE_ENTITY_PHONE_MNEMONIC_FIELD"] = "Nome mnemônico do telefone";
+$MESS["PHONE_ENTITY_PHONE_NUMBER_FIELD"] = "Telefone";
+$MESS["PHONE_ENTITY_USER_ID_FIELD"] = "ID de usuário";
+?>

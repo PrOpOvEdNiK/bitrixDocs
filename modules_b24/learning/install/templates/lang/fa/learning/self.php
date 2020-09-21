@@ -1,0 +1,6 @@
+<?
+$MESS["LEARNING_QUESTION_S"] = "سوال";
+$MESS["LEARNING_QUESTION_DESC"] = "توضیحات";
+$MESS["LEARNING_SELECT_ANSWER"] = "انتخاب پاسخ";
+$MESS["LEARNING_SUBMIT_ANSWER"] = "پاسخ";
+?>

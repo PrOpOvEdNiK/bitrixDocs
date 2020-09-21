@@ -1,0 +1,34 @@
+<?
+$MESS["TASKS_CLOSED_DATE"] = "Concluída em";
+$MESS["TASKS_CREATED_DATE"] = "Criada em";
+$MESS["TASKS_CREATOR"] = "Criada por";
+$MESS["TASKS_DATE_START"] = "Iniciada em";
+$MESS["TASKS_DEADLINE"] = "Prazo";
+$MESS["TASKS_END_DATE_PLAN"] = "Data de término";
+$MESS["TASKS_NEW_RESPONSIBLE"] = "Novo funcionário";
+$MESS["TASKS_NO_DATE"] = "não";
+$MESS["TASKS_PRIORITY"] = "Prioridade";
+$MESS["TASKS_PRIORITY_0"] = "Baixa";
+$MESS["TASKS_PRIORITY_1"] = "Normal";
+$MESS["TASKS_PRIORITY_2"] = "Alta";
+$MESS["TASKS_RESPONSIBLE"] = "Pessoa responsável";
+$MESS["TASKS_SIDEBAR_START_DATE"] = "de";
+$MESS["TASKS_START_DATE_PLAN"] = "Data de início";
+$MESS["TASKS_STATUS"] = "Status";
+$MESS["TASKS_STATUS_1"] = "Nova";
+$MESS["TASKS_STATUS_2"] = "Pendente";
+$MESS["TASKS_STATUS_3"] = "Em andamento";
+$MESS["TASKS_STATUS_4"] = "Revisão pendente";
+$MESS["TASKS_STATUS_5"] = "Concluída";
+$MESS["TASKS_STATUS_6"] = "Adiada";
+$MESS["TASKS_STATUS_7"] = "Recusada";
+$MESS["TASKS_STATUS_ACCEPTED"] = "Pendente";
+$MESS["TASKS_STATUS_COMPLETED"] = "Concluída";
+$MESS["TASKS_STATUS_DECLINED"] = "Recusada";
+$MESS["TASKS_STATUS_DELAYED"] = "Adiada";
+$MESS["TASKS_STATUS_IN_PROGRESS"] = "Em andamento";
+$MESS["TASKS_STATUS_NEW"] = "Nova";
+$MESS["TASKS_STATUS_OVERDUE"] = "Atrasada";
+$MESS["TASKS_STATUS_WAITING"] = "Revisão pendente";
+$MESS["TASKS_TASK_TITLE_LABEL"] = "Tarefa";
+?>

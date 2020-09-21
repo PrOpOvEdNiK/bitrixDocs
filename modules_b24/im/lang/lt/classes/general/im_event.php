@@ -1,0 +1,29 @@
+<?
+$MESS["IM_EVENT_RATING_BLOG_POST_LIKE"] = "Man patinka jūsų pranešimas #LINK#";
+$MESS["IM_EVENT_RATING_BLOG_COMMENT_LIKE"] = "Man patinka jūsų  #A_START#komentaras#A_END# prie \"#TITLE#\"";
+$MESS["IM_EVENT_RATING_FORUM_TOPIC_LIKE"] = "Man patinka jūsų tema \"#LINK#\"";
+$MESS["IM_EVENT_RATING_FORUM_POST_LIKE"] = "Man patinka jūsų  #A_START#komentaras#A_END# prie \"#TITLE#\"";
+$MESS["IM_EVENT_RATING_ELSE_LIKE"] = "Man patinka #LINK#";
+$MESS["IM_EVENT_RATING_BLOG_POST_DISLIKE"] = "Man nepatinka jūsų pranešimas #LINK#";
+$MESS["IM_EVENT_RATING_BLOG_COMMENT_DISLIKE"] = "Man nepatinka jūsų  #A_START#komentaras#A_END# prie \"#TITLE#\"";
+$MESS["IM_EVENT_RATING_FORUM_TOPIC_DISLIKE"] = "Man nepatinka jūsų tema #LINK#";
+$MESS["IM_EVENT_RATING_FORUM_POST_DISLIKE"] = "Man nepatinka jūsų  #A_START#komentaras#A_END# prie \"#TITLE#\"";
+$MESS["IM_EVENT_RATING_ELSE_DISLIKE"] = "Man nepatinka #LINK#";
+$MESS["IM_EVENT_RATING_COMMENT_LIKE"] = "Man patinka jūsų  #A_START#komentaras#A_END# prie \"#TITLE#\"";
+$MESS["IM_EVENT_RATING_FILE_LIKE"] = "Man patinka jūsų  #A_START#failas#A_END# prie \"#TITLE#\"";
+$MESS["IM_EVENT_RATING_PHOTO_LIKE"] = "Man patinka jūsų  #A_START#nuotrauka#A_END# prie \"#TITLE#\"";
+$MESS["IM_EVENT_RATING_PHOTO1_LIKE"] = "Man patinka jūsų  #A_START#nuotrauka#A_END# ";
+$MESS["IM_EVENT_RATING_COMMENT_DISLIKE"] = "Man nepatinka jūsų  #A_START#komentaras#A_END# prie \"#TITLE#\"";
+$MESS["IM_EVENT_RATING_FILE_DISLIKE"] = "Man nepatinka jūsų  #A_START#failas#A_END# prie \"#TITLE#\"";
+$MESS["IM_EVENT_RATING_PHOTO_DISLIKE"] = "Man nepatinka jūsų  #A_START#nuotrauka#A_END# prie \"#TITLE#\"";
+$MESS["IM_EVENT_RATING_PHOTO1_DISLIKE"] = "Man nepatinka jūsų  #A_START#nuotrauka#A_END# ";
+$MESS["IM_EVENT_RATING_BLOG_POST_MENTION_LIKE"] = "Man patinka pranešimas \"#LINK#\", kuriame jūs buvote paminėtas";
+$MESS["IM_EVENT_RATING_BLOG_COMMENT_MENTION_LIKE"] = "Man patinka #A_START#komentaras#A_END# \"#TITLE#\", kuriame jūs buvote paminėtas";
+$MESS["IM_EVENT_RATING_COMMENT_MENTION_LIKE"] = "Man patinka #A_START#komentaras#A_END# \"#TITLE#\", kuriame jūs buvote paminėtas";
+$MESS["IM_EVENT_RATING_BLOG_POST_MENTION_DISLIKE"] = "Man nepatinka pranešimas \"#LINK#\", kuriame jūs buvote paminėtas";
+$MESS["IM_EVENT_RATING_BLOG_COMMENT_MENTION_DISLIKE"] = "Man nepatinka #A_START#komentaras#A_END# \"#TITLE#\", kuriame jūs buvote paminėtas";
+$MESS["DESKTOP_APPLICATION_NAME"] = "Darbalaukio aplikacija";
+$MESS["DESKTOP_APPLICATION_DESC"] = "Sukurti čia specialų slaptažodį saugiai prieiti prie darbalaukio aplikacijos ";
+$MESS["IM_EVENT_RATING_LISTS_NEW_ELEMENT_LIKE"] = "Man patinka #A_START#jūsų pranešimas paleistam verslo procese #TITLE#\"#A_END#";
+$MESS["IM_EVENT_ERROR_CHANGE_PASSWORD_FOR_BOT"] = "Jūs negalite atkurti pokalbių boto slaptažodį.";
+?>

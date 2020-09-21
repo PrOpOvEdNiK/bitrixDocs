@@ -1,0 +1,7 @@
+<?
+$MESS["BCL_MOBILE_MONITORING_SITE_DELETING"] = "Usuń";
+$MESS["BCL_MOBILE_MONITORING_SITE_DEL_ERROR"] = "Błąd usuwania strony internetowej";
+$MESS["BCL_MOBILE_MONITORING_SITE_REFRESHING"] = "Aktualizacja";
+$MESS["BCL_MOBILE_MONITORING_SITE_SAVE_ERROR"] = "Błąd zapisywania parametrów";
+$MESS["BCL_MOBILE_MONITORING_SITE_SAVING"] = "Zapisywanie";
+?>

@@ -1,0 +1,106 @@
+#landosik, .landosik {
+    position: fixed;
+    left: ~'calc(50% - 270px)';
+    top: 62px;
+    width: 540px;
+    margin-top: -200px;
+    background: #fff;
+    z-index: 1100;
+    display: block;
+    transition: margin-top .3s ease 2s;
+    box-shadow: 0 0 5px #aaa;
+    &.visible {
+        margin-top: 0;
+    }
+
+    .content {
+        background: #fff;
+        display: flex;
+        flex-direction: column;
+        z-index:1;
+    }
+
+    .overlay {
+        content: '';
+        display: block;
+        position:fixed;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        background: rgba(0,0,0,0.2);
+        z-index: -12;
+    }
+
+    h2 {
+        font-size: 18px;
+        line-height: 22px;
+        color: #000000;
+
+        .highlight {
+            text-transform: uppercase;
+            color: #99cc33;
+            font-weight: 900;
+        }
+    }
+
+    .slogan {
+        font-size: 14px;
+        line-height: 16px;
+        color: #535c69;
+    }
+
+    .link {
+        display: flex;
+        flex-direction: row;
+        padding: 8px 20px;
+        text-decoration: none;
+        position: relative;
+        cursor: pointer;
+
+        + .link {
+            border-top: 1px solid #c4c4c4;
+        }
+    }
+
+    img {
+        margin-right: 20px;
+        height: 70px;
+        flex-basis: 70px;
+        align-self: flex-start;
+    }
+
+    .close {
+        position: absolute;
+        right: 0;
+        top: 0;
+        width: 40px;
+        height: 40px;
+        background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAHNJREFUeNpiYGBguADEVgykA0sgvswA1fyIRENAmh8DsTVMgBRDMDSTYoglVI01LgVWeBRYEdKMTyHRmrFpIFkzuiF4NTPhMeA/DjbR8YzuBSty/E9yOiEmGq0IaSYmIVmRoxlnaiQ3M8ENuUhBdr4EEGAAGWcofxIR5z4AAAAASUVORK5CYII=') center center no-repeat;
+
+        &:hover {
+            opacity: 0.8;
+            cursor: pointer;
+        }
+    }
+
+    .text {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        flex-basis: 0;
+        flex-grow: 1;
+    }
+}
+
+.blue-button {
+    border: 1px solid #1670ac;
+    background: linear-gradient(to bottom,   #1c8fc4 0%,#2987b3 80%,#308fbb 100%);
+    &:hover {
+        background: linear-gradient(to bottom,   #42a1cd 0%,#357ab6 80%,#42a1cd 100%);
+    }
+}
+
+.sider-right-button > .blue-button {
+    margin-left: 20px;
+}

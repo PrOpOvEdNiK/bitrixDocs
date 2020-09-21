@@ -1,0 +1,34 @@
+<script type='text/ejs' id='confirmTimerChange'>
+    <h2 class="header"><?= $this->t("TIMER_CHANGE_TASK"); ?></h2>
+    <div class="lines"></div>
+    <div class="tasks">
+        <div class="task task-start <%= window.SCRUMBAN.priority[taskStart.priority].cssClass %> <%= window.SCRUMBAN.taskType[parseInt(taskStart.taskTypeId, 10)].cssClass %>">
+            <div class="handle"></div>
+            <div class="body">
+                <div class="inner">
+                    <div class="descr jsDescr">
+                        <i class="jsTitleIcon title-icon"></i>
+                        <div class="title jsTitle">#<%= taskStart.backendTaskId %></div>
+                        <span class="lineTitle"><%= taskStart.realTitle ? htmlspecialchars(taskStart.realTitle) : taskStart.title %></span>
+                        <span class="lineDescr"><%= $.stripTags(((taskStart.description ? taskStart.description + '' : '')).br2nl()).nl2br().replace(/\n/g, " ").substr(0, 150) %></span>
+                    </div>
+                </div>
+            </div>
+            <div class="clear"></div>
+        </div>
+        <div class="task task-stop <%= window.SCRUMBAN.priority[taskStop.priority].cssClass %> <%= window.SCRUMBAN.taskType[parseInt(taskStop.taskTypeId, 10)].cssClass %>">
+            <div class="handle"></div>
+            <div class="body">
+                <div class="inner">
+                    <div class="descr jsDescr">
+                        <i class="jsTitleIcon title-icon"></i>
+                        <div class="title jsTitle">#<%= taskStop.backendTaskId %></div>
+                        <span class="lineTitle"><%= taskStop.realTitle ? htmlspecialchars(taskStop.realTitle) : taskStop.title %></span>
+                        <span class="lineDescr"><%= $.stripTags(((taskStop.description ? taskStop.description + '' : '')).br2nl()).nl2br().replace(/\n/g, " ").substr(0, 150) %></span>
+                    </div>
+                </div>
+            </div>
+            <div class="clear"></div>
+        </div>
+    </div>
+</script>

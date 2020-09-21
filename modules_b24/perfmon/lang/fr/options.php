@@ -1,0 +1,33 @@
+<?
+$MESS["PERFMON_OPTIONS_CACHE_LOG"] = "Suivre le journal de la mise en cache";
+$MESS["PERFMON_OPTIONS_LARGE_CACHE_LOG"] = "Déconnexion grandes opérations sur les fichiers de cache seulement";
+$MESS["PERFMON_OPTIONS_LARGE_CACHE_NOTE"] = "Ce ne sera pas vous connecter statistiques des pages qui ne utilisent pas de gros fichiers de cache. avertissements PHP ne seront pas enregistrées ainsi.";
+$MESS["PERFMON_OPTIONS_LARGE_CACHE_SIZE"] = "Fichier de cache est importante si elle dépasse";
+$MESS["PERFMON_OPTIONS_LARGE_CACHE_SIZE_KB"] = "(KB)";
+$MESS["PERFMON_OPTIONS_MAX_DISPLAY_URL"] = "Longueur maximale de l'URL lors de l'affichage";
+$MESS["PERFMON_OPTIONS_SLOW_SQL_LOG"] = "Enregistrer seulement les requêtes SQL lentes";
+$MESS["PERFMON_OPTIONS_SLOW_SQL_NOTE"] = "Il ne sera pas enregistré la statistique des pages sur lesquelles il n'y a pas de lentes demandes et les avertissements PHP ne seront pas enregistrés.";
+$MESS["PERFMON_OPTIONS_SLOW_SQL_TIME"] = "Temps d'exécution après lequel la requête est considérée lente";
+$MESS["PERFMON_OPTIONS_SLOW_SQL_TIME_SEC"] = "(sec.)";
+$MESS["PERFMON_OPTIONS_SQL_BACKTRACE"] = "Enregistrer la pile d'exécution pour les requêtes SQL";
+$MESS["PERFMON_OPTIONS_SQL_LOG"] = "Conserver l'historique des requêtes SQL";
+$MESS["PERFMON_OPTIONS_WARNING_LOG"] = "Tenir un journal d'avertissements PHP";
+$MESS["PERFMON_OPT_ACTIVE"] = "L'activité du moniteur";
+$MESS["PERFMON_OPT_ACTIVE_N"] = "Désactivé(e)s";
+$MESS["PERFMON_OPT_ACTIVE_TO"] = "Il reste avant l'échéance de l'activité";
+$MESS["PERFMON_OPT_ACTIVE_Y"] = "Activé(e)s";
+$MESS["PERFMON_OPT_CLEAR_DATA"] = "Supprimer les données recueillies précédemment";
+$MESS["PERFMON_OPT_INTERVAL_1800_SEC"] = "pour 30 minutes";
+$MESS["PERFMON_OPT_INTERVAL_24_HOURS"] = "24 heures";
+$MESS["PERFMON_OPT_INTERVAL_300_SEC"] = "pour 5 minutes";
+$MESS["PERFMON_OPT_INTERVAL_3600_SEC"] = "pendant 1 heure";
+$MESS["PERFMON_OPT_INTERVAL_4_HOURS"] = "Pour 4 heures";
+$MESS["PERFMON_OPT_INTERVAL_600_SEC"] = "pour 10 minutes";
+$MESS["PERFMON_OPT_INTERVAL_60_SEC"] = "pour 1 minute";
+$MESS["PERFMON_OPT_INTERVAL_7_DAYS"] = "pour une semaine";
+$MESS["PERFMON_OPT_INTERVAL_8_HOURS"] = "8 heures";
+$MESS["PERFMON_OPT_INTERVAL_NO"] = "non";
+$MESS["PERFMON_OPT_MINUTES"] = "#HOURS#:#MINUTES#:#SECONDS# (hrs:mins:secs)";
+$MESS["PERFMON_OPT_SET_ACTIVE"] = "Allumez le moniteur";
+$MESS["PERFMON_OPT_SET_IN_ACTIVE"] = "Débrancher le moniteur";
+?>

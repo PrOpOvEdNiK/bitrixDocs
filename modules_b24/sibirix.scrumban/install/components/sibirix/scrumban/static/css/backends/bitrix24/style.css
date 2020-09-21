@@ -1,0 +1,142 @@
+#kanban .taskDetails .mainData .author,
+#kanban .peopleItem i,
+#kanban .taskDetails .comments .person,
+#kanban .task .responsible.item,
+#kanban .peopleItem.mini,
+#kanban .filterPanel .peopleItem i {
+    background-size: 100%;
+}
+#kanban .profile-avatar .photo {
+    max-width: 37px;
+    max-height: 37px;
+}
+
+.links-block {
+    position: fixed;
+    z-index: 130;
+    top: 0;
+    width: 100%;
+    margin-left: -22px;
+    text-align: center;
+}
+
+.sync-block {
+    margin-right: 10px;
+    background-color: #fc9425;
+    border-radius: 0 0 4px 4px;
+    box-shadow: 0 3px 12px -2px rgba(0, 0, 0, 0.4);
+    z-index: 10;
+    display: inline-block;
+    width: 268px;
+}
+
+.sync-block a {
+    display: inline-block;
+    font: normal 12px/25px Arial, sans-serif;
+    padding: 0 10px;
+    color: #fff;
+
+    text-decoration: none;
+}
+
+.sync-block a img {
+    vertical-align: top;
+    padding: 5px 10px 0 0;
+}
+
+.alpha-block {
+    margin-right: 10px;
+    background-color: #FFF;
+    border-radius: 0 0 4px 4px;
+    box-shadow: 0 3px 12px -2px rgba(0, 0, 0, 0.4);
+    width: 189px;
+    display: inline-block;
+}
+
+.alpha-block a {
+    display: inline-block;
+    font: normal 12px/25px Arial, sans-serif;
+    padding: 0 18px;
+    color: #666;
+    text-decoration: none;
+}
+
+.bitrix24-return {
+    display: inline-block;
+    background-color: #78b5d2;
+    border-radius: 0px 0px 4px 4px;
+    box-shadow: 0px 3px 12px -2px rgba(0, 0, 0, 0.4);
+    width: 171px;
+}
+
+.bitrix24-return a {
+    display: inline-block;
+    font: normal 12px/25px Arial, sans-serif;
+    padding: 0px 18px;
+    color: #fff;
+
+    text-decoration: none;
+    box-shadow: inset 0px -3px 8px -4px rgba(0, 0, 0, 0.4);
+    border-radius: 0px 0px 4px 4px;
+}
+
+.sync-block:hover,
+.alpha-block:hover,
+.bitrix24-return:hover {
+    box-shadow: 0px 3px 12px -2px rgba(0, 0, 0, 0.8);
+}
+
+.count-warning {
+    position: absolute;
+    left: 0;
+    right: 0;
+    width: 600px;
+    margin: 0 auto;
+    top: 30px;
+    background: #f2e400;
+    border: 1px solid #000;
+    padding: 20px;
+    z-index: 150;
+}
+
+.count-warning .ico-close {
+    display: block;
+    width: 9px;
+    height: 9px;
+    right: 10px;
+    top: 10px;
+    position: absolute;
+    cursor: pointer;
+    /*background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAADNJREFUeNpiYACC/0DAgAZgYozIkoxAgK6BEZcJMA2M6Eaim8bEQAAQtoKQIxkIeRMgwACS0CvwIdFgxQAAAABJRU5ErkJggg==') 0 0 no-repeat;*/
+    background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAADZJREFUeNpiZGBg+M8AAYwMqAAszoQugM5mxCKJDBgZcZgA18zEQAAQZcV/fBqYsEiisAECDAC4jQkKrY1REAAAAABJRU5ErkJggg==') 0 0 no-repeat;
+    background-size: 100%;
+    -webkit-transition: all ease .2s;
+    -moz-transition: all ease .2s;
+    -ms-transition: all ease .2s;
+    -o-transition: all ease .2s;
+    transition: all ease .2s;
+}
+
+.count-warning .ico-close:hover {
+
+    -webkit-transform: rotate(90deg);
+    -moz-transform: rotate(90deg);
+    -ms-transform: rotate(90deg);
+    -o-transform: rotate(90deg);
+    transform: rotate(90deg);
+}
+
+#landosik {
+    top: 7px;
+}
+
+#scrumbanLaunchpad .projects-block .links .big-block {
+    padding-bottom: 20px;
+}
+
+#kanban.reports {
+    padding-top: 20px;
+}
+#kanban.reports .fixed-table {
+    top: 0;
+}

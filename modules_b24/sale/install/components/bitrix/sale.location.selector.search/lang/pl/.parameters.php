@@ -1,0 +1,16 @@
+<?
+$MESS["SALE_SLS_CODE_PARAMETER"] = "Kod symboliczny lokalizacji";
+$MESS["SALE_SLS_EXCLUDE_SUBTREE_PARAMETER"] = "Wyklucz element poddrzewa";
+$MESS["SALE_SLS_FILTER_BY_SITE_PARAMETER"] = "Filtruj według stron";
+$MESS["SALE_SLS_FILTER_SITE_ID_CURRENT"] = "Bieżący";
+$MESS["SALE_SLS_FILTER_SITE_ID_PARAMETER"] = "Strona";
+$MESS["SALE_SLS_ID_PARAMETER"] = "ID Lokalizacji";
+$MESS["SALE_SLS_INPUT_NAME_PARAMETER"] = "Nazwa pola";
+$MESS["SALE_SLS_JSCONTROL_GLOBAL_ID_PARAMETER"] = "ID panelu JavaScript";
+$MESS["SALE_SLS_JS_CALLBACK"] = "Funkcja zwrotna JavaScript";
+$MESS["SALE_SLS_PROVIDE_LINK_BY_PARAMETER"] = "Powiąż z użyciem";
+$MESS["SALE_SLS_PROVIDE_LINK_BY_PARAMETER_CODE"] = "kod symboliczny (kod)";
+$MESS["SALE_SLS_PROVIDE_LINK_BY_PARAMETER_ID"] = "ID";
+$MESS["SALE_SLS_SEARCH_BY_PRIMARY_PARAMETER"] = "Wyszukaj według ID i kodu";
+$MESS["SALE_SLS_SHOW_DEFAULT_LOCATIONS_PARAMETER"] = "Pokaż domyślne lokalizacje";
+?>

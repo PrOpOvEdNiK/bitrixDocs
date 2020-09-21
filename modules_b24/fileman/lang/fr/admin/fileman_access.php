@@ -1,0 +1,30 @@
+<?
+$MESS["FILEMAN_ACCESS_APPLY"] = "Appliquer";
+$MESS["FILEMAN_ACCESS_CHANGE_TO"] = "Modifiez les droits d'accès à";
+$MESS["FILEMAN_ACCESS_DIFFERENT"] = "Paramètres d'accès de ce groupe ont les droits différent pour les fichiers. Après avoir sauvagardé tous les fichiers auront les droits d'accès similaires pour ce groupe.";
+$MESS["FILEMAN_ACCESS_DIFF_GROUP"] = "Certains fichiers ou dossiers ont différents niveaux d'accès pour ce groupe : ";
+$MESS["FILEMAN_ACCESS_DIFF_LEVEL"] = "Certains fichiers ou dossiers ont différents niveaux d'accès : ";
+$MESS["FILEMAN_ACCESS_FILE"] = "Fichier";
+$MESS["FILEMAN_ACCESS_FOLDERS_FILES"] = "fichiers / dossiers : ";
+$MESS["FILEMAN_ACCESS_FOR_GROUP"] = "Pour le groupe d'utilisateur";
+$MESS["FILEMAN_ACCESS_FOR_GROUP2"] = "l'autorisation d'écriture a été définie. Tout utilisateur enregistré peut modifier ces fichiers et / ou dossiers. Voulez-vous vraiment pour enregistrer les modifications ?";
+$MESS["FILEMAN_ACCESS_GROUP"] = "Groupe";
+$MESS["FILEMAN_ACCESS_GROUP_INHERIT"] = "Tous les groupes avec &quot;Inherit&quot; Hériter niveau d'accès";
+$MESS["FILEMAN_ACCESS_LEVEL"] = "Niveau d'accès";
+$MESS["FILEMAN_ACCESS_LEVEL_CUR"] = "Niveau d'accès actuel";
+$MESS["FILEMAN_ACCESS_LEVEL_NOTCH"] = "(sélectionnez Highload bloc d'informations)";
+$MESS["FILEMAN_ACCESS_RESET"] = "Annuler";
+$MESS["FILEMAN_ACCESS_SAVE"] = "Enregistrer";
+$MESS["FILEMAN_ACCESS_TITLE"] = "Droits d'accès";
+$MESS["FILEMAN_ACCESS_TO_DENIED"] = "Vous ne disposez pas de droits requis pour modifier les paramètres d'accès à";
+$MESS["FILEMAN_CMENU_CAT"] = "Dossier";
+$MESS["FILEMAN_FILE_OR_FOLDER"] = "Dossier / Fichiers";
+$MESS["FILEMAN_FOLDER_ACCESS_INHERIT"] = "Hériter";
+$MESS["FILEMAN_TAB"] = "Autorisations d'accès";
+$MESS["FILEMAN_TAB_ALT"] = "Installation du module";
+$MESS["FM_FOLDER_ACCESS_DENIED"] = "Fermé";
+$MESS["FM_FOLDER_ACCESS_FULL"] = "Accès administratif complet";
+$MESS["FM_FOLDER_ACCESS_READ"] = "Lecture";
+$MESS["FM_FOLDER_ACCESS_WORKFLOW"] = "Flux de documents";
+$MESS["FM_FOLDER_ACCESS_WRITE"] = "Écrire";
+?>

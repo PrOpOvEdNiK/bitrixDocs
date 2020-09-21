@@ -1,0 +1,36 @@
+<?
+$MESS['B_B_MS_FROM'] = 'from';
+$MESS['B_B_MS_REPLY'] = 'Atsakyti';
+$MESS['B_B_MS_PARENT'] = 'Tėvas';
+$MESS['B_B_MS_LINK'] = 'Nuoroda';
+$MESS['B_B_MS_NAME'] = 'Vardas:';
+$MESS['B_B_MS_SUBJECT'] = 'Tema:';
+$MESS['B_B_MS_M_BODY'] = 'Pranešimas:';
+$MESS['B_B_MS_CAPTCHA_SYM'] = 'Simboliai paveikslėlyje';
+$MESS['B_B_MS_SEND'] = 'Siųsti';
+$MESS['B_B_MS_ADD_COMMENT'] = 'Pridėti komentarą';
+$MESS['BLOG_P_INSERT_IMAGE_LINK'] = 'Įterpti nuorodą į paveikslėlį';
+$MESS['BPC_BOLD'] = 'Boldas';
+$MESS['BPC_ITALIC'] = 'Italikas';
+$MESS['BPC_UNDER'] = 'Pabraukimas';
+$MESS['BPC_FONT'] = 'Šriftas';
+$MESS['BPC_CLOSE_OPENED_TAGS'] = 'Uždaryti visas atidarytas žymes';
+$MESS['BPC_CLOSE_ALL_TAGS'] = 'Uždaryti visas žymes';
+$MESS['BPC_HYPERLINK'] = 'Hiperlinkas';
+$MESS['BPC_IMAGE'] = 'Spalva';
+$MESS['BPC_CODE'] = 'Redaguoti teksto kodą';
+$MESS['BPC_LIST'] = 'Sukurti sąrašą';
+$MESS['BPC_QUOTE'] = 'Cituoti';
+$MESS['BPC_TEXT_ENTER_URL'] = 'Įveskite visą adresą (URL)';
+$MESS['BPC_TEXT_ENTER_URL_NAME'] = 'Įrašykite svetainės pavadinimą';
+$MESS['BPC_TEXT_ENTER_IMAGE'] = 'Įveskite pilną vaizdo adresą (URL)';
+$MESS['BPC_LIST_PROMPT'] = 'Įveskite sąrašo elementą. Užbaigti sąrašą paspauskite \"Atšaukti\" arba palikite tarpą';
+$MESS['BPC_ERROR_NO_URL'] = 'Jūs turite įvesti adresą (URL)';
+$MESS['BPC_ERROR_NO_TITLE'] = 'Turite įvesti pavadinimą';
+$MESS['BLOG_CATEGORY_NAME'] = 'Žymės pavadinimas';
+$MESS['BPC_PAGE'] = 'Tinklapis:';
+$MESS['BPC_PAGE_OF'] = 'iš ';
+$MESS['BPC_MES_DELETE_POST_CONFIRM'] = 'Ar tikrai norite pašalinti šį komentarą?';
+$MESS['B_B_MS_PREVIEW'] = 'Peržiūra';
+$MESS['B_B_MS_PREVIEW_TITLE'] = 'Peržiūrėti komentarą';
+?>

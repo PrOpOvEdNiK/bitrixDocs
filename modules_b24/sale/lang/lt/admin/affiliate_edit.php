@@ -1,0 +1,32 @@
+<?
+$MESS["SAE_NO_SITE_PLAN"] = "Nenurodyta plano svetainė";
+$MESS["SAE_NO_USER"] = "Nenurodytas naudotojas";
+$MESS["SAE_NO_PLAN"] = "Nenurodytas planas";
+$MESS["SAE_NO_DATE_CREATE"] = "Nenurodyta sukūrimo data";
+$MESS["SAE_AFFILIATE_ALREADY_EXISTS"] = "Naudotojo #USER_ID# partneris jau egzistuoja svetainėje #SITE_ID#";
+$MESS["SAE_ERROR_SAVE_AFF"] = "Įvyko klaida išsaugant partnerį";
+$MESS["SAE_TITLE_UPDATE_AFF"] = "Redaguoti partnerį #ID#";
+$MESS["SAE_TITLE_ADD_AFF"] = "Naujas partneris";
+$MESS["SAE_AFF_LIST"] = "Partneriai";
+$MESS["SAE_AFF_ADD"] = "Pridėti partnerį";
+$MESS["SAE_AFF_DELETE"] = "Pašalinti partnerį";
+$MESS["SAE_AFF_DELETE_CONF"] = "Ar tikrai norite pašalinti šį partnerį?";
+$MESS["SAE_AFF_TAB"] = "Partneris";
+$MESS["SAE_AFF_TAB_TITLE"] = "Partnerio parametrai";
+$MESS["SAE_DATE_UPDATE"] = "Paskutinio pakeitimo data:";
+$MESS["SAE_SITE"] = "Svetainė";
+$MESS["SAE_USER"] = "Naudotojas:";
+$MESS["SAE_PROFILE"] = "Naudotojo profilis";
+$MESS["SAE_AFFILIATE_REG"] = "Registruotas per partnerį:";
+$MESS["SAE_NO_AFFILIATE"] = "Partneris nerastas";
+$MESS["SAE_WAIT"] = "laukti";
+$MESS["SAE_PLAN"] = "Planas:";
+$MESS["SAE_ACTIVE"] = "Aktyvus:";
+$MESS["SAE_DATE_REG"] = "Registravimo data";
+$MESS["SAE_PAYED_SUM"] = "Mokama suma:";
+$MESS["SAE_PENDING_SUM"] = "Laukiama suma:";
+$MESS["SAE_LAST_CALC"] = "Paskutinio skaičiavimo data";
+$MESS["SAE_FIX_PLAN"] = "Fiksuoti planą";
+$MESS["SAE_AFF_SITE"] = "Partnerio svetainė";
+$MESS["SAE_AFF_DESCRIPTION"] = "Partnerio aprašymas";
+?>

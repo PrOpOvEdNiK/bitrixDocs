@@ -1,0 +1,4 @@
+<?
+$MESS["CRM_SECTION"] = "Minhas Atividades";
+$MESS["CRM_SECTION_ACTIVITY"] = "Minhas Atividades";
+?>

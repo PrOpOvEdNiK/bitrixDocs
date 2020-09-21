@@ -1,0 +1,12 @@
+<?
+$MESS["TASKS_TTDP_TEMPLATE_USER_VIEW_ACCOMPLICES"] = "Participants";
+$MESS["TASKS_TTDP_TEMPLATE_USER_VIEW_ADD"] = "ajouter";
+$MESS["TASKS_TTDP_TEMPLATE_USER_VIEW_AUDITORS"] = "Observateurs";
+$MESS["TASKS_TTDP_TEMPLATE_USER_VIEW_CHANGE"] = "changer";
+$MESS["TASKS_TTDP_TEMPLATE_USER_VIEW_DELETE"] = "Supprimer";
+$MESS["TASKS_TTDP_TEMPLATE_USER_VIEW_ENTER_AUDITOR"] = "observer";
+$MESS["TASKS_TTDP_TEMPLATE_USER_VIEW_LEAVE_AUDITOR"] = "ne pas regarder";
+$MESS["TASKS_TTDP_TEMPLATE_USER_VIEW_LEAVE_AUDITOR_CONFIRM"] = "Vous pouvez ne pas voir la tâche si vous n'êtes plus observateur. Voulez-vous supprimer votre rôle d'observateur ?";
+$MESS["TASKS_TTDP_TEMPLATE_USER_VIEW_ORIGINATOR"] = "Créé par";
+$MESS["TASKS_TTDP_TEMPLATE_USER_VIEW_RESPONSIBLE"] = "Responsable";
+?>

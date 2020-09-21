@@ -1,0 +1,35 @@
+<?
+$MESS["ALLOW_SWF_TIP"] = "Zezwól na odtwarzanie plików SWF. Nie zalecane ze względu na wysokie ryzyko ataku XSS za pośrednictwem pliku SWF.";
+$MESS["AUTOSTART_TIP"] = "Jeżeli zaznaczone, player zacznie określać multimedia automatycznie w momencie ładowania strony.";
+$MESS["BUFFER_LENGTH_TIP"] = "Długość bufora odtwarzania, w sekundach. Player będzie pobierać określoną ilość danych multimedialnych przed rozpoczęciem odtwarzania.";
+$MESS["CONTENT_TYPE_TIP"] = "Określa odtwarzanie tylko wybranego typu zawartości.";
+$MESS["CONTROLS_BGCOLOR_TIP"] = "Określa kolor tła panelu kontrolnego .playera";
+$MESS["CONTROLS_COLOR_TIP"] = "Określa kolor panelu kontrolnego playera.";
+$MESS["CONTROLS_OVER_COLOR_TIP"] = "Określa kolor panelu kontolnego playera w czasie dryfowania.";
+$MESS["DISPLAY_CLICK_TIP"] = "Wybierz tutaj działanie, które będzie przeprowadzane po kliknięciu ekranu playera przez użytkownika.";
+$MESS["DOWNLOAD_LINK_TARGET_TIP"] = "Określa docelowe okno dla linka.";
+$MESS["DOWNLOAD_LINK_TIP"] = "Określa bezpośredni link do pobrania multimediów lub adres URL każdej strony, która otworzy się po kliknięciu ekranu playera przez użytkownika (zależy od <b>Działania przeprowadzanego po klinięciu lewym klawiszem myszy na ekranie</b> ustawień). Ten parametr jest efektywny tylko podczas odtwarzania pojedynczej pozycji multimedialnej (np. nie listy odtwarzania).";
+$MESS["FULLSCREEN_TIP"] = "Jeżeli zaznaczone, przycisk pełnego ekranu będzie dodany do panelu kontrolnego playera.";
+$MESS["HEIGHT_TIP"] = "Wysokość okna playera łącznie z listą odtwarzania (jeżeli widoczna).";
+$MESS["HIDE_MENU_TIP"] = "Ukrywa menu kontekstowe playera z wyjątkiem elementów Ustawień i Adobe Flash Playera";
+$MESS["HIGH_QUALITY_TIP"] = "Ustawia maksymalną jakość odtwarzania.";
+$MESS["LOGO_TIP"] = "Ścieżka do obrazu loga, które będzie używane jako chronione prawem autorskim w oknie playera. Możesz wyszczególnić pełną nazwę ścieżki względem głównego foldera, albo tylko nazwę pliku, jeżeli plik jest w katalogu bieżącym.";
+$MESS["MUTE_TIP"] = "Jeżeli zaznaczone, dźwięk playera będzie wyciszony. Użytkownicy będą mogli włączyć dźwięk ręcznie.";
+$MESS["PLAYLIST_PREVIEW_HEIGHT_TIP"] = "Wysokość obrazu podglądu pliku, który pojawiaj się na liście odtwarzania.";
+$MESS["PLAYLIST_PREVIEW_WIDTH_TIP"] = "Szerokość obrazu podglądu pliku, który pojawiaj się na liście odtwarzania.";
+$MESS["PLAYLIST_SIZE_TIP"] = "Wysokość lub szerokość listy odtwarzania, zależnie od pozycji.";
+$MESS["PLAYLIST_TYPE_TIP"] = "Wybierz format listy odtwarzania.";
+$MESS["PREVIEW_TIP"] = "Ścieżka do podglądu obrazu. Możesz określić pełną nazwę ścieżki względem foldera głównego strony, albo tylko nazwę pliku, jeżeli plik jest w katalogu bieżącym.";
+$MESS["REPEAT_TIP"] = "Jeżeli zaznaczone, player będzie odtwarzać określone multimedia nieprzerwanie.";
+$MESS["SCREEN_COLOR_TIP"] = "Określa kolor ekranu playera.";
+$MESS["SHOW_CONTROLS_TIP"] = "Jeżeli zaznaczone, panel kontrolny playera będzie widoczny.";
+$MESS["SHOW_DIGITS_TIP"] = "Jeżeli zaznaczone, zostanie pokazany aktualny czas odtwarzania.";
+$MESS["SHOW_STOP_TIP"] = "Określa pokazanie przycisku <b>Stop</b> na panelu kontrolnym playera.";
+$MESS["SHUFFLE_TIP"] = "Jeżeli zaznaczone, odtwarza pozycje listy odtwarzania losowo. Nie wpływa to na kolejność elemntów listy odtwarzania.";
+$MESS["SKIN_PATH_TIP"] = "Domyślnym folderem skórki systemu jest <b>/bitrix/components/bitrix/player/mediaplayer/skins</b> (SWF pliki). Niestandardowe skórki są przechowywane w folderze, który nie zostanie zmieniony podczas aktualizacji systemu.";
+$MESS["SKIN_TIP"] = "Pokaż wszystkie skórki w określonym folderze. <b>Standardowe</b> skórki flash są zawsze dostępne.";
+$MESS["START_ITEM_TIP"] = "Określa element zerowy rozpoczynający listę odtwarzania.";
+$MESS["USE_PLAYLIST_TIP"] = "Aby włączyć listę odtwarzania, zaznacz tę opcję i określ nazwę ścieżki listy odtwarzania.";
+$MESS["VOLUME_TIP"] = "Ustawia głośność odtwarzania jako procent.";
+$MESS["WIDTH_TIP"] = "Szerokość okna odtwarzacza łącznie z listą odtwarzania (jeżeli widoczna).";
+?>

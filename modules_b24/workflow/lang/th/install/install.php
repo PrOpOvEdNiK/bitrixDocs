@@ -1,0 +1,29 @@
+<?
+$MESS ['FLOW_MODULE_NAME'] = "Workflow";
+$MESS ['FLOW_MODULE_DESCRIPTION'] = "Module to organize and process the site documents.";
+$MESS ['FLOW_INSTALL_TITLE'] = "การติดตั้ง Workflow Module ";
+$MESS ['FLOW_SELECT_INITIAL'] = "Please select the initial module settings:";
+$MESS ['FLOW_NO'] = "ไม่ใช้";
+$MESS ['FLOW_ATTENTION'] = "คำเตือน ! โมดูลกำลังจะถูกลบออกจากระบบ";
+$MESS ['FLOW_YOU_CAN_SAVE_TABLES'] = "ในการบันทึกข้อมูลลงในฐานข้อมูล, ตรวจสอบ &quot;Save Tables&quot; checkbox";
+$MESS ['FLOW_SAVE_TABLES'] = "บันทึก";
+$MESS ['FLOW_DELETE'] = "ถอดโมดูล";
+$MESS ['FLOW_DELETE_COMLETE'] = "ถอดโมดูลสมบูรณ์แล้ว";
+$MESS ['FLOW_BACK'] = "กลับ";
+$MESS ['FLOW_ERRORS'] = "Errors:";
+$MESS ['FLOW_INSTALL'] = "ติดตั้ง";
+$MESS ['FLOW_COMPLETE'] = "ติดตั้งสมบูรณ์แล้ว";
+$MESS ['FLOW_WRONG_MAIN_VERSION'] = "To install this module you have to upgrade the system kernel to version #VER#";
+$MESS ['FLOW_DENIED'] = "ถูกปฎิเสธ (denied)";
+$MESS ['FLOW_MODIFY'] = "แก้ไขเอกสารใน  workflow";
+$MESS ['FLOW_READ'] = "อ่านอย่างเดียว (read-only)";
+$MESS ['FLOW_WRITE'] = "ใช้งานได้ทั้งหมด (full access)";
+$MESS ['FLOW_USE_HTML_EDIT'] = "Use HTML editor (for IE 5.0 and higher):";
+$MESS ['FLOW_MAX_LOCK'] = "Max lock time (นาที):";
+$MESS ['FLOW_ADMIN'] = "กลุ่มผู้ดูแลระบบ Workflow:";
+$MESS ['FLOW_DAYS_AFTER_PUBLISHING'] = "จำนวนวันที่ต้องเก็บเอกสารหลังจากที่ได้เผยแพร่แล้ว<br>(negative value means keep permanently):";
+$MESS ['FLOW_HISTORY_COPIES'] = "จำนวนรายการสูงสุดในประวัติเอกสาร:";
+$MESS ['FLOW_HISTORY_DAYS'] = "จำนวนวันที่ต้องการเก็บเอกสาร<br>(negative value means keep permanently):";
+$MESS ['FLOW_HISTORY_SIMPLE_EDITING'] = "Keep file common modification history<br>(ภายนอก workflow):";
+$MESS ['FLOW_RESET'] = "ยกเลิก";
+?>

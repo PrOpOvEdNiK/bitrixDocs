@@ -1,0 +1,29 @@
+<?
+$MESS["SBB_DESC_YES"] = "Taip";
+$MESS["SBB_DESC_NO"] = "Ne";
+$MESS["SBB_HIDE_COUPON"] = "Slėpti kupono laukus";
+$MESS["SBB_COLUMNS_LIST"] = "Rodyti stulpelius";
+$MESS["SBB_BNAME"] = "Prekės pavadinimas";
+$MESS["SBB_BPROPS"] = "Prekės savybės";
+$MESS["SBB_BPRICE"] = "Kaina";
+$MESS["SBB_BTYPE"] = "Kainos tipas";
+$MESS["SBB_BQUANTITY"] = "Kiekis";
+$MESS["SBB_BDELETE"] = "Pašalinti";
+$MESS["SBB_BDELAY"] = "Įdėti į pageidavimų sąrašą";
+$MESS["SBB_BWEIGHT"] = "Svoris";
+$MESS["SBB_BDISCOUNT"] = "Nuolaida";
+$MESS["SBB_WEIGHT_UNIT"] = "Svorio vienetas";
+$MESS["SBB_WEIGHT_UNIT_G"] = "g";
+$MESS["SBB_WEIGHT_KOEF"] = "Nurodo vienetų skaičių gramais.";
+$MESS["SBB_QUANTITY_FLOAT"] = "Naudoti dalinius kiekius";
+$MESS["SBB_VAT_SHOW_VALUE"] = "Rodyti mokesčio reikšmę";
+$MESS["SBB_TAX_SHOW_VALUE"] = "Rodyti mokesčio sumą";
+$MESS["SBB_VAT_INCLUDE"] = "Įtraukti mokestį į kainą";
+$MESS["SBB_ORDER_SHOW"] = "Rodyti užsakymo progresą";
+$MESS["SOA_PATH_TO_PERSONAL"] = "Kliento sąskaitos puslapis";
+$MESS["SOA_PATH_TO_PAYMENT"] = "Mokėjimo sistemos puslapis";
+$MESS["SOA_SEND_NEW_USER_NOTIFY"] = "Siųsti pranešimą \"naudotojas užregistruotas\"";
+$MESS["SBB_TEMPLATE_LOCATION"] = "Lokacijos šablonas";
+$MESS["SBB_TMP_DEFAULT"] = "Numatytasis";
+$MESS["SBB_TMP_POPUP"] = "Paieškos eilutė";
+?>

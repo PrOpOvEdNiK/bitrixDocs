@@ -1,0 +1,4 @@
+<?
+$MESS["SBLP_BACKGROUND_STYLE_NONE"] = "Brak";
+$MESS["SBLP_Q_BR_COLUMN_SORT"] = "Sortowanie";
+?>

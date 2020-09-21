@@ -1,0 +1,12 @@
+<?
+$MESS["T_LEARNING_DESC_CAT"] = "آموزش الکترونیک";
+$MESS["T_LEARNING_DESC_COURSES"] = "دوره ها";
+$MESS["T_LEARNING_DESC_FID"] = "شناسه";
+$MESS["T_LEARNING_DESC_FNAME"] = "نام";
+$MESS["T_LEARNING_DESC_FSORT"] = "ترتیب";
+$MESS["T_LEARNING_DESC_FTSAMP"] = "آخرین بروز رسانی";
+$MESS["T_LEARNING_DESC_SORTORDER"] = "ترتیب";
+$MESS["LEARNING_COURSE"] = "دوره";
+$MESS["LEARNING_TEST_NAME"] = "آزمون";
+$MESS["LEARNING_TEST_DESCRIPTION"] = "آزمون";
+?>

@@ -1,0 +1,31 @@
+<?
+$MESS["MAIN_ADD"] = "Dodawanie";
+$MESS["MAIN_ADMIN_LIST_ACTIVATE"] = "aktywuj";
+$MESS["MAIN_ADMIN_LIST_CHECKED"] = "Zaznaczone:";
+$MESS["MAIN_ADMIN_LIST_DEACTIVATE"] = "deaktywuj";
+$MESS["MAIN_ADMIN_LIST_DELETE"] = "Usuń";
+$MESS["MAIN_ADMIN_LIST_SELECTED"] = "Wybrany:";
+$MESS["MAIN_ALL"] = "(Wszystko)";
+$MESS["POST_U_NO"] = "Nie";
+$MESS["POST_U_YES"] = "Tak";
+$MESS["rub_act"] = "Aktywne";
+$MESS["rub_del"] = "Usuń";
+$MESS["rub_del_err"] = "Nie można anulować newslettera.";
+$MESS["rub_edit"] = "Edytuj";
+$MESS["rub_f_active"] = "Aktywne";
+$MESS["rub_f_find"] = "Szukaj";
+$MESS["rub_f_find_title"] = "Wprowadź teks,t aby wyszukać";
+$MESS["rub_f_name"] = "Nazwa";
+$MESS["rub_f_recipient_cnt"] = "Odbiorcy";
+$MESS["rub_f_site"] = "Strona";
+$MESS["rub_is_public"] = "Subskrypcja";
+$MESS["rub_name"] = "Nazwa";
+$MESS["rub_nav"] = "Newsletters";
+$MESS["rub_save_error"] = "Błąd aktualizacji rekordu:";
+$MESS["rub_site"] = "Strona";
+$MESS["rub_sort"] = "Sortuj";
+$MESS["rub_title"] = "Newsletters";
+$MESS["sender_mailing_adm_detbut_address"] = "Odbiorcy";
+$MESS["sender_mailing_adm_detbut_chain"] = "wiadomości";
+$MESS["sender_mailing_adm_detbut_stat"] = "Statystyki";
+?>

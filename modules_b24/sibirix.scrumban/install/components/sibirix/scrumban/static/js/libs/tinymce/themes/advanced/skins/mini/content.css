@@ -1,0 +1,17 @@
+body, td, pre { color: #333; font-family: Arial, sans-serif; font-size: 14px; }
+pre { font-family: monospace; margin: 8px 0; }
+body { margin: 8px 0; background: #FFF; word-wrap: break-word; overflow: hidden; }
+h1 { font-size: 2em }
+h2 { font-size: 1.5em }
+h3 { font-size: 1.17em }
+h4 { font-size: 1em }
+h5 { font-size: .83em }
+h6 { font-size: .75em }
+img { border: 0; }
+table, img, hr { cursor: default }
+*[contentEditable]:focus { outline: 0 }
+p { margin: 0; }
+p, li, a { font: normal 14px Arial, sans-serif; color: #333; }
+p + p {  margin-top: 1em; }
+a { color: #369; }
+img { max-width: 100%; }

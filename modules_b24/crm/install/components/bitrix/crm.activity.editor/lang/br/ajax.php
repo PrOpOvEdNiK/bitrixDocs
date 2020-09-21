@@ -1,0 +1,29 @@
+<?
+$MESS["CRM_ACTION_DEFAULT_SUBJECT"] = "Nova atividade (#DATE#)";
+$MESS["CRM_ACTIVITY_COULD_NOT_CREATE_POSTING"] = "Não é possível cadastrar a mensagem de e-mail.";
+$MESS["CRM_ACTIVITY_COULD_NOT_SAVE_POSTING_FILE"] = "Não é possível anexar o \"#FILE_NAME#\" na mensagem.";
+$MESS["CRM_ACTIVITY_EMAIL_CREATION_CANCELED"] = "Mensagem de E-mail cancelada.";
+$MESS["CRM_ACTIVITY_EMAIL_EMPTY_FROM_FIELD"] = "Por favor, especifique o remetente da mensagem.";
+$MESS["CRM_ACTIVITY_EMAIL_EMPTY_TO_FIELD"] = "Por favor, especificar o destinatário da mensagem.";
+$MESS["CRM_ACTIVITY_INVALID_EMAIL"] = "#VALUE#' \"não é um endereço de e-mail válido.";
+$MESS["CRM_ACTIVITY_RESPONSIBLE_NOT_FOUND"] = "Não é possível encontrar um usuário responsável por esta atividade.";
+$MESS["CRM_CALL_ACTION_DEFAULT_SUBJECT"] = "Nova chamada telefônica (#DATE#)";
+$MESS["CRM_COMMUNICATION_TAB_COMPANY"] = "Empresa";
+$MESS["CRM_COMMUNICATION_TAB_CONTACT"] = "Contato";
+$MESS["CRM_COMMUNICATION_TAB_DEAL"] = "Negócio";
+$MESS["CRM_COMMUNICATION_TAB_LEAD"] = "Lead";
+$MESS["CRM_COMPANY_UPDATE_PERMISSION_DENIED"] = "Você não tem permissão para editar atividades da empresa #TITLE#\". Entre em contato com o administrador da intranet.";
+$MESS["CRM_CONTACT_UPDATE_PERMISSION_DENIED"] = "Você não tem permissão para editar atividades do contato #TITLE#\". Entre em contato com o administrador da intranet.";
+$MESS["CRM_DEAL_UPDATE_PERMISSION_DENIED"] = "Você não tem permissão para editar atividades do negócio #TITLE#. Entre em contato com o administrador da intranet.";
+$MESS["CRM_EMAIL_ACTION_DEFAULT_DESCRIPTION"] = "[nenhum texto]";
+$MESS["CRM_EMAIL_ACTION_DEFAULT_SUBJECT"] = "Novo e-mail (#DATE#)";
+$MESS["CRM_INCOMING_CALL_ACTION_DEFAULT_SUBJECT_EXT"] = "Ligação recebida #TITLE#";
+$MESS["CRM_LEAD_UPDATE_PERMISSION_DENIED"] = "Você não tem permissão para editar atividades do Lead #TITLE#\". Entre em contato com o administrador da intranet.";
+$MESS["CRM_MEETING_ACTION_DEFAULT_SUBJECT"] = "Nova reunião (#DATE#)";
+$MESS["CRM_MEETING_ACTION_DEFAULT_SUBJECT_EXT"] = "Reunião com #TITLE#";
+$MESS["CRM_OUTGOING_CALL_ACTION_DEFAULT_SUBJECT_EXT"] = "Ligação efetuada #TITLE#";
+$MESS["CRM_PERMISSION_DENIED"] = "Acesso negado";
+$MESS["CRM_TITLE_EMAIL_FROM"] = "De";
+$MESS["CRM_TITLE_EMAIL_SUBJECT"] = "Assunto";
+$MESS["CRM_TITLE_EMAIL_TO"] = "Para";
+?>

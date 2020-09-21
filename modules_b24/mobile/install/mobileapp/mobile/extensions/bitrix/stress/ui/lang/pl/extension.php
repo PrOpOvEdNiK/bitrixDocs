@@ -1,0 +1,32 @@
+<?
+$MESS["STRESS_CANCEL_MEASURE_RESULT"] = "Anuluj";
+$MESS["STRESS_DO_MEASURE_RIGHT_NOW"] = "Teraz zmierz poziom stresu";
+$MESS["STRESS_HOW_IT_WORKS"] = "Jak to działa?";
+$MESS["STRESS_INFLUENT_STRESS_LEVEL"] = "Dowiedz się, jak stres i obciążenie wpływają na twoje zdrowie.";
+$MESS["STRESS_LEVEL_GREEN"] = "Prawidłowy";
+$MESS["STRESS_LEVEL_GREEN_21-30"] = "Niski";
+$MESS["STRESS_LEVEL_GREEN_31-44"] = "Lekki";
+$MESS["STRESS_LEVEL_GREEN_45-55"] = "Optymalny";
+$MESS["STRESS_LEVEL_RED"] = "Nieprawidłowy";
+$MESS["STRESS_LEVEL_RED_0-9"] = "Znużenie";
+$MESS["STRESS_LEVEL_RED_10-20"] = "Zmęczenie";
+$MESS["STRESS_LEVEL_RED_61-69"] = "Męczący";
+$MESS["STRESS_LEVEL_RED_70-80"] = "Denerwujący";
+$MESS["STRESS_LEVEL_RED_81-89"] = "Wysoki";
+$MESS["STRESS_LEVEL_RED_90-98"] = "Przeciążony";
+$MESS["STRESS_LEVEL_RED_99-100"] = "Ekstremalny";
+$MESS["STRESS_LEVEL_TITLE"] = "Poziom stresu";
+$MESS["STRESS_LEVEL_UNKNOWN"] = "Nieokreślony";
+$MESS["STRESS_LEVEL_YELLOW"] = "OK";
+$MESS["STRESS_LEVEL_YELLOW_10-20"] = "Galareta";
+$MESS["STRESS_LEVEL_YELLOW_56-60"] = "Zbyt wysoki";
+$MESS["STRESS_LEVEL_YELLOW_61-69"] = "Podwyższony";
+$MESS["STRESS_MAKE_ANOTHER_ONE_MEASURE"] = "Zmierz ponownie";
+$MESS["STRESS_MAKE_MEASURE"] = "Zmierz";
+$MESS["STRESS_SAVE_PRIVATE"] = "Zapisz prywatnie";
+$MESS["STRESS_SHARE"] = "Podziel się";
+$MESS["STRESS_SHARE_TO_PROFILE"] = "Pokaż w profilu";
+$MESS["STRESS_WHAT_DOES_IT_MEAN"] = "Co to znaczy?";
+$MESS["WELLTORY_PROVIDED"] = "Poziom stresu jest mierzony przez aplikację Welltory";
+$MESS["WELLTORY_SPOTLIGHT"] = "Zmierz swój poziom stresu";
+?>

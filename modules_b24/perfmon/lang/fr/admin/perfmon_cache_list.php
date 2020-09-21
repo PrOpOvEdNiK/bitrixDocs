@@ -1,0 +1,36 @@
+<?
+$MESS["PERFMON_CACHE_AVG_CACHE_SIZE"] = "Cache (mercredi)";
+$MESS["PERFMON_CACHE_BASE_DIR"] = "Entité";
+$MESS["PERFMON_CACHE_CACHE_PATH"] = "Chemin vers le fichier";
+$MESS["PERFMON_CACHE_CACHE_SIZE"] = "Taille";
+$MESS["PERFMON_CACHE_COMPONENT_ID"] = "Exemplaire du composant";
+$MESS["PERFMON_CACHE_COMPONENT_NAME"] = "Composant";
+$MESS["PERFMON_CACHE_COUNT"] = "Cache des opérations";
+$MESS["PERFMON_CACHE_COUNT_C"] = "Nombre de remises à zéro de cache";
+$MESS["PERFMON_CACHE_COUNT_R"] = "Cache des lectures";
+$MESS["PERFMON_CACHE_COUNT_W"] = "Cache des entrées";
+$MESS["PERFMON_CACHE_FILE_NAME"] = "Fichier";
+$MESS["PERFMON_CACHE_FIND"] = "Rechercher";
+$MESS["PERFMON_CACHE_GROUP_BASE_DIR"] = "Groupement par type";
+$MESS["PERFMON_CACHE_GROUP_COMP"] = "Regroupement par composants";
+$MESS["PERFMON_CACHE_GROUP_FILE_NAME"] = "Groupement par fichier";
+$MESS["PERFMON_CACHE_GROUP_INIT_DIR"] = "Groupement selon le catalogue";
+$MESS["PERFMON_CACHE_GROUP_NONE"] = "Sans regroupement";
+$MESS["PERFMON_CACHE_HIT_ID"] = "Hit";
+$MESS["PERFMON_CACHE_HIT_RATIO"] = "Taux de succès";
+$MESS["PERFMON_CACHE_ID"] = "ID";
+$MESS["PERFMON_CACHE_INIT_DIR"] = "Répertoire";
+$MESS["PERFMON_CACHE_MANAGED"] = "géré";
+$MESS["PERFMON_CACHE_MAX_CACHE_SIZE"] = "Cache (max)";
+$MESS["PERFMON_CACHE_MIN_CACHE_SIZE"] = "Cache (min)";
+$MESS["PERFMON_CACHE_MODULE_NAME"] = "Module";
+$MESS["PERFMON_CACHE_NN"] = "#";
+$MESS["PERFMON_CACHE_OP_MODE"] = "Opération";
+$MESS["PERFMON_CACHE_OP_MODE_C"] = "Annuler";
+$MESS["PERFMON_CACHE_OP_MODE_R"] = "Lecture";
+$MESS["PERFMON_CACHE_OP_MODE_W"] = "Écrire";
+$MESS["PERFMON_CACHE_PAGE"] = "cache";
+$MESS["PERFMON_CACHE_SUM_CACHE_SIZE"] = "Cash (somme)";
+$MESS["PERFMON_CACHE_TITLE"] = "Analyseur de performances : mise en cache";
+$MESS["PERFMON_CACHE_UNMANAGED"] = "incontrôlable";
+?>

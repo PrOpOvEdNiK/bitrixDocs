@@ -1,0 +1,31 @@
+<?
+$MESS ['SUP_MAX_FILE_SIZE_EXCEEDING'] = "Error! Maximum file size of \"#FILE_NAME#\" is exceeded.";
+$MESS ['SUP_MESSAGE_NOT_FOUND'] = "Message is not founded.";
+$MESS ['SUP_TICKET_NOT_FOUND'] = "Ticket is not founded.";
+$MESS ['SUP_SOURCE'] = "Source";
+$MESS ['SUP_FROM'] = "From:";
+$MESS ['SUP_CREATE'] = "Created:";
+$MESS ['SUP_USER_PROFILE'] = "User profile";
+$MESS ['SUP_GUEST_ID'] = "Guest ";
+$MESS ['SUP_TIMESTAMP'] = "Modified:";
+$MESS ['SUP_NUMBER'] = "Number:";
+$MESS ['SUP_SPAM_MARK'] = "Spam mark:";
+$MESS ['SUP_POSSIBLE_SPAM'] = "possible spam";
+$MESS ['SUP_CERTAIN_SPAM'] = "certain spam";
+$MESS ['SUP_IS_HIDDEN'] = "Hidden:";
+$MESS ['SUP_IS_LOG'] = "Log:";
+$MESS ['SUP_MESSAGE'] = "Message:";
+$MESS ['SUP_ATTACHED_FILES'] = "Attached files:";
+$MESS ['SUP_VIEW_ALT'] = "View file";
+$MESS ['SUP_DOWNLOAD'] = "download";
+$MESS ['SUP_DELETE'] = "Delete";
+$MESS ['SUP_ATTACH_NEW_FILES'] = "Attach new files:";
+$MESS ['SUP_MORE'] = "More...";
+$MESS ['SUP_EXTERNAL_ID'] = "ID of initial external source (email etc.):";
+$MESS ['SUP_EXTERNAL_FIELD_1'] = "Additional field of initial external source (email headers etc.):";
+$MESS ['SUP_SAVE'] = "Save";
+$MESS ['SUP_APPLY'] = "Apply";
+$MESS ['SUP_RESET'] = "Reset";
+$MESS ['SUP_MODULE_IS_NOT_INSTALLED'] = "Techsupport module is not installed.";
+$MESS ['SUP_IS_OVERDUE'] = "Message was overdue:";
+?>

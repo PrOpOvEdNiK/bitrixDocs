@@ -1,0 +1,33 @@
+<?
+$MESS["MENU_SALESCENTER_SECTION"] = "Espace des ventes";
+$MESS["TOP_MENU_ABOUT"] = "Entreprise";
+$MESS["TOP_MENU_AI"] = "Laboratoires IA";
+$MESS["TOP_MENU_BIZPROC"] = "Procédure d'entreprise";
+$MESS["TOP_MENU_BLOG"] = "Conversations";
+$MESS["TOP_MENU_CALENDAR"] = "Calendrier";
+$MESS["TOP_MENU_COMPANY"] = "Employés";
+$MESS["TOP_MENU_CONFIGS"] = "Paramètres";
+$MESS["TOP_MENU_CONTACT_CENTER"] = "Centre de contact";
+$MESS["TOP_MENU_CRM"] = "CRM";
+$MESS["TOP_MENU_CRM_ANALYTICS"] = "Analytique CRM";
+$MESS["TOP_MENU_CRM_TRACKING"] = "Sales Intelligence";
+$MESS["TOP_MENU_DEPARTMENTS"] = "Services";
+$MESS["TOP_MENU_DISK"] = "Bitrix24.Drive";
+$MESS["TOP_MENU_FAVORITE"] = "Mon espace de travail";
+$MESS["TOP_MENU_GROUPS"] = "Groupes de travail";
+$MESS["TOP_MENU_GROUPS_EXTRANET"] = "Groupes de travail extranet";
+$MESS["TOP_MENU_IM_MESSENGER"] = "Chat et appels";
+$MESS["TOP_MENU_LIVE_FEED"] = "Flux d'activités";
+$MESS["TOP_MENU_MAIL"] = "Messagerie";
+$MESS["TOP_MENU_MARKETING"] = "Marketing CRM";
+$MESS["TOP_MENU_MARKETPLACE"] = "Applications";
+$MESS["TOP_MENU_ONEC"] = "CRM 1C + Bitrix24";
+$MESS["TOP_MENU_OPENLINES"] = "Canaux ouverts";
+$MESS["TOP_MENU_PHOTO"] = "Photos";
+$MESS["TOP_MENU_SERVICES"] = "Services";
+$MESS["TOP_MENU_SHOP"] = "Boutique en ligne";
+$MESS["TOP_MENU_SITES"] = "Sites";
+$MESS["TOP_MENU_TASKS"] = "Tâches";
+$MESS["TOP_MENU_TELEPHONY"] = "Téléphonie";
+$MESS["TOP_MENU_TIMEMAN"] = "Temps et rapports";
+?>

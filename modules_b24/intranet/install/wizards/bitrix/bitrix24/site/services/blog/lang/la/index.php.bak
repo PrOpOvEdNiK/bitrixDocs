@@ -1,0 +1,85 @@
+<?
+$MESS["BLOG_DEMO_GROUP_SOCNET"] = "Grupo de redes sociales";
+$MESS["BLG_NAME"] = "Blog de";
+$MESS["BLOG_DEMO_CATEGORY_1"] = "Aviso";
+$MESS["BLOG_DEMO_CATEGORY_2"] = "Consejo";
+$MESS["BLOG_DEMO_MESSAGE_TITLE"] = "Bitrix24: ¡Estamos empezando!";
+$MESS["BLOG_DEMO_MESSAGE_BODY"] = "Hoy es el glorioso día en que hemos creado nuestro propio Bitrix24, nuestro espacio de trabajo compartido. Esta es la arena para comunicarse, trabajar, desarrollar proyectos, abordar problemas y hacer otras cosas de una manera nueva y más productiva. No importa dónde se encuentre: en la oficina, o en viaje de negocios o desde su casa, podemos comunicarnos con usted y usted puede comunicarse con nosotros en cualquier momento que tengamos trabajo o algo para discutir.
+
+Bitrix24 es una forma natural de organizar debates grupales en el Flujo de Actividad, comunicarse de persona a persona o en grupos, hacer videollamadas, crear y controlar tareas, planificar su jornada laboral y mucho más.
+
+[B]¿Entonces, por dónde empezamos?[/B]
+
+1. Comencemos con algo simple. Me gusta esta publicación y mira a quién también le gusta.
+
+[IMG WIDTH=600 HEIGHT=300]/images/demo_post/en/1.png[/IMG]
+
+2. Agregue su comentario, o envíe un mensaje a todas las personas o solo a personas seleccionadas.
+
+[IMG WIDTH=600 HEIGHT=310]/images/demo_post/en/2.png[/IMG]
+
+3. Instale una aplicación móvil Bitrix24 gratuita en su teléfono iOS o Android, y una aplicación de escritorio en su computadora (Windows, MacOS o Linux):
+
+[URL=https://itunes.apple.com/app/bitrix24/id561683423][IMG]/images/demo_post/appstore.png[/IMG][/URL] [URL=https://play.google.com/store/apps/details?id=com.bitrix24.android][IMG]/images/demo_post/googleplay.png[/IMG][/URL]  [URL=http://dl.bitrix24.com/b24/bitrix24_desktop.exe][IMG]/images/demo_post/windows.png[/IMG][/URL] [URL=http://dl.bitrix24.com/b24/bitrix24_desktop.dmg][IMG]/images/demo_post/mac.png[/IMG][/URL] [URL=https://github.com/buglloc/brick][IMG]/images/demo_post/linux.png[/IMG][/URL]
+
+Cada vez que tenga dudas sobre el uso de nuestro Bitrix24, consulte Support24, donde puede encontrar respuestas a casi todas las preguntas que hacen nuevos usuarios, así como lecciones en video y cursos de capacitación.";
+$MESS["BLOG_DEMO_COMMENT_TITLE"] = "¡Interesante!";
+$MESS["BLOG_DEMO_COMMENT_BODY"] = "¡Lo intentaré!";
+$MESS["BPC_SONET_POST_TITLE"] = "creó una publicación de blog \"#TITLE#\"";
+$MESS["BPC_SONET_COMMENT_TITLE"] = "agregó un comentario en la publicación del blog \"#TITLE#\"";
+$MESS["BLOG_DEMO_MESSAGE_TITLE1"] = "¡Colaboración a Distancia!";
+$MESS["BLOG_DEMO_MESSAGE_BODY1"] = "Bitrix24 es una plataforma de comunicación y colaboración gratuita. Con Bitrix24 documentos, calendarios, chats grupales, tareas, proyectos, CRM, videoconferencias, telefonía, intranet social y otras herramientas están siempre a su alcance en la oficina, en el hogar y mientras viaja..
+
+Comience por invitar a colegas, socios comerciales y clientes a su cuenta de Bitrix24. Inicie la colaboración enviando un mensaje a todos los usuarios que se unieron a su cuenta.
+
+[IMG WIDTH=1004 HEIGHT=565]https://www.bitrix24.com/images/b24_en/post_n.png[/IMG]
+
+Instale una aplicación móvil gratuita para iOS o Android para mantenerse en contacto cuando no tenga acceso a su computadora. Eche un vistazo a nuestras aplicaciones de escritorio para Mac, PC o Linux para aprender cómo le ayuda a trabajar con documentos y sincronizar sus archivos en todos los dispositivos. 
+
+[IMG WIDTH=300 HEIGHT=201]https://www.bitrix24.com/images/b24_en/mob_tr.png[/IMG][IMG WIDTH=340 HEIGHT=180]https://www.bitrix24.com/images/b24_en/desk_tr.png[/IMG]
+
+[IMG WIDTH=60 HEIGHT=1]https://www.bitrix24.com/images/b24_en/i.png[/IMG][URL=https://itunes.apple.com/en/app/bitrix24/id561683423?l=en&ls=1&mt=8][IMG WIDTH=91 HEIGHT=28]https://www.bitrix24.com/images/b24_en/as001.png[/IMG][/URL] [URL=https://play.google.com/store/apps/details?id=com.bitrix24.android&hl=en][IMG WIDTH=98 HEIGHT=25]https://www.bitrix24.com/images/b24_en/gp005.png[/IMG][/URL][IMG WIDTH=120 HEIGHT=1]https://www.bitrix24.com/images/b24_en/i.png[/IMG][URL=http://dl.bitrix24.com/b24/bitrix24_desktop.dmg][IMG WIDTH=74 HEIGHT=31]https://www.bitrix24.com/images/b24_en/mac001.png[/IMG][/URL] [URL=http://dl.bitrix24.com/b24/bitrix24_desktop.exe][IMG WIDTH=88 HEIGHT=26]https://www.bitrix24.com/images/b24_en/win002.png[/IMG][/URL] [URL=https://github.com/buglloc/brick][IMG WIDTH=67 HEIGHT=28]https://www.bitrix24.com/images/b24_en/linux003.png[/IMG][/URL]";
+$MESS["BLOG_DEMO_MESSAGE_TITLE2"] = "¡Fácil gestión de tareas con Bitrix24!";
+$MESS["BLOG_DEMO_MESSAGE_BODY2"] = "¿Cansado de la confusión y las fechas límite perdidas? Bitrix24 le permite organizar todas sus tareas y asegurarle de que todo esté hecho a tiempo.
+[IMG WIDTH=1367 HEIGHT=713]https://www.bitrix24.com/images/b24_en/tasks_how.png[/IMG]   
+
+[B]¿Por dónde empiezo?[/B]
+
+[IMG WIDTH=20 HEIGHT=20]https://www.bitrix24.com/images/b24_en/1p.png[/IMG] Personalice el formulario de creación de tareas para satisfacer sus necesidades. 
+
+[IMG WIDTH=20 HEIGHT=20]https://www.bitrix24.com/images/b24_en/2p.png[/IMG] Cree tareas recurrentes y plantillas de tareas para administrar la rutina de manera más efectiva. 
+
+[IMG WIDTH=20 HEIGHT=20]https://www.bitrix24.com/images/b24_en/3p.png[/IMG] Use cuadros de Gantt, listas de verificación y dependencias de tareas para coordinar proyectos complejos.
+
+[IMG WIDTH=20 HEIGHT=20]https://www.bitrix24.com/images/b24_en/4p.png[/IMG] Establezca recordatorios para nunca perder una fecha límite.
+
+[IMG WIDTH=20 HEIGHT=20]https://www.bitrix24.com/images/b24_en/5p.png[/IMG] Aprenda a crear tareas a partir de correos electrónicos, comentarios o publicaciones.";
+$MESS["BLOG_DEMO_MESSAGE_TITLE3"] = "Primeros pasos en CRM";
+$MESS["BLOG_DEMO_MESSAGE_BODY3"] = "[URL=/crm/stream/]Bitrix24.CRM[/URL] almacena toda la información sobre sus clientes y posibles clientes: información de contacto, detalles de la empresa, negociaciones, cotizaciones, facturas, solicitudes, reuniones, correos electrónicos, llamadas y más.
+ 
+[IMG WIDTH=1115 HEIGHT=573]https://www.bitrix24.com/images/b24_en/b24crm.png[/IMG]
+
+[B]
+[/B][B]Deje que nuestro CRM haga el trabajo por usted![/B]
+
+Puede conectar Bitrix24.CRM a: 
+
+[IMG WIDTH=20 HEIGHT=20]https://www.bitrix24.com/images/b24_en/1p.png[/IMG] Your [URL=/company/personal/mail/]email address[/URL] con el fin de sincronizar todos los correos electrónicos entre CRM y su cuenta de correo electrónico.
+[IMG WIDTH=20 HEIGHT=20]https://www.bitrix24.com/images/b24_en/2p.png[/IMG] Your [URL=/telephony/lines.php]sistema telefónico[/URL] para hacer, recibir y grabar llamadas telefónicas.
+[IMG WIDTH=20 HEIGHT=20]https://www.bitrix24.com/images/b24_en/3p.png[/IMG] Your [URL=/settings/openlines/]cuentas de redes sociales[/URL] para comunicarse con sus suscriptores.
+[IMG WIDTH=20 HEIGHT=20]https://www.bitrix24.com/images/b24_en/4p.png[/IMG] Su sitio web para hablar con los visitantes a través de [URL=/settings/openlines/]live chat[/URL]. 
+[IMG WIDTH=20 HEIGHT=20]https://www.bitrix24.com/images/b24_en/5p.png[/IMG] Your [URL=/crm/webform/]web forms[/URL] para almacenar datos recolectados dentro de CRM.
+
+Independientemente de cómo elija comunicarse con sus clientes, por correo electrónico, teléfono, redes sociales o su sitio web, esta información terminará en su CRM, de fácil acceso y búsqueda. Naturalmente, puede agregar datos nuevos manualmente, migrar desde otro CRM o importar datos de clientes desde un archivo CSV.
+[B]
+[/B]Los campos personalizados, las limitaciones de los derechos de acceso, los embudos de venta y las múltiples canalizaciones también están disponibles para usted. 
+
+[URL=/crm/stream/][IMG WIDTH=133 HEIGHT=32]https://www.bitrix24.com/images/b24_en/go_to_crm.png[/IMG][/URL] 
+
+
+
+[B]¿Necesita aprender más sobre Bitrix24?[/B] 
+
+[IMG WIDTH=160 HEIGHT=134]https://www.bitrix24.com/images/b24_en/cloudman24.png[/IMG]
+Busque en la esquina superior derecha de este icono [IMG WIDTH=20 HEIGHT=20]https://www.bitrix24.com/images/b24_en/help24.png[/IMG]. Cuando hace clic en el signo de interrogación, lo llevará a la sección Support24.";
+?>

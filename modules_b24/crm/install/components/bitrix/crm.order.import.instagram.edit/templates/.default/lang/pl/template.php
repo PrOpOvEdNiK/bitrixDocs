@@ -1,0 +1,4 @@
+<?
+$MESS["CRM_OIIE_IMPORT_FEEDBACK"] = "Informacja zwrotna";
+$MESS["CRM_OIIE_SETTINGS_CONFIRM_DISABLE_BUTTON_CANCEL"] = "Anuluj";
+?>

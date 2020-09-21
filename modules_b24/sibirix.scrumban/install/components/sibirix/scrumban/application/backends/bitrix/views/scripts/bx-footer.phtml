@@ -1,0 +1,23 @@
+<div style="display: none;"><?
+$description = '';
+$id = "fakeTextEditor";
+$bbCode = false;
+
+$ar = array(
+    'id' => $id,
+    'BBCode' => $bbCode,
+    'height' => '200px',
+    'inputName' => $id . 'RealValue',
+    'inputId' => 'task-description',
+    'content' => $description,
+    'bUseFileDialogs' => false,
+    'toolbarConfig' => array('Image'),
+    'jsObjName' => 'oLHETask' . $id,
+    'bResizable' => true
+);
+
+$module = new CModule();
+$module->IncludeModule("fileman");
+$LHE = new CLightHTMLEditor();
+$LHE->Show($ar);
+?></div>

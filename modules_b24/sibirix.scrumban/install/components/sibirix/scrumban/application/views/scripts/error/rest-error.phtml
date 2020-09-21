@@ -1,0 +1,47 @@
+<? $this->initCss() ?>
+<div id="kanban" class="withBitrixHeader loading task-sortable">
+    <div class="popupContainer"></div>
+
+    <div class="frameHoverOverlay" id="jsFrameHoverOverlay"></div>
+
+    <div class="frameBorder">
+        <div class="header"></div>
+        <div class="footer">
+            <div class="whiteFooter">
+                <?= $this->partial("index/copyright.phtml") ?>
+            </div>
+            <div class="hoverArea jsBitrixFooterToggler"></div>
+        </div>
+        <div class="boardHeader jsKanbanHeader">
+            <div class="inner">
+
+            </div>
+            <div class="clear"></div>
+        </div>
+
+        <div class="boardHeader fakeBoardHeader jsFakeBoardHeader">
+            <div class="inner">
+            </div>
+        </div>
+
+        <div class="leftPadder"></div>
+        <div class="rightPadder"></div>
+
+        <div class="panels jsAllPanels">
+        </div>
+
+    </div>
+
+    <div class="frameInner" style="padding-top: 300px;">
+        <? if ($this->errorCode == 500) : ?>
+            <h2>Приложения "Доска задач" было обновлено.</h2>
+            <h3 class="contactAdmin">Для завершения обновления администратор портала должен перейти в приложение. Обратитесь к администратору для решения данн
+        <? elseif ($this->errorCode == 403) : ?>
+            <div class="no-access" style="text-align: center">
+                <img src="<?= CRM_PATH_STATIC; ?>/images/no-access.png" width="70" height="70" />
+                <p style="font: 300 20px/28px 'Open Sans', Arial, sans-serif; color: #4b4b4b; margin-top: 40px;"><?= $this->t('CRM_NO_ACCESS'); ?></p>
+            </div>
+        <? endif; ?>
+    </div>
+
+</div>

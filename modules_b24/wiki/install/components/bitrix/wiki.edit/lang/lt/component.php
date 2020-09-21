@@ -1,0 +1,38 @@
+<?
+$MESS["WIKI_MODULE_NOT_INSTALLED"] = "Wiki modulis nėra įdiegtas.";
+$MESS["IBLOCK_MODULE_NOT_INSTALLED"] = "Informacio bloko modulis nėra įdiegtas.";
+$MESS["IBLOCK_NOT_ASSIGNED"] = "Nepasirinktas informacinis blokas.";
+$MESS["SOCNET_MODULE_NOT_INSTALLED"] = "Socialinis tinklas modulis nėra įdiegtas.";
+$MESS["WIKI_SOCNET_INITIALIZING_FAILED"] = "Nepavyko inicijuoti socialinio tinklapio.";
+$MESS["WIKI_ACCESS_DENIED"] = "Prieiga uždrausta.";
+$MESS["WIKI_SESS_TIMEOUT"] = "Jūsų sesija pasibaigė. Prašome iš naujo išsaugoti puslapį.";
+$MESS["WIKI_IMAGE_INSERT"] = "Įterpti paveikslėlį";
+$MESS["WIKI_PAGE_NOT_FIND"] = "Nėra teksto, arba puslapis neegzistuoja. Jūs galite <a href=\"%LINK%\"> sukurti naują puslapį su šią antraštę dabar</a>.";
+$MESS["WIKI_DEFAULT_DETAIL_TEXT"] = "%NEWLINE%%HEAD%%NEWLINE%%NEWLINE%TŠiame puslapyje nėra teksto.";
+$MESS["WIKI_ERROR_RENAME"] = "Puslapis su tokiu pavadinimu jau egzistuoja.";
+$MESS["WIKI_ERROR_NAME_BAD_SYMBOL"] = "Pavadinime yra neleistinų simbolių (/)";
+$MESS["WIKI_ERROR_NAME_EMPTY"] = "Trūksta puslapio pavadinimo.";
+$MESS["WIKI_IMAGE_UPLOAD_ERROR"] = "Tik tokio formato nuotraukos gali būti įkeltos (JPG, JPEG, JPE, PNG, GIF, BMP).";
+$MESS["WIKI_CHOISE_CATEGORY"] = "Pasirinkite kategoriją";
+$MESS["FILE_NAME"] = "Failas";
+$MESS["CATEGORY_NAME"] = "Kategorija";
+$MESS["WIKI_SONET_LOG_TITLE_TEMPLATE"] = "Straipsnis \"#TITLE#\" pridėtas arba atnaujintas";
+$MESS["WIKI_DEL_SONET_LOG_TITLE_TEMPLATE"] = "Wiki straipsnis \"#TITLE#\" ištrintas";
+$MESS["WIKI_ERROR_TEXT_EMPTY"] = "Puslapio tekstas yra tuščias.";
+$MESS["WIKI_DELETE_ERROR"] = "Klaida trinant puslapį";
+$MESS["WIKI_MODIFY_COMMENT"] = "Komentuoti atnaujinimus";
+$MESS["WIKI_MODIFY_COMMENT_ABSENT"] = "nėra";
+$MESS["WIKI_REDIRECT"] = "Nukreipimas";
+$MESS["WIKI_PAGE_RENAMED"] = "puslapis %OLD_NAME% buvo pervadintas į %NEW_NAME%.";
+$MESS["WIKI_SONET_IM_ADD"] = "Naujas wiki puslapis \"#title#\" pridėtas grupėje #group_name#.";
+$MESS["WIKI_SONET_IM_EDIT"] = "Wiki puslapis \"#title#\" atnaujintas grypėje in #group_name#.";
+$MESS["WIKI_SONET_IM_DELETE"] = "Wiki puslapis \"#title#\" pašalintas grupėje #group_name#.";
+$MESS["WIKI_SONET_IM_RENAME"] = "Wiki puslapis \"#title_old#\" pervadintas į \"#title_new#\" grupėje #group_name#.";
+$MESS["WIKI_DIALOG_RENAME_PAGE_NAME"] = "Naujas pavadinimas";
+$MESS["WIKI_DIALOG_RENAME_TITLE"] = "Pavadinimo keitimas";
+$MESS["WIKI_DIALOG_RENAME_BUT_RENAME"] = "Keisti pavadinimą";
+$MESS["WIKI_DIALOG_RENAME_ERROR"] = "Nepavyko pakeisti pavadinimą.";
+$MESS["WIKI_DELETE_CONFIRM"] = "Ar tikrai norite ištrinti?";
+$MESS["WIKI_DELETE_PAGE"] = "Ar tikrai norite visiškai pašalinti puslapį, o jo pakeitimų istoriją?";
+$MESS["WIKI_BUTTON_DELETE"] = "Ištrinti";
+?>

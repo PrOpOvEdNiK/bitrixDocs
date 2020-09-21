@@ -1,0 +1,34 @@
+<?
+$MESS["P_ALL_PHOTOS"] = "toutes les galeries";
+$MESS["P_BEST_PHOTO_COMMENTS"] = "La photo le plus commentée";
+$MESS["P_BEST_PHOTO_RATING"] = "Photo la plus populaire";
+$MESS["P_BEST_PHOTO_SHOWS"] = "La photo la plus vue";
+$MESS["P_COMMENT_PHOTO"] = "Photographies commentées";
+$MESS["P_ERROR1"] = "Il n'y a pas de photos dans la galerie pour l'instant.";
+$MESS["P_ERROR2"] = "Vous pouvez <a target='_self' href='#CREATE_GALLERY#'>créer</a> votre galerie et charger vos premières photos.";
+$MESS["P_ERROR3"] = "Vous pouvez <a target='_self' href='#UPLOAD#'>charger</a> vos premières photos.";
+$MESS["P_ERROR4"] = "La galerie n'a pas encore de photos pour lesquelles quelqun a voté.";
+$MESS["P_ERROR5"] = "Pour le moment à la galerie il n'y a pas de photos avec commentaires.";
+$MESS["P_GALLERIES_VIEW"] = "Mes galeries";
+$MESS["P_GALLERY_CREATE"] = "Création d'une galerie photos";
+$MESS["P_GALLERY_VIEW"] = "Ma galerie";
+$MESS["P_LOGIN"] = "Connexion";
+$MESS["P_NOT_APPROVED"] = "Non publiés";
+$MESS["P_NOT_APPROVED_TITLE"] = "Les photos qui doivent être visibles pour tous les utilisateurs sur la page principale, mais que vous n'avez pas approuvées.";
+$MESS["P_NOT_MODERATED"] = "Des attendants";
+$MESS["P_NOT_MODERATED_TITLE"] = "Les photos qui attendent d'être censurées.";
+$MESS["P_PHOTOGRAPHIES"] = "Liste de photos";
+$MESS["P_PHOTO_2"] = "Photos vues";
+$MESS["P_PHOTO_COMMENTS"] = "Commentés";
+$MESS["P_PHOTO_LAST"] = "Nouveaux";
+$MESS["P_PHOTO_NEW"] = "Nouveaux";
+$MESS["P_PHOTO_RATING"] = "Populaire";
+$MESS["P_PHOTO_SHOWS"] = "consulté";
+$MESS["P_PHOTO_VIEW"] = "Mes photos";
+$MESS["P_RATING_PHOTO"] = "Photos en cours de consultation";
+$MESS["P_RECALC_7"] = "Veuillez recalculer la taille des galeries. <a href='#URL#'>Recalculer ?</a>";
+$MESS["P_TAGS_CLOUD"] = "Nuage de tags";
+$MESS["P_TITLE"] = "Accéder à la page principale de la galerie";
+$MESS["P_UPLOAD"] = "Charger une photo";
+$MESS["P_USERS_GALLERIES"] = "Galeries de l'utilisateur";
+?>

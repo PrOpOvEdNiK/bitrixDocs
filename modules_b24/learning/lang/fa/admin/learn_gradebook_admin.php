@@ -1,0 +1,6 @@
+<?
+$MESS["LEARNING_ADMIN_ATTEMPTS"] = "تعداد تلاش";
+$MESS["LEARNING_ADMIN_APPROVED"] = "گذرانده شده";
+$MESS["LEARNING_ADMIN_RESULT"] = "امتیاز";
+$MESS["LEARNING_ADMIN_TEST"] = "آزمون";
+?>

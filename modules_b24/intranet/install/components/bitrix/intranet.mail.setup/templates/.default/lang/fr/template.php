@@ -1,0 +1,29 @@
+<?
+$MESS["INTR_MAIL_CHECK"] = "Exécuter";
+$MESS["INTR_MAIL_CHECK_ERROR"] = "Erreur";
+$MESS["INTR_MAIL_CHECK_JUST_NOW"] = "Code secret (secret App) : ";
+$MESS["INTR_MAIL_CHECK_NA"] = "N/A";
+$MESS["INTR_MAIL_CHECK_SUCCESS"] = "Avec succès";
+$MESS["INTR_MAIL_CHECK_TEXT"] = "Dernière vérification #DATE#";
+$MESS["INTR_MAIL_CHECK_TEXT_NA"] = "Pas de données.";
+$MESS["INTR_MAIL_CHOOSE"] = "Choisissez un service de messagerie à utiliser sur le Portail";
+$MESS["INTR_MAIL_COMPLETE"] = "Boîte aux lettres est introuvable.";
+$MESS["INTR_MAIL_CREATE"] = "Connecter";
+$MESS["INTR_MAIL_INP_ENCRYPT"] = "Connexion protégée";
+$MESS["INTR_MAIL_INP_ENCRYPT_NO"] = "Non";
+$MESS["INTR_MAIL_INP_ENCRYPT_YES"] = "Oui";
+$MESS["INTR_MAIL_INP_LINK"] = "Adresse de l'interface WEB du serveur postal";
+$MESS["INTR_MAIL_INP_LOGIN"] = "Connexion";
+$MESS["INTR_MAIL_INP_PASS"] = "Mot de passe";
+$MESS["INTR_MAIL_INP_PORT"] = "Port";
+$MESS["INTR_MAIL_INP_SERVER"] = "Adresse du serveur IMAP";
+$MESS["INTR_MAIL_LINK"] = "Accéder à la boîte aux lettres";
+$MESS["INTR_MAIL_REMOVE"] = "Supprimer";
+$MESS["INTR_MAIL_REMOVE_COMPLETE"] = "Les données pour entrer au service postal sont éliminées";
+$MESS["INTR_MAIL_REMOVE_CONFIRM"] = "Supprimer les données de connexion de la boîte aux lettres ?";
+$MESS["INTR_MAIL_SETUP"] = "Veuillez saisir les données de connexion selon le protocole IMAP";
+$MESS["INTR_MAIL_SETUP_HINT"] = "Il est possible de régler la connexion à la messagerie sur votre profil";
+$MESS["INTR_MAIL_SETUP_LINK"] = "Régler une nouvelle connexion";
+$MESS["INTR_MAIL_STATUS"] = "Statut";
+$MESS["INTR_MAIL_UPDATE"] = "Enregistrer";
+?>

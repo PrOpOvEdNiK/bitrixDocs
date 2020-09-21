@@ -1,0 +1,10 @@
+<script type="text/ejs" id="peopleItem">
+    <div data-userId="<%= user.id %>" title="<%= user.getFullName() %>" class="peopleItem item <%= user.getStatus() %> <%= (user.id == -1) ? 'noPeople' : ''%>">
+        <% if (user.noAvatar || !user.avatar) { %>
+            <i style="background-color: <%= user.avatarColor %>;"><%= user.avatarLetters %></i>
+        <% } else { %>
+            <i <% if (user.avatar) { %>style="background-image: url('<%= user.avatar %>');" <% } %> ></i>
+        <% } %>
+        <span></span>
+    </div>
+</script>

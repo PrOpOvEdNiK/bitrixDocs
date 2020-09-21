@@ -1,0 +1,11 @@
+<?
+$MESS["BX_SALE_DISCOUNT_PRESET_TITLE_EDIT_DISCOUNT"] = "Pakeisti taisyklę su ID #ID#";
+$MESS["BX_SALE_DISCOUNT_PRESET_TITLE_ADD_DISCOUNT"] = "Sukurti naują taisyklę";
+$MESS["BX_SALE_DISCOUNT_PRESET_CONTEXT_DISCOUNT_LIST"] = "Taisyklių sąrašas";
+$MESS["BX_SALE_DISCOUNT_PRESET_CONTEXT_NEW"] = "Sukurti naują taisyklę";
+$MESS["BX_SALE_DISCOUNT_PRESET_CONTEXT_DELETE"] = "Ištrinti taisyklę";
+$MESS["BX_SALE_DISCOUNT_PRESET_CONTEXT_DELETE_CONFIRM"] = "Ar tikrai norite ištrinti šią taisyklę?";
+$MESS["BX_SALE_DISCOUNT_PRESET_FORM_EDIT_TAB_NAME_COMMON"] = "Parametrai";
+$MESS["BX_SALE_DISCOUNT_PRESET_FORM_EDIT_TAB_TITLE_COMMON"] = "Taisyklės parametrai";
+$MESS["BX_SALE_DISCOUNT_PRESET_ABSENT"] = "Nustatymai pagal nutylėjimą";
+?>

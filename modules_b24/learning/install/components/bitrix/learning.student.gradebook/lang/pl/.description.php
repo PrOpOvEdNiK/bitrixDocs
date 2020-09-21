@@ -1,0 +1,6 @@
+<?
+$MESS["LEARNING_SERVICE"] = "e-Nauka";
+$MESS["LEARNING_STUDENT_GRADEBOOK_DESC"] = "Wyniki testu";
+$MESS["LEARNING_STUDENT_GRADEBOOK_NAME"] = "Dzienniczek ocen ucznia";
+$MESS["LEARNING_STUDENT_SERVICE"] = "Uczeń";
+?>

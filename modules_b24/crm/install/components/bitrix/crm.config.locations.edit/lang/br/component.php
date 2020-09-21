@@ -1,0 +1,36 @@
+<?
+$MESS["CRM_ADD_ZIP"] = "Adicionar um CEP";
+$MESS["CRM_DEL_ZIP"] = "Excluir";
+$MESS["CRM_ERROR_CITY_NAME"] = "Cidade: o nome completo da cidade não está especificado.";
+$MESS["CRM_ERROR_CITY_NAME_LANG"] = "Cidade: o nome completo da cidade não está disponível para o idioma:";
+$MESS["CRM_ERROR_COUNTRY_NAME"] = "País: o nome completo do país não está especificado.";
+$MESS["CRM_ERROR_COUNTRY_NAME_LANG"] = "País: o nome completo do país não está disponível para o idioma: ";
+$MESS["CRM_ERROR_REGION_NAME_LANG"] = "O nome completo da região não está disponível para o idioma:";
+$MESS["CRM_ERROR_SELECT_COUNTRY"] = "Selecione um país para modificar ou adicionar um novo, certificando-se que o campo \"Editar país atual\" não esteja selecionado.";
+$MESS["CRM_LOC_ADD_UNKNOWN_ERROR"] = "Erro ao criar localização";
+$MESS["CRM_LOC_DELETE_UNKNOWN_ERROR"] = "Erro ao deletar a localização.";
+$MESS["CRM_LOC_FIELD_CHANGE_COUNTRY"] = "Editar país atual";
+$MESS["CRM_LOC_FIELD_COUNTRY_ID"] = "Selecionar País";
+$MESS["CRM_LOC_FIELD_ID"] = "ID";
+$MESS["CRM_LOC_FIELD_LOC_DEFAULT"] = "Padrão";
+$MESS["CRM_LOC_FIELD_LOC_ZIP"] = "CEP's";
+$MESS["CRM_LOC_FIELD_NAME"] = "Nome Completo";
+$MESS["CRM_LOC_FIELD_REGION_ID"] = "Selecione uma região";
+$MESS["CRM_LOC_FIELD_SHORT_NAME"] = "Primeiro Nome";
+$MESS["CRM_LOC_FIELD_SORT"] = "Classificação";
+$MESS["CRM_LOC_FIELD_WITHOUT_CITY"] = "Sem cidade";
+$MESS["CRM_LOC_NEW_COUNTRY"] = "Novo país";
+$MESS["CRM_LOC_NEW_REGION"] = "Nova região";
+$MESS["CRM_LOC_NOT_FOUND"] = "A localização não foi encontrada.";
+$MESS["CRM_LOC_SECTION_CITY"] = "Cidade ";
+$MESS["CRM_LOC_SECTION_COUNTRY"] = "País";
+$MESS["CRM_LOC_SECTION_MAIN"] = "Localização";
+$MESS["CRM_LOC_SECTION_REGION"] = "Região/Estado/Província";
+$MESS["CRM_LOC_SECTION_ZIP"] = "CEP's";
+$MESS["CRM_LOC_UPDATE_UNKNOWN_ERROR"] = "Erro ao atualizar localização.";
+$MESS["CRM_LOC_WITHOUT_COUNTRY"] = "Sem país";
+$MESS["CRM_LOC_WITHOUT_REGION"] = "Sem região";
+$MESS["CRM_MODULE_NOT_INSTALLED"] = "O módulo de CRM não está instalado.";
+$MESS["CRM_PERMISSION_DENIED"] = "Acesso negado";
+$MESS["CRM_SALE_MODULE_NOT_INSTALLED"] = "O módulo de e-Store não está instalado.";
+?>

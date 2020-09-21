@@ -1,0 +1,4 @@
+<?
+$MESS["TASKS_CALENDAR_DESCRIPTION"] = "Zadania";
+$MESS["TASKS_CALENDAR_NAME"] = "Zadania";
+?>

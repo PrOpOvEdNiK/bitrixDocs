@@ -1,0 +1,6 @@
+<?
+$MESS["GROUP_ENTITY_CREATED_BY_FIELD"] = "Stworzone przez";
+$MESS["GROUP_ENTITY_DATE_CREATE_FIELD"] = "Utworzone";
+$MESS["GROUP_ENTITY_DESCRIPTION_FIELD"] = "opis";
+$MESS["GROUP_ENTITY_TIMESTAMP_X_FIELD"] = "Data modyfikacji";
+?>

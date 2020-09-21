@@ -1,0 +1,32 @@
+<?
+$MESS["BLOG_MENU_ADD_MESSAGE"] = "Nouveau message";
+$MESS["BLOG_MENU_ADD_MESSAGE_TITLE"] = "Créer un nouveau message";
+$MESS["BLOG_MENU_BLOGS_LIST"] = "Page principale du blog";
+$MESS["BLOG_MENU_BLOGS_LIST_TITLE"] = "Page principale du blog";
+$MESS["BLOG_MENU_BLOG_EDIT"] = "Paramètres des blogues";
+$MESS["BLOG_MENU_BLOG_EDIT_TITLE"] = "Paramètres de mon blogue";
+$MESS["BLOG_MENU_CATEGORY_EDIT"] = "Paramètres des tags";
+$MESS["BLOG_MENU_CATEGORY_EDIT_TITLE"] = "Configuration des tags de mon blogue";
+$MESS["BLOG_MENU_CURRENT_BLOG"] = "Blog";
+$MESS["BLOG_MENU_CURRENT_BLOG_TITLE"] = "Blog &quot;#NAME#&quot;";
+$MESS["BLOG_MENU_DRAFT_MESSAGES"] = "Messages non terminés";
+$MESS["BLOG_MENU_DRAFT_MESSAGES_TITLE"] = "Messages non terminés";
+$MESS["BLOG_MENU_FRIENDS"] = "Bande des amis";
+$MESS["BLOG_MENU_FRIENDS_TITLE"] = "Bande des amis";
+$MESS["BLOG_MENU_FR_A_F"] = "Adjonction dans la liste d'amis";
+$MESS["BLOG_MENU_FR_B_F"] = "Devenir ami";
+$MESS["BLOG_MENU_GROUP_EDIT"] = "Réglage des groupes";
+$MESS["BLOG_MENU_GROUP_EDIT_TITLE"] = "Réglages des groupes de mon blog";
+$MESS["BLOG_MENU_LOGIN"] = "Autorisation";
+$MESS["BLOG_MENU_LOGIN_TITLE"] = "Autorisation";
+$MESS["BLOG_MENU_LOGOUT"] = "Sortie";
+$MESS["BLOG_MENU_LOGOUT_TITLE"] = "Sortie";
+$MESS["BLOG_MENU_MY_BLOG"] = "Mon blog";
+$MESS["BLOG_MENU_MY_BLOG_TITLE"] = "Mon blog";
+$MESS["BLOG_MENU_PROFILE"] = "Ma page";
+$MESS["BLOG_MENU_PROFILE_TITLE"] = "Ma page";
+$MESS["BLOG_MENU_REGISTER"] = "Enregistrement";
+$MESS["BLOG_MENU_REGISTER_TITLE"] = "Enregistrement";
+$MESS["BLOG_MENU_USER_SETTINGS"] = "Réglage des utilisateurs";
+$MESS["BLOG_MENU_USER_SETTINGS_TITLE"] = "Réglage des utilisateurs de mon blog";
+?>

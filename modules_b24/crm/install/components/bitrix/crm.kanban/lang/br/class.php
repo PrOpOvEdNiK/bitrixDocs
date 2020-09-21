@@ -1,0 +1,31 @@
+<?
+$MESS["CRM_ACCESS_NOTIFY_MESSAGE"] = "<a href=\"#URL#\">Configure etapas de CRM kanban</a> para mim ou conceda-me permissão adequada para que eu possa fazê-lo.";
+$MESS["CRM_KANBAN_CRM_NOT_INSTALLED"] = "O módulo de CRM não está instalado.";
+$MESS["CRM_KANBAN_EMAIL_TYPE_HOME"] = "Privado";
+$MESS["CRM_KANBAN_EMAIL_TYPE_OTHER"] = "Outro";
+$MESS["CRM_KANBAN_EMAIL_TYPE_WORK"] = "Trabalho";
+$MESS["CRM_KANBAN_ERROR_ACCESS_DENIED"] = "Acesso negado.";
+$MESS["CRM_KANBAN_ERROR_LEAD_ALREADY_CONVERTED"] = "Não é possível alterar o status de um Lead convertido.";
+$MESS["CRM_KANBAN_ERROR_SESSION_EXPIRED"] = "Sua sessão expirou.";
+$MESS["CRM_KANBAN_ERROR_STAGE_IS_NOT_EMPTY"] = "Este estágio não está vazio.";
+$MESS["CRM_KANBAN_ERROR_STAGE_IS_SYSTEM"] = "O estágio do sistema não pode ser excluído.";
+$MESS["CRM_KANBAN_ERROR_STAGE_IS_WIN"] = "O estágio final não pode ser excluído.";
+$MESS["CRM_KANBAN_PHONE_TYPE_FAX"] = "Fax";
+$MESS["CRM_KANBAN_PHONE_TYPE_HOME"] = "Página Inicial";
+$MESS["CRM_KANBAN_PHONE_TYPE_MOBILE"] = "Celular";
+$MESS["CRM_KANBAN_PHONE_TYPE_OTHER"] = "Outro";
+$MESS["CRM_KANBAN_PHONE_TYPE_PAGER"] = "Pager";
+$MESS["CRM_KANBAN_PHONE_TYPE_WORK"] = "Trabalho";
+$MESS["CRM_KANBAN_SELECT_BIRTHDATE"] = "Data de nascimento";
+$MESS["CRM_KANBAN_SELECT_SOURCE_ID"] = "Fonte";
+$MESS["CRM_KANBAN_SELECT_STATUS_ID"] = "Status";
+$MESS["CRM_KANBAN_SELECT_TYPE_ID"] = "Tipo";
+$MESS["CRM_KANBAN_TITLE2_DEAL"] = "Negócios";
+$MESS["CRM_KANBAN_TITLE2_INVOICE"] = "Faturas";
+$MESS["CRM_KANBAN_TITLE2_LEAD"] = "Leads";
+$MESS["CRM_KANBAN_TITLE2_QUOTE"] = "Orçamentos";
+$MESS["CRM_KANBAN_TITLE_DEAL"] = "Kanban, negócios";
+$MESS["CRM_KANBAN_TITLE_INVOICE"] = "Kanban, faturas";
+$MESS["CRM_KANBAN_TITLE_LEAD"] = "Kanban, Leads";
+$MESS["CRM_KANBAN_TITLE_QUOTE"] = "Kanban, orçamentos";
+?>

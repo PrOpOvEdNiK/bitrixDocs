@@ -1,0 +1,34 @@
+<?
+$MESS["CRM_MODULE_NOT_INSTALLED"] = "Le module CRM n'est pas installé.";
+$MESS["CRM_QUOTE_COPY_PAGE_TITLE"] = "Copier le devis";
+$MESS["CRM_QUOTE_CREATION_PAGE_TITLE"] = "Créer un devis";
+$MESS["CRM_QUOTE_FIELD_ASSIGNED_BY_ID"] = "Personne responsable";
+$MESS["CRM_QUOTE_FIELD_BEGINDATE"] = "Date de création";
+$MESS["CRM_QUOTE_FIELD_CLIENT"] = "Client";
+$MESS["CRM_QUOTE_FIELD_CLOSEDATE"] = "Date limite";
+$MESS["CRM_QUOTE_FIELD_COMMENTS"] = "Commentaire (non visible dans le devis)";
+$MESS["CRM_QUOTE_FIELD_CONTACT_LEGEND"] = "Contacts dans le devis";
+$MESS["CRM_QUOTE_FIELD_CONTENT"] = "Contenus";
+$MESS["CRM_QUOTE_FIELD_DEAL"] = "Transaction";
+$MESS["CRM_QUOTE_FIELD_DEAL_ID"] = "Transaction";
+$MESS["CRM_QUOTE_FIELD_FILES"] = "Fichiers";
+$MESS["CRM_QUOTE_FIELD_ID"] = "ID";
+$MESS["CRM_QUOTE_FIELD_LEAD"] = "Prospect";
+$MESS["CRM_QUOTE_FIELD_LEAD_ID"] = "Prospect";
+$MESS["CRM_QUOTE_FIELD_MYCOMPANY"] = "Détails de votre société";
+$MESS["CRM_QUOTE_FIELD_NUMBER"] = "Devis #";
+$MESS["CRM_QUOTE_FIELD_OPENED"] = "Disponible pour tout le monde";
+$MESS["CRM_QUOTE_FIELD_OPPORTUNITY_WITH_CURRENCY"] = "Montant et devise";
+$MESS["CRM_QUOTE_FIELD_PRODUCTS"] = "Produits";
+$MESS["CRM_QUOTE_FIELD_STATUS_ID"] = "Statut du devis";
+$MESS["CRM_QUOTE_FIELD_TERMS"] = "Conditions";
+$MESS["CRM_QUOTE_FIELD_TITLE"] = "Sujet";
+$MESS["CRM_QUOTE_FIELD_UTM"] = "Paramètres UTM";
+$MESS["CRM_QUOTE_NOT_FOUND"] = "Devis introuvable.";
+$MESS["CRM_QUOTE_SECTION_ADDITIONAL"] = "Plus";
+$MESS["CRM_QUOTE_SECTION_MAIN"] = "À propos du devis";
+$MESS["CRM_QUOTE_SECTION_PRODUCTS"] = "Produits";
+$MESS["CRM_QUOTE_TAB_EVENT"] = "Historique";
+$MESS["CRM_QUOTE_TAB_PRODUCTS"] = "Produits";
+$MESS["CRM_QUOTE_TAB_TREE"] = "Dépendances";
+?>

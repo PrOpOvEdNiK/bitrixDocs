@@ -1,0 +1,29 @@
+<?
+$MESS["LOG_TYPE_DOCUMENTS"] = "Bibliothèque de documents";
+$MESS["LOG_TYPE_ELEMENT_ADD"] = "Ajouter un fichier";
+$MESS["LOG_TYPE_ELEMENT_DELETE"] = "Supprimer le fichier";
+$MESS["LOG_TYPE_ELEMENT_MOVE"] = "Déplacer le fichier";
+$MESS["LOG_TYPE_ELEMENT_RENAME"] = "Renommer le fichier";
+$MESS["LOG_TYPE_ELEMENT_RESTORE"] = "Restaurer le fichier depuis la corbeille";
+$MESS["LOG_TYPE_ELEMENT_TRASH"] = "Déplacer le fichier dans la corbeille";
+$MESS["LOG_TYPE_ELEMENT_UPDATE"] = "Mettre à jour le fichier";
+$MESS["LOG_TYPE_SECTION_ADD"] = "Create folder";
+$MESS["LOG_TYPE_SECTION_DELETE"] = "Delete folder";
+$MESS["LOG_TYPE_SECTION_MOVE"] = "Move folder";
+$MESS["LOG_TYPE_SECTION_RENAME"] = "Rename folder";
+$MESS["LOG_TYPE_SECTION_RESTORE"] = "Restaurer le dossier depuis la corbeille";
+$MESS["LOG_TYPE_SECTION_TRASH"] = "Déplacer le dossier dans la corbeille";
+$MESS["LOG_WEBDAV_ELEMENT_ADD"] = "Fichier #NAME# ajouté";
+$MESS["LOG_WEBDAV_ELEMENT_DELETE"] = "Fichier #NAME# supprimé";
+$MESS["LOG_WEBDAV_ELEMENT_MOVE"] = "Fichier #NAME# déplacé dans \"#MOVE_TO#\"";
+$MESS["LOG_WEBDAV_ELEMENT_RENAME"] = "Fichier #NAME# renommé en #NAME#";
+$MESS["LOG_WEBDAV_ELEMENT_RESTORE"] = "Fichier #NAME# restauré";
+$MESS["LOG_WEBDAV_ELEMENT_TRASH"] = "Fichier #NAME# déplacé dans la corbeille";
+$MESS["LOG_WEBDAV_ELEMENT_UPDATE"] = "Fichier #NAME# mis à jour";
+$MESS["LOG_WEBDAV_SECTION_ADD"] = "Dossier #NAME# ajouté";
+$MESS["LOG_WEBDAV_SECTION_DELETE"] = "Dossier #NAME# supprimé";
+$MESS["LOG_WEBDAV_SECTION_MOVE"] = "Dossier #NAME# déplacé dans \"#MOVE_TO#\"";
+$MESS["LOG_WEBDAV_SECTION_RENAME"] = "Dossier #NAME# renommé en #NAME#";
+$MESS["LOG_WEBDAV_SECTION_RESTORE"] = "Dossier #NAME# restauré";
+$MESS["LOG_WEBDAV_SECTION_TRASH"] = "Dossier #NAME# déplacé dans la corbeille";
+?>

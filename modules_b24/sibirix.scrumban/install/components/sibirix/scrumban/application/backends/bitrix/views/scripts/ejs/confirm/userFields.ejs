@@ -1,0 +1,9 @@
+<script type="text/ejs" id="tplUserFields">
+    <div class="question user-fields">
+        <div class="body<% if (addHtmlPadding) { %> padded<% } %>">
+            <div class="js-errors" style="color: red"></div>
+            <iframe src="/bitrix/components/sibirix/task.user.fields/iframe.php?<%= this.taskId ? 'TASK_ID=' + this.taskId : 'new=1' %>&edit=1&required_only=1" style="width: 100%"></iframe>
+            <div class="loader" style="text-align: center;"><canvas class="shortLoader"></canvas></div>
+        </div>
+    </div>
+</script>

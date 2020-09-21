@@ -1,0 +1,4 @@
+<?
+$MESS["CRM_ACTIVITY_VISIT_DOWNLOAD_RECORD"] = "Baixar gravação";
+$MESS["CRM_ACTIVITY_VISIT_FIELD_DESCRIPTION"] = "Descrição";
+?>

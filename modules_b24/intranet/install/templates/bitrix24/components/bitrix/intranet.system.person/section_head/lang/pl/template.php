@@ -1,0 +1,29 @@
+<?
+$MESS["INTR_CONFIRM_DELETE"] = "Zaproszenie zostanie usunięte nieodwracalnie.\\n\\nNa pewno chcesz usunąć tego pracownika?";
+$MESS["INTR_CONFIRM_FIRE"] = "Pracownik nie będzie w stanie zalogować się do portalu, nie będzie widoczny w strukturze firmy. Jednakże, wszystkie jego lub jej osobiste dane (pliki, wiadomości, zadania, itp.) pozostaną nietknięte.\\n\\nNa pewno chcesz odmówić dostępu temu pracownikowi?";
+$MESS["INTR_CONFIRM_RESTORE"] = "Pracownik będzie w stanie się logować do portalu i będzie widoczny w strukturze firmy.\\n\\nNa pewno chcesz zezwolić na dostęp temu pracownikowi?";
+$MESS["INTR_EXTRANET"] = "(ekstranet)";
+$MESS["INTR_ISP_DEACTIVATE_USER"] = "Odmów dostępu";
+$MESS["INTR_ISP_DELETE_ERROR"] = "Błąd! Użytkownik nie został usunięty.";
+$MESS["INTR_ISP_DELETE_USER"] = "Usuń";
+$MESS["INTR_ISP_EDIT_USER"] = "Edytuj";
+$MESS["INTR_ISP_INVITE"] = "Zaproś ponownie";
+$MESS["INTR_ISP_INVITE_ACCESS"] = "Zaproszenie zostało wysłane";
+$MESS["INTR_ISP_IS_ABSENT"] = "poza biurem";
+$MESS["INTR_ISP_IS_ONLINE"] = "online";
+$MESS["INTR_ISP_PM"] = "Wyślij wiadomość";
+$MESS["INTR_ISP_RESTORE_USER"] = "Zezwól na dostęp";
+$MESS["INTR_ISP_TASK"] = "Dodaj zadanie";
+$MESS["INTR_ISP_VIDEO_CALL"] = "Połączenie video";
+$MESS["INTR_IS_ADMIN"] = "Administrator";
+$MESS["INTR_IS_HEAD"] = "Przełożony";
+$MESS["INTR_STR_UF_HEAD"] = "Kierownik działu";
+$MESS["INTR_USER_admin"] = "Administrator";
+$MESS["INTR_USER_extranet"] = "Extranet";
+$MESS["INTR_USER_fired"] = "Zwolniony";
+$MESS["INTR_USER_inactive"] = "Zaproszony";
+$MESS["ISL_PERSONAL_BIRTHDAY"] = "Data urodzin";
+$MESS["ISL_PERSONAL_EMAIL"] = "E-mail";
+$MESS["ISL_PERSONAL_PHONE"] = "Telefon";
+$MESS["ISL_PERSONAL_SKYPE"] = "Skype";
+?>

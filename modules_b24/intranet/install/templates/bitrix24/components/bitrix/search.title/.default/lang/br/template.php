@@ -1,0 +1,22 @@
+<?
+$MESS["CT_BST_GLOBAL_SEARCH"] = "Pesquisar";
+$MESS["CT_BST_GLOBAL_SEARCH_CALENDAR"] = "Calendário";
+$MESS["CT_BST_GLOBAL_SEARCH_CRM"] = "CRM";
+$MESS["CT_BST_GLOBAL_SEARCH_CRM_ACTIVITY"] = "Minhas atividades";
+$MESS["CT_BST_GLOBAL_SEARCH_CRM_COMPANY"] = "Empresas";
+$MESS["CT_BST_GLOBAL_SEARCH_CRM_CONTACT"] = "Contatos";
+$MESS["CT_BST_GLOBAL_SEARCH_CRM_DEAL"] = "Negócios";
+$MESS["CT_BST_GLOBAL_SEARCH_CRM_INVOICE"] = "Faturas";
+$MESS["CT_BST_GLOBAL_SEARCH_CRM_LEAD"] = "Leads";
+$MESS["CT_BST_GLOBAL_SEARCH_CRM_QUOTE"] = "Orçamentos";
+$MESS["CT_BST_GLOBAL_SEARCH_DISK"] = "Bitrix24.Drive";
+$MESS["CT_BST_GLOBAL_SEARCH_MORE"] = "Mais";
+$MESS["CT_BST_GLOBAL_SEARCH_NO_RESULT"] = "Não foram encontradas inserções.";
+$MESS["CT_BST_GLOBAL_SEARCH_PROCESS"] = "Meus fluxos de trabalho";
+$MESS["CT_BST_GLOBAL_SEARCH_SITE"] = "Sites";
+$MESS["CT_BST_GLOBAL_SEARCH_STREAM"] = "Fluxo de Atividades";
+$MESS["CT_BST_GLOBAL_SEARCH_TASKS"] = "Tarefas";
+$MESS["CT_BST_SEARCH_BUTTON"] = "Pesquisar";
+$MESS["CT_BST_SEARCH_HINT"] = "procurar pessoas, documentos, e mais";
+$MESS["CT_BST_WAITER_TEXT"] = "Pesquisando...";
+?>

@@ -1,0 +1,112 @@
+<?php
+    $this->initCss();
+?>
+
+<?php $this->headScript()->captureStart(Zend_View_Helper_Placeholder_Container_Abstract::APPEND, 'text/javascript', array('charset'=>'UTF-8')); ?>
+    /* BX_DEBUG_INFO */
+    var SCRUMBAN = <?= $this->modelOutput($this->jsConstants(), true) ?>;
+<?php $this->headScript()->captureEnd() ?>
+
+<?php $this->headScript()->captureStart(Zend_View_Helper_Placeholder_Container_Abstract::APPEND, 'text/javascript', array('charset'=>'UTF-8', 'magic' => false)) ?>
+    /* BX_DEBUG_INFO */
+    var projectList = <?= $this->modelOutput($this->projectList) ?>;
+    var project = <?= $this->modelOutput($this->project) ?>;
+    var sprintList = <?= $this->modelOutput($this->sprintList) ?>;
+    var sprint = <?= $this->modelOutput($this->sprint) ?>;
+    var baseStaticPath = '<?= SCRUMBAN_PATH_STATIC ?>';
+    var daysLeft = <?= ($this->domainTimeLeft === false || !isset($this->domainTimeLeft)) ? 'false' : $this->domainTimeLeft; ?>;
+    var lastProjects = <?= $this->modelOutput($this->lastProjects); ?>;
+    var userFeed = <?= $this->modelOutput($this->userFeed); ?>;
+    var jsonBoard, baseBoard;
+    jsonBoard = baseBoard = <?= $this->modelOutput($this->baseBoard) ?>;
+<?php $this->headScript()->captureEnd() ?>
+
+<?php
+    $this->initJs();
+    $this->InitHistoryScript($this->basePath);
+?>
+<?php if (!$this->cache()->start('planning')): ?>
+<div id="kanban" class="withBitrixHeader loading planningBoard">
+    <div class="popupContainer"></div>
+
+    <div class="frameHoverOverlay" id="jsFrameHoverOverlay"></div>
+
+    <div class="frameBorder">
+        <div class="header">
+            <div class="fixer">
+
+                <?= $this->render("_block/alpha.phtml"); ?>
+
+                <div class="right">
+                    <div class="fullScreenBlock" title="<?= $this->t('EXPAND_TO_FULL_SCREEN') ?>"><a href="javascript:void(0)" class="fullScreenToggler jsFullScreenToggler"></a></div>
+
+                    <?= $this->partial("_block/profile.phtml", array('currentUser' => $this->baseBoard->CURRENT_USER)); ?>
+
+                    <?= $this->partial("index/menu/type.phtml") ?>
+                </div>
+
+                <div class="left">
+                    <a href="javascript:void(0)" class="launchpad-link js-launchpad-link"><i class="ico-launchpad"></i></a>
+                    <?= $this->partial("index/menu/projects-sprints.phtml") ?>
+                </div>
+            </div>
+        </div>
+        <div class="footer">
+            <div class="whiteFooter">
+                <?= $this->partial("index/copyright.phtml") ?>
+                <?= $this->partial("index/menu/task-add.phtml") ?>
+            </div>
+            <div class="hoverArea jsBitrixFooterToggler"></div>
+        </div>
+
+        <div class="leftPadder"></div>
+        <div class="rightPadder"></div>
+
+        <div class="panels jsAllPanels task-view-short">
+            <div class="scrollTop scrollTopPanel"></div>
+
+            <?= $this->partial("planning/panel/sprint.phtml"); ?>
+
+            <?= $this->partial("planning/panel/taskDetails.phtml"); ?>
+        </div>
+
+    </div>
+
+    <div class="frameInner">
+        <?= $this->partial("planning/taskList.phtml"); ?>
+        <div class="clear"></div>
+    </div>
+
+</div>
+
+<div id="ejs">
+    <?= $this->partial("ejs/menu/popup-project-selector.ejs"); ?>
+    <?= $this->partial("ejs/panel/filter/creator-popup.ejs"); ?>
+    <?= $this->partial("ejs/planning/task-details-panel-empty.ejs"); ?>
+    <?= $this->partial('ejs/panel/sprint.ejs'); ?>
+
+    <?= $this->partial('ejs/task/card-details.ejs'); ?>
+    <?= $this->partial("ejs/sprintProgress.ejs"); ?>
+
+    <?= $this->partial("ejs/task/popup.ejs"); ?>
+    <?= $this->partial("ejs/planning/popup.ejs"); ?>
+    <?= $this->partial("ejs/planning/grid-task.ejs"); ?>
+    <?= $this->partial("ejs/planning/tasks-move-to-sprint.ejs"); ?>
+
+    <?= $this->partial('ejs/panel/filter/types.ejs'); ?>
+
+    <?= $this->partial('ejs/alert.ejs'); ?>
+    <?= $this->partial('ejs/alert/blocker.ejs'); ?>
+    <?= $this->partial('ejs/confirm.ejs'); ?>
+
+    <?= $this->partial('ejs/panel/filter/people.ejs'); ?>
+    <?= $this->partial("ejs/task/send-on-enter.ejs"); ?>
+    <?= $this->partial("ejs/task/select-create-event.ejs"); ?>
+    <?= $this->partial("ejs/viewTypeMenu.ejs"); ?>
+    <?= $this->partial('ejs/backend.ejs'); ?>
+    <?= $this->partial('ejs/launchpad.ejs'); ?>
+</div>
+
+<?php
+    $this->cache()->endCache();
+endif;?>

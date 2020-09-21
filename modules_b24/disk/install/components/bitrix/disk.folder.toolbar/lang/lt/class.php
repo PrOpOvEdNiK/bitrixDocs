@@ -1,0 +1,21 @@
+<?
+$MESS["DISK_FOLDER_TOOLBAR_UPLOAD_FILE_TEXT"] = "Įkelti";
+$MESS["DISK_FOLDER_TOOLBAR_UPLOAD_FILE_TITLE"] = "Įkelkite naujus dokumentus į šį aplanką";
+$MESS["DISK_FOLDER_TOOLBAR_CREATE_DOC_TEXT"] = "Naujas dokumentas";
+$MESS["DISK_FOLDER_TOOLBAR_CREATE_DOC_TITLE"] = "Sukurti naują dokumentą";
+$MESS["DISK_FOLDER_TOOLBAR_CREATE_FOLDER_TEXT"] = "Sukurti aplanką";
+$MESS["DISK_FOLDER_TOOLBAR_CREATE_FOLDER_TITLE"] = "Sukuria vidinį aplanką";
+$MESS["DISK_FOLDER_TOOLBAR_EMPTY_TRASHCAN_TEXT"] = "Išvalyti šiukšlinę";
+$MESS["DISK_FOLDER_TOOLBAR_EMPTY_TRASHCAN_TITLE"] = "Ištrinti visus failus ir aplankus iš šiukšlinės visam laikui";
+$MESS["DISK_FOLDER_TOOLBAR_EXTERNAL_LINK_LIST_TEXT"] = "Paskelbtas";
+$MESS["DISK_FOLDER_TOOLBAR_EXTERNAL_LINK_LIST_TITLE"] = "Rodyti failus su išorinėmis nuorodomis";
+$MESS["DISK_FOLDER_TOOLBAR_TRASHCAN_TEXT"] = "Ištrinta";
+$MESS["DISK_FOLDER_TOOLBAR_TRASHCAN_TITLE"] = "Rodyti ištrintus failus ir aplankus";
+$MESS["DISK_FOLDER_TOOLBAR_FOLDER_LIST_TEXT"] = "Visi";
+$MESS["DISK_FOLDER_TOOLBAR_FOLDER_LIST_TITLE"] = "Rodyti visus failus ir aplankus";
+$MESS["DISK_FOLDER_TOOLBAR_ERROR_COULD_NOT_FIND_OBJECT"] = "Objektas negali būti rastas.";
+$MESS["DISK_FOLDER_TOOLBAR_EXTERNAL_LINK_LIST_GO_BACK_TEXT"] = "Grįžti";
+$MESS["DISK_FOLDER_TOOLBAR_EXTERNAL_LINK_LIST_GO_BACK_TITLE"] = "Atgal į failus ir aplankus";
+$MESS["DISK_FOLDER_TOOLBAR_TRASHCAN_TEXT_2"] = "Šiukšlinė";
+$MESS["DISK_FOLDER_TOOLBAR_EXTERNAL_LINK_LIST_TEXT_2"] = "Viešieji failai";
+?>

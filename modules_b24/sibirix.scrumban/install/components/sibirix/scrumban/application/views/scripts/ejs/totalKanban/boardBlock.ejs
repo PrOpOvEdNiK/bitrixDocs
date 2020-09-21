@@ -1,0 +1,32 @@
+<script type="text/ejs" id="tplBoardBlockView">
+    <div class="multitaskHeader">
+        <div class="title" title="<%= model.title %>">
+            <div class="btnCollapseExpand jsHideBoard"></div>
+            <%
+                var boardBlockUrl;
+                if (model.sprintId !== null) {
+                    boardBlockUrl = $.String.sub(window.SCRUMBAN.routeList.sprint.index, {'sprintId': model.sprintId});
+                } else if (model.groupId !== null) {
+                    boardBlockUrl = $.String.sub(window.SCRUMBAN.routeList.project.index, {'projectId': model.groupId});
+                } else {
+                    boardBlockUrl = $.String.sub(window.SCRUMBAN.routeList.project.index, {'projectId': 'empty'});
+                }
+            %><a href='<%= boardBlockUrl %>' class="button thin jsKanbanLink"><?= $this->t('TASK_BOARD') ?></a>
+
+            <img src='<%= model.image %>'><span>
+            <i class="miniblock subtasks"><b></b><%= model.getTaskList().length %></i>
+            <%
+                if (model.groupId === null) {
+                    %><?= $this->t('TASK_WO_PROJECT'); ?><%
+                } else {
+                    %><%= model.projectName %><%
+
+                    if (model.sprintId != null) {
+                        %>, <%= model.sprintName %><%
+                    }
+                }
+            %></span>
+           
+        </div>
+    </div>
+</script>

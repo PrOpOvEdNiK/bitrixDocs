@@ -1,0 +1,33 @@
+<?
+$MESS["VOTE_ACTIVE_RED_LAMP"] = "Le sondage a expiré.";
+$MESS["VOTE_EDIT_ACCESS_IS_DENIED"] = "Aucune autorisation pour modifier le sondage.";
+$MESS["VOTE_EDIT_TITLE"] = "Modifier les paramètres du sondage";
+$MESS["VOTE_IS_NOT_EXPECTED"] = "Le résultat du sondage ne correspond pas au résultat enregistré.";
+$MESS["VOTE_IS_NOT_FOUND"] = "Le sondage est introuvable.";
+$MESS["VOTE_NOTIFY"] = "Avertir l'auteur à chaque vote : ";
+$MESS["VOTE_NOTIFY_EMAIL"] = "Oui, par e-mail";
+$MESS["VOTE_NOTIFY_IM"] = "Oui, par message instantané (Module 'Messenger web (im)')";
+$MESS["VOTE_NOTIFY_N"] = "Ne pas notifier";
+$MESS["VOTE_NOT_ACTIVE"] = "Le sondage est inactif.";
+$MESS["VOTE_READ_ACCESS_IS_DENIED"] = "Aucune autorisation pour voir le sondage.";
+$MESS["VOTE_VOTES"] = "Votes: ";
+$MESS["VT_UNKNOWN_ERROR_ADD_VOTE"] = "Erreur inconnue (sondage).";
+$MESS["V_CHANNEL_ID_COLON"] = "Groupe de sondage : ";
+$MESS["V_CHANNEL_ID_EDIT"] = "modifier";
+$MESS["V_CHANNEL_ID_SYMBOLIC_NAME"] = "ID symbole : ";
+$MESS["V_CHANNEL_ID_TITLE"] = "Titre : ";
+$MESS["V_CHANNEL_ID_USE_CAPTCHA"] = "Utiliser CAPTCHA";
+$MESS["V_DAYS"] = "jours";
+$MESS["V_HOURS"] = "heures";
+$MESS["V_MINUTES"] = "minutes";
+$MESS["V_NEW_CHANNEL"] = "Nouveau groupe de sondage";
+$MESS["V_SECONDS"] = "secondes";
+$MESS["V_UNIQUE"] = "Refuser les votes répétés : ";
+$MESS["V_UNIQUE_COOKIE_ONLY"] = "avec le même cookie";
+$MESS["V_UNIQUE_IP_DELAY"] = "Refuser les votes répétés de la même IP pour : ";
+$MESS["V_UNIQUE_IP_ONLY"] = "sur base de l'IP";
+$MESS["V_UNIQUE_SESSION"] = "dans la même session";
+$MESS["V_UNIQUE_USER_ID_NEW"] = "Interdire le droit de vote aux utilisateurs enregistrés après la date de début du sondage";
+$MESS["V_UNIQUE_USER_ID_ONLY"] = "sur base de l'ID de l'utilisateur";
+$MESS["V_USER_TYPE_DESCRIPTION"] = "Sondage";
+?>

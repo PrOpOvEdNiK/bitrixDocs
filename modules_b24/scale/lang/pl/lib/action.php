@@ -1,0 +1,4 @@
+<?
+$MESS["SCALE_ACTION_RESULT_ERROR"] = "Błąd";
+$MESS["SCALE_ACTION_RESULT_SUCCESS"] = "Zakończone Pomyślnie";
+?>

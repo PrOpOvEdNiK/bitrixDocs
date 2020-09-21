@@ -1,0 +1,4 @@
+<?
+$MESS["CRM_PRODUCT_CATALOG_NOT_SELECTED"] = "[non indiqué]";
+$MESS["CRM_PRODUCT_SECTION_NOT_SELECTED"] = "[non indiqué]";
+?>

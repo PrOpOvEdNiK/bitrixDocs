@@ -1,0 +1,225 @@
+/**
+ * Переменные
+ **/
+/****
+ * Миксины, разное
+ ****/
+/**
+ * Попапы
+ **/
+.modal {
+  /* add user modal */
+  /*
+        Modal - add section
+    */
+}
+.modal#import-passwords .modal-content {
+  width: 350px;
+}
+.modal#import-passwords .modal-content .loader {
+  position: absolute;
+  bottom: 24px;
+  right: 24px;
+  width: 16px;
+  height: 16px;
+  background: url('../images/loader-white-on-blue.gif');
+  bottom: 35px;
+  right: 28px;
+}
+.modal .add-user {
+  width: 700px;
+}
+.modal .add-user .modal-header {
+  border-bottom: none;
+}
+.modal .add-user .modal-header .modal-title {
+  font-weight: bold;
+  color: #333;
+}
+.modal .add-user .modal-header .directory {
+  margin-left: 10px;
+  font-weight: normal;
+}
+.modal .add-user .modal-header .dir-icon {
+  width: 16px;
+  height: 16px;
+  display: inline-block;
+  vertical-align: middle;
+}
+.modal .add-user .modal-body {
+  padding-top: 0;
+}
+.modal .add-user .modal-body .nav-tabs {
+  margin-bottom: 15px;
+}
+.modal .add-user .modal-body .right-col {
+  padding-left: 20px;
+}
+.modal .add-user .modal-body .right-col .block-wrap {
+  padding-top: 20px;
+}
+.modal .add-user .modal-body .right-col .block-wrap:first-child {
+  padding-top: 0;
+}
+.modal .add-user .modal-body .right-col hr {
+  margin: 7px 0;
+}
+.modal .add-user .modal-body .row {
+  margin-bottom: 18px;
+}
+.modal .add-user .modal-body .search-wrapper {
+  padding: 0;
+}
+.modal .add-user .modal-body .search-wrapper .icon-search {
+  top: 10px;
+  right: 10px;
+}
+.modal .add-user .modal-body .added-list .added {
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+.modal .add-user .modal-body .added-list .added-items a {
+  text-decoration: none !important;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  display: block;
+  line-height: 20px;
+  color: #333;
+  padding: 5px 4px;
+}
+.modal .add-user .modal-body .added-list .added-items a .delete {
+  font-weight: bold;
+  color: #bfcbcf;
+  margin-right: 10px;
+}
+.modal .add-user .modal-body .added-list .added-items a:hover {
+  background: #f0f5f7;
+  text-decoration: none;
+}
+.modal .add-user .modal-body .added-list .added-items a:hover .delete {
+  color: #333;
+}
+.modal .add-user .modal-body .user-add-collapsible-list {
+  margin-top: 12px;
+  font-size: 12px;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  height: 200px;
+}
+.modal .add-user .modal-body .user-add-collapsible-list > ul {
+  height: 100%;
+  overflow: auto;
+  /*ul {
+                        display: none;
+                    }*/
+}
+.modal .add-user .modal-body .user-add-collapsible-list li.opened > ul {
+  display: block;
+}
+.modal .add-user .modal-body .rights {
+  background: #fcf7e3;
+  border: 1px solid #faedd5;
+  border-radius: 5px;
+  padding: 6px 0;
+}
+.modal .add-user .modal-body .rights .right-notify {
+  font-size: 14px;
+  font-weight: bold;
+  color: #a47e3c;
+  vertical-align: middle;
+  margin-right: 8px;
+  margin-left: 10px;
+}
+.modal .add-user .modal-body .rights .checkbox {
+  display: inline-block;
+  vertical-align: middle;
+  margin: 0 12px 0 0;
+  font-size: 13px;
+}
+.modal .add-user .modal-body .rights .date-to {
+  display: inline-block;
+  vertical-align: middle;
+}
+.modal .add-user .modal-body .rights .date-to input[type=text] {
+  width: 140px;
+  display: inline-block;
+  vertical-align: middle;
+  height: 30px;
+}
+.modal .add-user .modal-footer {
+  text-align: center;
+  margin-top: 0;
+  padding-top: 6px;
+  padding-bottom: 27px;
+  border-top: 0;
+}
+.modal .add-user .modal-footer button {
+  width: 145px;
+}
+.modal .section-add .modal-dialog {
+  width: 332px;
+}
+.modal .section-add .modal-header,
+.modal .section-add .modal-body,
+.modal .section-add .modal-footer {
+  padding: 15px 14px;
+}
+.modal .section-add .modal-header {
+  border-bottom: none;
+}
+.modal .section-add .modal-footer {
+  border-top: none;
+  padding-top: 0;
+  margin-top: 12px;
+}
+.modal .section-add .modal-footer input,
+.modal .section-add .modal-footer button {
+  width: 146px;
+}
+.modal .section-add .modal-title {
+  font: 600 16px/20px 'Open Sans Semibold', 'Open Sans', 'Tahoma', 'Arial', sans-serif;
+  color: #333;
+}
+.modal .section-add label {
+  font-weight: normal;
+}
+.modal .section-add .section-icon {
+  margin-right: 5px;
+}
+.modal .section-add .dropdown {
+  margin-left: 10px;
+  display: inline-block;
+}
+.modal .section-add .dropdown .dropdown-toggle {
+  cursor: pointer;
+}
+.modal .section-add .dropdown .icons-default {
+  border-bottom: 1px solid #e5e5e5;
+  padding-left: 10px;
+  font-size: 0;
+}
+.modal .section-add .dropdown .icons-default .icon-folder-sprite {
+  margin-right: 12px;
+  margin-bottom: 15px;
+  cursor: pointer;
+}
+.modal .section-add .dropdown .icons-default .icon-folder-sprite:hover {
+  opacity: .8;
+}
+.modal .section-add .dropdown .upload-icon {
+  padding: 12px;
+}
+.modal .section-add .dropdown .upload-icon p {
+  text-align: center;
+  font-size: 12px;
+  color: #999;
+}
+.modal .section-add .dropdown .dropdown-menu {
+  width: 194px;
+  padding-top: 12px;
+}
+.modal .section-add input[type="text"] {
+  width: 257px;
+  display: inline-block;
+}

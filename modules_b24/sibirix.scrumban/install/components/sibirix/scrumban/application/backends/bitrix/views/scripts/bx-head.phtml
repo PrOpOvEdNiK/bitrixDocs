@@ -1,0 +1,6 @@
+<?
+global $APPLICATION;
+$APPLICATION->ShowHead();
+if (SITE_TEMPLATE_ID == "bitrix24") : ?>
+<script type="text/javascript" src="/bitrix/templates/bitrix24/bitrix24.js?_=<?= filemtime($_SERVER['DOCUMENT_ROOT'] . '/bitrix/templates/bitrix24/bitrix24.js') ?>"></script>
+<? endif; ?>

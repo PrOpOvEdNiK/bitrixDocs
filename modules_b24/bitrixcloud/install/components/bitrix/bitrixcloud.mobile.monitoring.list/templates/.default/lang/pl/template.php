@@ -1,0 +1,14 @@
+<?
+$MESS["BCLMMSL_MONITORING_BUT_DETAIL"] = "Szczegóły";
+$MESS["BCLMMSL_MONITORING_DOMAIN_REGISTRATION"] = "Domena wygaśnie w";
+$MESS["BCLMMSL_MONITORING_FAILED_PERIOD"] = "Przestój";
+$MESS["BCLMMSL_MONITORING_HTTP_RESPONSE_TIME"] = "Odpowiedź strony";
+$MESS["BCLMMSL_MONITORING_LICENSE"] = "Licencja wygaśnie w";
+$MESS["BCLMMSL_MONITORING_MONITORING_PERIOD"] = "Zakres dat";
+$MESS["BCLMMSL_MONITORING_MONITORING_SSL"] = "Certyfikat SSL wygaśnie w";
+$MESS["BCLMMSL_MONITORING_MONTH_LOST"] = "Miesięczne straty";
+$MESS["BCLMMSL_MONITORING_NO_DATA2"] = "Brak danych.";
+$MESS["BCLMMSL_MONITORING_NO_PROBS"] = "Obecnie nie ma problemów z twoją stroną.";
+$MESS["BCLMMSL_MONITORING_TITLE"] = "Kontroler Chmury";
+$MESS["BCLMMSL_TITLE"] = "Kontroler Chmury";
+?>

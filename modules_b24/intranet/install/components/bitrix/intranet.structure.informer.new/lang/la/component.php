@@ -1,0 +1,5 @@
+<?
+$MESS["INTR_ISIN_ACCEPTED"] = "Empleado";
+$MESS["INTR_ISIN_ICON_ADD"] = "Agregar Registro";
+$MESS["INTR_ISIN_NAME_TEMPLATE_DEFAULT"] = "#NOBR##NAME# #LAST_NAME##/NOBR#";
+?>

@@ -1,0 +1,37 @@
+<?
+$MESS["INTR_ISL_TPL_PARAM_USER_PROPERTY"] = "Paramètres pour l'affichage dans la liste";
+$MESS["INTR_ISL_TPL_PARAM_USER_PROPERTY_EXCEL"] = "Paramètres de transfert à Excel";
+$MESS["ISL_ADMIN_NOTES"] = "Notes de l'administrateur";
+$MESS["ISL_DATE_REGISTER"] = "Date d'enregistrement : ";
+$MESS["ISL_EMAIL"] = "E-mail";
+$MESS["ISL_FULL_NAME"] = "Nom, prénom";
+$MESS["ISL_ID"] = "ID";
+$MESS["ISL_LAST_NAME"] = "Nom";
+$MESS["ISL_LOGIN"] = "Connexion";
+$MESS["ISL_NAME"] = "Prénom";
+$MESS["ISL_PERSONAL_BIRTHDAY"] = "Date de naissance";
+$MESS["ISL_PERSONAL_CITY"] = "Ville";
+$MESS["ISL_PERSONAL_COUNTRY"] = "Pays";
+$MESS["ISL_PERSONAL_FAX"] = "Fax";
+$MESS["ISL_PERSONAL_GENDER"] = "Sexe";
+$MESS["ISL_PERSONAL_ICQ"] = "ICQ";
+$MESS["ISL_PERSONAL_MAILBOX"] = "Boîte aux lettres";
+$MESS["ISL_PERSONAL_MOBILE"] = "Portable";
+$MESS["ISL_PERSONAL_NOTES"] = "Notes";
+$MESS["ISL_PERSONAL_PAGER"] = "Pager";
+$MESS["ISL_PERSONAL_PHONE"] = "Numéro de téléphone";
+$MESS["ISL_PERSONAL_PHONES"] = "Téléphones";
+$MESS["ISL_PERSONAL_PHOTO"] = "Photo";
+$MESS["ISL_PERSONAL_POST_ADDRESS"] = "Adresse postale";
+$MESS["ISL_PERSONAL_PROFESSION"] = "Fonction";
+$MESS["ISL_PERSONAL_STATE"] = "Région";
+$MESS["ISL_PERSONAL_STREET"] = "Adresse réelle";
+$MESS["ISL_PERSONAL_WWW"] = "Site web";
+$MESS["ISL_PERSONAL_ZIP"] = "Code Postal";
+$MESS["ISL_SECOND_NAME"] = "Deuxième prénom";
+$MESS["ISL_WORK_COMPANY"] = "Entreprise";
+$MESS["ISL_WORK_FAX"] = "Fax de travail";
+$MESS["ISL_WORK_PHONE"] = "Téléphone professionnel";
+$MESS["ISL_WORK_POSITION"] = "Fonction";
+$MESS["ISL_XML_ID"] = "ID externe";
+?>

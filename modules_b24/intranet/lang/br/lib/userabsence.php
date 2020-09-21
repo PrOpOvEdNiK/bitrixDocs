@@ -1,0 +1,11 @@
+<?
+$MESS["INTR_USER_ABSENCE_TYPE_ASSIGNMENT"] = "Viagem de Negócios";
+$MESS["INTR_USER_ABSENCE_TYPE_LEAVEMATERINITY"] = "Licença de maternidade";
+$MESS["INTR_USER_ABSENCE_TYPE_LEAVESICK"] = "Licença por doença";
+$MESS["INTR_USER_ABSENCE_TYPE_LEAVEUNPAYED"] = "Licença sem vencimento";
+$MESS["INTR_USER_ABSENCE_TYPE_OTHER"] = "Outro";
+$MESS["INTR_USER_ABSENCE_TYPE_PERSONAL"] = "Calendários Pessoais";
+$MESS["INTR_USER_ABSENCE_TYPE_UNKNOWN"] = "Ausência sem permissão";
+$MESS["INTR_USER_ABSENCE_TYPE_VACATION"] = "Férias anuais";
+$MESS["USER_ABSENCE_STATUS_VACATION"] = "Está de licença";
+?>

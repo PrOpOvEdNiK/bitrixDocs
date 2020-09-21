@@ -1,0 +1,33 @@
+<?
+$MESS["DELETE_ERROR"] = "Wystąpił błąd podczas usuwania obiektu.";
+$MESS["SAVE_ERROR"] = "Wystąpił błąd podczas zapisywania obiektu.";
+$MESS["VOTE_ACTIVATE"] = "aktywuj";
+$MESS["VOTE_ACTIVE"] = "Aktywne";
+$MESS["VOTE_ADD_QUESTION"] = "dodaj pytanie";
+$MESS["VOTE_ALL"] = "(Wszystko)";
+$MESS["VOTE_CONFIRM_DEL_QUESTION"] = "Na pewno chcesz usunąć pytanie?";
+$MESS["VOTE_CREATE"] = "Utwórz";
+$MESS["VOTE_C_SORT"] = "Sort.";
+$MESS["VOTE_DEACTIVATE"] = "deaktywuj";
+$MESS["VOTE_DELETE"] = "Usuń";
+$MESS["VOTE_DIAGRAM"] = "Wykres";
+$MESS["VOTE_EXACT_MATCH"] = "Użyj dokładnego dopasowania";
+$MESS["VOTE_FLT_ACTIVE"] = "Aktywność";
+$MESS["VOTE_FLT_DIAGRAM"] = "załączone w diagramie";
+$MESS["VOTE_FLT_ID"] = "ID pytania";
+$MESS["VOTE_FLT_REQUIRED"] = "wymagane pytanie";
+$MESS["VOTE_F_ACTIVE"] = "Aktywny:";
+$MESS["VOTE_F_DIAGRAM"] = "załączone w wykresie:";
+$MESS["VOTE_F_QUESTION"] = "pytanie:";
+$MESS["VOTE_F_REQUIRED"] = "Wymagany";
+$MESS["VOTE_NO"] = "Nie";
+$MESS["VOTE_NOT_FOUND"] = "Niepoprawne ID ankiety";
+$MESS["VOTE_PAGES"] = "Pytania";
+$MESS["VOTE_PAGE_TITLE"] = "Lista pytań";
+$MESS["VOTE_QUESTION"] = "Pytanie";
+$MESS["VOTE_REQUIRED"] = "Wymagany";
+$MESS["VOTE_SAVE_ERROR"] = "Błąd zapisu do bazy danych";
+$MESS["VOTE_TIMESTAMP_X"] = "Zmodyfikowany";
+$MESS["VOTE_VOTE_LIST"] = "Lista ankiety";
+$MESS["VOTE_YES"] = "Tak";
+?>

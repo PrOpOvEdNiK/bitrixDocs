@@ -1,0 +1,5 @@
+<?
+$MESS["CRM_ACTIVITY_PROVIDER_SMS_INCOMING"] = "Przychodząca wiadomość SMS";
+$MESS["CRM_ACTIVITY_PROVIDER_SMS_NAME"] = "Wiadomość SMS";
+$MESS["CRM_ACTIVITY_PROVIDER_SMS_OUTGOING"] = "Wychodząca wiadomość SMS";
+?>

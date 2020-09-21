@@ -1,0 +1,13 @@
+<?
+$MESS["DOCGEN_TEMPLATES_DEFAULT_ENTITIES"] = "Enlace a la sección";
+$MESS["DOCGEN_TEMPLATES_DEFAULT_ERROR_MODULE"] = "El módulo \"Document Generator\" no está instalado.";
+$MESS["DOCGEN_TEMPLATES_DEFAULT_INSTALL"] = "Instalar";
+$MESS["DOCGEN_TEMPLATES_DEFAULT_MODULE_ERROR"] = "No puede utilizar el módulo #MODULE_ID#";
+$MESS["DOCGEN_TEMPLATES_DEFAULT_NAME"] = "Nombre";
+$MESS["DOCGEN_TEMPLATES_DEFAULT_REGION"] = "País";
+$MESS["DOCGEN_TEMPLATES_DEFAULT_REINSTALL"] = "Reinstalar";
+$MESS["DOCGEN_TEMPLATES_DEFAULT_SORT"] = "Clasificar";
+$MESS["DOCGEN_TEMPLATES_DEFAULT_TEMPLATE_NOT_FOUND"] = "La plantilla no fue encontrada";
+$MESS["DOCGEN_TEMPLATES_DEFAULT_TITLE"] = "Instalar Plantillas";
+$MESS["DOCGEN_TEMPLATES_PERMISSIONS_ERROR"] = "No tiene permiso para editar las plantillas";
+?>

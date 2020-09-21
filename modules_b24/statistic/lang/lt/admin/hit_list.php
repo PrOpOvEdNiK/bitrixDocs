@@ -1,0 +1,37 @@
+<?
+$MESS["STAT_F_LOGIC"] = "Logika tarp laukų";
+$MESS["STAT_GUEST_ID"] = "Lankytojo ID";
+$MESS["STAT_EDIT_USER"] = "Naudotojo anketa";
+$MESS["STAT_VIEW_SESSION_LIST"] = "Lankytojo sesijos";
+$MESS["STAT_NEW_GUEST_1"] = "pirmas kartas";
+$MESS["STAT_OLD_GUEST_1"] = "grįžo";
+$MESS["STAT_RECORDS_LIST"] = "Lankytojų statistika per paskutiniasias #STATISTIC_DAYS# dienas";
+$MESS["STAT_F_ID"] = "Hito ID";
+$MESS["STAT_F_SESSION"] = "Sesijos ID";
+$MESS["STAT_F_AUTH"] = "Užsiregistruotas";
+$MESS["STAT_F_LOGIN"] = "ID, prisijungimo vardas, vardas, pavardė";
+$MESS["STAT_F_GUEST_ID"] = "Lankytojo ID";
+$MESS["STAT_F_NEW_GUEST"] = "Pirmą kartą/grįžo";
+$MESS["STAT_F_IP"] = "IP adresas";
+$MESS["STAT_F_PAGE"] = "Puslapis";
+$MESS["STAT_HIT_PAGES"] = "Hitai";
+$MESS["STAT_NOT_REGISTERED"] = "neregistruotas";
+$MESS["STAT_DETAIL"] = "Aprašymas";
+$MESS["STAT_SESSION"] = "Sesija";
+$MESS["STAT_DATE"] = "data";
+$MESS["STAT_USER"] = "Lankytojas";
+$MESS["STAT_IP"] = "IP adresas";
+$MESS["STAT_PAGE"] = "Puslapis";
+$MESS["STAT_NOT_AUTH"] = "(neautorizuotas)";
+$MESS["STAT_F_USER_AGENT"] = "UserAgent";
+$MESS["STAT_F_STOP_LIST_ID"] = "Stop sąrašo įrašo ID";
+$MESS["STAT_F_STOP"] = "Šiuo metu stop sąraše";
+$MESS["STAT_COUNTRY"] = "Šalis";
+$MESS["STAT_CITY"] = "Miestas";
+$MESS["STAT_F_COUNTRY"] = "Šalis";
+$MESS["STAT_F_REGION"] = "Regionas";
+$MESS["STAT_F_CITY"] = "Miestas";
+$MESS["STAT_F_COOKIE"] = "Slapukai";
+$MESS["STAT_REGION"] = "Regionas";
+$MESS["STAT_SITE"] = "Svetainė";
+?>

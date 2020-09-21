@@ -1,0 +1,31 @@
+<?
+$MESS["SUPA_ACE_ACT"] = "Error al intentar activar la licencia";
+$MESS["SUPA_ACE_CPN"] = "El código de licencia no fue aprobado";
+$MESS["SUPA_AERR_CONTACT_EMAIL"] = "Por favor, escriba el e-mail de una persona de contacto";
+$MESS["SUPA_AERR_CONTACT_EMAIL1"] = "Por favor, compruebe que el e-mail de una persona de contacto este correcto";
+$MESS["SUPA_AERR_CONTACT_PERSON"] = "Por favor, escriba el nombre y los apellidos de una persona de contacto";
+$MESS["SUPA_AERR_CONTACT_PHONE"] = "Por favor, escriba el número de teléfono de una persona de contacto";
+$MESS["SUPA_AERR_EMAIL"] = "Por favor ingresar el e-mail del contacto";
+$MESS["SUPA_AERR_EMAIL1"] = "Por favor comprobar la dirección del correo electrónico ";
+$MESS["SUPA_AERR_FNAME"] = "Por favor ingresar el nombre del usuario para el cual una cuenta en<a href=\"http://www.bitrixsoft.com\">www.bitrixsoft.com</a> les sera creada.";
+$MESS["SUPA_AERR_LNAME"] = "Por favor ingresar el apellido del usuario para el cual una cuenta en<a href=\"http://www.bitrixsoft.com\">www.bitrixsoft.com</a> les sera creada.";
+$MESS["SUPA_AERR_LOGIN"] = "Por favor ingresar el nombre de usuario para usarlo en <a href=\"http://www.bitrixsoft.com\">www.bitrixsoft.com</a>";
+$MESS["SUPA_AERR_LOGIN1"] = "Nombre de usuario en <a href=\"http://www.bitrixsoft.com\">www.bitrixsoft.com</a> debe contener al menos 3 símbolos";
+$MESS["SUPA_AERR_NAME"] = "Por favor ingresar el nombre de la compañía que propietaria de la clave";
+$MESS["SUPA_AERR_PASSW"] = "Por favor ingresar la contraseña para usarla en <a href=\"http://www.bitrixsoft.com\">www.bitrixsoft.com</a>";
+$MESS["SUPA_AERR_PASSW_CONF"] = "La contraseña y la contraseña de confirmación son diferentes.";
+$MESS["SUPA_AERR_PHONE"] = "Por favor, escriba el número de teléfono del propietario del producto";
+$MESS["SUPA_AERR_URI"] = "Por favor ingresar la dirección del sitio web que sera usado con la clave";
+$MESS["SUPA_AME_EMAIL"] = "La suscripción de e-mail no se encuentra";
+$MESS["SUPA_AME_SUBSCR"] = "Error de suscripción";
+$MESS["SUPA_ASE_CHECK"] = "Error de escritura del archivo de verificación";
+$MESS["SUPA_ASE_NO_LIST"] = "Usted no puede recuperar la lista de módulos";
+$MESS["SUPA_ASE_PACK"] = "Usted no puede extraer archivos desde archivo";
+$MESS["SUPA_ASE_SOURCES"] = "Usted no puede descargar el código fuente";
+$MESS["SUPA_ASE_UPD"] = "Actualización del modulo fallida";
+$MESS["SUPA_ASTE_FLAG"] = "Usted no puede determinar el modo de instalación del versión beta.";
+$MESS["SUPA_AUE_UPD"] = "Ocurrió un error al intentar actualizar las actualizaciones del sitio";
+$MESS["SUP_CANT_OPEN_FILE"] = "No se pudo abrir el archivo para escribir";
+$MESS["SUP_ENTER_CORRECT_KEY"] = "Por favor ingrese el código de licencia correcto";
+$MESS["SUP_ENTER_KEY"] = "Por favor ingrese su código de licencia ";
+?>

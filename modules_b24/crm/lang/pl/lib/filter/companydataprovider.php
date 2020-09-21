@@ -1,0 +1,9 @@
+<?
+$MESS["CRM_COMPANY_FILTER_ACTIVITY_COUNTER"] = "Aktywności";
+$MESS["CRM_COMPANY_FILTER_ALL"] = "(wszystkie)";
+$MESS["CRM_COMPANY_FILTER_COMMUNICATION_TYPE"] = "Komunikacja";
+$MESS["CRM_COMPANY_FILTER_EMAIL"] = "E-mail";
+$MESS["CRM_COMPANY_FILTER_IM"] = "Komunikator";
+$MESS["CRM_COMPANY_FILTER_PHONE"] = "Telefon";
+$MESS["CRM_COMPANY_FILTER_WEB"] = "Strona internetowa";
+?>

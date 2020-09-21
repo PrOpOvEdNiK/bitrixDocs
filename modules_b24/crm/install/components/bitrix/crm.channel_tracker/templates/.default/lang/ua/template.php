@@ -1,0 +1,30 @@
+<?
+$MESS["CRM_CH_TRACKER_WGT_DEMO_TITLE"] = "Це демо-подання, ви можете приховати його і отримати аналітику за вашими даними.";
+$MESS["CRM_CH_TRACKER_WGT_AMOUNT_OF_SALE"] = "Сума продажів";
+$MESS["CRM_CH_TRACKER_WGT_RATING_BY_SUCCESSFUL_DEALS"] = "Рейтинг за сумою виграних угод";
+$MESS["CRM_CH_TRACKER_WGT_ACTIVITY_DYNAMIC"] = "Контроль комунікацій";
+$MESS["CRM_CH_TRACKER_WGT_COMMUNICATION_DYNAMIC"] = "Динаміка комунікаційного навантаження";
+$MESS["CRM_CH_TRACKER_WGT_COMMUNICATION_DYNAMIC_TELEPHONY"] = "Телефонія";
+$MESS["CRM_CH_TRACKER_WGT_COMMUNICATION_DYNAMIC_EMAIL"] = "E-mail";
+$MESS["CRM_CH_TRACKER_WGT_COMMUNICATION_DYNAMIC_OPENLINES"] = "Месенджери та соц. мережі";
+$MESS["CRM_CH_TRACKER_WGT_COMMUNICATION_DYNAMIC_FORM"] = "CRM - форми";
+$MESS["CRM_CH_TRACKER_WGT_PERSONAL_LOAD"] = "Навантаження по менеджерам";
+$MESS["CRM_CH_TRACKER_WGT_PERSONAL_LOAD_TELEPHONY"] = "Телефонія";
+$MESS["CRM_CH_TRACKER_WGT_PERSONAL_LOAD_EMAIL"] = "E-mail";
+$MESS["CRM_CH_TRACKER_WGT_PERSONAL_LOAD_OPENLINES"] = "Месенджери та соц. мережі";
+$MESS["CRM_CH_TRACKER_WGT_PERSONAL_LOAD_FORM"] = "CRM - форми";
+$MESS["CRM_CH_TRACKER_WGT_DEAL_SUCCESS_SUM_PER_MONTH"] = "Продажі за місяць";
+$MESS["CRM_CH_TRACKER_WGT_DEAL_SUCCESS_SUM_PER_DAY"] = "Продажі за сьогодні";
+$MESS["CRM_CH_TRACKER_WGT_DEAL_SUCCESS_SUM"] = "Сума продажів";
+$MESS["CRM_CH_TRACKER_WGT_NEW_CLIENTS"] = "Нові клієнти";
+$MESS["CRM_CH_TRACKER_WGT_NEW_CLIENTS_PER_DAY"] = "Нові клієнти за сьогодні";
+$MESS["CRM_CH_TRACKER_WGT_MANAGERS_FAILS"] = "Лічильники по менеджерам";
+$MESS["CRM_CH_TRACKER_WGT_MANAGERS_SUCCESSES"] = "Внесок менеджерів в продажі";
+$MESS["CRM_CH_TRACKER_WGT_DEAL_PROCESS_SUM"] = "Угоди в роботі";
+$MESS["CRM_CH_TRACKER_WGT_ANIMATION_1"] = "Ви можете в будь-який момент повернутися до оглядового відео, клікнувши на значок.";
+$MESS["CRM_CH_TRACKER_WGT_ANIMATION_2"] = "Запускаєте CRM?<br><br>  Візьміть під контроль канали, через які клієнти звертаються до вас: підключіть до CRM Телефонію, Електронну пошту, Відкриті лінії, CRM-форми.<br><br> Чим більше каналів ви підключите для роботи з вашими клієнтами, тим більше угод буде створено та доведено до успіху.";
+$MESS["CRM_CH_TRACKER_WGT_ANIMATION_4"] = "У будь-який момент подивіться демо-режим.";
+$MESS["CRM_CH_TRACKER_WGT_ANIMATION_3_SUPERVISOR"] = "Бажаєте тримати руку на пульсі вашої CRM системи? Контролювати ваших менеджерів? <br><br>Тоді цей звіт для вас! Лічильники показують поточну роботу менеджерів з клієнтами - CRM покаже вам кількість виконаних справ та скільки залишилося завдань на поточний день.<br><br> Мета ваших менеджерів зменшувати кількість лічильників, щоб до кінця робочого дня не залишилося жодного! Це означає, вони все роблять вчасно та жоден клієнт не залишиться без уваги. А це - запорука доведених до успіху угод.";
+$MESS["CRM_CH_TRACKER_WGT_ANIMATION_3_EMPLOYEE"] = "Бажаєте бути успішним менеджером та з легкістю виконувати план продажів?<br><br>Тоді ці лічильники для вас! Лічильники показують вашу поточну роботу з клієнтами - CRM сама підказує вам кількість виконаних справ та скільки залишилося завдань на поточний день.<br><br>  Зменшуйте кількість лічильників, щоб до кінця робочого дня у вас не залишилося жодного! Це означає, ви все робите вчасно та жоден клієнт не залишиться без уваги. А це - запорука доведених до успіху угод.";
+$MESS["CRM_CH_TRACKER_WGT_SALE_TARGET"] = "План продажів";
+?>

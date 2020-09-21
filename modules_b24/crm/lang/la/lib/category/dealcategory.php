@@ -1,0 +1,6 @@
+<?
+$MESS["CRM_DEAL_CATEGORY_DEFAULT"] = "General";
+$MESS["CRM_DEAL_CATEGORY_PERMISSION_ENTITY"] = "Negociación #CATEGORY#";
+$MESS["CRM_DEAL_CATEGORY_STAGE_FILTER"] = "Estado de la negociación";
+$MESS["CRM_DEAL_CATEGORY_STATUS_ENTITY"] = "#CATEGORY# estado de la negociación";
+?>

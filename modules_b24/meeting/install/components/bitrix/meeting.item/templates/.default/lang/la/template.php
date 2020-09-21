@@ -1,0 +1,33 @@
+<?
+$MESS["ME_BACK"] = "volver a la reunion";
+$MESS["ME_FILES"] = "Archivos";
+$MESS["ME_LIST_TITLE"] = "Regresar a las reuniones";
+$MESS["MI_BLOCK_TITLE"] = "Descripción de la tarea";
+$MESS["MI_CANCEL"] = "Cancelar";
+$MESS["MI_COMMENTS"] = "Comentarios";
+$MESS["MI_EDIT"] = "Editar";
+$MESS["MI_EDIT_DESCRIPTION"] = "Descripción";
+$MESS["MI_EDIT_FINISH"] = "Finalizar edición";
+$MESS["MI_EDIT_TITLE"] = "Tema";
+$MESS["MI_HISTORY_HIDE"] = "Ocultar historial del tema";
+$MESS["MI_HISTORY_SHOW"] = "Mostrar historial del tema (#CNT#)";
+$MESS["MI_MEETING_TITLE"] = "##ID# #TITLE#";
+$MESS["MI_REPORT"] = "Reporte";
+$MESS["MI_REPORTS"] = "Reportes";
+$MESS["MI_REPORT_DATE_START"] = "Fecha";
+$MESS["MI_REPORT_DEADLINE"] = "Debido a";
+$MESS["MI_REPORT_MEETING"] = "Tema de la reunión";
+$MESS["MI_REPORT_NO_REPORT"] = "Ninguno";
+$MESS["MI_REPORT_NO_RESPONSIBLE"] = "ninguno";
+$MESS["MI_REPORT_RESPONSIBLE"] = "Persona responable";
+$MESS["MI_REPORT_RESPONSIBLES"] = "Personas responsables";
+$MESS["MI_REPORT_STATE"] = "Estado";
+$MESS["MI_SAVE"] = "Guardar";
+$MESS["MI_SAVED"] = "Reporte guardado en #TIME#";
+$MESS["MI_SAVING"] = "Guardando..";
+$MESS["MI_TASKS"] = "Tareas";
+$MESS["MI_TASK_ADD"] = "Agregar nueva tarea";
+$MESS["MI_TASK_ATTACH"] = "Adjuntar a la tarea existente";
+$MESS["MI_TASK_DETACH"] = "Separar la tarea";
+$MESS["MI_TASK_DETACH_TITLE"] = "Separar la tarea del Tema";
+?>

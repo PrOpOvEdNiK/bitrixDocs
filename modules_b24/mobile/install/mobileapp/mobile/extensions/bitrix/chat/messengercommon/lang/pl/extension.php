@@ -1,0 +1,32 @@
+<?
+$MESS["IM_CHAT_CALL"] = "Rozmowa telefoniczna";
+$MESS["IM_CHAT_GENERAL"] = "Chat ogólny";
+$MESS["IM_CHAT_GROUP"] = "Czat grupy";
+$MESS["IM_CHAT_LINES"] = "Otwarty kanał";
+$MESS["IM_CHAT_OPEN"] = "Czat publiczny";
+$MESS["IM_CL_BOT"] = "Czatbot";
+$MESS["IM_CL_USER"] = "Użytkownik";
+$MESS["IM_CL_USER_B24"] = "Pracownik";
+$MESS["IM_CL_USER_EXTRANET"] = "Użytkownik zewnętrzny";
+$MESS["IM_CL_USER_LINES"] = "Użytkownik Otwartego kanału";
+$MESS["IM_F_ATTACH"] = "Załącznik";
+$MESS["IM_F_FILE"] = "Plik";
+$MESS["IM_F_RATING"] = "Ocena";
+$MESS["IM_M_BIRTHDAY_MESSAGE_SHORT"] = "Dzisiaj urodziny!";
+$MESS["IM_M_DELETED"] = "Ta wiadomość została usunięta.";
+$MESS["IM_M_ICON"] = "ikona";
+$MESS["IM_M_QUOTE_BLOCK"] = "Cytuj";
+$MESS["IM_STATUS_AWAY"] = "Poza zasięgiem";
+$MESS["IM_STATUS_AWAY_TITLE"] = "Niedostępny przez #TIME#";
+$MESS["IM_STATUS_BOT"] = "Czatbot";
+$MESS["IM_STATUS_DND"] = "Nie przeszkadzać";
+$MESS["IM_STATUS_GUEST"] = "Niedostępny";
+$MESS["IM_STATUS_LINES-ONLINE"] = "Użytkownik Otwartego kanału";
+$MESS["IM_STATUS_MOBILE"] = "Aplikacja mobilna";
+$MESS["IM_STATUS_NA"] = "Niedostępny";
+$MESS["IM_STATUS_NETWORK"] = "Bitrix24.Network";
+$MESS["IM_STATUS_OFFLINE"] = "Nieaktywny";
+$MESS["IM_STATUS_ONLINE"] = "Dostępny";
+$MESS["IM_STATUS_VACATION"] = "Na urlopie";
+$MESS["IM_STATUS_VACATION_TITLE"] = "Na urlopie do #DATE#";
+?>

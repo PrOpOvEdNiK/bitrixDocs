@@ -1,0 +1,36 @@
+<?
+$MESS["CRM_COMM_WGT_COMMUNICATIONS"] = "Canal de communication souhaité";
+$MESS["CRM_COMM_WGT_COMPANY_GROWTH_COUNT"] = "Nombre d'entreprises";
+$MESS["CRM_COMM_WGT_CONTACT_GROWTH_COUNT"] = "Nombre de contacts";
+$MESS["CRM_COMM_WGT_CONVERSION"] = "Conversion";
+$MESS["CRM_COMM_WGT_DEALS"] = "Transactions";
+$MESS["CRM_COMM_WGT_DEAL_FAILED_SUM"] = "Valeur des transactions manquées";
+$MESS["CRM_COMM_WGT_DEAL_PROCESS_SUM"] = "Valeur des transactions en cours";
+$MESS["CRM_COMM_WGT_DEAL_SUCCESS_SUM"] = "Valeur des transactions conclues";
+$MESS["CRM_COMM_WGT_DEAL_SUM_PERIOD"] = "Montant total des transactions";
+$MESS["CRM_COMM_WGT_FINANCE_INDEX"] = "Rapport payé à temps";
+$MESS["CRM_COMM_WGT_GROWTH"] = "Croissance de la clientèle";
+$MESS["CRM_COMM_WGT_INVOICES_ACTIVE_SUM"] = "Montant total des factures actives";
+$MESS["CRM_COMM_WGT_INVOICES_PAID_SUM"] = "Montant total des factures payées";
+$MESS["CRM_COMM_WGT_INVOICES_WAITING"] = "Toujours impayée";
+$MESS["CRM_COMM_WGT_MARKS"] = "Satisfaction client";
+$MESS["CRM_COMM_WGT_MARK_ALL"] = "Tout";
+$MESS["CRM_COMM_WGT_MARK_NEGATIVE"] = "Négatif";
+$MESS["CRM_COMM_WGT_MARK_NONE"] = "Pas évalué";
+$MESS["CRM_COMM_WGT_MARK_POSITIVE"] = "Positif";
+$MESS["CRM_COMM_WGT_MARK_SOURCE_FB"] = "Facebook";
+$MESS["CRM_COMM_WGT_MARK_SOURCE_SK"] = "Skype";
+$MESS["CRM_COMM_WGT_MARK_SOURCE_TG"] = "Telegram";
+$MESS["CRM_COMM_WGT_MARK_SOURCE_VK"] = "VK";
+$MESS["CRM_COMM_WGT_OVERALL_INVOICES"] = "Factures créées";
+$MESS["CRM_COMM_WGT_PAID_INTIME_COUNT"] = "Facture payée à temps";
+$MESS["CRM_COMM_WGT_PAID_INVOICES"] = "Factures payées";
+$MESS["CRM_COMM_WGT_PAYMENTS"] = "Paiements";
+$MESS["CRM_COMM_WGT_PROVIDER_STATUS"] = "#PROVIDER_NAME# : statut";
+$MESS["CRM_COMM_WGT_PROVIDER_SUM"] = "#PROVIDER_NAME# : montant total de commandes";
+$MESS["CRM_COMM_WGT_PROVIDER_TOTAL_QTY"] = "#PROVIDER_NAME# : charge totale";
+$MESS["CRM_COMM_WGT_SOURCES"] = "Charge du connecteur";
+$MESS["CRM_COMM_WGT_STATUSES"] = "Traitement de la demande";
+$MESS["CRM_COMM_WGT_STREAMS"] = "Flux de demande";
+$MESS["CRM_COMM_WGT_SUCCESS_DEALS"] = "Transactions conclues";
+?>

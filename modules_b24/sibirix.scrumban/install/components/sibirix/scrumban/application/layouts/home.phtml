@@ -1,0 +1,26 @@
+<?
+$this->doctype("<!DOCTYPE html>");
+
+$this->headMeta()->appendName('cmsmagazine', 'a6d59b86a2ee695c3bb9ec39f1549eef');
+$this->headMeta()->appendName('description', '');
+$this->headMeta()->appendName('author', '');
+$this->headMeta()->appendName('viewport', 'width=device-width, initial-scale=0.9');
+
+$this->headMeta()->appendHttpEquiv('X-UA-Compatible', 'IE=edge,chrome=1');
+
+?><?php echo $this->doctype() ?>
+<!--[if lt IE 7 ]><html lang="ru-RU" class="no-js ie6"><![endif]-->
+<!--[if IE 7 ]>   <html lang="ru-RU" class="no-js ie7"><![endif]-->
+<!--[if IE 8 ]>   <html lang="ru-RU" class="no-js ie8"><![endif]-->
+<!--[if IE 9 ]>   <html lang="ru-RU" class="no-js ie9"><![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--><html lang="ru-RU" class="no-js"><!--<![endif]-->
+<head>
+    <?= $this->headMeta() ?>
+    <?= $this->headTitle() ?>
+    <?= $this->magicHeadLink() ?>
+    <?= $this->magicHeadScript() ?>
+</head>
+<body>
+<?= $this->layout()->content ?>
+</body>
+</html>

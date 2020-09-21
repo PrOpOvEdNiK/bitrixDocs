@@ -1,0 +1,20 @@
+<? require($_SERVER["DOCUMENT_ROOT"]."/bitrix/header.php"); ?>
+
+<? $APPLICATION->SetPageProperty('title', $this->headTitle()); ?>
+<? $APPLICATION->AddHeadString('<script type="text/javascript" src="https://www.google.com/jsapi"></script>'); ?>
+<? $APPLICATION->AddHeadString("<script>google.load('visualization', '1.0', {packages:['corechart']});</script>"); ?>
+<? $APPLICATION->AddHeadString($this->backend()->showHead()); ?>
+
+<? $APPLICATION->AddHeadString($this->magicHeadLink()); ?>
+<? $APPLICATION->AddHeadString($this->magicHeadScript()); ?>
+<? $APPLICATION->AddHeadString('<script>!window.SCRUMBAN ? (window.SCRUMBAN = {server: {}}) : 0;window.SCRUMBAN.server.sessId = \''. session_id(). '\';</script>'); ?>
+<? $APPLICATION->AddHeadString('<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,800&amp;subset=cyrillic,cyrillic-ext" rel="stylesheet">'); ?>
+<div id="kanbanWrapper">
+    <?= $this->backend()->showHeader() ?>
+    <?= $this->layout()->content ?>
+    <?= $this->backend()->showFooter() ?>
+    <?= $this->render('_block/launchpad.phtml'); ?>
+    <?= $this->showOtherModuleNotify(); ?>
+</div>
+
+<? require($_SERVER["DOCUMENT_ROOT"]."/bitrix/footer.php"); ?>

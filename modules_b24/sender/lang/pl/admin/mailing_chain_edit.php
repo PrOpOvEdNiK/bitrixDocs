@@ -1,0 +1,31 @@
+<?
+$MESS["rub_dow"] = "Dni tygodnia:";
+$MESS["rub_tod"] = "Czas (e.g. 9:00,18:00):";
+$MESS["rubric_fri"] = "Pt";
+$MESS["rubric_mon"] = "Po";
+$MESS["rubric_sat"] = "So";
+$MESS["rubric_sun"] = "Nie";
+$MESS["rubric_thu"] = "Cz";
+$MESS["rubric_tue"] = "Wt";
+$MESS["rubric_wed"] = "Śr";
+$MESS["sender_chain_edit_action_add"] = "Dodawanie";
+$MESS["sender_chain_edit_action_copy"] = "Kopiuj";
+$MESS["sender_chain_edit_action_del"] = "Usuń";
+$MESS["sender_chain_edit_action_del_confirm"] = "Czy na pewno chcesz usunąć tę wiadomość?";
+$MESS["sender_chain_edit_action_del_title"] = "Usuń Wiadomość";
+$MESS["sender_chain_edit_btn_send"] = "Wyślij";
+$MESS["sender_chain_edit_btn_send_desc"] = "Wyślij wiadomość";
+$MESS["sender_chain_edit_btn_stop"] = "Zatrzymaj";
+$MESS["sender_chain_edit_field_attachment"] = "Załączniki";
+$MESS["sender_chain_edit_field_author"] = "Utworzony przez";
+$MESS["sender_chain_edit_field_message"] = "wiadomość";
+$MESS["sender_chain_edit_field_priority_1"] = "Wysoki";
+$MESS["sender_chain_edit_field_priority_3"] = "Normalny";
+$MESS["sender_chain_edit_field_priority_5"] = "Niski";
+$MESS["sender_chain_edit_field_subject"] = "Temat:";
+$MESS["sender_chain_edit_list"] = "wiadomości";
+$MESS["sender_chain_edit_tab_main"] = "Wiadomość";
+$MESS["sender_chain_edit_tab_message"] = "Szablon wiadomości";
+$MESS["sender_chain_edit_tab_message_title"] = "Szablon wiadomości";
+$MESS["sender_chain_edit_test_btn"] = "Wyślij";
+?>

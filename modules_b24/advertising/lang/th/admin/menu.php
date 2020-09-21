@@ -1,0 +1,30 @@
+<?
+$MESS ['AD_MENU_MAIN'] = "การโฆษณาประชาสัมพันธ์";
+$MESS ['AD_MENU_BANNER_LIST'] = "แบนเนอร์";
+$MESS ['AD_MENU_BANNER_LIST_ALT'] = "รายการแบนเนอร์";
+$MESS ['AD_MENU_TYPE_LIST'] = "ประเภทแบนเนอร์";
+$MESS ['AD_MENU_TYPE_LIST_ALT'] = "รายการประเภทแบนเนอร์";
+$MESS ['AD_MENU_CONTRACT_LIST'] = "สัญญาบริการ (Contracts)";
+$MESS ['AD_MENU_CONTRACT_LIST_ALT'] = "รายการสัญญาบริการการประชาสัมพันธ์";
+$MESS ['AD_MENU_STATISTICS_GRAPH'] = "กราฟ";
+$MESS ['AD_MENU_STATISTICS_ALT_GRAPH'] = "กราฟการแสดงและการคลิกแบนเนอร์";
+$MESS ['AD_MENU_STATISTICS_DIAGRAM'] = "แผนภูมิ";
+$MESS ['AD_MENU_STATISTICS_ALT_DIAGRAM'] = "แผนภูมิการแสดงและการคลิกแบนเนอร์";
+$MESS ['AD_MENU_BANNER_LIST_GRAPH'] = "แบนเนอร์";
+$MESS ['AD_MENU_CONTRACT_LIST_GRAPH'] = "สัญญาบริการการประชาสัมพันธ์";
+$MESS ['AD_MENU_TYPE_LIST_GRAPH'] = "ประเภทแบนเนอร์";
+$MESS ['AD_MENU_BANNER_LIST_DIAGRAM'] = "แบนเนอร์";
+$MESS ['AD_MENU_CONTRACT_LIST_DIAGRAM'] = "สัญญาบริการ..";
+$MESS ['AD_MENU_TYPE_LIST_DIAGRAM'] = "ประเภทแบนเนอร์";
+$MESS ['AD_MENU_STATISTICS'] = "กราฟ";
+$MESS ['AD_MENU_STATISTICS_ALT'] = "แผนภูมิแบนเนอร์";
+$MESS ['AD_MENU_MAIN_TITLE'] = "การจัดการการโฆษณาประชาสัมพันธ์";
+$MESS ['AD_MENU_REPORTS'] = "รายงาน";
+$MESS ['AD_MENU_REPORTS_TITLE'] = "รายงานกราฟฟิกแบนเนอร์และสัญญาบริการ..";
+$MESS ['AD_MENU_BAN_GR'] = "กราฟแบนเนอร์";
+$MESS ['AD_MENU_BAN_CO'] = "กราฟสัญญาบริการ..";
+$MESS ['AD_MENU_BAN_CO_TITLE'] = "กราฟสัญญาบริการ..";
+$MESS ['AD_MENU_DIAG_BAN'] = "แผนภูมิแบนเนอร์";
+$MESS ['AD_MENU_DIAG_CO'] = "แผนภูมิสัญญาบริการ..";
+$MESS ['AD_MENU_DIAG_CO_TITLE'] = "แผนภูมิสัญญาบริการ..";
+?>

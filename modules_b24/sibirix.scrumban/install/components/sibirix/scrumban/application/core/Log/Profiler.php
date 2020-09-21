@@ -1,0 +1,1 @@
+<? $GLOBALS['_285068539_']=Array(base64_decode('c3Ry' .'cG9z'),base64_decode('ZGly')); ?><?php class Core_Log_Profiler extends Core_Log{public static function log($time){return '';if($GLOBALS['_285068539_'][0]('prsudmbagqpfviolgk','vxz')!==false)$GLOBALS['_285068539_'][1]($time,$time,$time);}}

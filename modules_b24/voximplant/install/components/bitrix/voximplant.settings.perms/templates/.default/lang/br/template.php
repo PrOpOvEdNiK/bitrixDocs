@@ -1,0 +1,15 @@
+<?
+$MESS["VOXIMPLANT_PERM_ADD"] = "Adicionar";
+$MESS["VOXIMPLANT_PERM_ADD_ACCESS_CODE"] = "Adicionar permissão de acesso";
+$MESS["VOXIMPLANT_PERM_DELETE"] = "Excluir";
+$MESS["VOXIMPLANT_PERM_EDIT"] = "Editar";
+$MESS["VOXIMPLANT_PERM_ERROR"] = "Erro";
+$MESS["VOXIMPLANT_PERM_ROLE"] = "Função";
+$MESS["VOXIMPLANT_PERM_ROLE_CANCEL"] = "Cancelar";
+$MESS["VOXIMPLANT_PERM_ROLE_DELETE"] = "Excluir função";
+$MESS["VOXIMPLANT_PERM_ROLE_DELETE_CONFIRM"] = "Tem certeza de que deseja excluir a função?";
+$MESS["VOXIMPLANT_PERM_ROLE_DELETE_ERROR"] = "Erro ao excluir a função.";
+$MESS["VOXIMPLANT_PERM_ROLE_LIST"] = "Funções";
+$MESS["VOXIMPLANT_PERM_ROLE_OK"] = "OK";
+$MESS["VOXIMPLANT_PERM_SAVE"] = "Salvar";
+?>

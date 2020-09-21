@@ -1,0 +1,3 @@
+<?
+$MESS["P_SHOW_PAGE_NAVIGATION_NONE"] = "ukryj";
+?>

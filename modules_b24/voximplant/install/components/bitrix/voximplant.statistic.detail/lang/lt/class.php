@@ -1,0 +1,36 @@
+<?
+$MESS["TELEPHONY_STATUS_1"] = "Veikia registracijos premijos kreditas. Dėl išsamesnės informacijos kreipkitės į techninę pagalbą.";
+$MESS["TELEPHONY_STATUS_2"] = "Veikia registracijos premijos kreditas. ";
+$MESS["TELEPHONY_STATUS_3"] = "Kredito papildymas";
+$MESS["TELEPHONY_STATUS_409"] = "Balansas pataisytas po to, kai jį patikrino specialistas. Dėl išsamesnės informacijos kreipkitės į techninę pagalbą.";
+$MESS["TELEPHONY_HEADER_USER"] = "Darbuotojas";
+$MESS["TELEPHONY_HEADER_PORTAL_PHONE"] = "Portalo telefono numeris";
+$MESS["TELEPHONY_HEADER_PHONE"] = "Telefonas";
+$MESS["TELEPHONY_PORTAL_PHONE_SIP_OFFICE"] = "Biuro PBX (#ID#)";
+$MESS["TELEPHONY_PORTAL_PHONE_SIP_CLOUD"] = "Debesis su PBX (#ID#)";
+$MESS["TELEPHONY_HEADER_INCOMING"] = "Skabučio tipas";
+$MESS["TELEPHONY_HEADER_DURATION"] = "Skabučio trukmė";
+$MESS["TELEPHONY_HEADER_START_DATE"] = "Skabučio data";
+$MESS["TELEPHONY_HEADER_STATUS"] = "Statusas";
+$MESS["TELEPHONY_HEADER_COST"] = "Kaina";
+$MESS["TELEPHONY_HEADER_RECORD"] = "Įrašyti";
+$MESS["TELEPHONY_HEADER_LOG"] = "Detali informacija";
+$MESS["TELEPHONY_HEADER_VOTE"] = "Vertinimas";
+$MESS["TELEPHONY_BILLING"] = "Atsiskaitymas";
+$MESS["TELEPHONY_PORTAL_PHONE_EMPTY"] = "Nenustatyta";
+$MESS["TELEPHONY_FILTER_STATUS_UNSET"] = "(nėra)";
+$MESS["TELEPHONY_FILTER_STATUS_SUCCESSFUL"] = "Sėkmingas skambutis";
+$MESS["TELEPHONY_FILTER_STATUS_FAILED"] = "Nesėkmingas skambutis";
+$MESS["TEL_STAT_EXPORT_LOCK_ERROR"] = "Eksportavimo duomenys šiuo metu ruošiami, bandykite dar kartą vėliau.";
+$MESS["TELEPHONY_HEADER_TRANSCRIPT_COST"] = "Transkripcijos kaina";
+$MESS["TELEPHONY_HEADER_CRM"] = "CRM";
+$MESS["TELEPHONY_FILTER_TRANSCRIPT_TEXT"] = "Transkripcijoje yra";
+$MESS["TELEPHONY_FILTER_CRM"] = "CRM";
+$MESS["TEL_STAT_SHOW_TRANSCRIPT"] = "Atidaryti transkripciją";
+$MESS["TEL_STAT_ACTION_DOWNLOAD"] = "Atsisiųskite įrašą";
+$MESS["TEL_STAT_ACTION_SHOW_TRANSCRIPTION"] = "Atidaryti transkripciją";
+$MESS["TEL_STAT_ACTION_SHOW_LOG"] = "Žiūrėti žurnalą";
+$MESS["TELEPHONY_FILTER_HAS_RECORD"] = "Skambučio įrašymas";
+$MESS["TELEPHONY_HEADER_COMMENT"] = "Komentaras";
+$MESS["TELEPHONY_FILTER_COMMENT"] = "Komentaras";
+?>

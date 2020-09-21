@@ -1,0 +1,31 @@
+<?
+$MESS["GD_IBEL_ADDITIONAL_FIELDS"] = "Pokazują również, pola i właściwości";
+$MESS["GD_IBEL_DATE_FIELD"] = "Użyj jako data";
+$MESS["GD_IBEL_DESCRIPTION_FIELD"] = "Użyj jako opis";
+$MESS["GD_IBEL_DONOTUSE"] = "-- nie używać --";
+$MESS["GD_IBEL_EMPTY"] = "-- wybierz --";
+$MESS["GD_IBEL_IBLOCK_ID"] = "Blok informacji";
+$MESS["GD_IBEL_IBLOCK_TYPE"] = "Typ bloku informacji";
+$MESS["GD_IBEL_ITEMS_COUNT"] = "Ilość pozycji";
+$MESS["GD_IBEL_PICTURE_FIELD"] = "Użyj jako obraz";
+$MESS["GD_IBEL_SELECT_DATE_ACTIVE_FROM"] = "Data rozpoczęcia działalności";
+$MESS["GD_IBEL_SELECT_DATE_CREATE"] = "Utwórz datę";
+$MESS["GD_IBEL_SELECT_DETAIL_PICTURE"] = "Obraz detali";
+$MESS["GD_IBEL_SELECT_DETAIL_TEXT"] = "Uszczegółowiony opis";
+$MESS["GD_IBEL_SELECT_ID"] = "ID";
+$MESS["GD_IBEL_SELECT_NAME"] = "Nazwa";
+$MESS["GD_IBEL_SELECT_PREVIEW_PICTURE"] = "Miniatura";
+$MESS["GD_IBEL_SELECT_PREVIEW_TEXT"] = "Podgląd Tekstu";
+$MESS["GD_IBEL_SELECT_TIMESTAMP_X"] = "Data modyfikacji";
+$MESS["GD_IBEL_SORT_BY"] = "Sortowanie według";
+$MESS["GD_IBEL_SORT_BY_DATE_ACTIVE_FROM"] = "Data rozpoczęcia działalności";
+$MESS["GD_IBEL_SORT_BY_DATE_CREATE"] = "Utwórz datę";
+$MESS["GD_IBEL_SORT_BY_ID"] = "ID";
+$MESS["GD_IBEL_SORT_BY_NAME"] = "Nazwa";
+$MESS["GD_IBEL_SORT_BY_TIMESTAMP_X"] = "Data modyfikacji";
+$MESS["GD_IBEL_SORT_ORDER"] = "Porządek sortowania";
+$MESS["GD_IBEL_SORT_ORDER_ASC"] = "Rosnąco";
+$MESS["GD_IBEL_SORT_ORDER_DESC"] = "Malejąco";
+$MESS["GD_IBEL_THUMBNAIL_SIZE"] = "Rozmiar Obrazu";
+$MESS["GD_IBEL_TITLE_FIELD"] = "Użyj jako tytuł";
+?>

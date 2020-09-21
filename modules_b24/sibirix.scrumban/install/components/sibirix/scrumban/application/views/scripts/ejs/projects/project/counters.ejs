@@ -1,0 +1,14 @@
+<script type='text/ejs' id='projectPanelCountersContent'>
+    <div class="ga-block js-ga">
+        <button class="ga-auth js-ga-auth">Google</button>
+        <% if (this.gaAuthToken) { %>
+            <?= $this->t('CONNECTED'); ?>. <a href="javascript:void(0)" class="js-ga-reset"><?= $this->t('DISCONNECT'); ?></a>
+        <% } %>
+    </div>
+    <div class="ym-block js-ym">
+        <button class="ym-auth js-ym-auth">Yandex</button>
+        <% if (this.ymAuthToken) { %>
+            <?= $this->t('CONNECTED'); ?>. <a href="javascript:void(0)" class="js-ym-reset"><?= $this->t('DISCONNECT'); ?></a>
+        <% } %>
+    </div>
+</script>

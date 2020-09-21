@@ -1,0 +1,2 @@
+<?php
+$MESS["SALESCENTER_CONTROL_PANEL_ITEM_LABEL_COMMING_SOON"] = "Скоро появится";

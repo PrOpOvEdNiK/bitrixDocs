@@ -1,0 +1,33 @@
+<?
+$MESS["SKGO_EMPTY_SITE"] = "Nenurodyta užsakymų svetainė";
+$MESS["SKGO_EMPTY_PERS_TYPE"] = "Nenurodytas mokėtojo tipas";
+$MESS["SKGO_EMPTY_USER_ID"] = "Nenurodytas kliento ID";
+$MESS["SKGO_EMPTY_CURRENCY"] = "Nenurodyta valiuta";
+$MESS["SKGO_WRONG_CURRENCY"] = "Nepavyko rasti valiutos ##ID";
+$MESS["SKGO_WRONG_SITE"] = "Nepavyko rasti svetainės ##ID#";
+$MESS["SKGO_WRONG_USER"] = "Nepavyko rasti naudotojo ##ID#";
+$MESS["SKGO_WRONG_PERSON_TYPE"] = "Nepavyko rasti mokėtojo tipo ##ID#";
+$MESS["SKGO_WRONG_PS"] = "Nepavyko rasti mokėjimo sistemos ##ID#";
+$MESS["SKGO_WRONG_DELIVERY"] = "Nepavyko rasti pristatymo paslaugos ##ID#";
+$MESS["SKGO_WRONG_STATUS"] = "Nepavyko rasti statuso ##ID#";
+$MESS["SKGO_NO_ORDER_ID"] = "Nenurodytas užsakymo ID";
+$MESS["SKGO_NO_ORDER"] = "Nepavyko rasti užsakymo ##ID#";
+$MESS["SKGO_DUB_PAY"] = "Užsakymui ##ID# jau  priskirta apmokėjimo vėliavėlė";
+$MESS["SKGO_NO_ORDER_ID1"] = "Nenurodytas užaskymo ID";
+$MESS["SKGO_DUB_CANCEL"] = "Užsakymui ##ID# jau  priskirta atšaukimo vėliavėlė";
+$MESS["SKGO_DUB_DELIVERY"] = "Užsakymui ##ID# jau  priskirta pristatymo vėliavėlė";
+$MESS["SKGO_DUB_DEDUCTION"] = "Užsakymas ##ID# reikalauja reikšmės \"Pristatoma\".";
+$MESS["SKGO_DUB_RESERVATION"] = "Užsakymas ##ID# reikalauja reikšmės \"Rezervuota\".";
+$MESS["SKGO_ERROR_ORDERS"] = "Naudotojas ##USER_ID# jau atliko kelis užsakymus el.parduotuvėje ir negali būti pašalintas. ";
+$MESS["SKGO_ERROR_ORDERS_CURRENCY"] = "Sistemoje yra užsakymai valiuta #CURRENCY#.";
+$MESS["SKGO_CALC_PARAM_ERROR"] = "Klaida iškviečiant \"Paskaičiuokite užsakymą\": nenurodytas svetainės ID. ";
+$MESS["SKGO_SHOPPING_CART_EMPTY"] = "Pirkinių krepšelis yra tuščias";
+$MESS["SKGO_EMPTY_ACCOUNT_NUMBER"] = "Užsakymo numeris negali būti tuščias";
+$MESS["SKGO_EXISTING_ACCOUNT_NUMBER"] = "Užsakymo numeris, kurį jūs įvedėte, jau naudojamas kitam užsakymui";
+$MESS["SKGO_CANCEL_ERROR"] = "Nepavyko atšaukti užsakymo. #MESSAGE#";
+$MESS["SKGO_DELETE_ERROR"] = "Nepavyko ištrinti užsakymo. #MESSAGE#";
+$MESS["SALE_ORDER_GENERATE_ACCOUNT_NUMBER_ORDER_NUMBER_WRONG_ID"] = "Neteisingas užsakymo ID";
+$MESS["SALE_ORDER_GENERATE_ACCOUNT_NUMBER_ORDER_NUMBER_IS_NOT_SET"] = "Nepavyko nustatyti užsakymo ID";
+$MESS["SALE_ORDER_GENERATE_ACCOUNT_NUMBER_ORDER_NUMBER_IS_NOT_SET_AS_ID"] = "Nepavyko nustatyti ID kaip užsakymo numerį";
+$MESS["SKGO_DUB_STATUS"] = "Užsakymas ##ID# jau turi būtina statusą";
+?>

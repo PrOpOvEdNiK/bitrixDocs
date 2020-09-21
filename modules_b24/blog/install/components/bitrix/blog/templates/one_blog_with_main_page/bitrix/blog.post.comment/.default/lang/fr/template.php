@@ -1,0 +1,36 @@
+<?
+$MESS["BLOG_CATEGORY_NAME"] = "Nom du tag";
+$MESS["BLOG_P_INSERT_IMAGE_LINK"] = "Insérer le lien de l'image";
+$MESS["BPC_BOLD"] = "Gras(se)";
+$MESS["BPC_CLOSE_ALL_TAGS"] = "Fermer tous les tags";
+$MESS["BPC_CLOSE_OPENED_TAGS"] = "Fermer tous les tags ouverts";
+$MESS["BPC_CODE"] = "Code";
+$MESS["BPC_ERROR_NO_TITLE"] = "Vous devez entrer le nom";
+$MESS["BPC_ERROR_NO_URL"] = "Vous devez faire entrer l'adresse (URL)";
+$MESS["BPC_FONT"] = "Choix du type de caractères";
+$MESS["BPC_HYPERLINK"] = "Hyperlink";
+$MESS["BPC_IMAGE"] = "Couleur";
+$MESS["BPC_ITALIC"] = "Italique";
+$MESS["BPC_LIST"] = "Présentation du texte sous forme de liste";
+$MESS["BPC_LIST_PROMPT"] = "Veuillez saisir un point de la liste. Cliquez sur 'Annulation' ou laisser un espace pour terminer de la liste";
+$MESS["BPC_MES_DELETE_POST_CONFIRM"] = "Êtes-vous sûr de vouloir supprimer le commentaire ?";
+$MESS["BPC_PAGE"] = "Page : ";
+$MESS["BPC_PAGE_OF"] = "de";
+$MESS["BPC_QUOTE"] = "Offre";
+$MESS["BPC_TEXT_ENTER_IMAGE"] = "Veuillez saisir l'adresse (URL) complète de l'image";
+$MESS["BPC_TEXT_ENTER_URL"] = "Veuillez saisir l'adresse (URL) complète";
+$MESS["BPC_TEXT_ENTER_URL_NAME"] = "Veuillez saisir le nom du site";
+$MESS["BPC_UNDER"] = "Texte avec un tiret bas";
+$MESS["B_B_MS_ADD_COMMENT"] = "Ajouter un commentaire";
+$MESS["B_B_MS_CAPTCHA_SYM"] = "Code de confirmation (caractères sur l'image) : ";
+$MESS["B_B_MS_FROM"] = "de";
+$MESS["B_B_MS_LINK"] = "Lien au commentaire";
+$MESS["B_B_MS_M_BODY"] = "Message : ";
+$MESS["B_B_MS_NAME"] = "Dénomination : ";
+$MESS["B_B_MS_PARENT"] = "Parent";
+$MESS["B_B_MS_PREVIEW"] = "Affichage";
+$MESS["B_B_MS_PREVIEW_TITLE"] = "Affichage";
+$MESS["B_B_MS_REPLY"] = "Répondre";
+$MESS["B_B_MS_SEND"] = "Envoyer";
+$MESS["B_B_MS_SUBJECT"] = "Sujet : ";
+?>

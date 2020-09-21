@@ -1,0 +1,31 @@
+<?
+$MESS["SALE_ORDER_BASKET_COMPOSITION"] = "Siuntų sąrašas";
+$MESS["SALE_ORDER_BASKET_ROW_SETTINGS"] = "Nustatyti stulpelius";
+$MESS["SALE_ORDER_SHIPMENT_BASKET_ALL_PRODUCTS_DEL"] = "Ar tikrai norite ištrinti visas prekes siuntoje?";
+$MESS["SALE_ORDER_SHIPMENT_BASKET_SELECTED_PRODUCTS_DEL"] = "Ar tikrai norite ištrinti pasirinktas prekes siuntoje?";
+$MESS["SALE_ORDER_SHIPMENT_BASKET_ADD"] = "Pridėti";
+$MESS["SALE_ORDER_SHIPMENT_BASKET_ADD_NEW_STORE"] = "Pridėti sandėlį";
+$MESS["SALE_ORDER_SHIPMENT_BASKET_CLOSE"] = "Uždaryti";
+$MESS["SALE_ORDER_SHIPMENT_BASKET_NO_PRODUCTS"] = "Prekių atkrovimui nėra";
+$MESS["SALE_ORDER_SHIPMENT_BASKET_BARCODE"] = "Brūkšninis kodas";
+$MESS["SALE_ORDER_SHIPMENT_BASKET_ERROR_BASKET_QUANTITY"] = "Atkrautų prekių kiekis viršija kiekį krepšelyje";
+$MESS["SALE_ORDER_SHIPMENT_VIEW_BASKET_NO_PRODUCTS"] = "Siuntoje nėra prekių";
+$MESS["SALE_ORDER_SHIPMENT_BASKET_BARCODE_ALREADY_USED"] = "Pasirinktas brūkšninis kodas jau naudojamas";
+$MESS["SALE_ORDER_SHIPMENT_BASKET_FIND_BY_BARCODE"] = "Rasti pagal brūkšninį kodą";
+$MESS["SALE_ORDER_SHIPMENT_BASKET_FIND"] = "Rasti";
+$MESS["SALE_ORDER_SHIPMENT_BASKET_GOODS_ALL"] = "Viso prekių";
+$MESS["SALE_ORDER_SHIPMENT_BASKET_GOODS_SELECTED"] = "Pasirinkta";
+$MESS["SALE_ORDER_SHIPMENT_BASKET_PAGE"] = "Puslapis #CURRENT_PAGE# iš #COUNT_PAGE#";
+$MESS["SALE_ORDER_SHIPMENT_BASKET_APPLY"] = "Taikyti visiems įrašams sąraše";
+$MESS["SALE_ORDER_SHIPMENT_BASKET_APPLY_FOR_ALL"] = "Visiems";
+$MESS["SALE_ORDER_SHIPMENT_BASKET_DELETE_ITEMS"] = "Ištrinti įrašus";
+$MESS["SALE_ORDER_SHIPMENT_BASKET_BARCODE_CLOSE"] = "Uždaryti";
+$MESS["SALE_ORDER_SHIPMENT_BASKET_BARCODE_ENTER"] = "Įvesti brūkšninį kodą";
+$MESS["SALE_ORDER_SHIPMENT_BASKET_ERROR_ALREADY_SHIPPED"] = "Siunta išsiųsta. Krepšelis negali būti redaguojamas.";
+$MESS["SALE_ORDER_SHIPMENT_BASKET_ERROR_NOT_FOUND"] = "Prekės atitinkančios šį brūkšninę kodą nerastos.";
+$MESS["SALE_ORDER_SHIPMENT_BASKET_COMPOSITION"] = "Siuntos sudėtis:";
+$MESS["SALE_ORDER_SHIPMENT_BASKET_ERROR_QUANTITY"] = "#BASKET_ITEM#: nurodytas neteisingas kiekis";
+$MESS["SALE_ORDER_SHIPMENT_BASKET_BARCODE_EMPTY"] = "Brūkšniniai kodai nuskenuoti";
+$MESS["SALE_ORDER_SHIPMENT_BASKET_WRONG_BASKET_ITEM"] = "Neteisingas pirkinių krepšelio objektas";
+$MESS["SALE_ORDER_SHIPMENT_BASKET_BASKET_ITEM_NOT_FOUND"] = "Krepšelio elemento ##BASKET_ITEM_ID# sąryšis su siunta nerastas.";
+?>

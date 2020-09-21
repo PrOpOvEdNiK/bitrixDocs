@@ -1,0 +1,30 @@
+<?
+$MESS["STAT_ADV_BACK"] = "Zwroty";
+$MESS["STAT_ADV_NO_BACK"] = "bezpośrednie trafienia";
+$MESS["STAT_ADV_SUMMA"] = "Łącznie bezpośrednie trafienia i powroty";
+$MESS["STAT_ATTENTION"] = "Ostrzeżenie";
+$MESS["STAT_FILTER_PAGE_DIAGRAM_ALT"] = "Pokaż diagram trafień dla tej sekcji";
+$MESS["STAT_F_ADV"] = "Kampania reklamowa";
+$MESS["STAT_F_ADV_DATA_TYPE"] = "Rodzaj danych dla kampanii reklamowych";
+$MESS["STAT_F_SECTIONS"] = "Strona / Sekcja";
+$MESS["STAT_F_VIEW"] = "Wyświetl";
+$MESS["STAT_F_VIEW_FILES"] = "tylko strony";
+$MESS["STAT_F_VIEW_SECTIONS"] = "tylko sekcje";
+$MESS["STAT_GO"] = "Następujący link";
+$MESS["STAT_GROUP_BY_ENTERS"] = "Punkty wejścia";
+$MESS["STAT_GROUP_BY_EXITS"] = "Punkty wyjścia";
+$MESS["STAT_GROUP_BY_HITS"] = "Trafienia";
+$MESS["STAT_HITS"] = "Trafienia";
+$MESS["STAT_NO_DATA"] = "Brak danych do wyrysowania diagramu";
+$MESS["STAT_OTHER"] = "(inny)";
+$MESS["STAT_PAGE"] = "Sekcja/strona";
+$MESS["STAT_PERCENT"] = "Procent";
+$MESS["STAT_RECORDS_LIST"] = "Popularność stron i sekcji";
+$MESS["STAT_SECTION_GRAPH"] = "Wykres ruchu dla tej strony";
+$MESS["STAT_SECTION_LINK_STAT"] = "Statystyki połączeń dla tej strony";
+$MESS["STAT_SECTION_PAGES"] = "Wyniki";
+$MESS["STAT_SESSIONS"] = "Sesje";
+$MESS["STAT_T_ENTER_DIAGRAM"] = "Lista punktów wejścia";
+$MESS["STAT_T_EXIT_DIAGRAM"] = "Lista punktów wyjścia";
+$MESS["STAT_T_HITS_DIAGRAM"] = "Popularność";
+?>

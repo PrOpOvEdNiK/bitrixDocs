@@ -1,0 +1,37 @@
+<?
+$MESS["SCALE_PANEL_ACCESS_DENIED"] = "Odmowa dostępu";
+$MESS["SCALE_PANEL_JS_ACT_CONFIRM"] = "Na pewno chcesz";
+$MESS["SCALE_PANEL_JS_ACT_CONFIRM_TITLE"] = "Potwierdzenie";
+$MESS["SCALE_PANEL_JS_ACT_EXEC_INTERRUPTED"] = "Operacja została przerwana.";
+$MESS["SCALE_PANEL_JS_ACT_HOUR"] = "godzina(y)";
+$MESS["SCALE_PANEL_JS_ACT_MIN"] = "min";
+$MESS["SCALE_PANEL_JS_ACT_SEC"] = "sek";
+$MESS["SCALE_PANEL_JS_ACT_SERVER_WILL_AVAILABLE"] = "Serwer będzie dostępny za około";
+$MESS["SCALE_PANEL_JS_ADVICE_TO_BACKUP_TITLE"] = "Kopia Zapasowa";
+$MESS["SCALE_PANEL_JS_APD_2_CONFIRM"] = "Potwierdź";
+$MESS["SCALE_PANEL_JS_APD_BUT_START"] = "Uruchom";
+$MESS["SCALE_PANEL_JS_ARD_MESSAGE"] = "Dodatkowe Informacje";
+$MESS["SCALE_PANEL_JS_ARD_NAME"] = "Działanie";
+$MESS["SCALE_PANEL_JS_ARD_RES"] = "Wynik";
+$MESS["SCALE_PANEL_JS_ARD_RESULT"] = "Wynik";
+$MESS["SCALE_PANEL_JS_BX_ENV_NEED_UPDATE2"] = "wymagane aktualizacje";
+$MESS["SCALE_PANEL_JS_BX_ENV_VERSION"] = "Wersja";
+$MESS["SCALE_PANEL_JS_BX_INFO_ERROR"] = "Błąd";
+$MESS["SCALE_PANEL_JS_CANCEL"] = "Anuluj";
+$MESS["SCALE_PANEL_JS_CLOSE"] = "Zamknij";
+$MESS["SCALE_PANEL_JS_ERROR"] = "Błąd";
+$MESS["SCALE_PANEL_JS_EXTRA_DB_CONFIRM"] = "Sa bazy danych, które nie należą do bieżącej strony.<br>Na pewno chcesz kontynuować?";
+$MESS["SCALE_PANEL_JS_EXTRA_DB_CONFIRM_TITLE"] = "Potwierdź działanie";
+$MESS["SCALE_PANEL_JS_GLOBAL_ACTIONS"] = "Ogólne działania";
+$MESS["SCALE_PANEL_JS_MENU"] = "Działania";
+$MESS["SCALE_PANEL_JS_PROVIDER"] = "Dostawca VPS";
+$MESS["SCALE_PANEL_JS_PROVIDER_BUT_CHOOSE"] = "wybierz";
+$MESS["SCALE_PANEL_JS_PROVIDER_CONFIG_CHOOSE"] = "Wybierz konfigurację VPS";
+$MESS["SCALE_PANEL_JS_PROVIDER_ERROR"] = "Błąd";
+$MESS["SCALE_PANEL_JS_PROVIDER_MANUAL"] = "Wprowadź parametry serwera ręcznie";
+$MESS["SCALE_PANEL_JS_REFRESH_TITLE"] = "Odświeżanie strony";
+$MESS["SCALE_PANEL_JS_WARNING"] = "Ostrzeżenie";
+$MESS["SCALE_PANEL_JS_WFA_TEXT"] = "<p>Teraz przeprowadzane jest działanie ID  ##BID##.</p><p>Musisz zaczekać aż zostanie zakończone.</p> Strona odświeży się automatycznie, jak tylko działanie zostanie zakończone.</p>";
+$MESS["SCALE_PANEL_JS_WFA_TITLE"] = "Przeprowadź działanie…";
+$MESS["SCALE_PANEL_NEW_SERVER"] = "Nowy serwer";
+?>

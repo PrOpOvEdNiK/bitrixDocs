@@ -1,0 +1,27 @@
+<?
+$MESS["CRM_ACTIVITY_PLANNER_CANCEL"] = "Annuler";
+$MESS["CRM_ACTIVITY_PLANNER_COMMUNICATION_SEARCH_NO_DATA"] = "Pas de données.";
+$MESS["CRM_ACTIVITY_PLANNER_COMMUNICATION_SEARCH_TAB"] = "Recherche";
+$MESS["CRM_ACTIVITY_PLANNER_DATES_ERR"] = "La date de fin de l'évènement est antérieure à la date de début.";
+$MESS["CRM_ACTIVITY_PLANNER_DAY1"] = "jour";
+$MESS["CRM_ACTIVITY_PLANNER_DAY2"] = "jour";
+$MESS["CRM_ACTIVITY_PLANNER_DAY3"] = "jours";
+$MESS["CRM_ACTIVITY_PLANNER_DEST_1"] = "Sélectionner";
+$MESS["CRM_ACTIVITY_PLANNER_DEST_2"] = "Modifier";
+$MESS["CRM_ACTIVITY_PLANNER_DISK_ATTACHED_FILES"] = "Les pièces jointes";
+$MESS["CRM_ACTIVITY_PLANNER_DISK_ATTACH_FILE"] = "Joindre des fichiers";
+$MESS["CRM_ACTIVITY_PLANNER_DISK_SELECT_FILE"] = "Rechercher dans Bitrix24";
+$MESS["CRM_ACTIVITY_PLANNER_DISK_SELECT_FILE_LEGEND"] = "Ouvrir la fenêtre Bitrix24.Drive";
+$MESS["CRM_ACTIVITY_PLANNER_DISK_UPLOAD_FILE"] = "Télécharger fichier";
+$MESS["CRM_ACTIVITY_PLANNER_DISK_UPLOAD_FILE_LEGEND"] = "Ajouter en faisant glisser";
+$MESS["CRM_ACTIVITY_PLANNER_HOUR1"] = "heure";
+$MESS["CRM_ACTIVITY_PLANNER_HOUR2"] = "heure";
+$MESS["CRM_ACTIVITY_PLANNER_HOUR3"] = "heures";
+$MESS["CRM_ACTIVITY_PLANNER_IMPORTANT"] = "Affaire importante";
+$MESS["CRM_ACTIVITY_PLANNER_MIN1"] = "minute";
+$MESS["CRM_ACTIVITY_PLANNER_MIN2"] = "minutes";
+$MESS["CRM_ACTIVITY_PLANNER_MIN3"] = "minutes";
+$MESS["CRM_ACTIVITY_PLANNER_NO_OWNER"] = "Veuillez remplir le champ 'Avec qui' ou 'Transaction'.";
+$MESS["CRM_ACTIVITY_PLANNER_PLANNING_TITLE"] = "Planifier une activité";
+$MESS["CRM_ACTIVITY_PLANNER_SAVE"] = "Enregistrer";
+?>

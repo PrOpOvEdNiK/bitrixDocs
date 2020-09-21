@@ -1,0 +1,5 @@
+<?
+$MESS["SALE_COMPANY_RULE_COL_SORT"] = "Sortowanie";
+$MESS["SALE_COMPANY_RULE_DELETE"] = "Usuń";
+$MESS["SALE_COMPANY_RULE_EDIT_DESC"] = "Edytuj";
+?>

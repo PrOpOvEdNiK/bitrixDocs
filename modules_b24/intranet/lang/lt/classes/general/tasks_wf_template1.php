@@ -1,0 +1,17 @@
+<?
+$MESS["INTASK_WF_TMPL_HACK_SRE"] = "Nustatyti atsakingą asmenį";
+$MESS["INTASK_WF_TMPL_HACK_IPE"] = "Pradėti vykdyti";
+$MESS["INTASK_WF_TMPL_HACK_CE"] = "Užbaigti";
+$MESS["INTASK_WF_TMPL_HACK_CLE"] = "Uždaryti";
+$MESS["INTASK_WF_TMPL_HACK_WE"] = "Laukiama";
+$MESS["INTASK_WF_TMPL_HACK_DE"] = "Atidėti";
+$MESS["INTASK_WF_TMPL_HACK_NS"] = "Nepradėta";
+$MESS["INTASK_WF_TMPL_HACK_NOTSTARTED"] = "Nepradėta";
+$MESS["INTASK_WF_TMPL_HACK_INPROGRESS"] = "Vykdoma";
+$MESS["INTASK_WF_TMPL_HACK_CLOSED"] = "Uždaryta";
+$MESS["INTASK_WF_TMPL_HACK_WAITING"] = "Atidėta";
+$MESS["INTASK_WF_TMPL_HACK_NOTACCEPTED"] = "Nepriimta";
+$MESS["INTASK_WF_TMPL_HACK_COMPLETED"] = "Užbaigta";
+$MESS["INTASK_WF_TMPL_HACK_DEFERRED"] = "Atidėta";
+$MESS["INTASK_WF_TMPL_HACK_AE"] = "Priimti";
+?>

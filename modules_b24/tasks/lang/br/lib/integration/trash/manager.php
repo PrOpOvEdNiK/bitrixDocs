@@ -1,0 +1,5 @@
+<?
+$MESS["TASKS_TEMPLATE_TRASH_ENTITY_NAME"] = "Modelo de tarefa";
+$MESS["TASKS_TRASH_ENTITY_NAME"] = "Tarefa";
+$MESS["TASKS_TRASH_MODULE_NAME"] = "Tarefas";
+?>

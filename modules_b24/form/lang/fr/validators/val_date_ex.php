@@ -1,0 +1,7 @@
+<?
+$MESS["FORM_VALIDATOR_VAL_DATE_EX_DESCRIPTION"] = "Date de filtre";
+$MESS["FORM_VALIDATOR_VAL_DATE_EX_ERROR_LESS"] = "#FIELD_NAME# : la valeur est trop petite";
+$MESS["FORM_VALIDATOR_VAL_DATE_EX_ERROR_MORE"] = "#FIELD_NAME# : la valeur est trop grande";
+$MESS["FORM_VALIDATOR_VAL_DATE_EX_SETTINGS_DATE_FROM"] = "Date minimale";
+$MESS["FORM_VALIDATOR_VAL_DATE_EX_SETTINGS_DATE_TO"] = "Date maximale";
+?>

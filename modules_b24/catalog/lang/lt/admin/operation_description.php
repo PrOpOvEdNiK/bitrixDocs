@@ -1,0 +1,32 @@
+<?
+$MESS["OP_NAME_CATALOG_READ"] = "Skaityti modulio nustatymus";
+$MESS["OP_NAME_CATALOG_SETTINGS"] = "Redaguoti modulio nustatymus";
+$MESS["OP_NAME_CATALOG_PRICE"] = "Tvarkyti prekių kainas";
+$MESS["OP_NAME_CATALOG_GROUP"] = "Tvarkyti prekių tipus";
+$MESS["OP_NAME_CATALOG_DISCOUNT"] = "Tvarkyti nuolaidas";
+$MESS["OP_NAME_CATALOG_VAT"] = "Tvarkyti mokesčio tarifus";
+$MESS["OP_NAME_CATALOG_STORE"] = "Tvarkyti sandėlio atsargas";
+$MESS["OP_NAME_CATALOG_EXPORT_EDIT"] = "Redaguoti eksporto parametrus";
+$MESS["OP_NAME_CATALOG_EXPORT_EXEC"] = "Inicijuoti eksportą";
+$MESS["OP_NAME_CATALOG_IMPORT_EDIT"] = "Redaguoti importo parametrus";
+$MESS["OP_NAME_CATALOG_IMPORT_EXEC"] = "Inicijuoti importą";
+$MESS["OP_NAME_CATALOG_PURCHAS_INFO"] = "Rodyti pirkimo kainą";
+$MESS["OP_DESC_CATALOG_READ"] = "Naudotojas gali perskaityti (peržiūrėti) modulio parametrus";
+$MESS["OP_DESC_CATALOG_SETTINGS"] = "Naudotojas gali tvarkyti modulio parametrus";
+$MESS["OP_DESC_CATALOG_GROUP"] = "Naudotojas gali tvarkyti kainų tipus";
+$MESS["OP_DESC_CATALOG_DISCOUNT"] = "Naudotojas gali tvarkyti nuolaidas";
+$MESS["OP_DESC_CATALOG_VAT"] = "Naudotojas gali tvarkyti mokesčių tarifus";
+$MESS["OP_DESC_CATALOG_EXPORT_EDIT"] = "Naudotojas gali redaguoti eksporto parametrus";
+$MESS["OP_DESC_CATALOG_EXPORT_EXEC"] = "Naudotojas gali inicijuoti eksportą";
+$MESS["OP_DESC_CATALOG_IMPORT_EDIT"] = "Naudotojas gali redaguoti importo parametrus";
+$MESS["OP_DESC_CATALOG_IMPORT_EXEC"] = "Naudotojas gali inicijuoti importą";
+$MESS["OP_DESC_CATALOG_PURCHAS_INFO"] = "Klientas gali peržiūrėti prekės pirkimo kainas";
+$MESS["OP_NAME_CATALOG_EXTRA"] = "Tvarkyti antkainius";
+$MESS["OP_NAME_CATALOG_MEASURE"] = "Tvarkyti matavimo vienetus";
+$MESS["OP_DESC_CATALOG_PRICE"] = "Naudotojas gali tvarkyti prekės kainas";
+$MESS["OP_DESC_CATALOG_EXTRA"] = "Naudotojas gali redaguoti antkainių reikšmes";
+$MESS["OP_DESC_CATALOG_STORE"] = "Naudotojas gali tvarkyti sandėlio atsargų kontrolės dokumentus";
+$MESS["OP_DESC_CATALOG_MEASURE"] = "Naudotojas gali tvarkyti matavimo vienetus";
+$MESS["OP_NAME_CATALOG_VIEW"] = "Prekių peržiūra";
+$MESS["OP_DESC_CATALOG_VIEW"] = "Prekių peržiūra vadybininkams dirbančiais su užsakymais";
+?>

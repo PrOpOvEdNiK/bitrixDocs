@@ -1,0 +1,33 @@
+<?
+$MESS["SONET_UR_AGREE_FRIEND_MESSAGE"] = "L'utilisateur a confirmeé de devenir votre ami.";
+$MESS["SONET_UR_ALREADY_BAN"] = "Cet utilisateur est déjà sur la liste noire.";
+$MESS["SONET_UR_BANUSER_MESSAGE"] = "Vous êtes ajouté à la liste noire.";
+$MESS["SONET_UR_EMPTY_DATE_CREATE"] = "Date de création est indiquée inexactement.";
+$MESS["SONET_UR_EMPTY_DATE_UPDATE"] = "La date de modification des paramètres est incorrecte.";
+$MESS["SONET_UR_EMPTY_FIRST_USER_ID"] = "Le premier utilisateur n'est pas spécifié.";
+$MESS["SONET_UR_EMPTY_RELATION"] = "La liaison n'est pas indiquée";
+$MESS["SONET_UR_EMPTY_RELATION_ID"] = "Le mot de passe de connexion n'est pas indiqué.";
+$MESS["SONET_UR_EMPTY_SECOND_USER_ID"] = "Deuxième utilisateur inconnu.";
+$MESS["SONET_UR_EMPTY_SENDER_USER_ID"] = "L'utilisateur qui a envoyé la demande n'est pas indiqué.";
+$MESS["SONET_UR_EMPTY_TARGET_USER_ID"] = "Il n'est pas indiqué l'utilisateur qui doit recevoir la demande.";
+$MESS["SONET_UR_ERROR_CREATE_RELATION"] = "Erreur de création de la communication entre les utilisateurs.";
+$MESS["SONET_UR_ERROR_NO_FIRST_USER_ID"] = "Le premier utilisateur indiqué est incorrect.";
+$MESS["SONET_UR_ERROR_NO_RELATION"] = "Le lien est indiqué incorrectement.";
+$MESS["SONET_UR_ERROR_NO_SECOND_USER_ID"] = "Le deuxième utilisateur a été indiqué incorrectement.";
+$MESS["SONET_UR_ERROR_RELATION_FRIENDS2"] = "Les relations d'amitié sont plus pris en charge";
+$MESS["SONET_UR_ERROR_UPDATE_RELATION"] = "Erreur de changement de la communication entre les utilisateurs.";
+$MESS["SONET_UR_IM_UNFRIEND"] = "elle n'est plus dans une liste de vos amis";
+$MESS["SONET_UR_IM_UNFRIEND_F"] = "elle n'est plus dans une liste de vos amis";
+$MESS["SONET_UR_IM_UNFRIEND_M"] = "elle n'est plus dans une liste de vos amis";
+$MESS["SONET_UR_INVALID_TARGET_USER_ID"] = "L'utilisateur qui a envoyé la requête n'est pas trouvé.";
+$MESS["SONET_UR_NO_FRIEND_REQUEST"] = "Demande d'amitié introuvable.";
+$MESS["SONET_UR_REJECT_FRIEND_MESSAGE"] = "L'utilisateur a rejeté votre demande d'amitié.";
+$MESS["SONET_UR_RELATION_DELETE_ERROR"] = "Impossible de supprimer la relation entre les utilisateurs.";
+$MESS["SONET_UR_RELATION_NOT_FOUND"] = "Les relations entre les utilisateurs ne sont pas trouvée.";
+$MESS["SONET_UR_UNBANUSER_MESSAGE"] = "Vous êtes supprimé de la liste noire";
+$MESS["SONET_UR_UNBAN_ERROR"] = "Vous ne pouvez pas supprimer cet utilisateur de la liste noire.";
+$MESS["SONET_U_INVITE_CONFIRM"] = "Accepter";
+$MESS["SONET_U_INVITE_CONFIRM_TEXT"] = "Demande d'ami : '#TEXT#'";
+$MESS["SONET_U_INVITE_CONFIRM_TITLE"] = "Demande d'ami de l'utilisateur #USER#";
+$MESS["SONET_U_INVITE_REJECT"] = "Annuler";
+?>

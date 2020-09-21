@@ -1,0 +1,31 @@
+<?
+$MESS["TASKS_DURATION_DAYS"] = "jours";
+$MESS["TASKS_DURATION_HOURS"] = "heures";
+$MESS["TASKS_ELAPSED_H"] = "h";
+$MESS["TASKS_ELAPSED_M"] = "m";
+$MESS["TASKS_EXCEL_ADD_IN_REPORT"] = "Dans le rapport";
+$MESS["TASKS_EXCEL_CLOSED_DATE"] = "Date de fermeture envisagée";
+$MESS["TASKS_EXCEL_CREATED_BY"] = "Créateur";
+$MESS["TASKS_EXCEL_CREATED_DATE"] = "Date de création";
+$MESS["TASKS_EXCEL_DEADLINE"] = "Date limite";
+$MESS["TASKS_EXCEL_END_DATE_PLAN"] = "Date prévue d'achèvement";
+$MESS["TASKS_EXCEL_GROUP_ID"] = "Groupe";
+$MESS["TASKS_EXCEL_ID"] = "ID";
+$MESS["TASKS_EXCEL_MARK"] = "Evaluation";
+$MESS["TASKS_EXCEL_PRIORITY"] = "Criticité";
+$MESS["TASKS_EXCEL_REAL_STATUS"] = "Statut";
+$MESS["TASKS_EXCEL_RESPONSIBLE_ID"] = "Responsable";
+$MESS["TASKS_EXCEL_START_DATE_PLAN"] = "Date de début prévue";
+$MESS["TASKS_EXCEL_TIME_ESTIMATE"] = "Durée Prévue";
+$MESS["TASKS_EXCEL_TIME_SPENT_IN_LOGS"] = "Durée Réelle";
+$MESS["TASKS_EXCEL_TITLE"] = "Tâche";
+$MESS["TASKS_SIDEBAR_IN_REPORT_NO"] = "Non";
+$MESS["TASKS_SIDEBAR_IN_REPORT_YES"] = "Oui";
+$MESS["TASKS_STATUS_1"] = "Nouvelle campagne de publicité";
+$MESS["TASKS_STATUS_2"] = "Attend l'exécution";
+$MESS["TASKS_STATUS_3"] = "En cours";
+$MESS["TASKS_STATUS_4"] = "En attente du contrôle";
+$MESS["TASKS_STATUS_5"] = "Achevé(e)s";
+$MESS["TASKS_STATUS_6"] = "Différé";
+$MESS["TASKS_STATUS_7"] = "Est rejetée";
+?>

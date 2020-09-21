@@ -1,0 +1,34 @@
+<?
+$MESS["CRM_MODULE_NOT_INSTALLED"] = "O módulo de CRM não está instalado.";
+$MESS["CRM_QUOTE_COPY_PAGE_TITLE"] = "Copiar Orçamento";
+$MESS["CRM_QUOTE_CREATION_PAGE_TITLE"] = "Criar Orçamento";
+$MESS["CRM_QUOTE_FIELD_ASSIGNED_BY_ID"] = "Pessoa responsável";
+$MESS["CRM_QUOTE_FIELD_BEGINDATE"] = "Criada em";
+$MESS["CRM_QUOTE_FIELD_CLIENT"] = "Cliente";
+$MESS["CRM_QUOTE_FIELD_CLOSEDATE"] = "Prazo";
+$MESS["CRM_QUOTE_FIELD_COMMENTS"] = "Comentário (invisível no orçamento)";
+$MESS["CRM_QUOTE_FIELD_CONTACT_LEGEND"] = "Contatos no orçamento";
+$MESS["CRM_QUOTE_FIELD_CONTENT"] = "Conteúdos";
+$MESS["CRM_QUOTE_FIELD_DEAL"] = "Negócio";
+$MESS["CRM_QUOTE_FIELD_DEAL_ID"] = "Negócio";
+$MESS["CRM_QUOTE_FIELD_FILES"] = "Arquivos";
+$MESS["CRM_QUOTE_FIELD_ID"] = "ID";
+$MESS["CRM_QUOTE_FIELD_LEAD"] = "Lead";
+$MESS["CRM_QUOTE_FIELD_LEAD_ID"] = "Lead";
+$MESS["CRM_QUOTE_FIELD_MYCOMPANY"] = "Informações da sua empresa";
+$MESS["CRM_QUOTE_FIELD_NUMBER"] = "Orçamento #";
+$MESS["CRM_QUOTE_FIELD_OPENED"] = "Disponível para todos";
+$MESS["CRM_QUOTE_FIELD_OPPORTUNITY_WITH_CURRENCY"] = "Valor e moeda";
+$MESS["CRM_QUOTE_FIELD_PRODUCTS"] = "Produtos";
+$MESS["CRM_QUOTE_FIELD_STATUS_ID"] = "Status do Orçamento";
+$MESS["CRM_QUOTE_FIELD_TERMS"] = "Condições";
+$MESS["CRM_QUOTE_FIELD_TITLE"] = "Tópico";
+$MESS["CRM_QUOTE_FIELD_UTM"] = "Parâmetros UTM";
+$MESS["CRM_QUOTE_NOT_FOUND"] = "O orçamento não foi encontrado.";
+$MESS["CRM_QUOTE_SECTION_ADDITIONAL"] = "Mais";
+$MESS["CRM_QUOTE_SECTION_MAIN"] = "Sobre orçamento";
+$MESS["CRM_QUOTE_SECTION_PRODUCTS"] = "Produtos";
+$MESS["CRM_QUOTE_TAB_EVENT"] = "Histórico";
+$MESS["CRM_QUOTE_TAB_PRODUCTS"] = "Produtos";
+$MESS["CRM_QUOTE_TAB_TREE"] = "Dependências";
+?>

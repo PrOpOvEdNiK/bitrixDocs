@@ -1,0 +1,30 @@
+<?
+$MESS["LANDING_CMP_COLOR_AZURE"] = "Niebieski";
+$MESS["LANDING_CMP_COLOR_BLACK"] = "Czarny";
+$MESS["LANDING_CMP_COLOR_BLUE"] = "Niebieski";
+$MESS["LANDING_CMP_COLOR_BROWN"] = "Brązowy";
+$MESS["LANDING_CMP_COLOR_FLOWERS"] = "Czarny, biały i kwiaty";
+$MESS["LANDING_CMP_COLOR_GREEN"] = "Zielony";
+$MESS["LANDING_CMP_COLOR_JEANS"] = "Indygo";
+$MESS["LANDING_CMP_COLOR_ORANGERED"] = "Pomarańczowoczerwony";
+$MESS["LANDING_CMP_COLOR_PINK"] = "Różowy";
+$MESS["LANDING_CMP_COLOR_PURPLE"] = "Fioletowy";
+$MESS["LANDING_CMP_COLOR_RED"] = "Czerwony";
+$MESS["LANDING_CMP_COLOR_REDBLUE"] = "Czerwony i niebieski";
+$MESS["LANDING_CMP_COLOR_SEE"] = "Błękitny";
+$MESS["LANDING_CMP_COLOR_WHITE"] = "Biały";
+$MESS["LANDING_CMP_ERROR_MASTER_NO_SERVICE"] = "Usługa importu jest obecnie niedostępna";
+$MESS["LANDING_CMP_LD_ERROR_UNKNOWN_STEP_ID"] = "Nieznany krok tworzenia katalogu";
+$MESS["LANDING_CMP_LD_MESS_CATALOG_UPDATE"] = "Aktualizowanie parametrów katalogu produktów...";
+$MESS["LANDING_CMP_LD_MESS_DATA_PREPARE"] = "Przygotowywanie danych...";
+$MESS["LANDING_CMP_LD_MESS_IMPORT_COMPLETE"] = "Katalog produktów został utworzony";
+$MESS["LANDING_CMP_LD_MESS_XML_IMPORT_CATALOG_COMPLETE"] = "Produkty zostały zaimportowane";
+$MESS["LANDING_CMP_LD_MESS_XML_IMPORT_CATALOG_OFFERS_COMPLETE"] = "SKU zostały zaimportowane";
+$MESS["LANDING_CMP_LD_MESS_XML_IMPORT_CATALOG_OFFERS_PROGRESS"] = "Importowanie SKU...";
+$MESS["LANDING_CMP_LD_MESS_XML_IMPORT_CATALOG_OFFER_PRICES_COMPLETE"] = "Ceny SKU zostały zaimportowane";
+$MESS["LANDING_CMP_LD_MESS_XML_IMPORT_CATALOG_OFFER_PRICES_PROGRESS"] = "Importowanie cen SKU...";
+$MESS["LANDING_CMP_LD_MESS_XML_IMPORT_CATALOG_PRICES_COMPLETE"] = "Ceny produktów zostały zaimportowane";
+$MESS["LANDING_CMP_LD_MESS_XML_IMPORT_CATALOG_PRICES_PROGRESS"] = "Importowanie cen produktów...";
+$MESS["LANDING_CMP_LD_MESS_XML_IMPORT_CATALOG_PROGRESS"] = "Importowanie produktów...";
+$MESS["LANDING_CMP_LD_MESS_XML_IMPORT_COMPLETE"] = "Dane produktu zostały zaimportowane";
+?>

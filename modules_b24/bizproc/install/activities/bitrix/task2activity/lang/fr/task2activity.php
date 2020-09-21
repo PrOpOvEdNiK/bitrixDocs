@@ -1,0 +1,30 @@
+<?
+$MESS["BPCDA_FIELD_REQUIED"] = "Le champ '#FIELD#' doit être rempli.";
+$MESS["BPSA_TRACK_CLOSED"] = "La tâche est accomplie le #DATE#";
+$MESS["BPSA_TRACK_ERROR"] = "Erreur de création de la tâche.";
+$MESS["BPSA_TRACK_OK"] = "Une tâche a été créée depuis ID ##VAL#";
+$MESS["BPSA_TRACK_SUBSCR"] = "Le processus attend son achèvement";
+$MESS["BPSNMA_EMPTY_TASKASSIGNEDTO"] = "La propriété 'Responsable' n'est pas indiquée.";
+$MESS["BPSNMA_EMPTY_TASKNAME"] = "La propriété 'Destination de la tâche' n'est pas indiquée.";
+$MESS["BPTA1A_ADD_TO_REPORT"] = "Inclure la tâche dans un rapport sur l'efficacité";
+$MESS["BPTA1A_ALLOW_TIME_TRACKING"] = "Activer le suivi du temps de travail";
+$MESS["BPTA1A_CHANGE_DEADLINE"] = "Autoriser le responsable de changer un dernier délai";
+$MESS["BPTA1A_CHECK_RESULT"] = "Accepter le travail après l'achèvement de la tâche";
+$MESS["BPTA1A_TASKACCOMPLICES"] = "Co-exécuteurs";
+$MESS["BPTA1A_TASKACTIVEFROM"] = "Commencer";
+$MESS["BPTA1A_TASKACTIVETO"] = "Achèvement";
+$MESS["BPTA1A_TASKASSIGNEDTO"] = "Responsable";
+$MESS["BPTA1A_TASKCREATEDBY"] = "Créateur";
+$MESS["BPTA1A_TASKDEADLINE"] = "Date limite";
+$MESS["BPTA1A_TASKDETAILTEXT"] = "Description de la tâche";
+$MESS["BPTA1A_TASKFORUM"] = "Forum pour commentaires";
+$MESS["BPTA1A_TASKGROUPID"] = "Groupe de réseau social";
+$MESS["BPTA1A_TASKNAME"] = "Intitulé de la tâche";
+$MESS["BPTA1A_TASKPRIORITY"] = "Criticité";
+$MESS["BPTA1A_TASKPRIORITY_V2"] = "Priorité";
+$MESS["BPTA1A_TASKTRACKERS"] = "Auditeurs";
+$MESS["TASK_EMPTY_GROUP"] = "Tâche personnelle";
+$MESS["TASK_PRIORITY_0"] = "Bas";
+$MESS["TASK_PRIORITY_1"] = "Moyen";
+$MESS["TASK_PRIORITY_2"] = "Augmenté";
+?>

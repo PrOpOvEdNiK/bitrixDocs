@@ -1,0 +1,5 @@
+<?
+$MESS["BIZPROC_AUTOMATION_DELAY_ACTIVITY"] = "Wstrzymaj";
+$MESS["BIZPROC_AUTOMATION_PARALLEL_ACTIVITY"] = "Wykonanie równoległe";
+$MESS["BIZPROC_AUTOMATION_TEMPLATE_NAME"] = "Szablon automatyzacji (#STATUS#)";
+?>

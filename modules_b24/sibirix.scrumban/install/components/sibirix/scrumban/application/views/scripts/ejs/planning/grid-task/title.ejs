@@ -1,0 +1,17 @@
+<script type="text/ejs" id="tplGridTask">
+    <div class="gridTask jsGridTask">
+        <span class="lineTitle <% if (!$.htmlspecialchars(description).length) { %>single<% } %>"><%= $.htmlspecialchars(title) %></span>
+        <% if (code) { %>
+        <span class="lineCode"><%= code %></span>
+        <% } %>
+        <span class="subtask-add js-subtask-add" title="Добавить подзадачу"></span>
+        <% if (id == 'new' && parentId) { %>
+            <span class="has-parent-task js-remove-parent" title="Родительская задача #<%= parentId %>"></span>
+        <% } %>
+        <div class="clear"></div>
+        <span class="lineDescr"><%== $.stripTags(description.replace(/<br\s*\/?>/g, '#BR_NL#'))
+            .replace(/(#BR_NL#)|(\n)/g, '<br>')
+            .replace(/\s*(<br\s*\/?>\s*(?:\n\r?)*\s*){3,}/g, '<br><br>')
+            .replace(/^\s*(<br\s*\/?>\s*(?:\n\r?)*)+\s*/g, '') %></span>
+    </div>
+</script>

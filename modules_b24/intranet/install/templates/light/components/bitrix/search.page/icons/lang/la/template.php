@@ -1,0 +1,36 @@
+<?
+$MESS["CT_BSP_ADVANCED_SEARCH"] = "Búsqueda Avanzada";
+$MESS["CT_BSP_ALL"] = "(todos)";
+$MESS["CT_BSP_AND"] = "y";
+$MESS["CT_BSP_AND_ALT"] = "Operador <i>lógico y</i> está implícito y puede ser omitido: una consulta &quot;información de contacto&quot; es totalmente equivalente a &quot;contacto e información&quot;.";
+$MESS["CT_BSP_BRACKETS_ALT"] = "<i>Entre paréntesis</i> definir la procedencia del operador lógico.";
+$MESS["CT_BSP_CORRECT_AND_CONTINUE"] = "Corrija la frase de búsqueda y vuelva a intentarlo.";
+$MESS["CT_BSP_DATES_ALL"] = "todo";
+$MESS["CT_BSP_DATES_FROM"] = "desde #FROM#";
+$MESS["CT_BSP_DATES_FROM_TO"] = "desde #FROM# hasta #TO#";
+$MESS["CT_BSP_DATES_TO"] = "hasta #TO#";
+$MESS["CT_BSP_DATE_CHANGE"] = "Modificado";
+$MESS["CT_BSP_DESCRIPTION"] = "Descripción";
+$MESS["CT_BSP_ERROR"] = "Error en la frase de búsqueda:";
+$MESS["CT_BSP_EVERYWHERE"] = "todo";
+$MESS["CT_BSP_FOUND"] = "Encontró";
+$MESS["CT_BSP_GO"] = "Buscar";
+$MESS["CT_BSP_ITEM_TAGS"] = "Etiquetas";
+$MESS["CT_BSP_KEYBOARD_WARNING"] = "El idioma de entrada de consulta cambió para \"#query#\".";
+$MESS["CT_BSP_LOGIC"] = "Operadores logicos:";
+$MESS["CT_BSP_NOT"] = "no";
+$MESS["CT_BSP_NOTHING_TO_FOUND"] = "Lamentablemente, su búsqueda no coincide con ningún documento.";
+$MESS["CT_BSP_NOT_ALT"] = "Operador <i>ho hay lógico</i> restringe las búsquedas a páginas que no contienen el operando.";
+$MESS["CT_BSP_OPERATOR"] = "Operador";
+$MESS["CT_BSP_OR"] = "o";
+$MESS["CT_BSP_ORDER"] = "Clasificado por";
+$MESS["CT_BSP_ORDER_BY_DATE"] = "fecha";
+$MESS["CT_BSP_ORDER_BY_RANK"] = "relevancia";
+$MESS["CT_BSP_OR_ALT"] = "Operador <i>lógico o</i> permite buscar entidades que contengan al menos uno de los operandos.";
+$MESS["CT_BSP_SINTAX"] = "<b>Sintaxis de consulta de búsqueda:</b><br /><br />Una consulta de búsqueda común es una o más palabras, por ejemplo:<br /><i>información de contacto</i><br />Esta consulta encontrará páginas que contienen ambas palabras de consulta.<br /><br />Los operadores lógicos permiten crear consultas más complejas, por ejemplo: <br /><i>información de contacto o teléfono</i><br />Esta consulta encontrará páginas que contienen cualquiera de las palabras &quot;contact&quot; y&quot;información&quot; o &quot;teléfono&quot;.<br /><br /> <i>información de contacto no teléfono</i><br /> Esta consulta encontrará páginas que contengan palabras &quot;contacto&quot; and &quot;información&quot; but not &quot;teléfono&quot;.<br /> Puede usar corchetes para crear consultas más complejas.<br />";
+$MESS["CT_BSP_SYNONIM"] = "Sinónimos";
+$MESS["CT_BSP_TAGS"] = "etiquetas";
+$MESS["CT_BSP_WHEN"] = "fecha";
+$MESS["CT_BSP_WHERE"] = "sección";
+$MESS["CT_BSP_WHERE_LABEL"] = "Dónde";
+?>

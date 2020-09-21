@@ -1,0 +1,3 @@
+<?
+$MESS["INTRANET_PUBLIC_CONVERT_TAB"] = "Konwersja";
+?>

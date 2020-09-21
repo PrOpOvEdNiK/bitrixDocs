@@ -1,0 +1,35 @@
+<?
+$MESS["MOBILE_LOG_COMMENTS"] = "Commentaire";
+$MESS["MOBILE_LOG_COMMENTS_2"] = "Nombre de commentaires : ";
+$MESS["MOBILE_LOG_COMMENT_ACTION"] = "Commentaire";
+$MESS["MOBILE_LOG_COMMENT_ADD_BUTTON_SEND"] = "Envoyer";
+$MESS["MOBILE_LOG_COMMENT_ADD_TITLE"] = "Écrire un commentaire...";
+$MESS["MOBILE_LOG_COMMENT_BUTTON_MORE"] = "Voir tous les commentaires (#COMMENTS#)";
+$MESS["MOBILE_LOG_COMMENT_DELETE"] = "Supprimer";
+$MESS["MOBILE_LOG_COMMENT_EDIT"] = "Éditer";
+$MESS["MOBILE_LOG_COMMENT_FORMAT_DATE"] = "d F, g:i a";
+$MESS["MOBILE_LOG_COMMENT_FORMAT_DATE_YEAR"] = "d F Y, g:i a";
+$MESS["MOBILE_LOG_COMMENT_FORMAT_TIME"] = "g:i a";
+$MESS["MOBILE_LOG_COMMENT_LIKES_LIST"] = "Limite bannière spectacles";
+$MESS["MOBILE_LOG_COMMENT_REPLY"] = "Répondre";
+$MESS["MOBILE_LOG_DESTINATION_MORE_0"] = "et encore #COUNT# destinataires";
+$MESS["MOBILE_LOG_DESTINATION_MORE_1"] = "et encore #COUNT# destinataire";
+$MESS["MOBILE_LOG_DESTINATION_MORE_2"] = "et encore #COUNT# destinataires";
+$MESS["MOBILE_LOG_DESTINATION_MORE_3"] = "et encore #COUNT# destinataires";
+$MESS["MOBILE_LOG_DESTINATION_MORE_4"] = "et encore #COUNT# destinataires";
+$MESS["MOBILE_LOG_DESTINATION_MORE_5"] = "et encore #COUNT# destinataires";
+$MESS["MOBILE_LOG_DESTINATION_MORE_6"] = "et encore #COUNT# destinataires";
+$MESS["MOBILE_LOG_DESTINATION_MORE_7"] = "et encore #COUNT# destinataires";
+$MESS["MOBILE_LOG_DESTINATION_MORE_8"] = "et encore #COUNT# destinataires";
+$MESS["MOBILE_LOG_DESTINATION_MORE_9"] = "et encore #COUNT# destinataires";
+$MESS["MOBILE_LOG_EXPAND"] = "Plus";
+$MESS["MOBILE_LOG_LIKE2_ACTION"] = "Comme : ";
+$MESS["MOBILE_LOG_LIKE2_ACTION_PATTERN"] = "#LIKE# : ";
+$MESS["MOBILE_LOG_LIKE_ACTION"] = "Cela plaît à";
+$MESS["MOBILE_LOG_LIKE_COUNT_USERS"] = "#COUNT# #USERS#";
+$MESS["MOBILE_LOG_LIKE_ME"] = "Vous";
+$MESS["MOBILE_LOG_LIKE_OTHERS"] = "#COUNT_USERS# aime(nt).";
+$MESS["MOBILE_LOG_LIKE_YOU"] = "#YOU# aime ça.";
+$MESS["MOBILE_LOG_LIKE_YOU_OTHERS"] = "#YOU# et #COUNT_USERS#  autres personnes aimez ça.";
+$MESS["MOBILE_LOG_MORE"] = "Encore";
+?>

@@ -1,0 +1,32 @@
+<?
+$MESS["GD_IBEL_ADDITIONAL_FIELDS"] = "Champs et propriétés pour l'affichage supplémentaire";
+$MESS["GD_IBEL_DATE_FIELD"] = "Utiliser comme date";
+$MESS["GD_IBEL_DESCRIPTION_CUT"] = "Réduire la conclusion de la description à, symboles";
+$MESS["GD_IBEL_DESCRIPTION_FIELD"] = "Utiliser comme description";
+$MESS["GD_IBEL_DONOTUSE"] = "-- ne pas utiliser --";
+$MESS["GD_IBEL_EMPTY"] = "-- sélectionner --";
+$MESS["GD_IBEL_IBLOCK_ID"] = "Bloc d'information";
+$MESS["GD_IBEL_IBLOCK_TYPE"] = "Type du bloc d'information";
+$MESS["GD_IBEL_ITEMS_COUNT"] = "Quantité d'éléments";
+$MESS["GD_IBEL_PICTURE_FIELD"] = "Utiliser comme emplacement";
+$MESS["GD_IBEL_SELECT_DATE_ACTIVE_FROM"] = "Début de l'activité (date)";
+$MESS["GD_IBEL_SELECT_DATE_CREATE"] = "Date de création";
+$MESS["GD_IBEL_SELECT_DETAIL_PICTURE"] = "Affichage détaillé";
+$MESS["GD_IBEL_SELECT_DETAIL_TEXT"] = "Description";
+$MESS["GD_IBEL_SELECT_ID"] = "ID";
+$MESS["GD_IBEL_SELECT_NAME"] = "Dénomination";
+$MESS["GD_IBEL_SELECT_PREVIEW_PICTURE"] = "Image de l'annonce";
+$MESS["GD_IBEL_SELECT_PREVIEW_TEXT"] = "Description pour l'annonce";
+$MESS["GD_IBEL_SELECT_TIMESTAMP_X"] = "Date de modification";
+$MESS["GD_IBEL_SORT_BY"] = "Trier par nom";
+$MESS["GD_IBEL_SORT_BY_DATE_ACTIVE_FROM"] = "Début de l'activité (date)";
+$MESS["GD_IBEL_SORT_BY_DATE_CREATE"] = "Date de création";
+$MESS["GD_IBEL_SORT_BY_ID"] = "ID";
+$MESS["GD_IBEL_SORT_BY_NAME"] = "Dénomination";
+$MESS["GD_IBEL_SORT_BY_TIMESTAMP_X"] = "Date de modification";
+$MESS["GD_IBEL_SORT_ORDER"] = "Classification";
+$MESS["GD_IBEL_SORT_ORDER_ASC"] = "Croissant";
+$MESS["GD_IBEL_SORT_ORDER_DESC"] = "Décroissant";
+$MESS["GD_IBEL_THUMBNAIL_SIZE"] = "Dimensions de l'image";
+$MESS["GD_IBEL_TITLE_FIELD"] = "Utiliser comme un titre";
+?>

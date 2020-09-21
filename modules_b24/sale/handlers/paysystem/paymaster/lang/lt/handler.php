@@ -1,0 +1,15 @@
+<?
+$MESS["SALE_HPS_PAYMASTER_ERROR_PARAMS_VALUE"] = "Mokėjimo parametrai nesutampa;";
+$MESS["SALE_HPS_PAYMASTER_SIM_MODE_TEST"] = "testinis režimas, pinigai realiai nepervedami;";
+$MESS["SALE_HPS_PAYMASTER_DESC_MERCHANT_ID"] = "Pardavėjo piniginė - # MERCHANT_ID #;";
+$MESS["SALE_HPS_PAYMASTER_DESC_SYS_INVS_NO"] = "Sąskaitos numeris - #SYS_INVS_NO#;";
+$MESS["SALE_HPS_PAYMASTER_DESC_SYS_TRANS_NO"] = "mokėjimo numeris - #SYS_TRANS_NO#;";
+$MESS["SALE_HPS_PAYMASTER_DESC_SYS_TRANS_DATE"] = "mokėjimo data - #SYS_TRANS_DATE# ;";
+$MESS["SALE_HPS_PAYMASTER_DESC_PAY_SYSTEM"] = "mokėjimo data - #PAY_SYSTEM# ;";
+$MESS["SALE_HPS_PAYMASTER_DESC_PAYER_PURSE"] = "pirkėjo sąskaita - #PAYER_PURSE# ;";
+$MESS["SALE_HPS_PAYMASTER_DESC_PAYER_WM"] = "WMId pirkėjo - #PAYER_WM#;";
+$MESS["SALE_HPS_PAYMASTER_DESC_PAYER_NUMBER"] = "-kortos numeris - #PAYMER_NUMBER# ;";
+$MESS["SALE_HPS_PAYMASTER_DESC_PAYER_EMAIL"] = "paymer.com pirkėjo el. paštas - #PAYMER_EMAIL# ;";
+$MESS["SALE_HPS_PAYMASTER_DESC_TELEPAT_PHONENUMBER"] = "pirkėjo telefonas - #TELEPAT_PHONENUMBER#;";
+$MESS["SALE_HPS_PAYMASTER_DESC_TELEPAT_ORDERID"] = "Telepat mokėjimas - #TELEPAT_ORDERID# ;";
+?>

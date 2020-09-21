@@ -1,0 +1,6 @@
+<?
+$MESS["CRM_WEB_FORM_COMPLEX_NAME"] = "CRM formos";
+$MESS["CRM_WEB_FORM_COMPLEX_DESCRIPTION"] = "CRM formos";
+$MESS["CRM_NAME"] = "CRM ";
+$MESS["CRM_WEB_FORM_NAME"] = "CRM formos";
+?>

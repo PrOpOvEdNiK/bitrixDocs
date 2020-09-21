@@ -1,0 +1,79 @@
+@ico-clear: 'ico-clear' '../images/sprite.svg?1510563336' -87px -54px 10px 10px false;
+@ico-close: 'ico-close' '../images/sprite.svg?1510563336' -141px -62px 26px 26px false;
+@ico-copy: 'ico-copy' '../images/sprite.svg?1510563336' -67px -54px 16px 16px false;
+@ico-crm: 'ico-crm' '../images/sprite.svg?1510563336' -53px -2px 44px 44px false;
+@ico-desktop: 'ico-desktop' '../images/sprite.svg?1510563336' -2px -2px 47px 48px false;
+@ico-docs: 'ico-docs' '../images/sprite.svg?1510563336' -101px -37px 28px 32px false;
+@ico-launchpad: 'ico-launchpad' '../images/sprite.svg?1510563336' -2px -54px 37px 24px false;
+@ico-notify: 'ico-notify' '../images/sprite.svg?1510563336' -2px -82px 28px 32px false;
+@ico-plane: 'ico-plane' '../images/sprite.svg?1510563336' -141px -34px 27px 24px false;
+@ico-search: 'ico-search' '../images/sprite.svg?1510563336' -141px -92px 21px 21px false;
+@ico-settings: 'ico-settings' '../images/sprite.svg?1510563336' -101px -82px 29px 29px false;
+@ico-settings-big: 'ico-settings-big' '../images/sprite.svg?1510563336' -68px -82px 29px 29px false;
+@ico-settings-sm: 'ico-settings-sm' '../images/sprite.svg?1510563336' -43px -54px 20px 20px false;
+@ico-smile-sad: 'ico-smile-sad' '../images/sprite.svg?1510563336' -34px -82px 30px 29px false;
+@ico-support: 'ico-support' '../images/sprite.svg?1510563336' -141px -2px 28px 28px false;
+@ico-support-board: 'ico-support-board' '../images/sprite.svg?1510563336' -2px -118px 16px 16px false;
+@ico-to-b24: 'ico-to-b24' '../images/sprite.svg?1510563336' -101px -2px 36px 31px false;
+
+.ico-clear {
+    .icon(@ico-clear);
+}
+.ico-close {
+    .icon(@ico-close);
+}
+.ico-copy {
+    .icon(@ico-copy);
+}
+.ico-crm {
+    .icon(@ico-crm);
+}
+.ico-desktop {
+    .icon(@ico-desktop);
+}
+.ico-docs {
+    .icon(@ico-docs);
+}
+.ico-launchpad {
+    .icon(@ico-launchpad);
+}
+.ico-notify {
+    .icon(@ico-notify);
+}
+.ico-plane {
+    .icon(@ico-plane);
+}
+.ico-search {
+    .icon(@ico-search);
+}
+.ico-settings {
+    .icon(@ico-settings);
+}
+.ico-settings-big {
+    .icon(@ico-settings-big);
+}
+.ico-settings-sm {
+    .icon(@ico-settings-sm);
+}
+.ico-smile-sad {
+    .icon(@ico-smile-sad);
+}
+.ico-support {
+    .icon(@ico-support);
+}
+.ico-support-board {
+    .icon(@ico-support-board);
+}
+.ico-to-b24 {
+    .icon(@ico-to-b24);
+}
+
+.icon(@icon) {
+    display: inline-block;
+    width: extract(@icon, 5);
+    height: extract(@icon, 6);
+
+    @sprite-image: extract(@icon, 2);
+    @sprite-image-bare: ~`"@{sprite-image}".slice(1, -1)`;
+    background: url(@sprite-image-bare) extract(@icon, 3) extract(@icon, 4) no-repeat;
+}

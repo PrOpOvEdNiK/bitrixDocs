@@ -1,0 +1,6 @@
+<?
+$MESS["CATALOG_RECOMMENDED_PRODUCTS_COMPONENT_DEFAULT_TEMPLATE_DESCRIPTION"] = "Affiche la liste de marchandises conseillées";
+$MESS["CATALOG_RECOMMENDED_PRODUCTS_COMPONENT_DEFAULT_TEMPLATE_NAME"] = "Marchandises recommandées";
+$MESS["CP_CATALOG_SERVICES_MAIN_SECTION"] = "Boutique en ligne";
+$MESS["CP_CATALOG_SERVICES_PARENT_SECTION"] = "Informations sur le Produit";
+?>

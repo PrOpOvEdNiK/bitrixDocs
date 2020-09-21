@@ -1,0 +1,37 @@
+<?
+$MESS["ERROR_ADD_SMILE"] = "Erreur d'ajout du smiley.";
+$MESS["ERROR_COPY_IMAGE"] = "Erreur Photo d'upload (de l'autorisation d'écriture insuffisante ?)";
+$MESS["ERROR_EDIT_SMILE"] = "Erreur de changement du smiley.";
+$MESS["ERROR_EXISTS_IMAGE"] = "Une image du même nom existe déjà.";
+$MESS["ERROR_NO_IMAGE"] = "Image de smiley inconnu.";
+$MESS["ERROR_NO_MIN_NUM_POSTS"] = "Définissez le nombre minimal de message pour ce titre.";
+$MESS["ERROR_NO_NAME"] = "Le nom du smiley n'est pas spécifié en cette langue";
+$MESS["ERROR_NO_TYPE"] = "Indiquez le type de smiley.";
+$MESS["FSE_ERROR_EXT"] = "Extension interdite du fichier graphique.";
+$MESS["FSE_ICON"] = "Icône";
+$MESS["FSE_SMILE"] = "Smiley";
+$MESS["FSN_2FLIST"] = "Dans la liste de smileys";
+$MESS["FSN_DELETE_SMILE"] = "Eliminer le smiley";
+$MESS["FSN_DELETE_SMILE_CONFIRM"] = "tes-vous sûr de vouloir supprimer ce smiley ?";
+$MESS["FSN_NEW_SMILE"] = "Ajouter un nouveau smiley";
+$MESS["FSN_TAB_SMILE"] = "Un smiley du réseau social";
+$MESS["FSN_TAB_SMILE_DESCR"] = "Un smiley du réseau social";
+$MESS["SONET_ADD"] = "Ajouter";
+$MESS["SONET_APPLY"] = "Appliquer";
+$MESS["SONET_CODE"] = "Code";
+$MESS["SONET_CODE_LEN"] = "lettre";
+$MESS["SONET_DESCR"] = "Description";
+$MESS["SONET_EDIT_RECORD"] = "Changer le smiley N #ID#";
+$MESS["SONET_IMAGE"] = "Image du smiley";
+$MESS["SONET_IMAGE_NOTE"] = "(taille recommandée des smileys : 16x16, icônes : 15x15)";
+$MESS["SONET_NAME"] = "Titre";
+$MESS["SONET_NEW_RECORD"] = "Un nouveau smiley";
+$MESS["SONET_PT_PROPS"] = "Paramètres";
+$MESS["SONET_RECORDS_LIST"] = "Dans la liste de smileys";
+$MESS["SONET_RESET"] = "Annuler";
+$MESS["SONET_SAVE"] = "Enregistrer";
+$MESS["SONET_SORT"] = "Trier";
+$MESS["SONET_TYPE"] = "Type de smiley #TYPE# inconnu.";
+$MESS["SONET_TYPING"] = "Ecriture d'un smiley";
+$MESS["SONET_TYPING_NOTE"] = "(vous pouvez indiquer plusieurs variantes en les separant avec un espace)";
+?>

@@ -1,0 +1,22 @@
+<?
+$MESS["BIZPROC_WFS_PROP_STRING"] = "رشته";
+$MESS["BIZPROC_WFS_PROP_SELECT"] = "فهرست";
+$MESS["BIZPROC_WFS_PROP_USER"] = "کاربر";
+$MESS["BIZPROC_WFS_YES"] = "بله";
+$MESS["BIZPROC_WFS_NO"] = "خیر";
+$MESS["BIZPROC_WFS_CHANGE_PARAM"] = "ویرایش";
+$MESS["BIZPROC_WFS_DEL_PARAM"] = "حذف";
+$MESS["BIZPROC_WFS_TAB_MAIN"] = "عمومی";
+$MESS["BIZPROC_WFS_TAB_PARAM"] = "پارامترها";
+$MESS["BIZPROC_WFS_PAR_NAME"] = "عنوان:";
+$MESS["BIZPROC_WFS_PAR_DESC"] = "توضیحات:";
+$MESS["BIZPROC_WFS_PARAM_NAME"] = "نام";
+$MESS["BIZPROC_WFS_PARAM_TYPE"] = "نوع";
+$MESS["BIZPROC_WFS_PARAM_DEF"] = "پیش فرض";
+$MESS["BIZPROC_WFS_PARAM_ACT"] = "اقدامات";
+$MESS["BIZPROC_WFS_PARAMDESC"] = "توضیحات";
+$MESS["BIZPROC_WFS_BUTTON_CANCEL"] = "لغو";
+$MESS["BIZPROC_WFS_BUTTON_SAVE"] = "ذخیره";
+$MESS["BP_WF_TAB_PERM"] = "دسترسی";
+$MESS["BIZPROC_WFS_PARAMID"] = "شناسه";
+?>

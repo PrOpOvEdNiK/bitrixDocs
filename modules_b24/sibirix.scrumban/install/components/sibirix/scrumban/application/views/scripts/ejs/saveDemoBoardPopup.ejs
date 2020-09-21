@@ -1,0 +1,28 @@
+<script type="text/ejs" id="saveDemoBoardPopup">
+    <div class="closePopup"></div>
+    <div class="popup-title"><?= $this->t('SAVE_BOARD_POPUP_TITLE'); ?></div>
+    <div class="popup-form">
+        <div class="form-section form-fields">
+            <div class="block-title"><?= $this->t('SAVE_BOARD_POPUP_INPUTS_TITLE'); ?></div>
+            <div class="fields-inputs">
+                <div class="form-inputs">
+                    <div class="form-input">
+                        <input type="text" placeholder="<?= $this->t('SAVE_BOARD_POPUP_INPUTS_EMAIL'); ?>" class="inputs-email" name="email" />
+                    </div>
+                    <div class="form-input">
+                        <input type="text" placeholder="<?= $this->t('SAVE_BOARD_POPUP_INPUTS_DOMAIN_PH'); ?>" class="inputs-domain" name="domain" /><?= $this->t('SAVE_BOARD_POPUP_INPUTS_DOMAIN_SUFFIX'); ?>
+                    </div>
+                </div>
+                <div class="form-arrow"></div>
+                <div class="clear"></div>
+            </div>
+        </div>
+        <div class="form-section form-buttons">
+            <div class="block-title"><?= $this->t('SAVE_BOARD_POPUP_BUTTONS_TITLE'); ?></div>
+            <span class="button-sonet vk" data-sonet-type="vk" title="<?= $this->t('SAVE_BOARD_POPUP_BUTTONS_VK'); ?>"></span>
+            <span class="button-sonet fb" data-sonet-type="fb" title="<?= $this->t('SAVE_BOARD_POPUP_BUTTONS_FB'); ?>"></span>
+            <span class="button-sonet gp" data-sonet-type="google" title="<?= $this->t('SAVE_BOARD_POPUP_BUTTONS_GP'); ?>"></span>
+        </div>
+        <div class="clear"></div>
+    </div>
+</script>

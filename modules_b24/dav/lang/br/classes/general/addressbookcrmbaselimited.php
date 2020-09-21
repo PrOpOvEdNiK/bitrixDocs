@@ -1,0 +1,4 @@
+<?
+$MESS["DAV_EXPORT_FILTER_ALL"] = "Todos";
+$MESS["DAV_EXPORT_FILTER_RESPONSIBLE"] = "Pessoal";
+?>

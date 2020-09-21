@@ -1,0 +1,5 @@
+<?
+$MESS["BIZPROC_AUTOMATION_TEMPLATE_NAME"] = "Шаблон автоматизації (#STATUS#)";
+$MESS["BIZPROC_AUTOMATION_PARALLEL_ACTIVITY"] = "Паралельне виконання";
+$MESS["BIZPROC_AUTOMATION_DELAY_ACTIVITY"] = "Пауза";
+?>

@@ -1,0 +1,36 @@
+<?
+$MESS["FM_WRONG_DATE_CREATE_FROM"] = "Prašome įvesti teisingą apatinę sukūrimo datos ribą";
+$MESS["FM_WRONG_DATE_CREATE_TILL"] = "Ištaisykite viršutinę sukūrimo datos ribą.";
+$MESS["FM_FROM_TILL_TIMESTAMP"] = "Paskutinė data turi būti didesnė negu pirmoji data.";
+$MESS["FM_WRONG_DATE_FROM"] = "Ištaisykite pradinę datos vertę paskutinės žinutės sukūrimo datoje.";
+$MESS["FM_WRONG_DATE_TILL"] = "Ištaisykite galinę datos vertę paskutinės žinutės sukūrimo datoje.";
+$MESS["FM_WRONG_FORUM_ID"] = "Kelias į forumą neteisingas";
+$MESS["FM_WRONG_UPDATE"] = "Atnaujinti nepavyko";
+$MESS["FM_TOPICS"] = "Žinutės";
+$MESS["FORUM_TOPICS"] = "Tvarkyti temas";
+$MESS["FM_ACT_DELETE"] = "Ištrinti";
+$MESS["FM_ACT_MOVE"] = "Perkelti";
+$MESS["FM_TITLE_NAME"] = "Pavadinimas";
+$MESS["FM_TITLE_DESCRIPTION"] = "Aprašymas";
+$MESS["FM_TITLE_STATE"] = "Būklė";
+$MESS["FM_TITLE_APPROVED"] = "Moderacija";
+$MESS["FM_TITLE_SORT"] = "Rūšiavimas";
+$MESS["FM_TITLE_AUTHOR"] = "Autorius";
+$MESS["FM_TITLE_MESSAGES"] = "Žinutės";
+$MESS["FM_TITLE_VIEWS"] = "Peržiūros";
+$MESS["FM_TITLE_FORUM"] = "Forumas";
+$MESS["FM_TITLE_LAST_MESSAGE"] = "Paskutinė žinutė";
+$MESS["FM_TITLE_DATE_CREATE"] = "Sukurta";
+$MESS["FM_TITLE_DATE_LAST_POST"] = "Modifikuotas";
+$MESS["FM_TITLE_USER_START_ID"] = "Autoriaus ID";
+$MESS["F_OPEN"] = "Atidarytas";
+$MESS["F_CLOSE"] = "Uždarytas";
+$MESS["F_SHOW"] = "Patvirtinta";
+$MESS["F_HIDE"] = "Ne patvirtinta";
+$MESS["F_PINN"] = "Prikabinta";
+$MESS["F_UNPINN"] = "Atsegta";
+$MESS["F_LINK"] = "Nuoroda";
+$MESS["F_ALL"] = "Visi";
+$MESS["MAIN_ADMIN_LIST_SELECTED"] = "Pasirinkta:";
+$MESS["MAIN_ADMIN_LIST_CHECKED"] = "Pažymėta:";
+?>

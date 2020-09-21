@@ -1,0 +1,2 @@
+<?php
+$MESS['TASKS_COUNTERS_PROCESSOR_ADMIN_IS_NOT_AN_ADMIN'] = "Sistemos naudotojas nėra administratorius. Sistemos funkcionalumas gali sutrikti. Prašome įsitikinti, kad vartotojas su ID = 1 yra administratorius ir yra aktyvus.";

@@ -1,0 +1,36 @@
+<?
+$MESS["TELEPHONY_BILLING"] = "Facturation";
+$MESS["TELEPHONY_FILTER_COMMENT"] = "Commentaire";
+$MESS["TELEPHONY_FILTER_CRM"] = "CRM";
+$MESS["TELEPHONY_FILTER_HAS_RECORD"] = "Enregistrement d'appel";
+$MESS["TELEPHONY_FILTER_STATUS_FAILED"] = "Appel infructueux";
+$MESS["TELEPHONY_FILTER_STATUS_SUCCESSFUL"] = "Appel réussi";
+$MESS["TELEPHONY_FILTER_STATUS_UNSET"] = "(aucun)";
+$MESS["TELEPHONY_FILTER_TRANSCRIPT_TEXT"] = "La transcription contient";
+$MESS["TELEPHONY_HEADER_COMMENT"] = "Commentaire";
+$MESS["TELEPHONY_HEADER_COST"] = "Coût";
+$MESS["TELEPHONY_HEADER_CRM"] = "CRM";
+$MESS["TELEPHONY_HEADER_DURATION"] = "Durée d'appel";
+$MESS["TELEPHONY_HEADER_INCOMING"] = "Type d'appel";
+$MESS["TELEPHONY_HEADER_LOG"] = "Informations";
+$MESS["TELEPHONY_HEADER_PHONE"] = "Téléphone";
+$MESS["TELEPHONY_HEADER_PORTAL_PHONE"] = "Numéro de téléphone du portail";
+$MESS["TELEPHONY_HEADER_RECORD"] = "Enregistrement";
+$MESS["TELEPHONY_HEADER_START_DATE"] = "Date d'appel";
+$MESS["TELEPHONY_HEADER_STATUS"] = "Statut";
+$MESS["TELEPHONY_HEADER_TRANSCRIPT_COST"] = "Coût de transcription";
+$MESS["TELEPHONY_HEADER_USER"] = "Employé";
+$MESS["TELEPHONY_HEADER_VOTE"] = "Évaluation";
+$MESS["TELEPHONY_PORTAL_PHONE_EMPTY"] = "Non identifié";
+$MESS["TELEPHONY_PORTAL_PHONE_SIP_CLOUD"] = "PBX hébergé sur Cloud (#ID#)";
+$MESS["TELEPHONY_PORTAL_PHONE_SIP_OFFICE"] = "Office PBX (#ID#)";
+$MESS["TELEPHONY_STATUS_1"] = "Crédit bonus d'inscription chargé. Pour plus d'informations, veuillez contacter le support technique.";
+$MESS["TELEPHONY_STATUS_2"] = "Crédit bonus d'inscription chargé.";
+$MESS["TELEPHONY_STATUS_3"] = "Recharge de crédit";
+$MESS["TELEPHONY_STATUS_409"] = "Solde corrigé après avoir été vérifié par un spécialiste. Pour plus d'informations, veuillez contacter le support technique.";
+$MESS["TEL_STAT_ACTION_DOWNLOAD"] = "Télécharger l'enregistrement";
+$MESS["TEL_STAT_ACTION_SHOW_LOG"] = "Voir le journal";
+$MESS["TEL_STAT_ACTION_SHOW_TRANSCRIPTION"] = "Ouvrir la transcription";
+$MESS["TEL_STAT_EXPORT_LOCK_ERROR"] = "L'exportation des données est en cours de préparation pour le moment, veuillez réessayer plus tard.";
+$MESS["TEL_STAT_SHOW_TRANSCRIPT"] = "Ouvrir la transcription";
+?>

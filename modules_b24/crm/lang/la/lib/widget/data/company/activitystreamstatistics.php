@@ -1,0 +1,8 @@
+<?
+$MESS["CRM_COMPANY_ACTIVITY_STREAM_STAT_GROUP_BY_STREAM"] = "Solicitud de flujo";
+$MESS["CRM_COMPANY_ACTIVITY_STREAM_STAT_INCOMING_QTY"] = "Número de llamadas entrantes";
+$MESS["CRM_COMPANY_ACTIVITY_STREAM_STAT_MISSING_QTY"] = "Número de llamadas perdidas";
+$MESS["CRM_COMPANY_ACTIVITY_STREAM_STAT_OUTGOING_QTY"] = "Número de llamadas salientes";
+$MESS["CRM_COMPANY_ACTIVITY_STREAM_STAT_REVERSING_QTY"] = "Número de rellamadas";
+$MESS["CRM_COMPANY_ACTIVITY_STREAM_STAT_TOTAL"] = "Número de llamadas";
+?>

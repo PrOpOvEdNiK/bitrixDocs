@@ -1,0 +1,36 @@
+<?
+$MESS["P_CLOSE_FILTER"] = "Cacher";
+$MESS["P_DELETE"] = "Supprimer";
+$MESS["P_DELETE_CONFIRM"] = "Etes-vous sûr de vouloir supprimer les photos sans possibilité de leur restitution ?";
+$MESS["P_FILTER_RESET"] = "Annuler";
+$MESS["P_FILTER_SHOW"] = "Afficher";
+$MESS["P_GROUP_BY_DATE_CREATE"] = "Grouper les photos par jour d'ajout";
+$MESS["P_NOT_PUBLIC"] = "Ne pas publier";
+$MESS["P_NO_PHOTO"] = "La liste de photos est vide.";
+$MESS["P_OPEN_FILTER"] = "Montrer le filtre";
+$MESS["P_PHOTO_ORDER_BY_COMMENTS"] = "Photographies commentées";
+$MESS["P_PHOTO_ORDER_BY_DATE_CREATE"] = "Nouveaux";
+$MESS["P_PHOTO_ORDER_BY_RATING"] = "Meilleures photos";
+$MESS["P_PHOTO_ORDER_BY_SHOWS"] = "Photos en cours de consultation";
+$MESS["P_PHOTO_SORT_COMMENTS"] = "Commentés";
+$MESS["P_PHOTO_SORT_COMMENTS_TITLE"] = "par le nombre de commentaires";
+$MESS["P_PHOTO_SORT_ID"] = "Créer";
+$MESS["P_PHOTO_SORT_ID_TITLE"] = "d'après la date de l'ajout";
+$MESS["P_PHOTO_SORT_RATING"] = "Bhoutan";
+$MESS["P_PHOTO_SORT_RATING_TITLE"] = "par le classement d'après le vote pour les photos";
+$MESS["P_PHOTO_SORT_SHOWS"] = "déplacer les éléments sélectionnés dans un ordre séparé";
+$MESS["P_PHOTO_SORT_SHOWS_TITLE"] = "par le nombre d'examens";
+$MESS["P_PUBLIC"] = "Publier";
+$MESS["P_SELECT_PHOTO_FROM_PERIOD"] = "Choisir des photos pour la période";
+$MESS["P_SHOW"] = "Afficher";
+$MESS["P_SHOW_FILTER"] = "Filtre de l'éditeur";
+$MESS["P_SHOW_ONLY_NOT_ACTIVE"] = "non publiés";
+$MESS["P_SHOW_ONLY_NOT_ACTIVE_TILTE"] = "Photos non acceptées - ce sont des photos qui n'ont pas passées par la censure et que tout le monde ne voit pas, sauf l'auteur et l'éditeur.";
+$MESS["P_SHOW_ONLY_NOT_PUBLIC"] = "photos inédites";
+$MESS["P_SHOW_ONLY_NOT_PUBLIC_TITLE"] = "Les photos non publiées - ce sont les photos qui seront affichées sur la page d'accueil et sur les listes communes mais qui n'ont pas reçu l'approbation de l'éditeur.";
+$MESS["P_SHOW_ONLY_NOT_PUBLIC_TITLE1"] = "Des photos non publiées - ce sont les photos que l'auteur a voulu placer sur la page d'accueil et sur les listes générales, mais qui n'ont pas reçu l'approbation de l'éditeur.";
+$MESS["P_SHOW_SIMPLE"] = "photos approuvées";
+$MESS["P_SHOW_SIMPLE_TITLE"] = "Toutes les photos visibles pour l'utilisateur ordinaire seront affichées.";
+$MESS["P_UP"] = "Déplacer vers le haut";
+$MESS["P_UP_TITLE"] = "Accéder à la liste d'albums";
+?>

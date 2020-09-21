@@ -1,0 +1,30 @@
+<script type='text/ejs' id='projectPanelSyncKanban24'>
+    <div class='header'>
+        <i></i>
+        <h3><?= $this->t('SYNC_KANBAN24') ?></h3>
+    </div>
+    <div class='content js-content'></div>
+    <div class="content">
+        <div class="kanban-conflict-resolve">
+            <label>Что побеждает при конфликте синхронизации:</label>
+            <label><input type="radio" class="js-kanban-sync-conflict" name="kanban_sync_conflict" value="stage" <% if (model.kanbanSyncConflict == 'stage') { %>checked<% } %> /> <?= $this->t('KANBAN_SYNC_CONFLICT_STAGE'); ?></label>
+            <label><input type="radio" class="js-kanban-sync-conflict" name="kanban_sync_conflict" value="status" <% if (model.kanbanSyncConflict == 'status') { %>checked<% } %> /> <?= $this->t('KANBAN_SYNC_CONFLICT_STATUS'); ?></label>
+        </div>
+    </div>
+</script>
+<!--
+1. Без синхронизации — выводится всегда, последнимпунктом.
++ поясняющий текст, Катя даст. Пока любой с макета.
+
+2. Использовать колонки Доски задач для Канбан в Битрикс24 — выводим, если:
+а) В Скрамбане есть колонки, в Канбан24 нет стадий.
+б) В Скрамбане есть колонки, в Канбан24 есть стадии, стадии по названиям и/или количеству расходятся с колонками.
++ поясняющий текст, Катя даст. Пока любой с макета.
+
+3. Использовать колонки (стадии) Канбан из Битрикс24 для создания колонок в Доске задач — выводим, если:
+а) В Скрамбане есть колонки, в Канбан24 есть стадии, стадии по названиям и/или количеству расходятся с колонками.
++ поясняющий текст, Катя даст. Пока любой с макета.
+
+4. Использовать одинаковые колонки в Доске задач и Стадии в Битрикс24 — выводим ВМЕСТО 2 и 3, если:
+а) В Скрамбане и Канбан24 есть колонки и стадии, и они совпадают по количеству и названиям.
++ поясняющий текст, Катя даст. Пока любой с макета.-->

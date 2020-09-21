@@ -1,0 +1,30 @@
+<?
+$MESS['BLOG_TITLE'] = 'Tinklaraščio pavadinimas:';
+$MESS['BLOG_TITLE_DESCR'] = 'Įveskite unikalų pavadinimą, kuris tiksliausiai apibūdina Jūsų tinklaraštį';
+$MESS['BLOG_DESCR'] = 'Tinklaraščio aprašymas:';
+$MESS['BLOG_DESCR_TITLE'] = 'Laisvas Jūsų tinklaraščio aprašymas';
+$MESS['BLOG_URL'] = 'Pseudonimas (lotyniškomis raidėmis):';
+$MESS['BLOG_GRP'] = 'Tinklaraščių grupė';
+$MESS['BLOG_GRP_TITLE'] = 'Tinklaraščių grupė, su kurią labiausiai susijęs Jūsų tinklaraštis';
+$MESS['BLOG_AUTO_MSG'] = 'Automatinis pranešimas:';
+$MESS['BLOG_AUTO_MSG_TITLE'] = 'Naudoti apsaugą nuo automatinių pranešimų';
+$MESS['BLOG_CAPTHA'] = 'Neautorizuotam vartotojui rašant komentarus reikalauti įvesti paveiksle esantį tekstą';
+$MESS['BLOG_OPENED_GRPS'] = 'Atviros grupės:';
+$MESS['BLOG_OPENED_TITLE'] = 'Nurodykite grupes, į kurias gali patekti visi norintys be jūsų patvirtinimo';
+$MESS['BLOG_DEF_PERMS'] = 'Prieiga pagal nutylėjimą:';
+$MESS['BLOG_GROUPS'] = 'grupės';
+$MESS['BLOG_MESSAGES'] = 'pranešimai';
+$MESS['BLOG_COMMENTS'] = 'komentarai';
+$MESS['BLOG_ALL_USERS'] = 'visi naudotojai';
+$MESS['BLOG_REGISTERED'] = 'registruoti naudotojai';
+$MESS['BLOG_PERMS_TITLE'] = 'Nurodykite įvairių grupių prieigos teises jūsų tinklaraščiui. Esant reikalui galite nurodyti teises kiekvienam pranešimui atskirai.';
+$MESS['BLOG_SAVE'] = 'Išsaugoti';
+$MESS['BLOG_CREATE'] = 'Sukurti tinklaraštį';
+$MESS['BLOG_URL_TITLE'] = 'Nurodykite unikalų tinklaraščio pavadinimą lotyniškomis raidėmis. Jis bus naudojamas jūsų tinklaraščio web adreso sukūrimui, pvz. http://this-site.lt/blog/[tinklaraščio pavadinimas]';
+$MESS['BLOG_APPLY'] = 'Pritaikyti';
+$MESS['BLOG_CANCEL'] = 'Nutraukti';
+$MESS['BLOG_EMAIL_NOTIFY'] = 'Pranešimai';
+$MESS['BLOG_EMAIL_NOTIFY_TITLE'] = 'Siųsti pranešimus el. paštu';
+$MESS['BLOG_EMAIL_NOTIFY_HELP'] = 'Įjungus šį nustatymą į Jūsų el. pašto dėžutę bus siunčiami pranešimai apie komentarus bei naujas žinutes Jūsų tinklaraštyje.';
+$MESS['STOF_REQUIED_FIELDS_NOTE'] = 'Ženklas "žvaigždutė" (<font color="#ff0000">*</font>) nurodo privalomus laukus.';
+?>

@@ -1,0 +1,31 @@
+<?
+$MESS['BLB_DELETE_ERROR'] = 'Klaida šalinant tinklaraštį';
+$MESS['BLB_GROUP_NAV'] = 'Tinklaraščiai';
+$MESS['BLB_NAME'] = 'Pavadinimas';
+$MESS['BLB_DATE_CREATE'] = 'Sukurta';
+$MESS['BLB_DATE_UPDATE'] = 'Paskutinis atnaujinimas';
+$MESS['BLB_ACTIVE'] = 'Aktyvus:';
+$MESS['BLB_OWNER_ID'] = 'Naudotojas';
+$MESS['BLB_URL'] = 'Adresas';
+$MESS['BLB_GROUP_ID'] = 'Grupė';
+$MESS['BLB_UPDATE_ALT'] = 'Keisti tinklaraščio nustatymus';
+$MESS['BLB_DELETE_ALT'] = 'Pašalinti tinklaraštį';
+$MESS['BLB_DELETE_CONF'] = 'Ar tikrai norite pašalinti šį tinklaraštį?';
+$MESS['BLB_ADD_NEW'] = 'Naujas blogas';
+$MESS['BLB_ADD_NEW_ALT'] = 'Spauskyte pridėti naują tinklaraštį';
+$MESS['BLB_TITLE'] = 'Tinklaraščiai';
+$MESS['BLB_FILTER_ACTIVE'] = 'Aktyvus:';
+$MESS['BLB_FILTER_URL'] = 'Adresas';
+$MESS['BLB_FILTER_GROUP_ID'] = 'Grupė';
+$MESS['BLB_FILTER_OWNER'] = 'Naudotojas';
+$MESS['BLB_FILTER_NAME'] = 'Pavadinimas';
+$MESS['BLB_F_ALL'] = '(viską)';
+$MESS['BLB_YES'] = 'Taip';
+$MESS['BLB_NO'] = 'Ne';
+$MESS['BLB_ALLOW_HTML'] = 'html';
+$MESS['BLB_SOCNET_GROUP_ID'] = 'Tinklaraščio savininko grupė ';
+$MESS["BLB_USE_SOCNET"] = "Soc. tinklas";
+$MESS["MAIN_ADMIN_LIST_SELECTED"] = "Pasirinkta:";
+$MESS["MAIN_ADMIN_LIST_CHECKED"] = "Pažymėta:";
+$MESS["MAIN_ADMIN_LIST_DELETE"] = "ištrinti";
+?>

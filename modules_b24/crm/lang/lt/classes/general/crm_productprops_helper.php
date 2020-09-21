@@ -1,0 +1,14 @@
+<?
+$MESS["CRM_PRODUCT_PROP_IBLOCK_PROP_S"] = "Eilutė";
+$MESS["CRM_PRODUCT_PROP_IBLOCK_PROP_N"] = "Skaičius";
+$MESS["CRM_PRODUCT_PROP_IBLOCK_PROP_L"] = "Sąrašas";
+$MESS["CRM_PRODUCT_PROP_IBLOCK_PROP_F"] = "Byla";
+$MESS["CRM_PRODUCT_PROP_IBLOCK_PROP_G"] = "Susieti su skyriumi";
+$MESS["CRM_PRODUCT_PROP_IBLOCK_PROP_E"] = "Susieti su elementu";
+$MESS["CRM_PRODUCT_PE_PROP_TYPE_S"] = "Eilutė";
+$MESS["CRM_PRODUCT_PE_PROP_TYPE_N"] = "Skaičius";
+$MESS["CRM_PRODUCT_PE_PROP_TYPE_L"] = "Sąrašas";
+$MESS["CRM_PRODUCT_PE_PROP_TYPE_F"] = "Byla";
+$MESS["CRM_PRODUCT_PE_PROP_TYPE_G"] = "Susieti su skyriumi";
+$MESS["CRM_PRODUCT_PE_PROP_TYPE_E"] = "Susieti su elementu";
+?>

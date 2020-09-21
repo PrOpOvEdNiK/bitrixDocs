@@ -1,0 +1,35 @@
+<?
+$MESS["IB_SEG_MAIN_TITLE"] = "SKU generatorius";
+$MESS["IB_SEG_TAB_TITLE"] = "SKU generatorius";
+$MESS["IB_SEG_TITLE"] = "Pavadinimas";
+$MESS["IB_SEG_WEIGHT"] = "Svoris";
+$MESS["IB_SEG_PRICE_TYPE"] = "Kainos tipas";
+$MESS["IB_SEG_PRICE"] = "Prekės kaina";
+$MESS["IB_SEG_PRICE_SHORT"] = "Kina";
+$MESS["IB_SEG_CURRENCY"] = "Valiuta";
+$MESS["IB_SEG_GENERATE"] = "Generuoti";
+$MESS["IB_SEG_CANCEL"] = "Atšaukti";
+$MESS["IB_SEG_PRICE_ROW_ADD"] = "Daugiau";
+$MESS["IB_SEG_PROPERTY_ADD"] = "Pridėti savybę";
+$MESS["IB_SEG_PROPERTY_ADD_ALL"] = "Pridėti viską";
+$MESS["IB_SEG_VAT"] = "PVM tarifas";
+$MESS["IB_SEG_VAT_INCLUDED"] = "Mokesčiai įtraukti";
+$MESS["IB_SEG_DETAIL"] = "Išsamiai";
+$MESS["IB_SEG_ANNOUNCE"] = "Anonsas";
+$MESS["IB_SEG_SELECTED_PROPERTIES"] = "Pasirinktos savybės";
+$MESS["IB_SEG_PICTURES"] = "Paveikslėliai";
+$MESS["IB_SEG_ADD_PICTURES"] = "Pridėti paveikslėlius";
+$MESS["IB_SEG_FOR_ALL"] = "Visiems";
+$MESS["IB_SEG_SORT"] = "Rūšiavimas";
+$MESS["IB_SEG_ADD"] = "Pridėti";
+$MESS["IB_SEG_TOOLTIP_TITLE"] = "Lauko pavadinimas yra neprivalomas. Jei nenurodyta, bus naudojama produkto pavadinimas. Jei pavadinimas nurodytas šablonu, visi SKU bus grindžiami šiuo šablonu.";
+$MESS["IB_SEG_TOOLTIP_WEIGHT"] = "Supakuuotos prekės svoris ir matmenys. Šios vertės bus taikomos visų produktų SKU ir gali būti pakeistos vėliau.";
+$MESS["IB_SEG_TOOLTIP_PROPERTIES"] = "Savybės kurias naudos generatorius, turi būti \"sąrašas\" tipo.";
+$MESS["IB_SEG_BASE_LENGTH"] = "Ilgis (mm)";
+$MESS["IB_SEG_BASE_WIDTH"] = "Plotis (mm)";
+$MESS["IB_SEG_BASE_HEIGHT"] = "Aukštis (mm)";
+$MESS["IB_SEG_SKU_PROPERTIES"] = "SKU savybės";
+$MESS["IB_SEG_PARENT_PROPERTIES"] = "Aukštesnio lygio savybės savybės";
+$MESS["IB_SEG_QUANTITY"] = "Turimas kiekis:";
+$MESS["IB_SEG_MEASURE"] = "Matavimo vienetas";
+?>

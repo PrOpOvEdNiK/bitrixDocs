@@ -1,0 +1,6 @@
+<?
+$MESS["TASK_TOOLBAR_FILTER_BUTTON"] = "Filtr";
+$MESS["TASK_TOOLBAR_FILTER_GANTT"] = "Wykres Gantta";
+$MESS["TASK_TOOLBAR_FILTER_LIST"] = "Płaski widok";
+$MESS["TASK_TOOLBAR_FILTER_REPORTS"] = "Raporty";
+?>

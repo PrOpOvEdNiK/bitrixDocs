@@ -1,0 +1,4 @@
+<?
+$MESS["SALE_HPS_WEBMONEY_PAYMENT_DESC"] = "Mokėjimas #ID# nuo #DATE_INSERT#";
+$MESS["SALE_HPS_WEBMONEY_BUTTON"] = "Apmokėti";
+?>

@@ -1,0 +1,31 @@
+<?
+$MESS["EMAIL_OPT_DAYS"] = "jours";
+$MESS["EMAIL_OPT_HR"] = "h";
+$MESS["EMAIL_OPT_MIN"] = "m";
+$MESS["EMAL_OPT_PHP_LINE"] = "Ligne de commande de lancement du PHP : ";
+$MESS["EMAL_OPT_SEC"] = "a";
+$MESS["EMAL_OPT_SMTP_RUN"] = "Serveur: fonctionne.";
+$MESS["EMAL_OPT_SMTP_STAT_CNT"] = "Accepté:";
+$MESS["EMAL_OPT_SMTP_STAT_CNT_MAIL"] = "messages";
+$MESS["EMAL_OPT_SMTP_STAT_CONS"] = "Connexions : ";
+$MESS["EMAL_OPT_SMTP_STAT_CONS_NOW"] = "au moment actuel : ";
+$MESS["EMAL_OPT_SMTP_STAT_START"] = "Démarré";
+$MESS["EMAL_OPT_SMTP_STAT_UPTIME"] = "Fonctionne";
+$MESS["EMAL_OPT_SMTP_STOPPED"] = "Serveur: arrêté.";
+$MESS["EMAL_OPT_START_SMTP"] = "Lancez le serveur SMTP";
+$MESS["EMAL_OPT_STATUS"] = "Statut";
+$MESS["EMAL_OPT_STATUS_UNK"] = "inconnu";
+$MESS["EMAL_OPT_STOP_SMTP"] = "Arrêter le serveur SMTP";
+$MESS["MAIL_OPTIONS_CHECKSPAM"] = "Vérifier les messages entrants pour le spam";
+$MESS["MAIL_OPTIONS_LOG_SAVE"] = "Purge Adresse emaillog après (jours) : ";
+$MESS["MAIL_OPTIONS_RESET"] = "Annuler";
+$MESS["MAIL_OPTIONS_SAVE"] = "Enregistrer";
+$MESS["MAIL_OPTIONS_SAVE_ATTACHMENTS"] = "Enregistrer les pièces jointes dans la base de données";
+$MESS["MAIL_OPTIONS_SAVE_SRC"] = "Enregistrer email messages Adresse entrants dans la base de données";
+$MESS["MAIL_OPTIONS_TIMEOUT"] = "Délai de connexion (en minutes) : ";
+$MESS["MAIL_OPT_CONFIRM"] = "La valeur actuelle de la ligne de commande n'est pas sauvegardée. Lancer le serveur avec les anciennes données ?";
+$MESS["MAIL_OPT_ERR"] = "Erreur: ne peut pas vous désinscrire.";
+$MESS["MAIL_OPT_ERR_CON"] = "Erreur de connexion.";
+$MESS["MAIN_TAB_SMTP"] = "Serveur SMTP";
+$MESS["MAIN_TAB_SMTP_TITLE"] = "Les paramètres de la mise en marche du serveur SMTP";
+?>

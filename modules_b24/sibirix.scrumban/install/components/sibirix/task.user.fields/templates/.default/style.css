@@ -1,0 +1,68 @@
+.edit-fields {
+    display: inline-block;
+    border-bottom: 1px dashed;
+    cursor: pointer;
+    color: #999;
+    border-bottom-color: #999;
+}
+
+.edit-fields:hover {
+    border-bottom-color: transparent;
+}
+
+.edit-fields:after {
+    content: '';
+    display: inline-block;
+    position:absolute;
+    padding-left: 0;
+    width: 26px;
+    height: 20px;
+    margin: 0;
+    background: url("data:image/gif;base64,R0lGODlhCAAKAIABAHmAif///yH5BAEAAAEALAAAAAAIAAoAAAIRjA1wmMr9UnQKsuDe2qt5UAAAOw==") 50% 50% no-repeat;
+    cursor: pointer;
+    opacity: 0.5;
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
+    filter: alpha(opacity = 50);
+}
+
+.popup-window-button-link-cancel .popup-window-button-link-text {
+    color: #999 !important;
+    margin-top: 4px;
+    font: normal 14px Arial, sans-serif;
+    text-decoration: none !important;
+    cursor: pointer;
+    display: inline-block;
+    border-bottom: 1px dotted #999;
+}
+
+.task-detail-properties {
+    border-top: 0;
+    margin: 0;
+    padding: 0;
+}
+
+.webform-row.task-additional-properties-row {
+    padding-bottom: 25px;
+}
+.webform-row.task-additional-properties-row.required-only {
+    padding-bottom: 0;
+    margin-bottom: 0;
+}
+
+.task-property-name {
+    white-space: nowrap;
+    vertical-align: top;
+    padding: 5px 0;
+}
+.task-property-value {
+    padding: 5px 10px;
+}
+.fields.datetime {
+    white-space: nowrap;
+}
+.popup-window-button:before, .popup-window-button:after {
+    display: none;
+}
+.popup-window-button.popup-window-button-accept {
+    padding: 0 10px;
+}

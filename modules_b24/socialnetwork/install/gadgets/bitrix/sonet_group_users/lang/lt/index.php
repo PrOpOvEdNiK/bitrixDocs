@@ -1,0 +1,5 @@
+<?
+$MESS["GD_SONET_GROUP_USERS_TITLE"] = "Nariai";
+$MESS["GD_SONET_GROUP_USERS_AL_USERS"] = "Visi nariai";
+$MESS["GD_SONET_GROUP_USERS_NO_USERS"] = "Narių nėra";
+?>

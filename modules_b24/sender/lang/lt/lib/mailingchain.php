@@ -1,0 +1,12 @@
+<?
+$MESS["SENDER_CHAIN_STATUS_N"] = "Paruoštas siuntymui";
+$MESS["SENDER_CHAIN_STATUS_S"] = "Siunčiama..";
+$MESS["SENDER_CHAIN_STATUS_W"] = "Laukiama siuntymo";
+$MESS["SENDER_CHAIN_STATUS_Y"] = "Išsiųsta";
+$MESS["SENDER_ENTITY_MAILING_CHAIN_FIELD_TITLE_SUBJECT"] = "Tema";
+$MESS["SENDER_ENTITY_MAILING_CHAIN_FIELD_TITLE_MESSAGE"] = "Laiško turinys";
+$MESS["SENDER_ENTITY_MAILING_CHAIN_VALID_EMAIL_FROM"] = "Lauke \"Nuo\" nurodytas ne el. pašto adresas.";
+$MESS["SENDER_ENTITY_MAILING_CHAIN_FIELD_TITLE_EMAIL_FROM1"] = "Siuntėjas";
+$MESS["SENDER_CHAIN_STATUS_P"] = "Pauzė";
+$MESS["SENDER_ENTITY_MAILING_CHAIN_FIELD_TITLE_TITLE"] = "Naujienlaiškio pranešimo pavadinimas";
+?>

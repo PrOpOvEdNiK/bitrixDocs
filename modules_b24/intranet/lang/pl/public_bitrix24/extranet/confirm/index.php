@@ -1,0 +1,3 @@
+<?
+$MESS["TITLE"] = "Potwierdzenie rejestracji";
+?>

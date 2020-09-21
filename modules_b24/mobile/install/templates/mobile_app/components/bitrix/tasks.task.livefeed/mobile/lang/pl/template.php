@@ -1,0 +1,4 @@
+<?
+$MESS["TASKS_SONET_LOG_DESCRIPTION"] = "Opis";
+$MESS["TASKS_SONET_LOG_RESPONSIBLE_ID"] = "Odpowiedzialny";
+?>

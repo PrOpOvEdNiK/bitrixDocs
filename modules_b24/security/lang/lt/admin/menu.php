@@ -1,0 +1,36 @@
+<?
+$MESS["SEC_MENU_ITEM"] = "Proaktyvi apsauga";
+$MESS["SEC_MENU_TITLE"] = "Konfigūruoti proaktyvią apsaugą";
+$MESS["SEC_MENU_PANEL_ITEM"] = "Saugos skydelis";
+$MESS["SEC_MENU_PANEL_TITLE"] = "Saugumo skydelio parametrų santrauka";
+$MESS["SEC_MENU_FILTER_ITEM"] = "Proaktyvus filtras";
+$MESS["SEC_MENU_FILTER_TITLE"] = "Tvarkyti proaktyvų filtrą";
+$MESS["SEC_MENU_ANTIVIRUS_ITEM"] = "Web antivirusas";
+$MESS["SEC_MENU_ANTIVIRUS_TITLE"] = "Antiviruso tvarkymas ir konfigūracija";
+$MESS["SEC_MENU_FILTER_LOG_ITEM"] = "Atakų žurnalas ";
+$MESS["SEC_MENU_FILTER_LOG_TITLE"] = "Peržiūrėti atakų žurnalą";
+$MESS["SEC_MENU_OTP_NEW_ITEM"] = "Dviejų etapų autentifikavimas";
+$MESS["SEC_MENU_OTP_NEW_ITEM_TITLE"] = "Įjungti ir konfigūruoti dviejų etapų autentifikavimą";
+$MESS["SEC_MENU_ADMINIP_ITEM"] = "Valdymo skydelio apsauga";
+$MESS["SEC_MENU_ADMINIP_TITLE"] = "Filtruoti prieigą prie valdymo skydelio pagal IP adresą";
+$MESS["SEC_MENU_IP_ITEM"] = "Stop-sąrašas";
+$MESS["SEC_MENU_IP_TITLE"] = "IP blokavimo taisyklės";
+$MESS["SEC_MENU_FILE_ITEM"] = "Vientisumo kontrolė";
+$MESS["SEC_MENU_FILE_TITLE"] = "Patikrinti failo vientisumą";
+$MESS["SEC_MENU_ACTIVITY_ITEM"] = "Veiklos kontrolė";
+$MESS["SEC_MENU_ACTIVITY_TITLE"] = "Konfigūruoti veiklos ribas naudojant Web Analikos modulį";
+$MESS["SEC_MENU_SESSION_ITEM"] = "Sesijos apsauga";
+$MESS["SEC_MENU_SESSION_TITLE"] = "Sesijos apsaugos parametrai";
+$MESS["SEC_MENU_PHP_ITEM"] = "Rekomendacijos dėl PHP konfigūracijos";
+$MESS["SEC_MENU_PHP_TITLE"] = "Rekomendacijos dėl PHP konfigūracijos";
+$MESS["SEC_MENU_REDIRECT_ITEM"] = "Nukreipti apsaugą";
+$MESS["SEC_MENU_REDIRECT_TITLE"] = "Įjungiama nukreipimoi apsauga nuo informacijos išgavimo.";
+$MESS["SEC_MENU_FRAME_ITEM"] = "Anti-freimų apsauga";
+$MESS["SEC_MENU_FRAME_TITLE"] = "Įjungia anti-freimų apsaugą";
+$MESS["SEC_MENU_SCANNER_ITEM"] = "Apsaugos skeneris";
+$MESS["SEC_MENU_SCANNER_TITLE"] = "Paleisti apsaugos skenerį";
+$MESS["SEC_MENU_HOSTS_ITEM"] = "Serveriai/domenai";
+$MESS["SEC_MENU_HOSTS_TITLE"] = "Serverio apribojimų savybės";
+$MESS["SEC_MENU_DDOS_ITEM"] = "Apsauga nuo DDoS";
+$MESS["SEC_MENU_DDOS_TITLE"] = "Įjungti apsauga nuo DDoS";
+?>

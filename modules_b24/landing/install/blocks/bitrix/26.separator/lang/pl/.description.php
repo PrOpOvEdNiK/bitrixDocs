@@ -1,0 +1,4 @@
+<?
+$MESS["LANDING_BLOCK_9_SEPARATOR_LINE"] = "Seperator";
+$MESS["LANDING_BLOCK_9_SEPARATOR_NAME"] = "Seperator";
+?>

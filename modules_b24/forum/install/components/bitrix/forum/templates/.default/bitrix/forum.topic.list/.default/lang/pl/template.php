@@ -1,0 +1,38 @@
+<?
+$MESS["F_AUTHOR"] = "autor:";
+$MESS["F_CLOSED"] = "Zamknięte";
+$MESS["F_CLOSED_TOPIC"] = "Temat został zamknięty";
+$MESS["F_CREATE_NEW_TOPIC"] = "<noindex><a rel='nofollow' href='#HREF#'>Utwórz pierwszy temat</a></noindex> w tym temacie.";
+$MESS["F_HAVE_NEW_MESS"] = "Nowe posty";
+$MESS["F_HEAD_AUTHOR"] = "Autor";
+$MESS["F_HEAD_LAST_POST"] = "Ostatni Post";
+$MESS["F_HEAD_POSTS"] = "Posty";
+$MESS["F_HEAD_TOPICS"] = "Tematy";
+$MESS["F_HEAD_VIEWS"] = "Widoki";
+$MESS["F_MANAGE_CLOSE"] = "Zamknij tematy";
+$MESS["F_MANAGE_DELETE"] = "Usuń tematy";
+$MESS["F_MANAGE_MOVE"] = "Przenieś tematy";
+$MESS["F_MANAGE_OPEN"] = "Otwórz tematy";
+$MESS["F_MANAGE_PIN"] = "Przypnij tematy";
+$MESS["F_MANAGE_TOPICS"] = "Zarządzaj tematami";
+$MESS["F_MANAGE_UNPIN"] = "Odepnij tematy";
+$MESS["F_MESSAGE_NOT_APPROVED"] = "Niezatwierdzone wiadomości";
+$MESS["F_MOVED"] = "przeniesione";
+$MESS["F_MOVED_TOPIC"] = "Temat został przeniesiony";
+$MESS["F_NEW_TOPIC"] = "Dodaj nowy temat";
+$MESS["F_NEW_TOPIC_TITLE"] = "Dodaj nowy temat na tym forum";
+$MESS["F_NO_NEW_MESS"] = "Brak nowych postów";
+$MESS["F_NO_TOPICS_HERE"] = "Nie ma tutaj tematów.";
+$MESS["F_PINNED"] = "Przypięte";
+$MESS["F_PINNED_CLOSED_TOPIC"] = "Zamknięty przypięty temat";
+$MESS["F_PINNED_TOPIC"] = "Przypięte";
+$MESS["F_SELECT_ALL"] = "Wybierz wszystkie";
+$MESS["F_SET_FORUM_READ"] = "Oznacz wszystkie posty, jako przeczytane";
+$MESS["F_SUBSCRIBE"] = "Subskrybuj";
+$MESS["F_SUBSCRIBE_TO_NEW_POSTS"] = "Subskrypuj do nowych postów";
+$MESS["F_TOPIC_START"] = "Data rozpoczęcia";
+$MESS["F_USER_PROFILE"] = "Profil Użytkownika";
+$MESS["JS_DEL_TOPICS"] = "Spowoduje to nieodwracalne usunięcie tematów. Kontynuować?";
+$MESS["JS_NO_ACTION"] = "Brak wybranych działań do wykonania na tematach. Proszę wybrać działanie.";
+$MESS["JS_NO_TOPICS"] = "Brak wybranych tematów. Proszę wybrać tematy.";
+?>

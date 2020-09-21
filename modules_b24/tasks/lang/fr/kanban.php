@@ -1,0 +1,35 @@
+<?
+$MESS["MAIN_KANBAN_NOTIFY_CHANGE_DEADLINE"] = "La date limite de la tâche a été modifiée : #date#";
+$MESS["MAIN_KANBAN_NOTIFY_REMOVE_DEADLINE"] = "La date limite de la tâche a été supprimée";
+$MESS["MAIN_KANBAN_TITLE_PLACEHOLDER"] = "Intitulé #tag";
+$MESS["TASKS_KANBAN_DIABLE_SORT_TOOLTIP"] = "Vous n'avez pas les autorisations pour modifier les préférences du projet";
+$MESS["TASKS_KANBAN_ME_DISABLE_COMPLETE"] = "La tâche a été fermée. Reprenez-la pour la déplacer vers une autre colonne.";
+$MESS["TASKS_KANBAN_ME_DISABLE_DEADLINE"] = "Les dates de la tâche ne peuvent pas être modifiées sans changer la date limite";
+$MESS["TASKS_KANBAN_ME_DISABLE_DEADLINE_PART"] = "La date limite de la tâche restreint l'intervalle de dates possibles";
+$MESS["TASKS_KANBAN_ME_DISABLE_DEADLINE_PART2"] = "Impossible de déplacer cet élément à cause de la date limite de la tâche";
+$MESS["TASKS_KANBAN_ME_DISABLE_FROM_OVERDUE"] = "Modifier la date limite de la tâche ou la fermer avant de la déplacer";
+$MESS["TASKS_KANBAN_MORE_USERS"] = "plus";
+$MESS["TASKS_KANBAN_NOTIFY_BUTTON"] = "Envoyer un message";
+$MESS["TASKS_KANBAN_NOTIFY_HEADER"] = "Autorisations insuffisantes pour modifier les étapes.";
+$MESS["TASKS_KANBAN_NOTIFY_TEXT"] = "Seul l'administrateur de votre Bitrix24 ou le chef de projet peut créer une nouvelle étape. Veuillez lui envoyer un message ou lui parler afin de pouvoir ajouter les étapes de la tâche dont vous avez besoin.";
+$MESS["TASKS_KANBAN_NOTIFY_TITLE"] = "Autorisations insuffisantes";
+$MESS["TASKS_KANBAN_STATUS_COMPLETED"] = "Terminée";
+$MESS["TASKS_KANBAN_STATUS_COMPLETED_SUPPOSEDLY"] = "En attente de passage en revue";
+$MESS["TASKS_KANBAN_STATUS_DEFERRED"] = "Reporté";
+$MESS["TASKS_KANBAN_STATUS_NEW"] = "Nouveau";
+$MESS["TASKS_KANBAN_STATUS_OVERDUE"] = "Dépassé";
+$MESS["TASKS_KANBAN_STATUS_PAUSE"] = "Pause";
+$MESS["TASKS_KANBAN_STATUS_PROGRESS"] = "En cours";
+$MESS["TASKS_KANBAN_TITLE_CHECKLIST"] = "Liste de vérification (#complete# terminés de #all#)";
+$MESS["TASKS_KANBAN_TITLE_COMMENTS"] = "Commentaires (#count#)";
+$MESS["TASKS_KANBAN_TITLE_COMPLETE"] = "Terminer la tâche";
+$MESS["TASKS_KANBAN_TITLE_DEADLINE"] = "Date limite";
+$MESS["TASKS_KANBAN_TITLE_DEADLINE_SET"] = "Définir la date limite";
+$MESS["TASKS_KANBAN_TITLE_FILES"] = "Fichiers (#count#)";
+$MESS["TASKS_KANBAN_TITLE_PAUSE"] = "Suspendre la tâche";
+$MESS["TASKS_KANBAN_TITLE_START"] = "Démarrer la tâche";
+$MESS["TASKS_KANBAN_WO_GROUP_LABEL"] = "Groupe (projet)";
+$MESS["TASKS_KANBAN_WO_GROUP_VALUE"] = "aucun";
+$MESS["TASKS_TASK_CONFIRM_START_TIMER"] = "Vous utilisez déjà le tracker de temps pour \"{{TITLE}}\". Cette tâche va être suspendue. Continuer ?";
+$MESS["TASKS_TASK_CONFIRM_START_TIMER_TITLE"] = "Le tracker de temps est pour l'instant utilisé avec une autre tâche.";
+?>

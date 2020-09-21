@@ -1,0 +1,35 @@
+<?
+$MESS["SCA_ERROR_DELETE"] = "Klaida šalinant kortelę ##ID#";
+$MESS["SCA_ERROR_UPDATE"] = "Klaida atnaujinant kortelės ##ID# parametrus";
+$MESS["SCA_TITLE"] = "Mokėjimo kortelės";
+$MESS["SCA_USER_ID"] = "Naudotojo ID";
+$MESS["SCA_USER_LOGIN"] = "Naudotojo prisijungimo vardas";
+$MESS["SCA_USER"] = "Naudotojas";
+$MESS["SCA_ACTIVE"] = "Aktyvus";
+$MESS["SCA_ALL"] = "visi";
+$MESS["SCA_YES"] = "Taip";
+$MESS["SCA_NO"] = "Ne";
+$MESS["SCA_SET"] = "Nustatyti";
+$MESS["SCA_UNSET"] = "Atstatyti";
+$MESS["SCA_ADD_NEW"] = "Pridėti &gt;&gt;";
+$MESS["SCA_NAV"] = "Kortelės";
+$MESS["SCA_ACT"] = "Aktyvus";
+$MESS["SCA_SORT"] = "Rūšiavimas";
+$MESS["SCA_CURRENCY"] = "Valiuta";
+$MESS["SCA_TYPE"] = "Tipas";
+$MESS["SCA_ACTIONS"] = "Veiksmai";
+$MESS["SCA_DELETE_ALT"] = "Pašalinti sąskaitą";
+$MESS["SCA_DELETE"] = "Pašalinti ";
+$MESS["SCA_UPDATE_ALT"] = "Redaguoti mokėjimo kortelės parameetrus";
+$MESS["SCA_UPDATE"] = "Redaguoti ";
+$MESS["SCA_DELETE_ALT1"] = "Pašalinti mokėjimo kortelę";
+$MESS["SCA_DELETE_ALL_ALT"] = "Pažymėti kortelę šalinimui";
+$MESS["SCA_AVTIVE_ALL_ALT"] = "Pažymėti kortelę aktyvavimui/deaktyvavimui";
+$MESS["SCA_DELETE_ALL_ALT1"] = "Pažymėti visas korteles šalinimui";
+$MESS["SCA_SAVE"] = "Išsaugoti";
+$MESS["SCA_DELETE_CONF"] = "Ar tikrai norite pašalinti šią kortelę?";
+$MESS["SCA_NO_VALID_PASSWORD"] = "Prašome pateikti slaptažodį, kuris bus naudojamas šifruoti kredito kortelių numerius bendrų nustatymų puslapyje.";
+$MESS["SCAN_ADD_NEW"] = "Pridėti naują kredito kortelę";
+$MESS["SCAN_ADD_NEW_ALT"] = "Spustelėkite ir pridėkite naują kredito kortelę";
+$MESS["SCA_ATTENTION"] = "Dėmesio!";
+?>

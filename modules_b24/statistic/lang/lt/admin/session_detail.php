@@ -1,0 +1,35 @@
+<?
+$MESS["STAT_ADD_TO_STOPLIST_TITLE"] = "Pridėti IP prie stop sąrašo";
+$MESS["STAT_EDIT_USER"] = "Naudotojo duomenys";
+$MESS["STAT_VIEW_HITS_LIST_1"] = "Nurodyto lankytojo numerio hitų sąrašas";
+$MESS["STAT_VIEW_HITS_LIST_2"] = "Hitų sąrašas šiai ID sesijai";
+$MESS["STAT_NEW_GUEST"] = "(pirmą kartą)";
+$MESS["STAT_OLD_GUEST"] = "(grįžo)";
+$MESS["STAT_TITLE"] = "Sesija detaliai";
+$MESS["STAT_ID"] = "ID:";
+$MESS["STAT_LAST_PAGE"] = "Paskutinis puslapis:";
+$MESS["STAT_NUM_PAGES"] = "Hitų:";
+$MESS["STAT_TIME"] = "Laikas:";
+$MESS["STAT_HOUR"] = "val.";
+$MESS["STAT_MIN"] = "min.";
+$MESS["STAT_SEC"] = "sek.";
+$MESS["STAT_USER"] = "Lankytojas:";
+$MESS["STAT_NOT_AUTH"] = "(neautorizuotas)";
+$MESS["STAT_NOT_REGISTERED"] = "(neregistruotas)";
+$MESS["STAT_IP_FIRST"] = "Pirmas IP adresas:";
+$MESS["STAT_IP_LAST"] = "Paskutinis IP adresas:";
+$MESS["STAT_REFERER"] = "Iš kur atėjo:";
+$MESS["STAT_URL_TO"] = "Pirmas puslapis:";
+$MESS["STAT_NOT_FOUND"] = "nerasta";
+$MESS["STAT_ADV"] = "Reklaminė kampanija:";
+$MESS["STAT_USER_AGENT"] = "UserAgent:";
+$MESS["STAT_DATE_FIRST"] = "Pradžia:";
+$MESS["STAT_DATE_LAST"] = "Pabaiga:";
+$MESS["STAT_CITY"] = "Miestas";
+$MESS["STAT_CLOSE"] = "Uždaryti";
+$MESS["STAT_COUNTRY"] = "Šalis";
+$MESS["STAT_REGION"] = "Regionas";
+$MESS["STAT_SITE"] = "Svetainė";
+$MESS["STAT_STOP"] = "stop sąrašas";
+$MESS["STAT_STOPED"] = "stop";
+?>

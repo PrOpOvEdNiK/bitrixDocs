@@ -1,0 +1,51 @@
+<script type='text/ejs' id='boardDetailsOverlay'>
+    <div class="inner">
+
+        <div class="taskInfo jsCommonData"></div>
+        <div class="taskDetails">
+            <div class="closePopup"></div>
+            <div class="handle"></div>
+            <div class="body">
+                <div class="block boardData">
+                    <div class="header">
+                        <div class="inner">
+                            <div class="fat-green-button plus jsColumnAddButton"><i></i><?= $this->t('ADD_COLUMN') ?></div>
+                            <i></i>
+                            <h3><?= $this->t('COLUMNS') ?></h3>
+                            <div class="attention-message js-attention-message"></div>
+                        </div>
+                    </div>
+                    <div class="content jsColumns">
+                        <div class="container">
+                            <div class="columnContainer">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="block labels">
+                    <div class="header">
+                        <div class="inner">
+                            <i></i>
+                            <h3><?= $this->t('MARKERS') ?></h3>
+                        </div>
+                    </div>
+                    <div class="content jsSubtaskGrid">
+                        <div id="markersEditGrid"></div>
+                    </div>
+                </div>
+
+                <div class="block buttons">
+                    <div class="content">
+                        <div class="black">
+                            <div class="thin-green-button jsEditOk"><?= $this->t('APPLY') ?></div>
+                            <a class="cancelLink jsEditCancel"><?= $this->t('CANCEL') ?></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+</script>

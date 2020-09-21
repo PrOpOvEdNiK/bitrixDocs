@@ -1,0 +1,36 @@
+<?
+$MESS["Description"] = "Description";
+$MESS["File"] = "Choisissez le fichier pour le chargement";
+$MESS["Send"] = "Chargement";
+$MESS["Send_Document"] = "Chargement d'un nouveau document";
+$MESS["Send_Version"] = "Charger la nouvelle version";
+$MESS["Tags"] = "Tags";
+$MESS["Title"] = "Dénomination";
+$MESS["WD_ADD_SECTION"] = "Création d'un dossier";
+$MESS["WD_CANCEL"] = "Annuler";
+$MESS["WD_CLOSE"] = "Fermer";
+$MESS["WD_DROP"] = "Supprimer";
+$MESS["WD_DROP_CONFIRM"] = "tes-vous sûr de supprimer le dossier #NAME# sans possibilité de sa récupération ?";
+$MESS["WD_DROP_SECTION"] = "Suppression du Dossier #NAME#";
+$MESS["WD_EDIT_SECTION"] = "Modification du dossier #NAME#";
+$MESS["WD_ERROR_BAD_SESSID"] = "Votre session a expiré, s'il vous plaît essayer à nouveau.";
+$MESS["WD_ERROR_BAD_STATUS"] = "Vous n'avez pas le droit de enregistrer le fichier.";
+$MESS["WD_ERROR_SAME_NAME"] = "Le fichier du même nom existe déjà.";
+$MESS["WD_NAME"] = "Dénomination";
+$MESS["WD_SAVE"] = "Ajouter";
+$MESS["WD_UPLOAD_COLLAPSE_PROPS"] = "Cacher <a #LINK#> les propriétés du document</a>";
+$MESS["WD_UPLOAD_DROPHERE"] = "Vous pouvez glisser-déposer le fichier de votre ordinateur dans cette fenêtre.";
+$MESS["WD_UPLOAD_EXPAND_PROPS"] = "Donner <a #LINK#>propriétés du document</a>";
+$MESS["WD_UPLOAD_EXTENDED"] = "<a href='#LINK#'> Télécharger des Documents Multiples</a>";
+$MESS["WD_UPLOAD_INTERRUPT_BEWARE"] = "Le téléchargement du document n'est pas terminé. Si vous quittez cette page, le téléchargement du document sera interrompu.";
+$MESS["WD_UPLOAD_INTERRUPT_CONFIRM"] = "Le chargement du document n'est pas terminé. Voulez-vous arrêter le chargement ?";
+$MESS["WD_UPLOAD_NOT_DONE"] = "Le document n'a pas encore été chargé.";
+$MESS["WD_UPLOAD_NOT_DONE_ASK"] = "Le document n'a pas encore été chargé. Est-ce qu'il faut fermer le dialogue du chargement ?";
+$MESS["WD_UPLOAD_SUCCESS"] = "Le fichier est verrouillé par un autre processus.";
+$MESS["WD_UPLOAD_TITLE"] = "Chargement d'un nouveau document";
+$MESS["WD_UPLOAD_UNLOCK"] = "Débloquer le document après chargement";
+$MESS["WD_UPLOAD_VERSION_TITLE"] = "Chargement de la nouvelle copie du document '#NAME#'";
+$MESS["WD_WARNING_EXTENSIONS_DONT_MATCH"] = "Le type du fichier chargé ne correspond pas au type existant du document.";
+$MESS["WD_WARNING_FIRST_DOT"] = "Le nom commence par un point. Avec les réglages courants le document ne sera pas affiché dans la liste des documents.";
+$MESS["WD_WARNING_SAME_NAME"] = "Fichier du même nom existe déjà. Vous pouvez <a #LINK#>changer son nom</a>, ou cliquez sur 'Télécharger' pour télécharger la nouvelle version du document. Dans ce cas, l'ancienne version sera enregistrée dans l'histoire du document.";
+?>

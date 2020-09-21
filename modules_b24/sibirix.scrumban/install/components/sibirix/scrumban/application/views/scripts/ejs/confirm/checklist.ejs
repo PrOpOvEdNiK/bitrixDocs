@@ -1,0 +1,18 @@
+<script type='text/ejs' id='tplConfirmChecklist'>
+    <div class="checklist">
+        <% if (dodList.length) { %>
+        <% for (var iAcc=0; iAcc < dodList.length; iAcc++) {%>
+        <label class="dod" <% if (dodList[iAcc].description.length > 75) { %>title="<%= dodList[iAcc].description %>"<% } %>><input type="checkbox" class="styled" <% if (dodList[iAcc].isCheckedTask(checkDodList)) { %>checked="checked"<% }%> data-dodId="<%= dodList[iAcc].dodId %>"><i></i><span><%= htmlspecialchars(dodList[iAcc].description) %></span></label>
+        <% } %>
+        <% }
+
+        if (checkList.length) { %>
+        <% for (var iAcc=0; iAcc < checkList.length && iAcc < checkList.length; iAcc++) {
+        var desc = htmlspecialchars(checkList[iAcc].description);
+        %>
+        <label <% if (desc.length > 75) { %>title="<%= desc %>"<% } %>><input type="checkbox" class="styled" <% if (checkList[iAcc].isNewTask()) { %> disabled="disabled"<% }%> <% if (checkList[iAcc].isCheckedTask()) { %>checked="checked"<% }%> data-itemId="<%= checkList[iAcc].checklistItemId %>" ><i></i><span><%= desc %></span></label>
+        <% }
+
+        } %>
+    </div>
+</script>

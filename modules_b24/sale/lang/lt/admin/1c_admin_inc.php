@@ -1,0 +1,29 @@
+<?
+$MESS["SALE_1C_GROUP_PERMISSIONS"] = "Vartotojų grupės leido eksportuoti";
+$MESS["SALE_1C_SITE_LIST"] = "Eksportuoti šios svetainės užsakymus į 1C";
+$MESS["SALE_1C_SALE_ACCOUNT_NUMBER_SHOP_PREFIX"] = "Užsakymo numerio prefiksas (eksportui)";
+$MESS["SALE_1C_USE_ZIP"] = "Jei įmanoma, naudoti ZIP suspaudimą";
+$MESS["SALE_1C_ALL_SITES"] = "Visos svetainės";
+$MESS["SALE_1C_EXPORT_PAYED_ORDERS"] = "Eksportuoti tik apmokėtus užsakymus";
+$MESS["SALE_1C_EXPORT_ALLOW_DELIVERY_ORDERS"] = "Eksportuoti tik pristatomus užsakymus";
+$MESS["SALE_1C_EXPORT_FINAL_ORDERS"] = "Eksportuoti užsakymus iš būsenos";
+$MESS["SALE_1C_FINAL_STATUS_ON_DELIVERY"] = "Užsakymo būsena gavus pristatymą iš 1C";
+$MESS["SALE_1C_REPLACE_CURRENCY"] = "Eksportuojant į 1C valiutą keisti į";
+$MESS["SALE_1C_NO"] = "<Nepasirinkta>";
+$MESS["SALE_1C_RUB"] = "rub.";
+$MESS["SALE_1C_INTERVAL"] = "Importo žingsnio trukmė, s. (0 - importuoti visus iš karto)";
+$MESS["SALE_1C_FILE_SIZE_LIMIT"] = "Maksimalus importo failo gabalo dydis (baitai)";
+$MESS["SALE_1C_SITE_NEW_ORDERS"] = "Svetainė  naujiems užsakymams ir rangovams importuoti ";
+$MESS["SALE_1C_IMPORT_NEW_ORDERS"] = "Sukurti naujus užsakymus ir rangovus iš 1C";
+$MESS["SALE_1C_CHANGE_STATUS_FROM_1C"] = "Keisti užsakymo statusus pagal gaunamą informaciją iš 1C";
+$MESS["SALE_1C_IMPORT_DEFAULT_PS"] = "Mokėjimo sistema naujiems užsakymams";
+$MESS["SALE_1C_IMPORT_DEFAULT_PS_C"] = "Mokėjimas grynais. Mokėjimo sistema naujiems užsakymams";
+$MESS["SALE_1C_IMPORT_DEFAULT_PS_B"] = "Mokėjimas grynais. Mokėjimo sistema naujiems užsakymams";
+$MESS["SALE_1C_IMPORT_DEFAULT_PS_A"] = "Mokėjimas kortele. Mokėjimo sistema naujiems mokėjimams";
+$MESS["SALE_1C_IMPORT_DEFAULT_PS_ORDER_PAID"] = "Mokėjimo sistema užsakymų apmokėjimams kai 1C užsakymo apmokėjimo statusas pasikeičia";
+$MESS["SALE_1C_IMPORT_DEFAULT_SHIPMENT_SERVICE"] = "Pristatymo tarnyba naujiems užsakymams";
+$MESS["SALE_1C_IMPORT_UPDATE_BASKET_QUANTITY"] = "Padidinti prekių kiekį prekių krepšelyje jei kiekis mažesnis nei 1C pristatyme";
+$MESS["SALE_1C_IMPORT_NEW_PAYMENT"] = "Sukurti naujus mokėjimo dokumentus iš 1C sistemos";
+$MESS["SALE_1C_IMPORT_NEW_SHIPMENT"] = "Sukurti naujus pristatymo dokumentus iš 1C sistemos";
+$MESS["SALE_1C_IMPORT_NEW_ORDER_NEW_SHIPMENT"] = "Sukurti naują užsakymą (jei tokio nėra) gaunant naują pristymą iš 1C";
+?>

@@ -1,0 +1,11 @@
+<?
+$MESS["GD_LOG_ENTITY_MORE"] = "همه بروز رسانی ها";
+$MESS["GD_LOG_ENTITY_TITLE"] = "بروز رسانی ها";
+$MESS["GD_UPDATES_ENTITY_FORUM"] = "مباحثات";
+$MESS["GD_UPDATES_ENTITY_BLOG"] = "گزارشات";
+$MESS["GD_UPDATES_ENTITY_PHOTO"] = "عکس";
+$MESS["GD_UPDATES_ENTITY_FILES"] = "فایلها";
+$MESS["GD_UPDATES_ENTITY_CALENDAR"] = "تقویم";
+$MESS["GD_UPDATES_ENTITY_TASKS"] = "کارها";
+$MESS["GD_UPDATES_ENTITY_SYSTEM"] = "سیستم";
+?>

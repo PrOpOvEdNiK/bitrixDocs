@@ -1,0 +1,6 @@
+<?
+$MESS["TASKS_TTDP_TEMPLATESELECTOR_CREATE_HINT"] = "Utwórz według szablonu";
+$MESS["TASKS_TTDP_TEMPLATESELECTOR_EMPTY"] = "Brak szablonów";
+$MESS["TASKS_TTDP_TEMPLATESELECTOR_NO_TEMPLATE"] = "Utwórz na szablonie";
+$MESS["TASKS_TTDP_TEMPLATESELECTOR_TO_LIST"] = "Wszystkie szablony";
+?>

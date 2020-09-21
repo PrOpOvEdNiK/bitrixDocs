@@ -1,0 +1,33 @@
+<?
+$MESS["FILEMAN_BACK"] = "Folder";
+$MESS["FILEMAN_DEL_CONF"] = "Na pewno chcesz usunąć to menu?";
+$MESS["FILEMAN_MENU_EDIT_ADDITIONAL_LINK"] = "Dodatkowe linki do podświetlenia:";
+$MESS["FILEMAN_MENU_EDIT_APPLY"] = "Zastosuj";
+$MESS["FILEMAN_MENU_EDIT_AS_TEXT"] = "Edytuj jako plik";
+$MESS["FILEMAN_MENU_EDIT_CONDITION"] = "Warunek:";
+$MESS["FILEMAN_MENU_EDIT_CONDITION_TYPE"] = "Typ warunku:";
+$MESS["FILEMAN_MENU_EDIT_DEF"] = "(domyślny)";
+$MESS["FILEMAN_MENU_EDIT_DEL"] = "Usuń";
+$MESS["FILEMAN_MENU_EDIT_DELETE"] = "Usuń menu";
+$MESS["FILEMAN_MENU_EDIT_ENTER_TYPE"] = "Proszę wprowadzić typ menu!";
+$MESS["FILEMAN_MENU_EDIT_EXISTS_ERROR"] = "Ten folder już zawiera menu tego typu!";
+$MESS["FILEMAN_MENU_EDIT_EXT"] = "Tryb zaawansowany";
+$MESS["FILEMAN_MENU_EDIT_ITEMS"] = "Pozycje menu:";
+$MESS["FILEMAN_MENU_EDIT_LEFT_MENU"] = "Lewe menu";
+$MESS["FILEMAN_MENU_EDIT_LINK"] = "Link";
+$MESS["FILEMAN_MENU_EDIT_NAME"] = "Nazwa:";
+$MESS["FILEMAN_MENU_EDIT_PARAMS"] = "Parametry:";
+$MESS["FILEMAN_MENU_EDIT_PARAM_NAME"] = "Nazwa";
+$MESS["FILEMAN_MENU_EDIT_PARAM_VALUE"] = "Wartość";
+$MESS["FILEMAN_MENU_EDIT_RESET"] = "Wyczyść";
+$MESS["FILEMAN_MENU_EDIT_SAVE"] = "Zapisz";
+$MESS["FILEMAN_MENU_EDIT_SIMPLE"] = "Tryb prosty";
+$MESS["FILEMAN_MENU_EDIT_SORT"] = "Sortowanie";
+$MESS["FILEMAN_MENU_EDIT_TEMPLATE"] = "Szablon menu:";
+$MESS["FILEMAN_MENU_EDIT_TITLE"] = "Edytuj menu";
+$MESS["FILEMAN_MENU_EDIT_TITLE_ADD"] = "Dodaj menu";
+$MESS["FILEMAN_MENU_EDIT_TOP_MENU"] = "Wyższe menu";
+$MESS["FILEMAN_MENU_EDIT_TYPE"] = "Typ menu:";
+$MESS["FILEMAN_TAB1"] = "Menu";
+$MESS["FILEMAN_TAB1_ALT"] = "Parametry menu";
+?>

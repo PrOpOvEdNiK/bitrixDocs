@@ -1,0 +1,37 @@
+<?
+$MESS["PAGE_TITLE1"] = "Relatório Diário";
+$MESS["PAGE_TITLE2"] = "Dia útil";
+$MESS["PULLDOWN_DOWN"] = "Soltar para atualizar";
+$MESS["PULLDOWN_LOADING"] = "Atualizando dados...";
+$MESS["PULLDOWN_PULL"] = "Puxe para baixo para atualizar";
+$MESS["TM_BEGINNING"] = "início";
+$MESS["TM_DURATION"] = "dia útil<br>duração";
+$MESS["TM_DURATION2"] = "Duração do dia de trabalho";
+$MESS["TM_END"] = "fim";
+$MESS["TM_ERROR1"] = "Você não pode salvar o relatório. Marque a entrada primeiro.";
+$MESS["TM_ERROR2"] = "Você não marcou a saída ontem.";
+$MESS["TM_FINISH"] = "Hora de saída";
+$MESS["TM_MENU_CANCEL"] = "Cancelar";
+$MESS["TM_MENU_EDIT"] = "Modificar";
+$MESS["TM_MENU_REPORT"] = "Relatório Diário";
+$MESS["TM_MENU_SAVE"] = "Salvar";
+$MESS["TM_MENU_START"] = "Iniciar usando hora atual";
+$MESS["TM_MENU_START1"] = "Iniciar usando outra hora";
+$MESS["TM_MENU_STOP"] = "Cancelar alterações de hora";
+$MESS["TM_MENU_STOP1"] = "Encerrar usando outra hora";
+$MESS["TM_PAUSE"] = "intervalo";
+$MESS["TM_PAUSE2"] = "Intervalo";
+$MESS["TM_PLACEHODER0"] = "O relatório de trabalho é obrigatório. Envie o seu.";
+$MESS["TM_PLACEHODER1"] = "Digite um breve relatório sobre suas atividades.";
+$MESS["TM_REASON2"] = "Motivo da alteração";
+$MESS["TM_REASON_END"] = "Motivo da alteração";
+$MESS["TM_REASON_START"] = "Motivo da alteração";
+$MESS["TM_RESUME"] = "Continuar";
+$MESS["TM_SAVE"] = "Salvar";
+$MESS["TM_START"] = "Hora de entrada";
+$MESS["TM_STATUS_COMPLETED"] = "Hora de saída";
+$MESS["TM_STATUS_EXPIRED"] = "Não marcou a saída";
+$MESS["TM_STATUS_PAUSED"] = "Em intervalo";
+$MESS["TM_STATUS_START"] = "Hora de entrada";
+$MESS["TM_STATUS_WORK"] = "Trabalhando";
+?>

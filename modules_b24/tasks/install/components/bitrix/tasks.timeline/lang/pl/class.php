@@ -1,0 +1,8 @@
+<?
+$MESS["TASK_LIST_TASK_TL_STAGE_COMPLETE"] = "Zakończone";
+$MESS["TASK_LIST_TASK_TL_STAGE_OVERDUE"] = "Przeterminowane";
+$MESS["TASK_LIST_TASK_TL_STAGE_TODAY"] = "Dzisiaj";
+$MESS["TASK_LIST_TASK_TL_STAGE_TOMORROW"] = "Jutro";
+$MESS["TASK_LIST_TITLE"] = "Zadania";
+$MESS["TASK_LIST_TITLE_MY"] = "Moje zadania";
+?>

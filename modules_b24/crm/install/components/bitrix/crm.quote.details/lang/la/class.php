@@ -1,0 +1,34 @@
+<?
+$MESS["CRM_MODULE_NOT_INSTALLED"] = "El módulo CRM no estña instalado.";
+$MESS["CRM_QUOTE_COPY_PAGE_TITLE"] = "Copiar Cotización";
+$MESS["CRM_QUOTE_CREATION_PAGE_TITLE"] = "Crear Cotización";
+$MESS["CRM_QUOTE_FIELD_ASSIGNED_BY_ID"] = "Persona responsable";
+$MESS["CRM_QUOTE_FIELD_BEGINDATE"] = "Creado el";
+$MESS["CRM_QUOTE_FIELD_CLIENT"] = "Cliente";
+$MESS["CRM_QUOTE_FIELD_CLOSEDATE"] = "Fecha tope";
+$MESS["CRM_QUOTE_FIELD_COMMENTS"] = "Comentario (invisible en la cotización)";
+$MESS["CRM_QUOTE_FIELD_CONTACT_LEGEND"] = "Contactos en la cotización";
+$MESS["CRM_QUOTE_FIELD_CONTENT"] = "Contenido";
+$MESS["CRM_QUOTE_FIELD_DEAL"] = "Negociación";
+$MESS["CRM_QUOTE_FIELD_DEAL_ID"] = "Negocación";
+$MESS["CRM_QUOTE_FIELD_FILES"] = "Archivos";
+$MESS["CRM_QUOTE_FIELD_ID"] = "ID";
+$MESS["CRM_QUOTE_FIELD_LEAD"] = "Prospecto";
+$MESS["CRM_QUOTE_FIELD_LEAD_ID"] = "Prospecto";
+$MESS["CRM_QUOTE_FIELD_MYCOMPANY"] = "Detalles de su compañia";
+$MESS["CRM_QUOTE_FIELD_NUMBER"] = "Cotización #";
+$MESS["CRM_QUOTE_FIELD_OPENED"] = "Disponible para todos";
+$MESS["CRM_QUOTE_FIELD_OPPORTUNITY_WITH_CURRENCY"] = "Monto y moneda";
+$MESS["CRM_QUOTE_FIELD_PRODUCTS"] = "Productos";
+$MESS["CRM_QUOTE_FIELD_STATUS_ID"] = "Estado de la cotización";
+$MESS["CRM_QUOTE_FIELD_TERMS"] = "Condiciones";
+$MESS["CRM_QUOTE_FIELD_TITLE"] = "Tema";
+$MESS["CRM_QUOTE_FIELD_UTM"] = "Parámetros UTM";
+$MESS["CRM_QUOTE_NOT_FOUND"] = "La cotización no fue encontrada";
+$MESS["CRM_QUOTE_SECTION_ADDITIONAL"] = "Más";
+$MESS["CRM_QUOTE_SECTION_MAIN"] = "Acerca de la cotización";
+$MESS["CRM_QUOTE_SECTION_PRODUCTS"] = "Productos";
+$MESS["CRM_QUOTE_TAB_EVENT"] = "Historial";
+$MESS["CRM_QUOTE_TAB_PRODUCTS"] = "Productos";
+$MESS["CRM_QUOTE_TAB_TREE"] = "Dependencias";
+?>

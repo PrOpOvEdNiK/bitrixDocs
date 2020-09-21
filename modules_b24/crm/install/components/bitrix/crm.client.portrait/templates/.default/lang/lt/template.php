@@ -1,0 +1,31 @@
+<?
+$MESS["CRM_CLIENT_PORTRAIT_LOAD_ITEM_IDEAL"] = "Tobulas";
+$MESS["CRM_CLIENT_PORTRAIT_LOAD_ITEM_VERY_LOW"] = "Labai žemas";
+$MESS["CRM_CLIENT_PORTRAIT_LOAD_ITEM_LOW"] = "Žemas";
+$MESS["CRM_CLIENT_PORTRAIT_LOAD_ITEM_DESIRABLE"] = "Maksimaliai pageidautinas";
+$MESS["CRM_CLIENT_PORTRAIT_LOAD_ITEM_HIGH"] = "Aukštas";
+$MESS["CRM_CLIENT_PORTRAIT_LOAD_ITEM_VERY_HIGH"] = "Labai aukštas";
+$MESS["CRM_CLIENT_PORTRAIT_LOAD_ITEM_CRITICAL"] = "Kritinis";
+$MESS["CRM_CLIENT_PORTRAIT_INFO_EMAIL"] = "El.paštas";
+$MESS["CRM_CLIENT_PORTRAIT_INFO_PHONE"] = "Telefonas";
+$MESS["CRM_CLIENT_PORTRAIT_INFO_COMPANY"] = "Įmonė";
+$MESS["CRM_CLIENT_PORTRAIT_INFO_POST"] = "Pareigos";
+$MESS["CRM_CLIENT_PORTRAIT_INFO_RESPONSIBLE"] = "Atsakingas asmuo";
+$MESS["CRM_CLIENT_PORTRAIT_INFO_COMMENTS"] = "Komentaras";
+$MESS["CRM_CLIENT_PORTRAIT_INFO_COMMENTS_HIDE"] = "paslėpti";
+$MESS["CRM_CLIENT_PORTRAIT_INFO_COMMENTS_SHOW"] = "rodyti";
+$MESS["CRM_CLIENT_PORTRAIT_INFO_WON_DEALS"] = "Laimėtų sandorių kiekis";
+$MESS["CRM_CLIENT_PORTRAIT_INFO_CONVERSION"] = "Konversija";
+$MESS["CRM_CLIENT_PORTRAIT_LOAD_PIE_TITLE"] = "Apkrova kanalui";
+$MESS["CRM_CLIENT_PORTRAIT_INFO_WEB"] = "Svetainė";
+$MESS["CRM_CLIENT_PORTRAIT_INFO_COMPANY_TYPE"] = "Įmonės tipas";
+$MESS["CRM_CLIENT_PORTRAIT_INFO_INDUSTRY"] = "Pramonė";
+$MESS["CRM_CLIENT_PORTRAIT_LOAD_CONFIG_TITLE"] = "Didžiausia pageidautina apkrova";
+$MESS["CRM_CLIENT_PORTRAIT_LOAD_CONFIG_SAVE"] = "Įrašyti";
+$MESS["CRM_CLIENT_PORTRAIT_LOAD_CONFIG_CANCEL"] = "Atšaukti";
+$MESS["CRM_CLIENT_PORTRAIT_LOAD_CONFIG_DESCRIPTION"] = "Didžiausia pageidautina apkrova yra veiksmų per sandorį kiekis, kuris yra priimtinas Jūsų įmonei.";
+$MESS["CRM_CLIENT_PORTRAIT_LOAD_CONFIG_HELP"] = "Didžiausios pageidautinos apkrovos reikšmė gali būti nurodyta aiškiai arba apskaičiuojama automatiškai, remiantis vidutinišku veiksmų per sandorį skaičiumi.";
+$MESS["CRM_CLIENT_PORTRAIT_LOAD_CONFIG_AUTO"] = "Automatiškai";
+$MESS["CRM_CLIENT_PORTRAIT_LOAD_CONFIG_MANUAL"] = "Rankiniu būdu";
+$MESS["CRM_CLIENT_PORTRAIT_LOAD_SHOW_DEAL_CATEGORIES"] = "rodyti kanalus";
+?>

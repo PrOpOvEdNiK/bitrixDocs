@@ -1,0 +1,30 @@
+<?
+$MESS["F_DATE_FORMAT"] = "Format d'affichage de la date";
+$MESS["F_DATE_TIME_FORMAT"] = "Format d'affichage de la date et de l'heure";
+$MESS["F_DEFAULT_UID"] = "Identifiant de l'utilisateur";
+$MESS["F_FID_RANGE"] = "Forum ID";
+$MESS["F_MESSAGE_SEND_TEMPLATE"] = "Page de l'envoi du message";
+$MESS["F_MESSAGE_TEMPLATE"] = "Page de lecture du message";
+$MESS["F_PM_EDIT_TEMPLATE"] = "Page de la création (édition) de messages personnels";
+$MESS["F_PM_LIST_TEMPLATE"] = "Page des messages personnels";
+$MESS["F_PROFILE_TEMPLATE"] = "Page pour modifier le profil";
+$MESS["F_RATING_ID"] = "Classement";
+$MESS["F_RATING_SETTINGS"] = "Réglages des cotes";
+$MESS["F_READ_TEMPLATE"] = "Page de lecture du message";
+$MESS["F_SEND_ICQ"] = "Peuvent afficher le numéro ICQ dans le profil";
+$MESS["F_SEND_MAIL"] = "Peuvent envoyer un message (e-mail) depuis le profil";
+$MESS["F_SET_NAVIGATION"] = "Afficher la navigation";
+$MESS["F_SUBSCR_LIST_TEMPLATE"] = "Page d'abonnement";
+$MESS["F_URL_TEMPLATES"] = "Gestion des adresses de pages";
+$MESS["F_USER_LIST_TEMPLATE"] = "Page de la liste des utilisateurs enregistrés du forum";
+$MESS["F_USER_POST_TEMPLATE"] = "Page correspondance avec l'utilisateur";
+$MESS["RATING_TYPE"] = "Vue des boutons de rating";
+$MESS["RATING_TYPE_CONFIG"] = "ordinaire";
+$MESS["RATING_TYPE_LIKE_GRAPHIC"] = "J'aime (graphique)";
+$MESS["RATING_TYPE_LIKE_TEXT"] = "J'aime (textuel)";
+$MESS["RATING_TYPE_STANDART_GRAPHIC"] = "J'aime / Je n'aime pas (graphique)";
+$MESS["RATING_TYPE_STANDART_TEXT"] = "J'aime / Je n'aime pas (textuel)";
+$MESS["SHOW_RATING"] = "Activer le classement";
+$MESS["SHOW_RATING_CONFIG"] = "ordinaire";
+$MESS["USER_PROPERTY"] = "Afficher les propriétés supplémentaires";
+?>

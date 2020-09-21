@@ -1,0 +1,3 @@
+<?
+$MESS["SALE_ORDER_SHIPMENT_BASKET_ADD"] = "Dodaj";
+?>

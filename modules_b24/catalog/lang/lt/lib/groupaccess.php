@@ -1,0 +1,6 @@
+<?
+$MESS["GROUP_ACCESS_ENTITY_ID_FIELD"] = "Prieigos teisių ID";
+$MESS["GROUP_ACCESS_ENTITY_CATALOG_GROUP_ID_FIELD"] = "Kainos tipo ID";
+$MESS["GROUP_ACCESS_ENTITY_GROUP_ID_FIELD"] = "Naudotojų grupės ID";
+$MESS["GROUP_ACCESS_ENTITY_ACCESS_FIELD"] = "Prieigos teisės";
+?>

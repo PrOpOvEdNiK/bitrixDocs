@@ -1,0 +1,37 @@
+<?
+$MESS["library_wizard_name"] = "Dokumentų biblioteka";
+$MESS["library_wizard_title"] = "Dokumentų bibliotekos skirsnis (SEF)";
+$MESS["library_wizard_settings"] = "Dokumentų bibliotekos nustatymai";
+$MESS["library_wizard_lib_name"] = "Dokumentų bibliotekos pavadinimas:";
+$MESS["library_wizard_lib_name_val"] = "Bendri dokumentai";
+$MESS["library_wizard_iblock_type"] = "Informacinio bloko tipas:";
+$MESS["library_wizard_iblock"] = "Dokumentų informacinis blokas:";
+$MESS["library_wizard_iblock_new"] = "Sukurti naująjį informacinį bloką";
+$MESS["library_wizard_iblock_select"] = "Rinktis esamą informacinį bloką";
+$MESS["library_wizard_group_select"] = "(rinktis grupę)";
+$MESS["library_wizard_perm_read"] = "Skaityti";
+$MESS["library_wizard_perm_bp"] = "Verslo procesai";
+$MESS["library_wizard_perm_write"] = "Įrašyti";
+$MESS["library_wizard_perm_iblock"] = "Informacinio bloko prieigos teisės";
+$MESS["library_wizard_perm_add"] = "Pridėti grupę";
+$MESS["library_wizard_tags"] = "Žymių debesis";
+$MESS["library_wizard_tags_show"] = "Rodyti žymes:";
+$MESS["library_wizard_tags_num"] = "Žymių skaičius:";
+$MESS["library_wizard_comments"] = "Komentarų nustatymai";
+$MESS["library_wizard_comments_allow"] = "Leisti komentuoti:";
+$MESS["library_wizard_forum"] = "Forumas komentarams";
+$MESS["library_wizard_forum_new"] = "Sukurti naująjį forumą";
+$MESS["library_wizard_forum_select"] = "Rinktis esamą forumą";
+$MESS["library_wizard_perm_forum_read"] = "Skaityti";
+$MESS["library_wizard_perm_forum_write"] = "Rašyti";
+$MESS["library_wizard_perm_forum"] = "Komentarų forumo prieigos teisės";
+$MESS["library_wizard_forum_name"] = "Dokumentų bibliotekos komentarai";
+$MESS["library_wizard_perm_folder"] = "Aplanko prieigos teisės";
+$MESS["library_wizard_lib_resource"] = "Duomenų šaltinis:";
+$MESS["library_wizard_lib_resource_folder"] = "Fizinis disko aplankas";
+$MESS["library_wizard_lib_resource_iblock"] = "Informacinis blokas";
+$MESS["library_wizard_path_to_folder"] = "Aplanko kelias (atitinkamai svetainės šaknies aplankui)";
+$MESS["library_wizard_path_to_folder_error1"] = "Kelias turi prasidėti nuo '/'.";
+$MESS["library_wizard_path_to_folder_error2"] = "/bitrix/ negali būti saugojimo aplanku.";
+$MESS["library_wizard_iblock_name_error1"] = "Bibliotekos pavadinimas neturi būti sudarytas iš šių simbolių: /\\:*?|{}%&~";
+?>

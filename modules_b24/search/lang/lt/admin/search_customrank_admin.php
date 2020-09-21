@@ -1,0 +1,33 @@
+<?
+$MESS["customrank_of"] = "iš";
+$MESS["customrank_continue"] = "Tęsti";
+$MESS["customrank_site"] = "Tinklapis";
+$MESS["customrank_all"] = "(viską)";
+$MESS["customrank_module"] = "Modulis";
+$MESS["customrank_param1"] = "Parametras 1";
+$MESS["customrank_add"] = "Pridėti";
+$MESS["customrank_param2"] = "Parametras 2";
+$MESS["customrank_param3"] = "Parametras 3";
+$MESS["customrank_edit"] = "Redaguoti";
+$MESS["customrank_delete"] = "Šalinti";
+$MESS["customrank_id"] = "ID";
+$MESS["customrank_title"] = "Rūšiavimo taisyklių sąrašas";
+$MESS["customrank_applied"] = "Apdorota";
+$MESS["customrank_saved"] = "Taisyklės ięsaugotos.";
+$MESS["customrank_rules"] = "Taisyklės";
+$MESS["customrank_sort"] = "Svarba";
+$MESS["customrank_update"] = "Atnaujinti";
+$MESS["customrank_step2"] = "Žingsnis 2. Paieškos indekso atnaujinimas";
+$MESS["customrank_step1"] = "Žingsnis 1. Rūšiavimo taisyklių valdymas";
+$MESS["customrank_save_note"] = "Po taisyklių pakeitimų arba šalinimo reikia spausti mygtuką \\\"Atnaujinti\\\" kad pakeitimai įsigaliotu.";
+$MESS["customrank_no"] = "(nenustatyta)";
+$MESS["customrank_edit_error"] = "Įvyko klaida. Nepavyko atnaujinti įrašo:";
+$MESS["customrank_no_rule"] = "Taisyklė nerasta";
+$MESS["customrank_add_title"] = "Spauskyte pridėti naują rūšiavimo taisyklę";
+$MESS["customrank_find"] = "Ieškoti";
+$MESS["customrank_find_title"] = "Įrašykite paieškos žodžius";
+$MESS["customrank_stop"] = "Sustabdyti";
+$MESS["customrank_error_delete"] = "Klaida šalinant taisyklę.";
+$MESS["customrank_delete_confirm"] = "Ar tikrai norite pašalinti šią taisyklę?";
+$MESS["customrank_progress"] = "Atnaujinti paieškos indeksą.";
+?>

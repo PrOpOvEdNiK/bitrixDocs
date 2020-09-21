@@ -1,0 +1,17 @@
+<?
+$MESS["CRM_COMPANY_LIST_REBUILD_DUPLICATE_INDEX_COMPLETED_SUMMARY"] = "Įmonės dublikatai iš naujo indeksuoti. Apdorotos įmonės: #PROCESSED_ITEMS#.";
+$MESS["CRM_COMPANY_LIST_REBUILD_DUPLICATE_INDEX_PROGRESS_SUMMARY"] = "Apdorotos įmonės:#PROCESSED_ITEMS# iš #TOTAL_ITEMS#.";
+$MESS["CRM_COMPANY_LIST_REBUILD_DUPLICATE_INDEX_NOT_REQUIRED_SUMMARY"] = "Įmonės dublikatai netturi būti iš naujo indeksuoti.";
+$MESS["CRM_COMPANY_LIST_ROW_COUNT"] = "Viso: #ROW_COUNT#";
+$MESS["CRM_COMPANY_REQUISITES_BUILD_PROGRESS_SUMMARY"] = "Įmonių apdorota: #PROCESSED_ITEMS# iš #TOTAL_ITEMS#.";
+$MESS["CRM_COMPANY_REQUISITES_BUILD_COMPLETED_SUMMARY"] = "Įmonių rekvizitai sukurti. Įmonių apdorota: #PROCESSED_ITEMS#.";
+$MESS["CRM_COMPANY_REQUISITES_TRANSFER_PROGRESS_SUMMARY"] = "Įmonių apdorota: #PROCESSED_ITEMS# iš #TOTAL_ITEMS#.";
+$MESS["CRM_COMPANY_REQUISITES_TRANSFER_COMPLETED_SUMMARY"] = "Rekvizitų iš sąskaitų į įmones perkėlimas baigtas. Įmonių apdorota:  #PROCESSED_ITEMS#.";
+$MESS["CRM_COMPANY_REQUISITES_TRANSFER_NOT_REQUIRED_SUMMARY"] = "Rekvizitų perkėlimas į įmones iš sąskaitų nėra būtinas.";
+$MESS["CRM_COMPANY_LIST_REBUILD_ACT_STATISTICS_NOT_REQUIRED_SUMMARY"] = "Įmonės statistika neturi būti atnaujinta. ";
+$MESS["CRM_COMPANY_LIST_REBUILD_ACT_STATISTICS_PROGRESS_SUMMARY"] = "Apdorotos įmonės:  #PROCESSED_ITEMS# iš #TOTAL_ITEMS#.";
+$MESS["CRM_COMPANY_LIST_REBUILD_ACT_STATISTICS_COMPLETED_SUMMARY"] = "Atliktas įmonių statistinių duomenų apdorojimas. Apdorotos įmonės: #PROCESSED_ITEMS#.";
+$MESS["CRM_COMPANY_LIST_REBUILD_SEARCH_CONTENT_NOT_REQUIRED_SUMMARY"] = "Įmonės paieškos indeksas neturi būti atkurtas.";
+$MESS["CRM_COMPANY_LIST_REBUILD_SEARCH_CONTENT_PROGRESS_SUMMARY"] = "Apdorotos įmonės: #PROCESSED_ITEMS# iš #TOTAL_ITEMS#.";
+$MESS["CRM_COMPANY_LIST_REBUILD_SEARCH_CONTENT_COMPLETED_SUMMARY"] = "Įmonių paieškos indeksas turi būti atkurtas. Apdorotos įmonės:  #PROCESSED_ITEMS#. ";
+?>

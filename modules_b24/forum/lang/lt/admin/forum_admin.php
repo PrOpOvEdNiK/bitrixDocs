@@ -1,0 +1,34 @@
+<?
+$MESS["FORUMS"] = "Forumai";
+$MESS["NAV"] = "Forumai";
+$MESS["ACTIVE"] = "Aktyvus";
+$MESS["LAND"] = "Svetainė";
+$MESS["SORT"] = "Rūšiuoti.";
+$MESS["NAME"] = "Vardas";
+$MESS["FORUM_GROUP_ID"] = "Grupė";
+$MESS["MODERATION"] = "Moderavimas";
+$MESS["INDEXATION"] = "Indeksavimas";
+$MESS["ORDER_BY"] = "Rūšiuoti pagal";
+$MESS["ORDER_DIRECTION"] = "Rūšiavimo tvarka";
+$MESS["FORUM_EDIT"] = "Redaguoti";
+$MESS["FORUM_DELETE"] = "Trinti";
+$MESS["DELETE_CONFIRM"] = "Šis forumas bus negrįžtamai ištrintas. Tęsti?";
+$MESS["FA_NO_PERMS2UPDATE"] = "Forumui redaguoti nepakanka teisių";
+$MESS["FA_ERROR_UPDATE"] = "Atnaujinant forumą įvyko klaida";
+$MESS["FA_DELETE_NO_PERMS"] = "Šiam forumui ištrinti nepakanka teisių";
+$MESS["FA_DELETE_ERROR"] = "Trinant forumą įvyko klaida. Gali būti, kad yra apribotų duomenų, kurie neleidžia jo ištrinti.";
+$MESS["FFAN_ADD_NEW"] = "Naujas forumas";
+$MESS["FFAN_ADD_NEW_ALT"] = "Spustelėkite, jei norite pridėti naują forumą";
+$MESS["FFAN_SITE_ID"] = "Svetainė";
+$MESS["FFAN_ALL"] = "Visi";
+$MESS["FFAN_YES"] = "Taip";
+$MESS["FFAN_NO"] = "Ne";
+$MESS["FFAN_ACTIVE"] = "Aktyvus";
+$MESS["FFAN_GROUP_ID"] = "Forumo grupė";
+$MESS["MAIN_ADMIN_LIST_CLEAR_HTML"] = "valyti";
+$MESS["MAIN_ADMIN_LIST_SELECTED"] = "Pasirinkta:";
+$MESS["MAIN_ADMIN_LIST_CHECKED"] = "Pažymėta:";
+$MESS["MAIN_ADMIN_LIST_DELETE"] = "ištrinta";
+$MESS["MAIN_ADMIN_LIST_ACTIVATE"] = "įjungti";
+$MESS["MAIN_ADMIN_LIST_DEACTIVATE"] = "išjungti";
+?>

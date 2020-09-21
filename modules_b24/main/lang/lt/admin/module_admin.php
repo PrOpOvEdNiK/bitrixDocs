@@ -1,0 +1,35 @@
+<?
+$MESS["TITLE"] = "Modulio valdymas";
+$MESS["MOD_SETUP"] = "Statusas";
+$MESS["MOD_ACTION"] = "Veiksmas";
+$MESS["MOD_NAME"] = "Pavadinimas";
+$MESS["MOD_VERSION"] = "Versija";
+$MESS["SAVE"] = "Išsaugoti pakeitimus";
+$MESS["RESET"] = "Išvalyti";
+$MESS["MOD_INSTALL"] = "Įdiegti";
+$MESS["MOD_INSTALL_BUTTON"] = "Įdiegti";
+$MESS["MOD_DELETE"] = "Ištrinti";
+$MESS["MOD_INSTALLED"] = "Įdiegta";
+$MESS["MOD_NOT_INSTALLED"] = "Neįdiegta";
+$MESS["MOD_MAIN_MODULE"] = "Pagrindinis modulis";
+$MESS["MOD_MAIN_DESCRIPTION"] = "Sistemos „Bitrix Site Manager“ branduolys su sistemos autnaujininų galimybe #A1#\\\"SiteUpdate\\\"#A2#.";
+$MESS["MOD_DATE_UPDATE"] = "Atnaujinimo data";
+$MESS["MOD_UNINST_WARN"] = "Dėmesio!<br>Modulis bus pašalintas iš sistemos";
+$MESS["MOD_UNINST_SAVE"] = "Jūs galite išsaugoti duomenis duomenų bazės lentelėse:";
+$MESS["MOD_UNINST_SAVE_TABLES"] = "Išsaugoti lenteles";
+$MESS["MOD_UNINST_SAVE_EVENTS"] = "Išsaugoti prenešimų tipus ir šablonus";
+$MESS["MOD_UNINST_DEL"] = "Ištrinti modulį";
+$MESS["MOD_UNINST_OK"] = "Modulis sėkmingai ištrintas";
+$MESS["MOD_BACK"] = "Grįžti į sąrašą";
+$MESS["MOD_UNINST_ERR"] = "Nepavyko ištrinti. Įvyko klaida. :";
+$MESS["MOD_INST_ERR"] = "Diegimo klaidos:";
+$MESS["MOD_INST_OK"] = "Modulis sėkmingai įdiegtas";
+$MESS["COPY_PUBLIC_FILES"] = "Kopijuoti tinklapio viešosios dalies bylas";
+$MESS["COPY_FOLDER"] = "Katalogas, kur bus nukopijuotos bylos:";
+$MESS["INSTALL_PUBLIC_REW"] = "Perrašyti esamas bylas";
+$MESS["MOD_DEMO_DIR"] = "Norėdami peržiūrėti darbą, spauskite šias nuorodas:";
+$MESS["MOD_DEMO_SITE"] = "Svetainė";
+$MESS["MOD_DEMO_LINK"] = "Nuoroda";
+$MESS["MOD_PARTNER_NAME"] = "Įmonė <a target='_blank' href='#URI#'>#NAME#</a>";
+$MESS["MOD_UNINST_DEN"] = "Šis modulis negali būti įdiegtas.";
+?>

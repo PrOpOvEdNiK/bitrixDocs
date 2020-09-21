@@ -1,0 +1,34 @@
+<?
+$MESS["TASKS_STATUS_1"] = "Nauja";
+$MESS["TASKS_STATUS_2"] = "Laukiama";
+$MESS["TASKS_STATUS_3"] = "Vykdoma";
+$MESS["TASKS_STATUS_4"] = "Laukia patikrinimo";
+$MESS["TASKS_STATUS_5"] = "Užbaigta";
+$MESS["TASKS_STATUS_6"] = "Atidėta";
+$MESS["TASKS_STATUS_7"] = "Atmesta";
+$MESS["TASKS_PRIORITY"] = "Prioritetas";
+$MESS["TASKS_PRIORITY_0"] = "Žemas";
+$MESS["TASKS_PRIORITY_1"] = "Vidutinis";
+$MESS["TASKS_PRIORITY_2"] = "Aukštas";
+$MESS["TASKS_RESPONSIBLE"] = "Atsakingas";
+$MESS["TASKS_CREATOR"] = "Kūrėjas";
+$MESS["TASKS_STATUS"] = "Statusas";
+$MESS["TASKS_SIDEBAR_START_DATE"] = "nuo";
+$MESS["TASKS_TASK_TITLE_LABEL"] = "Užduotis";
+$MESS["TASKS_STATUS_OVERDUE"] = "Pradelsta";
+$MESS["TASKS_STATUS_NEW"] = "Nauja";
+$MESS["TASKS_STATUS_ACCEPTED"] = "Priimta";
+$MESS["TASKS_STATUS_IN_PROGRESS"] = "Vykdoma";
+$MESS["TASKS_STATUS_WAITING"] = "Laukia patikrinimo";
+$MESS["TASKS_STATUS_COMPLETED"] = "Atlikta";
+$MESS["TASKS_STATUS_DELAYED"] = "Atidėta";
+$MESS["TASKS_STATUS_DECLINED"] = "Atmesta";
+$MESS["TASKS_NEW_RESPONSIBLE"] = "Naujas darbuotojas";
+$MESS["TASKS_CREATED_DATE"] = "Sukūrimo data";
+$MESS["TASKS_DEADLINE"] = "Terminas";
+$MESS["TASKS_START_DATE_PLAN"] = "Pradžios data";
+$MESS["TASKS_END_DATE_PLAN"] = "Pabaigos data";
+$MESS["TASKS_NO_DATE"] = "nėra";
+$MESS["TASKS_DATE_START"] = "Pradžios data";
+$MESS["TASKS_CLOSED_DATE"] = "Užbaigta";
+?>

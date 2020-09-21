@@ -1,0 +1,6 @@
+<?
+$MESS["CRM_NAME"] = "CRM";
+$MESS["CRM_QUOTE_NAME"] = "Facturas";
+$MESS["CRM_QUOTE_PAYMENT_DESCRIPTION"] = "Ver factura HTML/PDF";
+$MESS["CRM_QUOTE_PAYMENT_NAME"] = "Ver factura HTML/PDF";
+?>

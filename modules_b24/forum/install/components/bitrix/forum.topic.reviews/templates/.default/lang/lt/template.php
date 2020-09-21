@@ -1,0 +1,30 @@
+<?
+$MESS["OPINIONS_NAME"] = "Jūsų vardas";
+$MESS["OPINIONS_EMAIL"] = "Jūsų el. paštas";
+$MESS["OPINIONS_SEND"] = "Siųsti";
+$MESS["OPINIONS_PREVIEW"] = "Peržiūrėti";
+$MESS["F_C_GOTO_FORUM"] = "Pereiti į forumą >>";
+$MESS["F_CAPTCHA_TITLE"] = "Boto apsauga nuo nepageidaujamo pašto (CAPTCHA)";
+$MESS["F_CAPTCHA_PROMT"] = "CAPTCHA vaizdo simboliai";
+$MESS["F_QUOTE_FULL"] = "Cituoti";
+$MESS["F_WANT_ALLOW_SMILES"] = "Ar šiame pranešime norite <b>įjungti</b> šypsniukus?";
+$MESS["F_WANT_SUBSCRIBE_TOPIC"] = "Prenumeruoti naujus pranešimus šioje temoje";
+$MESS["F_LOAD_FILE"] = "Įkelti failą";
+$MESS["F_LOAD_IMAGE"] = "Įkelti nuotrauką";
+$MESS["F_QUOTE_HINT"] = "Jei atsakymo formoje norite cituoti pranešimą, pažymėkite tekstą ir spustelėkite čia";
+$MESS["F_NAME"] = "Vardas";
+$MESS["JQOUTE_AUTHOR_WRITES"] = "rašo";
+$MESS["JERROR_NO_TOPIC_NAME"] = "Turite įvesti pavadinimą";
+$MESS["JERROR_NO_MESSAGE"] = "Turite įvesti pranešimą.";
+$MESS["JERROR_MAX_LEN"] = "Didžiausias pranešimo ilgis yra #MAX_LENGTH# simbolių. Iš viso simbolių: #LENGTH#.";
+$MESS["F_FILE_SIZE"] = "failo dydis neturi viršyti #SIZE#";
+$MESS["F_PREVIEW"] = "Peržiūra";
+$MESS["F_DOWNLOAD"] = "Atsisiųsti";
+$MESS["F_FILE_EXTENSION"] = "Leidžiami failai: #EXTENSION#.";
+$MESS["F_HIDE"] = "Paslėti";
+$MESS["F_SHOW"] = "Rodyti";
+$MESS["F_WAIT"] = "Prašome palaukti...";
+$MESS["F_DELETE"] = "Ištrinti";
+$MESS["F_DELETE_CONFIRM"] = "Jūsų žinutė bus ištrinta negrįžtamai. Tęsti?";
+$MESS["F_ATTACH_FILES"] = "Prikabinti failai";
+?>

@@ -1,0 +1,37 @@
+<?
+$MESS["EC_IBLOCK_MODULE_NOT_INSTALLED"] = "Moduł Bloków Informacji nie jest zainstalowany.";
+$MESS["EC_INTRANET_MODULE_NOT_INSTALLED"] = "Moduł intranetowy nie jest zainstalowany.";
+$MESS["INAF_F_DESCRIPTION"] = "Opis";
+$MESS["INAF_F_FLOOR"] = "Piętro";
+$MESS["INAF_F_ID"] = "ID";
+$MESS["INAF_F_NAME"] = "Nazwa";
+$MESS["INAF_F_PHONE"] = "Telefon";
+$MESS["INAF_F_PLACE"] = "Pojemność";
+$MESS["INAF_ITEM_NOT_FOUND"] = "Nie znaleziono rezerwacji";
+$MESS["INAF_MEETING_NOT_FOUND"] = "Nie znaleziono zasobu.";
+$MESS["INTASK_C29_CONFLICT"] = "Zasób jest zarezerwowany od #TIME1# do #TIME2#: #RES#";
+$MESS["INTASK_C29_EMPTY_DATE"] = "Data rezerwacji jest nieokreślona.";
+$MESS["INTASK_C29_EMPTY_DURATION"] = "Czas trwania spotkanie jest nieokreślony.";
+$MESS["INTASK_C29_EMPTY_NAME"] = "Tytuł spotkania jest nieokreślony.";
+$MESS["INTASK_C29_EMPTY_TIME"] = "Czas rezerwacji jest nieokreślony.";
+$MESS["INTASK_C29_HM"] = "godziny:minuty am/pm";
+$MESS["INTASK_C29_NEED_AUTH"] = "Musisz się autoryzować przed zarezerwowaniem zasobu.";
+$MESS["INTASK_C29_NO_RPERMS"] = "Nie masz uprawnień do rezerwacji zasobu.";
+$MESS["INTASK_C29_NO_RPERMS_MODIFY"] = "Nie masz uprawnień do edytowania tej rezerwacji";
+$MESS["INTASK_C29_PERIOD_TYPE"] = "Typ Okresu";
+$MESS["INTASK_C29_UF_PERSONS"] = "Osoby";
+$MESS["INTASK_C29_UF_PREPARE_ROOM"] = "Przygotowanie zasobu";
+$MESS["INTASK_C29_UF_RES_TYPE"] = "Typ spotkania";
+$MESS["INTASK_C29_UF_RES_TYPEA"] = "Konsultacja";
+$MESS["INTASK_C29_UF_RES_TYPEB"] = "Prezentacja";
+$MESS["INTASK_C29_UF_RES_TYPEC"] = "Negocjacje";
+$MESS["INTASK_C29_UF_RES_TYPED"] = "inne";
+$MESS["INTASK_C29_WRONG_DATE"] = "Data rezerwcji jest nieprawidłowa. Proszę użyć formatu daty: #FORMAT#";
+$MESS["INTASK_C29_WRONG_DURATION"] = "Czas trwania spotkania jest nieokreślony.";
+$MESS["INTASK_C29_WRONG_REG_DATE"] = "Data zakończenia wydarzenia cyklicznego jest nieprawidłowa. Proszę użyć formatu: #FORMAT#";
+$MESS["INTASK_C29_WRONG_TIME"] = "Czas rezerwacji jest nieprawidłowy. Proszę użyć formatu czasu: #FORMAT#";
+$MESS["INTASK_C36_PAGE_TITLE"] = "Rezerwacja zasobu";
+$MESS["INTASK_C36_PAGE_TITLE1"] = "Rezerwacja zasobu";
+$MESS["INTR_IRMR_NAME_TEMPLATE_DEFAULT"] = "#NOBR##NAME# #LAST_NAME##/NOBR#";
+$MESS["INTS_NO_IBLOCK_PERMS"] = "Nie masz uprawnień do wyświetlania bloku informacji zasobów.";
+?>

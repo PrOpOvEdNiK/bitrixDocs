@@ -1,0 +1,21 @@
+<?
+$MESS["IMOL_MESSAGE_CRM_CARD_FULL_NAME"] = "Ім'я";
+$MESS["IMOL_MESSAGE_CRM_CARD_COMPANY_TITLE"] = "Компанія";
+$MESS["IMOL_MESSAGE_CRM_CARD_POST"] = "Посада";
+$MESS["IMOL_MESSAGE_CRM_CARD_PHONE"] = "Телефон";
+$MESS["IMOL_MESSAGE_CRM_CARD_EMAIL"] = "Email";
+
+$MESS["IMOL_MESSAGE_CRM_CONTACT_ADD_NEW"] = "Створений новий контакт";
+$MESS["IMOL_MESSAGE_CRM_COMPANY_ADD_NEW"] = "Створена нова компанія";
+$MESS["IMOL_MESSAGE_CRM_DEAL_ADD_NEW"] = "Створена нова угода";
+$MESS["IMOL_MESSAGE_CRM_LEAD_ADD_NEW"] = "Створено новий лід";
+
+$MESS["IMOL_MESSAGE_CRM_DEAL_EXTEND"] = "Контактна інформація збережена в угоду";
+$MESS["IMOL_MESSAGE_CRM_LEAD_EXTEND"] = "Контактна інформація збережена в лід";
+$MESS["IMOL_MESSAGE_CRM_CONTACT_EXTEND"] = "Контактна інформація збережена в контакт";
+$MESS["IMOL_MESSAGE_CRM_COMPANY_EXTEND"] = "Контактна інформація збережена в компанію";
+
+$MESS["IMOL_MESSAGE_CRM_LEAD_UPDATE"] = "Лід прикріплений до діалогу";
+$MESS["IMOL_MESSAGE_CRM_CONTACT_UPDATE"] = "Контакт прикріплений до діалогу";
+$MESS["IMOL_MESSAGE_CRM_COMPANY_UPDATE"] = "Компанія прикріплена до діалогу";
+$MESS["IMOL_MESSAGE_CRM_DEAL_UPDATE"] = "Угода прикріплена до діалогу";

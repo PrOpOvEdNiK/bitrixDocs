@@ -1,0 +1,36 @@
+<?
+$MESS["BLB_AUTHOR_ANONYM"] = "Auteur anonyme";
+$MESS["BLB_AUTHOR_EMAIL"] = "Adresse emailde l'auteur";
+$MESS["BLB_AUTHOR_ID"] = "Auteur";
+$MESS["BLB_AUTHOR_IP"] = "IP de l'auteur";
+$MESS["BLB_AUTHOR_IP1"] = "IP1 d'auteur";
+$MESS["BLB_AUTHOR_NAME"] = "Nom d'auteur";
+$MESS["BLB_BLOG_ACTIVE"] = "Blog est actif";
+$MESS["BLB_BLOG_GROUP_ID"] = "Groupe de blogs";
+$MESS["BLB_BLOG_GROUP_SITE_ID"] = "Site";
+$MESS["BLB_BLOG_ID"] = "Blog";
+$MESS["BLB_BLOG_OWNER_ID"] = "Propriétaire du blogue";
+$MESS["BLB_BLOG_SOCNET_GROUP_ID"] = "Groupe propriétaire du blog";
+$MESS["BLB_COMMENT"] = "Commentaire";
+$MESS["BLB_DATE_CREATE"] = "Date de création";
+$MESS["BLB_DELETE_ALT"] = "Supprimer";
+$MESS["BLB_DELETE_CONF"] = "Êtes-vous sûr de vouloir supprimer le commentaire ?";
+$MESS["BLB_DELETE_ERROR"] = "Erreur de suppression du commentaire.";
+$MESS["BLB_F_ALL"] = "(Tous)";
+$MESS["BLB_GROUP_NAV"] = "Commentaire";
+$MESS["BLB_HIDE_ALT"] = "Cacher";
+$MESS["BLB_HIDE_ERROR"] = "Erreur de masquage du commentaire.";
+$MESS["BLB_NO"] = "Non";
+$MESS["BLB_POST_ID"] = "Message";
+$MESS["BLB_POST_TEXT"] = "Le texte du commentaire sur l'idée";
+$MESS["BLB_PUBLISH_STATUS"] = "Année de publication";
+$MESS["BLB_SHOW_ALT"] = "Afficher";
+$MESS["BLB_SHOW_ERROR"] = "Erreur de l'affichage du commentaire.";
+$MESS["BLB_STOP_LIST"] = "stop-liste";
+$MESS["BLB_TITLE"] = "Commentaire";
+$MESS["BLB_VIEW_ALT"] = "Voir le commentaire sur le site";
+$MESS["BLB_YES"] = "Oui";
+$MESS["MAIN_ADMIN_LIST_CHECKED"] = "Coché : ";
+$MESS["MAIN_ADMIN_LIST_DELETE"] = "supprimer";
+$MESS["MAIN_ADMIN_LIST_SELECTED"] = "Sélectionné : ";
+?>

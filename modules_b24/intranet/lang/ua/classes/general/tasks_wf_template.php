@@ -1,0 +1,66 @@
+<?
+$MESS["INTASK_WF_TMPL_HEEA_T_WaitingEvent"] = "В очікуванні";
+$MESS["INTASK_WF_TMPL_Waiting"] = "В очікуванні";
+$MESS["INTASK_WF_TMPL_SLAX_LOGTEXT"] = "Важливіть: {=Document:PROPERTY_TaskPriority}
+Дата початку: {=Document:ACTIVE_FROM}
+Дата закінчення: {=Document:ACTIVE_TO}
+Відповідальний: {=Document:PROPERTY_TaskAssignedTo_PRINTABLE}";
+$MESS["INTASK_WF_TMPL_SNMA_M_NotStartedEvent"] = "Виконання завдання \"[url={=Template:PathTemplate}]{=Document:NAME}[/url]\" не розпочато";
+$MESS["INTASK_WF_TMPL_InProgress"] = "Виконується";
+$MESS["INTASK_WF_TMPL_Completed"] = "Завершено";
+$MESS["INTASK_WF_TMPL_SNMA_M_CompleteEvent"] = "Завершено виконання завдання \"[url={=Template:PathTemplate}]{=Document:NAME}[/url]\"";
+$MESS["INTASK_WF_TMPL_HEEA_T_CompleteEvent"] = "Завершити завдання";
+$MESS["INTASK_WF_TMPL_SLAX_NotAccepted_LOGTITLE"] = "Завдання \"#TITLE#\" в статусі «Не прийнято»";
+$MESS["INTASK_WF_TMPL_SNMA_M_ApproveEvent"] = "Завдання \"[url={=Template:PathTemplate}]{=Document:NAME}[/url]\" було прийняте відповідальним на виконання";
+$MESS["INTASK_WF_TMPL_SNMA_M_CloseEvent"] = "Завдання \"[url={=Template:PathTemplate}]{=Document:NAME}[/url]\" закрито";
+$MESS["INTASK_WF_TMPL_SNMA_M_DeferredEvent"] = "Завдання \"[url={=Template:PathTemplate}]{=Document:NAME}[/url]\" відкладено";
+$MESS["INTASK_WF_TMPL_SNMA_M_WaitingEvent"] = "Завдання \"[url={=Template:PathTemplate}]{=Document:NAME}[/url]\" переведено у стан очікування";
+$MESS["INTASK_WF_TMPL_FRAXR_NotAccepted_ONINIT"] = "Завдання в статусі «Не прийнято»";
+$MESS["INTASK_WF_TMPL_Closed"] = "Закрито";
+$MESS["INTASK_WF_TMPL_HEEA_T_CloseEvent"] = "Закрити завдання";
+$MESS["INTASK_WF_TMPL_SNMA_M_InProgressEvent"] = "Розпочато виконання завдання \"[url={=Template:PathTemplate}]{=Document:NAME}[/url]\"";
+$MESS["INTASK_WF_TMPL_HEEA_T_InProgressEvent"] = "Розпочати виконання завдання";
+$MESS["INTASK_WF_TMPL_HEEA_T_NotStartedEvent"] = "Не почалася";
+$MESS["INTASK_WF_TMPL_NotStarted"] = "Не почалася";
+$MESS["INTASK_WF_TMPL_NotAccepted"] = "Не прийнята";
+$MESS["INTASK_WF_TMPL_Deferred"] = "Відкладена";
+$MESS["INTASK_WF_TMPL_HEEA_T_DeferredEvent"] = "Відкласти завдання";
+$MESS["INTASK_WF_TMPL_HEEA_T_ApproveEvent"] = "Прийняти завдання";
+$MESS["INTASK_WF_TMPL_HEEA_T_SetResponsibleEvent"] = "Змінити відповідального";
+$MESS["INTASK_WF_TMPL_SNMA95_M_NotAccepted"] = "Створено нове завдання \"[url={=Template:PathTemplate}]{=Document:NAME}[/url]\"";
+$MESS["INTASK_WF_TMPL_SNMA_MT_NotStartedEvent"] = "Повідомлення";
+$MESS["INTASK_WF_TMPL_SNMA_MT_CompleteEvent"] = "Повідомлення про завершення";
+$MESS["INTASK_WF_TMPL_SNMA_MT_CloseEvent"] = "Повідомлення про закриття";
+$MESS["INTASK_WF_TMPL_SNMA_MT_InProgressEvent"] = "Повідомлення про початок виконання";
+$MESS["INTASK_WF_TMPL_SNMA_MT_ApproveEvent"] = "Повідомлення про прийняття";
+$MESS["INTASK_WF_TMPL_SNMA_MT_SetResponsibleEvent"] = "Повідомлення про зміну відповідального";
+$MESS["INTASK_WF_TMPL_SNMA95_MT_NotAccepted"] = "Повідомлення про створення завдання";
+$MESS["INTASK_WF_TMPL_SNMA_MT_WaitingEvent"] = "Повідомлення про очікування";
+$MESS["INTASK_WF_TMPL_SNMA_MT_DeferredEvent"] = "Повідомлення про відкладення";
+$MESS["INTASK_WF_TMPL_SLAX_Waiting_LOGTITLE"] = "Статус завдання \"#TITLE#\" змінився на «В очікуванні»";
+$MESS["INTASK_WF_TMPL_SLAX_InProgress_LOGTITLE"] = "Статус завдання \"#TITLE#\" змінився на «Виконується»";
+$MESS["INTASK_WF_TMPL_SLAX_Completed_LOGTITLE"] = "Статус завдання \"#TITLE#\" змінився на «Завершено»";
+$MESS["INTASK_WF_TMPL_SLAX_Closed_LOGTITLE"] = "Статус завдання \"#TITLE#\" змінився на «Закрито»";
+$MESS["INTASK_WF_TMPL_SLAX_NotStarted_LOGTITLE"] = "Статус завдання \"#TITLE#\" змінився на «Не розпочалося»";
+$MESS["INTASK_WF_TMPL_SLAX_Deferred_LOGTITLE"] = "Статус завдання \"#TITLE#\" змінився на «Відкладено»";
+$MESS["INTASK_WF_TMPL_FRAXR_Waiting_ONINIT"] = "Статус завдання змінився на «В очікуванні»";
+$MESS["INTASK_WF_TMPL_FRAXR_InProgress_ONINIT"] = "Статус завдання змінився на «Виконується»";
+$MESS["INTASK_WF_TMPL_FRAXR_Completed_ONINIT"] = "Статус завдання змінився на «Завершено»";
+$MESS["INTASK_WF_TMPL_FRAXR_Closed_ONINIT"] = "Статус завдання змінився на «Закрито»";
+$MESS["INTASK_WF_TMPL_FRAXR_NotStarted_ONINIT"] = "Статус завдання змінився на «Не розпочалося»";
+$MESS["INTASK_WF_TMPL_FRAXR_Deferred_ONINIT"] = "Статус завдання змінився на «Відкладено»";
+$MESS["INTASK_WF_TMPL_SLAXR_SetResponsibleEvent"] = "У завдання \"#TITLE#\" змінився відповідальний";
+$MESS["INTASK_WF_TMPL_FRAXR_SetResponsibleEvent"] = "У завдання змінився відповідальний. Новий відповідальний {=Document:PROPERTY_TaskAssignedTo_PRINTABLE}";
+$MESS["INTASK_WF_TMPL_SSA_S_WaitingEvent"] = "Встановити статус «В очікуванні»";
+$MESS["INTASK_WF_TMPL_SSA_S_InProgressEvent"] = "Встановити статус «Виконується»";
+$MESS["INTASK_WF_TMPL_SSA_S_CompleteEvent"] = "Встановити статус «Завершено»";
+$MESS["INTASK_WF_TMPL_SSA_S_CloseEvent"] = "Встановити статус «Закрито»";
+$MESS["INTASK_WF_TMPL_SSA_S_ApproveEvent"] = "Встановити статус «Не розпочалося»";
+$MESS["INTASK_WF_TMPL_SSA_S_NotStartedEvent"] = "Встановити статус «Не розпочалося»";
+$MESS["INTASK_WF_TMPL_SSA_S_SetResponsibleEvent"] = "Встановити статус «Не прийнята»";
+$MESS["INTASK_WF_TMPL_SSA_S_DeferredEvent"] = "Встановити статус «Відкладено»";
+$MESS["INTASK_WF_TMPL_SNMA_M_SetResponsibleEvent"] = "Встановлений новий відповідальний для завдання \"[url={=Template:PathTemplate}]{=Document:NAME}[/url]\"";
+$MESS["INTASK_WF_TMPL_BP_NAME"] = "Шаблон робочого потоку задач";
+$MESS["INTASK_WF_TMPL_NAME"] = "Шаблон робочого потоку задач";
+$MESS["INTASK_WF_TMPL_DESC"] = "Шаблон робочого потоку задач";
+?>

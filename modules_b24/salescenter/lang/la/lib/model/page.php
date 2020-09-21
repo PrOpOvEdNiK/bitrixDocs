@@ -1,0 +1,3 @@
+<?
+$MESS["SALESCENTER_MODIFIED_AGO_SUFFIX"] = "Hace #DATE#";
+?>

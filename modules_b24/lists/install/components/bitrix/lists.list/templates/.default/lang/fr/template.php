@@ -1,0 +1,37 @@
+<?
+$MESS["CT_BLL_ADD_SECTION_POPUP_BUTTON_ADD"] = "Ajouter";
+$MESS["CT_BLL_ADD_SECTION_POPUP_BUTTON_CLOSE"] = "Fermer";
+$MESS["CT_BLL_ADD_SECTION_POPUP_BUTTON_EDIT"] = "Enregistrer";
+$MESS["CT_BLL_ADD_SECTION_POPUP_ERROR_NAME"] = "Le champ \"Nom\" doit être rempli";
+$MESS["CT_BLL_ADD_SECTION_POPUP_INPUT_NAME"] = "Nom";
+$MESS["CT_BLL_ADD_SECTION_POPUP_TITLE"] = "Créer une section";
+$MESS["CT_BLL_DELETE_POPUP_ACCEPT_BUTTON"] = "Supprimer";
+$MESS["CT_BLL_DELETE_POPUP_CANCEL_BUTTON"] = "Annuler";
+$MESS["CT_BLL_DELETE_POPUP_TITLE"] = "Confirmer la suppression";
+$MESS["CT_BLL_EDIT_SECTION_POPUP_TITLE"] = "Modifier la section";
+$MESS["CT_BLL_EXPORT_EXCEL"] = "Exporter vers Microsoft Excel";
+$MESS["CT_BLL_EXPORT_EXCEL_TITLE"] = "Exporter vers Microsoft Excel";
+$MESS["CT_BLL_EXPORT_IN_EXCEL"] = "Exporter vers Microsoft Excel";
+$MESS["CT_BLL_HIDE_SECTION_GRID"] = "Masquer les sections";
+$MESS["CT_BLL_MOVE_TO_SECTION"] = "déplacer dans la section";
+$MESS["CT_BLL_REBUILD_SEARCH_CONTENT_STATE"] = "#processed# de #total#";
+$MESS["CT_BLL_REBUILD_SEARCH_CONTENT_TITLE"] = "Recréer l'index de recherche";
+$MESS["CT_BLL_SECTION_RETURN"] = "Retour";
+$MESS["CT_BLL_SELECTED"] = "Sélectionné";
+$MESS["CT_BLL_SHOW_SECTION_GRID"] = "Afficher les sections";
+$MESS["CT_BLL_TOOLBAR_ACTION"] = "Actions";
+$MESS["CT_BLL_TOOLBAR_ADD"] = "Ajouter";
+$MESS["CT_BLL_TOOLBAR_ADD_ELEMENT_TITLE"] = "Ajouter un nouvel élément à la section actuelle";
+$MESS["CT_BLL_TOOLBAR_BIZPROC"] = "Processus d'affaires";
+$MESS["CT_BLL_TOOLBAR_BIZPROC_SETTINGS"] = "Configurer les flux de travail";
+$MESS["CT_BLL_TOOLBAR_BIZPROC_TITLE"] = "Processus d'affaires";
+$MESS["CT_BLL_TOOLBAR_EDIT_SECTION"] = "Gestion des sections";
+$MESS["CT_BLL_TOOLBAR_EDIT_SECTION_TITLE"] = "Modification et suppression des sections";
+$MESS["CT_BLL_TOOLBAR_ELEMENT_DELETE_WARNING"] = "Voulez-vous vraiment supprimer cet élément ?";
+$MESS["CT_BLL_TOOLBAR_FIELDS"] = "Personnaliser les champs";
+$MESS["CT_BLL_TOOLBAR_LIST"] = "Paramètres de la liste";
+$MESS["CT_BLL_TOOLBAR_LIST_TITLE"] = "Configurer les paramètres de la liste";
+$MESS["CT_BLL_TOOLBAR_PROCESS"] = "Paramètres de flux de travail";
+$MESS["CT_BLL_TOOLBAR_PROCESS_TITLE"] = "Modifier les préférences de flux de travail";
+$MESS["CT_BLL_TOOLBAR_SECTION_DELETE_WARNING"] = "Voulez-vous vraiment supprimer cette section ?";
+?>

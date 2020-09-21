@@ -1,0 +1,33 @@
+<?
+$MESS["SONET_MODULE_NOT_INSTALL"] = "Socialinio tinklo modulis neįdiegtas.";
+$MESS["SONET_P_USER_NO_USER"] = "Vartotojas nerastas.";
+$MESS["SONET_C3_NO_ENTITY_ID"] = "Subjekto ID nenurodytas.";
+$MESS["SONET_C3_PERMS"] = "Šiai operacijai atlikti neturite leidimo.";
+$MESS["SONET_C3_NO_SUBSCRIPTIONS"] = "Prenumeratų nėra";
+$MESS["SONET_C3_NO_GROUP"] = "Grupė nerasta.";
+$MESS["SONET_C3_GROUP_SETTINGS"] = "Prenumerata";
+$MESS["SONET_C3_USER_SETTINGS"] = "Prenumerata";
+$MESS["SUBSCRIBE_NAME_forum"] = "Forumas";
+$MESS["SUBSCRIBE_NAME_blog"] = "Internetinis dienoraštis";
+$MESS["SUBSCRIBE_NAME_calendar"] = "Kalendorius";
+$MESS["SUBSCRIBE_NAME_tasks"] = "Užduotys";
+$MESS["SUBSCRIBE_NAME_files"] = "Failai";
+$MESS["SUBSCRIBE_NAME_photo"] = "Nuotrauka";
+$MESS["SUBSCRIBE_NAME1_forum"] = "Diskusijos";
+$MESS["SUBSCRIBE_NAME1_blog"] = "Tinklaraščiai";
+$MESS["SUBSCRIBE_NAME1_calendar"] = "Kalendorius";
+$MESS["SUBSCRIBE_NAME1_tasks"] = "Užduotys";
+$MESS["SUBSCRIBE_NAME1_files"] = "Failai";
+$MESS["SUBSCRIBE_NAME1_photo"] = "Nuotrauka";
+$MESS["SONET_C3_PVG_OWNER"] = "Grupės savininkas";
+$MESS["SONET_C3_PVG_MOD"] = "Grupės savininkas ir moderatoriai";
+$MESS["SONET_C3_PVG_USER"] = "Visi nariai";
+$MESS["SONET_C3_PVG_ALL"] = "Visi vartotojai";
+$MESS["SONET_C3_PVU_NONE"] = "Tik aš";
+$MESS["SONET_C3_PVU_FR"] = "Tik draugai";
+$MESS["SONET_C3_PVU_FR2"] = "Tik draugai ir draugų draugai";
+$MESS["SONET_C3_PVU_ALL"] = "Visi vartotojai";
+$MESS["SONET_C3_SYSTEM"] = "Sistema";
+$MESS["SONET_C3_SYSTEM_FR"] = "Draugai";
+$MESS["SONET_C3_SYSTEM_GR"] = "Grupės";
+?>

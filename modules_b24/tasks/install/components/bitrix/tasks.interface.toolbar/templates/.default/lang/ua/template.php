@@ -1,0 +1,33 @@
+<?
+$MESS["TASKS_COUNTER_EMPTY"] = "Немає завдань, що вимагають оперативної реакції";
+$MESS["TASKS_COUNTER_EXPIRED_CANDIDATES_PLURAL_0"] = "майже прострочено";
+$MESS["TASKS_COUNTER_EXPIRED_CANDIDATES_PLURAL_1"] = "майже прострочені";
+$MESS["TASKS_COUNTER_EXPIRED_CANDIDATES_PLURAL_2"] = "майже прострочені";
+$MESS["TASKS_COUNTER_EXPIRED_PLURAL_0"] = "прострочено";
+$MESS["TASKS_COUNTER_EXPIRED_PLURAL_1"] = "прострочені";
+$MESS["TASKS_COUNTER_EXPIRED_PLURAL_2"] = "прострочені";
+$MESS["TASKS_COUNTER_NEW_PLURAL_0"] = "не переглянуте";
+$MESS["TASKS_COUNTER_NEW_PLURAL_1"] = "не переглянуті";
+$MESS["TASKS_COUNTER_NEW_PLURAL_2"] = "не переглянуті";
+$MESS["TASKS_COUNTER_TOTAL"] = "Завдання:";
+$MESS["TASKS_COUNTER_TOTAL_PLURAL_0"] = "завдання";
+$MESS["TASKS_COUNTER_TOTAL_PLURAL_1"] = "завдання";
+$MESS["TASKS_COUNTER_TOTAL_PLURAL_2"] = "Завдань:";
+$MESS["TASKS_COUNTER_WAIT_CTRL_PLURAL_0"] = "очікує контролю";
+$MESS["TASKS_COUNTER_WAIT_CTRL_PLURAL_1"] = "очікує контролю";
+$MESS["TASKS_COUNTER_WAIT_CTRL_PLURAL_2"] = "очікує контролю";
+$MESS["TASKS_COUNTER_WO_DEADLINE_PLURAL_0"] = "без крайнього терміну";
+$MESS["TASKS_COUNTER_WO_DEADLINE_PLURAL_1"] = "без крайнього терміну";
+$MESS["TASKS_COUNTER_WO_DEADLINE_PLURAL_2"] = "без крайнього терміну";
+$MESS["TASKS_FULL_TASK_INDEXING_TITLE"] = "Індексація завдань і коментарів";
+$MESS["TASKS_GROUP_COUNTERS_SOON"] = "Скоро тут з'являться лічильники завдань проєкту";
+$MESS["TASKS_SWITCHER_ITEM_GANTT"] = "Гант";
+$MESS["TASKS_SWITCHER_ITEM_KANBAN"] = "Канбан";
+$MESS["TASKS_SWITCHER_ITEM_LIST"] = "Список";
+$MESS["TASKS_SWITCHER_ITEM_REPORTS"] = "Звіти";
+$MESS["TASKS_SWITCHER_ITEM_ROBOTS"] = "Роботи";
+$MESS["TASKS_SWITCHER_NAME"] = "Вид";
+$MESS["TASKS_TASK_CHECKLIST_CONVERTING_TITLE"] = "Конвертація чек-листів завдань";
+$MESS["TASKS_TEMPLATE_CHECKLIST_CONVERTING_TITLE"] = "Конвертація чек-листів шаблонів завдань";
+$MESS["TASKS_TEMPLATE_SPOTLIGHT_TIMELINE"] = "Плануйте вирішення своїх завдань і стежте за крайнім терміном у новому відображенні.";
+?>

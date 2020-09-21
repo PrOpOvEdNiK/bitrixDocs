@@ -1,0 +1,4 @@
+<?
+$MESS["DISCOUNT_ENTITY_CREATED_BY_FIELD"] = "Stworzone przez";
+$MESS["DISCOUNT_ENTITY_DATE_CREATE_FIELD"] = "Utworzone";
+?>

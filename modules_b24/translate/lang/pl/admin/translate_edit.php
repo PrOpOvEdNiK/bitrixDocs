@@ -1,0 +1,29 @@
+<?
+$MESS["TRANS_CHAIN_FOLDER"] = "Kliknij, aby przejść do folderu";
+$MESS["TRANS_CHAIN_FOLDER_ROOT"] = "Kliknij, aby przejść do folderu głównego";
+$MESS["TRANS_DELETE"] = "Usuń:";
+$MESS["TRANS_DELETE_ALL"] = "Usuń wszystkie:";
+$MESS["TRANS_DELETE_CURRENT"] = "Usuń wiadomości nie znajdujące się w bieżącym języku.";
+$MESS["TRANS_FILENAME"] = "Nazwa pliku:";
+$MESS["TRANS_FOLDERS_LIST"] = "Lista folderu";
+$MESS["TRANS_GET_UNTRANSLATE"] = "Eksportuj nieprzetłumaczone wiadomości";
+$MESS["TRANS_GET_UNTRANSLATE_TITLE"] = "Eksportuj nieprzetłumaczone wiadomości do tego pliku";
+$MESS["TRANS_LIST"] = "Lista";
+$MESS["TRANS_LIST_TITLE"] = "Kliknij, aby powrócić do listy";
+$MESS["TRANS_NOT_TRANS"] = "Nieprzetłumaczone:";
+$MESS["TRANS_RESET"] = "Wyczyść";
+$MESS["TRANS_SAVE"] = "Zapisz";
+$MESS["TRANS_SHOW_ALL"] = "Pokaż wszystkie wiadomości";
+$MESS["TRANS_SHOW_ALL_TITLE"] = "Kliknij, aby wyświetlić wszystkie teksty języka";
+$MESS["TRANS_SHOW_ONLY_ERROR"] = "Pokaż tylko teksty nieprzetłumaczone";
+$MESS["TRANS_SHOW_ONLY_ERROR_TITLE"] = "Kliknij, aby wyświetlić tylko nieprzetłumaczone teksty języka";
+$MESS["TRANS_TITLE"] = "Tłumacz tekstów";
+$MESS["TRANS_TITLE_TITLE"] = "Język lokalizacji tekstu";
+$MESS["TRANS_TOTAL"] = "Łącznie Wiadomości:";
+$MESS["TR_FILE_EDIT"] = "Edytuj kod PHP";
+$MESS["TR_FILE_EDIT_TITLE"] = "Edytuj kod PHP";
+$MESS["TR_FILE_PHP"] = "Kod PHP";
+$MESS["TR_FILE_SHOW"] = "Zobacz kod PHP";
+$MESS["TR_FILE_SHOW_TITLE"] = "Zobacz kod PHP";
+$MESS["trans_edit_err"] = "Nieprawidłowa nazwa pliku.";
+?>

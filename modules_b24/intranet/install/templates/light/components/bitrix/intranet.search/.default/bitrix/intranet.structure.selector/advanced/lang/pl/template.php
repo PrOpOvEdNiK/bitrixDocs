@@ -1,0 +1,12 @@
+<?
+$MESS["INTR_COMP_IS_TPL_MY_OFFICE"] = "moje biuro";
+$MESS["INTR_COMP_IS_TPL_SECH"] = "Szukaj";
+$MESS["INTR_ISS_BUTTON_CANCEL"] = "Anuluj";
+$MESS["INTR_ISS_BUTTON_SUBMIT"] = "Szukaj";
+$MESS["INTR_ISS_PARAM_DEPARTMENT"] = "Dział";
+$MESS["INTR_ISS_PARAM_EMAIL"] = "E-mail";
+$MESS["INTR_ISS_PARAM_FIO"] = "Nazwa";
+$MESS["INTR_ISS_PARAM_KEYWORDS"] = "Słowa kluczowe";
+$MESS["INTR_ISS_PARAM_PHONE"] = "Telefon";
+$MESS["INTR_ISS_PARAM_PHONE_INNER"] = "Numer wewnętrzny";
+?>

@@ -1,0 +1,10 @@
+<?
+$MESS["TASKS_CSL_T_COL_DATE"] = "Date";
+$MESS["TASKS_CSL_T_COL_ERRORS"] = "Erreurs";
+$MESS["TASKS_CSL_T_COL_MESSAGE"] = "Message";
+$MESS["TASKS_CSL_T_COL_TYPE"] = "Type";
+$MESS["TASKS_CSL_T_MESSAGE_TYPE_1"] = "Notification";
+$MESS["TASKS_CSL_T_MESSAGE_TYPE_2"] = "Avertissement";
+$MESS["TASKS_CSL_T_MESSAGE_TYPE_3"] = "Erreur";
+$MESS["TASKS_CSL_T_NO_ERROR"] = "Non";
+?>

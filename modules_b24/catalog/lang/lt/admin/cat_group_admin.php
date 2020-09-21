@@ -1,0 +1,29 @@
+<?
+$MESS["GROUP_TITLE"] = "Kainos tipas";
+$MESS["ADD_GROUP"] = "Pridėti";
+$MESS["GROUP_PAGES"] = "Tipai";
+$MESS["ACTIONS"] = "Veiksmai";
+$MESS["NAME"] = "Pavadinimas";
+$MESS["BASE"] = "Bazė";
+$MESS["BASE_YES"] = "Taip";
+$MESS["EDIT_STATUS_ALT"] = "Keisti tipą";
+$MESS["EDIT"] = "Keisti";
+$MESS["DELETE_STATUS_ALT"] = "Pašalinti kainos tipą";
+$MESS["DELETE"] = "Pašalinti ";
+$MESS["DELETE_STATUS_CONFIRM"] = "Ar tikrai norite pašalinti šį kainos tipą?";
+$MESS["RESET"] = "Atstatyti";
+$MESS["SAVE"] = "Išsaugoti";
+$MESS["SORT"] = "Rūšiuoti";
+$MESS["ERROR_DELETING_TYPE"] = "Klaida šalinant kainos tipą.";
+$MESS["ERROR_UPDATING_REC"] = "Klaida atnaujinant įrašą";
+$MESS["CODE"] = "Kodas ";
+$MESS["CGAN_ADD_NEW"] = "Naujas kainos tipas";
+$MESS["CGAN_ADD_NEW_ALT"] = "Spustelėkite ir pridėkite naują kainos tipą";
+$MESS["group_admin_nav"] = "Tipai";
+$MESS["BT_CAT_GROUP_ADM_TITLE_XML_ID"] = "Išorinis ID";
+$MESS["BT_CAT_GROUP_ADM_LANG_MESS"] = "#LANG#: #VALUE#";
+$MESS["BT_CAT_GROUP_ADM_TITLE_MODIFIED_BY"] = "Pakeitė";
+$MESS["BT_CAT_GROUP_ADM_TITLE_TIMESTAMP_X"] = "Pakeista";
+$MESS["BT_CAT_GROUP_ADM_TITLE_CREATED_BY"] = "Sukūrė";
+$MESS["BT_CAT_GROUP_ADM_TITLE_DATE_CREATE"] = "Sukurta";
+?>

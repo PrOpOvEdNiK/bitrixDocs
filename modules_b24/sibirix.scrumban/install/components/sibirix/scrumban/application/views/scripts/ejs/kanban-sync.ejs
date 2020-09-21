@@ -1,0 +1,67 @@
+<script type='text/ejs' id='kanbanSync'>
+    <div class="kanban-sync <% if (this.model.supportEnabled) { %> support-enabled<% } %>">
+        <div class="top-text">
+            <% if (false !== this.model.kanbanSyncMethodFirst) { %>
+                <% if (this.model.supportEnabled) { %>
+                    <% if ('popup' === this.context) { %>
+                        <p><?= $this->t('SYNC_KANBAN24_SUPPORT_DETAIL_POPUP') ?></p>
+                    <% } else { %>
+                        <p><?= $this->t('SYNC_KANBAN24_SUPPORT_DETAIL_PROJECTS') ?></p>
+                    <% } %>
+                <% } else { %>
+                    <p><?= $this->t('SYNC_KANBAN24_DETAIL') ?></p>
+                <% } %>
+            <% } else { %>
+                <% if (this.model.supportEnabled) { %>
+                    <% if ('popup' === this.context) { %>
+                        <p><?= $this->t('SYNC_KANBAN24_SUPPORT_DETAIL_POPUP') ?></p>
+                    <% } else { %>
+                        <p><?= $this->t('SYNC_KANBAN24_SUPPORT_DETAIL_PROJECTS') ?></p>
+                    <% } %>
+                <% } %>
+            <% } %>
+        </div>
+
+        <% if (this.model.supportEnabled) { %>
+            <div class="hidden-option" style="">
+                <input class="js-kanban-sync" type="radio" name="kanban_sync" value="0" checked>
+            </div>
+            <div class="buttons">
+                <div class="fat-green-button js-apply"><?= $this->t('CLOSE'); ?></div>
+            </div>
+        <% } else { %>
+            <% if (this.model.kanbanSyncMethod != 3) { %>
+            <div class="option">
+                 <label><input class="js-kanban-sync" type="radio" name="kanban_sync" value="scrumban_win"><span><?= $this->t('SYNC_KANBAN24_SCRUMBAN_WIN_TITLE') ?></span></label> <span class="js-spoiler spoiler"><?= $this->t('DETAIL_SPOILER') ?></span>
+                 <div class="note cut js-cut"><?= $this->t('SYNC_KANBAN24_SCRUMBAN_WIN_DESCRIPTION') ?> <span class="js-spoiler-hide spoiler"><?= $this->t('DETAIL_SPOILER_HIDE') ?></span></div>
+            </div>
+                <% if (this.model.kanbanSyncMethod == 2) { %>
+                <div class="option">
+                     <label><input class="js-kanban-sync" type="radio" name="kanban_sync" value="kanban_win"><span><?= $this->t('SYNC_KANBAN24_KANBAN_WIN_TITLE') ?></span></label> <span class="js-spoiler spoiler"><?= $this->t('DETAIL_SPOILER') ?></span>
+                     <div class="note cut js-cut"><?= $this->t('SYNC_KANBAN24_KANBAN_WIN_DESCRIPTION') ?> <span class="js-spoiler-hide spoiler"><?= $this->t('DETAIL_SPOILER_HIDE') ?></span></div>
+                </div>
+                <% } %>
+            <% } else { %>
+            <div class="option">
+                 <label><input class="js-kanban-sync" type="radio" name="kanban_sync" value="1" <% if (this.model.kanbanSyncType == '1') { %>checked<% } %>><span><?= $this->t('SYNC_KANBAN24_ENABLE_TITLE') ?></span></label> <span class="js-spoiler spoiler"><?= $this->t('DETAIL_SPOILER') ?></span>
+                 <div class="note cut js-cut"><?= $this->t('SYNC_KANBAN24_ENABLE_DESCRIPTION') ?> <span class="js-spoiler-hide spoiler"><?= $this->t('DETAIL_SPOILER_HIDE') ?></span></div>
+            </div>
+            <% } %>
+            <div class="option">
+                 <label><input class="js-kanban-sync" type="radio" name="kanban_sync" value="0" <% if (this.model.kanbanSyncType == '0') { %>checked<% } %>><span><?= $this->t('SYNC_KANBAN24_DISABLE_TITLE') ?></span></label> <span class="js-spoiler spoiler"><?= $this->t('DETAIL_SPOILER') ?></span>
+                 <div class="note cut js-cut"><?= $this->t('SYNC_KANBAN24_DISABLE_DESCRIPTION') ?> <span class="js-spoiler-hide spoiler"><?= $this->t('DETAIL_SPOILER_HIDE') ?></span></div>
+            </div>
+
+            <% if ('popup' === this.context) { %>
+                <br>
+                <p><i><?= $this->t('SYNC_KANBAN24_SYNC_SETTINGS'); ?></i></p>
+            <% } %>
+
+            <div class="buttons">
+                <div class="fat-green-button disabled js-apply"><?= $this->t('APPLY') ?></div>
+            </div>
+        <% } %>
+
+        <div class="spring-loader"><canvas class="shortLoader" style="width: 200;height: 200"></canvas></div>
+    </div>
+</script>

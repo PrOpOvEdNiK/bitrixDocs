@@ -1,0 +1,23 @@
+<?
+$MESS["CRM_PRESET_TOOLBAR_ADD"] = "Pridėti šabloną";
+$MESS["CRM_PRESET_TOOLBAR_ADD_TITLE"] = "Pridėti naują šabloną";
+$MESS["CRM_PRESET_TOOLBAR_EDIT"] = "Redaguoti šabloną";
+$MESS["CRM_ALL"] = "Viso";
+$MESS["CRM_PRESET_LIST_ACTION_MENU_DELETE"] = "Ištrinti";
+$MESS["CRM_PRESET_LIST_ACTION_MENU_DELETE_CONF"] = "Ar tikrai norite ištrinti šį šabloną?";
+$MESS["CRM_PRESET_LIST_ACTION_MENU_FIELD_LIST"] = "Laukai";
+$MESS["CRM_PRESET_LIST_ACTION_MENU_EDIT"] = "Redaguoti";
+$MESS["CRM_ADD_PRESET_DIALOG_ERR_EMPTY_NAME"] = "Įveskite šablono pavadinimą";
+$MESS["CRM_ADD_PRESET_DIALOG_ERR_LONG_NAME"] = "Šablono pavadinimas per ilgas.";
+$MESS["CRM_ADD_PRESET_DIALOG_CREATE_NEW_TITLE"] = "Sukurti naują";
+$MESS["CRM_ADD_PRESET_DIALOG_FIXED_PRESET_TITLE"] = "Pasirinkti šabloną";
+$MESS["CRM_ADD_PRESET_DIALOG_CREATE_SELECTED_TITLE"] = "Pasirinkti iš sąrašo";
+$MESS["CRM_ADD_PRESET_DIALOG_NAME_TITLE"] = "Pavadinimas";
+$MESS["CRM_ADD_PRESET_DIALOG_ACTIVE_TITLE"] = "Aktyvus";
+$MESS["CRM_ADD_PRESET_DIALOG_SORT_TITLE"] = "Rūšiavimas";
+$MESS["CRM_ADD_PRESET_DIALOG_BTN_ADD_TEXT"] = "Pridėti";
+$MESS["CRM_ADD_PRESET_DIALOG_BTN_EDIT_TEXT"] = "Taikyti";
+$MESS["CRM_ADD_PRESET_DIALOG_BTN_CANCEL_TEXT"] = "Atšaukti";
+$MESS["CRM_PRESET_LIST_ACTION_MENU_SET_DEF_FOR_COMPANY"] = "Padaryti pirminiu įmonėms";
+$MESS["CRM_PRESET_LIST_ACTION_MENU_SET_DEF_FOR_CONTACT"] = "Padaryti pirminiu kontaktams";
+?>

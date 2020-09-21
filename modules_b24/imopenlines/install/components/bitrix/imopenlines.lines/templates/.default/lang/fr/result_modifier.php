@@ -1,0 +1,5 @@
+<?
+$MESS["OL_COMPONENT_LIST_ACTIONS_EDIT"] = "Modifier";
+$MESS["OL_COMPONENT_LIST_ACTIONS_REMOVE"] = "Supprimer le canal";
+$MESS["OL_COMPONENT_LIST_ACTIONS_VIEW"] = "Afficher";
+?>

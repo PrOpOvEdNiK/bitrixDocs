@@ -1,0 +1,4 @@
+<?
+$MESS["MESSAGE_ENTITY_AUTHOR_ID_FIELD"] = "Stworzone przez";
+$MESS["MESSAGE_ENTITY_DATE_CREATE_FIELD"] = "Utworzone";
+?>

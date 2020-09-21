@@ -1,0 +1,32 @@
+<?
+$MESS["DOCGEN_TEMPLATE_ADD_ACTIVE"] = "Activo";
+$MESS["DOCGEN_TEMPLATE_ADD_ADD_USER_LINK"] = "Agregar más";
+$MESS["DOCGEN_TEMPLATE_ADD_CANCEL"] = "Cancelar";
+$MESS["DOCGEN_TEMPLATE_ADD_COMPLETE"] = "El archivo ha sido cargado";
+$MESS["DOCGEN_TEMPLATE_ADD_DOWNLOAD"] = "Descargar plantilla";
+$MESS["DOCGEN_TEMPLATE_ADD_DRAG_HERE"] = "Arrastre un archivo aquí o <span class=\"docs-template-load-drag-line\" id=\"upload-template-text\">seleccione uno de su computadora</span>";
+$MESS["DOCGEN_TEMPLATE_ADD_ERROR_FILE"] = "Utilice solo archivos DOCX para plantillas";
+$MESS["DOCGEN_TEMPLATE_ADD_ERROR_NAME"] = "Por favor ingrese el nombre de la plantilla";
+$MESS["DOCGEN_TEMPLATE_ADD_ERROR_PROVIDER"] = "Por favor seleccione al menos una sección";
+$MESS["DOCGEN_TEMPLATE_ADD_FEEDBACK"] = "Feedback";
+$MESS["DOCGEN_TEMPLATE_ADD_FILE"] = "Cargar archivo de plantilla";
+$MESS["DOCGEN_TEMPLATE_ADD_FORMATS"] = "Las plantillas del documento deben estar en formato DOCX.";
+$MESS["DOCGEN_TEMPLATE_ADD_INSTALL"] = "Instalar";
+$MESS["DOCGEN_TEMPLATE_ADD_MAIN_PROVIDER"] = "Enlace a las secciones de CRM";
+$MESS["DOCGEN_TEMPLATE_ADD_NAME"] = "Nombre";
+$MESS["DOCGEN_TEMPLATE_ADD_PROGRESS"] = "Ahora cargando...";
+$MESS["DOCGEN_TEMPLATE_ADD_REINSTALL"] = "Restaurar la versión de plantilla predeterminada";
+$MESS["DOCGEN_TEMPLATE_ADD_REINSTALL_CONFIRM"] = "¿Seguro que quiere reemplazar el archivo con la plantilla predeterminada?";
+$MESS["DOCGEN_TEMPLATE_ADD_REINSTALL_CONFIRM_TITLE"] = "Restaurar plantilla";
+$MESS["DOCGEN_TEMPLATE_ADD_REINSTALL_SUCCESS"] = "El archivo de la plantilla ha sido actualizada.";
+$MESS["DOCGEN_TEMPLATE_ADD_SAVE"] = "Guardar";
+$MESS["DOCGEN_TEMPLATE_ADD_SORT"] = "Clasificar";
+$MESS["DOCGEN_TEMPLATE_ADD_SUCCESS"] = "Se ha cargado la plantilla";
+$MESS["DOCGEN_TEMPLATE_ADD_TEMPLATE_NUMERATOR"] = "Usar plantilla de numeración automática";
+$MESS["DOCGEN_TEMPLATE_ADD_TEMPLATE_NUMERATOR_CREATE"] = "crear";
+$MESS["DOCGEN_TEMPLATE_ADD_TEMPLATE_NUMERATOR_EDIT"] = "configurar";
+$MESS["DOCGEN_TEMPLATE_ADD_TEMPLATE_REGION"] = "Enlace al país";
+$MESS["DOCGEN_TEMPLATE_ADD_UPLOAD_NEW"] = "Cargar nuevo";
+$MESS["DOCGEN_TEMPLATE_ADD_USERS"] = "Usuarios de plantilla";
+$MESS["DOCGEN_TEMPLATE_ADD_WITH_STAMPS"] = "Con firmas y sello";
+?>

@@ -1,0 +1,30 @@
+<?
+$MESS["F_DATE_FORMAT"] = "Format daty";
+$MESS["F_DATE_TIME_FORMAT"] = "Format daty i godziny";
+$MESS["F_DEFAULT_UID"] = "ID Użytkownika";
+$MESS["F_FID_RANGE"] = "ID Forum";
+$MESS["F_MESSAGE_SEND_TEMPLATE"] = "Strona Wiadomości Postu";
+$MESS["F_MESSAGE_TEMPLATE"] = "Strona widoku wiadomości";
+$MESS["F_PM_EDIT_TEMPLATE"] = "Strona Tworzenia (edycji) Wiadomości Prywatnych";
+$MESS["F_PM_LIST_TEMPLATE"] = "Strona Wiadomości Prywatnych";
+$MESS["F_PROFILE_TEMPLATE"] = "Strona Edycji profilu";
+$MESS["F_RATING_ID"] = "Ocena";
+$MESS["F_RATING_SETTINGS"] = "Parametry Oceny";
+$MESS["F_READ_TEMPLATE"] = "Strona Czytania Tematu";
+$MESS["F_SEND_ICQ"] = "Pokaż Numer ICQ Do";
+$MESS["F_SEND_MAIL"] = "Można wysyłać wiadomości e-mail z profilu";
+$MESS["F_SET_NAVIGATION"] = "Pokaż Nawigacę Ścieżki";
+$MESS["F_SUBSCR_LIST_TEMPLATE"] = "Strona subskrypcji";
+$MESS["F_URL_TEMPLATES"] = "Przetwarzanie adresów URL";
+$MESS["F_USER_LIST_TEMPLATE"] = "Strona Listy Zarejestrowanych Użytkowników Forum";
+$MESS["F_USER_POST_TEMPLATE"] = "Strona Wiadomości Użytkownika";
+$MESS["RATING_TYPE"] = "Projekt przycisku oceniania";
+$MESS["RATING_TYPE_CONFIG"] = "domyślne";
+$MESS["RATING_TYPE_LIKE_GRAPHIC"] = "Lubię (obraz)";
+$MESS["RATING_TYPE_LIKE_TEXT"] = "Lubię (tekst)";
+$MESS["RATING_TYPE_STANDART_GRAPHIC"] = "Lubię/Nie lubię (obraz)";
+$MESS["RATING_TYPE_STANDART_TEXT"] = "Lubię/Nie lubię (tekst)";
+$MESS["SHOW_RATING"] = "Włącz ocenianie";
+$MESS["SHOW_RATING_CONFIG"] = "domyślne";
+$MESS["USER_PROPERTY"] = "Wyświetl dodatkowe właściwości";
+?>

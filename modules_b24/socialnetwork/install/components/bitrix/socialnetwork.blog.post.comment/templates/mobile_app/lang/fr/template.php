@@ -1,0 +1,33 @@
+<?
+$MESS["BLOG_COMMENT_MOBILE_FORMAT_DATE"] = "d F, g:i a";
+$MESS["BLOG_COMMENT_MOBILE_FORMAT_DATE_YEAR"] = "d F, g:i a";
+$MESS["BLOG_COMMENT_MOBILE_FORMAT_TIME"] = "g:i a";
+$MESS["BLOG_C_BUTTON_ALL"] = "Afficher les commentaires <i>·</i> #COMMENTS#";
+$MESS["BLOG_C_BUTTON_OLD"] = "Afficher les commentaires <i>·</i> #COMMENTS#";
+$MESS["BLOG_C_HIDE"] = "Masquer les commentaires";
+$MESS["BLOG_C_LIKES_LIST"] = "J'aime";
+$MESS["BLOG_C_REPLY"] = "Répondre";
+$MESS["BLOG_C_TEXT_TITLE"] = "Envoyer un message...";
+$MESS["BLOG_C_VIEW_ALL"] = "Afficher tous les commentaires";
+$MESS["BLOG_MONTH_01"] = "Janvier";
+$MESS["BLOG_MONTH_02"] = "Février";
+$MESS["BLOG_MONTH_03"] = "Mars";
+$MESS["BLOG_MONTH_04"] = "Avril";
+$MESS["BLOG_MONTH_05"] = "Mai";
+$MESS["BLOG_MONTH_06"] = "Juin";
+$MESS["BLOG_MONTH_07"] = "Juillet";
+$MESS["BLOG_MONTH_08"] = "Août";
+$MESS["BLOG_MONTH_09"] = "Septembre";
+$MESS["BLOG_MONTH_10"] = "Octobre";
+$MESS["BLOG_MONTH_11"] = "Novembre";
+$MESS["BLOG_MONTH_12"] = "Décembre";
+$MESS["BPC_MES_DELETE"] = "Supprimer";
+$MESS["BPC_MES_DELETE_POST_CONFIRM"] = "Voulez-vous vraiment supprimer ce commentaire ?";
+$MESS["BPC_MES_EDIT"] = "Éditer";
+$MESS["BPC_MES_HIDE"] = "Masquer";
+$MESS["BPC_MES_SHOW"] = "Afficher";
+$MESS["B_B_MS_ADD_COMMENT"] = "Ajouter un commentaire";
+$MESS["B_B_MS_CAPTCHA_SYM"] = "Code CAPTCHA";
+$MESS["B_B_MS_LINK"] = "Lien";
+$MESS["B_B_MS_NAME"] = "Prénom";
+?>

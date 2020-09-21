@@ -1,0 +1,35 @@
+<?
+$MESS["SEARCH_ALL"] = "(visi)";
+$MESS["SEARCH_GO"] = "Vykdyti";
+$MESS["SEARCH_ERROR"] = "Klaida paieškos frazėje:";
+$MESS["SEARCH_CORRECT_AND_CONTINUE"] = "Ištaisykite paieškos frazę ir pabandykite dar kartą.";
+$MESS["SEARCH_SINTAX"] = "<b>Search query syntax:</b><br /><br />A common search query is one or more words, for example:<br /><i>contact information</i><br />This query will find pages containing both query words.<br /><br />Logical operators allow building more complex queries, for example: <br /><i>contact information or phone</i><br />This query will find pages containing either words &quot;contact&quot; and &quot;information&quot; or &quot;phone&quot;.<br /><br /> <i>contact information not phone</i><br /> This query will find pages containing words &quot;contact&quot; and &quot;information&quot; but not &quot;phone&quot;.<br /> You can use brackets to build more complex queries.<br />";
+$MESS["SEARCH_LOGIC"] = "Loginiai operatoriai:";
+$MESS["SEARCH_OPERATOR"] = "Operatorius";
+$MESS["SEARCH_SYNONIM"] = " Sinonimai";
+$MESS["SEARCH_DESCRIPTION"] = "Aprašymas";
+$MESS["SEARCH_AND"] = "ir";
+$MESS["SEARCH_AND_ALT"] = "Operatorius <i>loginis ir</i> numanoma ir gali būti praleidžiamas: užklausa &quot;kontaktinė informacija&quot; atitinka visiškai &quot;Kontaktai ir informacija&quot;.";
+$MESS["SEARCH_OR"] = "arba";
+$MESS["SEARCH_OR_ALT"] = "Operatorius <i>loginis arba</i> leidžia ieškoti subjektų, kurių sudėtyje yra bent vienas iš operatorių.";
+$MESS["SEARCH_NOT"] = "ne";
+$MESS["SEARCH_NOT_ALT"] = "Operatorius <i>loginis ne</i> riboja paiešką puslapiuose, kurių sudėtyje nėra operando.";
+$MESS["SEARCH_BRACKETS_ALT"] = "<i>lenktiniuose skliaustuose</i> apibrėžkite loginio operatoriaus pirmenybę.";
+$MESS["SEARCH_MODIFIED"] = "Modifikuotas:";
+$MESS["SEARCH_NOTHING_TO_FOUND"] = "Deja, Jūsų paieška neatitiko jokių dokumentų.";
+$MESS["SEARCH_PATH"] = "Kelias:";
+$MESS["SEARCH_SORT_BY_RANK"] = "Rūšiuoti pagal atitikimą";
+$MESS["SEARCH_SORTED_BY_DATE"] = "Rūšiuota pagal datą";
+$MESS["SEARCH_SORTED_BY_RANK"] = "Surūšiuota pagal tinkamumą";
+$MESS["SEARCH_SORT_BY_DATE"] = "Rūšiuoti pagal datą";
+$MESS["SEARCH_CONTENT_TYPE_FILES"] = "Failai";
+$MESS["SEARCH_CONTENT_TYPE_CALENDAR"] = "Kalendorius";
+$MESS["SEARCH_CONTENT_TYPE_TASKS"] = "Uždaviniai";
+$MESS["SEARCH_CONTENT_TYPE_PHOTO"] = "Nuotrauka";
+$MESS["SEARCH_CONTENT_TYPE_BLOG"] = "Pranešimai";
+$MESS["SEARCH_CONTENT_TYPE_FORUM"] = "Forumas";
+$MESS["SEARCH_ADDITIONAL_FILTER"] = "Išplėstinė paieška";
+$MESS["SEARCH_ADDITIONAL_FILTER_FEATURE"] = "Pagal funkcionalą";
+$MESS["SEARCH_ADDITIONAL_FILTER_DATE"] = "Pagal datą";
+$MESS["CT_BSP_KEYBOARD_WARNING"] = "Užklausa įvesties kalba pakeistą į \"#query#\".";
+?>

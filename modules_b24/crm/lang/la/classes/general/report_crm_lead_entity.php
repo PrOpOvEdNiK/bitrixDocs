@@ -1,0 +1,35 @@
+<?
+$MESS["CRM_LEAD_ENTITY_ADDRESS"] = "Dirección";
+$MESS["CRM_LEAD_ENTITY_ASSIGNED_BY"] = "Persona responsable";
+$MESS["CRM_LEAD_ENTITY_ASSIGNED_BY_ID"] = "Persona responsable";
+$MESS["CRM_LEAD_ENTITY_COMMENTS"] = "Comentario";
+$MESS["CRM_LEAD_ENTITY_COMPANY_ID"] = "Compañía";
+$MESS["CRM_LEAD_ENTITY_COMPANY_TITLE"] = "Nombre de la compañía";
+$MESS["CRM_LEAD_ENTITY_CONTACT_ID"] = "Contacto";
+$MESS["CRM_LEAD_ENTITY_CREATED_BY"] = "Creado por";
+$MESS["CRM_LEAD_ENTITY_CREATED_BY_ID"] = "Creado por";
+$MESS["CRM_LEAD_ENTITY_CURRENCY_BY"] = "Tipo de cambio";
+$MESS["CRM_LEAD_ENTITY_CURRENCY_ID"] = "Tipo de cambio";
+$MESS["CRM_LEAD_ENTITY_DATE_CREATE"] = "Creado en ";
+$MESS["CRM_LEAD_ENTITY_DATE_MODIFY"] = "Modificado en ";
+$MESS["CRM_LEAD_ENTITY_EMAIL"] = "Correo Electrónico";
+$MESS["CRM_LEAD_ENTITY_EVENT_RELATION"] = "Eventos";
+$MESS["CRM_LEAD_ENTITY_ID"] = "ID";
+$MESS["CRM_LEAD_ENTITY_LAST_NAME"] = "Apellido";
+$MESS["CRM_LEAD_ENTITY_MESSENGER"] = "Messenger";
+$MESS["CRM_LEAD_ENTITY_MODIFY_BY"] = "Modificado por";
+$MESS["CRM_LEAD_ENTITY_MODIFY_BY_ID"] = "Modificado por";
+$MESS["CRM_LEAD_ENTITY_NAME"] = "Primer Nombre";
+$MESS["CRM_LEAD_ENTITY_OPPORTUNITY"] = "Total";
+$MESS["CRM_LEAD_ENTITY_PHONE"] = "Teléfono";
+$MESS["CRM_LEAD_ENTITY_POST"] = "Posición";
+$MESS["CRM_LEAD_ENTITY_PRODUCT_BY"] = "Productos";
+$MESS["CRM_LEAD_ENTITY_PRODUCT_ID"] = "Productos";
+$MESS["CRM_LEAD_ENTITY_SECOND_NAME"] = "Segundo Nombre";
+$MESS["CRM_LEAD_ENTITY_SOURCE_BY"] = "Origen";
+$MESS["CRM_LEAD_ENTITY_SOURCE_DESCRIPTION"] = "Información de origen";
+$MESS["CRM_LEAD_ENTITY_STATUS_BY"] = "Estado";
+$MESS["CRM_LEAD_ENTITY_STATUS_DESCRIPTION"] = "Información de estado";
+$MESS["CRM_LEAD_ENTITY_TITLE"] = "Nombre";
+$MESS["CRM_LEAD_ENTITY_WEB"] = "Sito Web";
+?>

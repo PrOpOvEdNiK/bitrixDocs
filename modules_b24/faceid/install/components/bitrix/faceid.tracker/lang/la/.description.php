@@ -1,0 +1,6 @@
+<?
+$MESS["FIT_SECTION_TEMPLATE_DESCRIPTION"] = "Mostrar estadísticas de visitas";
+$MESS["FIT_SECTION_TEMPLATE_NAME"] = "Face tracker";
+$MESS["FIT_SERVICES_MAIN_SECTION"] = "CRM";
+$MESS["FIT_SERVICES_PARENT_SECTION"] = "Prospectos";
+?>

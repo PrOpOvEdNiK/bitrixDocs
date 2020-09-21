@@ -1,0 +1,3 @@
+<?
+$MESS["BX_SALE_DISCOUNT_COUPON_EDIT_TAB_NAME_COMMON"] = "Ogólne parametry";
+?>

@@ -1,0 +1,19 @@
+<?
+$MESS["TASKS_LIST_CRM_TYPE_C"] = "Contacto";
+$MESS["TASKS_LIST_CRM_TYPE_CO"] = "Compañía";
+$MESS["TASKS_LIST_CRM_TYPE_D"] = "Negociación";
+$MESS["TASKS_LIST_CRM_TYPE_L"] = "Prospecto";
+$MESS["TASKS_LIST_ITEMS_NO"] = "No";
+$MESS["TASKS_LIST_ITEMS_PRIORITY_0"] = "Bajo";
+$MESS["TASKS_LIST_ITEMS_PRIORITY_1"] = "Normal";
+$MESS["TASKS_LIST_ITEMS_PRIORITY_2"] = "Alto";
+$MESS["TASKS_LIST_ITEMS_STATUS_1"] = "Nuevo";
+$MESS["TASKS_LIST_ITEMS_STATUS_2"] = "Pendiente";
+$MESS["TASKS_LIST_ITEMS_STATUS_3"] = "En progreso";
+$MESS["TASKS_LIST_ITEMS_STATUS_4"] = "En espera de control";
+$MESS["TASKS_LIST_ITEMS_STATUS_5"] = "Completado";
+$MESS["TASKS_LIST_ITEMS_STATUS_6"] = "Diferido";
+$MESS["TASKS_LIST_ITEMS_STATUS_7"] = "Rechazado";
+$MESS["TASKS_LIST_ITEMS_YES"] = "Si";
+$MESS["TASKS_LIST_NOT_SET"] = "Nuevo empleado";
+?>

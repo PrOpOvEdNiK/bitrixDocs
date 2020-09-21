@@ -1,0 +1,37 @@
+<?
+$MESS["PERSON_TYPE_TITLE"] = "Mokėtojo tipas";
+$MESS["ERROR_ADD_REC"] = "Klaida pridedant įrašą";
+$MESS["ERROR_NAME_REC"] = "Laukas \"Pavadinimas\" nenustatytas šiame įraše";
+$MESS["ERROR_LID_REC"] = "Laukas \"Svetainė\" nenustatytas šiame įraše";
+$MESS["ERROR_UPDATE_REC"] = "Klaida atnaujinant įrašą";
+$MESS["SALE_F_FILTER"] = "Filtras";
+$MESS["LANG_FILTER_NAME"] = "Svetainė";
+$MESS["LANG_FILTER_BTN"] = "Nustatyti filtrą";
+$MESS["SALE_F_DEL"] = "Pašalinti filtrą";
+$MESS["LANG_ALL"] = "Visos svetainės";
+$MESS["PERS_TYPE_NAV"] = "Mokėtojo tipas";
+$MESS["PERS_TYPE_NAME"] = "Pavadinimas";
+$MESS["PERS_TYPE_LID"] = "Svetainė";
+$MESS["PERS_TYPE_SORT"] = "Rūš.";
+$MESS["PERS_TYPE_DEL"] = "Pašalinti";
+$MESS["PERS_TYPE_UPD"] = "Išsaugoti";
+$MESS["PERS_TYPE_RESET"] = "Atstatyti";
+$MESS["PERS_TYPE_ID"] = "ID";
+$MESS["PERS_TYPE_DEL_CONF"] = "Pašalinus mokėtojo tipą, bus pašalinti visos jo savybes ir parametrai. Jei šisi mokėtojo tipas turi užsakymų, ji nebus pašalintas.";
+$MESS["SALE_PROPS"] = "Savybės";
+$MESS["SPT_ALL"] = "(visi)";
+$MESS["SPT_UNSET"] = "Atstatyti";
+$MESS["SPTAN_ERROR_UPDATE"] = "Klaida keičiant įrašą";
+$MESS["SPTAN_ERROR_DELETE"] = "Klaida šalinant įrašą";
+$MESS["PERS_PROPS"] = "Savybės";
+$MESS["SPTAN_UPDATE_ALT"] = "Redaguoti mokėtojo tipą";
+$MESS["SPTAN_DELETE_ALT1"] = "Pašalinti mokėtojo tipą";
+$MESS["SPTAN_ADD_NEW"] = "Naujas mokėtojo tipas";
+$MESS["SPTAN_ADD_NEW_ALT"] = "Spustelėkite ir pridėkite naują mokėtojo tipą";
+$MESS["SPTAN_VIEW_PROPS"] = "Į savybių sąrašą";
+$MESS["PERS_ACTIVE"] = "Aktyvus";
+$MESS["SALE_YES"] = "Taip";
+$MESS["SALE_NO"] = "Ne";
+$MESS["SALE_FIELD_ACTIVE"] = "Aktyvus";
+$MESS["SALE_ALL"] = "visi";
+?>

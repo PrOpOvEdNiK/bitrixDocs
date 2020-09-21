@@ -1,0 +1,6 @@
+<?
+$MESS["CRM_LEAD_GROUP_BY_SOURCE"] = "Fonte";
+$MESS["CRM_LEAD_SUM_STAT_NO_SOURCE"] = "[indefinido]";
+$MESS["CRM_LEAD_SUM_STAT_PRESET_OVERALL_COUNT"] = "Número de Leads";
+$MESS["CRM_LEAD_SUM_STAT_PRESET_OVERALL_SUM"] = "Valor total de Leads";
+?>

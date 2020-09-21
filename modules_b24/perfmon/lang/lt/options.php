@@ -1,0 +1,33 @@
+<?
+$MESS["PERFMON_OPT_ACTIVE"] = "Dabartinis monitoriaus statusas";
+$MESS["PERFMON_OPT_ACTIVE_Y"] = "Įjungtas";
+$MESS["PERFMON_OPT_ACTIVE_N"] = "Išjungtas";
+$MESS["PERFMON_OPTIONS_MAX_DISPLAY_URL"] = "Maksimmalus URL simbolių skaičius";
+$MESS["PERFMON_OPTIONS_SQL_LOG"] = "Registruoti SQL užklausas";
+$MESS["PERFMON_OPTIONS_SQL_BACKTRACE"] = "Registruoti SQL užklausų iškvietimus";
+$MESS["PERFMON_OPTIONS_SLOW_SQL_LOG"] = "Registruoti tik lėtas SQL užklausas";
+$MESS["PERFMON_OPTIONS_SLOW_SQL_TIME"] = "Lėtų užklausų riba";
+$MESS["PERFMON_OPTIONS_SLOW_SQL_TIME_SEC"] = "sek.";
+$MESS["PERFMON_OPTIONS_SLOW_SQL_NOTE"] = "Pažymėjus šią parinktį, statistika ir PHP įspėjimai apie \"greitus\" puslapius nebus užregistruoti.";
+$MESS["PERFMON_OPTIONS_WARNING_LOG"] = "Registruoti PHP įspėjimus";
+$MESS["PERFMON_OPT_SET_ACTIVE"] = "Įjungti monitorių";
+$MESS["PERFMON_OPT_ACTIVE_TO"] = "Aktyvus per";
+$MESS["PERFMON_OPT_SET_IN_ACTIVE"] = "Išjungti monitorių";
+$MESS["PERFMON_OPT_MINUTES"] = "#HOURS#:#MINUTES#:#SECONDS# (val:min:sek)";
+$MESS["PERFMON_OPT_INTERVAL_NO"] = "ne";
+$MESS["PERFMON_OPT_INTERVAL_60_SEC"] = "1 minutei";
+$MESS["PERFMON_OPT_INTERVAL_300_SEC"] = "5 minutėms";
+$MESS["PERFMON_OPT_INTERVAL_600_SEC"] = "10 minučių";
+$MESS["PERFMON_OPT_INTERVAL_1800_SEC"] = "30 minučių";
+$MESS["PERFMON_OPT_INTERVAL_3600_SEC"] = "1 valandai";
+$MESS["PERFMON_OPT_INTERVAL_4_HOURS"] = "4 valandos";
+$MESS["PERFMON_OPT_INTERVAL_8_HOURS"] = "8 valandos";
+$MESS["PERFMON_OPT_INTERVAL_24_HOURS"] = "24 valandos";
+$MESS["PERFMON_OPT_INTERVAL_7_DAYS"] = "savaitė";
+$MESS["PERFMON_OPT_CLEAR_DATA"] = "Išvalyti esamą monitorius statistiką (įšsaugant šią formą)";
+$MESS["PERFMON_OPTIONS_CACHE_LOG"] = "Registruoti talpyklos operacijas";
+$MESS["PERFMON_OPTIONS_LARGE_CACHE_LOG"] = "Registruoti tik didelių talpyklos failų operacijas";
+$MESS["PERFMON_OPTIONS_LARGE_CACHE_SIZE"] = "Talpyklos failas yra didelism jei jis viršija";
+$MESS["PERFMON_OPTIONS_LARGE_CACHE_SIZE_KB"] = "(KB)";
+$MESS["PERFMON_OPTIONS_LARGE_CACHE_NOTE"] = "Tai neregistruos statistikos puslapiams, kurie nenaudoja didelių talpyklos failų. PHP įspėjimai taip pat nebus užregistruoti.";
+?>

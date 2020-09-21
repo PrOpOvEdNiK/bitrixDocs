@@ -1,0 +1,4 @@
+<?
+$MESS["CRM_DEAL_CHANNEL_STAT_PRESET_OVERALL_COUNT"] = "Sandorių skaičius";
+$MESS["CRM_DEAL_CHANNEL_STAT_PRESET_OVERALL_SUM"] = "Bendra sandorių vertė";
+?>

@@ -1,0 +1,16 @@
+<?
+$MESS["STRUCTURE_TYPE_NAME"] = "چارت سازمانی";
+$MESS["STRUCTURE_ELEMENT_NAME"] = "المانها";
+$MESS["STRUCTURE_SECTION_NAME"] = "بخشها";
+$MESS["SERVICES_ELEMENT_NAME"] = "المانها";
+$MESS["SERVICES_SECTION_NAME"] = "بخشها";
+$MESS["EVENTS_TYPE_NAME"] = "تقویم";
+$MESS["EVENTS_ELEMENT_NAME"] = "رویدادها";
+$MESS["EVENTS_SECTION_NAME"] = "تقویم";
+$MESS["LIBRARY_TYPE_NAME"] = "اسناد";
+$MESS["LIBRARY_ELEMENT_NAME"] = "فایل";
+$MESS["LIBRARY_SECTION_NAME"] = "فولدرها";
+$MESS["PHOTOS_TYPE_NAME"] = "گالری تصویر";
+$MESS["PHOTOS_ELEMENT_NAME"] = "تصاویر";
+$MESS["PHOTOS_SECTION_NAME"] = "آلبوم";
+?>

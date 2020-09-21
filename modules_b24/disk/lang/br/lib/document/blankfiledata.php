@@ -1,0 +1,8 @@
+<?
+$MESS["DISK_BLANK_FILE_DATA_NEW_FILE_DOCX"] = "Novo documento";
+$MESS["DISK_BLANK_FILE_DATA_NEW_FILE_PPTX"] = "Nova apresentação";
+$MESS["DISK_BLANK_FILE_DATA_NEW_FILE_XLSX"] = "Nova planilha";
+$MESS["DISK_BLANK_FILE_DATA_TYPE_DOCX"] = "Documento";
+$MESS["DISK_BLANK_FILE_DATA_TYPE_PPTX"] = "Apresentação";
+$MESS["DISK_BLANK_FILE_DATA_TYPE_XLSX"] = "Planilha";
+?>

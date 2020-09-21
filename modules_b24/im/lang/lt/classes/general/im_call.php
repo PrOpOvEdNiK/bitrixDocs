@@ -1,0 +1,29 @@
+<?
+$MESS["IM_CALL_CHAT_WAIT"] = "Skambutis neatliktas: #USER_NAME# neatsako.";
+$MESS["IM_CALL_CHAT_BUSY_M"] = "Skambutis neatliktas: #USER_NAME# šiuo metu daro kitą skambutį.";
+$MESS["IM_CALL_CHAT_BUSY_F"] = "Skambutis neatliktas: #USER_NAME# šiuo metu daro kitą skambutį.";
+$MESS["IM_CALL_CHAT_ERROR"] = "Skambutis neatliktas: #USER_NAME# turi techninių kliūčių.";
+$MESS["IM_CALL_CHAT_DECLINE_M"] = "Skambutis neatliktas: #USER_NAME# atmėtė skambutį.";
+$MESS["IM_CALL_CHAT_DECLINE_F"] = "Skambutis neatliktas: #USER_NAME# atmėtė skambutį.";
+$MESS["IM_CALL_CHAT_START"] = "Skambutis pradėtas";
+$MESS["IM_CALL_CHAT_END"] = "Skambutis užbaigtas";
+$MESS["IM_CALL_CHAT_START_M"] = "#USER_NAME# prisijungė prie pokalbio";
+$MESS["IM_CALL_CHAT_START_F"] = "#USER_NAME# prisijungė prie pokalbio";
+$MESS["IM_CALL_CHAT_END_M"] = "#USER_NAME# prisijungė prie skambučio";
+$MESS["IM_CALL_CHAT_END_F"] = "#USER_NAME# paliko pokalbį";
+$MESS["IM_CALL_CHAT_ERROR_M"] = "#USER_NAME# negali prisijungti dėl techninių kliūčių";
+$MESS["IM_CALL_CHAT_ERROR_F"] = "#USER_NAME# negali prisijungti dėl techninių kliūčių";
+$MESS["IM_CALL_CHAT_OFFLINE"] = "Skambutis neatliktas: #USER_NAME#  nėra prisijungęs prie interneto arba nenaudoja programos, palaikančios skambučius";
+$MESS["IM_CALL_CHAT_TIMEOUT"] = "Skambutis neatliktas: naudotojas neatsako";
+$MESS["IM_CALL_CHAT_INIT_M"] = "#USER_NAME# pradėjo skambutį";
+$MESS["IM_CALL_CHAT_INIT_F"] = "#USER_NAME# pradėjo skambutį";
+$MESS["IM_CALL_CHAT_CLOSE_M"] = "#USER_NAME# užbaigė skambutį";
+$MESS["IM_CALL_CHAT_CLOSE_F"] = "#USER_NAME# užbaigė skambutį";
+$MESS["IM_CALL_CHAT_G_BUSY_M"] = "#USER_NAME# yra užimtas kitu pokalbiu";
+$MESS["IM_CALL_CHAT_G_BUSY_F"] = "#USER_NAME# yra užimtas kitu pokalbiu";
+$MESS["IM_CALL_CHAT_G_DECLINE_M"] = "#USER_NAME# nepriėmė skambučio";
+$MESS["IM_CALL_CHAT_G_DECLINE_F"] = "#USER_NAME# nepriėmė skambučio";
+$MESS["IM_ERROR_CALL_PRIVACY"] = "Nepavyko paskambinti, nes asmuo priima tik asmenų iš savo kontaktų sąrašo skambučius.";
+$MESS["IM_CALL_INVITE"] = "Skambutis nuo #USER_NAME#";
+$MESS["IM_CALL_INVITE_NA"] = "Bitrix24 naudotojas";
+?>

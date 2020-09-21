@@ -1,0 +1,4 @@
+<?
+$MESS["CRM_CUSTOMER_GENERAL"] = "Primaire";
+$MESS["CRM_CUSTOMER_RETURNING"] = "Répéter";
+?>

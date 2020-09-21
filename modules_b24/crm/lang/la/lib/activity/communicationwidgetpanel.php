@@ -1,0 +1,36 @@
+<?
+$MESS["CRM_COMM_WGT_COMMUNICATIONS"] = "Canal de comunicación preferido";
+$MESS["CRM_COMM_WGT_COMPANY_GROWTH_COUNT"] = "Número de compañías";
+$MESS["CRM_COMM_WGT_CONTACT_GROWTH_COUNT"] = "Número de contactos";
+$MESS["CRM_COMM_WGT_CONVERSION"] = "Conversación";
+$MESS["CRM_COMM_WGT_DEALS"] = "Negociaciones";
+$MESS["CRM_COMM_WGT_DEAL_FAILED_SUM"] = "Valor de las negociaciones perdidas";
+$MESS["CRM_COMM_WGT_DEAL_PROCESS_SUM"] = "Valor de las negociaciones en progreso";
+$MESS["CRM_COMM_WGT_DEAL_SUCCESS_SUM"] = "Valor de las negociaciones ganadas";
+$MESS["CRM_COMM_WGT_DEAL_SUM_PERIOD"] = "Importe total de las negociaciones";
+$MESS["CRM_COMM_WGT_FINANCE_INDEX"] = "Pagado en proprción de tiempo";
+$MESS["CRM_COMM_WGT_GROWTH"] = "Crecimiento de la base de cliente";
+$MESS["CRM_COMM_WGT_INVOICES_ACTIVE_SUM"] = "Importe total de las facturas activas";
+$MESS["CRM_COMM_WGT_INVOICES_PAID_SUM"] = "Importe total de las facturas pagadas";
+$MESS["CRM_COMM_WGT_INVOICES_WAITING"] = "Aún no pagadas";
+$MESS["CRM_COMM_WGT_MARKS"] = "Satisfacción del cliente";
+$MESS["CRM_COMM_WGT_MARK_ALL"] = "Todo";
+$MESS["CRM_COMM_WGT_MARK_NEGATIVE"] = "Negativo";
+$MESS["CRM_COMM_WGT_MARK_NONE"] = "Sin puntuación";
+$MESS["CRM_COMM_WGT_MARK_POSITIVE"] = "Positivo";
+$MESS["CRM_COMM_WGT_MARK_SOURCE_FB"] = "Facebook";
+$MESS["CRM_COMM_WGT_MARK_SOURCE_SK"] = "Skype";
+$MESS["CRM_COMM_WGT_MARK_SOURCE_TG"] = "Telegram";
+$MESS["CRM_COMM_WGT_MARK_SOURCE_VK"] = "VK";
+$MESS["CRM_COMM_WGT_OVERALL_INVOICES"] = "Facturas creadas";
+$MESS["CRM_COMM_WGT_PAID_INTIME_COUNT"] = "Factura pagada a tiempo";
+$MESS["CRM_COMM_WGT_PAID_INVOICES"] = "Pagar factura";
+$MESS["CRM_COMM_WGT_PAYMENTS"] = "Pagadas";
+$MESS["CRM_COMM_WGT_PROVIDER_STATUS"] = "#PROVIDER_NAME#: estados";
+$MESS["CRM_COMM_WGT_PROVIDER_SUM"] = "#PROVIDER_NAME#: cantidad total de pedidos";
+$MESS["CRM_COMM_WGT_PROVIDER_TOTAL_QTY"] = "#PROVIDER_NAME#: carga total";
+$MESS["CRM_COMM_WGT_SOURCES"] = "Conector de carga";
+$MESS["CRM_COMM_WGT_STATUSES"] = "Solicitud de procesamiento";
+$MESS["CRM_COMM_WGT_STREAMS"] = "Solicitud de flujo";
+$MESS["CRM_COMM_WGT_SUCCESS_DEALS"] = "Negociaciones ganadas";
+?>

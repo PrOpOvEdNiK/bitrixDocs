@@ -1,0 +1,6 @@
+<?
+$MESS["CRM_COMPANY_LIST_STEXPORT_COMPLETED_SUMMARY1"] = "O arquivo de exportação da empresa foi criado.";
+$MESS["CRM_COMPANY_LIST_STEXPORT_COMPLETED_SUMMARY2"] = "Empresas processadas: #PROCESSED_ITEMS#.";
+$MESS["CRM_COMPANY_LIST_STEXPORT_DOWNLOAD"] = "Baixar arquivo de exportação.";
+$MESS["CRM_COMPANY_LIST_STEXPORT_PROGRESS_SUMMARY"] = "Empresas processadas: #PROCESSED_ITEMS# de #TOTAL_ITEMS#.";
+?>

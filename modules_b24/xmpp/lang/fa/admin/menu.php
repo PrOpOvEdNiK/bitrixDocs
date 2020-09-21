@@ -1,0 +1,6 @@
+<?
+$MESS["XMPP_MENU_SERVER"] = "سرور XMPP";
+$MESS["XMPP_MENU_SERVER_TITLE"] = "XMPP Server";
+$MESS["XMPP_STANZA"] = "درخواست";
+$MESS["XMPP_STANZA_TITLE"] = "XMPP Query";
+?>

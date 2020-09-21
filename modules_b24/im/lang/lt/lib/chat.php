@@ -1,0 +1,13 @@
+<?
+$MESS["CHAT_ENTITY_ID_FIELD"] = "ID";
+$MESS["CHAT_ENTITY_TITLE_FIELD"] = "Pokalbio antraštė";
+$MESS["CHAT_ENTITY_AUTHOR_ID_FIELD"] = "Pokalbio kūrėjo ID";
+$MESS["CHAT_ENTITY_CALL_TYPE_FIELD"] = "Skambučio tipas";
+$MESS["CHAT_ENTITY_CALL_NUMBER_FIELD"] = "Numeris";
+$MESS["CHAT_ENTITY_ENTITY_TYPE_FIELD"] = "Subjektas";
+$MESS["CHAT_ENTITY_ENTITY_ID_FIELD"] = "Subjekto ID";
+$MESS["CHAT_ENTITY_TYPE_FIELD"] = "Pokalbių tipas";
+$MESS["CHAT_ENTITY_EXTRANET_FIELD"] = "Ekstranetas";
+$MESS["CHAT_ENTITY_COLOR_FIELD"] = "Pokalbio lango spalva";
+$MESS["CHAT_ENTITY_DESCRIPTION_FIELD"] = "Pokalbio aprašymas";
+?>

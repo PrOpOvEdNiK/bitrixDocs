@@ -1,0 +1,34 @@
+<?
+$MESS["AUTH_BLOG"] = "Blog";
+$MESS["AUTH_BZP"] = "Flujo de trabajo";
+$MESS["AUTH_CALENDAR"] = "Calendario";
+$MESS["AUTH_CALENDAR_DESCR"] = "Ver calendario personal";
+$MESS["AUTH_CAPTCHA_PROMT"] = "Escriba el texto de la imagen";
+$MESS["AUTH_CLOSE_WINDOW"] = "Cerrar";
+$MESS["AUTH_EXCHANGE"] = "Mensajes recientes de Microsoft Exchange";
+$MESS["AUTH_EXTMAIL"] = "Nuevos mensajes";
+$MESS["AUTH_EXTMAIL_ERR"] = "Editar los parámetros del buzón";
+$MESS["AUTH_FILES"] = "Mi Drive";
+$MESS["AUTH_FORGOT_PASSWORD_2"] = "¿Olvidaste tu contraseña?";
+$MESS["AUTH_GROUPS"] = "Grupos";
+$MESS["AUTH_LOG"] = "Flujo de actividad";
+$MESS["AUTH_LOGIN"] = "Iniciar sesión";
+$MESS["AUTH_LOGIN_BUTTON"] = "Iniciar sesión";
+$MESS["AUTH_LOGOUT"] = "Cerrar sesión";
+$MESS["AUTH_MICROBLOG"] = "Microblog";
+$MESS["AUTH_MP"] = "Mi Portal";
+$MESS["AUTH_NEW_MESSAGES"] = "Conversaciones";
+$MESS["AUTH_NEW_MESSAGES_DESCR"] = "Ver Conversaciones";
+$MESS["AUTH_PASSWORD"] = "Contraseña";
+$MESS["AUTH_PERSONAL_PAGE"] = "Mi Página";
+$MESS["AUTH_PERSONAL_PAGE_DESCR"] = "Enlaces a herramientas de gestión de perfiles";
+$MESS["AUTH_PHOTO"] = "Fotos";
+$MESS["AUTH_PROFILE"] = "Mi perfil";
+$MESS["AUTH_PROFILE_DESCR"] = "Editar perfil";
+$MESS["AUTH_REGISTER"] = "Registro";
+$MESS["AUTH_REMEMBER_ME"] = "recuérdame";
+$MESS["AUTH_TASKS"] = "Tareas";
+$MESS["AUTH_TASKS_DESCR"] = "Ver tareas personales";
+$MESS["AUTH_USER_MENU"] = "menú del usuario";
+$MESS["AUTH_WELCOME_TEXT"] = "Hola";
+?>

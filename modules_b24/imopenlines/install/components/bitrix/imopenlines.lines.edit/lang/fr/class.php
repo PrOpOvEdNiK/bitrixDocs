@@ -1,0 +1,31 @@
+<?
+$MESS["OL_COMPONENT_KPI_FIRST_ANSWER_TEXT"] = "#OPERATOR# a dépassé le temps de réponse initial maximum dans la conversation ##DIALOG#.";
+$MESS["OL_COMPONENT_KPI_FURTHER_ANSWER_TEXT"] = "#OPERATOR# a dépassé le temps de réponse maximum dans la conversation ##DIALOG#.";
+$MESS["OL_COMPONENT_LE_BOT_LIST"] = "le chat bot n'est pas sélectionné";
+$MESS["OL_COMPONENT_LE_CRM_SOURCE_CREATE"] = "Source du Canal ouvert";
+$MESS["OL_COMPONENT_LE_ERROR_PERMISSION"] = "Vous ne disposez pas des permissions suffisantes pour effectuer cette opération sur ce Canal ouvert";
+$MESS["OL_COMPONENT_LE_KPI_ANSWER_TIME_MINUTES"] = "minutes";
+$MESS["OL_COMPONENT_LE_KPI_ANSWER_TIME_MINUTES_1"] = "minute";
+$MESS["OL_COMPONENT_LE_KPI_ANSWER_TIME_OWN"] = "Personnalisé";
+$MESS["OL_COMPONENT_LE_KPI_ANSWER_TIME_SECONDS"] = "secondes";
+$MESS["OL_COMPONENT_LE_MENU_AGREEMENTS"] = "Accord";
+$MESS["OL_COMPONENT_LE_MENU_AUTOMATIC_ACTIONS"] = "Actions automatiques";
+$MESS["OL_COMPONENT_LE_MENU_BOTS"] = "Bots de chat";
+$MESS["OL_COMPONENT_LE_MENU_KPI"] = "ICP du temps de réponse";
+$MESS["OL_COMPONENT_LE_MENU_OTHERS"] = "Autre";
+$MESS["OL_COMPONENT_LE_MENU_QUALITY_MARK"] = "Évaluation de la qualité";
+$MESS["OL_COMPONENT_LE_MENU_QUEUE"] = "File d'attente";
+$MESS["OL_COMPONENT_LE_MENU_WORKTIME"] = "Temps de travail";
+$MESS["OL_COMPONENT_LE_OPTION_BOT"] = "Connecter le chat bot";
+$MESS["OL_COMPONENT_LE_OPTION_BOT_ID"] = "Chat bot ";
+$MESS["OL_COMPONENT_LE_OPTION_FORM"] = "Envoyer le formulaire CRM";
+$MESS["OL_COMPONENT_LE_OPTION_FORM_ID"] = "Formulaire CRM";
+$MESS["OL_COMPONENT_LE_OPTION_NONE"] = "Ne rien faire";
+$MESS["OL_COMPONENT_LE_OPTION_QUALITY"] = "Envoyer le texte et l'évaluation de la qualité";
+$MESS["OL_COMPONENT_LE_OPTION_TEXT"] = "Envoyer le texte";
+$MESS["OL_COMPONENT_LE_QUICK_ANSWERS_NO_ACCESS_CREATE"] = "Vous n'êtes pas autorisé à modifier ce Canal ouvert";
+$MESS["OL_COMPONENT_LE_QUICK_ANSWERS_STORAGE_CREATE"] = "Créer automatiquement";
+$MESS["OL_COMPONENT_LE_QUICK_ANSWERS_STORAGE_CREATE_ERROR"] = "Erreur lors de la création de la liste de réponses prédéfinies. Veuillez contacter l'assistance technique.";
+$MESS["OL_COMPONENT_LE_QUICK_ANSWERS_STORAGE_CREATE_ERROR_UNIQUE"] = "Une liste de Réponses prédéfinies existe déjà pour ce Canal ouvert.";
+$MESS["OL_COMPONENT_MODULE_NOT_INSTALLED"] = "Le module \"Canaux ouverts\" n'est pas installé.";
+?>

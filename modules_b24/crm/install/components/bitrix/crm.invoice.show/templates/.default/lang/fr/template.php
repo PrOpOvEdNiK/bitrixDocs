@@ -1,0 +1,37 @@
+<?
+$MESS["CRM_COMPANY_LINK"] = "Entreprise";
+$MESS["CRM_CONTACT_LINK"] = "Personne de contact";
+$MESS["CRM_DEAL_CLIENT_NOT_ASSIGNED"] = "[non affecté]";
+$MESS["CRM_DEAL_LINK"] = "Facture de transaction";
+$MESS["CRM_DEAL_NOT_OPENED"] = "Affichage de cet accord limité";
+$MESS["CRM_DEAL_OPENED"] = "Affichage des permis à tous les utilisateurs";
+$MESS["CRM_EDIT_BTN_TTL"] = "Appuyer pour éditer";
+$MESS["CRM_INVOICE_CLIENT"] = "Contractant";
+$MESS["CRM_INVOICE_COMMENT"] = "Commentaire du manager";
+$MESS["CRM_INVOICE_DATE_BILL"] = "Date d'établissement";
+$MESS["CRM_INVOICE_DATE_INSERT"] = "Créé le";
+$MESS["CRM_INVOICE_DATE_PAY_BEFORE"] = "Date limite";
+$MESS["CRM_INVOICE_DATE_UPDATE"] = "Date de modification";
+$MESS["CRM_INVOICE_FIELD_DATE_MARKED"] = "Date de rejet";
+$MESS["CRM_INVOICE_FIELD_PAY_VOUCHER_DATE"] = "Date de paiement";
+$MESS["CRM_INVOICE_FIELD_PAY_VOUCHER_NUM"] = "Document #";
+$MESS["CRM_INVOICE_FIELD_REASON_MARKED"] = "Commentaire";
+$MESS["CRM_INVOICE_PRICE_SHORT"] = "Total";
+$MESS["CRM_INVOICE_PUBLIC_LINK_COPY"] = "Copier";
+$MESS["CRM_INVOICE_RECUR_SHOW_TITLE"] = "Facture récurrente ##ACCOUNT_NUMBER# &mdash; #ORDER_TOPIC#";
+$MESS["CRM_INVOICE_SHOW_LEGEND"] = "Facture #ACCOUNT_NUMBER#";
+$MESS["CRM_INVOICE_SHOW_TITLE"] = "Facture ##ACCOUNT_NUMBER# &mdash; #ORDER_TOPIC#";
+$MESS["CRM_INVOICE_SIDEBAR_STATUS"] = "Statut";
+$MESS["CRM_INVOICE_TITLE"] = "Facture";
+$MESS["CRM_LOCK_BTN_TTL"] = "L'édition est inaccessible";
+$MESS["CRM_QUOTE_LINK"] = "Devis";
+$MESS["CRM_TAB_1"] = "Au sujet de la facture";
+$MESS["CRM_TAB_1_TITLE"] = "Propriétés de la facture";
+$MESS["CRM_TAB_HISTORY"] = "Historique";
+$MESS["CRM_TAB_HISTORY_TITLE"] = "Historique des modifications du facture";
+$MESS["CRM_TAB_PRODUCT_ROWS"] = "Produits";
+$MESS["CRM_TAB_PRODUCT_ROWS_TITLE"] = "Marchandises du facture";
+$MESS["CRM_TAB_TREE"] = "Dépendances";
+$MESS["CRM_TAB_TREE_TITLE"] = "Liens vers d'autres entités et objets";
+$MESS["INVOICE_USER_DESCRIPTION"] = "Commentaires (sera affiché sur la facture)";
+?>

@@ -1,0 +1,32 @@
+<?
+$MESS["DOCGEN_TEMPLATE_ADD_ACTIVE"] = "Ativo";
+$MESS["DOCGEN_TEMPLATE_ADD_ADD_USER_LINK"] = "Adicionar mais";
+$MESS["DOCGEN_TEMPLATE_ADD_CANCEL"] = "Cancelar";
+$MESS["DOCGEN_TEMPLATE_ADD_COMPLETE"] = "O arquivo foi carregado";
+$MESS["DOCGEN_TEMPLATE_ADD_DOWNLOAD"] = "Baixar modelo";
+$MESS["DOCGEN_TEMPLATE_ADD_DRAG_HERE"] = "Arraste um arquivo aqui ou <span class=\"docs-template-load-drag-line\" id=\"upload-template-text\">selecione um arquivo do seu computador</span>";
+$MESS["DOCGEN_TEMPLATE_ADD_ERROR_FILE"] = "Use apenas arquivos DOCX para modelos";
+$MESS["DOCGEN_TEMPLATE_ADD_ERROR_NAME"] = "Digite o nome do modelo";
+$MESS["DOCGEN_TEMPLATE_ADD_ERROR_PROVIDER"] = "Selecione pelo menos uma seção";
+$MESS["DOCGEN_TEMPLATE_ADD_FEEDBACK"] = "Comentários";
+$MESS["DOCGEN_TEMPLATE_ADD_FILE"] = "Carregar arquivo do modelo";
+$MESS["DOCGEN_TEMPLATE_ADD_FORMATS"] = "Os modelos de documentos devem estar no formato DOCX.";
+$MESS["DOCGEN_TEMPLATE_ADD_INSTALL"] = "Instalar";
+$MESS["DOCGEN_TEMPLATE_ADD_MAIN_PROVIDER"] = "Vincular a seções do CRM";
+$MESS["DOCGEN_TEMPLATE_ADD_NAME"] = "Nome";
+$MESS["DOCGEN_TEMPLATE_ADD_PROGRESS"] = "Carregando agora...";
+$MESS["DOCGEN_TEMPLATE_ADD_REINSTALL"] = "Restaurar versão do modelo padrão";
+$MESS["DOCGEN_TEMPLATE_ADD_REINSTALL_CONFIRM"] = "Tem certeza de que deseja substituir o arquivo pelo modelo padrão?";
+$MESS["DOCGEN_TEMPLATE_ADD_REINSTALL_CONFIRM_TITLE"] = "Restaurar Modelo";
+$MESS["DOCGEN_TEMPLATE_ADD_REINSTALL_SUCCESS"] = "O arquivo do modelo foi atualizado.";
+$MESS["DOCGEN_TEMPLATE_ADD_SAVE"] = "Salvar";
+$MESS["DOCGEN_TEMPLATE_ADD_SORT"] = "Tipo";
+$MESS["DOCGEN_TEMPLATE_ADD_SUCCESS"] = "O modelo foi carregado";
+$MESS["DOCGEN_TEMPLATE_ADD_TEMPLATE_NUMERATOR"] = "Usar modelo de numeração automática";
+$MESS["DOCGEN_TEMPLATE_ADD_TEMPLATE_NUMERATOR_CREATE"] = "criar";
+$MESS["DOCGEN_TEMPLATE_ADD_TEMPLATE_NUMERATOR_EDIT"] = "configurar";
+$MESS["DOCGEN_TEMPLATE_ADD_TEMPLATE_REGION"] = "Vincular ao país";
+$MESS["DOCGEN_TEMPLATE_ADD_UPLOAD_NEW"] = "Carregar novo";
+$MESS["DOCGEN_TEMPLATE_ADD_USERS"] = "Usuários de modelos";
+$MESS["DOCGEN_TEMPLATE_ADD_WITH_STAMPS"] = "Com assinaturas e carimbo";
+?>

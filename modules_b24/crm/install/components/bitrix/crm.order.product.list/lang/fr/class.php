@@ -1,0 +1,26 @@
+<?
+$MESS["CRM_ORDER_PLC_BASE_PRICE"] = "Prix de base";
+$MESS["CRM_ORDER_PLC_CURRENCY"] = "Devise";
+$MESS["CRM_ORDER_PLC_CUSTOM_PRICE"] = "Prix personnalisé";
+$MESS["CRM_ORDER_PLC_DEDUCTED"] = "Expédiée";
+$MESS["CRM_ORDER_PLC_DEFAULT_WEIGHT_UNIT"] = "kg";
+$MESS["CRM_ORDER_PLC_DIMENSIONS"] = "Dimensions";
+$MESS["CRM_ORDER_PLC_DISCOUNT_PRICE"] = "Réduction";
+$MESS["CRM_ORDER_PLC_FAILED_TO_CREATE_OBJECT"] = "Impossible de créer une instance de commande";
+$MESS["CRM_ORDER_PLC_NAME"] = "Nom";
+$MESS["CRM_ORDER_PLC_NOTES"] = "Type de prix";
+$MESS["CRM_ORDER_PLC_PRICE"] = "Prix";
+$MESS["CRM_ORDER_PLC_PRODUCT"] = "Produit";
+$MESS["CRM_ORDER_PLC_PRODUCT_ID"] = "ID du produit";
+$MESS["CRM_ORDER_PLC_PRODUCT_PRICE_ID"] = "ID du prix";
+$MESS["CRM_ORDER_PLC_PROPERTIES"] = "Propriétés";
+$MESS["CRM_ORDER_PLC_QUANTITY"] = "Quantité";
+$MESS["CRM_ORDER_PLC_SORTING"] = "Trier";
+$MESS["CRM_ORDER_PLC_THE_SUMM"] = "Montant";
+$MESS["CRM_ORDER_PLC_TYPE_PRICE_TYPE_ID"] = "ID du type de prix";
+$MESS["CRM_ORDER_PLC_UNKNOWN_DISCOUNT"] = "Réduction inconnue";
+$MESS["CRM_ORDER_PLC_VAT"] = "Taxe";
+$MESS["CRM_ORDER_PLC_VAT_INCLUDED"] = "TVA comprise";
+$MESS["CRM_ORDER_PLC_VAT_RATE"] = "Taux de TVA";
+$MESS["CRM_ORDER_PLC_WEIGHT"] = "Poids";
+?>

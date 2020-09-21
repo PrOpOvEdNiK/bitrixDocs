@@ -1,0 +1,40 @@
+<?
+$MESS["VI_CONFIG_EDIT_QUEUE_NAME"] = "Eilės grupės pavadinimas &nbsp; &mdash; &nbsp;";
+$MESS["VI_CONFIG_EDIT_QUEUE"] = "Eilės grupės nustatymai";
+$MESS["VI_CONFIG_EDIT_QUEUE_TIP_2"] = "Pasirinkite \"Bitrix24\" naudotojus, kurie atsakys į skambučius į šį numerį. Nurodykite skambučių paskirstymo metodą ir skambučio skaičių, po kurio skambutis nukreipiamas kitam naudotojui eilėje.";
+$MESS["VI_CONFIG_EDIT_QUEUE_TYPE"] = "Paskirstykite skambučius tapr \"Bitrix24\" naudotojų šioje eilės grupėje &nbsp; &mdash; &nbsp;";
+$MESS["VI_CONFIG_EDIT_QUEUE_TYPE_EVENLY"] = "tolygiai";
+$MESS["VI_CONFIG_EDIT_QUEUE_TYPE_STRICTLY"] = "tiksliai kaip eilėje";
+$MESS["VI_CONFIG_EDIT_QUEUE_TYPE_ALL"] = "viesiems";
+$MESS["VI_CONFIG_EDIT_QUEUE_TYPE_TIP"] = "<b>Tolygiai</b>: darbuotojų eilė neturi reikšmės; skambučiai bus paskirstyti taip, kad kiekvienas darbuotojas turėtų maždaug vienodą skambučių skaičių.<br><br><b>Tiksliai kaip eilėje</b>: darbuotojų eilė turi reikšmę; skambutis visada bus perduotas pirmam asmeniui eilės grupėje. Jei šis asmuo neatsako į skambutį, jis bus persiųstas kitam eilėje.";
+$MESS["VI_CONFIG_EDIT_QUEUE_TYPE_TIP_ASTERISK"] = "Atkreipkite dėmesį, kad šiame režime neribota eilė yra neprieinama.";
+$MESS["VI_CONFIG_EDIT_QUEUE_TYPE_TIP_2"] = "<b>Visiems</b> reiškia, kad skambutis bus nukreiptas visiems prieinamiems darbuotojams.";
+$MESS["VI_CONFIG_EDIT_QUEUE_TYPE_TIP_ASTERISK_2"] = "Atminkite, kad šis režimas įgalina begalę eilę.";
+$MESS["VI_CONFIG_EDIT_QUEUE_TIME"] = "Skambučio skaičius prieš perduodant kitam naudotojui eilėje &nbsp; &mdash; &nbsp;";
+$MESS["VI_CONFIG_EDIT_QUEUE_AMOUNT_OF_BEEPS_BEFORE_REDIRECT"] = "Skambučio skaičius prieš perduodant kitam &nbsp; &mdash; &nbsp;";
+$MESS["VI_CONFIG_EDIT_QUEUE_AMOUNT_OF_BEEPS_BEFORE_REDIRECT_2"] = "2 skambučiai";
+$MESS["VI_CONFIG_EDIT_QUEUE_AMOUNT_OF_BEEPS_BEFORE_REDIRECT_3"] = "3 skambučiai";
+$MESS["VI_CONFIG_EDIT_QUEUE_AMOUNT_OF_BEEPS_BEFORE_REDIRECT_4"] = "4 skambučiai";
+$MESS["VI_CONFIG_EDIT_QUEUE_AMOUNT_OF_BEEPS_BEFORE_REDIRECT_5"] = "5 skambučiai";
+$MESS["VI_CONFIG_EDIT_QUEUE_AMOUNT_OF_BEEPS_BEFORE_REDIRECT_6"] = "6 skambučiai";
+$MESS["VI_CONFIG_EDIT_QUEUE_AMOUNT_OF_BEEPS_BEFORE_REDIRECT_7"] = "7 skambučiai";
+$MESS["VI_CONFIG_EDIT_NO_ANSWER_2"] = "Praleistų skambučių apdorojimas";
+$MESS["VI_CONFIG_EDIT_NO_ANSWER_TIP"] = "Įjunkite balso paštą arba naudokite skambučio persiuntimą į mobiliojo telefono numerį, jei nė vienas darbuotojas negalės atsiliepti į skambutį.<br>Įrašytas balso pašto pranešimas arba nukreiptas skambutis bus priskirtas pirmam eilės darbuotojui.";
+$MESS["VI_CONFIG_EDIT_NO_ANSWER_TIP_2"] = "Pasirinkite kitą žingsnį, jei nė vienas iš pasirinktų \"Bitrix24\" naudotojų neatsakė į skambutį - peradresuokite į balso paštą, persiųskite į mobilųjį telefoną, persiųskite į kitą numerį, išsiųskite skambutį į eilę, paskambinkite.";
+$MESS["VI_CONFIG_EDIT_NO_ANSWER_ACTION"] = "Jei niekas neatsakė &nbsp; &mdash; &nbsp;";
+$MESS["VI_CONFIG_EDIT_NO_ANSWER_ACTION_2"] = "Įgalinti balso paštą";
+$MESS["VI_CONFIG_EDIT_NO_ANSWER_ACTION_3_2"] = "Nukreipti skambutį darbuotojui";
+$MESS["VI_CONFIG_EDIT_NO_ANSWER_ACTION_5"] = "Nukreipti skambutį į nurodytą numerį";
+$MESS["VI_CONFIG_EDIT_NO_ANSWER_ACTION_6"] = "Grįžti į eilę";
+$MESS["VI_CONFIG_EDIT_NO_ANSWER_ACTION_4"] = "Baigti skambutį
+";
+$MESS["VI_CONFIG_EDIT_NO_ANSWER_ACTION_7"] = "Persiųskite į kitą eilės grupę";
+$MESS["VI_CONFIG_EDIT_FORWARD_NUMBER"] = "Peradresuoti į numerį &nbsp; &mdash; &nbsp;";
+$MESS["VI_CONFIG_EDIT_NEXT_QUEUE"] = "Kita eilės grupė &nbsp; &mdash; &nbsp;";
+$MESS["VI_CONFIG_EDIT_SAVE"] = "Įrašyti";
+$MESS["VI_CONFIG_EDIT_BACK"] = "Grįžti į sąrašą";
+$MESS["VI_CONFIG_EDIT_CANCEL"] = "Atšaukti";
+$MESS["LM_ADD1"] = "Pridėti darbuotoją";
+$MESS["LM_ADD2"] = "Pridėti daugiau";
+$MESS["VI_CONFIG_EDIT_ALLOW_INTERCEPT"] = "Leisti skambučių perėmimą šioje eilės grupėje";
+?>

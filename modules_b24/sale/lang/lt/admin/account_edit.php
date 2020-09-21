@@ -1,0 +1,36 @@
+<?
+$MESS["SAE_NO_PERMS2ADD"] = "Jūs neturite pakankamai teisių pridėti naują sąskaitą";
+$MESS["SAE_EMPTY_USER"] = "Laukas \"Naudotojas\" yra tuščias";
+$MESS["SAE_EMPTY_CURRENCY"] = "Laukas \"Valiuta\" yra tuščias";
+$MESS["SAE_ALREADY_EXISTS"] = "Naudotojo sąskaita ##USER# valiutai #CURRENCY# jau egzistuoja";
+$MESS["SAE_NO_ACCOUNT"] = "Sąskaita ##ID# nerasta";
+$MESS["SAE_ERROR_SAVING"] = "Klaida išsaugant sąskaitą";
+$MESS["SAE_ERROR_SAVING_SUM"] = "Klaida išsaugant sąskaitą. Prašome patikrinti sumos galiojimą";
+$MESS["SAE_ERROR_SAVING_COMMENT"] = "Klaida išsaugant sąskaitos komentarus";
+$MESS["SAE_UPDATING"] = "Redaguoti sąskaitos parametrus";
+$MESS["SAE_ADDING"] = "Pridėti naują sąskaitą";
+$MESS["SAE_TO_LIST"] = "Sąskaitų sąrašas";
+$MESS["SAE_TIMESTAMP"] = "Paskutinio atnaujinimo data:";
+$MESS["SAE_USER1"] = "Naudotojas:";
+$MESS["SAE_USER_PROFILE"] = "Naudotojo profilis";
+$MESS["SAE_SUM"] = "Sąskaitos suma:";
+$MESS["SAE_UNLOCK"] = "Atrakinti sąskaitą:";
+$MESS["SAE_LOCKED"] = "Užrakinta";
+$MESS["SAE_NOTES"] = "Pastabos:";
+$MESS["SAE_OSN"] = "Priežastis pakeisti sumą:";
+$MESS["SAE_OSN_NOTE"] = "(pildoma, jei keičiasi sumą)";
+$MESS["SAE_SAVE"] = "Išsaugoti";
+$MESS["SAE_SAVE_ADD"] = "Pridėti";
+$MESS["SAE_APPLY"] = "Pritaikyti";
+$MESS["SAE_CANCEL"] = "Atšaukti";
+$MESS["SAEN_2FLIST"] = "Sąskaitų sąrašas";
+$MESS["SAEN_2FLIST_TITLE"] = "Peržiūrėti sąskaitų sąrašą";
+$MESS["SAEN_NEW_ACCOUNT"] = "Sukurti naują sąskaitą";
+$MESS["SAEN_NEW_ACCOUNT_TITLE"] = "Sukurti naują sąskaitą";
+$MESS["SAEN_DELETE_ACCOUNT"] = "Pašalinti sąskaitą";
+$MESS["SAEN_DELETE_ACCOUNT_CONFIRM"] = "Ar tikrai norite pašalinti šią sąskaitą?";
+$MESS["SAEN_TAB_ACCOUNT"] = "Naudotojo sąskaita";
+$MESS["SAEN_TAB_ACCOUNT_DESCR"] = "Naudotojo sąskaita";
+$MESS["SAE_ERROR"] = "Išsaugojimo klaida!";
+$MESS["SAE_LOCK"] = "Užrakinti sąskaitą:";
+?>

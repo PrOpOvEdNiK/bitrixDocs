@@ -1,0 +1,29 @@
+<?
+$MESS["ISV_ADD_DEPARTMENT"] = "Adicionar Departamento";
+$MESS["ISV_B24_INVITE"] = "Convidar usuários";
+$MESS["ISV_CHILDREN_COUNT_1"] = "#NUM# mais departamentos";
+$MESS["ISV_CHILDREN_COUNT_2"] = "#NUM# mais departamentos";
+$MESS["ISV_CHILDREN_COUNT_3"] = "#NUM# mais departamentos";
+$MESS["ISV_CHILDREN_COUNT_4"] = "#NUM# mais departamentos";
+$MESS["ISV_CHILDREN_COUNT_MUL"] = "#NUM# mais departamentos";
+$MESS["ISV_EMPLOYEES"] = "Funcionários";
+$MESS["ISV_EMP_COUNT_1"] = "#NUM# colaborador";
+$MESS["ISV_EMP_COUNT_2"] = "#NUM# colaboradors";
+$MESS["ISV_EMP_COUNT_3"] = "#NUM# colaboradors";
+$MESS["ISV_EMP_COUNT_4"] = "#NUM# colaboradors";
+$MESS["ISV_EMP_COUNT_MUL"] = "#NUM# colaboradors";
+$MESS["ISV_EMP_LIST"] = "Lista de colaboradors";
+$MESS["ISV_HINT_ADD"] = "Adicionar Departamento Secundário";
+$MESS["ISV_HINT_DELETE"] = "Excluir departamento";
+$MESS["ISV_HINT_EDIT"] = "Editar departamento";
+$MESS["ISV_SHOW_SUBTREE"] = "Exibir Estrutura do Departamento";
+$MESS["ISV_UNDO"] = "Cancelar";
+$MESS["ISV_add_dep"] = "Adicionar subdepartamento";
+$MESS["ISV_add_emp"] = "Adicionar colaborador";
+$MESS["ISV_confirm_change_department_0"] = "Transferir #EMP_NAME# para #DPT_NAME#?";
+$MESS["ISV_confirm_change_department_1"] = "Atribuir #EMP_NAME# a #DPT_NAME#?";
+$MESS["ISV_confirm_delete_department"] = "Deseja excluir the departmento? Todos os departamentos subordinados serão transferidos.";
+$MESS["ISV_confirm_move_department"] = "Transferir #DPT_NAME# para #DPT_NAME_TO#?";
+$MESS["ISV_confirm_set_head"] = "Atribuir #EMP_NAME# como chefe do departamento #DPT_NAME#?";
+$MESS["ISV_set_head"] = "Nomear como Supervisor";
+?>

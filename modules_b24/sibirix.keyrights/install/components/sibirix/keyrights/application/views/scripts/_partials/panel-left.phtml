@@ -1,0 +1,51 @@
+<div ng-controller="LeftPanelCtrl" class="sidepanel navi">
+    <div class="toolbox<?= $this->isAdmin ? ' admin' : ''; ?>">
+        <? /* if (isAdmin) {  ?>
+            <a class="settings" data-target="#import-passwords" ng-click="importPopup()" data-toggle="modal"></a>
+        <?  } */ ?>
+        <div class="tool add-folder" data-toggle="modal" data-target="#sectionAdd" ng-click="addTopFolder()"></div>
+        <div class="tool add-password js-add-password" ng-class="{ disabled: !canAddPassword }" ng-click="add()"></div>
+        <div class="tool setting" ng-class="{ disabled: !isAdmin }">
+            <i ng-class="{ 'dropdown-toggle': isAdmin }" data-toggle="dropdown"></i>
+            <ul class="dropdown-menu" role="menu" aria-labelledby="context_menu_1">
+                <li role="presentation"><a data-target="#import-passwords" ng-click="isAdmin && importPopup()" data-toggle="modal"><span><i class="icon icon-import">&nbsp;</i><?= $this->t('IMPORT'); ?></span></a></li>
+                <li role="presentation" ng-if="isAdmin"><a ng-click="isAdmin && editRootFolder()"><?= $this->t('ROOT_RIGHTS_EDIT'); ?></a></li>
+            </ul>
+        </div>
+        <div class="tool search" ng-class="{ active: searchInputVisibility }" ng-click="searchInputVisibility = !searchInputVisibility"></div>
+        <div class="clearfix"></div>
+        <div class="search-wrapper main-search" ng-class="{ visible: searchInputVisibility }">
+            <input id="mainSearchInput"
+                   ng-model="search"
+                   ng-focus="focusSearch()"
+                   ng-blur="searchInputVisibility = false"
+                   focus-me="searchInputVisibility"
+                   type="text"
+                   class="form-control"/>
+            <i class="icon-search"></i>
+
+            <div class="clearfix"></div>
+        </div>
+    </div>
+
+    <div class="js-baron wrapper wrapper-left">
+        <div class="scroller" scrolly="onScroll($event)">
+            <tree-list items="folders"></tree-list>
+
+            <div ng-show="0 === folders.length"
+                 ng-click="addTopFolder()"
+                 data-toggle="modal" data-target="#sectionAdd"
+                 class="empty-folder">
+                <?= $this->t('SECTION_ADD_TIP'); ?>
+            </div>
+        </div>
+        <div class="scroller-bar-wrapper">
+            <div class="scroller-bar"></div>
+        </div>
+    </div>
+
+    <div class="button-area">
+    </div>
+</div>
+
+<?= $this->render('_partials/modal/section-add.phtml'); ?>

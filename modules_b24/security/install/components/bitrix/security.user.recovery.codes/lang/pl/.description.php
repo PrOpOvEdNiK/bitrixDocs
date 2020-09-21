@@ -1,0 +1,3 @@
+<?
+$MESS["SECURITY_USER_RECOVERY_CODES_SECURITY_SERVICE"] = "Zabezpieczenia";
+?>

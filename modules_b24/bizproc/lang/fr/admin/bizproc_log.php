@@ -1,0 +1,35 @@
+<?
+$MESS["BPABL_BACK"] = "Précédent";
+$MESS["BPABL_DESCRIPTION"] = "Description du modèle de procédure d'entreprise";
+$MESS["BPABL_ERROR"] = "Erreur";
+$MESS["BPABL_ID"] = "Code de processus d'affaires";
+$MESS["BPABL_INVALID_WF"] = "Le processus d'affaires n'est pas trouvé";
+$MESS["BPABL_LOG"] = "Historique de l'exécution";
+$MESS["BPABL_NAME"] = "Nom du modèle de procédure d'entreprise";
+$MESS["BPABL_NO_PERMS"] = "Vous n'avez pas d'accès à ce processus business du document";
+$MESS["BPABL_RES2ADMINMODE"] = "Recherche élargie du réglage du composant";
+$MESS["BPABL_RES2SIMPLEMODE"] = "Mode simple";
+$MESS["BPABL_RES_1"] = "Non";
+$MESS["BPABL_RES_2"] = "Avec succès";
+$MESS["BPABL_RES_3"] = "Annulé";
+$MESS["BPABL_RES_4"] = "Erreur";
+$MESS["BPABL_RES_5"] = "Non initialisé";
+$MESS["BPABL_RES_6"] = "Indéfini";
+$MESS["BPABL_STATE_MODIFIED"] = "Date du statut courant";
+$MESS["BPABL_STATE_NAME"] = "Statut courant de la procédure d'entreprise";
+$MESS["BPABL_STATUS_1"] = "Date de l'initialisation";
+$MESS["BPABL_STATUS_2"] = "En cours";
+$MESS["BPABL_STATUS_3"] = "Annulé";
+$MESS["BPABL_STATUS_4"] = "Achevé(e)s";
+$MESS["BPABL_STATUS_5"] = "Erreur";
+$MESS["BPABL_STATUS_6"] = "Indéfini";
+$MESS["BPABL_TAB_TITLE"] = "les processus d'affaires";
+$MESS["BPABL_TITLE"] = "Processus business #ID#";
+$MESS["BPABL_TYPE_1"] = "Action en cours d'exécution '#ACTIVITY#'#NOTE#";
+$MESS["BPABL_TYPE_2"] = "Action réalisée '#ACTIVITY#' est achevée avec le statut '#STATUS#' et avec pour résultat '#RESULT#'#NOTE#";
+$MESS["BPABL_TYPE_3"] = "L'action '#ACTIVITY#'#NOTE# est annulée";
+$MESS["BPABL_TYPE_4"] = "Erreur le l'action '#ACTIVITY#'#NOTE#";
+$MESS["BPABL_TYPE_5"] = "Action '#ACTIVITY#'#NOTE#";
+$MESS["BPABL_TYPE_6"] = "Une action inconnue associée à '#ACTIVITY#'#NOTE# a été exécutée";
+$MESS["BPABL_WF_TAB"] = "les processus d'affaires";
+?>

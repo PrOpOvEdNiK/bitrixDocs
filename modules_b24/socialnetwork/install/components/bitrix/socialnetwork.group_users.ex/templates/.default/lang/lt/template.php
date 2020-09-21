@@ -1,0 +1,35 @@
+<?
+$MESS["SONET_GUE_T_MODS_SUBTITLE"] = "Moderatoriai";
+$MESS["SONET_GUE_T_USERS_SUBTITLE"] = "Nariai";
+$MESS["SONET_GUE_T_BAN_SUBTITLE"] = "Užblokuoti naudotojai";
+$MESS["SONET_GUE_T_ACTIONS_TITLE"] = "Veiksmai";
+$MESS["SONET_GUE_T_OWNER"] = "savininkas";
+$MESS["SONET_GUE_T_ACTION_ADDTOUSERS"] = "Pakviesti naudotojus";
+$MESS["SONET_GUE_T_ACTION_ADDTOMODERATORS"] = "Paskirti moderatorium";
+$MESS["SONET_GUE_T_ACTION_EXCLUDEFROMGROUP"] = "Pašalinti iš grupės";
+$MESS["SONET_GUE_T_ACTION_EXCLUDEFROMGROUP_CONFIRM"] = "Ar tikrai norite pašalinti visus šiuos naudotojus iš grupės?";
+$MESS["SONET_GUE_T_ACTION_BANFROMGROUP"] = "Blokuoti";
+$MESS["SONET_GUE_T_ACTION_EXCLUDEFROMMODERATORS"] = "Pašalinti iš moderatorių";
+$MESS["SONET_GUE_T_ACTION_UNBANFROMGROUP"] = "Atblokuoti";
+$MESS["SONET_GUE_T_ACTION_SETGROUPOWNER"] = "Pakeisti savininką";
+$MESS["SONET_GUE_T_ACTION_SETGROUPOWNER_CONFIRM"] = "Ar tikrai norite pakeisti grupės savininką?";
+$MESS["SONET_GUE_T_USER_ID_NOT_DEFINED"] = "Nepasirinkote jokio naudotojo.";
+$MESS["SONET_GUE_T_USER_ID_INCORRECT"] = "Pasirinkite naudotoją.";
+$MESS["SONET_GUE_T_OWNER_CANT_EXCLUDE_HIMSELF"] = "Savininkas negali pašalinti savęs iš grupės.";
+$MESS["SONET_GUE_T_GROUP_ID_NOT_DEFINED"] = "Grupė nerasta.";
+$MESS["SONET_GUE_T_NOT_ATHORIZED"] = "Jūs nesate prisijungęs.";
+$MESS["SONET_GUE_T_MODULE_NOT_INSTALLED"] = "Socialinio tinklo modulis neįdiegtas.";
+$MESS["SONET_GUE_T_NO_PERMS"] = "Jūs neturite teisių valdyti šią grupę.";
+$MESS["SONET_GUE_T_SESSION_WRONG"] = "Jūsų sesijos laikas baigėsi, prašome pakartoti veiksmus.";
+$MESS["SONET_GUE_T_ACTION_FAILED"] = "Veiksmas grąžino neteisingo užbaigimo požymį: #ERROR#";
+$MESS["SONET_GUE_T_WAIT"] = "Prašome palaukti&hellip;";
+$MESS["SONET_GUE_T_SAME_OWNER"] = "Nurodytas naudotojas jau yra grupės savinikas";
+$MESS["SONET_GUE_T_FIRED"] = "atleistas(-)";
+$MESS["SONET_GUE_T_FIRED_M"] = "atleistas";
+$MESS["SONET_GUE_T_FIRED_F"] = "atleista";
+$MESS["SONET_GUE_T_USERS_AUTO_SUBTITLE"] = "Susiję naudotojai";
+$MESS["SONET_GUE_T_DEPARTMENTS_SUBTITLE"] = "Skyriai";
+$MESS["SONET_GUE_T_ACTION_UNCONNECT_DEPT"] = "Atjungti";
+$MESS["SONET_GUE_T_DEPARTMENT_ID_NOT_DEFINED"] = "Nepasirinktas (-i) skyrius (-ai).";
+$MESS["SONET_GUE_T_CANT_EXCLUDE_AUTO_MEMBER"] = "Susietas naudotojas negali būti pašalintas iš grupės.";
+?>

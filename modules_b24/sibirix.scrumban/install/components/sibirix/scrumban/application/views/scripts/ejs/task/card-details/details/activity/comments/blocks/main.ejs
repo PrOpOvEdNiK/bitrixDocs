@@ -1,0 +1,32 @@
+<script type='text/ejs' id='taskDetailEditBlockComments'>
+    <div class="block comments jsComments">
+        <div class="header">
+            <div class="inner">
+                <i></i>
+                <h3><?= $this->t('COMMENTS') ?>
+                    <a href="javascript:void(0)" class="hide" data-hide-text="<?= $this->t('HIDE'); ?>"></a>
+                </h3>
+                <div class="activity-tabs">
+                    <button class="sort-activity js-sort-activity" title=""></button>
+                    <% if (window.SCRUMBAN.isFeatureEnabled('taskDetails.comments') || window.SCRUMBAN.isFeatureEnabled('taskDetails.logs')) { %>
+                        <a href="javascript:void(0)" class="activity-tab jsActTypeSelector"><span><?= $this->t('COMMENT_TAB_ALL') ?></span></a>
+                    <% } %>
+
+                    <% if (window.SCRUMBAN.isFeatureEnabled('taskDetails.comments')) { %>
+                        <a href="javascript:void(0)" class="activity-tab jsActTypeSelector" data-act_id="<%= window.SCRUMBAN.actTypes.comment %>"><span><?= $this->t('COMMENT_TAB_COMMENT') ?></span></a>
+                    <% } %>
+
+                    <% if (window.SCRUMBAN.isFeatureEnabled('taskDetails.logs')) { %>
+                         <a href="javascript:void(0)" class="activity-tab jsActTypeSelector" data-act_id="<%= window.SCRUMBAN.actTypes.log %>"><span><?= $this->t('COMMENT_TAB_LOG') ?></span></a>
+                    <% } %>
+
+                    <% if (!window.scrumbanBoard.getCurrentUser().isCustomer) { %>
+                        <a href="javascript:void(0)" class="activity-tab jsActTypeSelector" data-act_id="<%= window.SCRUMBAN.actTypes.timeLog %>"><span><?= $this->t('COMMENT_TAB_TIMELOG') ?></span></a>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+        <div class="clear"></div>
+        <div class="content jsCommentsContent"></div>
+    </div>
+</script>

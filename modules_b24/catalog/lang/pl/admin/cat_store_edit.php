@@ -1,0 +1,29 @@
+<?
+$MESS["ADDRESS_EMPTY"] = "Proszę dostarczyć dres magazynu.";
+$MESS["CAT_FEATURE_NOT_ALLOW"] = "Twoja edycja nie może użyć tej funkcji.";
+$MESS["CSTORE_SORT"] = "Sortuj";
+$MESS["CVAT_SORT"] = "Sortuj";
+$MESS["ISSUING_CENTER"] = "Wybierz lokalizację";
+$MESS["SHIPPING_CENTER"] = "Centrum wysyłki";
+$MESS["STORE_ACTIVE"] = "Aktywne";
+$MESS["STORE_ADDRESS"] = "Adres";
+$MESS["STORE_DELETE"] = "Usuń";
+$MESS["STORE_DELETE_CONFIRM"] = "Na pewno chcesz usunąć ten magazyn?";
+$MESS["STORE_DESCR"] = "Opis";
+$MESS["STORE_E_USER_FIELDS_ADD_HREF"] = "Dodaj niestandardowe pole";
+$MESS["STORE_GPS_N"] = "szerokość GPS";
+$MESS["STORE_GPS_S"] = "długość GPS";
+$MESS["STORE_IMAGE"] = "Obraz";
+$MESS["STORE_LIST"] = "Wszystkie magazyny";
+$MESS["STORE_NEW"] = "Dodawanie";
+$MESS["STORE_PHONE"] = "Telefon";
+$MESS["STORE_SAVE_ERROR"] = "Błąd zapisu magazynu";
+$MESS["STORE_SCHEDULE"] = "Godziny pracy";
+$MESS["STORE_SELECT_SITE_ID"] = "Wybierz stronę internetową";
+$MESS["STORE_SITE_ID"] = "Strona internetowa";
+$MESS["STORE_TAB"] = "Magazyny";
+$MESS["STORE_TAB_DESCR"] = "Magazyn";
+$MESS["STORE_TITLE"] = "Nazwa";
+$MESS["STORE_TITLE_ADD"] = "Nowy magazyn";
+$MESS["STORE_TITLE_UPDATE"] = "Edytuj Magazyn #ID#";
+?>

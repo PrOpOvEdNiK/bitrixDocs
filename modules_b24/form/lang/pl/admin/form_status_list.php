@@ -1,0 +1,29 @@
+<?
+$MESS["FORM_COPY"] = "Kopiuj";
+$MESS["FORM_COPY_ALT"] = "Kopiuj status";
+$MESS["FORM_C_SORT"] = "Sort.";
+$MESS["FORM_DEFAULT"] = "domyślne";
+$MESS["FORM_DELETE_STATUS_CONFIRM"] = "Na pewno chcesz usunąć ten status?";
+$MESS["FORM_DESCRIPTION"] = "Opis";
+$MESS["FORM_EDIT_ALT"] = "Zmień parametry statusu";
+$MESS["FORM_ERROR"] = "Błąd!";
+$MESS["FORM_FL_ACTIVE"] = "Aktywny";
+$MESS["FORM_FL_DESCR"] = "Opis";
+$MESS["FORM_FL_ID"] = "ID Statusu";
+$MESS["FORM_FL_RESULTS"] = "Licz wyniki";
+$MESS["FORM_FORM_EDIT"] = "Parametry formularza";
+$MESS["FORM_FORM_EDIT_TITLE"] = "Modyfikuj parametry formularza";
+$MESS["FORM_FORM_LIST"] = "Lista formularzy";
+$MESS["FORM_FORM_NAME"] = "Formularz:";
+$MESS["FORM_F_ACTIVE"] = "Aktywny:";
+$MESS["FORM_F_DESCRIPTION"] = "Opis:";
+$MESS["FORM_F_RESULTS"] = "Wyniki:";
+$MESS["FORM_F_TITLE"] = "Tytuł:";
+$MESS["FORM_NOT_FOUND"] = "Nie znaleziono formularza sieciowego";
+$MESS["FORM_PAGES"] = "Statusy";
+$MESS["FORM_PAGE_TITLE"] = "Lista statusów dla wyników formularza # #ID#";
+$MESS["FORM_RESULT_TITLE"] = "Otwórz wyniki formularza";
+$MESS["FORM_STATUS_DELETE"] = "Usuń";
+$MESS["FORM_STATUS_DELETE_ALT"] = "Usuń status";
+$MESS["FORM_TIMESTAMP"] = "Zmodyfikowany";
+?>

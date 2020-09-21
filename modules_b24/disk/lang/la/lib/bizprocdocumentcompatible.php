@@ -1,0 +1,37 @@
+<?
+$MESS["DISK_ADD"] = "Agregar";
+$MESS["DISK_BZ_D_AUTHOR"] = "Creado por";
+$MESS["DISK_BZ_D_FIELD_CODE"] = "Código mnemotécnico";
+$MESS["DISK_BZ_D_FIELD_CREATED_BY"] = "Creado por";
+$MESS["DISK_BZ_D_FIELD_CREATE_TIME"] = "Fecha y hora en el que un archivo fue creado";
+$MESS["DISK_BZ_D_FIELD_DELETED_BY"] = "Eliminado por";
+$MESS["DISK_BZ_D_FIELD_DELETE_TIME"] = "Fecha y hora en el que un archivo fue eliminado";
+$MESS["DISK_BZ_D_FIELD_FILE"] = "Archivo";
+$MESS["DISK_BZ_D_FIELD_ID"] = "ID del archivo";
+$MESS["DISK_BZ_D_FIELD_NAME"] = "Nombre del archivo";
+$MESS["DISK_BZ_D_FIELD_SIZE"] = "Tamaño del archivo";
+$MESS["DISK_BZ_D_FIELD_STORAGE_ID"] = "Almacenamiento";
+$MESS["DISK_BZ_D_FIELD_UPDATED_BY"] = "Modificado por";
+$MESS["DISK_BZ_D_FIELD_UPDATE_TIME"] = "Fecha y hora en el que un archivo fue modificado";
+$MESS["DISK_BZ_D_IDENTIFICATOR"] = "(ID)";
+$MESS["DISK_BZ_D_NAME_LASTNAME"] = "(Nombre / Apellido)";
+$MESS["DISK_BZ_D_NAME_NOT_CODE"] = "Ningún código nemotécnico fue proporcionado.";
+$MESS["DISK_DOC_TYPE_BOOL"] = "Si/No";
+$MESS["DISK_DOC_TYPE_DATA"] = "Fecha";
+$MESS["DISK_DOC_TYPE_DATETIME"] = "Fecha/Hora";
+$MESS["DISK_DOC_TYPE_DOUBLE"] = "Número";
+$MESS["DISK_DOC_TYPE_FILE"] = "Archivo";
+$MESS["DISK_DOC_TYPE_INT"] = "Entero";
+$MESS["DISK_DOC_TYPE_SELECT"] = "Lista";
+$MESS["DISK_DOC_TYPE_STRING"] = "Cadena";
+$MESS["DISK_DOC_TYPE_TEXT"] = "Texto de líneas múltiples";
+$MESS["DISK_DOC_TYPE_USER"] = "Enlazar con usuario";
+$MESS["DISK_FILED_NOT_SET"] = "No establecido";
+$MESS["DISK_IBD_DOCUMENT_XFORMOPTIONS1"] = "Especifique cada variante en una nueva línea. Si el valor de la variante y el nombre de la variante son diferentes, como prefijo el nombre con el valor entre corchetes. Por ejemplo: [v1] Variante 1";
+$MESS["DISK_IBD_DOCUMENT_XFORMOPTIONS2"] = "Haga clic en \"Establecer\" cuando haya terminado.";
+$MESS["DISK_IBD_DOCUMENT_XFORMOPTIONS3"] = "Establecer";
+$MESS["DISK_INVALID1"] = "El valor del campo no es un número entero.";
+$MESS["DISK_NO"] = "No";
+$MESS["DISK_UNKNOW"] = "Error desconocido.";
+$MESS["DISK_YES"] = "Si";
+?>

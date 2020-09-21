@@ -1,0 +1,31 @@
+<?
+$MESS["SEC_SCANNER_ADDITIONAL_INFO_BUTTON_ON"] = "Cacher";
+$MESS["SEC_SCANNER_ADDITIONAL_INFO_TITLE"] = "Détails";
+$MESS["SEC_SCANNER_CRITICAL_ERROR"] = "Important !";
+$MESS["SEC_SCANNER_CRITICAL_ERRORS_TITLE"] = "Pendant la numérisation, une erreur s'est produite : ";
+$MESS["SEC_SCANNER_CRITICAL_FIRST_START"] = "Vous ne l'avez pas Balayez votre système pour plus d'un mois.<br>Il est recommandé que vous numérisez le système dès maintenant.";
+$MESS["SEC_SCANNER_CRITICAL_HIGHT"] = "Augmenté";
+$MESS["SEC_SCANNER_CRITICAL_LOW"] = "Bas";
+$MESS["SEC_SCANNER_CRITICAL_MIDDLE"] = "Moyen";
+$MESS["SEC_SCANNER_CRITICAL_PROBLEMS_COUNT"] = "dont critiques : ";
+$MESS["SEC_SCANNER_CURRENT_TEST"] = "Vérification actuelle : ";
+$MESS["SEC_SCANNER_EXECUTION_TIME_DESCRIPTION"] = "Votre configuration ne laisse pas assez de temps au script PHP pour s'exécuter avant d'être terminé (the max_execution_time parameter). La valeur recommandée n'est pas mons de #MIN# s.";
+$MESS["SEC_SCANNER_EXECUTION_TIME_TITLE"] = "Impossible de démarrer Security Scanner.";
+$MESS["SEC_SCANNER_FAST_LOCAL_TESTS"] = "Effectuer une analyse interne 'rapide'";
+$MESS["SEC_SCANNER_INIT"] = "Initialisation...";
+$MESS["SEC_SCANNER_MAIN_TAB"] = "Numériser";
+$MESS["SEC_SCANNER_NO_PROBLEMS"] = "Aucune menace détectée.";
+$MESS["SEC_SCANNER_PROBLEMS_COUNT"] = "Menaces détectées: ";
+$MESS["SEC_SCANNER_REMOTE_TESTS"] = "Effectuer le scan extérieur";
+$MESS["SEC_SCANNER_SETTINGS_TAB"] = "Paramètres";
+$MESS["SEC_SCANNER_SETTINGS_TITLE"] = "Paramètres du scanner";
+$MESS["SEC_SCANNER_SLOW_LOCAL_TESTS"] = "Effectuer une analyse interne 'complexe'";
+$MESS["SEC_SCANNER_START_BUTTON"] = "Commencer";
+$MESS["SEC_SCANNER_STOP_BUTTON"] = "Arrêter le balayage";
+$MESS["SEC_SCANNER_TESTING_FAILURE"] = "Une erreur est survenue lors de la numérisation, ne permettant pas de poursuivre. Veuillez vous adresser au service technique.";
+$MESS["SEC_SCANNER_TESTING_FAILURE_CODE"] = "(code de l'erreur: #CODE#)";
+$MESS["SEC_SCANNER_TEST_DATE"] = "Dernière vérification: #DATE#";
+$MESS["SEC_SCANNER_TIP_BUTTON_ON"] = "Cacher";
+$MESS["SEC_SCANNER_TIP_TITLE"] = "Recommandations";
+$MESS["SEC_SCANNER_TITLE"] = "Scanneur de sécurité";
+?>

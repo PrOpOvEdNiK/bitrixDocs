@@ -1,0 +1,30 @@
+<?
+$MESS["MPF_INSERT_FILE"] = "Paspauskite bylos įkėlimui";
+$MESS["MPF_TAGS"] = "Žymės:";
+$MESS["MPF_SPOILER"] = "Įterpti santrauką";
+$MESS["MPF_ADD_TAG"] = "Pridėti daugiau";
+$MESS["MPF_DESTINATION"] = "Kam:";
+$MESS["MPF_DESTINATION_1"] = "Pridėti asmenis, grupes ar departamentus";
+$MESS["MPF_DESTINATION_2"] = "Pridėti daugiau";
+$MESS["MPF_DESTINATION_3"] = "Visi darbuotojai";
+$MESS["MPF_DESTINATION_4"] = "Visi naudotojai";
+$MESS["MPF_FILE_TITLE"] = "Įkelti bylas";
+$MESS["MPF_MORE"] = "Daugiau";
+$MESS["MPF_TAG_TITLE"] = "Pridėti žymę";
+$MESS["MPF_ADD_TAG1"] = "Pridėti";
+$MESS["MPF_MENTION_TITLE"] = "Pridėti paminėjimą";
+$MESS["MPF_IMAGE_TITLE"] = "Įkelti vaizdą";
+$MESS["MPF_FILE_INSERT_IN_TEXT"] = "Įkelti į tekstą";
+$MESS["MPF_FILE_IN_TEXT"] = "Tekste";
+$MESS["MPF_BUTTON_SEND"] = "Siųsti";
+$MESS["MPF_BUTTON_CANCEL"] = "Atšaukti";
+$MESS["MPF_SMILE_SET"] = "rinkiniai";
+$MESS["BLOG_LINK_SHOW_NEW"] = "Parašyti pranešimą &hellip;";
+$MESS["MPF_SELECT_ATTACHMENTS"] = "Įkelti bylas ir vaizdus";
+$MESS["MPF_DROP_ATTACHMENTS"] = "Vilkite bylas įkėlimui čia";
+$MESS["MPF_DRAG_ATTACHMENTS"] = "Vilkite bylas čia";
+$MESS["MPF_DRAG_ATTACHMENTS2"] = "Įkelti bylas?";
+$MESS["MPF_PIN_EDITOR_PANNEL"] = "Pritvirtinti skydelį su mygtukais";
+$MESS["MPF_PIN_EDITOR_PANNEL_OFF"] = "Atsegti skydelį su mygtukais";
+$MESS["MPF_IMPORTANT_TITLE"] = "Svarbi žinutė";
+?>

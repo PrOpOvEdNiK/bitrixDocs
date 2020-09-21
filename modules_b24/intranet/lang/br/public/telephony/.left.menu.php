@@ -1,0 +1,5 @@
+<?
+$MESS["SERVICES_MENU_TELEPHONY_CONNECT"] = "Conexão";
+$MESS["SERVICES_MENU_TELEPHONY_DETAIL"] = "Informações de Chamada";
+$MESS["SERVICES_MENU_TELEPHONY_MY_LINES"] = "Meus números";
+?>

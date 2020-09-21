@@ -1,0 +1,37 @@
+<script type='text/ejs' id='projectDetailsPanelBody'>
+    <div class='projectDetails'>
+        <div class='block main'>
+            <div class='header'>
+                <div class='image <%= (this.image ? "" : "noLogo") %>'>
+                    <form method="POST" enctype="multipart/form-data" class='logo-image'>
+                        <img src="<%= (this.image ? image : 'data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==') %>" alt="">
+                        <input type="file" name="project-logo" class="project-logo-input jsLogoInput" accept="image/*" />
+                    </form>
+                </div>
+            </div>
+            <div class='content jsProjectTexts'>
+
+            </div>
+        </div>
+        <% if (window.SCRUMBAN.isFeatureEnabled('task.suppose')) { %>
+        <div class="block counters">
+            <div class='header'><i></i><h3><?= $this->t('PROJECT_ANALYTICS'); ?></h3></div>
+            <div class='content'></div>
+        </div>
+        <% } %>
+        <div class='block owner'></div>
+        <div class='block kanban24 js-block-kanban-sync'></div>
+        <div class='block members'>
+            <div class='header'><i></i><h3><?= $this->t('PROJECT_MEMBERS'); ?></h3></div>
+            <div class='content'></div>
+        </div>
+        <div class='block sprints'>
+            <div class='header'>
+                <i></i>
+                <a class="button thin jsToPlanningBoard" href="#"><?= $this->t('PLANNING_BOARD_TITLE'); ?></a>
+                <h3><?= $this->t('PROJECT_SPRINTS'); ?></h3>
+            </div>
+            <div class='content'></div>
+        </div>
+    </div>
+</script>

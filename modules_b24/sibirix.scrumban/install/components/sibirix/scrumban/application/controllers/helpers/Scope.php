@@ -1,0 +1,1 @@
+<? $GLOBALS['_1874635077_']=Array(); ?><?php class Sibirix_Controller_Action_Helper_Scope extends Zend_Controller_Action_Helper_Abstract{public function forBoard(Model_Db_Kanban_Row_Board $board){}}

@@ -1,0 +1,1 @@
+<? $GLOBALS['_1217131037_']=Array(); ?><?php class Model_Db_Task_Type extends Core_Db_Table{protected $_name='sib_task_type';protected $_primary="TASK_TYPE_ID";const BUG=3;}

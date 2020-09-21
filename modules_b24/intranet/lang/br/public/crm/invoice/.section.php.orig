@@ -1,0 +1,4 @@
+<?
+$MESS["CRM_SECTION"] = "Faturas";
+$MESS["CRM_SECTION_INVOICE"] = "Faturas";
+?>

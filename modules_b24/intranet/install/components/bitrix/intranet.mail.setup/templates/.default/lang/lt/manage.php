@@ -1,0 +1,35 @@
+<?
+$MESS["INTR_MAIL_MANAGE_ADD_MAILBOX"] = "Pridėti pašto dėžutę";
+$MESS["INTR_MAIL_MANAGE_DOMAIN_ADD"] = "Prisegti domeną";
+$MESS["INTR_MAIL_MANAGE_DOMAIN_EDIT"] = "Konfigūruoti sujungimą";
+$MESS["INTR_MAIL_MANAGE_SEARCH_TITLE"] = "Filtras";
+$MESS["INTR_MAIL_MANAGE_SEARCH_PROMPT"] = "Ieškoti paštto dėžutes";
+$MESS["INTR_MAIL_MANAGE_SEARCH_BTN"] = "Ieškoti";
+$MESS["INTR_MAIL_MANAGE_SEARCH_CANCEL"] = "Atšaukti";
+$MESS["INTR_MAIL_MANAGE_GRID_NAME"] = "Naudotojai";
+$MESS["INTR_MAIL_MANAGE_GRID_EMAIL"] = "Esamas adresas";
+$MESS["INTR_MAIL_MANAGE_CREATE_TITLE"] = "Redaguoti pašto dėžutę";
+$MESS["INTR_MAIL_MANAGE_PASSWORD_TITLE"] = "Pakeisti slaptažodį";
+$MESS["INTR_MAIL_MANAGE_DELETE_TITLE"] = "Pašalinti pašto dėžutę";
+$MESS["INTR_MAIL_MANAGE_SELECT_SUBFORM"] = "Pasirinkti kitą pašto dėžutę";
+$MESS["INTR_MAIL_MANAGE_CREATE_SUBFORM"] = "Sukurti naują pašto dėžutę";
+$MESS["INTR_MAIL_MANAGE_INP_PASSWORD"] = "Sukurti slaptažodį";
+$MESS["INTR_MAIL_MANAGE_INP_NEW_PASSWORD"] = "Naujas slaptažodis";
+$MESS["INTR_MAIL_MANAGE_INP_PASSWORD2"] = "Patvirtinti slaptažodį";
+$MESS["INTR_MAIL_MANAGE_DELETE"] = "Pašalinti";
+$MESS["INTR_MAIL_MANAGE_DELETE_CONFIRM"] = "Ar tikrai norite pašalinti pašto dėžutę? <br><br>Visi pranešimai bus negrįžtamai pašalinti kartu su pašto dėžute!";
+$MESS["INTR_MAIL_MANAGE_ERR_AJAX"] = "Klaida. Bandykite dar kartą.";
+$MESS["INTR_MAIL_MANAGE_HINT"] = "Sukurti pašto dėžutę kiekvienam darbuotojui jūsų įmonėje. Naudoti šią sąsają įmonių pašto dėžutėms tvarkyti: sukurti, pridėti ar pašalinti pašto dėžutes, taip pat pakeisti dėžutės slaptažodžius.";
+$MESS["INTR_MAIL_MANAGE_DELETE_WT"] = "Dėmesio!";
+$MESS["INTR_MAIL_MANAGE_DELETE_WARNING"] = "Pašto dėžutė ir visi pranešimai joje bus pašalinti negrįžtamai!";
+$MESS["INTR_MAIL_MANAGE_DOMAIN_EDIT2"] = "Redaguoti nustatymus";
+$MESS["INTR_MAIL_MANAGE_SETUP"] = "Nustatymai";
+$MESS["INTR_MAIL_MANAGE_SETUP_BLACKLIST"] = "Neapdoroti adresų";
+$MESS["INTR_MAIL_MANAGE_SETUP_BLACKLIST_MORE"] = "ir";
+$MESS["INTR_MAIL_MANAGE_SETUP_BLACKLIST_ADD"] = "Pridėti daugiau";
+$MESS["INTR_MAIL_MANAGE_SETUP_BLACKLIST_PLACEHOLDER"] = "El. pašto adresai, atskirti kableliu arba nauja linija ";
+$MESS["INTR_MAIL_MANAGE_SETUP_ALLOW_CRM"] = "Leisti darbuotojams prijungti pašto dėžutes prie CRM";
+$MESS["INTR_MAIL_MANAGE_SETUP_SAVE"] = "Įrašyti";
+$MESS["INTR_MAIL_MANAGE_SETUP_SAVE_OK"] = "Parametrai sėkmingai išsaugoti.";
+$MESS["INTR_MAIL_MANAGE_SETUP_SAVE_ERROR"] = "Klaida išsaugant nustatymus";
+?>

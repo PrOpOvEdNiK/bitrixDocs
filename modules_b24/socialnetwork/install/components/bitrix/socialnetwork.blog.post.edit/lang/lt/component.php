@@ -1,0 +1,32 @@
+<?
+$MESS["BLOG_MODULE_NOT_INSTALL"] = "Tinklaraščio modulis neįdiegtas.";
+$MESS["B_B_MES_NO_BLOG"] = "Pranešimas nerastas.";
+$MESS["BLOG_POST_EDIT"] = "Redaguoti pranešimą";
+$MESS["BLOG_NEW_MESSAGE"] = "Naujas pokalbis";
+$MESS["BLOG_ERR_NO_RIGHTS"] = "Klaida: nepakanka teisių parašyti pranešimą";
+$MESS["BLOG_P_INSERT"] = "Paspauskite vaizdo įkėlimui";
+$MESS["BLOG_SONET_MODULE_NOT_AVAIBLE"] = "Pokalbiai neprieinami šiam naudotojui.";
+$MESS["BLG_GRP_NAME"] = "Grupės tinklaraštis";
+$MESS["BPE_HIDDEN_POSTED"] = "Jūsų pranešimas pridėtas sėkmingai. Pranešimai šiame pokalbyje yra tikrinami moderatoriaus; jūsų pranešimai taps matomi iš kart po moderatoriaus patikrinimo.";
+$MESS["BPE_SESS"] = "Jūsų sesija pasibaigė. Išsiųskite savo pranešimą dar kartą.";
+$MESS["BPE_COPY_DELETE_ERROR"] = "Nepavyko ištrinti pranešimo.<br />";
+$MESS["B_B_MES_NO_GROUP"] = "Socialinio tinklo grupė nerasta.";
+$MESS["B_B_MES_NO_GROUP_ACTIVE"] = "Funkcionalumas neprieinamas socialinio tinklo grupei.";
+$MESS["B_B_MES_NO_GROUP_RIGHTS"] = "Nepakanka teisių pranešimui socialinio tinklo grupėje sukurti";
+$MESS["BLOG_BLOG_BLOG_MES_DEL_ERROR"] = "Nepavyko ištrinti pranešimo";
+$MESS["BLOG_BLOG_BLOG_MES_DEL_NO_RIGHTS"] = "Jūs neturite teisių ištrinti šį pranešimą";
+$MESS["BLOG_BLOG_BLOG_MES_DEL_OK"] = "Pranešimas ištrintas";
+$MESS["BLOG_BLOG_SESSID_WRONG"] = "Jūsų sesija pasibaigė. Bandykite dar kartą.";
+$MESS["BLOG_BPE_EXTRANET_ERROR"] = "Pokalbis negali būti visiems prieinamas, nurodykite bent vieną gavėją.";
+$MESS["BLOG_SONET_GROUP_MODULE_NOT_AVAIBLE"] = "Šiai grupei pokalbiai yra neprieinami ";
+$MESS["BLOG_GRAT_IBLOCKELEMENT_NAME"] = "Padėka #GRAT_NAME#";
+$MESS["BLOG_EMPTY_TITLE_PLACEHOLDER"] = "Vaizdas";
+$MESS["BLOG_BPE_DESTINATION_EMPTY"] = "Nurodykite bent vieną gavėją";
+$MESS["B_B_HIDDEN_GROUP"] = "Paslėpta grupė";
+$MESS["B_B_PC_DUPLICATE_POST"] = "Jūsų pranešimas jau pridėtas";
+$MESS["SBPE_MULTIPLE_PREMODERATION"] = "Publikacija yra neįmanoma, nes pasirinktos kelios socialinio tinklo grupės, ir vienoje arba keliose iš jų įjungta pranešimų moderacija.";
+$MESS["SBPE_EXISTING_POST_PREMODERATION"] = "Nepavyko paskelbti, nes kaip gavėjas pasirinkta moderuojama naudotojų grupė.";
+$MESS["BLOG_EMPTY_TITLE_PLACEHOLDER2"] = "Failas ";
+$MESS["B_B_HIDDEN_USER"] = "Paslėptas naudotojas";
+$MESS["B_B_HIDDEN_DEPARTMENT"] = "Paslėptas skyrius";
+?>

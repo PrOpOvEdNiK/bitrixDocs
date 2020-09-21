@@ -1,0 +1,30 @@
+<?
+$MESS["imp_add"] = "Dodaj subskrybentów:";
+$MESS["imp_add_anonym"] = "Jako anonimowy użytkownik";
+$MESS["imp_add_gr"] = "Dodaj użytkowników do grup:";
+$MESS["imp_add_users"] = "Jako zarejestrowany użytkownik (utworzenie konta)";
+$MESS["imp_butt"] = "Importuj adresy";
+$MESS["imp_conf"] = "Oznaczyć subskrypcje jako potwierdzoną:";
+$MESS["imp_delim"] = "Adresy z listy muszą być oddzielone <b>kropką</b> lub rozpoczynać się w <b>nowej linii</b>.";
+$MESS["imp_error"] = "Błąd importowania adresów.";
+$MESS["imp_file"] = "Importuj z pliku:";
+$MESS["imp_fmt"] = "Format:";
+$MESS["imp_fmt_text"] = "Tekst";
+$MESS["imp_import_tab"] = "Importuj";
+$MESS["imp_import_tab_title"] = "Importuj parametery";
+$MESS["imp_list"] = "Importuj z listy:";
+$MESS["imp_results"] = "Wyniki importu:";
+$MESS["imp_results_added"] = "Dodane adresy:";
+$MESS["imp_results_err"] = "Złe adresy:";
+$MESS["imp_results_total"] = "Całkowicie unikatowe adresy do zaimportowania:";
+$MESS["imp_send_code"] = "Wyślij kod potwierdzenia subskrypcji:";
+$MESS["imp_send_reg"] = "Wyślij Informacje o rejestracji dla użytkowników:";
+$MESS["imp_site"] = "Wysyłanie e-maili za pomocą szablonów ze strony:";
+$MESS["imp_subscr"] = "Zapisz się do kategorii:";
+$MESS["imp_title"] = "Importuj emaile";
+$MESS["imp_user"] = "Subskrybenci mogą być dodawani jako anonimowi użytkownicy lub zarejestrowanih użytkownicy.";
+$MESS["imp_user_anonym"] = "Anonimowy subskrybenci nie posiadają osobistego konta na stronie. Zarejestrowani użytkownicy posiadają prywatne konta i mogą należeć do jednej lub więcej grup użytkowników.";
+$MESS["subscr_imp_err1"] = "Błąd ładowania pliku.";
+$MESS["subscr_imp_err2"] = "Błędny kod";
+$MESS["subscr_send_info"] = "Zostałeś zarejestrowany.";
+?>

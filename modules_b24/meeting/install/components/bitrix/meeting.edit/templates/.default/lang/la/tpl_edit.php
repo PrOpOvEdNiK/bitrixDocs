@@ -1,0 +1,30 @@
+<?
+$MESS["ME_AGENDA"] = "Agenda";
+$MESS["ME_AGENDA_EX"] = "Temas de la reunión anterior";
+$MESS["ME_CANCEL"] = "Cancelar";
+$MESS["ME_CREATE"] = "Crear reunión";
+$MESS["ME_DATE"] = "Fecha";
+$MESS["ME_DESCRIPTION"] = "Descripción de la reunión";
+$MESS["ME_DESCR_TITLE"] = "Descripción de la reunión";
+$MESS["ME_DURATION"] = "Duración";
+$MESS["ME_DURATION_3600"] = "horas";
+$MESS["ME_DURATION_60"] = "minutos";
+$MESS["ME_EDIT_TITLE"] = "Editar";
+$MESS["ME_EVENT_NOTIFY"] = "Notificar cuando los asistentes confirmen o rechacen la invitación";
+$MESS["ME_EVENT_REINVITE"] = "Pedir a los usuarios confirmar asistencia";
+$MESS["ME_FILES"] = "Archivos";
+$MESS["ME_GROUP"] = "Reunión del proyecto";
+$MESS["ME_KEEPER"] = "Asistente administrativo";
+$MESS["ME_LIST_TITLE"] = "Ver reuniones";
+$MESS["ME_MEMBERS"] = "Asistentes";
+$MESS["ME_MR_FREE"] = "La sala de reuniones está disponible.";
+$MESS["ME_MR_RESERVED"] = "La sala de reuiniones está ocupada.";
+$MESS["ME_MR_RESERVED_WARNING"] = "La sala seleccionada está ocupada. Por favor, opte por otro lugar u otro horario.";
+$MESS["ME_PLACE"] = "Ubicación";
+$MESS["ME_PLANNER"] = "Organizador";
+$MESS["ME_SAVE"] = "Guardar";
+$MESS["ME_TIME"] = "Hora";
+$MESS["ME_TITLE"] = "Tema";
+$MESS["ME_TITLE_DEFAULT"] = "Tema de la reunión";
+$MESS["ME_VIEW_TITLE"] = "Ver";
+?>

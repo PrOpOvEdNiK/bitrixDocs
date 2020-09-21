@@ -1,0 +1,30 @@
+<?
+$MESS["subs_save_error"] = "Wystąpił błąd podczas zapisywania adresu subskrypcji.";
+$MESS["subs_saved"] = "Adres subskrycji został zapisany pomyślnie.";
+$MESS["subscr_active"] = "Subskrypcja aktywna:";
+$MESS["subscr_add_text"] = "Dodawanie";
+$MESS["subscr_anonym"] = "Anonimowy subskrybent:";
+$MESS["subscr_conf"] = "Potwierdzenie subskrypcji:";
+$MESS["subscr_conf_code"] = "Potwierdzony kod subskrycji:";
+$MESS["subscr_date_add"] = "Utworzony:";
+$MESS["subscr_date_conf"] = "Data generowania kodu potwierdzającego:";
+$MESS["subscr_date_upd"] = "Zmodyfikowany:";
+$MESS["subscr_del_text"] = "Usuń";
+$MESS["subscr_fmt"] = "Format:";
+$MESS["subscr_fmt_text"] = "Tekst";
+$MESS["subscr_list"] = "Lista adresu";
+$MESS["subscr_list_text"] = "Lista";
+$MESS["subscr_mnu_add"] = "Dodaj nowego subskrybenta";
+$MESS["subscr_mnu_del"] = "usuń tego subskrybenta";
+$MESS["subscr_mnu_del_conf"] = "Usunąć adres subskrybenta?";
+$MESS["subscr_rub"] = "Newsletter categories:";
+$MESS["subscr_send_conf"] = "Wyślij kod potwierdzający do subskrybenta jeśli zostanie adres zmieniony lub dodany nowy:";
+$MESS["subscr_tab_subscriber"] = "Subskryber";
+$MESS["subscr_tab_subscriber_title"] = "Parametry subskrypcji";
+$MESS["subscr_tab_subscription"] = "Subskrypcje";
+$MESS["subscr_tab_subscription_title"] = "Tematy subskrycji";
+$MESS["subscr_templ"] = "Wyślij wiadomość przy użyciu szablonu z witryny:";
+$MESS["subscr_title_add"] = "Dodaj addres";
+$MESS["subscr_title_edit"] = "Edytuj addres #";
+$MESS["subscr_user"] = "Użytkownik (ID):";
+?>

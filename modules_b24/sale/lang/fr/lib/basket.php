@@ -1,0 +1,32 @@
+<?
+$MESS["SALE_BASKET_AVAILABLE_FOR_DECREASE_QUANTITY"] = "Quantité de \"#PRODUCT_NAME#\" disponible pour déduction : #AVAILABLE_QUANTITY#";
+$MESS["SALE_BASKET_AVAILABLE_FOR_PURCHASE_QUANTITY"] = "Quantité de \"#PRODUCT_NAME#\" disponible à l'achat : #AVAILABLE_QUANTITY#";
+$MESS["SALE_BASKET_ENTITY_BASKET_FIELD"] = "Contenu de commande";
+$MESS["SALE_BASKET_ENTITY_DATE_INSERT_FIELD"] = "Date d'ajout de la position";
+$MESS["SALE_BASKET_ENTITY_DATE_INS_FIELD"] = "Date d'ajout de la position";
+$MESS["SALE_BASKET_ENTITY_DATE_UPDATE_FIELD"] = "Date du changement de la position";
+$MESS["SALE_BASKET_ENTITY_DATE_UPD_FIELD"] = "Date du changement de la position";
+$MESS["SALE_BASKET_ENTITY_DELAY_FIELD"] = "Différé(e)";
+$MESS["SALE_BASKET_ENTITY_DISCOUNT_NAME_FIELD"] = "Le nom de la remise sur le produit";
+$MESS["SALE_BASKET_ENTITY_DISCOUNT_PRICE_FIELD"] = "Rabais pour les marchandises";
+$MESS["SALE_BASKET_ENTITY_DISCOUNT_VALUE_FIELD"] = "Information sur la remise";
+$MESS["SALE_BASKET_ENTITY_FUSER_ID_FIELD"] = "Identifiant du visiteur";
+$MESS["SALE_BASKET_ENTITY_GROSS_PROFIT_FIELD"] = "Marge brute";
+$MESS["SALE_BASKET_ENTITY_ID_FIELD"] = "ID de l'enregistrement";
+$MESS["SALE_BASKET_ENTITY_NAME_FIELD"] = "Dénomination des marchandises";
+$MESS["SALE_BASKET_ENTITY_NAME_WITH_IDENT_FIELD"] = "Nom [ID] du produit";
+$MESS["SALE_BASKET_ENTITY_NOTES_FIELD"] = "Type de prix";
+$MESS["SALE_BASKET_ENTITY_N_SUBSCRIBE_FIELD"] = "Souscriptions";
+$MESS["SALE_BASKET_ENTITY_ORDER_ID_FIELD"] = "Code de la commande";
+$MESS["SALE_BASKET_ENTITY_PRICE_FIELD"] = "Prix";
+$MESS["SALE_BASKET_ENTITY_PRODUCT_ID_FIELD"] = "Code du produit";
+$MESS["SALE_BASKET_ENTITY_PROFITABILITY_FIELD"] = "Rentabilité (%)";
+$MESS["SALE_BASKET_ENTITY_QUANTITY_FIELD"] = "Quantité";
+$MESS["SALE_BASKET_ENTITY_SUBSCRIBE_FIELD"] = "Il y a une souscription à ce produit";
+$MESS["SALE_BASKET_ENTITY_SUMMARY_PRICE_FIELD"] = "Montant du produit";
+$MESS["SALE_BASKET_ENTITY_SUMMARY_PURCHASING_PRICE_FIELD"] = "Coût façon";
+$MESS["SALE_BASKET_ENTITY_VAT_RATE_PRC_FIELD"] = "Impôt (%)";
+$MESS["SALE_BASKET_ITEM_WRONG_AVAILABLE_QUANTITY"] = "Erreur lors de la vérification de la disponibilité de \"#PRODUCT_NAME#\"";
+$MESS["SALE_BASKET_ITEM_WRONG_PRICE"] = "Le prix de \"#PRODUCT_NAME#\" est incorrect";
+$MESS["SALE_EVENT_ON_BASKET_ITEM_REFRESH_DATA"] = "Erreur de mise à jour des articles du panier d'achat.";
+?>

@@ -1,0 +1,6 @@
+<?
+$MESS["CRM_NAME"] = "CRM";
+$MESS["CRM_QUOTE_COMPLEX_DESCRIPTION"] = "Oferty";
+$MESS["CRM_QUOTE_COMPLEX_NAME"] = "Oferty";
+$MESS["CRM_QUOTE_NAME"] = "Oferty";
+?>

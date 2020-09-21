@@ -1,0 +1,5 @@
+<?
+$MESS["BOT_CHAT_ENTITY_BOT_ID_FIELD"] = "ID de bot";
+$MESS["BOT_CHAT_ENTITY_CHAT_ID_FIELD"] = "ID de chat";
+$MESS["BOT_CHAT_ENTITY_ID_FIELD"] = "ID único";
+?>

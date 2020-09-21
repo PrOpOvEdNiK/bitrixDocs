@@ -1,0 +1,12 @@
+<?
+$MESS["CATALOG_RECOMMENDED_PRODUCTS_LINE_ELEMENT_COUNT"] = "Nombre de points dans la ligne";
+$MESS["CATALOG_RECOMMENDED_PRODUCTS_TPL_TEMPLATE_THEME"] = "Sujet de couleur";
+$MESS["CATALOG_RECOMMENDED_PRODUCTS_TPL_THEME_BLACK"] = "espace des thèmes";
+$MESS["CATALOG_RECOMMENDED_PRODUCTS_TPL_THEME_BLUE"] = "bleu (sujet par défaut)";
+$MESS["CATALOG_RECOMMENDED_PRODUCTS_TPL_THEME_GREEN"] = "verte";
+$MESS["CATALOG_RECOMMENDED_PRODUCTS_TPL_THEME_RED"] = "rouge";
+$MESS["CATALOG_RECOMMENDED_PRODUCTS_TPL_THEME_SITE"] = "Prendre le thème dans les paramètres du site (pour la solution bitrix.eshop)";
+$MESS["CATALOG_RECOMMENDED_PRODUCTS_TPL_THEME_WOOD"] = "arbre";
+$MESS["CATALOG_RECOMMENDED_PRODUCTS_TPL_THEME_YELLOW"] = "jaune";
+$MESS["LINE_ELEMENT_COUNT_TIP"] = "Le nombre d'éléments affichés sur la ligne peut être de 1 à 5";
+?>

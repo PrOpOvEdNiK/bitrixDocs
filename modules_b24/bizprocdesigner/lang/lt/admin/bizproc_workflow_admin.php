@@ -1,0 +1,37 @@
+<?
+$MESS["BPATT_NO_ENTITY"] = "Nėra dokumento objekto.";
+$MESS["BPATT_NO_DOC_TYPE"] = "Dokumento tipas yra privalomas.";
+$MESS["BPATT_NO_EDIT_PAGE"] = "Šablono pakeitimo puslapio nėra. ";
+$MESS["BPATT_NO_PERMS"] = "Jūs neturite leidimo prieiti prie šio dokumento tipo šablonų.";
+$MESS["BPATT_ERROR"] = "Klaida";
+$MESS["BPATT_NAV"] = "Verslo proceso šablonai";
+$MESS["BPATT_NAME"] = "Pavadinimas";
+$MESS["BPATT_MODIFIED"] = "Pakeista";
+$MESS["BPATT_USER"] = "Pakeitė";
+$MESS["BPATT_AUTO_EXECUTE"] = "Auto paleidimas";
+$MESS["BPATT_DO_EDIT"] = "Redaguoti verslo proceso šabloną";
+$MESS["BPATT_AE_NONE"] = "Ne";
+$MESS["BPATT_AE_CREATE"] = "Sukurti";
+$MESS["BPATT_AE_EDIT"] = "Atnaujinti";
+$MESS["BPATT_AE_DELETE"] = "Pašalinti";
+$MESS["BPATT_DO_EDIT1"] = "Redaguoti";
+$MESS["BPATT_DO_DELETE1"] = "Pašalinti";
+$MESS["BPATT_DO_DELETE1_CONFIRM"] = "Ar tikrai norite pašalinti šį šabloną?";
+$MESS["BPATT_SUBMENU1_TEXT"] = "Verslo procesas su statusais";
+$MESS["BPATT_SUBMENU1_TEXT_TITLE"] = "Verslo procesas su statusais yra tęstinis verslo procesas su prieigos leidimo paskisrtymu, skirtu tvarkyti įvairių statusų dokumentus ";
+$MESS["BPATT_SUBMENU2_TEXT"] = "Nuoseklus verslo procesas";
+$MESS["BPATT_SUBMENU2_TEXT_TITLE"] = "Nuoseklus verslo procesas yra paprastas verslo procesas, skirtas vykdyti nuoseklus veiksmus su dokumentais";
+$MESS["BPATT_DO_CREATE_TEMPLATE"] = "Sukurti šabloną";
+$MESS["BPATT_TITLE"] = "Verslo proceso šablonas";
+$MESS["BPATT_F_NAME"] = "Pavadinimas";
+$MESS["BPATT_F_AUTOEXECUTE"] = "Auto paleidimas";
+$MESS["BPATT_ANY"] = "bet kuris";
+$MESS["BPATT_F_CREATE"] = "sukurti";
+$MESS["BPATT_F_EDIT"] = "redaguoti";
+$MESS["BPATT_USER_PROFILE"] = "Naudotojo profilis";
+$MESS["BPATT_BACK"] = "Grįžti";
+$MESS["BPATT_BACK_TITLE"] = "Grįžti į ankstesnį puslapį";
+$MESS["BPATT_DO_CREATE_TEMPLATE1"] = "Pridėti naują šabloną";
+$MESS["BPWFADM_ERR"] = "Klaida ##ID#: #ERROR_TEXT#";
+$MESS["BPWFADM_ACT"] = "Veiksm.";
+?>

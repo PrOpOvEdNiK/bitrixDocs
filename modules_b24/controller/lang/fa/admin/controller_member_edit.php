@@ -1,0 +1,10 @@
+<?
+$MESS["CTRLR_MEM_EDIT_ERROR"] = "خطا";
+$MESS["CTRLR_MEM_EDIT_DISCN_YES"] = "بله";
+$MESS["CTRLR_MEM_EDIT_CREATED"] = "ساخته شده:";
+$MESS["CTRLR_MEM_EDIT_MODIFIED"] = "ویرایش شده:";
+$MESS["CTRLR_MEM_EDIT_NAME"] = "نام:";
+$MESS["CTRLR_MEM_EDIT_DESCR"] = "توضیحات:";
+$MESS["CTRLR_MEM_EDIT_AVAIL_TRIAL_1_D"] = "روز";
+$MESS["CTRLR_MEM_EDIT_COUNTERS_FREE_Kb"] = "کیلوبایت";
+?>

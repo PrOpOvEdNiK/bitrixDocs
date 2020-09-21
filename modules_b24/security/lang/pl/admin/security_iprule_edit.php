@@ -1,0 +1,30 @@
+<?
+$MESS["SEC_IP_EDIT_ACTIVE"] = "Aktywne";
+$MESS["SEC_IP_EDIT_ACTIVE_FROM"] = "Aktywne od";
+$MESS["SEC_IP_EDIT_ACTIVE_TO"] = "Aktywny do";
+$MESS["SEC_IP_EDIT_ADD_TITLE"] = "Nowy profil";
+$MESS["SEC_IP_EDIT_ADMIN_SECTION"] = "dla stron panelu sterowania";
+$MESS["SEC_IP_EDIT_EDIT_TITLE"] = "Edytuj regułę";
+$MESS["SEC_IP_EDIT_EXCL_IPS"] = "Za wyjątkiem IP";
+$MESS["SEC_IP_EDIT_EXCL_MASKS"] = "Z wyjątkiem ścieżek (maska??)";
+$MESS["SEC_IP_EDIT_ID"] = "ID";
+$MESS["SEC_IP_EDIT_INCL_IPS"] = "zablokuj zasięgi i adresy IP";
+$MESS["SEC_IP_EDIT_INCL_MASKS"] = "Zablokować dostęp do ścieżek (maska??)";
+$MESS["SEC_IP_EDIT_INCL_MASKS_SAMPLE"] = "Przykłady: / * lub / Bitrix / admin / *";
+$MESS["SEC_IP_EDIT_MENU_ADD"] = "Dodawanie";
+$MESS["SEC_IP_EDIT_MENU_ADD_TITLE"] = "Dodaj nowy profil";
+$MESS["SEC_IP_EDIT_MENU_DELETE"] = "Usuń";
+$MESS["SEC_IP_EDIT_MENU_DELETE_CONF"] = "czy na pewno chcesz usunąć tę zasadę?";
+$MESS["SEC_IP_EDIT_MENU_DELETE_TITLE"] = "Usuń profil";
+$MESS["SEC_IP_EDIT_MENU_LIST"] = "Zasady";
+$MESS["SEC_IP_EDIT_MENU_LIST_TITLE"] = "zasady blokowania";
+$MESS["SEC_IP_EDIT_NAME"] = "Tytuł";
+$MESS["SEC_IP_EDIT_ROW_ADD"] = "Dodawanie";
+$MESS["SEC_IP_EDIT_SAVE_ERROR"] = "błąd podczas zapisywania zasady";
+$MESS["SEC_IP_EDIT_SAVE_ERROR_EMPTY_INCL_IPS"] = "Wymagane są adresy IP do bloku.";
+$MESS["SEC_IP_EDIT_SAVE_ERROR_EMPTY_INCL_MASKS"] = "Wymagane są symbole wieloznaczne adresowe do zablokowane.";
+$MESS["SEC_IP_EDIT_SITE_ID"] = "dla stron sekcji publicznych";
+$MESS["SEC_IP_EDIT_SORT"] = "Sortuj";
+$MESS["SEC_IP_EDIT_TAB"] = "Profil";
+$MESS["SEC_IP_EDIT_TAB_TITLE"] = "edytuj zasadę bloku IP";
+?>

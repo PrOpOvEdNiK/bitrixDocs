@@ -1,0 +1,3 @@
+<?
+$MESS["DOCUMENTGENERATOR_DEFAULT_NUMERATOR_TITLE"] = "Numéro de préfixe";
+?>

@@ -1,0 +1,34 @@
+<?
+$MESS["sender_group_conn_cnt"] = "Sélectionné";
+$MESS["sender_wizard_access_denied"] = "Vous ne pouvez pas exécuter l'assistant parce que vous avez seulement l'autorisation de lecture.";
+$MESS["sender_wizard_status_chain"] = "Créer<br>message";
+$MESS["sender_wizard_status_chain_send_type"] = "Newsletter<br>calendrier";
+$MESS["sender_wizard_status_final"] = "Prêt à envoyer !";
+$MESS["sender_wizard_status_group"] = "Sélectionnez ou<br>créer un groupe";
+$MESS["sender_wizard_status_mailing"] = "Sélectionnez ou créez<br>un bulletin d'information";
+$MESS["sender_wizard_status_trig_chain"] = "Configurer les e-mails";
+$MESS["sender_wizard_status_trig_mailing"] = "Créer ou éditer une lettre d'information";
+$MESS["sender_wizard_status_trig_mailing_group"] = "Commencer la condition";
+$MESS["sender_wizard_step_chain_send_type_title"] = "L'envoi de l'annexe";
+$MESS["sender_wizard_step_chain_title"] = "Nouvelle newsletter message";
+$MESS["sender_wizard_step_chain_title_sub"] = "Modèle de Message";
+$MESS["sender_wizard_step_chain_title_sub_desc"] = "En gardant un ensemble de modèles de message est le moyen de créer et envoyer une newsletter message rapide. Enregistrer le message en tant que modèle et le récupérer plus tard, à partir de la rubrique \"Mes Modèles\".";
+$MESS["sender_wizard_step_group_title"] = "Créer groupe de bénéficiaires";
+$MESS["sender_wizard_step_mailing_bnt_end"] = "Enregistrer et envoyer";
+$MESS["sender_wizard_step_mailing_bnt_next"] = "Prochaine étape";
+$MESS["sender_wizard_step_mailing_existed_not_selected"] = "Aucun bulletin d'information sélectionné";
+$MESS["sender_wizard_step_mailing_field_exist"] = "Sélectionnez la newsletter";
+$MESS["sender_wizard_step_mailing_field_exist_list"] = "Sélectionner dans la liste ...";
+$MESS["sender_wizard_step_mailing_field_new"] = "Créer un nouveau bulletin";
+$MESS["sender_wizard_step_mailing_group_field_bnt_add"] = "Créer un nouveau groupe";
+$MESS["sender_wizard_step_mailing_group_title"] = "Sélectionner ou créer des groupes de bénéficiaires";
+$MESS["sender_wizard_step_mailing_group_title_sub"] = "Sélectionner le destinataire groupes";
+$MESS["sender_wizard_step_mailing_title"] = "Sélectionner ou créer un bulletin d'information";
+$MESS["sender_wizard_step_mailing_title_sub"] = "Bulletin des paramètres";
+$MESS["sender_wizard_step_trig_mailing_exist_title"] = "Éditer l'e-mail déclenché";
+$MESS["sender_wizard_step_trig_mailing_group_title"] = "Conditions de démarrage et d'arrêt";
+$MESS["sender_wizard_step_trig_mailing_title"] = "Nouvel e-mail déclenché";
+$MESS["sender_wizard_step_trig_mailing_title_sub"] = "Sélectionner le préréglage";
+$MESS["sender_wizard_text"] = "Cet assistant va vous guider à travers quelques étapes simples pour créer et envoyer une newsletter.";
+$MESS["sender_wizard_title"] = "Bulletin D'Information De L'Assistant";
+?>

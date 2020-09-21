@@ -1,0 +1,29 @@
+<?
+$MESS ['MAIL_MBOX_EDT_TITLE_1'] = "ปรับปรุงกล่องข้อความ ##ID#";
+$MESS ['MAIL_MBOX_EDT_TITLE_2'] = "กล่องข้อความใหม่";
+$MESS ['MAIL_MBOX_EDT_ERROR'] = "พบข้อผิดพลาดในการบันทึกกล่องข้อความ";
+$MESS ['MAIL_MBOX_EDT_TAB'] = "กล่องข้อความ";
+$MESS ['MAIL_MBOX_EDT_BACK_LINK'] = "รายการกล่องข้อความ";
+$MESS ['MAIL_MBOX_EDT_NEW'] = "เพิ่มกล่องข้อความใหม่";
+$MESS ['MAIL_MBOX_EDT_DEL'] = "ลบกล่องข้อความ:";
+$MESS ['MAIL_MBOX_EDT_ID'] = "รหัส:";
+$MESS ['MAIL_MBOX_EDT_DATECH'] = "ปรับปรุงล่าสุด:";
+$MESS ['MAIL_MBOX_EDT_LANG'] = "ภาษา:";
+$MESS ['MAIL_MBOX_EDT_ACT'] = "ทำงาน:";
+$MESS ['MAIL_MBOX_EDT_NAME'] = "ชื่อ:";
+$MESS ['MAIL_MBOX_EDT_DESC'] = "รายละเอียด:";
+$MESS ['MAIL_MBOX_EDT_SERVER'] = "เมล์เซิร์ฟเวอร์ (POP3) / port:";
+$MESS ['MAIL_MBOX_EDT_LOGIN'] = "เข้าระบบ:";
+$MESS ['MAIL_MBOX_EDT_PASSWORD'] = "รหัสผ่าน:";
+$MESS ['MAIL_MBOX_EDT_USE_APOP'] = "Use secure authentication (MD5 APOP):";
+$MESS ['MAIL_MBOX_EDT_CHARSET'] = "Charset for incoming mail:";
+$MESS ['MAIL_MBOX_EDT_PERIOD'] = "ตรวจสอบระยะห่าง:";
+$MESS ['MAIL_MBOX_EDT_PERIOD_MIN'] = "minutes (0 or leave empty for manual check)";
+$MESS ['MAIL_MBOX_EDT_MAX_MSGS'] = "Maximum number of messages received at a single connection:";
+$MESS ['MAIL_MBOX_EDT_MAX_MSGS_CNT'] = "(0 or leave empty for unlimited number)";
+$MESS ['MAIL_MBOX_EDT_DEL_AFTER_RETR'] = "Delete received messages from server:";
+$MESS ['MAIL_MBOX_EDT_ADD_NEW_RULE'] = "เพิ่มกล่องข้อความและสร้างตัวกรอง:";
+$MESS ['MAIL_MBOX_EDT_ADD_NEW_RULE_MANUAL'] = "(manual settings)";
+$MESS ['MAIL_MBOX_EDT_ADD'] = "เพิ่ม...";
+$MESS ['MAIL_MBOX_EDT_DEL_CONFIRM'] = "ลบกล่องข้อความหรือไม่?";
+?>

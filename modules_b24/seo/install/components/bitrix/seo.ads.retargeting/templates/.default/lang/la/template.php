@@ -1,0 +1,31 @@
+<?
+$MESS["CRM_ADS_RTG_ADD_AUDIENCE"] = "Crear audiencia";
+$MESS["CRM_ADS_RTG_APPLY"] = "Ejecutar";
+$MESS["CRM_ADS_RTG_AUDIENCE_ADD_HINT_GOOGLE"] = "Para crear una audiencia, seleccione \"Administrador de audiencia\" en la sección \"Biblioteca compartida\".";
+$MESS["CRM_ADS_RTG_AUDIENCE_ADD_HINT_VKONTAKTE"] = "Utilice la página de Reorientación para crear una audiencia.";
+$MESS["CRM_ADS_RTG_AUDIENCE_TYPE_HINT_GOOGLE"] = "Las audiencias de \"Lista de clientes\" son compatibles.";
+$MESS["CRM_ADS_RTG_AUDIENCE_TYPE_HINT_VKONTAKTE"] = "Se admiten audiencias obtenidas de un píxel o importadas de un archivo.";
+$MESS["CRM_ADS_RTG_AUDIENCE_TYPE_HINT_YANDEX"] = "Las audiencias de \"Datos del CRM\" son compatibles.";
+$MESS["CRM_ADS_RTG_AUTO_REMOVE_DAYS"] = "días";
+$MESS["CRM_ADS_RTG_AUTO_REMOVE_TITLE"] = "quitar de la audiencia en";
+$MESS["CRM_ADS_RTG_AUTO_REMOVE_TITLE_YANDEX"] = "quitar de los segmentos en";
+$MESS["CRM_ADS_RTG_CABINET_FACEBOOK"] = "Cuenta de publicidad de Facebook";
+$MESS["CRM_ADS_RTG_CABINET_GOOGLE"] = "Cuenta de publicidad de Google AdWords";
+$MESS["CRM_ADS_RTG_CABINET_VKONTAKTE"] = "Cuenta de publicidad VK";
+$MESS["CRM_ADS_RTG_CABINET_YANDEX"] = "Cuenta de publicidad Yandex.Audience";
+$MESS["CRM_ADS_RTG_CANCEL"] = "Cancelar";
+$MESS["CRM_ADS_RTG_CLOSE"] = "Cerrar";
+$MESS["CRM_ADS_RTG_ERROR_ACTION"] = "La acción ha sido cancelada porque se produjo un error.";
+$MESS["CRM_ADS_RTG_ERROR_NO_AUDIENCES"] = "No se ha encontrado audiencia. Por favor proceda a %name% para crear una audiencia";
+$MESS["CRM_ADS_RTG_LOGIN"] = "Conectar";
+$MESS["CRM_ADS_RTG_LOGOUT"] = "Desconectar";
+$MESS["CRM_ADS_RTG_REFRESH"] = "Actualizar";
+$MESS["CRM_ADS_RTG_REFRESH_TEXT"] = "Actualizar la audiencia objetiva.";
+$MESS["CRM_ADS_RTG_REFRESH_TEXT_YANDEX"] = "Actualizar segmentos objetivo.";
+$MESS["CRM_ADS_RTG_SELECT_ACCOUNT"] = "Seleccionar cuenta de publicidad";
+$MESS["CRM_ADS_RTG_SELECT_AUDIENCE"] = "Agregar a la audiencia";
+$MESS["CRM_ADS_RTG_SELECT_CONTACT_DATA"] = "Agregar teléfono y correo electrónico al segmentos";
+$MESS["CRM_ADS_RTG_SELECT_CONTACT_DATA_EMAIL"] = "e-mail";
+$MESS["CRM_ADS_RTG_SELECT_CONTACT_DATA_PHONE"] = "teléfono";
+$MESS["CRM_ADS_RTG_TITLE"] = "Configurar Audiencia Objetiva.";
+?>

@@ -1,0 +1,35 @@
+<?
+$MESS["CRM_WEBFORM_SCRIPT_BTN_COPY"] = "copier";
+$MESS["CRM_WEBFORM_SCRIPT_BTN_EDIT"] = "configurer";
+$MESS["CRM_WEBFORM_SCRIPT_COPY_ONE_LINE"] = "une ligne";
+$MESS["CRM_WEBFORM_SCRIPT_HINT_INJECT"] = "Insérer le code avant le bouton ou le lien";
+$MESS["CRM_WEBFORM_SCRIPT_INLINE"] = "Sur la page";
+$MESS["CRM_WEBFORM_SCRIPT_LINK"] = "Lien";
+$MESS["CRM_WEBFORM_SCRIPT_PARAM_ANIMATION"] = "Animation en fondu";
+$MESS["CRM_WEBFORM_SCRIPT_PARAM_ANIMATION_BOTTOM"] = "Basse";
+$MESS["CRM_WEBFORM_SCRIPT_PARAM_ANIMATION_TOP"] = "Haute";
+$MESS["CRM_WEBFORM_SCRIPT_PARAM_DELAY"] = "Affichage différé";
+$MESS["CRM_WEBFORM_SCRIPT_PARAM_POSITION"] = "Position";
+$MESS["CRM_WEBFORM_SCRIPT_PARAM_POSITION_CENTER"] = "Centre";
+$MESS["CRM_WEBFORM_SCRIPT_PARAM_POSITION_LEFT"] = "Gauche";
+$MESS["CRM_WEBFORM_SCRIPT_PARAM_POSITION_RIGHT"] = "Droite";
+$MESS["CRM_WEBFORM_SCRIPT_PARAM_VIEW_TYPE"] = "Afficher";
+$MESS["CRM_WEBFORM_SCRIPT_PARAM_VIEW_TYPE_PANEL"] = "Panneau";
+$MESS["CRM_WEBFORM_SCRIPT_PARAM_VIEW_TYPE_POPUP"] = "Fenêtre";
+$MESS["CRM_WEBFORM_SCRIPT_SCRIPT_ON_SITE"] = "Code embarqué";
+$MESS["CRM_WEBFORM_SCRIPT_SEC"] = "s";
+$MESS["CRM_WEBFORM_SCRIPT_SELECTOR"] = "Afficher le code hérité";
+$MESS["CRM_WEBFORM_SCRIPT_SEND_TO_EMAIL"] = "envoyer le code sur l'e-mail";
+$MESS["CRM_WEBFORM_SCRIPT_TAB_ONPAGE"] = "Sur la page";
+$MESS["CRM_WEBFORM_SCRIPT_TAB_SCRIPT_BUTTON"] = "Bouton";
+$MESS["CRM_WEBFORM_SCRIPT_TAB_SCRIPT_CLICK"] = "Clic sur bouton ou lien";
+$MESS["CRM_WEBFORM_SCRIPT_TAB_SCRIPT_DELAY"] = "Retardé";
+$MESS["CRM_WEBFORM_SCRIPT_TAB_SCRIPT_INLINE"] = "Embarqué";
+$MESS["CRM_WEBFORM_SCRIPT_TAB_SCRIPT_LINK"] = "Lien";
+$MESS["CRM_WEBFORM_SCRIPT_TAB_WINDOW"] = "Sur la fenêtre";
+$MESS["CRM_WEBFORM_SCRIPT_WINDOW_BUTTON"] = "Fenêtre contextuelle - clic de bouton";
+$MESS["CRM_WEBFORM_SCRIPT_WINDOW_CLICK"] = "Afficher une fenêtre contextuelle après avoir cliqué sur un bouton ou un lien";
+$MESS["CRM_WEBFORM_SCRIPT_WINDOW_DELAY"] = "Fenêtre contextuelle - afficher après délai";
+$MESS["CRM_WEBFORM_SCRIPT_WINDOW_INLINE"] = "Le formulaire sera incorporé dans votre page";
+$MESS["CRM_WEBFORM_SCRIPT_WINDOW_LINK"] = "Fenêtre contextuelle - lien";
+?>

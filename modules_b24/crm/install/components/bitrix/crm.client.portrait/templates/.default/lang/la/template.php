@@ -1,0 +1,31 @@
+<?
+$MESS["CRM_CLIENT_PORTRAIT_INFO_COMMENTS"] = "Comentario";
+$MESS["CRM_CLIENT_PORTRAIT_INFO_COMMENTS_HIDE"] = "ocultar";
+$MESS["CRM_CLIENT_PORTRAIT_INFO_COMMENTS_SHOW"] = "mostrar";
+$MESS["CRM_CLIENT_PORTRAIT_INFO_COMPANY"] = "Compañía";
+$MESS["CRM_CLIENT_PORTRAIT_INFO_COMPANY_TYPE"] = "Tipo de compañía";
+$MESS["CRM_CLIENT_PORTRAIT_INFO_CONVERSION"] = "Conversión";
+$MESS["CRM_CLIENT_PORTRAIT_INFO_EMAIL"] = "E-mail";
+$MESS["CRM_CLIENT_PORTRAIT_INFO_INDUSTRY"] = "Sector de actividad";
+$MESS["CRM_CLIENT_PORTRAIT_INFO_PHONE"] = "Teléfono";
+$MESS["CRM_CLIENT_PORTRAIT_INFO_POST"] = "Cargo";
+$MESS["CRM_CLIENT_PORTRAIT_INFO_RESPONSIBLE"] = "Persona responsable";
+$MESS["CRM_CLIENT_PORTRAIT_INFO_WEB"] = "Sitio web";
+$MESS["CRM_CLIENT_PORTRAIT_INFO_WON_DEALS"] = "Valor de las negociaciones ganadas";
+$MESS["CRM_CLIENT_PORTRAIT_LOAD_CONFIG_AUTO"] = "Automático";
+$MESS["CRM_CLIENT_PORTRAIT_LOAD_CONFIG_CANCEL"] = "Cancelar";
+$MESS["CRM_CLIENT_PORTRAIT_LOAD_CONFIG_DESCRIPTION"] = "Es preferible que la carga máxima sea por el número de actividades de las negociaciones de su compañía.";
+$MESS["CRM_CLIENT_PORTRAIT_LOAD_CONFIG_HELP"] = "El valor máximo de la carga puede ser especificado explícitamente, o puede ser calculado automáticamente por el promedio del número de actividades por negociación.";
+$MESS["CRM_CLIENT_PORTRAIT_LOAD_CONFIG_MANUAL"] = "Manual";
+$MESS["CRM_CLIENT_PORTRAIT_LOAD_CONFIG_SAVE"] = "Guardar";
+$MESS["CRM_CLIENT_PORTRAIT_LOAD_CONFIG_TITLE"] = "Carga máxima preferible";
+$MESS["CRM_CLIENT_PORTRAIT_LOAD_ITEM_CRITICAL"] = "Crítico";
+$MESS["CRM_CLIENT_PORTRAIT_LOAD_ITEM_DESIRABLE"] = "Máximo deseable";
+$MESS["CRM_CLIENT_PORTRAIT_LOAD_ITEM_HIGH"] = "Alto";
+$MESS["CRM_CLIENT_PORTRAIT_LOAD_ITEM_IDEAL"] = "Ideal";
+$MESS["CRM_CLIENT_PORTRAIT_LOAD_ITEM_LOW"] = "Bajo";
+$MESS["CRM_CLIENT_PORTRAIT_LOAD_ITEM_VERY_HIGH"] = "Muy alto";
+$MESS["CRM_CLIENT_PORTRAIT_LOAD_ITEM_VERY_LOW"] = "Muy bajo";
+$MESS["CRM_CLIENT_PORTRAIT_LOAD_PIE_TITLE"] = "Cargar por canal";
+$MESS["CRM_CLIENT_PORTRAIT_LOAD_SHOW_DEAL_CATEGORIES"] = "mostrar pipelines";
+?>

@@ -1,0 +1,5 @@
+<?
+$MESS["DISK_JS_FILE_DIALOG_OAUTH_NOTICE"] = "Aby załadować plik z zewnętrznego dysku, <br/> proszę się zalogować do swojego konta <a id=\"bx-js-disk-run-oauth-modal\" href=\"#\">#SERVICE#</a>.";
+$MESS["DISK_JS_FILE_DIALOG_OAUTH_NOTICE_DETAIL"] = "<p>Plik zostanie zapisany w folderze załadowanych plików na Bitrix24.Drive. Zewnętrzny plik nie będzie dłużej obserwowany dla dalszych aktualizacji.</p> <p>Gdy tylko twoje zewnętrzne konto zostanie dodane do Birtix24, będzie ono dostępne dla dalszych funkcji.</p>";
+$MESS["DISK_JS_FILE_DIALOG_OAUTH_NOTICE_DETAIL_B24"] = "<p>Plik zostanie zapisany w folderze Bitrix24.Drive's. Dla pliku zewnętrznego nie będą sprawdzane późniejsze aktualizacje .</p> <p>Kiedy twoje zewnętrzne konto zostanie podłączone do Bitrix24,będzie ono dostępne dla każdej funkcji, które może je użyć.</p><p>Użyj strony Paszportu Bitrix aby odłączyć zewnętrzne usługi.</p>";
+?>

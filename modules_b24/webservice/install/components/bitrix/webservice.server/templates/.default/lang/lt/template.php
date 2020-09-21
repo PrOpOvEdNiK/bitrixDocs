@@ -1,0 +1,30 @@
+<?
+$MESS['BX_WSTMPL_RESULT'] = 'Iškvietimo rezultatas:';
+$MESS['BX_WSTMPL_ERROR_NOWSDESCR'] = 'Nėra Web serviso aprašymo.';
+$MESS['BX_WSTMPL_TITLE_PREFIX'] = 'Web serviso aprašymas';
+$MESS['BX_WSTMPL_WEBSERVICE'] = 'Web Servisas';
+$MESS['BX_WSTMPL_ENDPOINT'] = 'Prieigos taškas:';
+$MESS['BX_WSTMPL_METHODS'] = 'Metodai:';
+$MESS['BX_WSTMPL_ERROR_NOMETHODS'] = 'Web Serviso metodai nėra aprašyti.';
+$MESS['BX_WSTMPL_CLASS'] = 'Klasė:';
+$MESS['BX_WSTMPL_METHOD'] = 'Web Serviso metodas:';
+$MESS['BX_WSTMPL_NAMESPACE'] = 'Vardų erdvė:';
+$MESS['BX_WSTMPL_BSTYLE'] = 'Saistymo stilius:';
+$MESS['BX_WSTMPL_DOC'] = 'Aprašymas:';
+$MESS['BX_WSTMPL_WSDLDESCPRE'] = 'Kitos operacijos palaikomos. Oficialų apibrėžimą žiūrėti:';
+$MESS['BX_WSTMPL_WSDLDESC'] = 'Paslaugos aprašymas.';
+$MESS['BX_WSTMPL_INNERTESTPRE'] = 'Paleisti sisteminius WEB-serviso testus galima';
+$MESS['BX_WSTMPL_INNERTEST'] = 'čia.';
+$MESS['BX_WSTMPL_BACKPRE'] = 'Kad gauti visą operacijų sąrašą, paspauskite';
+$MESS['BX_WSTMPL_BACK'] = 'čia.';
+$MESS['BX_WSTMPL_PARAMS'] = 'Parametrai:';
+$MESS['BX_WSTMPL_TEST'] = 'Testas:';
+$MESS['BX_WSTMPL_ERROR_NOFORCOMPLEX'] = 'Testavimo forma prieinama tik metodams naudojantiems kaip parametrus primityvius metodus.';
+$MESS['BX_WSTMPL_ERROR_PARAMETER'] = 'Parametras';
+$MESS['BX_WSTMPL_ERROR_VALUE'] = 'Reikšmė';
+$MESS['BX_WSTMPL_ERROR_SUBMIT'] = 'Pradėti';
+$MESS['BX_WSTMPL_ERROR_NOTENOUGHTPARAMS'] = 'Nepakanka parametrų užklausoje.';
+$MESS['BX_WSTMPL_ERROR_UNKNOWN'] = 'Negalima pradėti užklausą.';
+$MESS['BX_WSTMPL_ERRSEC_NOOP'] = 'Informacijos pagal jūsų užklausimą nėra.';
+$MESS['BX_WSTMPL_ERROR_NOTFORAUTH'] = 'Testavimo forma prieinama tik metodams, nereikalaujantiems HTTP Basic registracijos.';
+?>

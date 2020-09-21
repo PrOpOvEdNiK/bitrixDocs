@@ -1,0 +1,35 @@
+<?
+$MESS["MB_LIVE_FEED"] = "Жива стрічка";
+$MESS["MB_MESSAGES"] = "Чати";
+$MESS["MB_COMPANY"] = "Співробітники";
+$MESS["MB_SEC_FAVORITE"] = "ОБРАНЕ";
+$MESS["MB_SEC_GROUPS"] = "ГРУПИ";
+$MESS["MB_SEC_EXTRANET"] = "ГРУПИ ЕКСТРАНЕТ";
+$MESS["MB_EXIT"] = "Вихід";
+$MESS["MB_HELP"] = "Допомога";
+$MESS["MB_MY_BITRIX24"] = "Мої Бітрікс24";
+$MESS["PULL_TEXT"] = "Потягніть, щоб оновити...";
+$MESS["DOWN_TEXT"] = "Відпустіть, щоб оновити...";
+$MESS["MB_TASKS_MAIN_MENU_ITEM"] = "Завдання";
+$MESS["MB_CURRENT_USER_FILES_MAIN_MENU_ITEM"] = "Файли";
+$MESS["MB_SHARED_FILES_MAIN_MENU_ITEM"] = "Спільні файли";
+$MESS["LOAD_TEXT"] = "Оновлення меню...";
+$MESS["MB_CALENDAR_LIST"] = "Календар";
+$MESS["MB_CRM_ACTIVITY"] = "Мої справи";
+$MESS["MB_CRM_CONTACT"] = "Контакти";
+$MESS["MB_CRM_COMPANY"] = "Компанії";
+$MESS["MB_CRM_DEAL"] = "Угоди";
+$MESS["MB_CRM_LEAD"] = "Ліди";
+$MESS["MB_CRM_INVOICE"] = "Рахунки";
+$MESS["MB_CRM_PRODUCT"] = "Товари";
+$MESS["MB_CONTACTS"] = "Контакти";
+$MESS["MB_BP_MAIN_MENU_ITEM"] = "Бізнес процеси";
+$MESS["MB_CURRENT_USER_FILES_MAIN_MENU_ITEM_NEW"] = "Мій диск";
+$MESS["MB_SHARED_FILES_MAIN_MENU_ITEM_NEW"] = "Загальний диск";
+$MESS["MB_CHAT_AND_CALLS"] = "Чат і дзвінки";
+$MESS["MB_MARKETPLACE_GROUP_TITLE"] = "Застосунки";
+$MESS["MB_CRM_QUOTE"] = "Пропозиції";
+$MESS["MB_ASK_SYNC_CARDDAV"] = "Синхронізувати Bitrix24 зі списком контактів вашого смартфону?";
+$MESS["MB_ASK_SYNC_YES"] = "Так";
+$MESS["MB_ASK_SYNC_NO"] = "Ні";
+?>

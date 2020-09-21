@@ -1,0 +1,3 @@
+<?
+$MESS["SONET_LIVEFEED_INTRANET_NEW_USER_TITLE"] = "Dodano użytkownika #USER_NAME#";
+?>

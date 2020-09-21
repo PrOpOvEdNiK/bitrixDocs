@@ -1,0 +1,12 @@
+<?
+$MESS["CRM_ACTIVITY_WEBFORM_FIELDS_LINK"] = "Enlace del formulario";
+$MESS["CRM_ACTIVITY_WEBFORM_IP"] = "Enviado desde la dirección IP";
+$MESS["CRM_ACTIVITY_WEBFORM_NAME"] = "Formulario del CRM";
+$MESS["CRM_ACTIVITY_WEBFORM_NAME_IN"] = "Bandeja de entrada";
+$MESS["CRM_ACTIVITY_WEBFORM_NO"] = "No";
+$MESS["CRM_ACTIVITY_WEBFORM_STATUS_ACT"] = "Conectado";
+$MESS["CRM_ACTIVITY_WEBFORM_STATUS_INACT"] = "Conectar";
+$MESS["CRM_ACTIVITY_WEBFORM_USER_CONSENT"] = "El Acuerdo es visible";
+$MESS["CRM_ACTIVITY_WEBFORM_VISITED_PAGES"] = "Páginas visitadas";
+$MESS["CRM_ACTIVITY_WEBFORM_YES"] = "Si";
+?>

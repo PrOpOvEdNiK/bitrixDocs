@@ -1,0 +1,34 @@
+<?
+$MESS["CTRLR_TASK_BUTTON_START"] = "Inicio";
+$MESS["CTRLR_TASK_COLUMN_ARGS"] = "Argumento";
+$MESS["CTRLR_TASK_COLUMN_DATE_CRE"] = "Creado";
+$MESS["CTRLR_TASK_COLUMN_DATE_MOD"] = "Modificado";
+$MESS["CTRLR_TASK_COLUMN_EXEC"] = "Ejecutado";
+$MESS["CTRLR_TASK_COLUMN_RESULT"] = "Resultado";
+$MESS["CTRLR_TASK_COLUMN_STATUS"] = "Estado";
+$MESS["CTRLR_TASK_COLUMN_TASK"] = "Tarea";
+$MESS["CTRLR_TASK_COLUMN_URL"] = "URL del Cliente";
+$MESS["CTRLR_TASK_ERR_DELETE"] = "Error cancelando la tarea";
+$MESS["CTRLR_TASK_ERR_LOCK"] = "Error en la base de datos al intentar bloquear la tarea:";
+$MESS["CTRLR_TASK_ERR_LOCK_ADVICE"] = "Por favor contactar con el administrador de la base de datos para obtener permisos para ejecutar el dbms_lock.";
+$MESS["CTRLR_TASK_FLR_ANY"] = "(cualquiera)";
+$MESS["CTRLR_TASK_FLR_ST"] = "Estado de la ejecución";
+$MESS["CTRLR_TASK_FLT_CLIENT"] = "Cliente";
+$MESS["CTRLR_TASK_FLT_CREATED"] = "Creado";
+$MESS["CTRLR_TASK_FLT_EXECUTED"] = "La última ejecución";
+$MESS["CTRLR_TASK_FLT_ID"] = "ID";
+$MESS["CTRLR_TASK_FLT_MODYFIED"] = "Modificado";
+$MESS["CTRLR_TASK_FLT_OPERATION"] = "Operación";
+$MESS["CTRLR_TASK_MENU_CANCEL"] = "Cancelar";
+$MESS["CTRLR_TASK_MENU_CANCEL_CONFIRM"] = "La tarea sera removida. Desea continuar?";
+$MESS["CTRLR_TASK_MENU_LOG"] = "Ver registro";
+$MESS["CTRLR_TASK_MENU_REPEAT"] = "Repetir";
+$MESS["CTRLR_TASK_MENU_REPEAT_CONFIRM"] = "La tarea sera ejecutada otra vez. Desea continuar?";
+$MESS["CTRLR_TASK_NAV"] = "Tareas";
+$MESS["CTRLR_TASK_PROGRESS"] = "Tarea en progreso.";
+$MESS["CTRLR_TASK_PROGRESS_BAR"] = "Terminado:";
+$MESS["CTRLR_TASK_PROGRESS_BAR_FROM"] = "para";
+$MESS["CTRLR_TASK_REPEAT"] = "Repetir";
+$MESS["CTRLR_TASK_REP_DELETE"] = "Error repitiendo una tarea";
+$MESS["CTRLR_TASK_TITLE"] = "Tareas del cliente remoto";
+?>

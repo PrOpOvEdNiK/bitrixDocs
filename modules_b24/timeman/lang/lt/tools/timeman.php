@@ -1,0 +1,35 @@
+<?
+$MESS["TM_TASK_STATUS_-2"] = "Nauja";
+$MESS["TM_TASK_STATUS_-1"] = "Pavėluota";
+$MESS["TM_TASK_STATUS_1"] = "Nauja";
+$MESS["TM_TASK_STATUS_2"] = "Priimta";
+$MESS["TM_TASK_STATUS_3"] = "Vykdoma";
+$MESS["TM_TASK_STATUS_4"] = "Atlikta";
+$MESS["TM_TASK_STATUS_5"] = "Uždaryta";
+$MESS["TM_TASK_STATUS_6"] = "Atidėta";
+$MESS["TM_TASK_STATUS_7"] = "Atmesta";
+$MESS["TM_TASK_SET_STATUS_2"] = "Atnaujinta";
+$MESS["TM_TASK_SET_STATUS_2_1"] = "Priimti";
+$MESS["TM_TASK_SET_STATUS_3"] = "Pradėti vykdyti";
+$MESS["TM_TASK_SET_STATUS_4"] = "Užbaigti";
+$MESS["TM_TASK_SET_STATUS_6"] = "Atidėti";
+$MESS["TM_TASK_SET_STATUS_7"] = "Atmesti";
+$MESS["TM_TASK_STATUS"] = "Statusas";
+$MESS["TM_TASK_DATE_START"] = "Pradžia";
+$MESS["TM_TASK_DATE_END"] = "Pabaiga";
+$MESS["TM_TASK_DEADLINE"] = "Terminas";
+$MESS["TM_TASK_CREATED_DATE"] = "Sukurta";
+$MESS["TM_TASK_CREATED_BY"] = "Kūrėjas";
+$MESS["TM_TASK_CREATED_BY_PL"] = "Kūrėjai";
+$MESS["TM_TASK_RESPONSIBLE_ID"] = "Atsakingas asmuo";
+$MESS["TM_TASK_RESPONSIBLE_ID_PL"] = "Atsakingi asmenys";
+$MESS["TM_TASK_AUDITORS"] = "Stebėtojas";
+$MESS["TM_TASK_AUDITORS_PL"] = "Stebėtojai";
+$MESS["TM_TASK_ACCOMPLICES"] = "Dalyvis";
+$MESS["TM_TASK_ACCOMPLICES_PL"] = "Dalyviai";
+$MESS["TM_CALENDAR_CHOOSE"] = "Pasirinkti kalendorių";
+$MESS["TM_CONFIRM_LATE_OPEN"] = "Ar tikrai noriteišeiti #TIME#?";
+$MESS["TM_IN"] = "per";
+$MESS["TM_TILL"] = "#today# iki #time#";
+$MESS["TM_DAY_CLOSED_ADMIN"] = "Darbo dieną buvo uždaryta vadovo.";
+?>

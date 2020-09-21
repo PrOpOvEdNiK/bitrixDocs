@@ -1,0 +1,9 @@
+<?
+$MESS["SCALE_ITS_AVG_LOAD_CURR"] = "Bieżący";
+$MESS["SCALE_ITS_AVG_LOAD_MAX"] = "Maksymalne";
+$MESS["SCALE_ITS_AVG_LOAD_MIN"] = "Minimum";
+$MESS["SCALE_ITS_AVG_LOAD_NAME"] = "Ładuj";
+$MESS["SCALE_MONITORING_HDDACT"] = "Aktywne";
+$MESS["SCALE_MONITORING_MEMORY"] = "Pamięć";
+$MESS["SCALE_MONITORING_NET_SEC"] = "na sekundę";
+?>

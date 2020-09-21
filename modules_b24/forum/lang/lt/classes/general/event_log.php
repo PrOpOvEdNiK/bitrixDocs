@@ -1,0 +1,35 @@
+<?
+$MESS["FORUM_MESSAGE_APPROVE"] = "Rodyti pranešimą";
+$MESS["FORUM_MESSAGE_UNAPPROVE"] = "Paslėpti pranešimą";
+$MESS["FORUM_MESSAGE_MOVE"] = "Perkelti pranešimą";
+$MESS["FORUM_MESSAGE_EDIT"] = "Redaguoti pranešimą";
+$MESS["FORUM_MESSAGE_DELETE"] = "Ištrinti pranešimą";
+$MESS["FORUM_TOPIC_APPROVE"] = "Rodyti temą";
+$MESS["FORUM_TOPIC_UNAPPROVE"] = "Paslėpti temą";
+$MESS["FORUM_TOPIC_STICK"] = "Prikabinti temą";
+$MESS["FORUM_TOPIC_UNSTICK"] = "Atkabinti temą";
+$MESS["FORUM_TOPIC_OPEN"] = "Atidaryti temą";
+$MESS["FORUM_TOPIC_CLOSE"] = "Uždaryti temą";
+$MESS["FORUM_TOPIC_MOVE"] = "Perkelti temą";
+$MESS["FORUM_TOPIC_EDIT"] = "Redaguoti temą";
+$MESS["FORUM_TOPIC_DELETE"] = "Ištrinti temą";
+$MESS["FORUM_FORUM_EDIT"] = "Redaguoti forumą";
+$MESS["FORUM_FORUM_DELETE"] = "Ištrinti forumą";
+$MESS["FORUM_MESSAGE_SPAM"] = "Pranešimas ištrintas kaip spamas.";
+$MESS["FORUM_TOPIC_SPAM"] = "Tema ištrinta kaip spamas.";
+$MESS["LOG_FORUM"] = "Forumas";
+$MESS["LOG_FORUM_MESSAGE_APPROVE"] = "Parodytas pranešimas temoje #NAME#";
+$MESS["LOG_FORUM_MESSAGE_UNAPPROVE"] = "Paslėptas pranešimas temoje #NAME#";
+$MESS["LOG_FORUM_MESSAGE_MOVE"] = "Pranešimas perkeltas į #NAME#";
+$MESS["LOG_FORUM_MESSAGE_EDIT"] = "Temoje #NAME# pakeistas pranešimas";
+$MESS["LOG_FORUM_MESSAGE_DELETE"] = "Temoje #NAME# ištrintas pranešimas";
+$MESS["LOG_FORUM_TOPIC_APPROVE"] = "Rodoma tema #NAME#";
+$MESS["LOG_FORUM_TOPIC_UNAPPROVE"] = "Paslėpta tema #NAME#";
+$MESS["LOG_FORUM_TOPIC_STICK"] = "Tema #NAME# prikabinta";
+$MESS["LOG_FORUM_TOPIC_UNSTICK"] = "Tema #NAME# atkabinta";
+$MESS["LOG_FORUM_TOPIC_OPEN"] = "Atidaryta tema #NAME#";
+$MESS["LOG_FORUM_TOPIC_CLOSE"] = "Uždaryta tema #NAME#";
+$MESS["LOG_FORUM_TOPIC_DELETE"] = "Tema #NAME# ištrinta";
+$MESS["LOG_FORUM_TOPIC_MOVE"] = "Tema #NAME# perkelta į forumą \"#FORUM#\"";
+$MESS["LOG_FORUM_TOPIC_EDIT"] = "Pakeista tema #NAME# ";
+?>

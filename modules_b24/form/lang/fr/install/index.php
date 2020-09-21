@@ -1,0 +1,29 @@
+<?
+$MESS["COPY_FOLDER"] = "Dossier dans lequel seront copiés des fichiers (par rapport à la racine du site) : ";
+$MESS["COPY_PUBLIC_FILES"] = "Copier les fichiers publiques";
+$MESS["FORM_ATTENTION"] = "Attention ! Le module sera supprimé du système.";
+$MESS["FORM_BACK"] = "Retourner";
+$MESS["FORM_COMPLETE"] = "L'installation est terminée.";
+$MESS["FORM_DELETE"] = "Supprimer";
+$MESS["FORM_DELETE_COMLETE"] = "La suppression est terminée.";
+$MESS["FORM_DEMO_DIR"] = "Vous pouvez voir le fonctionnement des fichiers démonstratifs à l'aide des liens suivants : ";
+$MESS["FORM_DENIED"] = "Bloquer l'accès";
+$MESS["FORM_ERRORS"] = "Erreurs : ";
+$MESS["FORM_FULL"] = "Remplacer les fichiers existants";
+$MESS["FORM_INSTALL"] = "Installation";
+$MESS["FORM_INSTALL_TITLE"] = "Web Forms installation du module";
+$MESS["FORM_LINK"] = "Lien au commentaire";
+$MESS["FORM_MODULE_DESCRIPTION"] = "Ce module gère diverses formes web, permet de stocker des données et de filtre dans les formulaires remplis.";
+$MESS["FORM_MODULE_NAME"] = "Formulaires web";
+$MESS["FORM_NO"] = "aucun";
+$MESS["FORM_OPENED"] = "accès accordé";
+$MESS["FORM_RESET"] = "Annuler";
+$MESS["FORM_SAVE_TABLES"] = "Enregistrer les tables";
+$MESS["FORM_SELECT_INITITAL"] = "S'il vous plaît sélectionnez le dossier pour les fichiers de démonstration : ";
+$MESS["FORM_SITE"] = "Site";
+$MESS["FORM_UNINSTALL_TITLE"] = "Web Forms module de désinstallation";
+$MESS["FORM_URL_PUBLIC"] = "Dossier des fichiers de démonstration : ";
+$MESS["FORM_WRONG_MAIN_VERSION"] = "Pour installer ce module, vous devez mettre à jour le noyau du système à la version #VER#";
+$MESS["FORM_YOU_CAN_SAVE_TABLES"] = "Vous pouvez stocker des données dans les tables de la base de données, si vous installez le drapeau &quot;Enregistrer les tables&quot;";
+$MESS["INSTALL_PUBLIC_REW"] = "Remplacer les fichiers existants";
+?>

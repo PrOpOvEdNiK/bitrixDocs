@@ -1,0 +1,33 @@
+<?
+$MESS["CTRLR_TASK_BUTTON_START"] = "Commencer";
+$MESS["CTRLR_TASK_COLUMN_ARGS"] = "Argument";
+$MESS["CTRLR_TASK_COLUMN_DATE_CRE"] = "Créé";
+$MESS["CTRLR_TASK_COLUMN_DATE_MOD"] = "Modifié";
+$MESS["CTRLR_TASK_COLUMN_EXEC"] = "Accompli";
+$MESS["CTRLR_TASK_COLUMN_RESULT"] = "Résultat";
+$MESS["CTRLR_TASK_COLUMN_STATUS"] = "Statut";
+$MESS["CTRLR_TASK_COLUMN_TASK"] = "La tâche";
+$MESS["CTRLR_TASK_COLUMN_URL"] = "URL du client";
+$MESS["CTRLR_TASK_ERR_DELETE"] = "Erreur d'Annuler de la tâche";
+$MESS["CTRLR_TASK_ERR_LOCK"] = "Erreur de la base de données au cours du blocage de la tâche : ";
+$MESS["CTRLR_TASK_ERR_LOCK_ADVICE"] = "Veuillez vous adresser à l'administrateur de la base de donnée pour qu'il vous donne des droits d'exécution du paquet dbms_lock.";
+$MESS["CTRLR_TASK_FLR_ANY"] = "(n'importe lesquel(el)s)";
+$MESS["CTRLR_TASK_FLR_ST"] = "Statut d'exécution";
+$MESS["CTRLR_TASK_FLT_CLIENT"] = "Client";
+$MESS["CTRLR_TASK_FLT_CREATED"] = "Créé";
+$MESS["CTRLR_TASK_FLT_EXECUTED"] = "Dernier lancement";
+$MESS["CTRLR_TASK_FLT_MODYFIED"] = "Modifié";
+$MESS["CTRLR_TASK_FLT_OPERATION"] = "Opération";
+$MESS["CTRLR_TASK_MENU_CANCEL"] = "Annuler";
+$MESS["CTRLR_TASK_MENU_CANCEL_CONFIRM"] = "La tâche sera supprimée sur la liste. Continuer ?";
+$MESS["CTRLR_TASK_MENU_LOG"] = "Afficher le journal";
+$MESS["CTRLR_TASK_MENU_REPEAT"] = "Répéter la tâche";
+$MESS["CTRLR_TASK_MENU_REPEAT_CONFIRM"] = "La tâche sera exécutée à nouveau. Continuer ?";
+$MESS["CTRLR_TASK_NAV"] = "Tâches";
+$MESS["CTRLR_TASK_PROGRESS"] = "Exécution des tâches.";
+$MESS["CTRLR_TASK_PROGRESS_BAR"] = "Exécuté:";
+$MESS["CTRLR_TASK_PROGRESS_BAR_FROM"] = "de";
+$MESS["CTRLR_TASK_REPEAT"] = "Répéter la tâche";
+$MESS["CTRLR_TASK_REP_DELETE"] = "Erreur de répétition de la tâche";
+$MESS["CTRLR_TASK_TITLE"] = "Les tâches pour l'exécution sur les clients du contrôleur des sites";
+?>

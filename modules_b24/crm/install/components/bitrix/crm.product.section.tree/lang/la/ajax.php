@@ -1,0 +1,5 @@
+<?
+$MESS["CRM_PRODUCT_SECTION_TREE_AJAX_ERROR_EMPTY_ACTION"] = "Ninguna acción seleccionada.";
+$MESS["CRM_PRODUCT_SECTION_TREE_AJAX_ERROR_REQUIRED_PARAMETER"] = "El parámetro #PARAM# es requerido pero falta.";
+$MESS["CRM_PRODUCT_SECTION_TREE_AJAX_ERROR_UNKNOWN_ACTION"] = "Acción desconocida: #ACTION#.";
+?>

@@ -1,0 +1,21 @@
+<?
+$MESS["CRM_INTERFACE_FILTER_ADD"] = "Créer un nouveau filtre";
+$MESS["CRM_INTERFACE_FILTER_ADD_FIELD"] = "Conditions supplémentaires de recherche";
+$MESS["CRM_INTERFACE_FILTER_CANCEL"] = "Annuler";
+$MESS["CRM_INTERFACE_FILTER_CURRENT"] = "Filtre";
+$MESS["CRM_INTERFACE_FILTER_DAYS_SUFFIX"] = "jours";
+$MESS["CRM_INTERFACE_FILTER_DELETE"] = "Supprimer";
+$MESS["CRM_INTERFACE_FILTER_DELETE_FIELD"] = "Cacher la condition de recherche";
+$MESS["CRM_INTERFACE_FILTER_FIND"] = "Rechercher";
+$MESS["CRM_INTERFACE_FILTER_HIDE_ALL"] = "Cacher tous les filtres";
+$MESS["CRM_INTERFACE_FILTER_LIST_VALUE_NOT_SELECTED"] = "(non)";
+$MESS["CRM_INTERFACE_FILTER_MAXIMIZE"] = "Afficher le filtre";
+$MESS["CRM_INTERFACE_FILTER_MINIMIZE"] = "Fermer le filtre";
+$MESS["CRM_INTERFACE_FILTER_SAVE"] = "Enregistrer";
+$MESS["CRM_INTERFACE_FILTER_SAVE_AS"] = "Enregistrer comme";
+$MESS["CRM_INTERFACE_FILTER_SAVE_AS_DIALOG_FIELD_NAME"] = "Dénomination du filtre";
+$MESS["CRM_INTERFACE_FILTER_SAVE_AS_DIALOG_FIELD_NAME_DEFAULT"] = "Nouveau filtre";
+$MESS["CRM_INTERFACE_FILTER_SAVE_AS_DIALOG_TITLE"] = "Enregistrer le filtre";
+$MESS["CRM_INTERFACE_FILTER_SETTINGS"] = "Actions avec le filtre";
+$MESS["CRM_INTERFACE_FILTER_SHOW_ALL"] = "Afficher tous les filtres";
+?>

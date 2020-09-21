@@ -1,0 +1,32 @@
+<?
+$MESS ['MAIL_MBOX_ADM_TITLE'] = "กล่องข้อความ";
+$MESS ['MAIL_MBOX_ADM_DELERR'] = "พบข้อผิดพลาดในการลบกล่องข้อความ";
+$MESS ['MAIL_MBOX_ADM_FILT_ACT'] = "ทำงาน:";
+$MESS ['MAIL_SAVE_ERROR'] = "พบข้อผิดพลาดในการปรับปรุงกล่องข้อความ";
+$MESS ['MAIL_MBOX_ADM_FILT_ANY'] = "(any)";
+$MESS ['MAIL_MBOX_ADM_FILT_LANG'] = "ภาษา:";
+$MESS ['MAIL_MBOX_ADM_FILT_NAME'] = "ชื่อ:";
+$MESS ['MAIL_MBOX_ADM_NAVIGATION'] = "กล่องข้อความ";
+$MESS ['MAIL_MBOX_ADM_DATECH'] = "ปรับปรุง";
+$MESS ['MAIL_MBOX_ADM_NAME'] = "ชื่อ";
+$MESS ['MAIL_MBOX_ADM_ACT'] = "ทำงาน";
+$MESS ['MAIL_MBOX_ADM_LANG'] = "ภาษา";
+$MESS ['MAIL_MBOX_ADM_VIEW'] = "เรียกดู";
+$MESS ['MAIL_MBOX_ADM_ACTIONS'] = "จัดการ";
+$MESS ['MAIL_MBOX_ADM_RULES'] = "การจัดการตัวกรอง";
+$MESS ['MAIL_MBOX_ADM_NEWRULE'] = "เพิ่มตัวกรองใหม่";
+$MESS ['MAIL_MBOX_ADM_MSGS'] = "เมล์ข้อความ";
+$MESS ['MAIL_MBOX_ADM_MESSAGES'] = "ข้อความ";
+$MESS ['MAIL_MBOX_ADM_MESSAGES_TOTAL'] = "ข้อความทั้งหมด";
+$MESS ['MAIL_MBOX_ADM_MESSAGES_NEW'] = "ข้อความใหม่";
+$MESS ['MAIL_MBOX_ADM_LOG_ALT'] = "View log";
+$MESS ['MAIL_MBOX_ADM_LOG'] = "Log";
+$MESS ['MAIL_MBOX_ADM_CHANGE'] = "ปรับปรุงการตั้งค่ากล่องข้อความ";
+$MESS ['MAIL_MBOX_ADM_CHANGE2'] = "ปรับปรุง";
+$MESS ['MAIL_MBOX_ADM_DELETE_ALT'] = "ลบกล่องข้อความ";
+$MESS ['MAIL_MBOX_ADM_DELETE'] = "ลบ";
+$MESS ['MAIL_MBOX_ADM_LISTEMPTY'] = "List is empty";
+$MESS ['MAIL_MBOX_ADM_LISTTOTAL'] = "ทั้งหมด:";
+$MESS ['MAIL_MBOX_ADM_RULES_LINK'] = "ตัวกรอง";
+$MESS ['MAIL_MBOX_ADM_DEL_CONFIRM'] = "กล่องข้อความและข้อความทั้งหมด   ตัวกรองและเครื่องมือตัวกรองจะถูกลบ คุณต้องการทำต่อหรือไม่? ";
+?>

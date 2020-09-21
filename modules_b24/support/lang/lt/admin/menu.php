@@ -1,0 +1,33 @@
+<?
+$MESS["SUP_M_SUPPORT"] = "Techninis palaikymas";
+$MESS["SUP_M_TICKETS"] = "Užklausimas";
+$MESS["SUP_M_TICKETS_ALT"] = "Lankytojų užklausimai svetainės administracijai";
+$MESS["SUP_M_REPORT_TABLE_ALT"] = "Atidarytų bei uždarytų užklausimų paskirstymo lentelės pagal skirtingus parametrus";
+$MESS["SUP_M_REPORT_GRAPH"] = "Grafikai";
+$MESS["SUP_M_REPORT_GRAPH_ALT"] = "Techninės pagalbos darbo ataskaita grafikinėje formoje";
+$MESS["SUP_M_CATEGORY"] = "Kategorijos";
+$MESS["SUP_M_CRITICALITY"] = "Kritiškumas";
+$MESS["SUP_M_STATUS"] = "Statusas";
+$MESS["SUP_M_MARK"] = "Atsakymų vertinimas";
+$MESS["SUP_M_FUA"] = "Dažniausi atsakymai";
+$MESS["SUP_M_SOURCE"] = "Šaltiniai";
+$MESS["SUP_M_DIFFICULTY"] = "Sudetingumas";
+$MESS["SUP_M_SLA"] = "Palaikymo lygiai";
+$MESS["SUP_M_DICT"] = "Žurnalai";
+$MESS["SUP_M_SUPPORT_TITLE"] = "Techninės pagalbos valdymas";
+$MESS["SUP_M_DICT_TITLE"] = "Žurnalo nustatymai";
+$MESS["SUP_M_DIFFICULTY_TITLE"] = "Sudetingumo lygis";
+$MESS["SUP_M_GROUPS"] = "Grupės:";
+$MESS["SUP_M_GROUPS_TITLE"] = "Grupių redagavimas";
+$MESS["SUP_M_USER_IN_GROUPS"] = "Naudotojai grupėse";
+$MESS["SUP_M_USER_IN_GROUPS_TITLE"] = "Naudotojų sąrašas grupėse";
+$MESS["SUP_M_COUPONS"] = "Specužklausos kuponas";
+$MESS["SUP_M_COUPONS_TITLE"] = "Spec-užklausimų kuponų sukūrimas bei redagavimas";
+$MESS["SUP_M_COUPONS_LOG"] = "Kuponų panaudojimo žurnalas";
+$MESS["SUP_M_COUPONS_LOG_TITLE"] = "Kuponų panaudojimo žurnalas";
+$MESS["SUP_M_REPORT_TABLE"] = "Darbo aplinka";
+$MESS["SUP_M_TIMETABLE"] = "Tvarkaraščiai";
+$MESS["SUP_M_HOLIDAYS"] = "Išimtys";
+$MESS["SUP_M_SHEDULE"] = "Tvarkaraščiai";
+$MESS["SUP_M_SHEDULE_TITLE"] = "Tvarkaraščiai";
+?>

@@ -1,0 +1,33 @@
+<?
+$MESS["CHANGE_STATUS"] = "Nie zmieniaj statusu zgłoszenia";
+$MESS["SUP_ATTACHED_FILES"] = "Załączone pliki:";
+$MESS["SUP_ATTACH_NEW_FILES"] = "Załącz nowe pliki:";
+$MESS["SUP_CERTAIN_SPAM"] = "spam";
+$MESS["SUP_CREATE"] = "Utworzony:";
+$MESS["SUP_DELETE_MESSAGE"] = "Usuń Wiadomość";
+$MESS["SUP_DELETE_MESSAGE_CONFIRM"] = "Czy na pewno chcesz usunąć tę wiadomość?";
+$MESS["SUP_DOWNLOAD"] = "Pobierz";
+$MESS["SUP_EDIT_ALT"] = "Edytuj ustawienia wiadomości";
+$MESS["SUP_EDIT_RECORD"] = "Wiadomość # #ID# (zgłoszenie # #TID#)";
+$MESS["SUP_ERROR"] = "Błąd zapisu wiadomośći";
+$MESS["SUP_EXTERNAL_FIELD_1"] = "Dodatkowe pole początkowego źródła zewnętrznego (nagłówki email itp.)";
+$MESS["SUP_EXTERNAL_ID"] = "ID początkowego źródła zewnętrznego (email itp.):";
+$MESS["SUP_FROM"] = "Od:";
+$MESS["SUP_GUEST_ID"] = "Profil Gościa";
+$MESS["SUP_IS_HIDDEN"] = "Ukryty:";
+$MESS["SUP_IS_LOG"] = "Dziennik:";
+$MESS["SUP_IS_OVERDUE"] = "Wiadomość była po terminie:";
+$MESS["SUP_MESSAGE"] = "Wiadomość:";
+$MESS["SUP_MESSAGE_NOT_FOUND"] = "Nie znaleziono wiadomości";
+$MESS["SUP_MORE"] = "Więcej...";
+$MESS["SUP_NUMBER"] = "Numer:";
+$MESS["SUP_POSSIBLE_SPAM"] = "Możliwy spam";
+$MESS["SUP_RESET"] = "Wyczyść";
+$MESS["SUP_SAVE"] = "Zapisz";
+$MESS["SUP_SPAM_MARK"] = "Oznaczenie spam:";
+$MESS["SUP_TASK_TIME"] = "Czas zadania (min.):";
+$MESS["SUP_TICKETS_LIST"] = "Lista zgłoszenia";
+$MESS["SUP_TICKET_EDIT"] = "Modyfikuj zgłoszenie  # #TID#";
+$MESS["SUP_TIMESTAMP"] = "Zmodyfikowany:";
+$MESS["SUP_VIEW_ALT"] = "Wyświetl plik";
+?>

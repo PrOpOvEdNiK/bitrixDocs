@@ -1,0 +1,15 @@
+<?
+$MESS["INTR_ISIA_TPL_SHOW"] = "Rodyti:";
+$MESS["INTR_ISIA_TPL_ALL"] = "Visus";
+$MESS["INTR_ISIA_TPL_NOW"] = "Dabar";
+$MESS["INTR_ISIA_TPL_TODAY"] = "Šiandien";
+$MESS["INTR_ISIA_TPL_TOMORROW"] = "Rytoj";
+$MESS["INTR_ISIA_TPL_THE_DAY_AFTER_TOMORROW"] = "Poryt";
+$MESS["INTR_ISIA_TPL_IN"] = "per";
+$MESS["INTR_ISIA_TPL_DAYS_1"] = "dieną";
+$MESS["INTR_ISIA_TPL_DAYS_2_4"] = "dieną";
+$MESS["INTR_ISIA_TPL_DAYS"] = "dienas";
+$MESS["INTR_ISIA_TPL_FROM"] = "nuo";
+$MESS["INTR_ISIA_TPL_TILL"] = "iki";
+$MESS["INTR_ISIA_TPL_NO_ABSENCES"] = "Nėra neatvykusių";
+?>

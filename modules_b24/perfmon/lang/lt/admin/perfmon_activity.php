@@ -1,0 +1,17 @@
+<?
+$MESS["PERFMON_ACT_MINUTES"] = "#HOURS#:#MINUTES#:#SECONDS# (v:m:s)";
+$MESS["PERFMON_ACTION_BUTTON_ON"] = "Įjungti ";
+$MESS["PERFMON_ACT_SET_ACTIVE"] = "Įjungti monitorių";
+$MESS["PERFMON_ACT_ACTIVE_TO"] = "Aktyvus iki ";
+$MESS["PERFMON_ACTIVE_Y"] = "Monitorius įjungtas ir renka informaciją.";
+$MESS["PERFMON_ACTIVE_N"] = "Monitorius išjungtas.";
+$MESS["PERFMON_ACT_INTERVAL_60_SEC"] = "1 min";
+$MESS["PERFMON_ACT_INTERVAL_3600_SEC"] = "1 val ";
+$MESS["PERFMON_ACT_INTERVAL_600_SEC"] = "10 min";
+$MESS["PERFMON_ACT_INTERVAL_1800_SEC"] = "30 min";
+$MESS["PERFMON_ACT_INTERVAL_300_SEC"] = "5 min";
+$MESS["PERFMON_ACT_INTERVAL_NO"] = "ne";
+$MESS["PERFMON_ACTION_BUTTON_OFF"] = "Išjungti";
+$MESS["PERFMON_ACT_SET_IN_ACTIVE"] = "Išjungti monitorių";
+$MESS["PERFMON_ACTIVITY_TITLE"] = "Veikla";
+?>

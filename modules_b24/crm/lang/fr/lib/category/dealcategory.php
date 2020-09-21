@@ -1,0 +1,6 @@
+<?
+$MESS["CRM_DEAL_CATEGORY_DEFAULT"] = "Général";
+$MESS["CRM_DEAL_CATEGORY_PERMISSION_ENTITY"] = "Transaction #CATEGORY#";
+$MESS["CRM_DEAL_CATEGORY_STAGE_FILTER"] = "Étape de transaction";
+$MESS["CRM_DEAL_CATEGORY_STATUS_ENTITY"] = "Étapes de transaction #CATEGORY#";
+?>

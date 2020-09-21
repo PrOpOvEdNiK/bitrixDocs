@@ -1,0 +1,35 @@
+<?
+$MESS["CRM_ENTITY_ADDRESS_1"] = "Gatvė, namas";
+$MESS["CRM_ENTITY_ADDRESS_2"] = "Ofisas / butas";
+$MESS["CRM_ENTITY_ADDRESS_CITY"] = "Miestas";
+$MESS["CRM_ENTITY_ADDRESS_POSTAL_CODE"] = "Pašto indeksas";
+$MESS["CRM_ENTITY_ADDRESS_REGION"] = "Rajonas";
+$MESS["CRM_ENTITY_ADDRESS_PROVINCE"] = "Apskritis";
+$MESS["CRM_ENTITY_ADDRESS_COUNTRY"] = "Šalis";
+$MESS["CRM_ENTITY_REG_ADDRESS_1"] = "Gatvė, namas (juridinis adresas)";
+$MESS["CRM_ENTITY_REG_ADDRESS_2"] = "Ofisas / butas (juridinis adresas)";
+$MESS["CRM_ENTITY_REG_ADDRESS_CITY"] = "Miestas (juridinis adresas)";
+$MESS["CRM_ENTITY_REG_ADDRESS_POSTAL_CODE"] = "Pašto indeksas (juridinis adresas)";
+$MESS["CRM_ENTITY_REG_ADDRESS_REGION"] = "Rajonas (juridinis adresas)";
+$MESS["CRM_ENTITY_REG_ADDRESS_PROVINCE"] = "Apskritis (juridinis adresas)";
+$MESS["CRM_ENTITY_REG_ADDRESS_COUNTRY"] = "Šalis (juridinis adresas)";
+$MESS["CRM_ENTITY_SHORT_ADDRESS_1"] = "Gatvė";
+$MESS["CRM_ENTITY_SHORT_ADDRESS_2"] = "Ofisas / butas";
+$MESS["CRM_ENTITY_SHORT_ADDRESS_CITY"] = "Miestas";
+$MESS["CRM_ENTITY_SHORT_ADDRESS_POSTAL_CODE"] = "Pašto indeksas";
+$MESS["CRM_ENTITY_SHORT_ADDRESS_REGION"] = "Rajonas";
+$MESS["CRM_ENTITY_SHORT_ADDRESS_PROVINCE"] = "Apskritis";
+$MESS["CRM_ENTITY_SHORT_ADDRESS_COUNTRY"] = "Šalis";
+$MESS["CRM_ENTITY_SHORT_REG_ADDRESS_1"] = "Gatvė (juridinis adresas)";
+$MESS["CRM_ENTITY_SHORT_REG_ADDRESS_2"] = "Ofisas / butas (juridinis adresas)";
+$MESS["CRM_ENTITY_SHORT_REG_ADDRESS_CITY"] = "Miestas (juridinis adresas)";
+$MESS["CRM_ENTITY_SHORT_REG_ADDRESS_POSTAL_CODE"] = "Pašto indeksas (juridinis adresas)";
+$MESS["CRM_ENTITY_SHORT_REG_ADDRESS_REGION"] = "Rajonas (juridinis adresas)";
+$MESS["CRM_ENTITY_SHORT_REG_ADDRESS_PROVINCE"] = "Apskritis (juridinis adresas)";
+$MESS["CRM_ENTITY_SHORT_REG_ADDRESS_COUNTRY"] = "Šalis (juridinis adresas)";
+$MESS["CRM_ENTITY_FULL_ADDRESS"] = "Adresas";
+$MESS["CRM_ENTITY_FULL_REG_ADDRESS"] = "Juridinis adresas";
+$MESS["CRM_ENTITY_ADDRESS_CHANGE_EVENT_EMPTY"] = "-Tuščia-";
+$MESS["CRM_ENTITY_ADDRESS_PRY"] = "Gatvės adresas";
+$MESS["CRM_ENTITY_ADDRESS_REG"] = "Juridinis adresas";
+?>

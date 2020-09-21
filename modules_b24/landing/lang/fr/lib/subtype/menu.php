@@ -1,0 +1,10 @@
+<?
+$MESS["LANDING_BLOCK_ST_PERSONAL_ACCOUNT"] = "Compte personnel";
+$MESS["LANDING_BLOCK_ST_PERSONAL_CART"] = "Panier";
+$MESS["LANDING_BLOCK_ST_PERSONAL_ORDERS"] = "Commandes en cours";
+$MESS["LANDING_BLOCK_ST_PERSONAL_ORDERS_HISTORY"] = "Historique des commandes";
+$MESS["LANDING_BLOCK_ST_PERSONAL_PERSONAL"] = "Espace personnel";
+$MESS["LANDING_BLOCK_ST_PERSONAL_PRIVATE"] = "Informations personnelles";
+$MESS["LANDING_BLOCK_ST_PERSONAL_PROFILE"] = "Profils de commande";
+$MESS["LANDING_BLOCK_ST_PERSONAL_SUBSCRIBE"] = "Abonnement";
+?>

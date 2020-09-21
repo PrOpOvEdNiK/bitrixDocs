@@ -1,0 +1,37 @@
+<?
+$MESS["EC_IBLOCK_MODULE_NOT_INSTALLED"] = "El modulo de Bloque informativo no esta instalado";
+$MESS["EC_INTRANET_MODULE_NOT_INSTALLED"] = "El modulo de intranet no esta instalado";
+$MESS["INAF_F_DESCRIPTION"] = "Descripción";
+$MESS["INAF_F_FLOOR"] = "Piso";
+$MESS["INAF_F_ID"] = "ID";
+$MESS["INAF_F_NAME"] = "Nombre";
+$MESS["INAF_F_PHONE"] = "Teléfono";
+$MESS["INAF_F_PLACE"] = "Capicidad";
+$MESS["INAF_ITEM_NOT_FOUND"] = "La reserva no fue encontrada";
+$MESS["INAF_MEETING_NOT_FOUND"] = "La sala de reunión no fue encontrada";
+$MESS["INTASK_C29_CONFLICT"] = "La sala de reunión esta reservada desde #TIME1# hasta #TIME2#: #RES#";
+$MESS["INTASK_C29_EMPTY_DATE"] = "La fecha de reserva no esta especificada.";
+$MESS["INTASK_C29_EMPTY_DURATION"] = "La duración de la reunión no esta especificada.";
+$MESS["INTASK_C29_EMPTY_NAME"] = "El titulo de la reunión no esta especificada.";
+$MESS["INTASK_C29_EMPTY_TIME"] = "La hora de reserva no esta especificada.";
+$MESS["INTASK_C29_HM"] = "horas:minutos";
+$MESS["INTASK_C29_NEED_AUTH"] = "Usted tiene que autorizarse antes de reservar la sala de reunión.";
+$MESS["INTASK_C29_NO_RPERMS"] = "Usted no tiene permiso para reservar una sala de reunión.";
+$MESS["INTASK_C29_NO_RPERMS_MODIFY"] = "Usted no tiene los permisos para editar esta reserva";
+$MESS["INTASK_C29_PERIOD_TYPE"] = "Tipo de periodo";
+$MESS["INTASK_C29_UF_PERSONS"] = "Personas";
+$MESS["INTASK_C29_UF_PREPARE_ROOM"] = "Preparación de la sala de reunión";
+$MESS["INTASK_C29_UF_RES_TYPE"] = "Tipo de Reunión";
+$MESS["INTASK_C29_UF_RES_TYPEA"] = "Consulta";
+$MESS["INTASK_C29_UF_RES_TYPEB"] = "Presentación";
+$MESS["INTASK_C29_UF_RES_TYPEC"] = "Negociación";
+$MESS["INTASK_C29_UF_RES_TYPED"] = "Otro";
+$MESS["INTASK_C29_WRONG_DATE"] = "La fecha de reserva es incorrecta. Por favor seguir el formato de fecha: #FORMAT#";
+$MESS["INTASK_C29_WRONG_DURATION"] = "La duración de la reunión es incorrecta";
+$MESS["INTASK_C29_WRONG_REG_DATE"] = "La fecha de finalización del evento es incorrecto. Por favor siga el formato: #FORMAT#";
+$MESS["INTASK_C29_WRONG_TIME"] = "La hora de reserva es incorrecta. Por favor seguir el formato de hora: #FORMAT#";
+$MESS["INTASK_C36_PAGE_TITLE"] = "Reserva de la sala de reunión";
+$MESS["INTASK_C36_PAGE_TITLE1"] = "Reserva de la sala de reunión";
+$MESS["INTR_IRMR_NAME_TEMPLATE_DEFAULT"] = "#NOBR##NAME# #LAST_NAME##/NOBR#";
+$MESS["INTS_NO_IBLOCK_PERMS"] = "Usted no tiene permiso para ver la tarea del Bloque informativo.";
+?>

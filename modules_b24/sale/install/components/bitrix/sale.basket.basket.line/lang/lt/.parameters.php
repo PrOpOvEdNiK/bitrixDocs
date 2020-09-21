@@ -1,0 +1,32 @@
+<?
+$MESS["SBBL_PATH_TO_BASKET"] = "Krepšelio puslapis";
+$MESS["SBBL_PATH_TO_PERSONAL"] = "Asmeninis skyrius";
+$MESS["SBBL_SHOW_PERSONAL_LINK"] = "Rodyti nuorodą į asmeninį skyrių";
+$MESS["SBBL_SHOW_NUM_PRODUCTS"] = "Rodyti prekių kiekį";
+$MESS["SBBL_SHOW_TOTAL_PRICE"] = "Rodyti bendrą prekių sumą";
+$MESS["SBBL_SHOW_PRODUCTS"] = "Rodyti prekių sąrašą";
+$MESS["SBBL_POSITION_FIXED"] = "Rodyti komponentą per kitus elementus";
+$MESS["SBBL_POSITION_VERTICAL"] = "Vertikalus lygiavimas";
+$MESS["SBBL_POSITION_VERTICAL_TOP"] = "į viršų";
+$MESS["SBBL_POSITION_VERTICAL_BOTTOM"] = "žemyn";
+$MESS["SBBL_POSITION_HORIZONTAL"] = "Horizontalus lygiavimas";
+$MESS["SBBL_POSITION_HORIZONTAL_LEFT"] = "į kairę";
+$MESS["SBBL_POSITION_HORIZONTAL_RIGHT"] = "į dešinę";
+$MESS["SBBL_PATH_TO_ORDER"] = "Užsakymo puslapis";
+$MESS["SBBL_SHOW_DELAY"] = "Rodyti pageidavimų sąrašą";
+$MESS["SBBL_SHOW_NOTAVAIL"] = "Rodyti neprieinamas prekes";
+$MESS["SBBL_SHOW_SUBSCRIBE"] = "Rodyti prekes iš naudotojo pageidavimų sąrašo";
+$MESS["SBBL_SHOW_IMAGE"] = "Rodyti prekės vaizdą";
+$MESS["SBBL_SHOW_PRICE"] = "Rodyti prekės kainą";
+$MESS["SBBL_SHOW_SUMMARY"] = "Rodyti tarpinė sumą kiekvienoje eilutėje";
+$MESS["SBBL_SHOW_EMPTY_VALUES"] = "Rodyti nulines reikšmes tuščiame krepšelyje";
+$MESS["SBBL_POSITION_CENTER"] = "centras";
+$MESS["SBBL_PATH_TO_REGISTER"] = "Registracijos puslapis";
+$MESS["SBBL_PATH_TO_PROFILE"] = "Profilio puslapis";
+$MESS["SBBL_PERSONAL"] = "Asmeninis skyrius";
+$MESS["SBBL_AUTHOR"] = "Autorizavimas";
+$MESS["SBBL_SHOW_AUTHOR"] = "Leisti autorizavimą krepšelyje";
+$MESS["SBBL_LIST"] = "Prekių sąrašas";
+$MESS["SBBL_HIDE_ON_BASKET_PAGES"] = "Nerodyti krepšelio ir užsakymo apiforminimo puslapiuose";
+$MESS["HIDE_ON_BASKET_PAGES_TIP"] = "Ši parinktis leidžia jums paslėpti komponentą krepšelio ir užsakymo apiforminimo puslapiuose. Rekomenduojama palikti šią parinktį įjungta norint išvengti papildomos apkrovos šiuose puslapiuose.";
+?>

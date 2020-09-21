@@ -1,0 +1,8 @@
+<?
+$MESS["SENDER_CAMPAIGN_LIST_BTN_ADD"] = "Ajouter une campagne";
+$MESS["SENDER_CAMPAIGN_LIST_BTN_EDIT"] = "Éditer";
+$MESS["SENDER_CAMPAIGN_LIST_BTN_EDIT_TITLE"] = "Éditer une campagne";
+$MESS["SENDER_CAMPAIGN_LIST_BTN_REMOVE"] = "Supprimer";
+$MESS["SENDER_CAMPAIGN_LIST_BTN_REMOVE_TITLE"] = "Supprimer la campagne";
+$MESS["SENDER_TEMPLATE_LIST_BTN_VIEW"] = "Afficher";
+?>

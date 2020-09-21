@@ -1,0 +1,3 @@
+<?
+$MESS["BOT_TOKEN_ENTITY_DATE_CREATE_FIELD"] = "Utworzone";
+?>

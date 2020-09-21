@@ -1,0 +1,34 @@
+<?
+$MESS["AUTH_BLOG"] = "Blog";
+$MESS["AUTH_BZP"] = "Flux de documents";
+$MESS["AUTH_CALENDAR"] = "Calendrier";
+$MESS["AUTH_CALENDAR_DESCR"] = "Consulter son calendrier";
+$MESS["AUTH_CAPTCHA_PROMT"] = "Types de tables différentes de type standard sont disponibles à partir de MySQL 4.0";
+$MESS["AUTH_CLOSE_WINDOW"] = "Fermer";
+$MESS["AUTH_EXCHANGE"] = "Nouveaux messages dans Microsoft Exchange";
+$MESS["AUTH_EXTMAIL"] = "Nouvelles lettres dans la boîte aux lettres";
+$MESS["AUTH_EXTMAIL_ERR"] = "Modifier les paramètres de la boîte aux lettres";
+$MESS["AUTH_FILES"] = "Mon Drive";
+$MESS["AUTH_FORGOT_PASSWORD_2"] = "Avez-vous oublié votre mot de passe ?";
+$MESS["AUTH_GROUPS"] = "Groupes";
+$MESS["AUTH_LOG"] = "Flux d'activités";
+$MESS["AUTH_LOGIN"] = "Connexion";
+$MESS["AUTH_LOGIN_BUTTON"] = "Connexion";
+$MESS["AUTH_LOGOUT"] = "Sortie";
+$MESS["AUTH_MICROBLOG"] = "messages";
+$MESS["AUTH_MP"] = "Mon Portail";
+$MESS["AUTH_NEW_MESSAGES"] = "Conversations";
+$MESS["AUTH_NEW_MESSAGES_DESCR"] = "Accéder aux messages";
+$MESS["AUTH_PASSWORD"] = "Mot de passe";
+$MESS["AUTH_PERSONAL_PAGE"] = "Mon Profil";
+$MESS["AUTH_PERSONAL_PAGE_DESCR"] = "Liens sur les divers éléments de la gestion de profils";
+$MESS["AUTH_PHOTO"] = "Liste de photos";
+$MESS["AUTH_PROFILE"] = "Ma page";
+$MESS["AUTH_PROFILE_DESCR"] = "Modifier votre profil";
+$MESS["AUTH_REGISTER"] = "Enregistrement";
+$MESS["AUTH_REMEMBER_ME"] = "se souvenir de moi";
+$MESS["AUTH_TASKS"] = "Tâches";
+$MESS["AUTH_TASKS_DESCR"] = "Consulter ses tâches";
+$MESS["AUTH_USER_MENU"] = "le menu de l'utilisateur";
+$MESS["AUTH_WELCOME_TEXT"] = "Bonjour";
+?>

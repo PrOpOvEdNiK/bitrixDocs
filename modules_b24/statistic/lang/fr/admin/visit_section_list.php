@@ -1,0 +1,31 @@
+<?
+$MESS["STAT_ADV_BACK"] = "a restituer";
+$MESS["STAT_ADV_NO_BACK"] = "coups directs";
+$MESS["STAT_ADV_SUMMA"] = "total des deux coups directs et retours";
+$MESS["STAT_ATTENTION"] = "Attention !";
+$MESS["STAT_ATTENTION_GOTO"] = "Cliquez sur le '& raquo;' symbole pour accéder à la section ou la page.";
+$MESS["STAT_FILTER_PAGE_DIAGRAM_ALT"] = "Afficher frappe schéma pour cette section";
+$MESS["STAT_F_ADV"] = "Campagne publicitaire";
+$MESS["STAT_F_ADV_DATA_TYPE"] = "Type de données pour des campagnes publicitaires";
+$MESS["STAT_F_SECTIONS"] = "Page / Section";
+$MESS["STAT_F_VIEW"] = "Affichage";
+$MESS["STAT_F_VIEW_FILES"] = "pages seulement";
+$MESS["STAT_F_VIEW_SECTIONS"] = "sections seulement";
+$MESS["STAT_GO"] = "Suivez le lien";
+$MESS["STAT_GROUP_BY_ENTERS"] = "Les points d'entrée";
+$MESS["STAT_GROUP_BY_EXITS"] = "Points de sortie";
+$MESS["STAT_GROUP_BY_HITS"] = "Hits";
+$MESS["STAT_HITS"] = "Hits";
+$MESS["STAT_NO_DATA"] = "Pas de données pour construire un diagramme";
+$MESS["STAT_OTHER"] = "(autres)";
+$MESS["STAT_PAGE"] = "Section / Page";
+$MESS["STAT_PERCENT"] = "La part quantitative";
+$MESS["STAT_RECORDS_LIST"] = "Pages et sections popularité";
+$MESS["STAT_SECTION_GRAPH"] = "Graphe du trafic pour cette page";
+$MESS["STAT_SECTION_LINK_STAT"] = "Lien statistiques pour cette page";
+$MESS["STAT_SECTION_PAGES"] = "Inscriptions";
+$MESS["STAT_SESSIONS"] = "Accéder à la liste des sessions";
+$MESS["STAT_T_ENTER_DIAGRAM"] = "Liste des points d'entrée";
+$MESS["STAT_T_EXIT_DIAGRAM"] = "Liste des points de sortie";
+$MESS["STAT_T_HITS_DIAGRAM"] = "Fréquentation";
+?>

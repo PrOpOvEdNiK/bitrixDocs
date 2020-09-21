@@ -1,0 +1,29 @@
+<?
+$MESS["CRM_ACTION_DEFAULT_SUBJECT"] = "Nowa aktywność (#DATE#)";
+$MESS["CRM_ACTIVITY_COULD_NOT_CREATE_POSTING"] = "Nie można zarejestrować wiadomości e-mail.";
+$MESS["CRM_ACTIVITY_COULD_NOT_SAVE_POSTING_FILE"] = "Nie można dołączyć do wiadomości \"#FILE_NAME#\".";
+$MESS["CRM_ACTIVITY_EMAIL_CREATION_CANCELED"] = "Wiadomość e-mail została anulowana.";
+$MESS["CRM_ACTIVITY_EMAIL_EMPTY_FROM_FIELD"] = "Proszę określić nadawcę wiadomości.";
+$MESS["CRM_ACTIVITY_EMAIL_EMPTY_TO_FIELD"] = "Proszę określić odbiorcę wiadomości.";
+$MESS["CRM_ACTIVITY_INVALID_EMAIL"] = "#VALUE#' nie jest prawidłowym adresem e-mail.";
+$MESS["CRM_ACTIVITY_RESPONSIBLE_NOT_FOUND"] = "Nie można znaleźć użytkownika odpowiedzialnego za to działanie.";
+$MESS["CRM_CALL_ACTION_DEFAULT_SUBJECT"] = "Nowe połączenie telefoniczne (#DATE#)";
+$MESS["CRM_COMMUNICATION_TAB_COMPANY"] = "Firma";
+$MESS["CRM_COMMUNICATION_TAB_CONTACT"] = "Kontakt";
+$MESS["CRM_COMMUNICATION_TAB_DEAL"] = "Deal";
+$MESS["CRM_COMMUNICATION_TAB_LEAD"] = "Lead";
+$MESS["CRM_COMPANY_UPDATE_PERMISSION_DENIED"] = "Nie masz uprawnień do edytowania działań firmy #TITLE#. Skontaktuj się z administratorem intranetu.";
+$MESS["CRM_CONTACT_UPDATE_PERMISSION_DENIED"] = "Nie masz uprawnień do edytowania działań kontaktu #TITLE#. Skontaktuj się z administratorem intranetu.";
+$MESS["CRM_DEAL_UPDATE_PERMISSION_DENIED"] = "Nie masz uprawnień do edytowania działań w ramach dealu #TITLE#. Skontaktuj się z administratorem intranetu.";
+$MESS["CRM_EMAIL_ACTION_DEFAULT_DESCRIPTION"] = "[brak treści]";
+$MESS["CRM_EMAIL_ACTION_DEFAULT_SUBJECT"] = "Nowy e -mail (#DATE#)";
+$MESS["CRM_INCOMING_CALL_ACTION_DEFAULT_SUBJECT_EXT"] = "Przychodzące połączenie telefoniczne #TITLE#";
+$MESS["CRM_LEAD_UPDATE_PERMISSION_DENIED"] = "Nie masz uprawnień do edytowania działań w ramach leadu #TITLE#. Skontaktuj się z administratorem intranetu.";
+$MESS["CRM_MEETING_ACTION_DEFAULT_SUBJECT"] = "Nowe spotkanie (#DATE#)";
+$MESS["CRM_MEETING_ACTION_DEFAULT_SUBJECT_EXT"] = "Spotkanie z #TITLE#";
+$MESS["CRM_OUTGOING_CALL_ACTION_DEFAULT_SUBJECT_EXT"] = "Wychodzące połączenie telefoniczne #TITLE#";
+$MESS["CRM_PERMISSION_DENIED"] = "Odmowa dostępu";
+$MESS["CRM_TITLE_EMAIL_FROM"] = "od";
+$MESS["CRM_TITLE_EMAIL_SUBJECT"] = "Temat";
+$MESS["CRM_TITLE_EMAIL_TO"] = "do";
+?>

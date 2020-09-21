@@ -1,0 +1,31 @@
+<?
+$MESS["CRM_KANBAN_ACTIVITY_LETSGO_DEAL"] = "Planifiez de nouvelles activités pour faire descendre les transactions dans le pipeline.";
+$MESS["CRM_KANBAN_ACTIVITY_LETSGO_LEAD"] = "Planifiez de nouvelles activités pour faire descendre les prospects dans l'entonnoir des ventes.";
+$MESS["CRM_KANBAN_ACTIVITY_MORE"] = "Plus";
+$MESS["CRM_KANBAN_ACTIVITY_MY"] = "Activités";
+$MESS["CRM_KANBAN_ACTIVITY_PLAN"] = "Planifier";
+$MESS["CRM_KANBAN_ACTIVITY_PLAN_CALL"] = "Appel";
+$MESS["CRM_KANBAN_ACTIVITY_PLAN_MEETING"] = "Réunion";
+$MESS["CRM_KANBAN_ACTIVITY_PLAN_TASK"] = "Tâche";
+$MESS["CRM_KANBAN_CONVERT_POPUP_TITLE"] = "Créer en se basant sur le prospect : ";
+$MESS["CRM_KANBAN_CONVERT_SELECT_ENTITY"] = "Sélectionner";
+$MESS["CRM_KANBAN_ERROR_DISABLE_CONVERTED_LEAD"] = "Impossible de modifier le statut des prospects convertis.";
+$MESS["CRM_KANBAN_FAIL_CONFIRM_APPLY"] = "Appliquer";
+$MESS["CRM_KANBAN_FAIL_CONFIRM_CANCEL"] = "Annuler";
+$MESS["CRM_KANBAN_FAIL_CONFIRM_DEAL"] = "Voulez-vous modifier le statut de la transaction en \"#STATUS_NAME#\" ? Ce statut indique que la transaction est perdue.";
+$MESS["CRM_KANBAN_FAIL_CONFIRM_INVOICE"] = "Voulez-vous modifier le statut de la facture en \"#STATUS_NAME#\" ? Ce statut indique que la facture est perdue.";
+$MESS["CRM_KANBAN_FAIL_CONFIRM_LEAD"] = "Voulez-vous modifier le statut du prospect en \"#STATUS_NAME#\" ? Ce statut indique que le prospect est perdu.";
+$MESS["CRM_KANBAN_FAIL_CONFIRM_QUOTE"] = "Voulez-vous modifier le statut du devis en \"#STATUS_NAME#\" ? Ce statut indique que le devis est perdu.";
+$MESS["CRM_KANBAN_FINAL_ALERT"] = "Voulez-vous fermer cela comme échec ?";
+$MESS["CRM_KANBAN_INVOICE_PARAMS"] = "Finaliser le statut de la facture";
+$MESS["CRM_KANBAN_INVOICE_PARAMS_CANCEL"] = "Annuler";
+$MESS["CRM_KANBAN_INVOICE_PARAMS_COMMENT"] = "Commentaire";
+$MESS["CRM_KANBAN_INVOICE_PARAMS_DATE"] = "Date";
+$MESS["CRM_KANBAN_INVOICE_PARAMS_DOCNUM"] = "Facture #";
+$MESS["CRM_KANBAN_INVOICE_PARAMS_SAVE"] = "Enregistrer";
+$MESS["CRM_KANBAN_NO_DATA"] = "Cette page ne contient actuellement aucune donnée.";
+$MESS["CRM_KANBAN_NO_EMAIL"] = "Pas d'e-mail";
+$MESS["CRM_KANBAN_NO_IMOL"] = "Pas de communication par chat";
+$MESS["CRM_KANBAN_NO_PHONE"] = "Pas de téléphone";
+$MESS["CRM_KANBAN_RELOAD_PAGE"] = "Veuillez actualiser la page.";
+?>

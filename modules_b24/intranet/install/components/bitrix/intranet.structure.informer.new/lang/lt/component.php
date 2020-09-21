@@ -1,0 +1,5 @@
+<?
+$MESS["INTR_ISIN_ACCEPTED"] = "Samdomas";
+$MESS["INTR_ISIN_ICON_ADD"] = "Pridėti įrašą";
+$MESS["INTR_ISIN_NAME_TEMPLATE_DEFAULT"] = "#NOBR##NAME# #LAST_NAME##/NOBR#";
+?>

@@ -1,0 +1,34 @@
+<?
+$MESS["ACTION_VARIABLE_TIP"] = "Nazwa zmiennej, w której wymagane działanie będzie przekazywane: ADD_TO_COMPARE_LIST, ADD2BASKET etc. Domyślną wartością jest <i>działanie</i>.";
+$MESS["AJAX_MODE_TIP"] = "Włącz AJAX w komponentach.";
+$MESS["AJAX_OPTION_JUMP_TIP"] = "Określa przewinięcie do komponentu, gdy przejście AJAX zostanie zakończone.";
+$MESS["AJAX_OPTION_SHADOW_TIP"] = "Określa obszar modyfikowany do cieniowania na przejściu AJAX.";
+$MESS["AJAX_OPTION_STYLE_TIP"] = "Określa do pobrania i przetwarzania styli CSS komponentu na przejściu AJAX.";
+$MESS["BASKET_URL_TIP"] = "Podaj ściężkę do strony koszyka klienta.";
+$MESS["CACHE_FILTER_TIP"] = "Aktywując tę opcję spowodujesz, że wszystkie wyniki filtru będą zachowane w schowku.";
+$MESS["CACHE_TIME_TIP"] = "W tym miejscu określ okres czasu, w trakcie którego pamięć podręczna jest aktualna.";
+$MESS["DETAIL_URL_TIP"] = "Określ ścieżkę do strony szczegółów elementów dla aktualnego bloku informacji.";
+$MESS["DISPLAY_BOTTOM_PAGER_TIP"] = "Jeżeli zaznaczone, linki ścieżki nawigacji będą wyświetlane na dole strony.";
+$MESS["DISPLAY_PANEL_TIP"] = "Jeżeli zaznaczone, przyciski narzędzi będą pokazywane na pasku narzędzi administratora i obszar paska narzędzi edycji komponentu w trybie edycji strony.";
+$MESS["DISPLAY_TOP_PAGER_TIP"] = "Jeżeli zaznaczone, linki ścieżki nawigacji będą wyświetlane na górze strony.";
+$MESS["ELEMENT_ID_TIP"] = "To pole zawiera wyrażenie, które prowadzi do ID elementu, dla którego lista wiązanych elementów ma być pokazany.";
+$MESS["ELEMENT_SORT_FIELD_TIP"] = "Pole, przez które pozycje będą posortowane.";
+$MESS["ELEMENT_SORT_ORDER_TIP"] = "Kierunek, przez który elementy mają być posortowane.";
+$MESS["FILTER_NAME_TIP"] = "Nazwa zmiennej, w której ustawienia filtra będą przekazywane. Możesz pozostawić pole puste, aby użyć domyślnej nazwy.";
+$MESS["IBLOCK_TYPE_TIP"] = "Wybierz tutaj jeden z istniejących typów bloków informacji. Kliknij <b>OK</b>.  aby załadować bloki informacji wybranego typu.";
+$MESS["LINK_PROPERTY_SID_TIP"] = "Wybierz tutaj właściwość wiążącą element lub określ to jako kod w następnym polu.";
+$MESS["PAGER_DESC_NUMBERING_CACHE_TIME_TIP"] = "Czas buforowania pierwszych stron, w sekundach, dla wstecznej nawigacji.";
+$MESS["PAGER_DESC_NUMBERING_TIP"] = "Użyj tej opcji, jeżeli chcesz umieścić nowe elementy na górze. Dzięki temu tylko ostatnia strona w strukturze ścieżki nawigacji jest modyfikowana. Wszystkie pozostałe strony mogą być buforowane przez dość długi czas.";
+$MESS["PAGER_SHOW_ALWAYS_TIP"] = "Jeżeli zaznaczone, panel ścieżki nawigacji będzie pokazywany nawet jeżeli wszytskie elementy mieszczą się na stronie.";
+$MESS["PAGER_TEMPLATE_TIP"] = "Nazwa szablonu nawigacji. Jeżeli pusty, domyślny szablon (<b>.domyślny</b>) będzie używany. Alternatywnie, możesz użyć <b>pomarańczowego</b> szablonu.";
+$MESS["PAGER_TITLE_TIP"] = "Nazwa kategorii, przez którą nawigacja będzie przeglądana.";
+$MESS["PAGE_ELEMENT_COUNT_TIP"] = "Wyszczególnia liczbę elementów na stronie.";
+$MESS["PRICE_CODE_TIP"] = "Określ typ ceny, który będzie używany w katalogu. Jeżeli pominiesz typ ceny, ceny i przyciski <b>Kup</b> i <b>Dodaj do koszyka</b> nie będą wyświetlane.";
+$MESS["PRICE_VAT_INCLUDE_TIP"] = "Zaznaczenie tej opcji określi wliczenie podatku do wyświetlanej ceny.";
+$MESS["PRODUCT_ID_VARIABLE_TIP"] = "Nazwa zmiennej, w której będzie przekazywane ID produktu.";
+$MESS["PROPERTY_CODE_TIP"] = "Wybierz właściwości bloku informacji, które chcesz wyświetlać na liście elementów. Wybierając <i>żadne</i> i nie określając kodów właściwości poniżej spowoduje niewyświetlanie właściwości.";
+$MESS["SECTION_ID_VARIABLE_TIP"] = "Nazwa zmiennej, w której ID sekcji bloku informacji będzie przekazywane.";
+$MESS["SECTION_URL_TIP"] = "Określ tutaj ścieżkę do bloku informacji opisu sekcji.";
+$MESS["SET_TITLE_TIP"] = "Jeżeli zaznaczone, tytuł strony zostanie ustawiony na nazwę powiązanego bloku informacji.";
+$MESS["USE_PRICE_COUNT_TIP"] = "Jeżeli zaznaczone, wszystkie istniejące przedziały cenowe zostaną wybrane.";
+?>

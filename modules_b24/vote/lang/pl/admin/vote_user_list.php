@@ -1,0 +1,34 @@
+<?
+$MESS["DELETE_ERROR"] = "Wystąpił błąd podczas usuwania obiektu.";
+$MESS["MAIN_ADMIN_LIST_CHECKED"] = "Zaznaczone:";
+$MESS["MAIN_ADMIN_LIST_SELECTED"] = "Wybrany:";
+$MESS["VOTE_ALL"] = "(Wszystko)";
+$MESS["VOTE_CONFIRM_DEL"] = "usunąć tego gościa?";
+$MESS["VOTE_COUNTER"] = "Ilość głosów";
+$MESS["VOTE_DATE_END"] = "Ostatnie";
+$MESS["VOTE_DATE_START"] = "Pierwsza";
+$MESS["VOTE_DELETE"] = "Usuń";
+$MESS["VOTE_EDIT_USER"] = "Profil Użytkownika";
+$MESS["VOTE_EXACT_MATCH"] = "Użyj dokładnego dopasowania";
+$MESS["VOTE_FL_COUNTER"] = "Ilość głosów";
+$MESS["VOTE_FL_DATE_LS"] = "Data ostatniej ankiety";
+$MESS["VOTE_FL_DATE_ST"] = "Data pierwszej ankiety";
+$MESS["VOTE_FL_ID"] = "ID Użytkownika";
+$MESS["VOTE_FL_ID_STAT"] = "ID gościa w statystykach";
+$MESS["VOTE_FL_IP"] = "adres IP";
+$MESS["VOTE_FL_VOTE"] = "Ankieta";
+$MESS["VOTE_F_COUNTER"] = "liczba głosów:";
+$MESS["VOTE_F_DATE_END"] = "Data ostatniej ankiety";
+$MESS["VOTE_F_DATE_START"] = "Data pierwszej ankiety";
+$MESS["VOTE_F_GUEST_ID"] = "ID gościa w module statystycznym:";
+$MESS["VOTE_F_IP"] = "Adres IP:";
+$MESS["VOTE_F_USER"] = "Imię lub nazwisko użytkownika";
+$MESS["VOTE_F_VOTE"] = "Ankieta:";
+$MESS["VOTE_GUEST_USER_INFO"] = "Informacje użytkownika";
+$MESS["VOTE_NOT_AUTHORIZED"] = "(nieautoryzowane)";
+$MESS["VOTE_PAGES"] = "Odwiedzający";
+$MESS["VOTE_PAGE_TITLE"] = "Goście biorący udział w sondażach";
+$MESS["VOTE_TILL"] = "do";
+$MESS["VOTE_USER"] = "Gość";
+$MESS["VOTE_USER_VOTES"] = "Lista ankiet, w których wzięli udział gośćie";
+?>

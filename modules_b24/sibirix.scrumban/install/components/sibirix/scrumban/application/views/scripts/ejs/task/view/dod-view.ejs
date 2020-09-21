@@ -1,0 +1,3 @@
+<script type="text/ejs" id="tplTaskDod">
+    <label class="dod"><input type="checkbox" class="styled" <% if (dod.isCheckedTask(checkDodList)) { %>checked="checked"<% }%> data-dodId="<%= dod.dodId %>"><i></i><span><%= htmlspecialchars(dod.description) %></span></label>
+</script>

@@ -1,0 +1,20 @@
+<script type="text/ejs" id="tplProjectView">
+    <div class="project-main">
+        <div class="project-logo"><%
+            if (image) {
+                %><div class="logo-image"><img src="<%== image %>"></div><%
+            } else if (this.avatarColor && this.avatarLetters) {
+                %><div class="logo-image" style='background-color: <%= avatarColor %>'><%= avatarLetters %></div><%
+            } else {
+                %><div class="logo-image noLogo"></div><%
+            }
+        %></div>
+        <div class="info">
+            <div class="title">
+                <span class="lineTitle"><%== name %></span>
+                <span class="lineDescr"><%== description %></span>
+            </div>
+        </div>
+        <div class="clear"></div>
+    </div>
+</script>

@@ -1,0 +1,5 @@
+<?
+$MESS["CRM_ENTITY_ED_PROG_CLOSE"] = "Completar";
+$MESS["CRM_ENTITY_ED_PROG_DEAL_CLOSE"] = "Cerrar negociación";
+$MESS["CRM_ENTITY_ED_PROG_LEAD_CLOSE"] = "Cerrar prospecto";
+?>

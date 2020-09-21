@@ -1,0 +1,34 @@
+<?
+$MESS["CRM_TAB_1"] = "Pasiūlymas";
+$MESS["CRM_TAB_1_TITLE"] = "Pasiūlymo savybės";
+$MESS["CRM_QUOTE_SHOW_TITLE"] = "Pasiūlymas ##QUOTE_NUMBER# nuo #BEGINDATE#";
+$MESS["CRM_QUOTE_SHOW_NEW_TITLE"] = "Naujas pasiūlymas";
+$MESS["CRM_QUOTE_WEBDAV_FILE_LOADING"] = "Įkeliama";
+$MESS["CRM_QUOTE_WEBDAV_FILE_ALREADY_EXISTS"] = "Failas tokiu pavadinimu jau egzistuoja. Jūs galite naudoti esamą aplanką, tokiu atveju esama dokumento versija bus išsaugotą istorijoje.";
+$MESS["CRM_QUOTE_WEBDAV_FILE_ACCESS_DENIED"] = "Negalima įeiti";
+$MESS["CRM_QUOTE_WEBDAV_ATTACH_FILE"] = "Prisegti failą";
+$MESS["CRM_QUOTE_WEBDAV_TITLE"] = "Failai";
+$MESS["CRM_QUOTE_WEBDAV_DRAG_FILE"] = "Pertempti vieną arba daugiau failų čia";
+$MESS["CRM_QUOTE_WEBDAV_SELECT_FILE"] = "arba pasirinkti savo kompiuteryje";
+$MESS["CRM_QUOTE_WEBDAV_SELECT_FROM_LIB"] = "Pasirinkti iš bibiotekos";
+$MESS["CRM_QUOTE_WEBDAV_LOAD_FILES"] = "Atnaujinti failus";
+$MESS["CRM_QUOTE_DISK_ATTACH_FILE"] = "Prisegti failą";
+$MESS["CRM_QUOTE_DISK_ATTACHED_FILES"] = "Prisegti failai";
+$MESS["CRM_QUOTE_DISK_SELECT_FILE"] = "Ieškoti Bitrix24";
+$MESS["CRM_QUOTE_DISK_SELECT_FILE_LEGEND"] = "Atidaryti Bitrix24.Diskas langą";
+$MESS["CRM_QUOTE_DISK_UPLOAD_FILE"] = "Įkelti failą";
+$MESS["CRM_QUOTE_DISK_UPLOAD_FILE_LEGEND"] = "Vilkite failus čia";
+$MESS["CRM_QUOTE_CUSTOM_SAVE_BUTTON_TITLE"] = "Išsaugoti ir grįžti";
+$MESS["CRM_QUOTE_CONV_ACCESS_DENIED"] = "Jūs privalote turėti sandorių ir iniciatyvų \"Kurti\" teises.";
+$MESS["CRM_QUOTE_CONV_GENERAL_ERROR"] = "Klaida.";
+$MESS["CRM_QUOTE_CONV_DIALOG_TITLE"] = "Sukurti savybę pasiūlymo pagrindu";
+$MESS["CRM_QUOTE_CONV_DIALOG_CONTINUE_BTN"] = "Tęsti";
+$MESS["CRM_QUOTE_CONV_DIALOG_CANCEL_BTN"] = "Ayšaukti";
+$MESS["CRM_QUOTE_CONV_DIALOG_SYNC_LEGEND"] = "Pasirinktos savybės neturi laukų į kuriuos duomenys iš sandorio gali būti perduotos. Pasirinkite savybes, kuriuose papildomi laukai bus sukurti, informacijos išsaugojimui.";
+$MESS["CRM_QUOTE_CONV_DIALOG_SYNC_FILED_LIST_TITLE"] = "Kokie laukai bus sukurti";
+$MESS["CRM_QUOTE_CONV_DIALOG_SYNC_ENTITY_LIST_TITLE"] = "Pasirinkite savybes kuriuose bus sukurti papildomi laukai";
+$MESS["CRM_QUOTE_EDIT_CONV_DEAL_CATEGORY_DLG_TITLE"] = "Sandorio savybės";
+$MESS["CRM_QUOTE_EDIT_CONV_DEAL_CATEGORY_DLG_FIELD"] = "Kanalas";
+$MESS["CRM_QUOTE_EDIT_BUTTON_SAVE"] = "Įrašyti";
+$MESS["CRM_QUOTE_EDIT_BUTTON_CANCEL"] = "Atšaukti";
+?>

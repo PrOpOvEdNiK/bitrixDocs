@@ -1,0 +1,30 @@
+<?
+$MESS["SUP_ALL"] = "(همه)";
+$MESS["SUP_ADD_MARK"] = "دقت پاسخ";
+$MESS["SUP_MARK"] = "دقت پاسخ";
+$MESS["SUP_F_DEFAULT"] = "پیش فرض";
+$MESS["SUP_ADD_CATEGORY"] = "گروه";
+$MESS["SUP_CRITICALITY"] = "میزان اهمیت";
+$MESS["SUP_ADD_CRITICALITY"] = "میزان اهمیت";
+$MESS["SUP_DELETE"] = "حذف";
+$MESS["SUP_F_DESCR"] = "توضیحات";
+$MESS["SUP_ADD_DIFFICULTY"] = "سختی";
+$MESS["SUP_F_ID"] = "شناسه";
+$MESS["SUP_F_SID"] = "کد نمونیک";
+$MESS["SUP_EDIT"] = "ویرایش";
+$MESS["SUP_PAGES"] = "رکورد";
+$MESS["SUP_RESET"] = "نوسازی";
+$MESS["SUP_F_RESPONSIBLE"] = "پاسخگو";
+$MESS["SUP_RESPONSIBLE"] = "پاسخگو";
+$MESS["SUP_SAVE"] = "ذخیره";
+$MESS["SUP_F_SITE"] = "سایتها";
+$MESS["SUP_SITE"] = "سایتها";
+$MESS["SUP_SORT"] = "ترتیب";
+$MESS["SUP_ADD_SOURCE"] = "منبع";
+$MESS["SUP_SOURCE"] = "منبع";
+$MESS["SUP_ADD_STATUS"] = "وضعیت";
+$MESS["SUP_STATUS"] = "وضعیت";
+$MESS["SUP_F_NAME"] = "عنوان";
+$MESS["SUP_NAME"] = "عنوان";
+$MESS["SUP_F_TYPE"] = "نوع";
+?>

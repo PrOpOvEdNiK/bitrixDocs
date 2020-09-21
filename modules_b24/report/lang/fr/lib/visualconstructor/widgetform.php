@@ -1,0 +1,4 @@
+<?
+$MESS["SAVE_WIDGET_CONFIG_SAVE_BUTTON"] = "Enregistrer";
+$MESS["SAVE_WIDGET_CONFIG_CANCEL_BUTTON"] = "Annuler";
+?>

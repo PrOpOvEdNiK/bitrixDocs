@@ -1,0 +1,32 @@
+<?
+$MESS["ADV_NIVO_PARAMETER_NO"] = "(nenustatyta)";
+$MESS["ADV_NIVO_PARAMETER_IMG"] = "Skaidrės nuotrauka";
+$MESS["ADV_NIVO_PARAMETER_LINK_URL"] = "Skaidrės nuoroda";
+$MESS["ADV_NIVO_PARAMETER_LINK_TITLE"] = "Užuominos tekstas";
+$MESS["ADV_NIVO_PARAMETER_LINK_TARGET"] = "Kur atidaryti nuoroda";
+$MESS["ADV_NIVO_PARAMETER_LINK_TARGET_SELF"] = "dabartiniame lange";
+$MESS["ADV_NIVO_PARAMETER_LINK_TARGET_BLANK"] = "naujame lange";
+$MESS["ADV_NIVO_PARAMETER_LINK_TARGET_PARENT"] = "tame pačiame rėmelyje";
+$MESS["ADV_NIVO_PARAMETER_LINK_TARGET_TOP"] = "tame pačiame naršyklės lange";
+$MESS["ADV_NIVO_PARAMETER_HEADING"] = "Antraštė";
+$MESS["ADV_NIVO_PARAMETER_PRESET"] = "Skaidrės šablonas";
+$MESS["ADV_NIVO_PARAMETER_HEADING_SHOW"] = "Rodyti antraštę";
+$MESS["ADV_NIVO_PARAMETER_HEADING_TEXT"] = "Antraštės tekstas";
+$MESS["ADV_NIVO_PARAMETER_FONT_SIZE"] = "Teksto dydis";
+$MESS["ADV_NIVO_PARAMETER_FONT_COLOR"] = "Teksto spalva";
+$MESS["ADV_NIVO_PARAMETER_BG_COLOR"] = "Fono spalva";
+$MESS["ADV_NIVO_PARAMETER_BG_OPACITY"] = "Fono skaidrumas";
+$MESS["ADV_NIVO_PARAMETER_ANNOUNCEMENT_SHOW"] = "Rodyti anonsą";
+$MESS["ADV_NIVO_PARAMETER_ANNOUNCEMENT_TEXT"] = "Anonso tekstas";
+$MESS["ADV_NIVO_PARAMETER_ANNOUNCEMENT"] = "Anonsas";
+$MESS["ADV_NIVO_PARAMETER_ANNOUNCEMENT_MOBILE_HIDE"] = "Slėpti plotą su anonsu nuo mobiliojo telefono peržiūros";
+$MESS["ADV_NIVO_PARAMETER_BUTTON"] = "Rodyti mygtuką";
+$MESS["ADV_NIVO_PARAMETER_BUTTON_TEXT"] = "Mygtuko tekstas";
+$MESS["ADV_NIVO_PARAMETER_BUTTON_TEXT_DEF"] = "Detaliai";
+$MESS["ADV_NIVO_PARAMETER_BUTTON_BG_COLOR"] = "Mygtuko spalva";
+$MESS["ADV_NIVO_PARAMETER_BUTTON_LINK_URL"] = "Mygtuko nuoroda";
+$MESS["ADV_NIVO_PARAMETER_OVERLAY"] = "Fonas";
+$MESS["ADV_NIVO_PARAMETER_OVERLAY_COLOR"] = "Fono spalva";
+$MESS["ADV_NIVO_PARAMETER_OVERLAY_OPACITY"] = "Fono skaidrumas";
+$MESS["ADV_NIVO_PARAMETER_EFFECT"] = "Skaidrių perjungimo efektas";
+?>

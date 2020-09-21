@@ -1,0 +1,5 @@
+<?
+$MESS["CRM_AUTOMATION_TEMPLATE_NAME"] = "Automatizavimo šablonas (#STATUS#)";
+$MESS["CRM_AUTOMATION_PARALLEL_ACTIVITY"] = "Lygiagretus vykdymas";
+$MESS["CRM_AUTOMATION_DELAY_ACTIVITY"] = "Pauzė";
+?>

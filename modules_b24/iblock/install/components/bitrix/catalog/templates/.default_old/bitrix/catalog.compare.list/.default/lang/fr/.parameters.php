@@ -1,0 +1,8 @@
+<?
+$MESS["CP_BCCL_TPL_PARAM_POSITION_BOTTOM_LEFT"] = "bas gauche";
+$MESS["CP_BCCL_TPL_PARAM_POSITION_BOTTOM_RIGHT"] = "bas droit";
+$MESS["CP_BCCL_TPL_PARAM_POSITION_TOP_LEFT"] = "haut gauche";
+$MESS["CP_BCCL_TPL_PARAM_POSITION_TOP_RIGHT"] = "haut droit";
+$MESS["CP_BCCL_TPL_PARAM_TITLE_POSITION"] = "Position";
+$MESS["CP_BCCL_TPL_PARAM_TITLE_POSITION_FIXED"] = "Graphique comparatif flottant au-dessus de la page";
+?>

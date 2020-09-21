@@ -1,0 +1,34 @@
+<?
+$MESS['STAT_ERROR'] = 'Klaida išsaugojant įrašą';
+$MESS['STAT_PARAMS'] = 'Parametrai';
+$MESS['STAT_PARAMS_S'] = 'Įrašo parametrai';
+$MESS['STAT_REDIRECT'] = 'Peradresuoti į (URL):';
+$MESS['STAT_GREEN_LAMP'] = 'aktyvus';
+$MESS['STAT_RED_LAMP'] = 'neaktyvus';
+$MESS['STAT_START_DATE'] = 'Pradžios data ';
+$MESS['STAT_END_DATE'] = 'Pabaigos data';
+$MESS['STAT_DEFAULT_MESSAGE'] = 'Priėjimas uždraustas tinklapio administratoriu';
+$MESS['STAT_EDIT_RECORD'] = 'Stop-sąrašo įrašo # #ID# parametrai';
+$MESS['STAT_NEW_RECORD'] = 'Naujas stop-sąrašo įrašas';
+$MESS['STAT_RECORDS_LIST'] = 'stop-sąrašas';
+$MESS['STAT_TIMESTAMP'] = 'Redaguota:';
+$MESS['STAT_ACTIVE'] = 'Aktyvum žymė:';
+$MESS['STAT_IP'] = 'Tinklo IP adresas:';
+$MESS['STAT_MASK'] = 'Tinklo kaukė:';
+$MESS['STAT_USER_AGENT'] = 'UserAgent:';
+$MESS['STAT_URL_FROM'] = 'Iš kur atėjo:';
+$MESS['STAT_URL_TO'] = 'Kur atėjo:';
+$MESS['STAT_MESSAGE'] = 'Rodyti pranešimą:';
+$MESS['STAT_COMMENT_S'] = 'Komentarai';
+$MESS['STAT_SAVE_STATISTIC'] = 'Išsaugoti statistiką:';
+$MESS['STAT_MESSAGE_LID'] = 'Kalbos koduotėje:';
+$MESS['STAT_EMPTY'] = 'tuščias';
+$MESS['STAT_ACTIVITY'] = 'Įrašo aktyvumas';
+$MESS['STAT_CONDITIONS'] = 'Pagal kokius požymius filtruoti lankytojus (logika - \"ir\")';
+$MESS['STAT_WHAT_TO_DO'] = 'Ką būtina padaryti';
+$MESS['STAT_ACTIONS'] = 'Veiksmai';
+$MESS['STAT_COMMENT'] = 'Administratoriaus komentaras';
+$MESS['STAT_NEW_STOPLIST'] = 'Naujas stop-sąrašo įrašas';
+$MESS['STAT_DELETE_STOPLIST'] = 'Šalinti stop-sąrašo įrašą';
+$MESS['STAT_DELETE_STOPLIST_CONFIRM'] = 'Ar tikrai norite šalinti stop-sąrašo įrašą?';
+?>

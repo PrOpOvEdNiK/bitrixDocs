@@ -1,0 +1,5 @@
+<?
+$MESS["CRM_INVOICE_SETTINGS_VIEW_KANBAN"] = "Faktura kanban";
+$MESS["CRM_INVOICE_SETTINGS_VIEW_LIST"] = "Lista faktur";
+$MESS["CRM_INVOICE_SETTINGS_VIEW_WIDGET"] = "Analityka faktur";
+?>

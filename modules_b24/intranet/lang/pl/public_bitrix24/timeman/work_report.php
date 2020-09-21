@@ -1,0 +1,5 @@
+<?
+$MESS["TARIFF_RESTRICTION_TEXT"] = "Automatyczne gromadzenie sprawozdań od wszystkich pracowników jest jedną z najbardziej przydatnych metod zwiększania wydajności. Wyznaczasz termin (na przykład każdy piątek lub ostatni dzień miesiąca), a portal automatycznie otworzy okno, w którym każdy z pracowników będzie miał wpisać raport ze swoich dziennych/tygodniowych/miesięcznych osiągnąć i nakreślić plany na najbliższą przyszłość. Przełożony pracownika może przyjąć raport z pozytywną lub negatywną oceną, aby dać każdemu podwładnemu przydatną informację zwrotną. <a href=\"javascript:void(0)\" onclick='top.BX.Helper.show(\"redirect=detail&code=5391955\");'>Szczegóły</a>";
+$MESS["TARIFF_RESTRICTION_TEXT2"] = "Raporty pracy dostępne są tylko w <a href=\"/settings/license_all.php\" target=\"_blank\">wybranych planach płatnych</a>.";
+$MESS["TITLE"] = "Raporty Pracy";
+?>

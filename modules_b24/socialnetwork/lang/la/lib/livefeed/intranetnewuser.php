@@ -1,0 +1,3 @@
+<?
+$MESS["SONET_LIVEFEED_INTRANET_NEW_USER_TITLE"] = "Se agregó al usuario #USER_NAME#";
+?>

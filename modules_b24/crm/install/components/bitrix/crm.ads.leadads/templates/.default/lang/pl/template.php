@@ -1,0 +1,36 @@
+<?
+$MESS["CRM_ADS_LEADADS_AFTER_DISABLE_FACEBOOK"] = "Po odłączeniu formularza od Facebooka będzie można go edytować; dane z formularzy nie będą przesyłane do CRM.";
+$MESS["CRM_ADS_LEADADS_AFTER_ENABLE_FACEBOOK"] = "Po powiązaniu formularza z Facebookiem nie można go edytować; dane z formularzy zostaną przesłane do CRM.";
+$MESS["CRM_ADS_LEADADS_APPLY"] = "Wykonaj";
+$MESS["CRM_ADS_LEADADS_BUTTON_EXPORTED_SUCCESS"] = "Zakończono pomyślnie";
+$MESS["CRM_ADS_LEADADS_BUTTON_EXPORT_FACEBOOK"] = "Połącz z Facebookiem";
+$MESS["CRM_ADS_LEADADS_BUTTON_UNLINK_FACEBOOK"] = "Odłącz od Facebooka";
+$MESS["CRM_ADS_LEADADS_CABINET_FACEBOOK"] = "Strony na Facebooku";
+$MESS["CRM_ADS_LEADADS_CANCEL"] = "Anuluj";
+$MESS["CRM_ADS_LEADADS_CAPTION_FACEBOOK"] = "Formularze reklam na Facebooku";
+$MESS["CRM_ADS_LEADADS_CLOSE"] = "Zamknij";
+$MESS["CRM_ADS_LEADADS_ERROR_ACTION"] = "Działanie została anulowane z powodu błędu.";
+$MESS["CRM_ADS_LEADADS_ERROR_NO_ACCOUNTS_FACEBOOK"] = "Nie znaleziono stron Facebooka. Przejdź do %name% i utwórz stronę.";
+$MESS["CRM_ADS_LEADADS_FORM_ID"] = "ID formularza";
+$MESS["CRM_ADS_LEADADS_FORM_NAME_FACEBOOK"] = "Nazwa formularza Facebooka";
+$MESS["CRM_ADS_LEADADS_FORM_SUCCESS_URL"] = "Adres URL do przekierowania po przesłaniu formularza";
+$MESS["CRM_ADS_LEADADS_GROUP_DO_AUTH_HINT_VKONTAKTE"] = "Można podłączyć tylko jedną grupę.";
+$MESS["CRM_ADS_LEADADS_GROUP_DO_AUTH_VKONTAKTE"] = "Podłącz grupę";
+$MESS["CRM_ADS_LEADADS_GROUP_IS_AUTH_HINT_VKONTAKTE"] = "Aby zmienić grupę, odłącz tę, która jest aktualnie podłączona. Wszystkie powiązane formularze również zostaną odłączone.";
+$MESS["CRM_ADS_LEADADS_GROUP_IS_AUTH_VKONTAKTE"] = "Odłącz grupę";
+$MESS["CRM_ADS_LEADADS_IS_LINKED"] = "powiązane";
+$MESS["CRM_ADS_LEADADS_LINKS_ITEM_FACEBOOK"] = "dla strony \"%account%\" jako \"%name%\"";
+$MESS["CRM_ADS_LEADADS_LINKS_ITEM_VKONTAKTE"] = "dla grupy \"%account%\" jako \"%name%\"";
+$MESS["CRM_ADS_LEADADS_LINKS_TITLE"] = "Formularz \"%name%\" został już dodany";
+$MESS["CRM_ADS_LEADADS_LIST"] = "Lista";
+$MESS["CRM_ADS_LEADADS_LOCALE"] = "Język formularza";
+$MESS["CRM_ADS_LEADADS_LOCALE_AUTO"] = "Bieżący język";
+$MESS["CRM_ADS_LEADADS_LOGIN"] = "Połącz";
+$MESS["CRM_ADS_LEADADS_LOGOUT"] = "Rozłącz";
+$MESS["CRM_ADS_LEADADS_MORE"] = "Szczegóły";
+$MESS["CRM_ADS_LEADADS_NOW"] = "powiązane teraz";
+$MESS["CRM_ADS_LEADADS_REFRESH"] = "Odśwież";
+$MESS["CRM_ADS_LEADADS_REFRESH_TEXT"] = "Odśwież dostępne preferencje.";
+$MESS["CRM_ADS_LEADADS_SELECT_ACCOUNT_FACEBOOK"] = "Dodaj formularz na stronach Facebooka";
+$MESS["CRM_ADS_LEADADS_TITLE_FACEBOOK"] = "W reklamach na Facebooku można wyświetlać formularze dodane w Bitrix24.";
+?>

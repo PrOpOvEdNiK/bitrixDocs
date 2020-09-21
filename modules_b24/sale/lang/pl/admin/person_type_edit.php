@@ -1,0 +1,29 @@
+<?
+$MESS["F_ACTIVE"] = "Aktywne";
+$MESS["SPTEN_2FLIST"] = "Typy płatnika";
+$MESS["SPTEN_ACTIVE"] = "Aktywne";
+$MESS["SPTEN_ADDING"] = "Dodaj nowy typ płatnika";
+$MESS["SPTEN_APPLY"] = "Zastosuj";
+$MESS["SPTEN_CANCEL"] = "Anuluj";
+$MESS["SPTEN_DELETE_PERSON_TYPE"] = "Usuń typ płatnika";
+$MESS["SPTEN_DELETE_PERSON_TYPE_CONFIRM"] = "Na pewno chcesz usunąć ten typ płatnika?";
+$MESS["SPTEN_ERROR"] = "Błąd zapisu";
+$MESS["SPTEN_ERROR_SAVING_PERSON_TYPE"] = "Błąd zapisywania typu płatnika";
+$MESS["SPTEN_NAME"] = "Nazwa";
+$MESS["SPTEN_NEW_PERSON_TYPE"] = "Utwórz nowy typ płatnika";
+$MESS["SPTEN_NO_PERMS2ADD"] = "Nie masz wystarczających uprawnień, aby dodać nowy typ płatnika";
+$MESS["SPTEN_NO_PERSON_TYPE"] = "Nie znaleziono typu płatnika ##ID#";
+$MESS["SPTEN_PERSON_TYPE_VALUE"] = "Wartość upstu";
+$MESS["SPTEN_PRICE"] = "Właściwe dla zamówienia";
+$MESS["SPTEN_PRICE_FROM"] = "od";
+$MESS["SPTEN_PRICE_TO"] = "do";
+$MESS["SPTEN_SAVE"] = "Zapisz";
+$MESS["SPTEN_SAVE_ADD"] = "Dodawanie";
+$MESS["SPTEN_SITE"] = "Strona";
+$MESS["SPTEN_SORT"] = "Indeks sortowania";
+$MESS["SPTEN_TAB_PERSON_TYPE"] = "Typ płatnika";
+$MESS["SPTEN_TAB_PERSON_TYPE_DESCR"] = "Parametry typu płatnika";
+$MESS["SPTEN_TIMESTAMP"] = "Data ostatniej modyfikacji:";
+$MESS["SPTEN_TO_LIST"] = "Typy płatnika";
+$MESS["SPTEN_UPDATING"] = "Edytuj parametry typu płatnika";
+?>

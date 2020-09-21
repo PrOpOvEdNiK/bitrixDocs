@@ -1,0 +1,30 @@
+<script type='text/ejs' id='taskDetailEditBlockMainData'>
+    <div class="block mainData">
+        <div class="header">
+            <div class="inner">
+                <?/**/?>
+
+                <div class="author-block"></div>
+
+                <h3 class="title jsTitle"><%= $.htmlspecialchars(title) %></h3>
+            </div>
+        </div>
+        <div class="content jsDescription">
+            <i class='hiddenCopyableText'><br><?= $this->t('TASK_DESCRIPTION') ?>: <br></i>
+            <% if (description) { %><%== description %><% } else { %><i><?= $this->t('ENTER_A_DESCRIPTION_TASK') ?></i><% } %>
+        </div>
+    </div>
+</script>
+
+<script type="text/ejs" id="taskDetailEditCreator">
+    <div data-userId="<%= taskAuthor.id %>" class="author <%= taskAuthor.getStatus() %>" <%
+        if (taskAuthor.noAvatar || !taskAuthor.avatar) {
+            %>style="background-color: <%= taskAuthor.avatarColor %>;" <%
+        } else {
+            %>style="background-image: url('<% if (taskAuthor.bigAvatar) { %><%= taskAuthor.bigAvatar %><% } %>');" <%
+        }
+        %> title="<%= taskAuthor.getFullName() %>">
+        <span><br><%= String._('TASK_AUTHOR') %>: <%= taskAuthor.getFullName() %><br><%= String._('TASK_TITLE') %>: </span>
+        <% if (taskAuthor.noAvatar || !taskAuthor.avatar) { %><%= taskAuthor.avatarLetters %><% } %>
+    </div>
+</script>

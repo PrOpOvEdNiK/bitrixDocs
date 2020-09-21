@@ -1,0 +1,36 @@
+<?
+$MESS["MAIN_ADM_CAPTCHA_PARAM1"] = "Teksto skaidrumas (procentais, 0-100)";
+$MESS["MAIN_ADM_CAPTCHA_PARAM2"] = "Mažiausia fono atsitiktinės spalvos reikšmė";
+$MESS["MAIN_ADM_CAPTCHA_PARAM3"] = "Didžiausia fono atsitiktinės spalvos reikšmė";
+$MESS["MAIN_ADM_CAPTCHA_PARAM4"] = "Ratų kiekis";
+$MESS["MAIN_ADM_CAPTCHA_PARAM5"] = "Mažiausia ratų atsitiktinės spalvos reikšmė";
+$MESS["MAIN_ADM_CAPTCHA_PARAM6"] = "Didžiausia ratų atsitiktinės spalvos reikšmė";
+$MESS["MAIN_ADM_CAPTCHA_PARAM7"] = "Linijos virš teksto";
+$MESS["MAIN_ADM_CAPTCHA_PARAM8"] = "Linijų kiekis";
+$MESS["MAIN_ADM_CAPTCHA_PARAM9"] = "Mažiausia linijos atsitiktinės spalvos reikšmė";
+$MESS["MAIN_ADM_CAPTCHA_PARAM10"] = "Didžiausia linijos atsitiktinės spalvos reikšmė";
+$MESS["MAIN_ADM_CAPTCHA_PARAM11"] = "Teksto pastraipa iš kairės";
+$MESS["MAIN_ADM_CAPTCHA_PARAM12"] = "Šrifto dydis";
+$MESS["MAIN_ADM_CAPTCHA_PARAM13"] = "Mažiausia šrifto atsitiktinės spalvos reikšmė";
+$MESS["MAIN_ADM_CAPTCHA_PARAM14"] = "Didžiausia šrifto atsitiktinės spalvos reikšmė";
+$MESS["MAIN_ADM_CAPTCHA_PARAM15"] = "Mažiausias vertikalus sukimosi kampas (laipsniais)";
+$MESS["MAIN_ADM_CAPTCHA_PARAM16"] = "Didžiausias vertikalus sukimosi kampas (laipsniais)";
+$MESS["MAIN_ADM_CAPTCHA_PARAM17"] = "Minimalus atstumas nuo apatinio kairiojo simbolių kampo (neigiama reikšmė reiškia didžiausią persidengiančių simbolių atstumą)";
+$MESS["MAIN_ADM_CAPTCHA_PARAM18"] = "Didžiausias atstumas nuo apatinio kairiojo simbolių kampo (neigiama reikšmė reiškia mažiausią persidengiančių simbolių atstumą)";
+$MESS["MAIN_ADM_CAPTCHA_PARAM19"] = "Netiesinis iškraipymas";
+$MESS["MAIN_ADM_CAPTCHA_PARAM20"] = "Rėmelio spalva";
+$MESS["MAIN_ADM_CAPTCHA_PARAM21"] = "Naudoti šriftai";
+$MESS["MAIN_ADM_CAPTCHA_PARAM22"] = "Leistini simboliai (rekomenduojamas simbolių rinkinys: ABCDEFGHJKLMNPQRSTWXYZ23456789)";
+$MESS["MAIN_ADM_CAPTCHA_TAB"] = "Parametrai";
+$MESS["MAIN_ADM_CAPTCHA_TAB_TITLE"] = "Redaguojami CAPTCHA nustatymai";
+$MESS["MAIN_ADM_CAPTCHA_PAGE_TITLE"] = "CAPTCHA nustatymai";
+$MESS["MAIN_ADM_CAPTCHA_PRESETS"] = "Iš anksto nustatyti";
+$MESS["MAIN_ADM_CAPTCHA_PRESET_0"] = "Naudotojas";
+$MESS["MAIN_ADM_CAPTCHA_PRESET_1"] = "Senas stilius";
+$MESS["MAIN_ADM_CAPTCHA_PRESET_2"] = "Bangos";
+$MESS["MAIN_ADM_CAPTCHA_PRESET_3"] = "Linijos";
+$MESS["MAIN_ADM_CAPTCHA_PRESET_4"] = "Negatyvas";
+$MESS["MAIN_ADM_CAPTCHA_PRESET_5"] = "Žalia";
+$MESS["MAIN_ADM_CAPTCHA_PARAM23"] = "Rodyti raidžių eskizus";
+$MESS["MAIN_ADM_CAPTCHA_PRESET_6"] = "Eskizai";
+?>

@@ -1,0 +1,9 @@
+<?
+$MESS["CRM_ACTIVITY_ENTITY_NAME_COMPANY"] = "Compañía";
+$MESS["CRM_ACTIVITY_ENTITY_NAME_CONTACT"] = "Contacto";
+$MESS["CRM_ACTIVITY_ENTITY_NAME_DEAL"] = "Negociación";
+$MESS["CRM_ACTIVITY_ENTITY_NAME_LEAD"] = "Propescto";
+$MESS["CRM_ACTIVITY_LABLE_ENTITY_ID"] = "ID de la entidad:";
+$MESS["CRM_ACTIVITY_LABLE_ENTITY_TYPE"] = "Tipo de entidad:";
+$MESS["CRM_ACTIVITY_SELECT_TYPE_ENTITY"] = "Seleccionar el campo entidad";
+?>

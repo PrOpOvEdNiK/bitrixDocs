@@ -1,0 +1,177 @@
+<div class="main" ng-controller="EntitiesCtrl">
+    <div class="table-wrapper">
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th ng-click="toggleSort('NAME')"
+                    ng-class="{sorted: 'NAME'==sort.predicate, 'sorted-desc': sort.reverse}"
+                    class="column-name">
+                    <?= $this->t('NAME'); ?> <i class="glyphicon glyphicon-sort"></i>
+                </th>
+                <th ng-click="toggleSort('CRYPTED.URL')"
+                    ng-class="{sorted: 'CRYPTED.URL'==sort.predicate, 'sorted-desc': sort.reverse}"
+                    class="column-url">URL <i class="glyphicon glyphicon-sort"></i>
+                </th>
+                <th class="column-expired"><!--&nbsp;--></th>
+            </tr>
+            </thead>
+        </table>
+    </div>
+    <div class="js-baron wrapper wrapper-main">
+        <div class="scroller" style="height: 1000px;">
+            <div class="table-wrapper">
+                <table class="table table-hover">
+
+                    <tbody>
+                    <!-- Subfolders -->
+                    <tr ng-repeat="folder in entities.folders | orderBy:sort.predicate:sort.reverse"
+                        ng-click="openFolder(folder)">
+                        <td colspan="3"
+                            data-drag="true"
+                            data-jqyoui-options="{revert: 'invalid', appendTo: 'body', helper: getHelper}"
+                            jqyoui-draggable="{animate: false, onStart: 'dragStart(0, folder)'}"
+                            data-drop="true"
+                            jqyoui-droppable="{onDrop: 'drop(folder)', onOver: 'dropOver(folder.ID)', onOut: 'dropOut(folder.ID)' }"
+                            ng-class="{ 'drop-over': isDropOvered(folder.ID) }">
+                            <div class="drag-root">
+                                <i class="icon-folder {{(folder.DETAIL_PICTURE ? '' : 'icon-folder-sprite folder-' + folder.DESCRIPTION)}}"
+                                   style="{{(folder.DETAIL_PICTURE ? 'background-image: url(\'' + folder.DETAIL_PICTURE + '\');' : '')}}">&nbsp;</i>
+                                {{folder.NAME}}
+                            </div>
+                        </td>
+                    </tr>
+                    <!-- /Subfolders -->
+
+                    <!-- Entities -->
+                    <tr ng-repeat="entity in entities.entities | orderBy:sort.predicate:sort.reverse"
+                        ng-click="show(entity.ID)"
+                        ng-right-click="toggleDropdown($event, entity.ID, true)"
+                        ng-class="{active: isActive(entity.ID), hover: isHover(entity.ID)}">
+                        <td>
+                            <div class="wrapper drag-root"
+                                 data-drag="dragAvailable"
+                                 data-jqyoui-options="{revert: 'invalid', appendTo: 'body', helper: getHelper}"
+                                 jqyoui-draggable="{animate: false, onStart: 'dragStart(1, entity)'}">
+                                <span class="favicon" favicon="entity.CRYPTED.URL"><img src="<?= KEYRIGHTS_PATH_STATIC; ?>/images/no-icon.ico" alt="" class="no-icon"></span>
+                                {{entity.NAME}}
+
+                                <div class="menu dropdown">
+                                    <i ng-click="toggleDropdown($event, entity.ID)" id="context_menu_{{ entity.ID }}" class="icon-menu dropdown-toggle" data-toggle="dropdown">&nbsp;</i>
+
+                                    <ul class="dropdown-menu" role="menu" aria-labelledby="context_menu_{{ entity.ID }}">
+                                        <li role="presentation" id="ctxmenu-copy-login-{{entity.ID}}" class="js-login" data-clipboard-text="{{ entity.CRYPTED.LOGIN }}"><a href="javascript:void(0)">
+                                                <span><i class="icon icon-file">&nbsp;</i><?= $this->t('COPY_LOGIN'); ?></span>
+                                                <!--<small>Ctrl+I</small>-->
+                                            </a></li>
+                                        <li role="presentation" id="ctxmenu-copy-pass-{{entity.ID}}" class="js-pass" data-clipboard-text="{{ entity.CRYPTED.PASSWORD }}"><a href="javascript:void(0)">
+                                                <span><i class="icon icon-file">&nbsp;</i><?= $this->t('COPY_PASS'); ?></span>
+                                                <!--<small>Ctrl+c</small>-->
+                                            </a></li>
+                                        <li role="presentation" id="ctxmenu-copy-ul-{{entity.ID}}" class="js-url" data-clipboard-text="{{ entity.CRYPTED.URL }}"><a href="javascript:void(0)">
+                                                <span><i class="icon icon-file">&nbsp;</i><?= $this->t('COPY_URL'); ?></span>
+                                                <!--<small>Ctrl+u</small>-->
+                                            </a></li>
+                                        <!--li role="presentation"><a href="javascript:void(0)">
+                                            <span><i class="glyphicon glyphicon-play-circle"></i>Запустить</span>
+                                            <small>Ctrl+Alt+r</small>
+                                        </a></li-->
+                                        <li role="presentation" ng-show="entity.CAN_WRITE"><a ng-click="deleteEntity(entity.ID)" href="javascript:void(0)">
+                                                <span><i class="glyphicon glyphicon-trash"></i><?= $this->t('DEL'); ?></span>
+                                                <!--<small>Del</small>-->
+                                            </a></li>
+
+                                        <!--li role="presentation" class="divider"></li>
+                                        <li role="presentation" class="dropdown-header">Прикрепленные файлы</li>
+                                        <li role="presentation" class="dropdown-filelink">
+                                            <a href="javascript:void(0);">Key.ppk</a>
+                                        </li-->
+                                    </ul>
+                                </div>
+                            </div>
+                        </td>
+                        <td ng-bind-html='renderPasswordLink(entity.CRYPTED.URL)'></td>
+                        <td>
+                            <!--i ng-show="expired(entity.CRYPTED.EXPIRED)"
+                               class="cell-tooltip glyphicon glyphicon-exclamation-sign jsTooltip"
+                               title="Истекает {{formatDate(entity.CRYPTED.EXPIRED)}}"
+                               data-toggle="tooltip"></i-->
+                        </td>
+                    </tr>
+                    <!-- /Entities -->
+
+                    <!-- Search entities -->
+                    <tr ng-repeat-start="groupEntities in searchEntities.entities | orderBy:sort.predicate:sort.reverse" ng-click="openFolder(groupEntities.section)" class="group">
+                        <td colspan="3">
+                            <i class="icon-folder {{(groupEntities.section.DETAIL_PICTURE ? '' : 'icon-folder-sprite folder-' + groupEntities.section.DESCRIPTION)}}"
+                               style="{{(groupEntities.section.DETAIL_PICTURE ? 'background-image: url(\'' + groupEntities.section.DETAIL_PICTURE + '\');' : '')}}">&nbsp;</i>
+                            {{groupEntities.NAME}}
+                        </td>
+                    </tr>
+
+                    <tr ng-repeat="entity in groupEntities.entities | orderBy:sort.predicate:sort.reverse" ng-click="show(entity.ID)">
+                        <td>
+                            <div class="wrapper">{{entity.NAME}}
+                                <div class="menu dropdown">
+                                    <i id="context_menu_1" class="icon-menu dropdown-toggle" data-toggle="dropdown">&nbsp;</i>
+                                    <ul class="dropdown-menu" role="menu" aria-labelledby="context_menu_1">
+                                        <li role="presentation" id="ctxmenu-copy-login-{{entity.ID}}" class="js-login" data-clipboard-text="{{ entity.CRYPTED.LOGIN }}"><a href="javascript:void(0)">
+                                                <span><i class="icon icon-file">&nbsp;</i><?= $this->t('COPY_LOGIN'); ?></span>
+                                                <!--<small>Ctrl+I</small>-->
+                                            </a></li>
+                                        <li role="presentation" id="ctxmenu-copy-pass-{{entity.ID}}" class="js-pass" data-clipboard-text="{{ entity.CRYPTED.PASSWORD }}"><a href="javascript:void(0)">
+                                                <span><i class="icon icon-file">&nbsp;</i><?= $this->t('COPY_PASS'); ?></span>
+                                                <!--<small>Ctrl+c</small>-->
+                                            </a></li>
+                                        <li role="presentation" id="ctxmenu-copy-ul-{{entity.ID}}" class="js-url" data-clipboard-text="{{ entity.CRYPTED.URL }}"><a href="javascript:void(0)">
+                                                <span><i class="icon icon-file">&nbsp;</i><?= $this->t('COPY_URL'); ?></span>
+                                                <!--<small>Ctrl+u</small>-->
+                                            </a></li>
+                                        <!--li role="presentation"><a href="javascript:void(0)">
+                                            <span><i class="glyphicon glyphicon-play-circle"></i>Запустить</span>
+                                            <small>Ctrl+Alt+r</small>
+                                        </a></li-->
+                                        <li role="presentation" ng-show="entity.CAN_WRITE"><a ng-click="deleteEntity(entity.ID)" href="javascript:void(0)">
+                                                <span><i class="glyphicon glyphicon-trash"></i><?= $this->t('DEL'); ?></span>
+                                                <!--<small>Del</small>-->
+                                            </a></li>
+
+                                        <!--li role="presentation" class="divider"></li>
+                                        <li role="presentation" class="dropdown-header">Прикрепленные файлы</li>
+                                        <li role="presentation" class="dropdown-filelink">
+                                            <a href="javascript:void(0);">Key.ppk</a>
+                                        </li-->
+                                    </ul>
+                                </div>
+                            </div>
+                        </td>
+                        <td ng-bind-html='renderPasswordLink(entity.CRYPTED.URL)'></td>
+                        <td><!--i class="cell-tooltip glyphicon glyphicon-exclamation-sign jsTooltip" title="Истекает 24.06.2016" data-toggle="tooltip"></i></td-->
+                    </tr>
+
+                    <tr ng-repeat-end></tr>
+                    <!-- /Search entities -->
+                    </tbody>
+                </table>
+
+                <div class="nothing-found" ng-show="findNothingMessage">
+                    <?= $this->t('SEARCH_FOUND_NOTHING'); ?>
+                </div>
+            </div>
+
+            <div ng-show="0 === entities.folders.length && 0 === entities.entities.length"
+                 ng-click="add()"
+                 class="empty-password">
+                <?= $this->t('EMPTY_MESSAGE_TIP'); ?>
+            </div>
+        </div>
+        <div class="scroller-bar-wrapper">
+            <div class="scroller-bar"></div>
+        </div>
+    </div>
+
+    <div class='button-area'>
+    </div>
+
+    <!-- Наш секретный дивчик для коммуникации с надстройкой -->
+    <div id="secretDiv" style="display: none;"></div>
+</div>

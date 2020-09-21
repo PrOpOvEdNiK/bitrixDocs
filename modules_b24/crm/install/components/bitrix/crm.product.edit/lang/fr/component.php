@@ -1,0 +1,30 @@
+<?
+$MESS["CRM_FIELD_ACTIVE"] = "Actif(ve)";
+$MESS["CRM_FIELD_CURRENCY"] = "Devise";
+$MESS["CRM_FIELD_MEASURE"] = "Unité de mesure";
+$MESS["CRM_FIELD_PRICE"] = "Prix";
+$MESS["CRM_FIELD_PRODUCT_DESCRIPTION"] = "Description";
+$MESS["CRM_FIELD_PRODUCT_NAME"] = "Dénomination";
+$MESS["CRM_FIELD_SECTION"] = "Section";
+$MESS["CRM_FIELD_SORT"] = "Trier";
+$MESS["CRM_FIELD_VAT_ID"] = "Taux de TVA";
+$MESS["CRM_FIELD_VAT_INCLUDED"] = "La TVA est incluse dans le prix";
+$MESS["CRM_MEASURE_NOT_SELECTED"] = "[non indiqué]";
+$MESS["CRM_MODULE_NOT_INSTALLED"] = "Le module du CRM n'a pas été installé.";
+$MESS["CRM_PERMISSION_DENIED"] = "Accès interdit";
+$MESS["CRM_PRODUCT_ADD_UNKNOWN_ERROR"] = "Une erreur est intervenue pendant la création de la marchandise";
+$MESS["CRM_PRODUCT_DELETE_UNKNOWN_ERROR"] = "Erreur survenue au cours de la suppression du produit.";
+$MESS["CRM_PRODUCT_FIELD_DETAIL_PICTURE"] = "Image détaillée";
+$MESS["CRM_PRODUCT_FIELD_PREVIEW_PICTURE"] = "Image de l'annonce";
+$MESS["CRM_PRODUCT_NAME_IS_TOO_LONG"] = "Le nom du produit ne peut pas dépasser 255 caractères.";
+$MESS["CRM_PRODUCT_NAV_TITLE_ADD"] = "Ajout d'une marchandise";
+$MESS["CRM_PRODUCT_NAV_TITLE_COPY"] = "Copier le produit";
+$MESS["CRM_PRODUCT_NAV_TITLE_EDIT"] = "Produit : #NAME#";
+$MESS["CRM_PRODUCT_NAV_TITLE_LIST"] = "Produits";
+$MESS["CRM_PRODUCT_NOT_FOUND"] = "La marchandise n'a pas été trouvée.";
+$MESS["CRM_PRODUCT_PROP_DOWNLOAD"] = "Télécharger";
+$MESS["CRM_PRODUCT_PROP_ENLARGE"] = "Faire agrandir";
+$MESS["CRM_PRODUCT_UPDATE_UNKNOWN_ERROR"] = "Une erreur est survenue pendant la mise à jour de la marchandise.";
+$MESS["CRM_SECTION_PRODUCT_INFO"] = "Information sur la marchandise";
+$MESS["CRM_SECTION_PRODUCT_SECTION"] = "Rubrique marchandise";
+?>

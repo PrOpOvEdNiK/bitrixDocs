@@ -1,0 +1,31 @@
+<?
+$MESS["IB_E_ACCESS_D"] = "Negar";
+$MESS["IB_E_ACCESS_R"] = "Leer";
+$MESS["IB_E_ACCESS_U"] = "Flujo de trabajo";
+$MESS["IB_E_ACCESS_U2"] = "Proceso de negocio";
+$MESS["IB_E_ACCESS_W"] = "Escribir";
+$MESS["IB_E_ACCESS_X"] = "Acceso total (inc. administración de r}derechos de acceso)";
+$MESS["IB_E_BIZPROC"] = "Usado en el proceso de negocio:";
+$MESS["IB_E_DEFAULT_ACCESS"] = "Por defecto";
+$MESS["IB_E_DEFAULT_ACCESS_TITLE"] = "Permisos de acceso predeterminados";
+$MESS["IB_E_EVERYONE"] = "Para todos";
+$MESS["IB_E_GROUP_ACCESS_TITLE"] = "Permisos del grupo de usuarios";
+$MESS["IB_E_PERMISSIONS_WARN"] = "Cambiando al modo de administración de permisos simples podrá resetear todos los permisos actuales del block d información.";
+$MESS["IB_E_RIGHTS"] = "Administración de permisos extendidos:";
+$MESS["IB_E_RIGHTS_WARN"] = "Está seguro que desea cambiar el modo de los permisos a \"#IB_NAME#\"?";
+$MESS["IB_E_WF_TYPE"] = "Usado en el flujo de trabajo o en el proceso de negocio";
+$MESS["IB_E_WF_TYPE_BIZPROC"] = "proceso de negocio";
+$MESS["IB_E_WF_TYPE_LABEL"] = "Si";
+$MESS["IB_E_WF_TYPE_NONE"] = "no se usa";
+$MESS["IB_E_WF_TYPE_WORKFLOW"] = "flujo de trabajo";
+$MESS["IB_E_WORKFLOW"] = "Incluir en flujo de trabajo:";
+$MESS["IB_WDUF_ADD"] = "Agregar campo personalizado";
+$MESS["WD_ACCESS_DENIED"] = "Acceso denegado.";
+$MESS["WD_ADD_GROUP"] = "Agregar grupo";
+$MESS["WD_ERROR_BAD_SESSID"] = "Su sesión ha caducado. Por favor, repita la operación";
+$MESS["WD_IBLOCK_ID_EMPTY"] = "El block de información no está especificado.";
+$MESS["WD_TAB15_TITLE"] = "Campos personalizados";
+$MESS["WD_TAB1_TITLE"] = "Parámetros";
+$MESS["WD_TAB2_TITLE"] = "Acceso";
+$MESS["WD_TAB3_TITLE"] = "Permisos de acceso para el block de información";
+?>

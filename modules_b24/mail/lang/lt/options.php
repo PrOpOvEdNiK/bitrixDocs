@@ -1,0 +1,31 @@
+<?
+$MESS["MAIL_OPTIONS_SAVE_SRC"] = "Išsaugoti laiško originalų tekstą";
+$MESS["MAIL_OPTIONS_SAVE_ATTACHMENTS"] = "Išsaugoti prisegamas bylas";
+$MESS["MAIL_OPTIONS_TIMEOUT"] = "Sujungimo laiko limitas:";
+$MESS["MAIL_OPTIONS_CHECKSPAM"] = "Filtruoti pranešimus nuo spamo:";
+$MESS["MAIL_OPTIONS_LOG_SAVE"] = "Saugoti darbo žurnalą (dienų):";
+$MESS["MAIL_OPTIONS_SAVE"] = "Išsaugoti";
+$MESS["MAIL_OPTIONS_RESET"] = "Atšaukti";
+$MESS["MAIN_TAB_SMTP"] = "SMTP Serveris";
+$MESS["MAIN_TAB_SMTP_TITLE"] = "SMTP Serverio statuso parametrai";
+$MESS["MAIL_OPT_CONFIRM"] = "Dabartinė komandinė eilutė nebuvo išsaugota. Paleisti serverį naudojant seną komandinę eilutę?";
+$MESS["MAIL_OPT_ERR"] = "Klaida:";
+$MESS["MAIL_OPT_ERR_CON"] = "Sujungimo klaida.";
+$MESS["EMAIL_OPT_DAYS"] = "dienos";
+$MESS["EMAIL_OPT_HR"] = "v";
+$MESS["EMAIL_OPT_MIN"] = "m";
+$MESS["EMAL_OPT_SEC"] = "s";
+$MESS["EMAL_OPT_SMTP_STOPPED"] = "Serveris yra sustabdytas.";
+$MESS["EMAL_OPT_SMTP_RUN"] = "Serveris veikia.";
+$MESS["EMAL_OPT_SMTP_STAT_START"] = "Pradėta:";
+$MESS["EMAL_OPT_SMTP_STAT_UPTIME"] = "veikia";
+$MESS["EMAL_OPT_SMTP_STAT_CNT"] = "Gauti:";
+$MESS["EMAL_OPT_SMTP_STAT_CNT_MAIL"] = "pranešimai";
+$MESS["EMAL_OPT_SMTP_STAT_CONS"] = "Sujungimai:";
+$MESS["EMAL_OPT_SMTP_STAT_CONS_NOW"] = "dabar:";
+$MESS["EMAL_OPT_PHP_LINE"] = "PHP komandinė eilutė:";
+$MESS["EMAL_OPT_STATUS"] = "Statusas:";
+$MESS["EMAL_OPT_STATUS_UNK"] = "nežinimas";
+$MESS["EMAL_OPT_START_SMTP"] = "Paleisti SMTP serverį";
+$MESS["EMAL_OPT_STOP_SMTP"] = "Sustabdyti SMTP serverį";
+?>

@@ -1,0 +1,37 @@
+<?
+$MESS["F_MESSAGES_PER_PAGE"] = "Pranešimų skaičius viename puslapyje";
+$MESS["F_FORUM_ID"] = "Forumo ID";
+$MESS["F_USE_CAPTCHA"] = "Naudoti CAPTCHA";
+$MESS["F_READ_TEMPLATE"] = "Forumo temos skaitymo puslapis";
+$MESS["F_PROFILE_VIEW_TEMPLATE"] = "Profilio puslapis";
+$MESS["F_PREORDER"] = "Atvaizduoti pranešimus tiesiogine tvarka";
+$MESS["F_DATE_TIME_FORMAT"] = "Datos ir laiko atvaizdavimo formatas";
+$MESS["F_NAME_TEMPLATE"] = "Vardo formatas";
+$MESS["F_PAGE_NAVIGATION_TEMPLATE"] = "Navigacijos grandinės šablono pavadinimas";
+$MESS["F_EDITOR_CODE_DEFAULT"] = "Pagal nutylėjimą paprasto teksto redaktoriaus režimas";
+$MESS["F_SHOW_RATING"] = "Rodyti įvertinimą";
+$MESS["F_SHOW_MINIMIZED"] = "Uždaryti atsakymo formą";
+$MESS["F_EDITOR_SETTINGS"] = "Redaktoriaus nustatymai";
+$MESS["F_SUBSCRIBE_AUTHOR_ELEMENT"] = "Prirašyti elemento autorių naujiems komentarams";
+$MESS["ALLOW_SMILES_TITLE"] = "leisti šypsenėles";
+$MESS["ALLOW_HTML_TITLE"] = "leisti HTML";
+$MESS["ALLOW_NL2BR_TITLE"] = "pakeisti naujas eilutes su <br>";
+$MESS["ALLOW_ANCHOR_TITLE"] = "leisti nuorodos";
+$MESS["ALLOW_BIU_TITLE"] = "leisti žymes B, U, I ir S";
+$MESS["ALLOW_IMG_TITLE"] = "leisti nuotraukas";
+$MESS["ALLOW_VIDEO_TITLE"] = "leisti vaizdo įrašus";
+$MESS["ALLOW_LIST_TITLE"] = "leisti sąrašus";
+$MESS["ALLOW_TABLE_TITLE"] = "leisti lenteles";
+$MESS["ALLOW_QUOTE_TITLE"] = "leisti citatas";
+$MESS["ALLOW_CODE_TITLE"] = "leisti kodą";
+$MESS["ALLOW_FONT_TITLE"] = "leisti šriftus";
+$MESS["ALLOW_ALIGN_TITLE"] = "įjungti lygiavimą";
+$MESS["F_ENTITY_TYPE"] = "Subjekto tipas";
+$MESS["F_ENTITY_ID"] = "Skaitmeninis subjekto ID";
+$MESS["F_ENTITY_XML_ID"] = "Simbolinis subjekto ID (XML ID)";
+$MESS["F_PERMISSION"] = "Prieigos teisės";
+$MESS["F_USER_FIELDS"] = "Rodyti pranešimo naudotojo laukus";
+$MESS["F_IMAGE_SIZE"] = "Paveikslėlių dydis pranešime (px)";
+$MESS["F_IMAGE_HTML_SIZE"] = "Vaizdų įterptų į tekstą matmenys (px) (naudojamas HTML suspaudimas)";
+$MESS["ALLOW_MENTION_TITLE"] = "leisti darbuotojo minėjimą";
+?>

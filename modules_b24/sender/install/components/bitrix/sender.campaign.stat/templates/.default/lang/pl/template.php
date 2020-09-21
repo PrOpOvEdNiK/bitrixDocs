@@ -1,0 +1,25 @@
+<?
+$MESS["SENDER_STATS_CHART_CLICK"] = "Kliknięcia";
+$MESS["SENDER_STATS_CHART_EFFICIENCY"] = "Dynamika wydajności";
+$MESS["SENDER_STATS_CHART_READ"] = "Wyświetlenia";
+$MESS["SENDER_STATS_CHART_UNSUB"] = "Anulowane subskrypcje";
+$MESS["SENDER_STATS_COUNTER_CLICK"] = "Kliknięcia";
+$MESS["SENDER_STATS_COUNTER_POSTINGS"] = "Liczba wiadomości";
+$MESS["SENDER_STATS_COUNTER_READ"] = "Wyświetlenia";
+$MESS["SENDER_STATS_COUNTER_SEND_ALL"] = "Łącznie wysłanych wiadomości";
+$MESS["SENDER_STATS_COUNTER_SUBS"] = "Subskrybowane";
+$MESS["SENDER_STATS_COUNTER_UNSUB"] = "Anulowane subskrypcje";
+$MESS["SENDER_STATS_CREATE_NEW"] = "Utwórz nową wiadomość reklamową";
+$MESS["SENDER_STATS_EFFICIENCY_LEVEL_1"] = "Zła";
+$MESS["SENDER_STATS_EFFICIENCY_LEVEL_2"] = "W porządku";
+$MESS["SENDER_STATS_EFFICIENCY_LEVEL_3"] = "Akceptowalna";
+$MESS["SENDER_STATS_EFFICIENCY_LEVEL_4"] = "Dobra";
+$MESS["SENDER_STATS_EFFICIENCY_LEVEL_5"] = "Doskonała";
+$MESS["SENDER_STATS_EFFICIENCY_TITLE"] = "Skuteczność reklamy";
+$MESS["SENDER_STATS_FILTER_FROM_AUTHOR"] = "od";
+$MESS["SENDER_STATS_FILTER_PERIOD_FOR"] = "dla";
+$MESS["SENDER_STATS_IN"] = "w";
+$MESS["SENDER_STATS_NO_DATA"] = "Brak danych";
+$MESS["SENDER_STATS_RECENT_POSTINGS"] = "Najnowsze wiadomości reklamowe";
+$MESS["SENDER_STATS_TITLE"] = "Start";
+?>

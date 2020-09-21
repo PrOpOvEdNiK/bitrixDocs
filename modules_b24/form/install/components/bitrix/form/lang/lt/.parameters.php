@@ -1,0 +1,30 @@
+<?
+$MESS["COMP_FORM_PARAMS_ACTION_ALIAS"] = "GET veiksmo kintamojo pavadinimas";
+$MESS["COMP_FORM_SEF_RESULT_VIEW_PAGE"] = "Rezultato peržiūros puslapis";
+$MESS["COMP_FORM_SEF_RESULT_NEW_PAGE"] = "Rezultato papildymo puslapis";
+$MESS["COMP_FORM_SEF_RESULT_EDIT_PAGE"] = "Rezultato redagavimo puslapis";
+$MESS["COMP_FORM_SEF_RESULT_LIST_PAGE"] = "Rezultatų sąrašo puslapis";
+$MESS["COMP_FORM_PARAMS_SUCCESS_URL"] = "Sėkmingo siuntimo pranešimo puslapis";
+$MESS["COMP_FORM_PARAMS_START_PAGE"] = "Pradinis puslapis";
+$MESS["COMP_FORM_VALUES_LIST"] = "Rezultatų sąrašas";
+$MESS["COMP_FORM_VALUES_NEW"] = "Rezultato papildymo puslapis";
+$MESS["COMP_FORM_PARAMS_SHOW_LIST_PAGE"] = "Atvaizduoti rezultatų sąrašo puslapį";
+$MESS["COMP_FORM_PARAMS_SHOW_EDIT_PAGE"] = "Atvaizduoti rezultato redagavimo puslapį";
+$MESS["COMP_FORM_PARAMS_SHOW_VIEW_PAGE"] = "Atvaizduoti rezultato peržiūros puslapį";
+$MESS["COMP_FORM_PARAMS_RESULT_ID"] = "Rezultato ID";
+$MESS["COMP_FORM_PARAMS_EDIT_ADDITIONAL"] = "Redaguoti papildomus laukus";
+$MESS["COMP_FORM_PARAMS_EDIT_STATUS"] = "Atvaizduoti statuso pakeitimo formą";
+$MESS["COMP_FORM_PARAMS_WEB_FORM_ID"] = "Web formos ID";
+$MESS["COMP_FORM_PARAMS_SHOW_ANSWER_VALUE"] = "Atvaizduoti parametro reikšmę ANSWER_VALUE";
+$MESS["COMP_FORM_PARAMS_SHOW_ADDITIONAL"] = "Atvaizduoti web formos papildomus laukus";
+$MESS["COMP_FORM_PARAMS_SHOW_STATUS"] = "Rezultatų lentelėje atvaizduoti kiekvieno rezultato statusą";
+$MESS["COMP_FORM_PARAMS_NOT_SHOW_FILTER"] = "Laukų kodai kuriuos negalima atvaizduoti filtre (per kablelį)";
+$MESS["COMP_FORM_PARAMS_NOT_SHOW_FILTER_LIST"] = "Laukų kodai kuriuos negalima atvaizduoti filtre";
+$MESS["COMP_FORM_PARAMS_NOT_SHOW_TABLE"] = "Laukų kodai kuriuos negalima atvaizduoti lentelėje (per kablelį)";
+$MESS["COMP_FORM_PARAMS_NOT_SHOW_TABLE_LIST"] = "Laukų kodai kuriuos negalima atvaizduoti lentelėje";
+$MESS["COMP_FORM_PARAMS_CHAIN_ITEM_TEXT"] = "Papildomo elemento navigacijos grandinėje pavadinimas";
+$MESS["COMP_FORM_PARAMS_CHAIN_ITEM_LINK"] = "Papildomo elemento navigacijos grandinėje nuoroda ";
+$MESS["COMP_FORM_PARAMS_IGNORE_CUSTOM_TEMPLATE"] = "Ignoruoti savo šabloną";
+$MESS["COMP_FORM_PARAMS_USE_EXTENDED_ERRORS"] = "Naudoti išplėstą klaidų pranešimų išvedimą";
+$MESS["COMP_FORM_PARAMS_NAME_TEMPLATE"] = "Vardo formatas";
+?>

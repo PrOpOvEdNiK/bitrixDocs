@@ -1,0 +1,29 @@
+<?
+$MESS["SONET_GL_EMPTY_ENTITY_TYPE"] = "Savybės tipas nenurodytas.";
+$MESS["SONET_GL_ERROR_NO_ENTITY_TYPE"] = "Savybės tipas nurodytas neteisingas.";
+$MESS["SONET_GL_EMPTY_ENTITY_ID"] = "Savybės ID nenurodyta.";
+$MESS["SONET_GL_ERROR_CALC_ENTITY_TYPE"] = "Nepavyko nustatyti savybės tipą.";
+$MESS["SONET_GL_ERROR_NO_ENTITY_ID"] = "Neteisingas savybės ID.";
+$MESS["SONET_GL_ERROR_NO_USER_ID"] = "Neteisingas naudotojo ID.";
+$MESS["SONET_GL_EMPTY_EVENT_ID"] = "Įvykis nenurodytas";
+$MESS["SONET_GL_ERROR_NO_FEATURE_ID"] = "Nurodytas įvykis neteisingas.";
+$MESS["SONET_GL_EMPTY_DATE_CREATE"] = "Sukūrimo data neteisinga.";
+$MESS["SONET_GL_EMPTY_TITLE"] = "Nenurodyta antraštė.";
+$MESS["SONET_GL_WRONG_PARAMETER_ID"] = "Neteisingas ID.";
+$MESS["SONET_GL_TITLE_JOIN1"] = "Naujas narys #TITLE# prisijungė prie grupės";
+$MESS["SONET_GL_TITLE_JOIN2"] = "Nauji nariai #TITLE# prisijungė prie grupės";
+$MESS["SONET_GL_TITLE_UNJOIN1"] = "Narys #TITLE# išėjo iš grupės";
+$MESS["SONET_GL_TITLE_UNJOIN2"] = "Nariai #TITLE# išėjo iš grupės";
+$MESS["SONET_GL_TITLE_MODERATE1"] = "Grupei priskirtas moderatorius #TITLE#.";
+$MESS["SONET_GL_TITLE_MODERATE2"] = "Grupei priskirti moderatoriai #TITLE#.";
+$MESS["SONET_GL_TITLE_OWNER1"] = "Grupei #TITLE# priskirtas naujas savininkas.";
+$MESS["SONET_GL_TITLE_UNMODERATE1"] = "#TITLE# pašalintas iš grupės moderatorių.";
+$MESS["SONET_GL_TITLE_UNMODERATE2"] = "#TITLE# pašalinti iš grupės moderatorių.";
+$MESS["SONET_GL_TITLE_FRIEND1"] = "Į draugų sąrašą pridėtas naudotojas #TITLE#.";
+$MESS["SONET_GL_TITLE_UNFRIEND1"] = "Naudotojas #TITLE# pašalintas iš draugų.";
+$MESS["SONET_GL_TITLE_GROUP1"] = "Naudotojas tapo grupės #TITLE# nariu.";
+$MESS["SONET_GL_TITLE_UNGROUP1"] = "Naudotojas išėjo iš grupės #TITLE#.";
+$MESS["SONET_GL_TITLE_EXCLUDE_USER1"] = "Naudotojas pašalintas iš #TITLE# grupės.";
+$MESS["SONET_GL_TITLE_EXCLUDE_GROUP1"] = "Naudotojas #TITLE# pašalintas iš grupės.";
+$MESS["SONET_GL_SEND_EVENT_LINK"] = "Pereiti:";
+?>

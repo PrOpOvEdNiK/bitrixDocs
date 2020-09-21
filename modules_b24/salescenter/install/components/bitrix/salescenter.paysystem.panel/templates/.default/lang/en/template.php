@@ -1,0 +1,6 @@
+<?
+$MESS["SPP_SALESCENTER_JS_POPUP_CLOSE"] = "Close";
+$MESS["SPP_SALESCENTER_PAYSYSTEM_SUB_APP_TITLE"] = "Partner applications";
+$MESS["SPP_SALESCENTER_PAYSYSTEM_SUB_TITLE"] = "Payment systems";
+$MESS["SPP_SALESCENTER_TITLE"] = "Select payment system";
+?>

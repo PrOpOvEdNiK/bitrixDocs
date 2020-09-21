@@ -1,0 +1,9 @@
+<?
+$MESS["CTRLR_RUN_FILTER_GROUP"] = "گروه";
+$MESS["CTRLR_RUN_FILTER_SITE"] = "سایت";
+$MESS["CTRLR_RUN_FILTER_SITE_ALL"] = "(همه)";
+$MESS["CTRLR_RUN_BUTT_RUN"] = "اجرا";
+$MESS["CTRLR_RUN_BUTT_CLEAR"] = "پاک کردن";
+$MESS["CTRLR_RUN_SEND_FILE_FROM"] = "از:";
+$MESS["CTRLR_RUN_SEND_FILE_TO"] = "به:";
+?>

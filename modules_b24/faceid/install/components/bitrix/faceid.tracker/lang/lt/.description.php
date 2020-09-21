@@ -1,0 +1,6 @@
+<?
+$MESS["FIT_SERVICES_MAIN_SECTION"] = "CRM";
+$MESS["FIT_SERVICES_PARENT_SECTION"] = "Leadai";
+$MESS["FIT_SECTION_TEMPLATE_NAME"] = "Veido seklys";
+$MESS["FIT_SECTION_TEMPLATE_DESCRIPTION"] = "Rodo apsilankimų statistiką";
+?>

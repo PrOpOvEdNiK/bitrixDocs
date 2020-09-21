@@ -1,0 +1,4 @@
+<?
+$MESS["CRM_BUTTON_WEBFORM_WIDGET_LOGO_BITRIX"] = "Bitrix";
+$MESS["CRM_BUTTON_WEBFORM_WIDGET_LOGO_TEXT"] = "Stronę obsługuje";
+?>

@@ -1,0 +1,5 @@
+<?
+$MESS["CRM_DEAL_IN_WORK_CATEGORY"] = "Aktywne deale";
+$MESS["CRM_DEAL_IN_WORK_PRESET_OVERALL_COUNT"] = "Liczba deali w toku";
+$MESS["CRM_DEAL_IN_WORK_PRESET_OVERALL_COUNT_SHORT"] = "Liczba deali";
+?>

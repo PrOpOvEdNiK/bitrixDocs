@@ -1,0 +1,16 @@
+<?
+$MESS["CRM_ACTIVITY_CALL_LIST_LABEL"] = "Šaltų skambučių sąrašas";
+$MESS["CRM_ACTIVITY_CALL_LIST_SUBJECT"] = "Šaltų skambučių tema";
+$MESS["CRM_ACTIVITY_CALL_LIST_SUBJECT_PLACEHOLDER"] = "Veiksmo antraštė";
+$MESS["CRM_ACTIVITY_CALL_LIST_DESCRIPTION"] = "Šaltų skambučių užduoties aprašymas";
+$MESS["CRM_ACTIVITY_CALL_LIST_DESCRIPTION_PLACEHOLDER"] = "Pateikite čia duomenis apie veiksmą";
+$MESS["CRM_ACTIVITY_CALL_LIST_CREATE_FROM"] = "Sukurti sąrašą iš";
+$MESS["CRM_ACTIVITY_CALL_LIST_CREATE_FROM_LEADS"] = "Lead'ai";
+$MESS["CRM_ACTIVITY_CALL_LIST_CREATE_FROM_CONTACTS"] = "Kontaktai";
+$MESS["CRM_ACTIVITY_CALL_LIST_CREATE_FROM_COMPANIES"] = "Įmonės";
+$MESS["CRM_ACTIVITY_CALL_LIST_CREATE_TAB_FILTER_PARAMS"] = "Atrankos paramatrai";
+$MESS["CRM_ACTIVITY_CALL_LIST_ACTIVITY_CREATED"] = "Sukurtas šalto skambučio veiksmas";
+$MESS["CRM_ACTIVITY_CALL_LIST_ACTIVITY_CREATED_TEXT"] = "Dabar Jūs galite redaguoti veiksmą";
+$MESS["CRM_ACTIVITY_CALL_LIST_ACTIVITY_GOTO"] = "Atviras veiksmas";
+$MESS["CRM_CALL_LIST_FILTER"] = "filtras";
+?>

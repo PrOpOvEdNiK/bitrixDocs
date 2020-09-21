@@ -1,0 +1,30 @@
+<?
+$MESS["FLOW_DOCUMENT_LIST"] = "فهرست فایلها";
+$MESS["FLOW_RECORD_NOT_FOUND"] = "شناسه رکورد درست نیست یا رکورد پیدا نمی شود";
+$MESS["FLOW_PAGE_TITLE"] = "رکورد # #ID#";
+$MESS["FLOW_PAGE_DIFF_TITLE"] = "Compare documents # #ID# and # #PREV_ID#";
+$MESS["FLOW_HISTORY"] = "سابقه";
+$MESS["FLOW_STATUS"] = "وضعیت:";
+$MESS["FLOW_FILENAME"] = "نام فایل:";
+$MESS["FLOW_TITLE"] = "عنوان:";
+$MESS["FLOW_TEXT"] = "متن";
+$MESS["FLOW_DOCUMENT_ID"] = "شناسه فایل:";
+$MESS["FLOW_DOCUMENT_FILENAME"] = "نام فایل:";
+$MESS["FLOW_DOCUMENT_TITLE"] = "عنوان:";
+$MESS["FLOW_DOCUMENT_DATE_ENTER"] = "ساخته شده:";
+$MESS["FLOW_DOCUMENT_DATE_MODIFY"] = "ویرایش شده:";
+$MESS["FLOW_DOCUMENT_DATE_LOCK"] = "قفل شده:";
+$MESS["FLOW_DOCUMENT_STATUS"] = "وضعیت:";
+$MESS["FLOW_CURRENT_SETTINGS"] = "تنظیمات کنونی فایل";
+$MESS["FLOW_RECORD_SETTINGS"] = "تنظیمات رکورد";
+$MESS["FLOW_TIMESTAMP"] = "ویرایش شده:";
+$MESS["FLOW_COMMENTS"] = "یادداشت:";
+$MESS["FLOW_HIST_VIEW_SITE"] = "سایت:";
+$MESS["FLOW_PAGE_PARAM_TITLE"] = "تنظیمات کنونی فایل";
+$MESS["FLOW_BACK"] = "بازگشت به فهرست";
+$MESS["FLOW_USER_ALT"] = "View user information";
+$MESS["FLOW_STATUS_ALT"] = "View status information";
+$MESS["FLOW_VIEW_DOC_ALT"] = "View original document";
+$MESS["FLOW_VIEW_FILE_ALT"] = "View a file";
+$MESS["FLOW_SITE_ALT"] = "دیدن دادههای سایت";
+?>

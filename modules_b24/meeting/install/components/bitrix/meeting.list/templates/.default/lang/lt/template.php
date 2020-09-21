@@ -1,0 +1,32 @@
+<?
+$MESS["ME_ADD"] = "Naujas susitikimas";
+$MESS["ME_DETAIL"] = "Peržiūrėti susitikimą";
+$MESS["ME_DETAIL_EX"] = "Peržiūrėti ir redaguoti susitikimą";
+$MESS["ME_EDIT"] = "Redaguoti susitikimą";
+$MESS["ME_EDIT_EX"] = "Peržiūrėti ir redaguoti susitikimą";
+$MESS["ME_COPY"] = "Sukurti kitą susitikimą";
+$MESS["ME_COPY_EX"] = "Sukurti naują susitikimą remiantis rezultatais dabartinio";
+$MESS["ME_DELETE"] = "Ištrinti susitikimą";
+$MESS["ME_DELETE_EX"] = "Ištrinti susitikimą";
+$MESS["ME_ERR_NO_MEETINGS"] = "Nėra suplanuotų susitikimų";
+$MESS["ME_TITLE"] = "Tema";
+$MESS["ME_DATE_START"] = "Data";
+$MESS["ME_CURRENT_STATE"] = "Stadija";
+$MESS["ME_OWNER"] = "Savininkas";
+$MESS["ME_PLACE"] = "Vieta";
+$MESS["ME_STATE_P"] = "Nepradėtas";
+$MESS["ME_STATE_C"] = "Baigtas";
+$MESS["ME_STATE_A"] = "Vykdomas";
+$MESS["ME_DELETE_CONFIRM"] = "Ar tikrai norite ištrinti šį susitikimą?";
+$MESS["ME_FILTER"] = "Filtras";
+$MESS["ME_FILTER_TITLE"] = "Pavadinimas";
+$MESS["ME_FILTER_CURRENT_STATE"] = "Stadija";
+$MESS["ME_FILTER_CURRENT_STATE_ALL"] = "(visi)";
+$MESS["ME_FILTER_OWNER"] = "Savininkas";
+$MESS["ME_FILTER_OWNER_CHOOSE"] = "Pasirinkti";
+$MESS["ME_FILTER_MEMBER"] = "Dalyviai";
+$MESS["ME_FILTER_HEAD"] = "Tik mano susitikimai";
+$MESS["ME_FILTER_SUBMIT"] = "Ieškoti";
+$MESS["ME_FILTER_CANCEL"] = "Atšaukti";
+$MESS["ME_FILTER_GROUP"] = "Projektas";
+?>

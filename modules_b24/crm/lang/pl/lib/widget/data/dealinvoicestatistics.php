@@ -1,0 +1,5 @@
+<?
+$MESS["CRM_DEAL_INVOICE_STAT_PRESET_OVERALL_COUNT"] = "Liczba faktur";
+$MESS["CRM_DEAL_INVOICE_STAT_PRESET_OVERALL_OWED_SUM"] = "Suma faktur niezapłaconych";
+$MESS["CRM_DEAL_INVOICE_STAT_PRESET_OVERALL_SUM"] = "Suma faktur zapłaconych";
+?>

@@ -1,0 +1,31 @@
+<?
+$MESS["SP_LIST_FIELD_NAME"] = "Pavadinimas";
+$MESS["SP_LIST_FIELD_SORT"] = "Rūšiavimas";
+$MESS["SP_LIST_FIELD_ACTIVE_FROM"] = "Aktyvus nuo";
+$MESS["SP_LIST_FIELD_ACTIVE_TO"] = "Aktyvus iki";
+$MESS["SP_LIST_FIELD_PREVIEW_PICTURE"] = "Peržiūrėti nuotrauką";
+$MESS["SP_LIST_FIELD_PREVIEW_TEXT"] = "Peržiūrėti tekstą";
+$MESS["SP_LIST_FIELD_DETAIL_PICTURE"] = "Detali nuotrauka";
+$MESS["SP_LIST_FIELD_DETAIL_TEXT"] = "Detalus tekstas";
+$MESS["SP_LIST_FIELD_DATE_CREATE"] = "Sukurta";
+$MESS["SP_LIST_FIELD_CREATED_BY"] = "Sukūrė";
+$MESS["SP_LIST_FIELD_TIMESTAMP_X"] = "Pakeista";
+$MESS["SP_LIST_FIELD_MODIFIED_BY"] = "Pakeitė";
+$MESS["SP_LIST_FIELD_CREATE_NONE"] = "(pažymėti lauko tipą)";
+$MESS["SP_LIST_FIELD_S"] = "Eilutė";
+$MESS["SP_LIST_FIELD_N"] = "Numeris";
+$MESS["SP_LIST_FIELD_L"] = "Sąrašas";
+$MESS["SP_LIST_FIELD_F"] = "Failas";
+$MESS["SP_LIST_FIELD_G"] = "Pririšti prie skyrių";
+$MESS["SP_LIST_FIELD_E"] = "Pririšti prie elementų";
+$MESS["SP_IGNORE"] = "(nenurodyta)";
+$MESS["SP_ERROR_WRONG_IBLOCK_ID"] = "Neteisingas informacijos blokas.";
+$MESS["SP_ERROR_WRONG_SP_LIST_ID"] = "Neteisingas sąrašo ID";
+$MESS["SP_ERROR_IBLOCK_EXISTS"] = "Informacijos blokas jau yra sujungtas su SharePoint sąrašu.";
+$MESS["SP_ERROR_LIST_EXISTS"] = "SharePoint sąrašas jau yra sujungtas su informacijos bloku.";
+$MESS["SP_ERROR_WRONG_URL"] = "Neteisingas SharePoint serverio URL.";
+$MESS["SP_ERROR_MODULE_NOT_INSTALLED"] = "Modulis nėra įdiegtas.";
+$MESS["SP_ERROR_CLASS_NOT_EXISTS"] = "Prižiūrėtojas klasė neegzistuoja.";
+$MESS["SP_ERROR_MAX_ERRORS"] = "Viršijo įmanomą paslaugų klaidų maksimumą.";
+$MESS["SP_ERROR_METHOD_NOT_EXISTS"] = "Klientas #CLASS# nepalaiko metodo #METHOD#.";
+?>

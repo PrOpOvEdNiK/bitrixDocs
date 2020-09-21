@@ -1,0 +1,45 @@
+<div class="modal fade section-add" id="sectionAdd" role="dialog" aria-hidden="true" aria-labelledby="sectionAddLabel">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <form action="javascript:void(0);" name="sectionForm" ng-controller="AddFolderCtrl" novalidate
+                ng-submit="!showLoader && sectionForm.$valid && submit()" tabcycle>
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true" skiptab>&times;</button>
+                    <h4 class="modal-title" id="sectionAddLabel">{{title}}</h4>
+                </div>
+                <div class="modal-body">
+                    <label>
+                        <input type="hidden" ng-model="folder.id" value="{{folder.id}}">
+                        <input type="hidden" ng-model="folder.section" value="{{folder.section}}">
+                        <input type="text" class="form-control" ng-class="{'disabled': showLoader}" placeholder="<?= $this->t('NAME'); ?>" required ng-model="folder.name"
+                            value="{folder.name}"/>
+                    </label>
+                    <div class="dropdown">
+                        <div class="dropdown-toggle" ng-click="toggleIconPopup()" rel="#icon-dropdown"
+                            ><i ng-show="!folder.ico" class="section-icon icon-folder-sprite folder-{{folder.color}}">&nbsp;</i
+                            ><div ng-show="folder.ico" class="own-icon" style="background: url('{{folder.ico[1]}}') 0 0 no-repeat;"></div
+                            ><i class="icon-arrow-down">&nbsp;</i
+                        ></div>
+                        <div class="dropdown-menu close-outside" id="icon-dropdown" role="menu" ng-show="showIconPopup">
+                            <div class="icons-default">
+                                <i ng-repeat="colorIdx in colorIdxs"
+                                    class="icon-folder-sprite folder-{{colorIdx}}"
+                                    ng-click="changeColor(colorIdx)">&nbsp;</i>
+                            </div>
+                            <!--div class="upload-icon">
+                                <p>или загрузите<br/>своё изображение</p>
+                                <a href="javascript:void(0);" class="btn btn-primary btn-block">Загрузить</a>
+                                <input onchange="angular.element(this).scope().fileNameChanged(this)" type="file" name="file" />
+                            </div-->
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a href="javascript:void(0);" class="btn btn-default" data-dismiss="modal"><?= $this->t('CANCEL2'); ?></a>
+                    <button class="btn btn-default btn-primary" ng-class="{'disabled': showLoader || !sectionForm.$valid}">{{okCaption}}</button>
+                </div>
+                <div class="loader" ng-show="showLoader"></div>
+            </form>
+        </div>
+    </div>
+</div>

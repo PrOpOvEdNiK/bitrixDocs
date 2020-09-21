@@ -1,0 +1,34 @@
+<?
+$MESS["AJAX_MODE_TIP"] = "Włącz AJAX w komponentach.";
+$MESS["AJAX_OPTION_JUMP_TIP"] = "Określa przewinięcie do komponentu, gdy przejście AJAX zostanie zakończone.";
+$MESS["AJAX_OPTION_SHADOW_TIP"] = "Określa obszar modyfikowany do cieniowania na przejściu AJAX.";
+$MESS["AJAX_OPTION_STYLE_TIP"] = "Określa do pobrania i przetwarzania styli CSS komponentu na przejściu AJAX.";
+$MESS["CACHE_TIME_TIP"] = "W tym miejscu określ okres czasu, w trakcie którego pamięć podręczna jest aktualna.";
+$MESS["CHECK_DATES_TIP"] = "Wyszczególnia przeszukiwanie tylko aktywnych (niewygasłych) dokumentów.";
+$MESS["CP_BSP_DISPLAY_BOTTOM_PAGER"] = "Pokaż Poniżej Wyników";
+$MESS["CP_BSP_DISPLAY_TOP_PAGER"] = "Pokaż Ponad Wynikami";
+$MESS["CP_BSP_FILTER_NAME"] = "Ekstra filtr";
+$MESS["CP_BSP_NO_WORD_LOGIC"] = "Wyłącz przetwarzanie popularnych słów jako operatory logiczne";
+$MESS["CP_BSP_SHOW_WHEN"] = "Umożliwiają filtrowania według daty dokumentu";
+$MESS["CP_BSP_USE_LANGUAGE_GUESS"] = "Auto wykrywanie układu klawiatury";
+$MESS["CP_SP_DEFAULT_SORT"] = "Domyślne sortowanie";
+$MESS["CP_SP_DEFAULT_SORT_DATE"] = "Według daty";
+$MESS["CP_SP_DEFAULT_SORT_RANK"] = "według trafności";
+$MESS["PAGER_SHOW_ALWAYS_TIP"] = "Jeżeli zaznaczone, panel ścieżki nawigacji będzie pokazywany nawet jeżeli wszytskie elementy mieszczą się na stronie.";
+$MESS["PAGER_TEMPLATE_TIP"] = "Nazwa szablonu nawigacji. Możesz zostawić pole puste by użyć szablonu podstawowego (<i>.domyślnie</i>).";
+$MESS["PAGER_TITLE_TIP"] = "Wyszczególnia tytuł nawigacji.";
+$MESS["PAGE_RESULT_COUNT_TIP"] = "Ilość wyników wyszukiwania może być pokazana na jednej stronie. Inne wyniki będą dostępne przez linki nawigacji.";
+$MESS["RESTART_TIP"] = "Jeżeli zaznaczony, pierwsza przepustka poszukiwania użyje morfologii. Jeżeli morfologia szukają nie produkują żadnych wyników, proste poszukiwanie będzie wykonane.";
+$MESS["SEARCH_CHECK_DATES"] = "Przeszukaj tylko dokumenty aktywne dla daty wyszukiwania";
+$MESS["SEARCH_PAGER_SETTINGS"] = "Pager settings";
+$MESS["SEARCH_PAGER_SHOW_ALWAYS"] = "Always show the pager";
+$MESS["SEARCH_PAGER_TEMPLATE"] = "Nazwa szablonu pager`a";
+$MESS["SEARCH_PAGER_TITLE"] = "Nazwa wyników wyszukiwania";
+$MESS["SEARCH_PAGE_RESULT_COUNT"] = "Wyniki na stronie";
+$MESS["SEARCH_RESTART"] = "Spróbuj wyszukiwania bez morfologicznego wsparcia (jeżeli nie znaleziono wyników wyszukiwania)";
+$MESS["SEARCH_RESULTS"] = "Wyniki wyszukiwania";
+$MESS["SEARCH_USE_TITLE_RANK"] = "Poważaj tytuły kiedy jest ranking wyników wyszukiwania";
+$MESS["USE_TITLE_RANK_TIP"] = "Z tej opcji włączonej, obiekty z odpowiednich działów pokaże się na początku listy wyników.";
+$MESS["arrFILTER_TIP"] = "Pozwala zawężać obszar przeszukiwania. Na przykład, możesz wyszczególnić przeszukiwanie tylko statycznych plików.";
+$MESS["arrFILTER_socialnetwork_user_TIP"] = "Pokaż ID użytkownika, którego treść powinna być włączona do wyszukiwania.";
+?>

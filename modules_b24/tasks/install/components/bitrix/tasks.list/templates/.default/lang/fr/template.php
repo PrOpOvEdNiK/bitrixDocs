@@ -1,0 +1,130 @@
+<?
+$MESS["TASKS_ACCOMPLICE"] = "Co-traitant";
+$MESS["TASKS_ADD_QUICK_TASK"] = "Créer une tâche rapide";
+$MESS["TASKS_ADD_TASK"] = "Ajouter une tâche";
+$MESS["TASKS_ADD_TEMPLATE_TASK"] = "Ajouter une tâche d'après le modèle";
+$MESS["TASKS_APPLY"] = "Appliquer";
+$MESS["TASKS_APPROVE_TASK"] = "Accepter le travail";
+$MESS["TASKS_AUDITOR"] = "Superviseur";
+$MESS["TASKS_CANCEL"] = "Annuler";
+$MESS["TASKS_CONFIGURE_LIST"] = "Configurer la liste";
+$MESS["TASKS_CREATOR"] = "Créateur";
+$MESS["TASKS_DATE_COMPLETED"] = "Date de l'achèvement";
+$MESS["TASKS_DATE_END"] = "Date de clôture";
+$MESS["TASKS_DATE_START"] = "A partir de la date";
+$MESS["TASKS_DATE_STARTED"] = "Commencé(e)s le";
+$MESS["TASKS_DEADLINE"] = "Date limite";
+$MESS["TASKS_DECLINE_REASON"] = "Raison de refus de la tâche";
+$MESS["TASKS_DECLINE_TASK"] = "Refuser";
+$MESS["TASKS_DEFAULT_SORT"] = "Tri par défaut";
+$MESS["TASKS_DOUBLE_CLICK"] = "Double-clic - Voir";
+$MESS["TASKS_DURATION"] = "Combien d'heures";
+$MESS["TASKS_EXPORT_EXCEL"] = "Excel";
+$MESS["TASKS_EXPORT_OUTLOOK"] = "Exportation de la liste vers Outlook";
+$MESS["TASKS_FILTER_BY_TAG"] = "Par tags";
+$MESS["TASKS_FILTER_CREAT_DATE"] = "Date de création";
+$MESS["TASKS_FILTER_FIND"] = "Rechercher";
+$MESS["TASKS_FILTER_IN_CONTROL"] = "En attente de contrôle";
+$MESS["TASKS_FILTER_NOT_ACCEPTED"] = "Non acceptés";
+$MESS["TASKS_FILTER_PICK_DATE"] = "Choisir la date du calendrier";
+$MESS["TASKS_FILTER_SELECT"] = "sélectionner";
+$MESS["TASKS_FILTER_SHOW_SUBORDINATE"] = "montrer les tâches des subordonnés";
+$MESS["TASKS_FINISHED"] = "Achevé(e)s";
+$MESS["TASKS_GANTT"] = "Chat de Gantt";
+$MESS["TASKS_HELP"] = "Aide";
+$MESS["TASKS_LIST_COLUMN_1"] = "ID";
+$MESS["TASKS_LIST_COLUMN_10"] = "Groupe";
+$MESS["TASKS_LIST_COLUMN_11"] = "Durée prévue";
+$MESS["TASKS_LIST_COLUMN_12"] = "Compabilité du temps écoulé";
+$MESS["TASKS_LIST_COLUMN_13"] = "Temps dépensé";
+$MESS["TASKS_LIST_COLUMN_14"] = "Permettre au responsible de modifier la date limite";
+$MESS["TASKS_LIST_COLUMN_15"] = "Créé le";
+$MESS["TASKS_LIST_COLUMN_16"] = "Date de modification";
+$MESS["TASKS_LIST_COLUMN_17"] = "Date de clôture";
+$MESS["TASKS_LIST_COLUMN_2"] = "Dénomination";
+$MESS["TASKS_LIST_COLUMN_3"] = "Créé par";
+$MESS["TASKS_LIST_COLUMN_4"] = "Responsable";
+$MESS["TASKS_LIST_COLUMN_5"] = "Date limite";
+$MESS["TASKS_LIST_COLUMN_6"] = "Evaluation";
+$MESS["TASKS_LIST_COLUMN_7"] = "CRM";
+$MESS["TASKS_LIST_COLUMN_8"] = "Criticité";
+$MESS["TASKS_LIST_COLUMN_9"] = "Statut";
+$MESS["TASKS_LIST_COLUMN_SORTING"] = "Personnalisé";
+$MESS["TASKS_LIST_CONFIRM_ACTION_FOR_ALL_ITEMS"] = "Faut-il appliquer l'action à toutes les tâches de la liste (y compris des sous-tâches), et aux autres pages aussi ?";
+$MESS["TASKS_LIST_CONFIRM_REMOVE_FOR_ALL_ITEMS"] = "Supprimer toutes les tâches de la liste (y compris leurs sous-tâches), y compris sur les autres pages ?";
+$MESS["TASKS_LIST_CONFIRM_REMOVE_FOR_SELECTED_ITEMS"] = "Supprimer tâches sélectionnées ?";
+$MESS["TASKS_LIST_GROUP_ACTION_ADD_ACCOMPLICE"] = "Ajouter un collaborateur";
+$MESS["TASKS_LIST_GROUP_ACTION_ADD_AUDITOR"] = "Ajouter un observateur";
+$MESS["TASKS_LIST_GROUP_ACTION_ADD_FAVORITE"] = "Ajouter aux favoris";
+$MESS["TASKS_LIST_GROUP_ACTION_ADJUST_DEADLINE"] = "Transférer un dernier délai en avant";
+$MESS["TASKS_LIST_GROUP_ACTION_CHANGE_ORIGINATOR"] = "Changer de fournisseurs";
+$MESS["TASKS_LIST_GROUP_ACTION_CHANGE_RESPONSIBLE"] = "Changer le responsable";
+$MESS["TASKS_LIST_GROUP_ACTION_COMPLETE"] = "Achever";
+$MESS["TASKS_LIST_GROUP_ACTION_DAYS_PLURAL_0"] = "jour";
+$MESS["TASKS_LIST_GROUP_ACTION_DAYS_PLURAL_1"] = "jours";
+$MESS["TASKS_LIST_GROUP_ACTION_DAYS_PLURAL_2"] = "jours";
+$MESS["TASKS_LIST_GROUP_ACTION_DELETE_FAVORITE"] = "Supprimer des favoris";
+$MESS["TASKS_LIST_GROUP_ACTION_FOR_ALL"] = "Pour tous";
+$MESS["TASKS_LIST_GROUP_ACTION_MONTHES_PLURAL_0"] = "mois";
+$MESS["TASKS_LIST_GROUP_ACTION_MONTHES_PLURAL_1"] = "mois";
+$MESS["TASKS_LIST_GROUP_ACTION_MONTHES_PLURAL_2"] = "mois";
+$MESS["TASKS_LIST_GROUP_ACTION_PLEASE_WAIT"] = "Attendez...";
+$MESS["TASKS_LIST_GROUP_ACTION_REMOVE"] = "Supprimer";
+$MESS["TASKS_LIST_GROUP_ACTION_SET_DEADLINE"] = "Préciser la date limite";
+$MESS["TASKS_LIST_GROUP_ACTION_SET_GROUP"] = "Choisissez les services que votre site va offrir";
+$MESS["TASKS_LIST_GROUP_ACTION_SUBSTRACT_DEADLINE"] = "Transférer un dernier délai en arrière";
+$MESS["TASKS_LIST_GROUP_ACTION_WEEKS_PLURAL_0"] = "pour une semaine";
+$MESS["TASKS_LIST_GROUP_ACTION_WEEKS_PLURAL_1"] = "nombre de semaines";
+$MESS["TASKS_LIST_GROUP_ACTION_WEEKS_PLURAL_2"] = "nombre de semaines";
+$MESS["TASKS_LIST_MENU_RESET_TO_DEFAULT_PRESET"] = "Affichage par défaut";
+$MESS["TASKS_LIST_SUBMIT"] = "Appliquer";
+$MESS["TASKS_LIST_TOOLTIP_FOR_ALL_ITEMS"] = "Sélectionner les tâches sur toutes les pages de la liste, y compris les sous-tâches";
+$MESS["TASKS_LIST_TRIAL_EXPIRED_TEXT"] = "L'offre gratuite vous permet d'avoir jusqu'à 5 dépendances entre les tâches. Passer en tâches avancées et gestion de projet si vous voulez profiter de dépendances illimitées.
+
+Quatre types de dépendances sont actuellement prises en charge :
+Terminer à Démarrer (TD)
+Démarrer à Démarrer (DD)
+Terminer à Terminer (TT) 
+Démarrer à Terminer (DT)
+
+<a href=\"https://bitrix24.com/pro/tasks.php\" target=\"_blank\">En apprendre plus</a>
+
+Tâches avancées + CRM avancées + Téléphonie avancée et d'autres fonctionnalités supplémentaires sont disponibles avec les offres commerciales sélectionnées.";
+$MESS["TASKS_LIST_TRIAL_EXPIRED_TITLE_V2"] = "Disponible uniquement dans les tâches avancées de Bitrix24";
+$MESS["TASKS_MARK"] = "Classement";
+$MESS["TASKS_MARK_N"] = "Négatif";
+$MESS["TASKS_MARK_NONE"] = "Aucun";
+$MESS["TASKS_MARK_P"] = "Positive";
+$MESS["TASKS_NO_RESPONSIBLE"] = "Le responsable n'est pas indiqué.";
+$MESS["TASKS_NO_TASKS"] = "il n'y a pas de tâches";
+$MESS["TASKS_NO_TEMPLATES"] = "Pour l'instant il n'y a pas de modèles";
+$MESS["TASKS_NO_TITLE"] = "Le nom de la tâche n'est pas indiqué.";
+$MESS["TASKS_OK"] = "OK";
+$MESS["TASKS_PLAIN_LIST"] = "Liste plate des tâches";
+$MESS["TASKS_PRIORITY_V2"] = "Tâche importante";
+$MESS["TASKS_QUICK_CANCEL"] = "Annuler";
+$MESS["TASKS_QUICK_DEADLINE"] = "Date limite";
+$MESS["TASKS_QUICK_DESCRIPTION"] = "description";
+$MESS["TASKS_QUICK_INFO_DETAILS"] = "Détails";
+$MESS["TASKS_QUICK_INFO_EMPTY_DATE"] = "non";
+$MESS["TASKS_QUICK_IN_GROUP"] = "tâche dans un projet";
+$MESS["TASKS_QUICK_SAVE"] = "Enregistrer";
+$MESS["TASKS_QUICK_TITLE"] = "Dénomination de la tâche";
+$MESS["TASKS_REPORTS"] = "Liste de rapports";
+$MESS["TASKS_RESPONSIBLE"] = "Responsable";
+$MESS["TASKS_STATUS"] = "Statut";
+$MESS["TASKS_STATUS_ACCEPTED"] = "Attend l'exécution";
+$MESS["TASKS_STATUS_COMPLETED"] = "Achevé(e)s";
+$MESS["TASKS_STATUS_DECLINED"] = "Est rejetée";
+$MESS["TASKS_STATUS_DELAYED"] = "Différé";
+$MESS["TASKS_STATUS_IN_PROGRESS"] = "En cours d'exécution";
+$MESS["TASKS_STATUS_NEW"] = "Créer";
+$MESS["TASKS_STATUS_OVERDUE"] = "...périmé(e)s";
+$MESS["TASKS_STATUS_WAITING"] = "En attente de contrôle";
+$MESS["TASKS_TASK_FILES"] = "Fichiers";
+$MESS["TASKS_TASK_TITLE_LABEL"] = "Tâche No.";
+$MESS["TASKS_TEMPLATES"] = "Liste de modèles";
+$MESS["TASKS_TEMPLATES_LIST"] = "Listes de tous les modèles";
+$MESS["TASKS_TITLE"] = "Tâches";
+$MESS["TASKS_TREE_LIST"] = "Liste de tâches avec les sous-tâches";
+?>

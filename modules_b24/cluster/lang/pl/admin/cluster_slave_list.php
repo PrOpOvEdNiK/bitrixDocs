@@ -1,0 +1,31 @@
+<?
+$MESS["CLU_MAIN_LOAD"] = "Minimalne Ładowanie";
+$MESS["CLU_SLAVE_BACKUP"] = "Kopia Zapasowa";
+$MESS["CLU_SLAVE_LIST_ADD"] = "Dodaj Podrzędną Bazę Danych";
+$MESS["CLU_SLAVE_LIST_ADD_TITLE"] = "Uruchom Kreatora Nowej Podrzędnej Bazy Danych";
+$MESS["CLU_SLAVE_LIST_BEHIND"] = "Opóźnienie (sek)";
+$MESS["CLU_SLAVE_LIST_DB_HOST"] = "Serwer";
+$MESS["CLU_SLAVE_LIST_DB_LOGIN"] = "Użytkownik";
+$MESS["CLU_SLAVE_LIST_DB_NAME"] = "Baza Danych";
+$MESS["CLU_SLAVE_LIST_DELETE"] = "Usuń";
+$MESS["CLU_SLAVE_LIST_DELETE_CONF"] = "Usunąć połączenie?";
+$MESS["CLU_SLAVE_LIST_DESCRIPTION"] = "Opis";
+$MESS["CLU_SLAVE_LIST_EDIT"] = "Edytuj";
+$MESS["CLU_SLAVE_LIST_FLAG"] = "Stan";
+$MESS["CLU_SLAVE_LIST_ID"] = "ID";
+$MESS["CLU_SLAVE_LIST_MASTER_ADD"] = "Dodaj bazę danych typu master/typu slave";
+$MESS["CLU_SLAVE_LIST_MASTER_ADD_TITLE"] = "Uruchom kreatora nowej bazy danych typu master/typu slave";
+$MESS["CLU_SLAVE_LIST_NAME"] = "Nazwa";
+$MESS["CLU_SLAVE_LIST_PAUSE"] = "Pauza";
+$MESS["CLU_SLAVE_LIST_REFRESH"] = "Odśwież";
+$MESS["CLU_SLAVE_LIST_RESUME"] = "Wznów";
+$MESS["CLU_SLAVE_LIST_SKIP_SQL_ERROR"] = "Ignoruj Błąd";
+$MESS["CLU_SLAVE_LIST_SKIP_SQL_ERROR_ALT"] = "Ignoruj pojedyńczy błąd SQL i kontynuuj replikację";
+$MESS["CLU_SLAVE_LIST_START_USING_DB"] = "Użyj Bazy Danych";
+$MESS["CLU_SLAVE_LIST_STATUS"] = "Status";
+$MESS["CLU_SLAVE_LIST_STOP"] = "Zaniechaj Użycia Bazy Danych";
+$MESS["CLU_SLAVE_LIST_TITLE"] = "Podrzędne Bazy Dancyh";
+$MESS["CLU_SLAVE_LIST_WEIGHT"] = "Waga (%)";
+$MESS["CLU_SLAVE_NOCONNECTION"] = "rozłączony";
+$MESS["CLU_SLAVE_UPTIME"] = "czas pracy";
+?>

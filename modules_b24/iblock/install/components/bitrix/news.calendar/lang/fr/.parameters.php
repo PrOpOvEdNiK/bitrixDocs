@@ -1,0 +1,29 @@
+<?
+$MESS["IBLOCK_DETAIL_URL"] = "L'URL guidant vers la page avec le contenu de l'élément de la rubrique";
+$MESS["T_IBLOCK_DESC_CAL_DATE_ACTIVE_FROM"] = "Date d'activité du";
+$MESS["T_IBLOCK_DESC_CAL_DATE_ACTIVE_TO"] = "Date d'activité jusqu'au";
+$MESS["T_IBLOCK_DESC_CAL_DATE_CREATE"] = "Date de création";
+$MESS["T_IBLOCK_DESC_CAL_DATE_FIELD"] = "Champ de date";
+$MESS["T_IBLOCK_DESC_CAL_MVN"] = "Nom de la variable pour le mois";
+$MESS["T_IBLOCK_DESC_CAL_NEWS_COUNT"] = "Nombre de nouvelles par jour (0 - nombre illimité)";
+$MESS["T_IBLOCK_DESC_CAL_SHOW_CURRENT_DATE"] = "Afficher le mois et l'année en cours";
+$MESS["T_IBLOCK_DESC_CAL_SHOW_MONTH_LIST"] = "Afficher une liste déroulante des Mois";
+$MESS["T_IBLOCK_DESC_CAL_SHOW_TIME"] = "Afficher le temps de nouvelles";
+$MESS["T_IBLOCK_DESC_CAL_SHOW_YEAR"] = "Montrer année switcher";
+$MESS["T_IBLOCK_DESC_CAL_TIMESTAMP_X"] = "Dernière date de modification";
+$MESS["T_IBLOCK_DESC_CAL_TITLE_LEN"] = "longueur de titre (0 - ne limitent pas)";
+$MESS["T_IBLOCK_DESC_CAL_TYPE"] = "Type de calendrier";
+$MESS["T_IBLOCK_DESC_CAL_TYPE_EVENTS"] = "Evénements";
+$MESS["T_IBLOCK_DESC_CAL_TYPE_NEWS"] = "Actualité";
+$MESS["T_IBLOCK_DESC_CAL_WS"] = "Début de la semaine";
+$MESS["T_IBLOCK_DESC_CAL_WS_0"] = "Dimanche";
+$MESS["T_IBLOCK_DESC_CAL_WS_1"] = "Lundi";
+$MESS["T_IBLOCK_DESC_CAL_WS_2"] = "Mardi";
+$MESS["T_IBLOCK_DESC_CAL_WS_3"] = "Mercredi";
+$MESS["T_IBLOCK_DESC_CAL_WS_4"] = "Jeudi";
+$MESS["T_IBLOCK_DESC_CAL_WS_5"] = "Vendredi";
+$MESS["T_IBLOCK_DESC_CAL_WS_6"] = "Samedi";
+$MESS["T_IBLOCK_DESC_CAL_YVN"] = "Nom de la variable pour l'année";
+$MESS["T_IBLOCK_DESC_LIST_ID"] = "Bloc d'information";
+$MESS["T_IBLOCK_DESC_LIST_TYPE"] = "Type du bloc d'information (n'est utilisé que pour la vérification)";
+?>

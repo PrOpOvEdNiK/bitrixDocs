@@ -1,0 +1,30 @@
+<?
+$MESS["SBBL_AUTHOR"] = "Autoryzacja";
+$MESS["SBBL_LIST"] = "Lista produktów";
+$MESS["SBBL_PATH_TO_BASKET"] = "Strona koszyka";
+$MESS["SBBL_PATH_TO_ORDER"] = "Strona zamawiania";
+$MESS["SBBL_PATH_TO_PERSONAL"] = "Sekcja personalna";
+$MESS["SBBL_PATH_TO_PROFILE"] = "Strona profilu";
+$MESS["SBBL_PATH_TO_REGISTER"] = "Strona zapomnianego hasła";
+$MESS["SBBL_PERSONAL"] = "Sekcja personalna";
+$MESS["SBBL_POSITION_CENTER"] = "Centrum";
+$MESS["SBBL_POSITION_FIXED"] = "Wyświetl komponent ponad innymi elementami";
+$MESS["SBBL_POSITION_HORIZONTAL"] = "Wyrównanie w poziomie";
+$MESS["SBBL_POSITION_HORIZONTAL_LEFT"] = "lewy";
+$MESS["SBBL_POSITION_HORIZONTAL_RIGHT"] = "Prawa";
+$MESS["SBBL_POSITION_VERTICAL"] = "Wyrównanie w pionie";
+$MESS["SBBL_POSITION_VERTICAL_BOTTOM"] = "Na dole";
+$MESS["SBBL_POSITION_VERTICAL_TOP"] = "góra";
+$MESS["SBBL_SHOW_AUTHOR"] = "Zezwól na autoryzację w koszyku";
+$MESS["SBBL_SHOW_DELAY"] = "Pokaż listę życzeń";
+$MESS["SBBL_SHOW_EMPTY_VALUES"] = "Pokaż wartość zero w pustym koszyku";
+$MESS["SBBL_SHOW_IMAGE"] = "Pokaż zdjęcie produktu";
+$MESS["SBBL_SHOW_NOTAVAIL"] = "Pokaż niedostępne produkty";
+$MESS["SBBL_SHOW_NUM_PRODUCTS"] = "Pokaż liczbę produktów";
+$MESS["SBBL_SHOW_PERSONAL_LINK"] = "Wyświetla link do Sekcji Osobistej";
+$MESS["SBBL_SHOW_PRICE"] = "Pokaż cenę produktu";
+$MESS["SBBL_SHOW_PRODUCTS"] = "Pokaż listęproduktów";
+$MESS["SBBL_SHOW_SUBSCRIBE"] = "Pokaż produkty znajdujące się na liście obserwowanych użytkownika";
+$MESS["SBBL_SHOW_SUMMARY"] = "Pokaż sumę częściową w każdym wierszu";
+$MESS["SBBL_SHOW_TOTAL_PRICE"] = "Pokaż całkowitą ilość według produktów";
+?>

@@ -1,0 +1,16 @@
+<script type="text/ejs" id="tplTaskSubtasks">
+    <div class="fullWidth jsMultitaskInner">
+        <div class="multitaskBlock">
+            <div class="multitaskHeader">
+                <div class="btnCollapseExpand jsHideSubTasks" title="<?= $this->t('COLLAPSE_SUBTASKS') ?>"></div>
+                <div class="icon <%= window.SCRUMBAN.taskType[taskTypeId].cssClass %>"></div>
+                <div class="title" title="<%= title %>">
+                    <span class="jsDescr"><%= code ? code + "-" : "" %><%= id %>: <%= title %></span>
+                    <div class="icons"></div>
+                </div>
+            </div>
+            <div class="clear"></div>
+            <div class="tasks"></div>
+        </div>
+    </div>
+</script>

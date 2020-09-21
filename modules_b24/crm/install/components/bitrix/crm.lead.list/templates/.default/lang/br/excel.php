@@ -1,0 +1,6 @@
+<?
+$MESS["CRM_COLUMN_PRODUCT_NAME"] = "Produto";
+$MESS["CRM_COLUMN_PRODUCT_PRICE"] = "Preço";
+$MESS["CRM_COLUMN_PRODUCT_QUANTITY"] = "Quantidade";
+$MESS["ERROR_LEAD_IS_EMPTY"] = "Não há Leads.";
+?>

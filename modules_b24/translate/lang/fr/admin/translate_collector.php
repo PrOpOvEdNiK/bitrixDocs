@@ -1,0 +1,37 @@
+<?
+$MESS["TRANS_DOWNLOAD"] = "Importer Localisation";
+$MESS["TRANS_DOWNLOAD_TITLE"] = "Importer Localisation";
+$MESS["TRANS_TITLE"] = "Recueillir Cordes";
+$MESS["TRANS_TITLE_TITLE"] = "Recueillir Cordes";
+$MESS["TRANS_UPLOAD"] = "Recueillir et Exporter les chaînes";
+$MESS["TRANS_UPLOAD_TITLE"] = "Recueillir et Exporter les chaînes";
+$MESS["TR_COLLECT_DATE"] = "Veuillez saisir la date d'assemblage (YYYYMMDD)";
+$MESS["TR_COLLECT_LANGUAGE"] = "Former une localisation";
+$MESS["TR_COLLECT_LOADING"] = "Assemblage...";
+$MESS["TR_CONVERT_ENCODING"] = "Veuillez choisir l'encodage";
+$MESS["TR_CONVERT_FROM_NATIONAL"] = "Localisation en codage national";
+$MESS["TR_CONVERT_FROM_UTF8"] = "Localisation en UTF-8";
+$MESS["TR_CONVERT_NATIONAL"] = "Convertir au Codage National";
+$MESS["TR_CONVERT_UTF8"] = "Convertir au format UTF-8";
+$MESS["TR_DOWNLOAD_LANGUAGE"] = "Importer Localisation";
+$MESS["TR_ERROR_ARCHIVE"] = "Erreur de l'archive";
+$MESS["TR_ERROR_CREATE_TARGET_FOLDER"] = "La création du répertoire final '%PATH%' n'était pas réussie.";
+$MESS["TR_ERROR_CREATE_TEMP_FOLDER"] = "Vous ne pouvez pas créer un répertoire temporaire.";
+$MESS["TR_ERROR_DELETE_TARGET_FOLDER"] = "Vous ne pouvez pas supprimer le répertoire fini '%PATH%'.";
+$MESS["TR_ERROR_DELETE_TEMP_FOLDER"] = "Impossible de supprimer le répertoire temporaire '% PATH%'.";
+$MESS["TR_ERROR_ENCODING"] = "Veuillez saisir le codage correct.";
+$MESS["TR_ERROR_LANGUAGE_CHARSET_NON_UTF"] = "Le codage de la langue sélectionnée n'est pas UTF-8. Veuillez désactiver la conversion de codage de caractère national.";
+$MESS["TR_ERROR_LANGUAGE_DATE"] = "SVP entrez la date d'assemblage.";
+$MESS["TR_ERROR_LANGUAGE_ID"] = "La langue sélectionnée est introuvable";
+$MESS["TR_ERROR_OPEN_FILE"] = "Impossible d'ouvrir le fichier '%FILE%'.";
+$MESS["TR_ERROR_SELECT_LANGUAGE"] = "Veuillez choisir une langue pour la création du recueil.";
+$MESS["TR_ERROR_TARFILE"] = "Aucun fichier sélectionné.";
+$MESS["TR_ERROR_TARFILE_EXTENTION"] = "Type de fichier non valide";
+$MESS["TR_LANGUAGE_COLLECTED_ARCHIVE"] = "La localisation '%LANG%' a été réunie dans l'archive '%FILE_PATH%'. <br> télécharger : %LINK%";
+$MESS["TR_LANGUAGE_COLLECTED_FOLDER"] = "La localisation '%LANG%' est formée dans le répertoire '%PATH%'";
+$MESS["TR_LANGUAGE_DOWNLOADED"] = "La localisation est chargée";
+$MESS["TR_PACK_FILES"] = "Emballer les fichiers (tar.gz)";
+$MESS["TR_SELECT_LANGUAGE"] = "Choisir une langue pour l'assemblage";
+$MESS["TR_SELECT_LANGUAGE_DESCRIPTION"] = "(si la langue est absente dans la liste, tout d'abord <a href='lang_edit.php?lang=fr'>ajoutez</a> la)";
+$MESS["TR_UPLOAD_FILE"] = "Sélectionnez le fichier (tar.gz)";
+?>

@@ -1,0 +1,35 @@
+<?
+$MESS["DISK_JS_BTN_CANCEL"] = "Anuluj";
+$MESS["DISK_JS_BTN_CLOSE"] = "Zamknij";
+$MESS["DISK_JS_BTN_DOWNLOAD"] = "Pobierz";
+$MESS["DISK_JS_BTN_SAVE"] = "Zapisz";
+$MESS["DISK_JS_HELP_WITH_BDISK"] = "Dowiedz się więcej o korzystaniu z dokumentów";
+$MESS["DISK_JS_PLAYER_ERROR_MESSAGE"] = "Używana przeglądarka nie może niestety odtworzyć tego pliku.<br />Możesz <span class=\"disk-player-download\">pobrać go</span> i odtworzyć na swoim komputerze.";
+$MESS["DISK_JS_SERVICE_CHANGE_TEXT"] = "Możesz zmienic swój wybór później wybierając link \"Więcej\" w ustawieniach dysku.";
+$MESS["DISK_JS_SERVICE_CHOICE_TITLE"] = "Wybierz sposób pracy z dokumentem";
+$MESS["DISK_JS_SERVICE_CHOICE_TITLE_SMALL"] = "Dokument";
+$MESS["DISK_JS_SERVICE_CLOUD_TEXT"] = "Dostęp do dokumentu, uzywając Google Docs albo MS Office Web App";
+$MESS["DISK_JS_SERVICE_CLOUD_TITLE"] = "W chmurze";
+$MESS["DISK_JS_SERVICE_HELP_TEXT"] = "Mozesz zmienić wybór później używając link \"Więcej\".";
+$MESS["DISK_JS_SERVICE_HELP_TEXT_2"] = "Możesz zmienić swój wybór później w ustawieniach.";
+$MESS["DISK_JS_SERVICE_LOCAL_TEXT"] = "Edycja dokumentów przy pomocy aplikacji zainstalowanej na twoim komputerze";
+$MESS["DISK_JS_SERVICE_LOCAL_TITLE"] = "Lokalnie";
+$MESS["DISK_JS_SHARING_LABEL_NAME_ADD_RIGHTS_USER"] = "Dodaj więcej";
+$MESS["DISK_JS_SHARING_LABEL_NAME_ALLOW_SHARING_RIGHTS_USER"] = "Pozwól tym użytkownikom na zmianę parametrów udostępniania";
+$MESS["DISK_JS_SHARING_LABEL_NAME_RIGHTS"] = "Uprawnienia dostępu";
+$MESS["DISK_JS_SHARING_LABEL_NAME_RIGHTS_USER"] = "Użytkownicy";
+$MESS["DISK_JS_SHARING_LABEL_OWNER"] = "Właściciel";
+$MESS["DISK_JS_SHARING_LABEL_RIGHTS_FOLDER"] = "Prawa dostępu udostępnionego folderu";
+$MESS["DISK_JS_SHARING_LABEL_RIGHT_ADD"] = "Dodawanie";
+$MESS["DISK_JS_SHARING_LABEL_RIGHT_EDIT"] = "Do edycji";
+$MESS["DISK_JS_SHARING_LABEL_RIGHT_FULL"] = "Pełny dostęp";
+$MESS["DISK_JS_SHARING_LABEL_RIGHT_READ"] = "Do odczytu";
+$MESS["DISK_JS_SHARING_LABEL_TITLE_MODAL"] = "Parametry udostępnienia";
+$MESS["DISK_JS_SHARING_LABEL_TITLE_MODAL_2"] = "Udostępnianie";
+$MESS["DISK_JS_SHARING_LABEL_TOOLTIP_SHARING"] = "Wszyscy użytkownicy, z którymi folder jest współdzielony<br/>będą w stanie współdzielić folder z innymi użytkownikami";
+$MESS["DISK_JS_STATUS_ACTION_ERROR"] = "To jest błąd.";
+$MESS["DISK_JS_STATUS_ACTION_SUCCESS"] = "Zakończone Pomyślnie";
+$MESS["DISK_JS_USER_LOCKED_DOCUMENT"] = "Zablokowany przez";
+$MESS["DISK_VIEWER_DESCR_PROCESS_SAVE_FILE_TO_OWN_FILES"] = "Plik #NAME# jest zapisywany na <br>Twoim Bitrix24.Drive";
+$MESS["DISK_VIEWER_DESCR_SAVE_FILE_TO_OWN_FILES"] = "Plik #NAME# został zapisany <br>w folderze \"Files\\Saved\"";
+?>

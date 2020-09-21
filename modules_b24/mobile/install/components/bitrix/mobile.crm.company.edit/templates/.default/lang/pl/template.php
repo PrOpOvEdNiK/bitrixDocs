@@ -1,0 +1,18 @@
+<?
+$MESS["M_CRM_COMPANY_CONVERSION_NOTIFY"] = "Pola wymagane";
+$MESS["M_CRM_COMPANY_EDIT_CANCEL_BTN"] = "Anuluj";
+$MESS["M_CRM_COMPANY_EDIT_CONTINUE_BTN"] = "Kontynuuj";
+$MESS["M_CRM_COMPANY_EDIT_CONVERT_TITLE"] = "Firma";
+$MESS["M_CRM_COMPANY_EDIT_CREATE_TITLE"] = "Dodaj Firmę";
+$MESS["M_CRM_COMPANY_EDIT_EDIT_TITLE"] = "Edycja";
+$MESS["M_CRM_COMPANY_EDIT_SAVE_BTN"] = "Zapisz";
+$MESS["M_CRM_COMPANY_EDIT_VIEW_TITLE"] = "Wyświetl firmę";
+$MESS["M_CRM_COMPANY_MENU_ACTIVITY"] = "Aktywności";
+$MESS["M_CRM_COMPANY_MENU_DEALS"] = "Deale";
+$MESS["M_CRM_COMPANY_MENU_DELETE"] = "Usuń";
+$MESS["M_CRM_COMPANY_MENU_EDIT"] = "Edycja";
+$MESS["M_CRM_COMPANY_MENU_HISTORY"] = "Historia";
+$MESS["M_DETAIL_DOWN_TEXT"] = "Puść, aby odświeżyć ...";
+$MESS["M_DETAIL_LOAD_TEXT"] = "Aktualizuję ...";
+$MESS["M_DETAIL_PULL_TEXT"] = "Ściągnij, aby odświeżyć ...";
+?>

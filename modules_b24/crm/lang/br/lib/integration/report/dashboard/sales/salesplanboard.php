@@ -1,0 +1,4 @@
+<?
+$MESS["CRM_REPORT_DASHBOARD_SALES_TARGET_GRID_WIDGET_TITLE"] = "Desempenho do funcionário";
+$MESS["CRM_REPORT_DASHBOARD_SALES_TARGET_WIDGET_TITLE"] = "Plano de vendas";
+?>

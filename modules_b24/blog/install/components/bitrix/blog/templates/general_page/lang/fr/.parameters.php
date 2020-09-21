@@ -1,0 +1,31 @@
+<?
+$MESS["BC_NAME_TEMPLATE"] = "Affichage du nom";
+$MESS["BC_NAME_TEMPLATE_DEFAULT"] = "#NOBR##NAME# #LAST_NAME##/NOBR#";
+$MESS["BC_PATH_TO_CONPANY_DEPARTMENT"] = "Modèle de chemin d'accès à la page d'une section";
+$MESS["BC_PATH_TO_MESSAGES_CHAT"] = "Modèle de chemin d'accès au chat";
+$MESS["BC_PATH_TO_SONET_USER_PROFILE"] = "Modèle de chemin d'accès à la page de l'utilisateur du réseau social";
+$MESS["BC_PATH_TO_VIDEO_CALL"] = "Page de l'appel vidéo";
+$MESS["BC_SHARE_HIDE"] = "Ne pas ouvrir la barre de signets sociaux Par Défaut";
+$MESS["BC_SHARE_SHORTEN_URL_KEY"] = "clé pour bit.ly";
+$MESS["BC_SHARE_SHORTEN_URL_LOGIN"] = "nom d'utilisateur pour bit.ly";
+$MESS["BC_SHARE_SYSTEM"] = "Signets et réseaux sociaux utilisés";
+$MESS["BC_SHARE_TEMPLATE"] = "Modèle du composant du panneau des signets sociaux";
+$MESS["BC_SHOW_LOGIN"] = "Afficher le nom d'utilisateur si le nom n'est pas spécifié";
+$MESS["BC_USE_SHARE"] = "Afficher le panneau des signets sociaux";
+$MESS["BLG_THEME"] = "Thème du modèle";
+$MESS["BLG_THEME_BLUE"] = "Bleu";
+$MESS["BLG_THEME_GREEN"] = "Vert";
+$MESS["BLG_THEME_ORANGE"] = "Orange";
+$MESS["BLG_THEME_RED"] = "Rouge";
+$MESS["BLG_THEME_RED2"] = "Rouge simple";
+$MESS["B_SEO_USER"] = "Empêcher les araignées de recherche et les robots collecteurs de suivre le lien au profil d'utilisateur";
+$MESS["GENERAL_PAGE_GROUP_ID"] = "Groupe de blogues pour l'affichage";
+$MESS["GENERAL_PAGE_PATH_TO_BLOG"] = "Chemin vers le blogue de l'utilisateur";
+$MESS["GENERAL_PAGE_PATH_TO_BLOG_CATEGORY"] = "Chemin d'accès à la page du blog de l'utilisateur avec filtre par tag";
+$MESS["GENERAL_PAGE_PATH_TO_GROUP_BLOG"] = "Chemin vers le blogue du groupe";
+$MESS["GENERAL_PAGE_PATH_TO_GROUP_BLOG_CATEGORY"] = "Chemin d'accès à la page du blog du groupe avec le filtre par tag";
+$MESS["GENERAL_PAGE_PATH_TO_GROUP_BLOG_POST"] = "Chemin vers le message dans le blog du groupe";
+$MESS["GENERAL_PAGE_PATH_TO_POST"] = "Chemin vers le message dans le blogue de l'utilisateur";
+$MESS["GENERAL_PAGE_PATH_TO_USER"] = "Chemin vers la page de l'utilisateur";
+$MESS["GENERAL_PAGE_USE_SOCNET"] = "Est utilisé en cadre du réseau social";
+?>

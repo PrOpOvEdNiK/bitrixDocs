@@ -1,0 +1,33 @@
+<?
+$MESS["SHOW"] = "Rodyti";
+$MESS["PIN"] = "PIN";
+$MESS["DATE"] = "Data";
+$MESS["PIN_TYPE"] = "Tipas";
+$MESS["PIN_TYPE_PLEASE"] = "Prašome įvesti PIN";
+$MESS["ACTIVATION_CODE_TYPE_PLEASE"] = "Prašome įvesti aktivacijos kodą";
+$MESS["REQUEST_DATA"] = "Data yra privaloma.";
+$MESS["ORG_LIST"] = "Sąrašas";
+$MESS["TO_PAYROLL_FORM"] = "Darbo užmokesčio forma";
+$MESS["PAYROLL"] = "Darbo užmokesčio fondas";
+$MESS["HOLYDAY"] = "Atostogos";
+$MESS["NEW_WINDOW"] = "Naujas langas";
+$MESS["GET_PIN"] = "Gauti PIN";
+$MESS["ACTIVATION_CODE_TYPE"] = "Įvesti aktivacijos kodą";
+$MESS["GET_PIN_FORM_TITLE"] = "Gauti PIN";
+$MESS["REPLAY_ACTIVATION"] = "Pakartoti aktivaciją";
+$MESS["GET_ANOTHER_PIN"] = "Gauti kitą PIN";
+$MESS["FORWARD_TO_PAYROLL_FROM"] = "Eiti į darbo užmokesčio formą";
+$MESS["NO_DATA_YET"] = "Nėra duomenų";
+$MESS["MONTH_1"] = "Sausis";
+$MESS["MONTH_2"] = "Vasaris";
+$MESS["MONTH_3"] = "Kovas";
+$MESS["MONTH_4"] = "Balandis";
+$MESS["MONTH_5"] = "Gegužė";
+$MESS["MONTH_6"] = "Birželis";
+$MESS["MONTH_7"] = "Liepa";
+$MESS["MONTH_8"] = "Rugpjūtis";
+$MESS["MONTH_9"] = "Rugsėjis";
+$MESS["MONTH_10"] = "Spalis";
+$MESS["MONTH_11"] = "Lapkritis";
+$MESS["MONTH_12"] = "Gruodis";
+?>

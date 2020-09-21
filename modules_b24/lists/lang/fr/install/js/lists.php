@@ -1,0 +1,4 @@
+<?
+$MESS["LISTS_ASSETS_JS_STATUS_ACTION_ERROR"] = "C'est une erreur.";
+$MESS["LISTS_ASSETS_JS_STATUS_ACTION_SUCCESS"] = "Réussi";
+?>

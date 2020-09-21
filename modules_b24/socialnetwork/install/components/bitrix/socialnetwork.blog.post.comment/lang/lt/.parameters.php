@@ -1,0 +1,33 @@
+<?
+$MESS['BPC_PATH_TO_BLOG'] = 'Kelio šablonas į tinklaraščio puslapį';
+$MESS['BPC_PATH_TO_USER'] = 'Kelio šablonas į tinklaraščio naudotojo puslapį';
+$MESS['BPC_PATH_TO_SMILE'] = 'Kelias į aplanką su šypsenėlėmis, svetainės šakninio aplanko atžvilgiu';
+$MESS['BPC_USER_VAR'] = 'Kintamojo pavadinimas kuriame saugomas tinklaraščio naudotojo identifikatorius';
+$MESS['BPC_POST_VAR'] = 'Kintamojo pavadinimas kuriame saugomas tinklaraščio pranešimo identifikatorius';
+$MESS['BPC_PAGE_VAR'] = 'Puslapio kintamojo pavadinimas';
+$MESS['BPC_ID'] = 'Pranešimo ID';
+$MESS['B_VARIABLE_ALIASES'] = 'Kintamųjų vardai';
+$MESS['BC_DATE_TIME_FORMAT'] = 'Datos ir laiko atvaizdavimo formatas';
+$MESS['BPC_COMMENT_ID_VAR'] = 'Kintamojo vardas identifikuoti komentarą';
+$MESS["SHOW_RATING"] = "Įjungti reitingą";
+$MESS["SHOW_RATING_CONFIG"] = "numatytasis";
+$MESS["RATING_TYPE"] = "Reitingo mygtukų dizainas";
+$MESS["RATING_TYPE_CONFIG"] = "numatytasis";
+$MESS["RATING_TYPE_STANDART_TEXT"] = "Patinka / Nepatinka (tekstas)";
+$MESS["RATING_TYPE_STANDART_GRAPHIC"] = "Patinka / Nepatinka (paveikslėlis)";
+$MESS["RATING_TYPE_LIKE_TEXT"] = "Patinka (tekstas)";
+$MESS["RATING_TYPE_LIKE_GRAPHIC"] = "Patinka (paveikslėlis)";
+$MESS["BPC_IMAGE_MAX_WIDTH"] = "Maks. Vaizdo plotis";
+$MESS["BPC_IMAGE_MAX_HEIGHT"] = "Maks. Vaizdo aukštis";
+$MESS["BPC_ALLOW_VIDEO"] = "Leisti įterpti vaizdo įrašą";
+$MESS["BPC_SHOW_SPAM"] = "Rodyti admininstratoriams nuorodas į visus naudotojo komentarus";
+$MESS["BPC_NO_URL_IN_COMMENTS"] = "Išjungti nuorodas komentaruose";
+$MESS["BPC_NO_URL_IN_COMMENTS_N"] = "Niekam";
+$MESS["BPC_NO_URL_IN_COMMENTS_A"] = "Anonimams";
+$MESS["BPC_NO_URL_IN_COMMENTS_L"] = "Visiems";
+$MESS["BPC_NO_URL_IN_COMMENTS_AUTHORITY"] = "Minimalus autoritetas, su kuriuo vartotojai gali įterpti nuorodas į komentarus";
+$MESS["BPC_ALLOW_IMAGE_UPLOAD"] = "Leiti paveiklėlius komentaruose";
+$MESS["BPC_ALLOW_IMAGE_UPLOAD_A"] = "Visiems";
+$MESS["BPC_ALLOW_IMAGE_UPLOAD_R"] = "Registruoti vartotojai";
+$MESS["BPC_ALLOW_IMAGE_UPLOAD_N"] = "Niekam";
+?>

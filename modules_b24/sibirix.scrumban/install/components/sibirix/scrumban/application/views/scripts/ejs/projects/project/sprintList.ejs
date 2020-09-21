@@ -1,0 +1,22 @@
+<script type="text/ejs" id="tplProjectSprintList">
+    <table><%
+    for (var i = 0; i < this.length; i++) {
+        %><tr>
+            <td class='status <%= (this[i].archived != "Y") ? "active" : ""%>'><i><b></b></i></td>
+            <td><%= this[i].title %></td>
+            <%
+                if (!this[i].statistics || (this[i].statistics.length == 0)) {
+                    %><td class='statistics' title='<?= $this->t("PROJECT_SPRINT_NO_TASKS"); ?>'><span class='sprintStats empty'></span></td><%
+                } else {
+                    %><td class='statistics' title='<%= this[i].statistics.title %>'>
+                        <span class='sprintStats'>
+                            <u style='width:<%= this[i].statistics.green  * 60 %>px'></u>
+                            <i style='width:<%= this[i].statistics.yellow * 60 %>px'></i>
+                        </span>
+                    </td><%
+                }
+            %>
+        </tr><%
+    }
+    %></table>
+</script>

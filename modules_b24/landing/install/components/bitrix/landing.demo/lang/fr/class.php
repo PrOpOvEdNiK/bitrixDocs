@@ -1,0 +1,30 @@
+<?
+$MESS["LANDING_CMP_COLOR_AZURE"] = "Bleu";
+$MESS["LANDING_CMP_COLOR_BLACK"] = "Noir";
+$MESS["LANDING_CMP_COLOR_BLUE"] = "Bleu";
+$MESS["LANDING_CMP_COLOR_BROWN"] = "Marron";
+$MESS["LANDING_CMP_COLOR_FLOWERS"] = "Noir, blanc et fleurs";
+$MESS["LANDING_CMP_COLOR_GREEN"] = "Vert";
+$MESS["LANDING_CMP_COLOR_JEANS"] = "Indigo";
+$MESS["LANDING_CMP_COLOR_ORANGERED"] = "Rouge-orange";
+$MESS["LANDING_CMP_COLOR_PINK"] = "Rose";
+$MESS["LANDING_CMP_COLOR_PURPLE"] = "Violet";
+$MESS["LANDING_CMP_COLOR_RED"] = "Rouge";
+$MESS["LANDING_CMP_COLOR_REDBLUE"] = "Rouge et bleu";
+$MESS["LANDING_CMP_COLOR_SEE"] = "Cyan";
+$MESS["LANDING_CMP_COLOR_WHITE"] = "Blanc";
+$MESS["LANDING_CMP_ERROR_MASTER_NO_SERVICE"] = "Le service d'importation est actuellement indisponible";
+$MESS["LANDING_CMP_LD_ERROR_UNKNOWN_STEP_ID"] = "Étape de création du catalogue inconnue";
+$MESS["LANDING_CMP_LD_MESS_CATALOG_UPDATE"] = "Mise à jour des paramètres du catalogue commercial…";
+$MESS["LANDING_CMP_LD_MESS_DATA_PREPARE"] = "Préparation des données…";
+$MESS["LANDING_CMP_LD_MESS_IMPORT_COMPLETE"] = "Le catalogue des produits a bien été créé";
+$MESS["LANDING_CMP_LD_MESS_XML_IMPORT_CATALOG_COMPLETE"] = "Les produits ont bien été importés";
+$MESS["LANDING_CMP_LD_MESS_XML_IMPORT_CATALOG_OFFERS_COMPLETE"] = "Les UGS ont bien été importées";
+$MESS["LANDING_CMP_LD_MESS_XML_IMPORT_CATALOG_OFFERS_PROGRESS"] = "Importation des UGS…";
+$MESS["LANDING_CMP_LD_MESS_XML_IMPORT_CATALOG_OFFER_PRICES_COMPLETE"] = "Les prix des UGS ont bien été importés";
+$MESS["LANDING_CMP_LD_MESS_XML_IMPORT_CATALOG_OFFER_PRICES_PROGRESS"] = "Importation des prix des UGS…";
+$MESS["LANDING_CMP_LD_MESS_XML_IMPORT_CATALOG_PRICES_COMPLETE"] = "Les prix des produits ont bien été importés";
+$MESS["LANDING_CMP_LD_MESS_XML_IMPORT_CATALOG_PRICES_PROGRESS"] = "Importation des prix des produits…";
+$MESS["LANDING_CMP_LD_MESS_XML_IMPORT_CATALOG_PROGRESS"] = "Importation des produits…";
+$MESS["LANDING_CMP_LD_MESS_XML_IMPORT_COMPLETE"] = "Les données des produits ont été importées";
+?>

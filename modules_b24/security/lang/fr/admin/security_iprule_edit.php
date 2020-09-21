@@ -1,0 +1,31 @@
+<?
+$MESS["SEC_IP_EDIT_ACTIVE"] = "Actif(ve)";
+$MESS["SEC_IP_EDIT_ACTIVE_FROM"] = "Début de l'activité";
+$MESS["SEC_IP_EDIT_ACTIVE_TO"] = "Fin de l'activité";
+$MESS["SEC_IP_EDIT_ADD_TITLE"] = "Nouvelle règle";
+$MESS["SEC_IP_EDIT_ADMIN_SECTION"] = "Appliqué à des pages de section administrative";
+$MESS["SEC_IP_EDIT_EDIT_TITLE"] = "Edition d'une Règle";
+$MESS["SEC_IP_EDIT_EXCL_IPS"] = "Exclusion de l'ID de la liste des ID bloqués";
+$MESS["SEC_IP_EDIT_EXCL_MASKS"] = "Les exceptions des masques des chemins";
+$MESS["SEC_IP_EDIT_ID"] = "ID";
+$MESS["SEC_IP_EDIT_INCL_IPS"] = "Adresses IP et plages d'adresses qui seront bloquées";
+$MESS["SEC_IP_EDIT_INCL_IPS_SAMPLE"] = "Par exemple: 192.168.0.7 ou 192.168.0.1-192.168.0.100";
+$MESS["SEC_IP_EDIT_INCL_MASKS"] = "Bloquer l'accès à des chemins (masque)";
+$MESS["SEC_IP_EDIT_INCL_MASKS_SAMPLE"] = "Par exemple: /* ou /bitrix/admin/*";
+$MESS["SEC_IP_EDIT_MENU_ADD"] = "Ajouter";
+$MESS["SEC_IP_EDIT_MENU_ADD_TITLE"] = "Créer une nouvelle règle";
+$MESS["SEC_IP_EDIT_MENU_DELETE"] = "Supprimer";
+$MESS["SEC_IP_EDIT_MENU_DELETE_CONF"] = "Etes-vous sûr de souhaiter éliminer cette règle ?";
+$MESS["SEC_IP_EDIT_MENU_DELETE_TITLE"] = "Supprimer la règle";
+$MESS["SEC_IP_EDIT_MENU_LIST"] = "Règles";
+$MESS["SEC_IP_EDIT_MENU_LIST_TITLE"] = "Liste des règles de blocage";
+$MESS["SEC_IP_EDIT_NAME"] = "Titre";
+$MESS["SEC_IP_EDIT_ROW_ADD"] = "Ajouter";
+$MESS["SEC_IP_EDIT_SAVE_ERROR"] = "Erreur de sauvegarde de la règle.";
+$MESS["SEC_IP_EDIT_SAVE_ERROR_EMPTY_INCL_IPS"] = "Vous n'avez pas indiqué les adresses IP qui seront bloquées.";
+$MESS["SEC_IP_EDIT_SAVE_ERROR_EMPTY_INCL_MASKS"] = "Vous n'avez pas indiqué les masques des chemins dont l'accès sera bloqué.";
+$MESS["SEC_IP_EDIT_SITE_ID"] = "Valable pour les Pages de la Section Publique du site";
+$MESS["SEC_IP_EDIT_SORT"] = "Trier";
+$MESS["SEC_IP_EDIT_TAB"] = "Règle";
+$MESS["SEC_IP_EDIT_TAB_TITLE"] = "Edition de la règle de blocage IP";
+?>

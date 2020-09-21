@@ -1,0 +1,37 @@
+<?
+$MESS["INTL_IBLOCK"] = "Bloque informativo";
+$MESS["INTL_IBLOCK_TYPE"] = "Tipo de Bloque informativo";
+$MESS["INTL_P_FRI_F"] = "Viernes";
+$MESS["INTL_P_MON_F"] = "Lunes";
+$MESS["INTL_P_SAN_F"] = "Domingo";
+$MESS["INTL_P_SAT_F"] = "Sábado";
+$MESS["INTL_P_THU_F"] = "Jueves";
+$MESS["INTL_P_TUE_F"] = "Martes";
+$MESS["INTL_P_WEEK_HOLIDAYS"] = "Fin de semana días";
+$MESS["INTL_P_WEN_F"] = "Miércoles";
+$MESS["INTL_SET_NAVCHAIN"] = "Establecer atajos";
+$MESS["INTL_USERGROUPS_CLEAR"] = "Grupos de usuarios permitidos para Cancelar las salas de reuniones reservadas";
+$MESS["INTL_USERGROUPS_MODIFY"] = "Grupos de usuarios permitidos para editar los horarios para la sala de reunión";
+$MESS["INTL_USERGROUPS_RESERVE"] = "Grupos de usuarios permitidos para la reserva de la sala de reunión";
+$MESS["INTR_IRM_PARAM_DATE_TIME_FORMAT"] = "Formato de fecha y hora";
+$MESS["INTR_IRM_PARAM_NAME_TEMPLATE"] = "Formato de nombre";
+$MESS["INTR_IRM_PARAM_NAME_TEMPLATE_DEFAULT"] = "#NOBR##NAME# #LAST_NAME##/NOBR#";
+$MESS["INTR_IRM_PARAM_PATH_TO_CONPANY_DEPARTMENT"] = "Ruta a la plantilla de la página de departamento";
+$MESS["INTR_IRM_PARAM_PATH_TO_USER"] = "Ruta de la plantilla de perfil de usuario";
+$MESS["INTR_IRM_PARAM_PATH_TO_VIDEO_CALL"] = "Página de vídeo llamada";
+$MESS["INTR_IRM_PARAM_PM_URL"] = "Página de los mensajes personales";
+$MESS["INTR_IRM_PARAM_SHOW_LOGIN"] = "Mostrar el nombre de la sesión si requiere los campos nombre de usuario y no están habilitados";
+$MESS["INTR_IRM_PARAM_SHOW_YEAR"] = "Mostrar año de nacimiento";
+$MESS["INTR_IRM_PARAM_SHOW_YEAR_VALUE_M"] = "solo hombres";
+$MESS["INTR_IRM_PARAM_SHOW_YEAR_VALUE_N"] = "nadie";
+$MESS["INTR_IRM_PARAM_SHOW_YEAR_VALUE_Y"] = "todo";
+$MESS["SONET_ITEM_VAR"] = "Variable del ID de reserva";
+$MESS["SONET_MEETING_VAR"] = "Variable para el ID de la sala de reunión";
+$MESS["SONET_PAGE_VAR"] = "Variable de la página";
+$MESS["SONET_SEF_PATH_INDEX"] = "Página principal del sistema de reservación de la sala de reunión";
+$MESS["SONET_SEF_PATH_MEETING"] = "Horario de la sala de reunión";
+$MESS["SONET_SEF_PATH_MODIFY_MEETING"] = "Editor de Horarios de la sala de reunión";
+$MESS["SONET_SEF_PATH_RESERVE_MEETING"] = "Reserva de la sala de reunión";
+$MESS["SONET_SEF_PATH_SEARCH"] = "Búsqueda de vacantes para la sala de reunión";
+$MESS["SONET_SEF_PATH_VIEW_ITEM"] = "Ruta de la página de los detalles de la reservación";
+?>

@@ -1,0 +1,38 @@
+<?
+$MESS["VULNSCAN_SIMILAR"] = "Panašus";
+$MESS["VULNSCAN_REQUIRE"] = "Privalomos sąlygos";
+$MESS["VULNSCAN_FILE"] = "Failas";
+$MESS["VULNSCAN_XSS_NAME"] = "Kryžminių svetainių skriptas";
+$MESS["VULNSCAN_XSS_HELP"] = "Užpuolikas gali vykdyti pasirinktą kenksmingą HTML/JS kodą nukentėjusiojo naršyklės kontekste. Rekomenduojama filtruoti kintamuosius prieš išėinant į HTML/JS <br> Skaityti daugiau:. <a href=\"https://www.owasp.org/index.php/Cross-site_Scripting_(XSS)\">https://www.owasp.org/index.php/Cross-site_Scripting_(XSS)</a>";
+$MESS["VULNSCAN_HEADER_NAME"] = "HTTP atsakymo skaidymas";
+$MESS["VULNSCAN_HEADER_HELP"] = "Užpuolikas gali naudoti HTTP atsakymo antraštės injekciją atlikti peradresavimą arba įterpti kenksmingą HTML/JS kodą. Rekomenduojama filtruoti naujas eilutes prieš išeinant į atsakymo antraštėje. Aktualu PHP prieš 5,4. Skaityti daugiau: <a href=\"http://www.infosecwriters.com/text_resources/pdf/HTTP_Response.pdf\">http://www.infosecwriters.com/text_resources/pdf/HTTP_Response.pdf</a>";
+$MESS["VULNSCAN_DATABASE_NAME"] = "SQL injekcija";
+$MESS["VULNSCAN_DATABASE_HELP"] = "Užpuolikas gali įterpti savavališkai SQL komandas į užklausą, kas yra nepaprastai pavojinga. Rekomenduojama filtruoti naudotojo duomenis prieš faktiškai siųsdami juos į serverį. Skaityti daugiau: <a href=\"https://www.owasp.org/index.php/SQL_Injection\">https://www.owasp.org/index.php/SQL_Injection</a>";
+$MESS["VULNSCAN_INCLUDE_NAME"] = "Failų įtraukimas";
+$MESS["VULNSCAN_INCLUDE_HELP"] = "Užpuolikas gali prijungti vietinius ir/arba nuotolinius failus, arba skaityti svetainės failus. Rekomenduojama konvertuoti į kanonines formas kelius prie naudotojo duomenų prieš jas naudojant. Skaityti daugiau:<a href=\"https://rdot.org/forum/showthread.php?t=343\">https://rdot.org/forum/showthread.php?t=343</a>";
+$MESS["VULNSCAN_EXEC_NAME"] = "Savavalis komandos vykdymas";
+$MESS["VULNSCAN_EXEC_HELP"] = "Užpuolikas gali įterpti ir vykdyti pasirinktą kodą ar komandas. Tai labai pavojinga. Skaityti daugiau:<a href=\"https://www.owasp.org/index.php/Code_Injection\">https://www.owasp.org/index.php/Code_Injection</a>";
+$MESS["VULNSCAN_CODE_NAME"] = "Savavalis kodo vykdymas";
+$MESS["VULNSCAN_CODE_HELP"] = "Užpuolikas gali įterpti ir vykdyti pasirinktą PHP kodą. Skaityti daugiau:<a href=\"http://cwe.mitre.org/data/definitions/78.html\">http://cwe.mitre.org/data/definitions/78.html</a>";
+$MESS["VULNSCAN_POP_NAME"] = "Duomenų publikacija";
+$MESS["VULNSCAN_POP_HELP"] = "Vartotojo duomenų deserializacjia gali tapti rimtu pažeidžiamumu. Skaityti daugiau:<a href=\"https://rdot.org/forum/showthread.php?t=950\">https://rdot.org/forum/showthread.php?t=950</a>";
+$MESS["VULNSCAN_OTHER_NAME"] = "Galimas sistemos logikos pakeitimas";
+$MESS["VULNSCAN_OTHER_HELP"] = "Nėra aprašymo.";
+$MESS["VULNSCAN_UNKNOWN"] = "Galimas pažeidžiamumas";
+$MESS["VULNSCAN_UNKNOWN_HELP"] = "Nėra aprašymo.";
+$MESS["VULNSCAN_HELP_INPUT"] = "Šaltinis";
+$MESS["VULNSCAN_HELP_FUNCTION"] = "Funkcija/Metodas";
+$MESS["VULNSCAN_HELP_VULNTYPE"] = "Pažeidžiamumo tipas";
+$MESS["VULNSCAN_FIULECHECKED"] = "patikrinti failai:";
+$MESS["VULNSCAN_VULNCOUNTS"] = "Rastos galimos problemos:";
+$MESS["VULNSCAN_DYNAMIC_FUNCTION"] = "Dinaminis funkcijos iškvietimas!";
+$MESS["VULNSCAN_EXTRACT"] = "Anksčiau inicializuoti kintamieji gali būti perrašyti!";
+$MESS["VULNSCAN_TOKENIZER_NOT_INSTALLED"] = "PHP tokenizatorius neįjungtas. Prašome įjungti jį testui užbaigti.";
+$MESS["VULNSCAN_XSS_HELP_SAFE"] = "Naudokite <b>htmlspecialcharsbx</b>. Žymės reikšmės atributai visada kabutėse. Pagreitinkite protokolo specifikatorių (http) href ir src atributo reikšmėse, kai reikalaujama.";
+$MESS["VULNSCAN_HEADER_HELP_SAFE"] = "Naujas eilutes rekomenduojama filtruoti prieš pridedant teksto antraštę.";
+$MESS["VULNSCAN_DATABASE_HELP_SAFE"] = "Naudokite tikslius tipus skaitiniams duomenims (int, float ir tt.). Naudokite mysql_escape_string, \$DB->ForSQL()  ir panašius eilučių duomenims. Kontroliuokite duomenų ilgį. ";
+$MESS["VULNSCAN_INCLUDE_HELP_SAFE"] = "Normalizuoti kelius prieš juos naudojant.";
+$MESS["VULNSCAN_EXEC_HELP_SAFE"] = "Patikrinkite, ar kintamosios reikšmės yra teisingi ir leidžiamame intervale. Pavyzdžiui, jūs norėsite atsisakyti nacionalinių ir skyrybos ženklų. Leidžiamas diapazonas yra apibrėžtas projekto reikalavimais. Naudokite escapeshellcmd ir escapeshellarg didesniam saugumui.";
+$MESS["VULNSCAN_CODE_HELP_SAFE"] = "Filtruoti naudotojo įvestį naudojant <b>EscapePHPString</b>.";
+$MESS["VULNSCAN_HELP_SAFE"] = "Būkite saugūs!";
+?>

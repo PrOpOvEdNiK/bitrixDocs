@@ -1,0 +1,30 @@
+<?
+$MESS["BLOG_ALL_USERS"] = "Wszyscy użytkownicy";
+$MESS["BLOG_APPLY"] = "Zastosuj";
+$MESS["BLOG_AUTO_MSG"] = "Automatyczne wiadomości:";
+$MESS["BLOG_AUTO_MSG_TITLE"] = "Użyj złożonej ochrony automatycznej wiadomości";
+$MESS["BLOG_CANCEL"] = "Anuluj";
+$MESS["BLOG_CAPTHA"] = "Wymaga wpisania specjalnego kodu, jeżeli komentarz jest dodany przez nieautoryzowanego użytkownika";
+$MESS["BLOG_COMMENTS"] = "Komentarze";
+$MESS["BLOG_CONFIRM_DELETE"] = "Ta grupa zawiera użytkowników. Na pewno chcesz usunąć grupę?";
+$MESS["BLOG_CREATE"] = "Stwórz blog";
+$MESS["BLOG_DEF_PERMS"] = "Dostęp domyślny:";
+$MESS["BLOG_DESCR"] = "Opis bloga:";
+$MESS["BLOG_EMAIL_NOTIFY"] = "Powiadomienia";
+$MESS["BLOG_EMAIL_NOTIFY_HELP"] = "Włączenie tej opcji oznacza, że ​​będziesz otrzymywać powiadomienia o nowych komentarzach i postach na swoim blogu.";
+$MESS["BLOG_EMAIL_NOTIFY_TITLE"] = "Wyślij powiadomienia e-mailem";
+$MESS["BLOG_GROUPS"] = "Grupy";
+$MESS["BLOG_GROUP_ADD"] = "Dodaj >>";
+$MESS["BLOG_GROUP_DELETE"] = "Usuń";
+$MESS["BLOG_GRP"] = "Grupa bloga:";
+$MESS["BLOG_MESSAGES"] = "wiadomości";
+$MESS["BLOG_NAME_CHANGE"] = "Edytuj";
+$MESS["BLOG_NEED_AUTH"] = "Najpierw proszę o autoryzację na stronie";
+$MESS["BLOG_OPENED_GRPS"] = "Grupy otwarte:";
+$MESS["BLOG_OPENED_TITLE"] = "Określ grupy, do których każda osoba może zostać dodana bez twojego zatwierdzenia";
+$MESS["BLOG_REGISTERED"] = "Zarejestrowani użykownicy";
+$MESS["BLOG_SAVE"] = "Zapisz";
+$MESS["BLOG_TITLE"] = "Nazwa bloga:";
+$MESS["BLOG_URL"] = "Pseudonim (Łacińskie litery):";
+$MESS["BLOG_URL_TITLE"] = "Określ pseudonim dla swojego bloga (z łacińskimi literami).Pseudonim będzie używany do budowania adresów URL do twojego bloga w formie <nobr>http://this-site.com/blog/[nazwa bloga]</nobr>";
+?>

@@ -1,0 +1,33 @@
+<?
+$MESS["IBLOCK_TYPE_TIP"] = "Išskleidžiamajame sąraše galite pasirinkti vieną iš sukurtų sistemoje informacinių blokų tipų. Paspaudus mygtuką OK bus įkelti pasirinkto tipo informaciniai blokai.";
+$MESS["IBLOCK_ID_TIP"] = "Sąraše randasi visi informaciniai blokai sukurti nurodytam tipui. Pasirinkite vieną iš esančių informacinių blokų. Pasirinkus <i>(kitas)</i> gretimame lange turėsite nurodyti informacinio bloko ID, pvz.:={\$_REQUEST[\"ID\"]}";
+$MESS["ELEMENT_ID_TIP"] = "Laukas skirtas nurodyti naujienos ID. Galite nurodyti ID, o galite užklausti iš masyvo _REQUEST. Pagal nutylėjimą laukas turi reikšmę ={\$_REQUEST[\"ID\"]}";
+$MESS["FIELD_CODE_TIP"] = "Tarp nurodytų laukų pasirinkite tuos kurie bus atvaizduojami detalios peržiūros puslapyje. Pasirinkus <i>nenurodyta</i> ir nenurodžius laukų žemiau puslapyje bus atvaizduojami tipiniai laukai.";
+$MESS["PROPERTY_CODE_TIP"] = "Tarp nurodytų laukų pasirinkite tuos kurie bus atvaizduojami detalios peržiūros puslapyje. Pasirinkus <i>nenurodyta</i> ir nenurodžius laukų žemiau, detalios peržiūros puslapyje nebus atvaizduojami.";
+$MESS["IBLOCK_URL_TIP"] = "Nurodomas kelias į informacinio bloko elementų sąrašą. Reikšmė pagal nutylėjimą, news.php?ID=#IBLOCK_ID#";
+$MESS["META_KEYWORDS_TIP"] = "Išplečiamajame sąraše išvardintos visos informacinio bloko savybės. Pasirenkama viena turinti raktinius žodžius.";
+$MESS["META_DESCRIPTION_TIP"] = "Išplečiamajame sąraše išvardintos visos informacinio bloko savybės. Pasirenkama viena turinti aprašymą.";
+$MESS["DISPLAY_PANEL_TIP"] = "Jei pažymėta, mygtukai bus atvaizduojami svetainės redagavimo rėžimu svetainės administravimo skydelyje bei komponentų redagavimo mygtukų rinkinyje.";
+$MESS["SET_TITLE_TIP"] = "Jeigu pažymėta, tinklalapio antrašte bus nustatytas esamo detaliai atvaizduojamo elemento pavadinimas.";
+$MESS["INCLUDE_IBLOCK_INTO_CHAIN_TIP"] = "Į navigacijos grandinę pridėti infobloko elemento pavadinimą.";
+$MESS["ADD_SECTIONS_CHAIN_TIP"] = "Jeigu pažymėta informaciniame bloke sukurti skyriai. Jų pavadinimai bus atvaizduojami navigacijos grandinėje.";
+$MESS["ADD_ELEMENT_CHAIN_TIP"] = "Jei pažymėta, elementas pavadinimas bus pridėtas į navigacijos grandinę.";
+$MESS["ACTIVE_DATE_FORMAT_TIP"] = "Pasirinkite reikiamą datos formatą. Jeigu nurodote <i>kitas</i>, galite sukurti savo formatą naudojant PHP funkciją <b><i>date</i></b>.";
+$MESS["USE_PERMISSIONS_TIP"] = "Apriboti priėjimą prie infobloko elementų detalios informacijos peržiūros.";
+$MESS["CACHE_TYPE_TIP"] = "<i>Auto</i>: podėlis (cache) galioja  podėlio nustatymuose nurodytą laiko tarpą;
+<i>Kešuoti</i>:Visada kešuoti nurodytą laiko tarpą;
+<i>Nekešuoti</i>:podėlis nenaudojamas";
+$MESS["CACHE_TIME_TIP"] = "Lauke nurodomas podėlio (cache) naudojimo laikas sekundėmis.";
+$MESS["DISPLAY_TOP_PAGER_TIP"] = "Navigacijos nuorodos atvaizduojamos puslapio viršuje.";
+$MESS["DISPLAY_BOTTOM_PAGER_TIP"] = "Navigacijos nuorodos atvaizduojamos puslapio apačioje.";
+$MESS["PAGER_TITLE_TIP"] = "Kategorijos pavadinimas naudojamas navigacijoje (pvz.: naujienos, straipsniai ir t.t.)";
+$MESS["PAGER_TEMPLATE_TIP"] = "Navigacijos grandinės šablono pavadinimas. Pagal nutylėjimą (<i>.default</i>) šablonas yra naudojamas. Sistemoje įdiegtas šablonas <i>orange</i>.";
+$MESS["GROUP_PERMISSIONS_TIP"] = "Naudotojų grupės iš kurių galima pasirinkti tas, kurioms bus leidžiama peržiūrėti elementų detalią informaciją.";
+$MESS["CHECK_DATES_TIP"] = "Atvaizduoja tik aktyvius informacinio bloko elementus";
+$MESS["AJAX_MODE_TIP"] = "Komponente įjungiamas AJAX.";
+$MESS["AJAX_OPTION_SHADOW_TIP"] = "Sritis kuri turi pasikeisti bus užtamsinta. ";
+$MESS["AJAX_OPTION_JUMP_TIP"] = "Pasibaigus AJAX perėjimui pasislinks į komponento pradžią.";
+$MESS["AJAX_OPTION_STYLE_TIP"] = "Pasibaigus AJAX perėjimams bus pakrauti ir apdoroti komponento CSS stiliai.";
+$MESS["AJAX_OPTION_HISTORY_TIP"] = "Vykdant AJAX perėjimus leisti naudoti naršyklės \"Atgal\" ir \"Pirmyn\" mygtukus.";
+$MESS["SET_BROWSER_TITLE_TIP"] = "Jei pasirinkta, informacinio bloko elemento pavadinimas (arba SEO antraštė jei aktyvi) bus naudojamas kaip naršyklės lango pavadinimas.";
+?>

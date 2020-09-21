@@ -1,0 +1,36 @@
+<?
+$MESS["CRM_COMM_WGT_GROWTH"] = "Klientų bazės augimas";
+$MESS["CRM_COMM_WGT_COMPANY_GROWTH_COUNT"] = "Įmonių kiekis";
+$MESS["CRM_COMM_WGT_CONTACT_GROWTH_COUNT"] = "Kontaktų kiekis";
+$MESS["CRM_COMM_WGT_COMMUNICATIONS"] = "Pageidaujamas komunikavimo kanalas";
+$MESS["CRM_COMM_WGT_PROVIDER_TOTAL_QTY"] = "#PROVIDER_NAME#: bendra apkrova";
+$MESS["CRM_COMM_WGT_PROVIDER_STATUS"] = "#PROVIDER_NAME#: statusas";
+$MESS["CRM_COMM_WGT_STREAMS"] = "Užklausų srautai";
+$MESS["CRM_COMM_WGT_MARKS"] = "Klientų pasitenkinimas";
+$MESS["CRM_COMM_WGT_STATUSES"] = "Prašymas apdorojamas";
+$MESS["CRM_COMM_WGT_PROVIDER_SUM"] = "#PROVIDER_NAME#: bendra užsakymų suma ";
+$MESS["CRM_COMM_WGT_SOURCES"] = "Jungties apkrova";
+$MESS["CRM_COMM_WGT_MARK_NONE"] = "Neįvertintas";
+$MESS["CRM_COMM_WGT_MARK_NEGATIVE"] = "Neigiamas";
+$MESS["CRM_COMM_WGT_MARK_POSITIVE"] = "Teigiamas";
+$MESS["CRM_COMM_WGT_MARK_ALL"] = "Visi";
+$MESS["CRM_COMM_WGT_MARK_SOURCE_VK"] = "VK";
+$MESS["CRM_COMM_WGT_MARK_SOURCE_TG"] = "Telegram";
+$MESS["CRM_COMM_WGT_MARK_SOURCE_SK"] = "Skype";
+$MESS["CRM_COMM_WGT_MARK_SOURCE_FB"] = "Facebook";
+$MESS["CRM_COMM_WGT_DEAL_SUCCESS_SUM"] = "Laimėtų sandorių vertė";
+$MESS["CRM_COMM_WGT_DEAL_PROCESS_SUM"] = "Vykdomų sandorių vertė";
+$MESS["CRM_COMM_WGT_DEAL_FAILED_SUM"] = "Pralaimėtų sandorių vertė";
+$MESS["CRM_COMM_WGT_PAID_INTIME_COUNT"] = "Sąskaitos, apmokėtos laiku";
+$MESS["CRM_COMM_WGT_OVERALL_INVOICES"] = "Sukurtos sąskaitos";
+$MESS["CRM_COMM_WGT_FINANCE_INDEX"] = "Mokėjimų laiku koeficientas";
+$MESS["CRM_COMM_WGT_INVOICES_ACTIVE_SUM"] = "Aktyvių sąskaitų bendra suma";
+$MESS["CRM_COMM_WGT_INVOICES_PAID_SUM"] = "Apmokėtų sąskaitų bendra suma";
+$MESS["CRM_COMM_WGT_INVOICES_WAITING"] = "Dar neapmokėta";
+$MESS["CRM_COMM_WGT_DEAL_SUM_PERIOD"] = "Bendra sandorių suma";
+$MESS["CRM_COMM_WGT_CONVERSION"] = "Pokalbis";
+$MESS["CRM_COMM_WGT_DEALS"] = "Sandoriai";
+$MESS["CRM_COMM_WGT_SUCCESS_DEALS"] = "Laimėti sandoriai";
+$MESS["CRM_COMM_WGT_PAID_INVOICES"] = "Apmokėtos sąskaitos";
+$MESS["CRM_COMM_WGT_PAYMENTS"] = "Mokėjimai ";
+?>

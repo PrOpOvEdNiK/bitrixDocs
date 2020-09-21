@@ -1,0 +1,17 @@
+<script type='text/ejs' id='taskAddPopupTypes'>
+    <ul><%
+        var localTaskTypeId;
+        for (i in window.SCRUMBAN.taskTypeSorted) {
+            if (!window.SCRUMBAN.taskTypeSorted.hasOwnProperty(i)) continue;
+
+            localTaskTypeId = parseInt(window.SCRUMBAN.taskTypeSorted[i].id, 10);
+            if (this.types && this.types.length) {
+                if (this.types.indexOf(localTaskTypeId) != -1) {
+                    %><li data-task-type="<%= localTaskTypeId %>" class="<%= window.SCRUMBAN.taskType[localTaskTypeId].cssClass %>" title="<%= window.SCRUMBAN.taskType[localTaskTypeId].title %>"><i></i><span><%= window.SCRUMBAN.taskType[localTaskTypeId].title %></span></li><%
+                }
+            } else {
+                %><li data-task-type="<%= localTaskTypeId %>" class="<%= window.SCRUMBAN.taskType[localTaskTypeId].cssClass %>" title="<%= window.SCRUMBAN.taskType[localTaskTypeId].title %>"><i></i><span><%= window.SCRUMBAN.taskType[localTaskTypeId].title %></span></li><%
+            }
+        }
+    %></ul>
+</script>

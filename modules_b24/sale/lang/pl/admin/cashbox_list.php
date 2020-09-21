@@ -1,0 +1,13 @@
+<?
+$MESS["SALE_ALL"] = "Wszystko";
+$MESS["SALE_CASHBOX_DATE_CREATE"] = "Utworzone";
+$MESS["SALE_CASHBOX_DELETE"] = "Usuń";
+$MESS["SALE_CASHBOX_DELETE_DESCR"] = "Usuń";
+$MESS["SALE_CASHBOX_EDIT"] = "Edytuj";
+$MESS["SALE_CASHBOX_NAME"] = "Nazwa";
+$MESS["SALE_CASHBOX_ONLINE_N"] = "Nie";
+$MESS["SALE_CASHBOX_ONLINE_Y"] = "Tak";
+$MESS["SALE_CASHBOX_SORT"] = "Sortowanie";
+$MESS["SALE_NO"] = "Nie";
+$MESS["SALE_YES"] = "Tak";
+?>

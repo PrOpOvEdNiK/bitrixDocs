@@ -1,0 +1,100 @@
+<?
+$MESS["MFC1_CANT_LOAD_DATAFILE"] = "Nepavyko įkelti duomenų failo. ";
+$MESS["MFC1_CANT_OPEN_ERRORFILE"] = "Nepavyko atidaryti klaidų failo. ";
+$MESS["MFC1_CANT_CREATE_ERRORFILE"] = "Nepavyko sukurti klaidų failo. ";
+$MESS["MFC1_FILE_NOT_SET"] = "Failas nenurodytas.";
+$MESS["MFC1_PWD_NOT_SET"] = "Nenurodytas slaptažodis.";
+$MESS["MFC1_KEY_NOT_SET"] = "Nenurodytas raktas.";
+$MESS["MFC1_PWD_KEY_EQ"] = "Slaptažodis ir raktas turi būti skirtingi.";
+$MESS["MFC1_EMPTY_FILE"] = "Failas yra tuščias. ";
+$MESS["MFC1_NO_CRC_NOT_SET"] = "Kontrolinės sumos patikrinimo skripto failas nėra pasirašytas.";
+$MESS["MFC1_CRC_NOT_CORRECT"] = "Kontrolinė suma yra neteisinga.";
+$MESS["MFC1_NO_CRC"] = "Kontrolinė suma nerasta. ";
+$MESS["MFC1_EXISTS_OTHER_DIF"] = "Yra kitų skirtumų";
+$MESS["MFC1_SIZE_DIF"] = "dydis yra skirtingas";
+$MESS["MFC1_CRC_DIF"] = "kontrolinė suma yra skirtinga";
+$MESS["MFC1_NEW_DIF"] = "naujas";
+$MESS["MFC1_DEL_DIF"] = "pašalintas";
+$MESS["MFC1_NO_DIF"] = "Skirtumų nerasta. ";
+$MESS["MFC1_ERR_NO_PWD"] = "Nenurodytas slaptažodis, skirtas pasirašyti failo vientisumo patikrinimo skriptą.";
+$MESS["MFC1_ERR_VERIFY"] = "Įvyko klaida vientisumo tikrinimo metu:";
+$MESS["MFC1_OK_VERIFY"] = "Dabartinis raktinis žodis yra '#KEY#'. Jei šis žodis skiriasi nuo to, ką jūs anksčiau įrašėte, patikrinimo skriptas yra pažeistas.";
+$MESS["MFC1_ERR_C_PWD"] = "Nenurodytas slaptažodis failo vientisumo patikrinimo skriptui patikrinti.";
+$MESS["MFC1_ERR_C_PWD_CHECK"] = "Slaptažodžio patvirtinimas nesutampa su slaptažodžiu. Prašome įvesti iš naujo.";
+$MESS["MFC1_ERR_C_KEY"] = "Nenurodytas raktažodis failo vientisumo patikrinimo skriptui patikrinti.";
+$MESS["MFC1_ERR_C_PWD_KEY"] = "Raktažodis turi skirtis nuo slaaptažodžio.";
+$MESS["MFC1_ERR_C_ERR"] = "Įvyko klaida parašo tikrinimo metu:";
+$MESS["MFC1_ERR_C_ERR_RIGHT"] = "Jūs neturite leidimo pasirašyti vientisumo tikrinimo skriptą.";
+$MESS["MFC1_ERR_C_SUCCESS"] = "Vientisumo tikrinimo skriptas sėkmingai pasirašytas.";
+$MESS["MFC1_ERR_NO_ACT"] = "Jūs turite pasirinkti veiksmą.";
+$MESS["MFC1_ERR_C_NO_REG"] = "Jūs turite pasirinkti bent vieną regioną.";
+$MESS["MFC1_ERR_C_NO_PWD1"] = "Nenurodytas rezultatų šifravimo slaptažodis.";
+$MESS["MFC1_ERR_V_FILE"] = "Nepasirinktas patvirtinimo failas.";
+$MESS["MFC1_ERR_V_PWD1"] = "Nenurodytas rezultatų iššifravimo slaptažodis.";
+$MESS["MFC1_TITLE"] = "Failo vientisumo patikrinimas";
+$MESS["MFC1_TAB_SIGN"] = "Skripto  vientisumo patikrinimas";
+$MESS["MFC1_TAB_SIGN_DESCR"] = "Patikrinti skripto vientisumą";
+$MESS["MFC1_TAB_SELECT"] = "Veiksmai";
+$MESS["MFC1_TAB_SELECT_DESCR"] = "Veiksmo pasirinkimas";
+$MESS["MFC1_TAB_COLLECT"] = "Duomenų rinkimas";
+$MESS["MFC1_TAB_COLLECT_DESCR"] = "Duomenų rinkimas";
+$MESS["MFC1_TAB_COLLECT_REP"] = "Ataskaita";
+$MESS["MFC1_TAB_COLLECT_REP_DESCR"] = "Ataskaita";
+$MESS["MFC1_TAB_FILE"] = "Failas";
+$MESS["MFC1_TAB_FILE_DESCR"] = "Failo pasirinkimas";
+$MESS["MFC1_TAB_VERIFY"] = "Duomenų patikrinimas";
+$MESS["MFC1_TAB_VERIFY_DESCR"] = "Duomenų patikrinimas";
+$MESS["MFC1_TAB_VERIFY_REP"] = "Ataskaita";
+$MESS["MFC1_TAB_VERIFY_REP_DESCR"] = "Ataskaita";
+$MESS["MFCW_INT_PASS_NOTSUBSCR"] = "Sugalvokite ir atsiminkite savo slaptažodį.Saugus slaptažodis turi būti mažiausiai 10 simbolių, kurių sudėtyje yra raidžių ir skaitmenų.";
+$MESS["MFCW_INT_KEY_HINT_NOT_SUBSCR"] = "Tai bet kuris žodis, kad jūs turite atsiminti. Šis žodis neturi būti toks pat kaip ir slaptažodis. Jei raktinis žodis bus skirtingas kitą kartą, failo tikrinimo skriptas gali būti pakeistas.";
+$MESS["MFCW_INT_PASS_SUBSCR"] = "Tikrindami failo vientisumą, įveskite slaptažodį, kurį naudojote raktui nustatyti.";
+$MESS["MFC1_F_PWD"] = "Slaptažodis";
+$MESS["MFC1_F_PWD_CONF"] = "Patvirtinti slaptažodį ";
+$MESS["MFC1_F_KEY"] = "Raktinis žodis";
+$MESS["MFC1_F_ACT"] = "Veiksmas";
+$MESS["MFC1_F_ACT_VERIFY"] = "Patikrinti failus";
+$MESS["MFC1_F_ACT_COLLECT"] = "Surinkti failų informaciją";
+$MESS["MFC1_F_FILE_SUBTITLE1"] = "Pasirinkti patikrinimo duomenų failą";
+$MESS["MFC1_F_DELETE_CONFIRM"] = "Ar tikrai norite pašalinti šį failą?";
+$MESS["MFC1_FT_DATE"] = "Data";
+$MESS["MFC1_FT_REGION"] = "Regionas";
+$MESS["MFC1_FT_EXTS"] = "Išplėtimas";
+$MESS["MFC1_FT_ACTS"] = "Veiksmai";
+$MESS["MFC1_R_KERNEL"] = "Branduolis";
+$MESS["MFC1_R_SYSTEM"] = "Sistemos sritis";
+$MESS["MFC1_R_PSYSTEM"] = "Asmeninė sistemos sritis";
+$MESS["MFC1_R_PUBLIC"] = "Viešas skyrius";
+$MESS["MFC1_ACT_DODELETE"] = "Pašalinti";
+$MESS["MFC1_F_NO_FILES"] = "Failai nerasti.";
+$MESS["MFC1_F_FILE_SUBTITLE2"] = "Įkelti patikrinimo duomenų failą";
+$MESS["MFC1_F_LOAD_FILE"] = "Patikrinimo duomenų failas";
+$MESS["MFC1_F_COLLECT_REGION"] = "Duomenų rinkimo sritis";
+$MESS["MFC1_F_EXTS"] = "Failo išplėtimas";
+$MESS["MFC1_F_CRY_PWD"] = "Šifravimo slaptažodis";
+$MESS["MFC1_F_C_STEP"] = "Žingsnio trukmė (sek.)";
+$MESS["MFC1_F_DEC_PWD"] = "Aprašymo slaptažodis";
+$MESS["MFC1_F_V_STEP"] = "Žingsnio trukmė (sek.)";
+$MESS["MFC1_J_FINISH"] = "Failas apdorotas.";
+$MESS["MFC1_J_NUM_FILES"] = "Sėkmingai apdoroti failai";
+$MESS["MFC1_J_DWL_PROMT1"] = "Norėdami parsisiųsti rezultato failą,";
+$MESS["MFC1_J_DWL_PROMT2"] = "spauskite čia";
+$MESS["MFC1_J_PROCESS_ERR"] = "Klaida įvyko, apdorojant failus:";
+$MESS["MFC1_SLEEP_A_MINUTE"] = "Prašome palaukti, kol bus atliktas apdorojimas...";
+$MESS["MFC1_B_FIRST"] = "Pirmas";
+$MESS["MFC1_B_NEXT"] = "Kitas";
+$MESS["MFCW_LEGEND_SUBSCR_1"] = "<p>Failo vientisumo patikrinimas yra naudingas nustatyti, kokie pokyčiai buvo padaryti sistemos failams. Jūs galite  bet kuriuo metu patikrinti sistemos branduolio vientisumą, sistemos failus ar bendrus failus.<p>
+<p>Prieš pradėdami patikrą, pirmiausia turite patikrinti, ar neturi patikrinimo skriptas neleistinų pakeitimų.</p>
+<p>Įveskite slaptažodį, kurį naudojote patikrinimo skriptui pasirašyti. Patikrinimo rezultatuose skriptas parodys raktažodį, kuri jūs įvedėte pasirašydamas skriptą.</p>
+<p>Jei nėra jūsų raktinio žodžio, tai rodo, kad skriptas yra pažeistas (t.y. jis buvo iš dalies pakeistas ir juo negalima pasitikėti).</p>
+<p>Jūs turite nustatyti raktažodį dar kartą, kai atnaujinimo sistema keičia vientisumo patikros skriptą.</p>";
+$MESS["MFCW_LEGEND_NOTSUBSCR_1"] = "<p>Failo vientisumo patikrinimas yra naudingas nustatyti, kokie pokyčiai buvo padaryti sistemos failams. Jūs galite  bet kuriuo metu patikrinti sistemos branduolio vientisumą, sistemos failus ar bendrus failus.<p>
+<p>Prieš pradėdami patikrą, pirmiausia turite patikrinti, ar neturi patikrinimo skriptas neleistinų pakeitimų.</p> 
+<p>Paleidus skriptą pirmą kartą, įveskite bet kokį norimą slaptažodį, kuriame yra ne mažiau kaip 10 simbolių (raidžių ir skaičių), ir bet kokį raktažodį (jis turi skirtis nuo slaptažodžio), ir spustelėkite &quot;Set New Key&quot;.</p>
+<p><i>Rekomenduojama dėl aukšto saugumo lygio.</i></p>";
+$MESS["MFCW_LEGEND_2"] = "Jei jūs anksčiau pasirašėte patikrinimo skriptą, patikrinkite raktažodį. Jei jis yra ne tas pats, kurį jūs anksčiau naudojote pasirašant, skriptas buvo iš dalies pakeistas ir jums nereikėtų pasitikėti patikrinimo rezultatais <br /> Pasirinkite norimą veiksmą:. Patikrinti failus arba rinkti failo informaciją iš naujo.";
+$MESS["MFCW_LEGEND_3_verify"] = "Pasirinkite žurnalo failą arba įkelkite failą iš savo kompiuterio.";
+$MESS["MFCW_LEGEND_4_verify"] = "Įveskite slaptažodį, kurį naudojote failui sukurti. <br /> Nurodykite žingsnio trukmę (sekundėmis)  polaipsniniam failų patikrinimui.";
+$MESS["MFCW_LEGEND_3_collect"] = "Įveskite ir įsiminkite slaptažodį, kuris bus naudojamas failui šifruoti. <br /> Įveskite žingsnio trukmę (sekundėmis) polaipsniniam failų patikrinimui.";
+$MESS["MFC1_ZEND_FILE"] = "Nepavyko patikrinti Zend užkoduoto failo vientisumą ";
+?>

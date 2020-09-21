@@ -1,0 +1,4 @@
+<?
+$MESS["SALE_PS_RESTRICTIONS_BY_PERSON_TYPE"] = "par type de payeur";
+$MESS["SALE_SALE_PS_RESTRICTIONS_BY_PERSON_TYPE_NAME"] = "Type de payeur";
+?>

@@ -1,0 +1,31 @@
+<?
+$MESS["CRM_KANBAN_ACTIVITY_MY"] = "Справи";
+$MESS["CRM_KANBAN_ACTIVITY_PLAN"] = "План";
+$MESS["CRM_KANBAN_ACTIVITY_PLAN_CALL"] = "Дзвінок";
+$MESS["CRM_KANBAN_ACTIVITY_PLAN_MEETING"] = "Зустріч";
+$MESS["CRM_KANBAN_ACTIVITY_PLAN_TASK"] = "Завдання";
+$MESS["CRM_KANBAN_ACTIVITY_MORE"] = "Ще";
+$MESS["CRM_KANBAN_ACTIVITY_LETSGO_LEAD"] = "Заплануйте справи, щоб просунути лід вперед по воронці.";
+$MESS["CRM_KANBAN_ACTIVITY_LETSGO_DEAL"] = "Заплануйте справи, щоб просунути угоду вперед по воронці.";
+$MESS["CRM_KANBAN_RELOAD_PAGE"] = "Будь ласка, оновіть сторінку.";
+$MESS["CRM_KANBAN_FINAL_ALERT"] = "Дійсно закрити як невдалий?";
+$MESS["CRM_KANBAN_INVOICE_PARAMS"] = "Параметри закриття рахунку";
+$MESS["CRM_KANBAN_INVOICE_PARAMS_DATE"] = "Дата";
+$MESS["CRM_KANBAN_INVOICE_PARAMS_COMMENT"] = "Коментар";
+$MESS["CRM_KANBAN_INVOICE_PARAMS_DOCNUM"] = "Номер документа";
+$MESS["CRM_KANBAN_INVOICE_PARAMS_SAVE"] = "Зберегти";
+$MESS["CRM_KANBAN_INVOICE_PARAMS_CANCEL"] = "Скасування";
+$MESS["CRM_KANBAN_CONVERT_POPUP_TITLE"] = "Створити на підставі ліда:";
+$MESS["CRM_KANBAN_CONVERT_SELECT_ENTITY"] = "Вибрати";
+$MESS["CRM_KANBAN_FAIL_CONFIRM_DEAL"] = "Перемістити угоду в програний статус \"#STATUS_NAME#\"?";
+$MESS["CRM_KANBAN_FAIL_CONFIRM_LEAD"] = "Перемістити лід в програний статус \"#STATUS_NAME#\"?";
+$MESS["CRM_KANBAN_FAIL_CONFIRM_INVOICE"] = "Перемістити рахунок в програний статус \"#STATUS_NAME#\"?";
+$MESS["CRM_KANBAN_FAIL_CONFIRM_QUOTE"] = "Перемістити пропозицію в програний статус \"#STATUS_NAME#\"?";
+$MESS["CRM_KANBAN_FAIL_CONFIRM_APPLY"] = "Перемістити";
+$MESS["CRM_KANBAN_FAIL_CONFIRM_CANCEL"] = "Скасувати";
+$MESS["CRM_KANBAN_NO_DATA"] = "Поки даних на цій сторінці немає";
+$MESS["CRM_KANBAN_NO_EMAIL"] = "E-mail відсутній";
+$MESS["CRM_KANBAN_NO_PHONE"] = "Телефон відсутній";
+$MESS["CRM_KANBAN_NO_IMOL"] = "Спілкування в чаті неможливо";
+$MESS["CRM_KANBAN_ERROR_DISABLE_CONVERTED_LEAD"] = "Не можна змінювати статус у зконвертованіх лідів.";
+?>

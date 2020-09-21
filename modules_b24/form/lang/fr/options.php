@@ -1,0 +1,41 @@
+<?
+$MESS["FORM_CRM_TITLEBAR_EDIT"] = "Edition du serveur CRM";
+$MESS["FORM_CRM_TITLEBAR_NEW"] = "Nouveau serveur CRM";
+$MESS["FORM_DEFAULT_PERMISSION"] = "L'autorisation par défaut pour les nouveaux formulaires Web : ";
+$MESS["FORM_EDIT_RESULT_TEMPLATE_PATH"] = "Chemin au résultat édition modèles : ";
+$MESS["FORM_PRINT_RESULT_TEMPLATE_PATH"] = "Chemin au résultat modèles printout : ";
+$MESS["FORM_RECORDS_LIMIT"] = "Nombre maximum d'enregistrements de base de données pour aller chercher dans la requête SQL : ";
+$MESS["FORM_RESET"] = "Annuler";
+$MESS["FORM_RESULTS_PAGEN"] = "Résultats de formulaire Web par page : ";
+$MESS["FORM_SAVE"] = "Enregistrer";
+$MESS["FORM_SHOW_RESULT_TEMPLATE_PATH"] = "Chemin au résultat modèles d'affichage : ";
+$MESS["FORM_SHOW_TEMPLATE_PATH"] = "Chemin pour former des modèles d'affichage : ";
+$MESS["FORM_TAB_CRM"] = "Connexion au CRM";
+$MESS["FORM_TAB_CRM_ADD_BUTTON"] = "Ajouter";
+$MESS["FORM_TAB_CRM_CHECK"] = "vérifier la connexion";
+$MESS["FORM_TAB_CRM_CHECK_ERROR"] = "Erreur: #ERROR#";
+$MESS["FORM_TAB_CRM_CHECK_LOADING"] = "requête d'autorisation.";
+$MESS["FORM_TAB_CRM_CHECK_NO"] = "il n'y a pas de données de l'autorisation";
+$MESS["FORM_TAB_CRM_CONFIRM"] = "Supprimer la connexion ?";
+$MESS["FORM_TAB_CRM_DELETE"] = "Supprimer";
+$MESS["FORM_TAB_CRM_EDIT"] = "Éditer";
+$MESS["FORM_TAB_CRM_FORM_URL_PATH"] = "Chemin";
+$MESS["FORM_TAB_CRM_FORM_URL_SERVER"] = "Serveur CRM";
+$MESS["FORM_TAB_CRM_NOTE"] = "Pas de portails enregistrés.";
+$MESS["FORM_TAB_CRM_NOTE_LINK"] = "Créer un lien.";
+$MESS["FORM_TAB_CRM_ROW_ACTIVE"] = "Actif(ve)";
+$MESS["FORM_TAB_CRM_ROW_AUTH"] = "Autorisation";
+$MESS["FORM_TAB_CRM_ROW_AUTH_LOGIN"] = "Connexion";
+$MESS["FORM_TAB_CRM_ROW_AUTH_PASSWORD"] = "Mot de passe";
+$MESS["FORM_TAB_CRM_ROW_AUTH_PASSWORD_SHOW"] = "montrer le mot de passe";
+$MESS["FORM_TAB_CRM_ROW_AUTH_SHOW"] = "Paramètres d'autorisation";
+$MESS["FORM_TAB_CRM_ROW_TITLE"] = "Dénomination";
+$MESS["FORM_TAB_CRM_ROW_URL"] = "URL";
+$MESS["FORM_TAB_CRM_SECTION_TITLE"] = "Portails attachés";
+$MESS["FORM_TAB_CRM_TITLE"] = "Réglages de la connexion avec le portail de entreprise";
+$MESS["FORM_TAB_CRM_UNTITLED"] = "-- Sans nom --";
+$MESS["FORM_TAB_CRM_WRONG_URL"] = "Mauvaise adresse CRM";
+$MESS["FORM_USE_HTML_EDIT"] = "Utilisez éditeur HTML visuel";
+$MESS["MAIN_RESTORE_DEFAULTS"] = "par défaut";
+$MESS["SIMPLE_MODE"] = "Utilisez simple éditeur de forme";
+?>

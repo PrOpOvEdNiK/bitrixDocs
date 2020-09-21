@@ -1,0 +1,31 @@
+<?
+$MESS["IB_E_ACCESS_D"] = "Atsisakyti";
+$MESS["IB_E_ACCESS_R"] = "Skaityti";
+$MESS["IB_E_ACCESS_U"] = "Darbo eiga";
+$MESS["IB_E_ACCESS_U2"] = "Verslo procesai";
+$MESS["IB_E_ACCESS_W"] = "Rašyti";
+$MESS["IB_E_ACCESS_X"] = "Pilna prieiga (įskaitant prieigos teisių valdymą)";
+$MESS["IB_E_BIZPROC"] = "Naudojama verslo procese:";
+$MESS["IB_E_DEFAULT_ACCESS"] = "Numatytasis";
+$MESS["IB_E_DEFAULT_ACCESS_TITLE"] = "Numatytasis prieigos leidimas";
+$MESS["IB_E_EVERYONE"] = "Kiekvienam";
+$MESS["IB_E_GROUP_ACCESS_TITLE"] = "Naudotojų grupės leidimai";
+$MESS["IB_E_WF_TYPE"] = "Naudojama darbo eigoje arba verslo procese:";
+$MESS["IB_E_WF_TYPE_NONE"] = "nenaudojama";
+$MESS["IB_E_WF_TYPE_WORKFLOW"] = "darbo eiga";
+$MESS["IB_E_WF_TYPE_BIZPROC"] = "verslo procesas";
+$MESS["IB_E_WORKFLOW"] = "Įtraukta į darbo eigą:";
+$MESS["WD_ACCESS_DENIED"] = "Negalima įeiti.";
+$MESS["WD_ERROR_BAD_SESSID"] = "Jūsų sesija pasibaigė. Prašome pakartoti operaciją.";
+$MESS["WD_TAB2_TITLE"] = "Prieiga";
+$MESS["WD_ADD_GROUP"] = "Pridėti grupę";
+$MESS["IB_E_WF_TYPE_LABEL"] = "Taip";
+$MESS["WD_TAB1_TITLE"] = "Parametrai";
+$MESS["WD_IBLOCK_ID_EMPTY"] = "Nenurodytas informacijos blokas.";
+$MESS["WD_TAB3_TITLE"] = "Informacijos bloko prieigos teisės";
+$MESS["IB_E_RIGHTS"] = "Pratęstas leidimo valdymas:";
+$MESS["IB_E_PERMISSIONS_WARN"] = "Perėjus prie paprasto leidimo valdymo režimo bus atkurti visi esami  informacijos bloko leidimai.";
+$MESS["IB_E_RIGHTS_WARN"] = "Ar tikrai norite pakeisti leidimų režimą į \"#IB_NAME#\"?";
+$MESS["WD_TAB15_TITLE"] = "Papildomi laukai";
+$MESS["IB_WDUF_ADD"] = "Pridėti papildomą lauką";
+?>

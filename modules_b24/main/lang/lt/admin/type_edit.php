@@ -1,0 +1,32 @@
+<?
+$MESS["EDIT_TITLE"] = "Redaguoti įvykį #TYPE#";
+$MESS["NEW_TITLE"] = "Pridėti naują įvykį";
+$MESS["EVENT_NAME"] = "El. pašto pranešimo tipas";
+$MESS["LANG_PARAMS"] = "Kalbos parametrai";
+$MESS["EVENT_NAME_TITLE"] = "Įvykio tipas";
+$MESS["EVENT_NAME_DESCR"] = "El. pašto pranešimo tipas";
+$MESS["TEMPLATES_TITLE"] = "Šablonai";
+$MESS["TEMPLATES_DESCR"] = "El. pašto šablonai";
+$MESS["EVENT_NAME_LANG"] = "Pavadinimas";
+$MESS["EVENT_SORT_LANG"] = "Rūšiavimas";
+$MESS["EVENT_DESCR_LANG"] = "Aprašymas";
+$MESS["RECORD_LIST"] = "Tipų sąrašas";
+$MESS["RECORD_LIST_TITLE"] = "Eiti į el.pašto įvykių sąrašą";
+$MESS["MAIN_NEW_RECORD"] = "Pridėti tipą";
+$MESS["MAIN_NEW_RECORD_TITLE"] = "Pridėti naują el.pašto tipą";
+$MESS["MAIN_DELETE_RECORD"] = "Šalinti tipą";
+$MESS["MAIN_DELETE_RECORD_TITLE"] = "Pašalinti tipą, įskaitant šablonus";
+$MESS["MAIN_DELETE_RECORD_CONF"] = "Ar tikrai norite pašalinti esamą tipą, įskaitant šablonus?";
+$MESS["MAIN_NEW_TEMPLATE"] = "Pridėti šabloną";
+$MESS["MAIN_NEW_TEMPLATE_TITLE"] = "Pridėti naują šabloną šiam įvykių tipui";
+$MESS["TEMPLATE_LIST"] = "Šablonų sąrašas";
+$MESS["TEMPLATE_LIST_TITLE"] = "Pereiti prie šablonų sąrašo";
+$MESS["LANGUAGE_PARAMS"] = "Kalbos parametrai";
+$MESS["SAVE"] = "Išsaugoti pakeitimus";
+$MESS["ADD"] = "Pridėti";
+$MESS["RESET"] = "Išvalyti";
+$MESS["MAIN_ERROR_SAVING"] = "Klaida. Nepavyko išsaugoti";
+$MESS["ERROR_LANG_EMPTY"] = "Kalbos parametrai nenurodyti";
+$MESS["LANG_FIELDS"] = "Jūs turite užpildyti bent vieną kalbos lauką";
+$MESS["type_edit_add_message_template"] = "Pridėti pranešimo šabloną";
+?>

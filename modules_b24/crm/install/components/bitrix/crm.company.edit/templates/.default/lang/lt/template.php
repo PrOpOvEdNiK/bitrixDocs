@@ -1,0 +1,20 @@
+<?
+$MESS["CRM_TAB_1"] = "Įmonė";
+$MESS["CRM_TAB_1_TITLE"] = "Įmonės savybės";
+$MESS["CRM_TAB_2"] = "Žurnalas";
+$MESS["CRM_TAB_2_TITLE"] = "Įmonės žurnalas";
+$MESS["CRM_TAB_3"] = "Verslo procesai";
+$MESS["CRM_TAB_3_TITLE"] = "Įmonės verslo procesai";
+$MESS["CRM_COMPANY_EDIT_DUP_CTRL_SUMMARY_TITLE"] = "Rasti sutapimai";
+$MESS["CRM_COMPANY_EDIT_DUP_CTRL_WARNING_DLG_TITLE"] = "Galimi klonai";
+$MESS["CRM_COMPANY_EDIT_DUP_CTRL_WARNING_ACCEPT_BTN_TITLE"] = "Ignoruoti ir išsaugoti";
+$MESS["CRM_COMPANY_EDIT_DUP_CTRL_WARNING_CANCEL_BTN_TITLE"] = "Atšaukti";
+$MESS["CRM_COMPANY_EDIT_DUP_CTRL_TTL_SUMMARY_TITLE"] = "pagal vardą";
+$MESS["CRM_COMPANY_EDIT_DUP_CTRL_PHONE_SUMMARY_TITLE"] = "pagal telefoną";
+$MESS["CRM_COMPANY_EDIT_DUP_CTRL_EMAIL_SUMMARY_TITLE"] = "pagal el.paštą";
+$MESS["CRM_COMPANY_EDIT_DUP_CTRL_SHORT_SUMMARY_TITLE"] = "rasta";
+$MESS["CRM_COMPANY_EDIT_TITLE"] = "Įmonė ##ID# &mdash; #TITLE#";
+$MESS["CRM_COMPANY_CREATE_TITLE"] = "Nauja įmonė";
+$MESS["CRM_COMPANY_EDIT_DUP_CTRL_REQUISITE_SUMMARY_TITLE"] = "pagal įmonės duomenis";
+$MESS["CRM_COMPANY_EDIT_DUP_CTRL_BANK_DETAIL_SUMMARY_TITLE"] = "pagal banko duomenis";
+?>

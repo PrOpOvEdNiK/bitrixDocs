@@ -1,0 +1,5 @@
+<?
+$MESS["TARIFF_RESTRICTION_TEXT"] = "A coleta automática de relatórios de todos os funcionários é um dos mais úteis meios de melhorar a eficiência. Você define a programação (por exemplo, a cada sexta-feira ou no final de cada mês) e o portal abrirá uma janela onde o funcionário terá que digitar um relatório de suas atividades diárias/semanais/mensais e traçar planos para o futuro próximo. O supervisor do funcionário pode então aceitar o relatório com uma avaliação positiva ou negativa para fornecer um feedback útil a cada subordinado. <a href=\"javascript:void(0)\" onclick='top.BX.Helper.show(\"redirect=detail&code=5391955\");'>Informações</a>";
+$MESS["TARIFF_RESTRICTION_TEXT2"] = "Relatórios de trabalho estão disponíveis somente no plano Profissional.";
+$MESS["TITLE"] = "Relatórios de Trabalho";
+?>

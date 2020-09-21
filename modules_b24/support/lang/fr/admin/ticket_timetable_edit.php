@@ -1,0 +1,32 @@
+<?
+$MESS["MAIN_ADMIN_MENU_COPY"] = "Copie";
+$MESS["MAIN_ADMIN_MENU_DELETE"] = "Supprimer";
+$MESS["MAIN_ADMIN_MENU_LIST"] = "Liste";
+$MESS["SUP_24H"] = "24 heures";
+$MESS["SUP_ADMIN_ROW_COPY"] = "Copie";
+$MESS["SUP_ADMIN_ROW_DELETE"] = "Supprimer la ligne";
+$MESS["SUP_ADMIN_TAB1"] = "Graphique";
+$MESS["SUP_ADMIN_TAB2"] = "Heures";
+$MESS["SUP_ADMIN_TITLE"] = "Plannings";
+$MESS["SUP_ADMIN_TITLE_ADD"] = "Création de nouveaux horaires";
+$MESS["SUP_ADMIN_TITLE_EDIT"] = "Éditer l'horaire '#NAME#'";
+$MESS["SUP_ADMIN_USER_FIELDS"] = "Paramètres avancés";
+$MESS["SUP_BACK_TO_ADMIN"] = "Précédent";
+$MESS["SUP_CLOSED"] = "Ne fonctionne pas";
+$MESS["SUP_CONFIRM_DEL_MESSAGE"] = "tes-vous sûr de vouloir supprimer cet Emploi du temps ?";
+$MESS["SUP_CUSTOM"] = "heures d'ouverture : <br>(HH24:MI)";
+$MESS["SUP_DESCRIPTION"] = "Description";
+$MESS["SUP_ERROR"] = "Avec erreurs";
+$MESS["SUP_FORM_SETTINGS"] = "Paramètres";
+$MESS["SUP_FORM_SETTINGS_EX"] = "Paramètres";
+$MESS["SUP_HOURS"] = "Heures";
+$MESS["SUP_NAME"] = "Dénomination";
+$MESS["SUP_TIMETABLE_NOT_FOUND"] = "L'horaire n'a pas été trouvé.";
+$MESS["SUP_WEEKDAY_0"] = "Lundi";
+$MESS["SUP_WEEKDAY_1"] = "Mardi";
+$MESS["SUP_WEEKDAY_2"] = "Mercredi";
+$MESS["SUP_WEEKDAY_3"] = "Jeudi";
+$MESS["SUP_WEEKDAY_4"] = "Vendredi";
+$MESS["SUP_WEEKDAY_5"] = "Samedi";
+$MESS["SUP_WEEKDAY_6"] = "Dimanche";
+?>

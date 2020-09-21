@@ -1,0 +1,34 @@
+<?
+$MESS["EC_INTRANET_MODULE_NOT_INSTALLED"] = "Intraneto modulis nėra įdiegtas.";
+$MESS["EC_IBLOCK_MODULE_NOT_INSTALLED"] = "Informacinių blokų modulis nėra įdiegtas.";
+$MESS["INTASK_C36_PAGE_TITLE"] = "Konferencijų salės užsakymo informacija";
+$MESS["INTASK_C36_PAGE_TITLE1"] = "Konferencijų salės užsakymas";
+$MESS["INAF_F_ID"] = "ID";
+$MESS["INAF_F_NAME"] = "Antraštė";
+$MESS["INAF_F_DESCRIPTION"] = "Aprašymas";
+$MESS["INAF_F_FLOOR"] = "Aukštas";
+$MESS["INAF_F_PLACE"] = "Vietos";
+$MESS["INAF_F_PHONE"] = "Telefonas";
+$MESS["INAF_MEETING_NOT_FOUND"] = "Konferencijų salė nerasta. ";
+$MESS["INAF_ITEM_NOT_FOUND"] = "Užsakymas nerastas. ";
+$MESS["INTASK_C29_UF_PERSONS"] = "Asmenys";
+$MESS["INTASK_C29_UF_RES_TYPE"] = "Susitikimo tipas";
+$MESS["INTASK_C29_UF_RES_TYPEA"] = "Pasitarimas";
+$MESS["INTASK_C29_UF_RES_TYPEB"] = "Prezentacija";
+$MESS["INTASK_C29_UF_RES_TYPEC"] = "Dėrybos";
+$MESS["INTASK_C29_UF_RES_TYPED"] = "Kita";
+$MESS["INTASK_C29_UF_PREPARE_ROOM"] = "Konferencijų salės paruošimas";
+$MESS["INTASK_C29_NEED_AUTH"] = "Norint užsisakyti konferencijų salę, jūs turite autorizuotis";
+$MESS["INTASK_C29_NO_RPERMS"] = "Jūs neturite leidimo užsisakyti konferencijų salę.";
+$MESS["INTASK_C29_EMPTY_DATE"] = "Nenurodyta rezervacijos data.";
+$MESS["INTASK_C29_WRONG_DATE"] = "Rezervacijos data yra neteisinga. Prašome naudotis formatu:  #FORMAT#";
+$MESS["INTASK_C29_EMPTY_TIME"] = "Nenurodytas rezervacijos laikas.";
+$MESS["INTASK_C29_HM"] = "valandos:minutės";
+$MESS["INTASK_C29_WRONG_TIME"] = "Rezervacijos laikas yra neteisingas. Prašome naudotis formatu:  #FORMAT#";
+$MESS["INTASK_C29_EMPTY_DURATION"] = "Nenurodyta posėdžio trukmė. ";
+$MESS["INTASK_C29_WRONG_DURATION"] = "Posėdžio trukmė yra neteisinga. ";
+$MESS["INTASK_C29_EMPTY_NAME"] = "Nenurodytas posėdžio pavadinimas.";
+$MESS["INTASK_C29_CONFLICT"] = "Konferencijų salė yra rezervuota nuo #TIME1# iki #TIME2#: #RES#";
+$MESS["INTR_IRMVI_NAME_TEMPLATE_DEFAULT"] = "#NOBR##NAME# #LAST_NAME##/NOBR#";
+$MESS["INTS_NO_IBLOCK_PERMS"] = "Jūs neturite leidimo peržiūrėti konferencijų salės informacijos bloką.";
+?>

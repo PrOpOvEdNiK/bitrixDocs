@@ -1,0 +1,13 @@
+<?
+$MESS["SALE_HPS_WEBMONEY_TEST"] = "Testinis rėžimas";
+$MESS["SALE_HPS_WEBMONEY_PAYEE_PURSE"] = "pardavėjo piniginė - #PAYEE_PURSE#";
+$MESS["SALE_HPS_WEBMONEY_INVS_NO"] = "sąskaitos numeris - #INVS_NO#";
+$MESS["SALE_HPS_WEBMONEY_TRANS_NO"] = "mokėjimo numeris - #TRANS_NO#";
+$MESS["SALE_HPS_WEBMONEY_TRANS_DATE"] = "mokėjimo data - #TRANS_DATE#";
+$MESS["SALE_HPS_WEBMONEY_PAYER_PURSE"] = "pirkėjo piniginė - #PAYER_PURSE#";
+$MESS["SALE_HPS_WEBMONEY_PAYER_WM"] = "Pirkėjo WMId - #PAYER_WM#";
+$MESS["SALE_HPS_WEBMONEY_PAYMER_NUMBER"] = "-kortos numeris - #PAYMER_NUMBER#";
+$MESS["SALE_HPS_WEBMONEY_PAYMER_EMAIL"] = "paymer.compirkėjo el. paštas - #PAYMER_EMAIL#";
+$MESS["SALE_HPS_WEBMONEY_TELEPAT_PHONENUMBER"] = "pirkėjo telefono nr. - #TELEPAT_PHONENUMBER#";
+$MESS["SALE_HPS_WEBMONEY_TELEPAT_ORDERID"] = "Telepat mokėjimas - #TELEPAT_ORDERID#";
+?>

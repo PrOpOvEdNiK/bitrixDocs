@@ -1,0 +1,33 @@
+<?
+$MESS["INTRANET_USER_PROFILE_STRESSLEVEL_TYPE_DESCRIPTION_GREEN"] = "Ótimo";
+$MESS["INTRANET_USER_PROFILE_STRESSLEVEL_TYPE_DESCRIPTION_GREEN1"] = "Baixo";
+$MESS["INTRANET_USER_PROFILE_STRESSLEVEL_TYPE_DESCRIPTION_GREEN2"] = "Leve";
+$MESS["INTRANET_USER_PROFILE_STRESSLEVEL_TYPE_DESCRIPTION_GREEN3"] = "Ótimo";
+$MESS["INTRANET_USER_PROFILE_STRESSLEVEL_TYPE_DESCRIPTION_RED"] = "Ruim";
+$MESS["INTRANET_USER_PROFILE_STRESSLEVEL_TYPE_DESCRIPTION_RED1"] = "Perdendo energia";
+$MESS["INTRANET_USER_PROFILE_STRESSLEVEL_TYPE_DESCRIPTION_RED2"] = "Cansado";
+$MESS["INTRANET_USER_PROFILE_STRESSLEVEL_TYPE_DESCRIPTION_RED3"] = "Exaustivo";
+$MESS["INTRANET_USER_PROFILE_STRESSLEVEL_TYPE_DESCRIPTION_RED4"] = "Exigente";
+$MESS["INTRANET_USER_PROFILE_STRESSLEVEL_TYPE_DESCRIPTION_RED5"] = "Alto";
+$MESS["INTRANET_USER_PROFILE_STRESSLEVEL_TYPE_DESCRIPTION_RED6"] = "Super estressado";
+$MESS["INTRANET_USER_PROFILE_STRESSLEVEL_TYPE_DESCRIPTION_RED7"] = "Extremo";
+$MESS["INTRANET_USER_PROFILE_STRESSLEVEL_TYPE_DESCRIPTION_UNKNOWN"] = "Indefinido";
+$MESS["INTRANET_USER_PROFILE_STRESSLEVEL_TYPE_DESCRIPTION_YELLOW"] = "OK";
+$MESS["INTRANET_USER_PROFILE_STRESSLEVEL_TYPE_DESCRIPTION_YELLOW1"] = "Sentido moleza";
+$MESS["INTRANET_USER_PROFILE_STRESSLEVEL_TYPE_DESCRIPTION_YELLOW2"] = "Um pouco alto";
+$MESS["INTRANET_USER_PROFILE_STRESSLEVEL_TYPE_DESCRIPTION_YELLOW3"] = "Elevado";
+$MESS["INTRANET_USER_PROFILE_STRESSLEVEL_TYPE_TEXT_GREEN1"] = "Seu corpo está relaxado. Você não está mostrando sinais de sobrecarga.";
+$MESS["INTRANET_USER_PROFILE_STRESSLEVEL_TYPE_TEXT_GREEN2"] = "Seu corpo está sob uma leve pressão, mas você está lidando bem. Esse tipo de estresse não aumenta sua resiliência, mas também não prejudica.";
+$MESS["INTRANET_USER_PROFILE_STRESSLEVEL_TYPE_TEXT_GREEN3"] = "Seu corpo está suficientemente estressado. Está pronto para fazer as coisas. Isso se chama eustresse, uma quantidade saudável de estresse que ajuda a aumentar a resiliência do corpo.";
+$MESS["INTRANET_USER_PROFILE_STRESSLEVEL_TYPE_TEXT_RED1"] = "Seu nível de estresse está baixo, mas você está tendo problemas em lidar com isso. Parece que recentemente você passou por algo física, mental ou emocionalmente esgotante.";
+$MESS["INTRANET_USER_PROFILE_STRESSLEVEL_TYPE_TEXT_RED2"] = "Seu nível de estresse está baixo, mas você está tendo problemas em lidar com isso. Parece que recentemente você passou por algo física, mental ou emocionalmente esgotante.";
+$MESS["INTRANET_USER_PROFILE_STRESSLEVEL_TYPE_TEXT_RED3"] = "Seu corpo está usando muitos recursos para lidar com o estresse e está difícil para os seus sistemas, embora você possa se sentir bem por enquanto.";
+$MESS["INTRANET_USER_PROFILE_STRESSLEVEL_TYPE_TEXT_RED4"] = "Seu corpo está sobrecarregado. Você está exagerando. Isso não é bom por longos períodos de tempo, pois pode afetar sua saúde.";
+$MESS["INTRANET_USER_PROFILE_STRESSLEVEL_TYPE_TEXT_RED5"] = "Seu corpo está passando por muito estresse. Ele está usando uma tonelada de recursos para lidar com a pressão.";
+$MESS["INTRANET_USER_PROFILE_STRESSLEVEL_TYPE_TEXT_RED6"] = "Seu corpo está passando por muito estresse. Você está em um estado de distresse, que pode esgotar sua energia e seus recursos rapidamente.";
+$MESS["INTRANET_USER_PROFILE_STRESSLEVEL_TYPE_TEXT_RED7"] = "Seu corpo está passando por muito estresse. Seus sistemas estão tendo dificuldades para funcionar sem problemas. Isso pode afetar sua saúde ao longo do tempo.";
+$MESS["INTRANET_USER_PROFILE_STRESSLEVEL_TYPE_TEXT_TITLE"] = "O que significa o nível de estresse #LEVEL#?";
+$MESS["INTRANET_USER_PROFILE_STRESSLEVEL_TYPE_TEXT_YELLOW1"] = "Seu corpo está relaxado demais e não consegue se recompor. Parece que você exagerou recentemente, e ele está ocupado se recuperando.";
+$MESS["INTRANET_USER_PROFILE_STRESSLEVEL_TYPE_TEXT_YELLOW2"] = "Seu corpo está um pouco sobrecarregado. Ele está lidando bem, mas está usando mais recursos do que o normal para suportar a pressão.";
+$MESS["INTRANET_USER_PROFILE_STRESSLEVEL_TYPE_TEXT_YELLOW3"] = "Seu corpo está sobrecarregado. Ele está lidando bem, mas está consumindo mais energia e recursos do que o normal para suportar a pressão.";
+?>

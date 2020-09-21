@@ -1,0 +1,30 @@
+<?
+$MESS["CP_BPST_CACHE_GROUPS"] = "Prendre en compte les droits d'accès";
+$MESS["CP_BPST_SECTION_FIELDS"] = "Champs de section";
+$MESS["CP_BPST_SECTION_USER_FIELDS"] = "Propriétés de la section";
+$MESS["IBLOCK_CACHE_FILTER"] = "Mettre en cache si un filtre est installé";
+$MESS["IBLOCK_DETAIL_URL"] = "L'URL guidant vers la page avec le contenu de l'élément de la rubrique";
+$MESS["IBLOCK_ELEMENT_COUNT"] = "Photos Maximum à afficher dans une section";
+$MESS["IBLOCK_ELEMENT_SORT_FIELD"] = "Champ du tri des photos";
+$MESS["IBLOCK_ELEMENT_SORT_ORDER"] = "Ordre du tri des photos";
+$MESS["IBLOCK_FIELD"] = "Correspondance des champs";
+$MESS["IBLOCK_FILTER_NAME"] = "Nom du tableau sortant pour la filtration";
+$MESS["IBLOCK_IBLOCK"] = "Bloc d'information";
+$MESS["IBLOCK_LINE_ELEMENT_COUNT"] = "Nombre de photos à afficher dans une ligne de table";
+$MESS["IBLOCK_PROPERTY"] = "Propriétés";
+$MESS["IBLOCK_SECTION_COUNT"] = "Les sections maximales à afficher";
+$MESS["IBLOCK_SECTION_SORT_FIELD"] = "Par quel champ trions-nous les rubriques ?";
+$MESS["IBLOCK_SECTION_SORT_ORDER"] = "Ordre de triage des sections";
+$MESS["IBLOCK_SECTION_URL"] = "URL menant vers la page avec le contenu de la section";
+$MESS["IBLOCK_SORT_ACTIVE_FROM"] = "date de l'activité (depuis)";
+$MESS["IBLOCK_SORT_ACTIVE_TO"] = "la date d'activité (selon)";
+$MESS["IBLOCK_SORT_ASC"] = "en ordre ascendant";
+$MESS["IBLOCK_SORT_DEPTH_LEVEL"] = "dossier niveau d'imbrication";
+$MESS["IBLOCK_SORT_DESC"] = "par ordre descendant";
+$MESS["IBLOCK_SORT_ID"] = "ID";
+$MESS["IBLOCK_SORT_NAME"] = "dénomination";
+$MESS["IBLOCK_SORT_SHOWS"] = "quantité de vues en moyenne";
+$MESS["IBLOCK_SORT_SORT"] = "index de tri";
+$MESS["IBLOCK_SORT_TIMESTAMP"] = "Date de modification";
+$MESS["IBLOCK_TYPE"] = "Type du bloc d'information";
+?>

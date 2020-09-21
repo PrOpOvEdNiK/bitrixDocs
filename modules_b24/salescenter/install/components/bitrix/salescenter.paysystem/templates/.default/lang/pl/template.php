@@ -1,0 +1,32 @@
+<?
+$MESS["SALESCENTER_SP_ADD_PAYMENT_BUTTON"] = "Konfiguruj";
+$MESS["SALESCENTER_SP_BUTTON_CLOSE"] = "Anuluj";
+$MESS["SALESCENTER_SP_CAHSBOX_HINT"] = "Brak kas fiskalnych. <a href='#CASHBOX_SETTINGS_LINK#'>Skonfiguruj kasy fiskalne</a>";
+$MESS["SALESCENTER_SP_CONNECT_HINT"] = "Użyj konta Yandex do uwierzytelnienia";
+$MESS["SALESCENTER_SP_CONNECT_PAYMENT_BUTTON"] = "Podłącz";
+$MESS["SALESCENTER_SP_ERROR_POPUP_TITLE"] = "Błąd";
+$MESS["SALESCENTER_SP_LINK_CONNECT"] = "Jak podłączyć system płatności";
+$MESS["SALESCENTER_SP_PARAMS_FORM_CAN_PRINT_CHECK"] = "Włącz wydruki pokwitowań";
+$MESS["SALESCENTER_SP_PARAMS_FORM_CASHBOX"] = "Kasy fiskalne";
+$MESS["SALESCENTER_SP_PARAMS_FORM_DESCRIPTION"] = "Opis";
+$MESS["SALESCENTER_SP_PARAMS_FORM_IS_CASH"] = "Typ płatności";
+$MESS["SALESCENTER_SP_PARAMS_FORM_IS_CASH_ACQUIRING"] = "Transakcja kartą";
+$MESS["SALESCENTER_SP_PARAMS_FORM_IS_CASH_CASH"] = "Gotówka";
+$MESS["SALESCENTER_SP_PARAMS_FORM_IS_CASH_NO_CASH"] = "Przelew bankowy";
+$MESS["SALESCENTER_SP_PARAMS_FORM_LOGOTIP"] = "Logo systemu płatności";
+$MESS["SALESCENTER_SP_PARAMS_FORM_LOGOTIP_HINT"] = "Zalecany rozmiar: 100 na 45 pikseli";
+$MESS["SALESCENTER_SP_PARAMS_FORM_LOGOTIP_LOAD_BUTTON"] = "Prześlij";
+$MESS["SALESCENTER_SP_PARAMS_FORM_NAME"] = "Nazwa";
+$MESS["SALESCENTER_SP_PARAMS_FORM_NAME_HINT"] = "Przykład: „Płatność kartami Visa i MasterCard”. To jest nazwa, którą będą widzieć klienci na liście opcji płatności";
+$MESS["SALESCENTER_SP_PARAMS_FORM_TITLE"] = "Parametry";
+$MESS["SALESCENTER_SP_PAYSYSTEM_CASH_DESCRIPTION"] = "Płatność gotówką w miejscu odbioru lub kurierowi.";
+$MESS["SALESCENTER_SP_PAYSYSTEM_CASH_TITLE"] = "Płatność gotówką";
+$MESS["SALESCENTER_SP_PAYSYSTEM_DELETE_CONFIRM"] = "Na pewno usunąć ten system płatności?";
+$MESS["SALESCENTER_SP_PAYSYSTEM_PAYPAL_DESCRIPTION"] = "Płatność przez PayPal";
+$MESS["SALESCENTER_SP_PAYSYSTEM_PAYPAL_TITLE"] = "PayPal";
+$MESS["SALESCENTER_SP_POPUP_BUTTON_CANCEL"] = "Anuluj";
+$MESS["SALESCENTER_SP_POPUP_BUTTON_CLOSE"] = "Zamknij";
+$MESS["SALESCENTER_SP_POPUP_CONTENT"] = "Zmiany nie zostały zapisane. Czy na pewno chcesz zamknąć panel wysuwany?";
+$MESS["SALESCENTER_SP_POPUP_TITLE"] = "Potwierdź działanie";
+$MESS["SALESCENTER_SP_YANDEX_LOGOUT"] = "Wyłącz";
+?>

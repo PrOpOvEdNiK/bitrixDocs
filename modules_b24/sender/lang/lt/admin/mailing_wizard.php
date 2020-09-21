@@ -1,0 +1,34 @@
+<?
+$MESS["sender_wizard_title"] = "Naujienlaiškio vedlys";
+$MESS["sender_wizard_step_mailing_title"] = "Sukurti arba pasirinkti naujienlaiškį";
+$MESS["sender_wizard_step_mailing_title_sub"] = "Naujienlaiškio parametrai";
+$MESS["sender_wizard_step_mailing_group_title"] = "Pasirinkti arba sukurti gavėjų grupes";
+$MESS["sender_wizard_step_mailing_group_title_sub"] = "Gavėjų grupių pasirinkimas";
+$MESS["sender_wizard_step_group_title"] = "Sukurti gavėjų grupę";
+$MESS["sender_wizard_step_chain_title"] = "Naujienlaiškio sukūrimas";
+$MESS["sender_wizard_step_chain_title_sub"] = "Pranešimo šablonas";
+$MESS["sender_wizard_step_chain_title_sub_desc"] = "Pranešimų šablonas leidžia greitai sukurti ir išsiųsti laišką. Tam tikslui išsaugokite esamą naujienlaiškį kaip šabloną ir vėliau pasirinkite jį iš aplanko \"Mano Šablonai\".";
+$MESS["sender_wizard_step_chain_send_type_title"] = "Siuntimo tvarkaraštis";
+$MESS["sender_wizard_step_mailing_bnt_next"] = "Kitas žingsnis";
+$MESS["sender_wizard_step_mailing_bnt_end"] = "Išsaugoti ir siųsti";
+$MESS["sender_wizard_status_mailing"] = "Pasirinkti arba sukurti<br>naujienlaiškį";
+$MESS["sender_wizard_status_group"] = "Pasirinkti arba<br>sukurti grupę";
+$MESS["sender_wizard_status_chain"] = "Sukurti<br>naujienlaiškį";
+$MESS["sender_wizard_status_chain_send_type"] = "Naujienlaiškio<br>tvarkaraštis";
+$MESS["sender_wizard_status_final"] = "Baigta";
+$MESS["sender_wizard_text"] = "Šis vedlys jus lydės per kelis paprastus sekančius žingsnius, ko pasekoje sukursite ir išsiųsite naujienlaiškį.";
+$MESS["sender_wizard_step_mailing_existed_not_selected"] = "Naujienlaiškis nepasirinktas";
+$MESS["sender_wizard_step_mailing_field_new"] = "Sukurti naują naujienlaiškį";
+$MESS["sender_wizard_step_mailing_field_exist"] = "Pasirinkite naujienlaiškį";
+$MESS["sender_wizard_step_mailing_field_exist_list"] = "Pasirinkite iš sąrašo ...";
+$MESS["sender_wizard_step_mailing_group_field_bnt_add"] = "Sukurti naują grupę";
+$MESS["sender_group_conn_cnt"] = "Pasirinkta";
+$MESS["sender_wizard_access_denied"] = "Jūs negalite paleisti vedlio nes turite tik leidimą skaityti.";
+$MESS["sender_wizard_step_trig_mailing_title"] = "Naujo laiškų automatinio siuntimo sukūrimas";
+$MESS["sender_wizard_step_trig_mailing_title_sub"] = "Automatinio siuntimo pasirinkimas";
+$MESS["sender_wizard_step_trig_mailing_group_title"] = "Pradžios ir pabaigos sąlygos";
+$MESS["sender_wizard_status_trig_mailing"] = "Sukurti arba redaguoti naujienlaiškį";
+$MESS["sender_wizard_status_trig_mailing_group"] = "Paleidimo sąlyga";
+$MESS["sender_wizard_status_trig_chain"] = "Laiškų nustatymas";
+$MESS["sender_wizard_step_trig_mailing_exist_title"] = "Automatinio laiškų siuntimo redagavimas";
+?>

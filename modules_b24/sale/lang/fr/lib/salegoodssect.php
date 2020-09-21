@@ -1,0 +1,6 @@
+<?
+$MESS["SALE_GOODS_SECTION_ENTITY_ID"] = "ID de la section";
+$MESS["SALE_GOODS_SECTION_ENTITY_PROD"] = "Article";
+$MESS["SALE_GOODS_SECTION_ENTITY_PROD_ID"] = "Code du produit";
+$MESS["SALE_GOODS_SECTION_ENTITY_SECT"] = "Créer une section";
+?>

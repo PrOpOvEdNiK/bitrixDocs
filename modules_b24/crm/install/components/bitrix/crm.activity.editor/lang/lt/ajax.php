@@ -1,0 +1,29 @@
+<?
+$MESS["CRM_ACTION_DEFAULT_SUBJECT"] = "Nauja veikla (#DATE#)";
+$MESS["CRM_CALL_ACTION_DEFAULT_SUBJECT"] = "Naujas telefono skambutis  (#DATE#)";
+$MESS["CRM_MEETING_ACTION_DEFAULT_SUBJECT"] = "Naujas susitikimas  (#DATE#)";
+$MESS["CRM_EMAIL_ACTION_DEFAULT_SUBJECT"] = "Naujas el.laiškas  (#DATE#)";
+$MESS["CRM_TITLE_EMAIL_SUBJECT"] = "Tema";
+$MESS["CRM_TITLE_EMAIL_FROM"] = "Nuo";
+$MESS["CRM_TITLE_EMAIL_TO"] = "Kam";
+$MESS["CRM_COMMUNICATION_TAB_LEAD"] = "Iniciatyva";
+$MESS["CRM_COMMUNICATION_TAB_DEAL"] = "Sandoris";
+$MESS["CRM_COMMUNICATION_TAB_COMPANY"] = "Įmonė";
+$MESS["CRM_COMMUNICATION_TAB_CONTACT"] = "Kontaktas";
+$MESS["CRM_ACTIVITY_EMAIL_EMPTY_FROM_FIELD"] = "Nurodykite laiško siuntėją.";
+$MESS["CRM_ACTIVITY_EMAIL_EMPTY_TO_FIELD"] = "Nurodykite laiško gavėją.";
+$MESS["CRM_ACTIVITY_INVALID_EMAIL"] = "'#VALUE#' yra neteisingas el.pašto adresas.";
+$MESS["CRM_ACTIVITY_RESPONSIBLE_NOT_FOUND"] = "Nepavyko rasti naudotojo, atsakingo už šią veiklą.";
+$MESS["CRM_INCOMING_CALL_ACTION_DEFAULT_SUBJECT_EXT"] = "Įeinantis skambutis #TITLE#";
+$MESS["CRM_OUTGOING_CALL_ACTION_DEFAULT_SUBJECT_EXT"] = "Išeinantis skambutis  #TITLE#";
+$MESS["CRM_MEETING_ACTION_DEFAULT_SUBJECT_EXT"] = "Susitikimas su #TITLE#";
+$MESS["CRM_PERMISSION_DENIED"] = "Negalima įeiti";
+$MESS["CRM_EMAIL_ACTION_DEFAULT_DESCRIPTION"] = "[nėra teksto]";
+$MESS["CRM_CONTACT_UPDATE_PERMISSION_DENIED"] = "Jūs neturite leidimo redaguoti veiklas susijusias su kontaktu #TITLE#\". Prašome susisiekti su savo intranetu administratoriumi.";
+$MESS["CRM_COMPANY_UPDATE_PERMISSION_DENIED"] = "Jūs neturite leidimo redaguoti veiklas susijusias su kompanija #TITLE#\". Prašome susisiekti su savo intranetu administratoriumi.";
+$MESS["CRM_LEAD_UPDATE_PERMISSION_DENIED"] = "Jūs neturite leidimo redaguoti veiklas susijusias su iniciatyva #TITLE#\". Prašome susisiekti su savo intranetu administratoriumi.";
+$MESS["CRM_DEAL_UPDATE_PERMISSION_DENIED"] = "Jūs neturite leidimo redaguoti veiklas susijusias su sandoriu #TITLE#\". Prašome susisiekti su savo intranetu administratoriumi.";
+$MESS["CRM_ACTIVITY_COULD_NOT_CREATE_POSTING"] = "Nepavyko užsiregistruoti laišką išsiuntymui.";
+$MESS["CRM_ACTIVITY_COULD_NOT_SAVE_POSTING_FILE"] = "Nepavyko prikabinti bylą \"#FILE_NAME#\" prie laiško.";
+$MESS["CRM_ACTIVITY_EMAIL_CREATION_CANCELED"] = "Elektroninis laiškas atšauktas.";
+?>

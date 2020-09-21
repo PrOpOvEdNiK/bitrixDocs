@@ -1,0 +1,31 @@
+<?
+$MESS["LEARNING_DESC_YES"] = "Taip";
+$MESS["LEARNING_DESC_NO"] = "Ne";
+$MESS["LEARNING_COURSE_ID_NAME"] = "Kurso identifikatorius";
+$MESS["LEARNING_CHECK_PERMISSIONS"] = "Tikrinti prieigos teises";
+$MESS["LEARN_COURSE_ID_DESC"] = "Kurso identifikatorius";
+$MESS["LEARN_INDEX_ID_DESC"] = "Puslapio ID";
+$MESS["LEARN_LESSON_ID_DESC"] = "Pamokos ID";
+$MESS["LEARN_CHAPTER_ID_DESC"] = "Skyriaus ID";
+$MESS["LEARN_SELF_TEST_DESC"] = "Savarankiško patikrinimo testo ID";
+$MESS["LEARN_TEST_ID_DESC"] = "Testo ID";
+$MESS["LEARN_TYPE_ID_DESC"] = "Visos kurso medžiagos ID";
+$MESS["LEARN_TEST_LIST_ID_DESC"] = "Testų sąrašo ID";
+$MESS["LEARN_GRADEBOOK_ID_DESC"] = "Žurnalo ID";
+$MESS["LEARN_FOR_TEST_ID_DESC"] = "Žurnalo testo ID";
+$MESS["LEARN_INDEX_DESC"] = "URL, vedantis į pagrindinį puslapį";
+$MESS["LEARN_LESSON_DETAIL_DESC"] = "URL, vedantis į pamokos puslapį";
+$MESS["LEARN_CHAPTER_DETAIL_DESC"] = "URL, vedantis į skyriaus puslapį";
+$MESS["LEARN_TEST_SELF_DESC"] = "URL, vedantis į savarankiškų testų puslapį";
+$MESS["LEARN_TEST_DETAIL_DESC"] = "URL, vedantis į testo puslapį ";
+$MESS["LEARN_TEST_LIST_DESC"] = "URL, vedantis į puslapį su testų sąrašu";
+$MESS["LEARN_COURSE_CONTENTS_DESC"] = "URL, vedantis į puslapį su visą kurso medžiagą";
+$MESS["LEARN_GRADEBOOK_DESC"] = "URL, vedantis į žurnalo puslapį";
+$MESS["LEARNING_PAGE_WINDOW_NAME"] = "Klausimų kiekis navigacijos grandinėje";
+$MESS["LEARNING_SHOW_TIME_LIMIT"] = "Rodyti laiko apribojimo skaitiklį";
+$MESS["LEARNING_TESTS_PER_PAGE"] = "Testų skaičius puslapyje";
+$MESS["TEST_DETAIL_GROUP"] = "Testo nustatymai";
+$MESS["TEST_LIST_GROUP"] = "Testų sąrašo nustatymai";
+$MESS["T_LEARNING_PAGE_NUMBER_VARIABLE"] = "Klausimo ID";
+$MESS["LEARN_PATH_TO_USER_PROFILE"] = "Naudotojo profilio puslapio nuoroda";
+?>

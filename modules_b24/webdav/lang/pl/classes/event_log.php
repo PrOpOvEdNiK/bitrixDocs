@@ -1,0 +1,29 @@
+<?
+$MESS["LOG_TYPE_DOCUMENTS"] = "Biblioteka dokumentów";
+$MESS["LOG_TYPE_ELEMENT_ADD"] = "Dodaj plik";
+$MESS["LOG_TYPE_ELEMENT_DELETE"] = "Usuń plik";
+$MESS["LOG_TYPE_ELEMENT_MOVE"] = "Przenieś plik";
+$MESS["LOG_TYPE_ELEMENT_RENAME"] = "Zmień nazwę pliku";
+$MESS["LOG_TYPE_ELEMENT_RESTORE"] = "Przywróć plik z kosza";
+$MESS["LOG_TYPE_ELEMENT_TRASH"] = "Przenieś plik do kosza";
+$MESS["LOG_TYPE_ELEMENT_UPDATE"] = "Zaktualizuj plik";
+$MESS["LOG_TYPE_SECTION_ADD"] = "Utwórz folder";
+$MESS["LOG_TYPE_SECTION_DELETE"] = "Usuń folder";
+$MESS["LOG_TYPE_SECTION_MOVE"] = "Przenieś folder";
+$MESS["LOG_TYPE_SECTION_RENAME"] = "Zmień nazwę folderu";
+$MESS["LOG_TYPE_SECTION_RESTORE"] = "Przywróć folder z kosza";
+$MESS["LOG_TYPE_SECTION_TRASH"] = "Przenieś folder do kosza";
+$MESS["LOG_WEBDAV_ELEMENT_ADD"] = "Plik #NAME# został dodany";
+$MESS["LOG_WEBDAV_ELEMENT_DELETE"] = "Plik #NAME# został usunięty";
+$MESS["LOG_WEBDAV_ELEMENT_MOVE"] = "Plik #NAME# został przeniesiony do \"#MOVE_TO#\"";
+$MESS["LOG_WEBDAV_ELEMENT_RENAME"] = "Nazwa pliku #NAME# została zmieniona na #NAME#";
+$MESS["LOG_WEBDAV_ELEMENT_RESTORE"] = "Plik #NAME# został przywrócony";
+$MESS["LOG_WEBDAV_ELEMENT_TRASH"] = "Plik #NAME# został przeniesiony do kosza";
+$MESS["LOG_WEBDAV_ELEMENT_UPDATE"] = "Plik #NAME# został zaaktualizowany";
+$MESS["LOG_WEBDAV_SECTION_ADD"] = "Folder #NAME# został dodany";
+$MESS["LOG_WEBDAV_SECTION_DELETE"] = "Folder #NAME# został usunięty";
+$MESS["LOG_WEBDAV_SECTION_MOVE"] = "Folder #NAME# został przeniesiony do \"#MOVE_TO#\"";
+$MESS["LOG_WEBDAV_SECTION_RENAME"] = "Nazwa folderu #NAME# została zmieniona na #NAME#";
+$MESS["LOG_WEBDAV_SECTION_RESTORE"] = "Folder #NAME# został przywrócony";
+$MESS["LOG_WEBDAV_SECTION_TRASH"] = "Folder #NAME# został przeniesiony do kosza";
+?>

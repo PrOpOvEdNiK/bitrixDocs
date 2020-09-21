@@ -1,0 +1,4 @@
+<?
+$MESS["TASK_TREE_EXCEPTION_LINK_EXISTS_EXCEPTION"] = "Užduotys jau susietos";
+$MESS["TASK_TREE_EXCEPTION_LINK_DOES_NOT_EXIST_EXCEPTION"] = "Užduotys nesusietos";
+?>

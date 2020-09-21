@@ -1,0 +1,4 @@
+<?
+$MESS["LANDING_BLOCK_27_7_ONE_COL_FIX_TEXT_BG_NAME_NEW"] = "Tekst o stałej długości na kolorowym tle";
+$MESS["LANDING_BLOCK_27_7_ONE_COL_FIX_TEXT_BG_NODES_LANDINGBLOCKNODE_TEXT"] = "Tekst";
+?>

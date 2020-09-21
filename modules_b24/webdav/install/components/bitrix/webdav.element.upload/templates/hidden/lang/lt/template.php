@@ -1,0 +1,36 @@
+<?
+$MESS["WD_DROP_CONFIRM"] = "Ar tikrai norite pašalinti aplanką #NAME# negrįžtamai?";
+$MESS["WD_NAME"] = "Pavadinimas";
+$MESS["WD_DROP_SECTION"] = "Pašalinti aplanką #NAME#";
+$MESS["WD_EDIT_SECTION"] = "Readaguoti aplanką #NAME#";
+$MESS["WD_ADD_SECTION"] = "Sukurti aplanką";
+$MESS["WD_DROP"] = "Pašalinti";
+$MESS["WD_SAVE"] = "Sukurti";
+$MESS["WD_CANCEL"] = "Atšaukti";
+$MESS["WD_CLOSE"] = "Uždaryti";
+$MESS["WD_UPLOAD_TITLE"] = "Įkelti naują dokumentą";
+$MESS["WD_UPLOAD_VERSION_TITLE"] = "Pakeisti dokumentą į \"#NAME#\"";
+$MESS["WD_UPLOAD_SUCCESS"] = "Failas buve sėkmingai įkeltas.";
+$MESS["File"] = "Pažymėti failą įkėlimui";
+$MESS["Title"] = "Pavadinimas";
+$MESS["Tags"] = "Žymės";
+$MESS["Send"] = "Įkelti";
+$MESS["Send_Document"] = "Įkelti naują dokumentą";
+$MESS["Send_Version"] = "Įkelti naują versiją";
+$MESS["Description"] = "Aprašymas";
+$MESS["WD_UPLOAD_EXTENDED"] = "<a href=\"#LINK#\">Įkelti daug dokumentų</a>";
+$MESS["WD_UPLOAD_EXPAND_PROPS"] = "Nustatyti <a #LINK#>dokumento savybes</a>";
+$MESS["WD_UPLOAD_COLLAPSE_PROPS"] = "Pasl4pti <a #LINK#>dokumento savybes</a>";
+$MESS["WD_UPLOAD_INTERRUPT_BEWARE"] = "Dokumentas yra dar įkeliamas į serverį. Įkėlimo procesas bus nutrauktas, jei jūs paliksite šį puslapį.";
+$MESS["WD_UPLOAD_INTERRUPT_CONFIRM"] = "Dokumentas yra dar įkeliamas į serverį. Ar tikrai norite nutraukti?";
+$MESS["WD_UPLOAD_NOT_DONE"] = "Dokumentas dar nėra įkeltas.";
+$MESS["WD_UPLOAD_NOT_DONE_ASK"] = "Dokumentas dar nėra įkeltas. Uždaryti įkėlimo dailogo langą?";
+$MESS["WD_WARNING_SAME_NAME"] = "Failas tokiu pavadinimu jau egzistuoja. Jūs galite <a #LINK#>pakeisti failo pavadinimą</a> arba įkelti naują versiją, paspausdami \"Įkelti\" (tai išsaugos ankstesnę versiją pakeitimų žurnale).";
+$MESS["WD_ERROR_SAME_NAME"] = "Failas tokiu pavadinimu jau egzistuoja.";
+$MESS["WD_ERROR_BAD_STATUS"] = "Jūs neturite leidimo išsaugoti failą.";
+$MESS["WD_WARNING_EXTENSIONS_DONT_MATCH"] = "Failo, kurį bandote įkelti, tipas neatitinka esamo failo tipo.";
+$MESS["WD_UPLOAD_UNLOCK"] = "Atrakinti dokumentą po įkėlimo";
+$MESS["WD_ERROR_BAD_SESSID"] = "Jūsų sesija pasibaigė. Prašome bandyti dar kartą.";
+$MESS["WD_WARNING_FIRST_DOT"] = "Pavadinimas prasideda tašku. Dokumentas nebus rodomas dokumentų sąraše pagal dabartinius nustatymus.";
+$MESS["WD_UPLOAD_DROPHERE"] = "Jūs galite partempti failą iš savo kompiuterio į šį langą ir palikti jį ten.";
+?>

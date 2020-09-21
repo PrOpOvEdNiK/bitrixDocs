@@ -1,0 +1,30 @@
+<?
+$MESS["BPATL_DESCR"] = "Aprašymas";
+$MESS["BPATL_DESCR_FULL"] = "Pilnas aprašymas";
+$MESS["BPATL_F_MODIFIED"] = "Pakeista";
+$MESS["BPATL_MODIFIED"] = "Pakeista";
+$MESS["BPATL_F_NAME"] = "Pavadinimas";
+$MESS["BPATL_NAME"] = "Pavadinimas";
+$MESS["BPATL_NAV"] = "Užduotys";
+$MESS["BPATL_TITLE"] = "Užduotys";
+$MESS["BPATL_VIEW"] = "Peržiūrėti užduotį";
+$MESS["BPATL_WORKFLOW_NAME"] = "Verslo procesas";
+$MESS["BPATL_WORKFLOW_STATE"] = "Statusas";
+$MESS["BPATL_USER"] = "Naudotojas";
+$MESS["BPATL_USER_ID"] = "Naudotojo ID";
+$MESS["BPATL_USER_NOT_FOUND"] = "Naudotojas  ##USER_ID# nerastas. ";
+$MESS["MAIN_ADMIN_LIST_SELECTED"] = "Pasirinkta:";
+$MESS["MAIN_ADMIN_LIST_CHECKED"] = "Pažymėta:";
+$MESS["BPATL_FILTER_STATUS"] = "Statusas";
+$MESS["BPATL_FILTER_STATUS_ALL"] = "Visi";
+$MESS["BPATL_FILTER_STATUS_RUNNING"] = "Vykdomi";
+$MESS["BPATL_FILTER_STATUS_COMPLETE"] = "Užbaigti";
+$MESS["BPATL_DOCUMENT_NAME"] = "Dokumentas";
+$MESS["BPATL_STARTED"] = "Aktyvo pradžia";
+$MESS["BPATL_STARTED_BY"] = "Paleido";
+$MESS["BPATL_OVERDUE_DATE"] = "Galutinis terminas";
+$MESS["BPATL_GROUP_ACTION_YES"] = "Patvirtinti";
+$MESS["BPATL_GROUP_ACTION_NO"] = "Atmesti";
+$MESS["BPATL_GROUP_ACTION_OK"] = "Atlikti";
+$MESS["BPATL_GROUP_ACTION_DELEGATE"] = "Deleguoti";
+?>

@@ -1,0 +1,9 @@
+<?
+$MESS["SALE_DTM_STATUS_NAME_NO_INFORMATION"] = "Nėra informacijos";
+$MESS["SALE_DTM_STATUS_NAME_WAITING_SHIPMENT"] = "Atsiėmimo vietoje";
+$MESS["SALE_DTM_STATUS_NAME_ON_THE_WAY"] = "kėlionėje";
+$MESS["SALE_DTM_STATUS_NAME_ARRIVED"] = "Pašto skyriuje";
+$MESS["SALE_DTM_STATUS_NAME_HANDED"] = "Pristatyta";
+$MESS["SALE_DTM_STATUS_NAME_PROBLEM"] = "Problema";
+$MESS["SALE_DTM_STATUS_NAME_UNKNOWN"] = "Nežinomas statusas";
+?>

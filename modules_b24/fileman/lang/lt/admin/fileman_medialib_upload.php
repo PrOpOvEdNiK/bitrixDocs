@@ -1,0 +1,31 @@
+<?
+$MESS["FM_ML_UPL_LOACATE"] = "Pasirinkti kolekciją";
+$MESS["FM_ML_UPL_NOTICE"] = "Jūs galite susieti naujus failus į kolekciją, kai įkėlimas bus baigtas.";
+$MESS["FM_ML_UPL_TITLE1"] = "Įkelti kelis failus į Media biblioteką";
+$MESS["FM_ML_UPL_TITLE2"] = "Naujų elementų parametrai";
+$MESS["FM_ML_UPL_NO_NAME_WARN"] = "Elemento pavadinimas nenurodytas.";
+$MESS["FM_ML_UPL_NO_COLS_WARN"] = "Elementas turi būti bent vienos kolekcijos dalimi.";
+$MESS["FM_ML_UPL_ACCESS_DENIED"] = "Nepakanka teisių įkelti failus į šią kolekciją.";
+$MESS["ML_ADD_COL2ITEM"] = "Pridėti objektą prie naujos kolekcijos";
+$MESS["MEDIALIB_UPLOADER_APPLET"] = "Masinis įkėlimas";
+$MESS["MEDIALIB_UPLOADER_DESCRIPTION"] = "Aprašymas";
+$MESS["MEDIALIB_UPLOADER_HAS_BEEN_UPLOADED"] = "Įkelta";
+$MESS["MEDIALIB_UPLOADER_CANCEL"] = "Atšaukti";
+$MESS["MEDIALIB_UPLOADER_UPLOAD1"] = "Įkelti nuotraukas";
+$MESS["MEDIALIB_UPLOADER_UPLOAD"] = "Įkelti";
+$MESS["MEDIALIB_UPLOADER_UPLOAD_FROM"] = "iš";
+$MESS["MEDIALIB_UPLOADER_ADD"] = "Pridėti dar";
+$MESS["MEDIALIB_UPLOADER_DND"] = "Vilkite nuotraukas čia";
+$MESS["MEDIALIB_UPLOADER_COUNT"] = "Pasirinktos nuotraukos";
+$MESS["MEDIALIB_UPLOADER_SIMPLIFIED"] = "Supaprastintas vaizdas";
+$MESS["MEDIALIB_UPLOADER_NORMAL"] = "Normalus vaizdas";
+$MESS["MEDIALIB_UPLOADER_EDIT"] = "Redaguoti";
+$MESS["MEDIALIB_UPLOADER_TURN"] = "Pasukti pagal laikrodžio rodyklę";
+$MESS["MEDIALIB_UPLOADER_DEL"] = "Ištrinti";
+$MESS["FM_ML"] = "Media biblioteka";
+$MESS["MEDIALIB_UPLOADER_TITLE1"] = "HTML5 įkėlimas";
+$MESS["MEDIALIB_UPLOADER_TITLE2"] = "Java įkėlimas";
+$MESS["MEDIALIB_UPLOADER_INTO"] = "Įkelti į kolekciją";
+$MESS["FM_ML_UPL_NOTICE_CYR"] = "Bylų pavadinime gali būti šie simboliai: lotyniškos raidės, skaičiai, pabraukimas, brūkšnelis, taškas. Visi kiti simboliai bus išpjauti.";
+$MESS["MEDIALIB_UPLOADER_COUNT2"] = "Pasirinkti failai";
+?>

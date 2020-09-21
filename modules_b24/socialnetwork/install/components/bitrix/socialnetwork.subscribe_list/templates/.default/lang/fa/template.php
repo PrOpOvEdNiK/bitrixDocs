@@ -1,0 +1,32 @@
+<?
+$MESS["SONET_C30_T_ACTIONS"] = "اقدامات";
+$MESS["SONET_C30_T_SHOW_ALL"] = "همه";
+$MESS["SONET_C334_SITE"] = "تنها در سایت و با ایمیل";
+$MESS["SONET_C334_MAIL"] = "تنها در سایت";
+$MESS["SONET_C30_T_blog"] = "وبلاگ";
+$MESS["SONET_C30_T_calendar"] = "تقویم";
+$MESS["SONET_C30_T_calendar1"] = "تقویم";
+$MESS["SONET_C334_CHANGE"] = "تغییر";
+$MESS["SONET_C30_T_forum1"] = "مباحثات";
+$MESS["SONET_C30_T_files"] = "فایل";
+$MESS["SONET_C30_T_files1"] = "فایل";
+$MESS["SONET_C30_T_forum"] = "انجمن";
+$MESS["SONET_C30_T_system_friends"] = "دوستان";
+$MESS["SONET_C334_GR"] = "گروه #NAME#";
+$MESS["SONET_C30_T_USER"] = "گروه / کاربر";
+$MESS["SONET_C30_T_system_groups"] = "گروه ها";
+$MESS["SONET_C30_T_EMPTY"] = "اشتراک فعالی موجود نیست.<br>این صفحه آخرین فعالیت گروه ها و افرادی که شما با آنها در ارتباط هستید را نشان می دهد.";
+$MESS["SONET_C30_T_SHOW_GROUP"] = "تنها گروه ها";
+$MESS["SONET_C30_T_SHOW_USER"] = "تنها کاربران";
+$MESS["SONET_C30_T_photo"] = "گالری تصویر";
+$MESS["SONET_C30_T_photo1"] = "گالری تصویر";
+$MESS["SONET_C30_T_blog1"] = "گزارشات";
+$MESS["SONET_C30_T_SHOW"] = "اشتراک ها";
+$MESS["SONET_C30_T_TOTAL"] = "مشترک شده";
+$MESS["SONET_C30_T_system"] = "سیستم";
+$MESS["SONET_C30_T_system1"] = "سیستم";
+$MESS["SONET_C30_T_tasks"] = "کارها";
+$MESS["SONET_C30_T_tasks1"] = "کارها";
+$MESS["SONET_C334_US1"] = "کاربر ";
+$MESS["SONET_C334_US"] = "کاربر #NAME#";
+?>

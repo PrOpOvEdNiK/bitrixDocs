@@ -1,0 +1,7 @@
+<?
+$MESS["CRM_GRID_ENTITY_SEL_BTN"] = "Wybierz";
+$MESS["CRM_GRID_ENTITY_SEL_LAST"] = "Ostatnia";
+$MESS["CRM_GRID_ENTITY_SEL_SEARCH"] = "Szukaj";
+$MESS["CRM_GRID_SEL_SEARCH_NO_RESULT"] = "Nie znaleziono wpisów.";
+$MESS["CRM_INT_FILTER_NAV_BAR_TITLE"] = "Widok";
+?>

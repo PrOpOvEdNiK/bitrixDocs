@@ -1,0 +1,37 @@
+<?
+$MESS["INTR_ISL_TPL_GENDER_F"] = "Pt";
+$MESS["INTR_ISL_TPL_GENDER_M"] = "P";
+$MESS["ISL_ADMIN_NOTES"] = "Uwagi administratora";
+$MESS["ISL_DATE_REGISTER"] = "Zarejestrowany w dniu:";
+$MESS["ISL_EMAIL"] = "E-mail";
+$MESS["ISL_FULL_NAME"] = "Pełna nazwa";
+$MESS["ISL_ID"] = "ID";
+$MESS["ISL_LAST_NAME"] = "Nazwisko";
+$MESS["ISL_LOGIN"] = "Login";
+$MESS["ISL_NAME"] = "Imię";
+$MESS["ISL_PERSONAL_BIRTHDAY"] = "Data urodzin";
+$MESS["ISL_PERSONAL_CITY"] = "Miasto";
+$MESS["ISL_PERSONAL_COUNTRY"] = "Kraj";
+$MESS["ISL_PERSONAL_FAX"] = "Fax";
+$MESS["ISL_PERSONAL_GENDER"] = "Płeć";
+$MESS["ISL_PERSONAL_ICQ"] = "ICQ";
+$MESS["ISL_PERSONAL_MAILBOX"] = "Skrytka pocztowa";
+$MESS["ISL_PERSONAL_MOBILE"] = "Telefon Komórkowy";
+$MESS["ISL_PERSONAL_NOTES"] = "Notatki";
+$MESS["ISL_PERSONAL_PAGER"] = "Pager";
+$MESS["ISL_PERSONAL_PHONE"] = "Telefon";
+$MESS["ISL_PERSONAL_PHONES"] = "Telefony";
+$MESS["ISL_PERSONAL_PHOTO"] = "Galeria";
+$MESS["ISL_PERSONAL_POST_ADDRESS"] = "Adres do korespondencji";
+$MESS["ISL_PERSONAL_PROFESSION"] = "Nazwa stanowiska";
+$MESS["ISL_PERSONAL_STATE"] = "Region/stan";
+$MESS["ISL_PERSONAL_STREET"] = "Ulica";
+$MESS["ISL_PERSONAL_WWW"] = "Strona internetowa";
+$MESS["ISL_PERSONAL_ZIP"] = "Kod pocztowy";
+$MESS["ISL_SECOND_NAME"] = "Drugie Imię";
+$MESS["ISL_TPL_NOTE_NULL"] = "Wyszukiwanie nie pozwoliło na odnalezienie żadnego z pracowników.";
+$MESS["ISL_TPL_NOTE_UNFILTERED"] = "Określ kryteria wyszukiwania.";
+$MESS["ISL_WORK_PHONE"] = "Telefon Służbowy";
+$MESS["ISL_WORK_POSITION"] = "Stanowisko";
+$MESS["ISL_XML_ID"] = "Zewnętrzne ID";
+?>

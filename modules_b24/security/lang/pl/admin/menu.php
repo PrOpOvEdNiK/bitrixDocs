@@ -1,0 +1,33 @@
+<?
+$MESS["SEC_MENU_ACTIVITY_ITEM"] = "Kontrola aktywności";
+$MESS["SEC_MENU_ACTIVITY_TITLE"] = "Skonfiguruj limit działań za pomocą modułu Web Analytics";
+$MESS["SEC_MENU_ADMINIP_ITEM"] = "Panel sterowania Ochrona";
+$MESS["SEC_MENU_ADMINIP_TITLE"] = "Filteruj dostęp do Panelu sterowania za pomocą adresu IP";
+$MESS["SEC_MENU_ANTIVIRUS_ITEM"] = "antywirus sieciowy";
+$MESS["SEC_MENU_ANTIVIRUS_TITLE"] = "zrządzanie i konfiguracja antywirusa";
+$MESS["SEC_MENU_FILE_ITEM"] = "Sprawdź integralność plików";
+$MESS["SEC_MENU_FILE_TITLE"] = "Sprawdź integralność plików";
+$MESS["SEC_MENU_FILTER_ITEM"] = "filtr proaktywny";
+$MESS["SEC_MENU_FILTER_LOG_ITEM"] = "Historia włamań";
+$MESS["SEC_MENU_FILTER_LOG_TITLE"] = "Wyświetl dziennik włamań";
+$MESS["SEC_MENU_FILTER_TITLE"] = "zarządzaj filtrami proaktywnymi";
+$MESS["SEC_MENU_FRAME_ITEM"] = "Ochrona Anty-ramowa";
+$MESS["SEC_MENU_FRAME_TITLE"] = "Umożliwia ochronę anty-ramową";
+$MESS["SEC_MENU_HOSTS_TITLE"] = "Preferencje ograniczeń hosta";
+$MESS["SEC_MENU_IP_ITEM"] = "zatrzymaj listę";
+$MESS["SEC_MENU_IP_TITLE"] = "Przepisy blokujące IP";
+$MESS["SEC_MENU_ITEM"] = "Czynna Ochrona";
+$MESS["SEC_MENU_OTP_NEW_ITEM"] = "Dwustopniowe uwierzytelnienie";
+$MESS["SEC_MENU_OTP_NEW_ITEM_TITLE"] = "Włącza i konfiguruje dwustopniowe uwierzytelnienie";
+$MESS["SEC_MENU_PANEL_ITEM"] = "panel bezpieczeństwa";
+$MESS["SEC_MENU_PANEL_TITLE"] = "podsumowanie ustawień panelu bezpieczeństwa";
+$MESS["SEC_MENU_PHP_ITEM"] = "Zalecenia dotyczące konfiguracji PHP";
+$MESS["SEC_MENU_PHP_TITLE"] = "Zalecenia dotyczące konfiguracji PHP";
+$MESS["SEC_MENU_REDIRECT_ITEM"] = "Przekieruj ochronę";
+$MESS["SEC_MENU_REDIRECT_TITLE"] = "Włączanie przekierowania ochrony przed phishingiem.";
+$MESS["SEC_MENU_SCANNER_ITEM"] = "skaner bezpieczeństwa";
+$MESS["SEC_MENU_SCANNER_TITLE"] = "Uruchom skaner bezpieczeństwa";
+$MESS["SEC_MENU_SESSION_ITEM"] = "Ochrona sesji";
+$MESS["SEC_MENU_SESSION_TITLE"] = "Parametry ochrony sesji";
+$MESS["SEC_MENU_TITLE"] = "konfiguruj proaktywną ochronę";
+?>

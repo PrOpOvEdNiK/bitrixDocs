@@ -1,0 +1,23 @@
+<?
+$MESS["CRM_CURRENCY_DEC_POINT"] = "Ponto decimal";
+$MESS["CRM_CURRENCY_FIELD_AMOUNT_CNT"] = "Valor nominal";
+$MESS["CRM_CURRENCY_FIELD_DEFAULT_EXCH_RATE"] = "Taxa de câmbio (padrão)";
+$MESS["CRM_CURRENCY_FIELD_ID"] = "Moeda";
+$MESS["CRM_CURRENCY_FIELD_SORT"] = "Índice de classificação";
+$MESS["CRM_CURRENCY_FORMAT_STRING"] = "Formato da moeda";
+$MESS["CRM_CURRENCY_FULL_NAME"] = "Nome";
+$MESS["CRM_CURRENCY_INVOICES_DEFAULT"] = "Moeda padrão das faturas";
+$MESS["CRM_CURRENCY_NOT_FOUND"] = "Moeda não encontrada.";
+$MESS["CRM_CURRENCY_SECTION_MAIN"] = "Moeda";
+$MESS["CRM_CURRENCY_SHOW_BASE"] = "Moeda base";
+$MESS["CRM_CURRENCY_THOUSANDS_SEP"] = "Separador de milhar personalizado";
+$MESS["CRM_CURRENCY_THOUSANDS_VARIANT"] = "Separador de milhar";
+$MESS["CRM_CURRENCY_THOUSANDS_VARIANT_ANOTHER"] = "Outro";
+$MESS["CRM_CURRENCY_THOUSANDS_VARIANT_B"] = "Espaço sem quebra";
+$MESS["CRM_CURRENCY_THOUSANDS_VARIANT_C"] = "Vírgula";
+$MESS["CRM_CURRENCY_THOUSANDS_VARIANT_D"] = "Período";
+$MESS["CRM_CURRENCY_THOUSANDS_VARIANT_N"] = "Nenhum";
+$MESS["CRM_CURRENCY_THOUSANDS_VARIANT_S"] = "Espaço";
+$MESS["CRM_MODULE_NOT_INSTALLED"] = "O módulo de CRM não está instalado.";
+$MESS["CRM_PERMISSION_DENIED"] = "Acesso negado";
+?>

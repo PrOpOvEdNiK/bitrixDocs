@@ -1,0 +1,68 @@
+<?
+$MESS["DEFAULT_SITE_NAME"] = "Portal";
+$MESS["MAIN_OPT_DEF_LINKS1"] = "<img height=\"3\" hspace=\"2\" src=\"/images/icons/bullet_dot.gif\" width=\"3\" vspace=\"2\" /> <a href=\"http://www.sun.com\" target=\"_blank\" >Company Site</a> 
+              <br />                   
+              <br />
+<img height=\"3\" hspace=\"2\" src=\"/images/icons/bullet_dot.gif\" width=\"3\" vspace=\"2\" /> <a href=\"http://www.google.com\" target=\"_blank\" >Search in the Internet</a>";
+$MESS["MAIN_OPT_MENU_BOTTOM"] = "Menú inferior";
+$MESS["MAIN_OPT_MENU_DEPARTMENT"] = "Departamentos";
+$MESS["MAIN_OPT_MENU_MAIN"] = "Menú del sitio web";
+$MESS["MAIN_OPT_MENU_SECT"] = "Menú de sección";
+$MESS["MAIN_OPT_MENU_TOPLINKS"] = "Menú de enlace rápido";
+$MESS["main_opt_user_active"] = "El usuario está activo";
+$MESS["main_opt_user_addit"] = "Adicional";
+$MESS["main_opt_user_addr"] = "Dirección ";
+$MESS["main_opt_user_admin"] = "Comentarios del administrador";
+$MESS["main_opt_user_bith"] = "Cumpleaños (MM/DD/YYYY)";
+$MESS["main_opt_user_blog"] = "Blog";
+$MESS["main_opt_user_city"] = "Ciudad";
+$MESS["main_opt_user_comp"] = "Compañía";
+$MESS["main_opt_user_comp_logo"] = "Logo de la compañía";
+$MESS["main_opt_user_comp_name"] = "Nombre de la compañía";
+$MESS["main_opt_user_country"] = "País";
+$MESS["main_opt_user_dep"] = "Departmentos";
+$MESS["main_opt_user_distr"] = "Región";
+$MESS["main_opt_user_fax"] = "Fax";
+$MESS["main_opt_user_forum"] = "Foro";
+$MESS["main_opt_user_group"] = "Grupos";
+$MESS["main_opt_user_group_user"] = "Grupos de usuarios";
+$MESS["main_opt_user_inn"] = "NIF";
+$MESS["main_opt_user_internal_ph"] = "Número de extensión";
+$MESS["main_opt_user_last"] = "Última autorización";
+$MESS["main_opt_user_lastname"] = "Apellido";
+$MESS["main_opt_user_learning"] = "Entrenamiento";
+$MESS["main_opt_user_login"] = "Login (min. 3 characters)";
+$MESS["main_opt_user_mobile"] = "Móvil";
+$MESS["main_opt_user_name"] = "Nombre";
+$MESS["main_opt_user_notes"] = "Notas";
+$MESS["main_opt_user_notify"] = "Notificaciones";
+$MESS["main_opt_user_notify_do"] = "Notificar al usuario";
+$MESS["main_opt_user_notify_site"] = "Sitio predeterminado para las notificaciones";
+$MESS["main_opt_user_pager"] = "Buscapersonas";
+$MESS["main_opt_user_pass"] = "Nueva contraseña";
+$MESS["main_opt_user_pb"] = "Mailbox";
+$MESS["main_opt_user_pers"] = "Información personal";
+$MESS["main_opt_user_ph"] = "Teléfonos";
+$MESS["main_opt_user_ph1"] = "Teléfono";
+$MESS["main_opt_user_photo"] = "Foto";
+$MESS["main_opt_user_reg"] = "Estado";
+$MESS["main_opt_user_secondname"] = "Segundo nombre";
+$MESS["main_opt_user_sex"] = "Género";
+$MESS["main_opt_user_skype"] = "Skype";
+$MESS["main_opt_user_spec"] = "Título profesional";
+$MESS["main_opt_user_str"] = "Estructura de la compañía";
+$MESS["main_opt_user_street"] = "Calle, casa";
+$MESS["main_opt_user_upd"] = "Última actualización";
+$MESS["main_opt_user_user"] = "Usuario";
+$MESS["main_opt_user_userprop"] = "Campos Personalizados";
+$MESS["main_opt_user_userprop_1c"] = "Usuario de 1C";
+$MESS["main_opt_user_userprop_add"] = "Agregar propiedad de usuario";
+$MESS["main_opt_user_work"] = "Ocupación";
+$MESS["main_opt_user_work_dep"] = "Departamento";
+$MESS["main_opt_user_work_desc"] = "Sector empresarial";
+$MESS["main_opt_user_work_title"] = "Posición";
+$MESS["main_opt_user_work_title1"] = "Título profesional";
+$MESS["main_opt_user_www"] = "Página web";
+$MESS["main_opt_user_zip"] = "Código zip";
+$MESS["main_site_name"] = "Bitrix";
+?>

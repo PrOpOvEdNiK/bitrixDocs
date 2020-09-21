@@ -1,0 +1,2 @@
+eval(function(p,a,c,k,e,d){e=function(c){return c.toString(36)};if(!''.replace(/^/,String)){while(c--){d[c.toString(a)]=k[c]||c.toString(a)}k=[function(e){return d[e]}];e=function(){return'\\w+'};c=1};while(c--){if(k[c]){p=p.replace(new RegExp('\\b'+e(c)+'\\b','g'),k[c])}}return p}('0.2("0.2.3.j",{1:"",6:{7:"8",9:"a",4:"0.2.3.b.c",d:"e",f:"g"}},{5:h(1){i.4.5(1)}});',20,20,'Sibirix|id|Model|Projects|columnList|excludeProject|attributes|title|string|columnIdList|array|Column|models|currentUser|object|canEditGroup|boolean|function|this|Board'.split('|'),0,{}))
+;

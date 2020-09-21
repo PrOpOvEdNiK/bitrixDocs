@@ -1,0 +1,29 @@
+<?
+$MESS["INTR_ABSC_GROUP_FILTER"] = "Filtro parametrai";
+$MESS["INTR_ABSC_PARAM_CALENDAR_IBLOCK_TYPE"] = "Asmeninių kalendorių informacinio bloko tipas";
+$MESS["INTR_ABSC_PARAM_CALENDAR_IBLOCK_ID"] = "Asmeninių kalendorių informacinis blokas";
+$MESS["INTR_ABSC_PARAM_DETAIL_URL"] = "Detalaus atvaizdavimo puslapis";
+$MESS["INTR_ABSC_PARAM_VIEW_START"] = "Pradinis atvaizdas";
+$MESS["INTR_ABSC_PARAM_VIEW_day"] = "diena";
+$MESS["INTR_ABSC_PARAM_VIEW_week"] = "savaitė";
+$MESS["INTR_ABSC_PARAM_VIEW_month"] = "mėnuo";
+$MESS["INTR_ISL_PARAM_NAME_TEMPLATE"] = "Vardo formatas";
+$MESS["INTR_ABSC_PARAM_DAY_START"] = "Darbo dienos pradžia (valanda)";
+$MESS["INTR_ABSC_PARAM_DAY_FINISH"] = "Darbo dienos pabaiga (valanda)";
+$MESS["INTR_ISL_PARAM_FIRST_DAY"] = "Savaitės pirmoji diena";
+$MESS["INTR_ISL_PARAM_FIRST_DAY_0"] = "sekmadienis";
+$MESS["INTR_ISL_PARAM_FIRST_DAY_1"] = "pirmadienis";
+$MESS["INTR_ISL_PARAM_FIRST_DAY_2"] = "antradienis";
+$MESS["INTR_ISL_PARAM_FIRST_DAY_3"] = "trečiadienis";
+$MESS["INTR_ISL_PARAM_FIRST_DAY_4"] = "ketvirtadienis";
+$MESS["INTR_ISL_PARAM_FIRST_DAY_5"] = "penktadienis";
+$MESS["INTR_ISL_PARAM_FIRST_DAY_6"] = "šeštadienis";
+$MESS["INTR_ABSC_PARAM_DAY_SHOW_NONWORK"] = "Rodyti nedarbo valandas dienos atvaizdavime";
+$MESS["INTR_ABSC_PARAM_FILTER_CONTROLS"] = "Rodyti valdiklius";
+$MESS["INTR_ABSC_PARAM_FILTER_CONTROLS_DATEPICKER"] = "Datos parinkimas";
+$MESS["INTR_ABSC_PARAM_FILTER_CONTROLS_TYPEFILTER"] = "Neatvykimo tipo filtras";
+$MESS["INTR_ABSC_PARAM_FILTER_CONTROLS_SHOW_ALL"] = "Tik neatvykimai";
+$MESS["INTR_ABSC_PARAM_FILTER_CONTROLS_DEPARTMENT"] = "Skyriai";
+$MESS["INTR_ABSC_PARAM_DATE_FORMAT"] = "Datos formatas";
+$MESS["INTR_ABSC_PARAM_DATETIME_FORMAT"] = "Datos ir laiko formatas";
+?>

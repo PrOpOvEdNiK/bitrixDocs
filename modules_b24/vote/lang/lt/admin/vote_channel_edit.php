@@ -1,0 +1,31 @@
+<?
+$MESS["VOTE_SORTING"] = "Rūšiavimas:";
+$MESS["VOTE_SITE"] = "Svetainės:";
+$MESS["VOTE_EDIT_RECORD"] = "Apklausų grupės parametrai # #ID#";
+$MESS["VOTE_NEW_RECORD"] = "Nauja apklausų grupė";
+$MESS["VOTE_RECORDS_LIST"] = "Grupių sąrašas";
+$MESS["VOTE_TIMESTAMP"] = "Redaguota:";
+$MESS["VOTE_ACTIVE"] = "Aktyvus:";
+$MESS["VOTE_HIDDEN"] = "Paslėpti:";
+$MESS["VOTE_VOTE_SINGLE"] = "Leisti tik vieną esamą apklausą grupėje:";
+$MESS["VOTE_SYMBOLIC_NAME"] = "Simbolinis identifikatorius:";
+$MESS["VOTE_TITLE"] = "Pavadinimas:";
+$MESS["VOTE_VOTES"] = "Apklausos";
+$MESS["VOTE_RIGHTS"] = "Naudotojų grupių priėjimo teisės";
+$MESS["VOTE_VOTE_ADD"] = "Pridėti aplanką";
+$MESS["VOTE_CREATE_NEW_RECORD"] = "Sukurti naują grupę";
+$MESS["VOTE_DELETE_RECORD"] = "Ištrinti grupę";
+$MESS["VOTE_DELETE_RECORD_CONFIRM"] = "Ar tikrai norite pašalinti grupę ir visas apklausas susietas su ją?";
+$MESS["VOTE_PROP"] = "Savybės";
+$MESS["VOTE_ACCESS"] = "Prieiga";
+$MESS["VOTE_GRP_PROP"] = "Grupės sąvybės";
+$MESS["VOTE_SITE_EDIT"] = "Redaguoti svetainę";
+$MESS["VOTE_GOT_ERROR"] = "Klaida išsaugojant grupę";
+$MESS["VOTE_VOTES_TITLE"] = "Grupės apklausų sąrašas";
+$MESS["VOTE_CREATE_VOTE"] = "Sukurti apklausą";
+$MESS["VOTE_CREATE"] = "Sukurti";
+$MESS["VOTE_LIST"] = "Sąrašas";
+$MESS["VOTE_DELETE"] = "Pašalinti";
+$MESS["VOTE_USE_CAPTCHA"] = "Naudoti CAPTCHA";
+$MESS["VOTE_CHANNEL_IS_NOT_EXISTS"] = "Apklausos grupė ##ID# nerasta.";
+?>

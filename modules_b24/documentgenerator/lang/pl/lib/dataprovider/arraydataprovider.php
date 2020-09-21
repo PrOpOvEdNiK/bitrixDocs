@@ -1,0 +1,4 @@
+<?
+$MESS["DOCGEN_DATAPROVIDER_ARRAY_INDEX_TITLE"] = "Bieżący element";
+$MESS["DOCGEN_DATAPROVIDER_ARRAY_NUMBER_TITLE"] = "Liczba elementów";
+?>

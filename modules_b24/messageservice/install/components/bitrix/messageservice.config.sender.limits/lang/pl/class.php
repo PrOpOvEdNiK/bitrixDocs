@@ -1,0 +1,9 @@
+<?
+$MESS["MESSAGESERVICE_HEADER_CURRENT"] = "Wysłane dzisiaj";
+$MESS["MESSAGESERVICE_HEADER_LIMIT"] = "Dzienny limit wysyłania";
+$MESS["MESSAGESERVICE_HEADER_SENDER"] = "Usługi";
+$MESS["MESSAGESERVICE_HEADER_SENDER_FROM"] = "Nadawca";
+$MESS["MESSAGESERVICE_MODULE_NOT_INSTALLED"] = "Moduł \"Komunikator\" nie jest zainstalowany.";
+$MESS["MESSAGESERVICE_PERMISSION_DENIED"] = "Odmowa dostępu";
+$MESS["MESSAGESERVICE_ROW_EDIT"] = "Edycja";
+?>

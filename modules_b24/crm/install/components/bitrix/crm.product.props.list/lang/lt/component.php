@@ -1,0 +1,29 @@
+<?
+$MESS["CRM_MODULE_NOT_INSTALLED"] = "CRM modulis nėra įdiegtas.";
+$MESS["CRM_SALE_MODULE_NOT_INSTALLED"] = "El.parduotuvės modulis nėra įdiegtas.";
+$MESS["CRM_PERMISSION_DENIED"] = "Prieigos nėra";
+$MESS["CRM_INTS_TASKS_NAV"] = "Įrašai";
+$MESS["CRM_PRODUCT_PROP_PL_ID"] = "ID";
+$MESS["CRM_PRODUCT_PROP_PL_NAME"] = "Pavadinimas";
+$MESS["CRM_PRODUCT_PROP_PL_CODE"] = "Simbolinis kodas";
+$MESS["CRM_PRODUCT_PROP_PL_SORT"] = "Rūšiuoti";
+$MESS["CRM_PRODUCT_PROP_PL_ACTIVE"] = "Aktyvus";
+$MESS["CRM_PRODUCT_PROP_PL_PROPERTY_TYPE"] = "Tipas";
+$MESS["CRM_PRODUCT_PROP_PL_MULTIPLE"] = "Sudėtinis";
+$MESS["CRM_PRODUCT_PROP_PL_XML_ID"] = "Išorinis ID";
+$MESS["CRM_PRODUCT_PROP_PL_WITH_DESCRIPTION"] = "Yra aprašymas";
+$MESS["CRM_PRODUCT_PROP_PL_SEARCHABLE"] = "Ieškoti";
+$MESS["CRM_PRODUCT_PROP_PL_FILTRABLE"] = "Rodyti filtre";
+$MESS["CRM_PRODUCT_PROP_PL_IS_REQUIRED"] = "Privalomas";
+$MESS["CRM_PRODUCT_PROP_PL_HINT"] = "Patarimas";
+$MESS["CRM_PRODUCT_PROP_PL_DELETE_ERROR"] = "Įvyko klaida šalinant objektą.";
+$MESS["CRM_PRODUCT_PROP_PL_SAVE_ERROR"] = "Klaida išsaugant įrašą ##ID#: #ERROR_TEXT#";
+$MESS["CRM_PRODUCT_PROP_IBLOCK_PROP_S"] = "Eilutė";
+$MESS["CRM_PRODUCT_PROP_IBLOCK_PROP_N"] = "Numeris";
+$MESS["CRM_PRODUCT_PROP_IBLOCK_PROP_L"] = "Sąrašas";
+$MESS["CRM_PRODUCT_PROP_IBLOCK_PROP_F"] = "Failas";
+$MESS["CRM_PRODUCT_PROP_IBLOCK_PROP_G"] = "Susieti su skyriumi";
+$MESS["CRM_PRODUCT_PROP_IBLOCK_PROP_E"] = "Susieti su elementais";
+$MESS["CRM_PRODUCT_PROP_IBLOCK_ALL"] = "(bet kuris)";
+$MESS["IBLOCK_MODULE_NOT_INSTALLED"] = "Informacijos blokų modulis nėra įdiegtas.";
+?>

@@ -1,0 +1,28 @@
+<script type='text/ejs' id='detailEditCommentsList'>
+    <div class="jsCommentList">
+        <%
+        var tpl, editTpl;
+        for (var i = 0; i<list.length; i++) {
+            switch (list[i].actType) {
+                case window.SCRUMBAN.actTypes.comment:
+                    tpl = 'detailEditComment';
+                    editTpl = 'detailEditCommentEdit';
+                    break;
+                case window.SCRUMBAN.actTypes.log:
+                    tpl = 'detailEditLog';
+                    break;
+                case window.SCRUMBAN.actTypes.timeLog:
+                    if (list[i].minutes == 0) {
+                        continue;
+                    }
+                    tpl = 'detailEditTimeLog';
+                    editTpl = 'detailEditWorklogAdd';
+                    break;
+                default:
+                    tpl = 'detailEditComment';
+                    break;
+            }
+            %><%== $.View(tpl, list[i]) %><%
+        } %>
+    </div>
+</script>

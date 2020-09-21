@@ -1,0 +1,35 @@
+<?
+$MESS['F_BUTTON_MOVE'] = 'Perkelti';
+$MESS['F_TITLE_ON_FORUM'] = 'forume';
+$MESS['F_MOVE_TO'] = 'Perkelti į';
+$MESS['F_HEAD_TO_EXIST_TOPIC'] = 'esamą temą';
+$MESS['F_HEAD_TO_NEW_TOPIC'] = 'naują temą';
+$MESS['F_TOPIC_NAME'] = 'Temos pavadinimas';
+$MESS['F_TOPIC_DESCR'] = 'Temos aprašymas';
+$MESS['F_TOPIC_TAGS'] = 'Žymės';
+$MESS['F_AUTHOR_PROFILE'] = 'Pranešimo autoriaus profilis';
+$MESS['F_NUM_MESS'] = 'Viso pranešimų: ';
+$MESS['F_DATE_REGISTER'] = 'Registracijos data:';
+$MESS['F_BAD_NEW_TOPIC'] = 'Tema nerasta.';
+$MESS['F_BAD_TOPIC'] = 'Tema nerasta.';
+$MESS['FORUM_MAIN_WAIT'] = 'Prašome palaukti...';
+$MESS['F_EMAIL_TITLE'] = 'Siųsti el. laišką';
+$MESS['F_HIDE'] = 'Slėpti';
+$MESS['F_SHOW'] = 'Rodyti';
+$MESS['F_EDIT'] = 'Redaguoti';
+$MESS['F_DELETE'] = 'Šalinti';
+$MESS['F_REAL_IP'] = '/ realus';
+$MESS['F_PRIVATE_MESSAGE'] = 'Pranešimas';
+$MESS['F_EDIT_HEAD'] = 'Redaguota:';
+$MESS['F_ATTACH_FILES'] = 'Prisegtos bylos';
+$MESS['F_POINTS'] = 'Balų:';
+$MESS['F_DELETE_MESSAGES_CONFIRM'] = 'Pranešimai bus ištrinti be galimybės atkurti. Tęsti?';
+$MESS['F_TOPIC_ID'] = 'Temos ID';
+$MESS['F_TITLE'] = 'Pranešimų perkėlimas';
+$MESS['F_TOPIC_NOT_FOUND'] = 'tema nerasta';
+$MESS['F_TOPIC_SEARCH_TITLE'] = 'įĮveskite temos ID arba spustelėkite «...» ir ieškokite susijusios temos. ';
+$MESS['F_ANCHOR'] = 'Nuoroda į šį pranešimą';
+$MESS['F_PRIVATE_MESSAGE_TITLE'] = 'Siųsti privačią žinutę';
+$MESS['F_USER_ID'] = 'Lankytojo ID';
+$MESS['F_USER_ID_USER'] = 'Naudotojo ID';
+?>

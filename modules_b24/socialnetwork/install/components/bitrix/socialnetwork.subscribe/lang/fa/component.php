@@ -1,0 +1,33 @@
+<?
+$MESS["SONET_C3_PVG_USER"] = "همه کاربران";
+$MESS["SONET_C3_PVG_ALL"] = "همه کاربران";
+$MESS["SONET_C3_PVU_ALL"] = "همه کاربران";
+$MESS["SUBSCRIBE_NAME_blog"] = "وبلاگ";
+$MESS["SUBSCRIBE_NAME_calendar"] = "تقویم";
+$MESS["SUBSCRIBE_NAME1_calendar"] = "تقویم";
+$MESS["SUBSCRIBE_NAME1_forum"] = "مباحثات";
+$MESS["SUBSCRIBE_NAME_files"] = "فایل";
+$MESS["SUBSCRIBE_NAME1_files"] = "فایل";
+$MESS["SUBSCRIBE_NAME_forum"] = "انجمن";
+$MESS["SONET_C3_SYSTEM_FR"] = "دوستان";
+$MESS["SONET_C3_PVG_OWNER"] = "مدیر گروه";
+$MESS["SONET_C3_PVG_MOD"] = "مالک گروه و مدیران";
+$MESS["SONET_C3_NO_GROUP"] = "گروه پیدا نشد.";
+$MESS["SONET_C3_SYSTEM_GR"] = "گروه ها";
+$MESS["SONET_C3_PVU_FR"] = "فقط دوستان";
+$MESS["SONET_C3_PVU_FR2"] = "دوستان و دوستان دوستان";
+$MESS["SONET_C3_PVU_NONE"] = "تنها خودم";
+$MESS["SUBSCRIBE_NAME_photo"] = "عکس";
+$MESS["SUBSCRIBE_NAME1_photo"] = "عکس";
+$MESS["SUBSCRIBE_NAME1_blog"] = "گزارشات";
+$MESS["SONET_C3_GROUP_SETTINGS"] = "اشتراک";
+$MESS["SONET_C3_USER_SETTINGS"] = "اشتراک";
+$MESS["SONET_C3_SYSTEM"] = "سیستم";
+$MESS["SUBSCRIBE_NAME_tasks"] = "کارها";
+$MESS["SUBSCRIBE_NAME1_tasks"] = "کارها";
+$MESS["SONET_C3_NO_GROUP_ID"] = "شناسه گروه تعیین نشده است.";
+$MESS["SONET_MODULE_NOT_INSTALL"] = "ماژول کلوب کاربران غیر فعال است.";
+$MESS["SONET_C3_NO_USER_ID"] = "شناسه کاربر تعیین نشده است.";
+$MESS["SONET_P_USER_NO_USER"] = "کاربر پیدا نشد.";
+$MESS["SONET_C3_PERMS"] = "مجوز این کار را ندارید.";
+?>

@@ -1,0 +1,4 @@
+<?
+$MESS["SALE_PS_DESCRIPTION_DECLINED"] = "Odrzucone";
+$MESS["SALE_PS_DESCRIPTION_INPROCESS"] = "W toku";
+?>

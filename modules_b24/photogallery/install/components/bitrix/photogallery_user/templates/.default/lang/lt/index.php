@@ -1,0 +1,34 @@
+<?
+$MESS["P_TITLE"] = "Galerija ";
+$MESS["P_RATING_PHOTO"] = "Populiarios nuotraukos";
+$MESS["P_COMMENT_PHOTO"] = "Komentuojamos nuotraukos";
+$MESS["P_PHOTO_2"] = "Peržiūrėtos nuotraukos";
+$MESS["P_BEST_PHOTO_RATING"] = "Populiariausios nuotraukos";
+$MESS["P_BEST_PHOTO_COMMENTS"] = "Labiausiai komentuojamos nuotraukos";
+$MESS["P_BEST_PHOTO_SHOWS"] = "Labiausiai žiūrimos nuotraukos";
+$MESS["P_PHOTOGRAPHIES"] = "Nuotraukos";
+$MESS["P_PHOTO_NEW"] = "Naujos";
+$MESS["P_PHOTO_SHOWS"] = "Peržiūrėtos";
+$MESS["P_PHOTO_RATING"] = "Populiarios";
+$MESS["P_PHOTO_COMMENTS"] = "Labiausiai komentuojamos";
+$MESS["P_USERS_GALLERIES"] = "Naudotojo galerijos";
+$MESS["P_ALL_PHOTOS"] = "visos galerijos";
+$MESS["P_TAGS_CLOUD"] = "Žymių debesis";
+$MESS["P_NOT_APPROVED"] = "Nepatvirtintos nuotraukos";
+$MESS["P_NOT_APPROVED_TITLE"] = "Nuotraukos, kurios bus matomos visiems lankytojams tituliniame puslapyje, bet vis dar nepatvirtintos.";
+$MESS["P_NOT_MODERATED"] = "Nepatvirtintos";
+$MESS["P_NOT_MODERATED_TITLE"] = "Nuotraukos, kurių moderavimo yra laukiama.";
+$MESS["P_UPLOAD"] = "Įkelti nuotrauką";
+$MESS["P_PHOTO_VIEW"] = "Mano nuotraukos";
+$MESS["P_LOGIN"] = "Prisijungimo vardas";
+$MESS["P_GALLERY_CREATE"] = "Sukurti galeriją";
+$MESS["P_GALLERY_VIEW"] = "Mano galerija ";
+$MESS["P_GALLERIES_VIEW"] = "Mano galerijos";
+$MESS["P_ERROR1"] = "Šioje galerijoje dar nėra nuotraukų.";
+$MESS["P_ERROR2"] = "<a target=\"_self\" href=\"#CREATE_GALLERY#\">Sukurtie</a> jūsų galeriją ir įkelti naujas nuotraukas.";
+$MESS["P_ERROR3"] = "<a target=\"_self\" href=\"#UPLOAD#\">Įkelti</a> naujas nuotraukas.";
+$MESS["P_ERROR4"] = "Šioje galerijoje ne vienai nuotraukai balsų nepriskirta.";
+$MESS["P_ERROR5"] = "Šioje galerijoje ne vienai nuotraukai nepalikta komentarų.";
+$MESS["P_RECALC_7"] = "Prašome perskaičiuoti nuotraukų galerijos failų dydį. <a href=\"#URL#\">Perskaičiuoti?</a>";
+$MESS["P_PHOTO_LAST"] = "Naujos nuotraukos";
+?>

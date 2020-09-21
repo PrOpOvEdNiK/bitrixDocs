@@ -1,0 +1,23 @@
+<script type="text/ejs" id="kanbanColumnDetailsView">
+    <i class="close"><?= $this->t('DELETE') ?></i>
+    <div class="shadow">
+        <h3><i class='startEdit' title='<?= $this->t("TO_EDIT"); ?>'></i><%= title %></h3>
+        <% if (!isNaN(taskStatus) && (taskStatus !== null) && (window.SCRUMBAN.taskStatus[taskStatus] != undefined)) { %>
+        <div class="status"><i class="miniblock <%= window.SCRUMBAN.taskStatus[taskStatus].cssClass %>"><b></b><%= window.SCRUMBAN.taskStatus[taskStatus].title %></i></div>
+        <% } %>
+        <% if ((!isNaN(tasksMin) || !isNaN(tasksMax)) && ((tasksMin != null) || (tasksMax != null)) && ((tasksMin != 0) || (tasksMax != 0))) { %>
+        <div class="taskStats"><i></i><%= (!isNaN(tasksMin) && (tasksMin != null)) ? tasksMin : ((!isNaN(tasksMax) && (tasksMax != null)) ? '0' : '...') %>&mdash;<%= (!isNaN(tasksMax) && (tasksMax != null)) ? tasksMax : "..." %></div>
+        <% } %>
+        <div class="clear"></div>
+        <div class="dodsList">
+            <% for (var i = 0; i<dodList.length; i++) {
+            %><label class="view" title="<%= htmlspecialchars(dodList[i].description) %>">
+            <b class="move"></b>
+            <input type="checkbox" disabled checked="checked" data-itemid="<%= dodList[i].dodId %>" class="styled"><i></i><span><%= htmlspecialchars(dodList[i].description) %></span>
+            <b class="edit"></b>
+            <b class="delete"></b>
+        </label><%
+            } %>
+        </div>
+    </div>
+</script>

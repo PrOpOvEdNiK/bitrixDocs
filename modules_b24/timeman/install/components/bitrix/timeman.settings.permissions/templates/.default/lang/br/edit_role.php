@@ -1,0 +1,10 @@
+<?
+$MESS["TIMEMAN_ACTION_READ"] = "Visualizar";
+$MESS["TIMEMAN_ACTION_UPDATE"] = "Editar";
+$MESS["TIMEMAN_DEFAULT_OPERATION_TITLE"] = "Acesso negado";
+$MESS["TIMEMAN_ROLE_CANCEL"] = "Cancelar";
+$MESS["TIMEMAN_ROLE_ENTITY"] = "Entidade";
+$MESS["TIMEMAN_ROLE_LABEL"] = "Nome";
+$MESS["TIMEMAN_ROLE_PERMISSION"] = "Permissão";
+$MESS["TIMEMAN_ROLE_SAVE"] = "Salvar";
+?>

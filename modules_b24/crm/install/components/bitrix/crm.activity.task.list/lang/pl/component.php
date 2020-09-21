@@ -1,0 +1,37 @@
+<?
+$MESS["CRM_COLUMN_CHANGED_BY"] = "Zmodyfikowane przez";
+$MESS["CRM_COLUMN_CLOSED_DATE"] = "Zamknięte";
+$MESS["CRM_COLUMN_DATE_CREATE"] = "Utworzony";
+$MESS["CRM_COLUMN_DATE_MODIFY"] = "Zmodyfikowany";
+$MESS["CRM_COLUMN_DATE_START"] = "Data rozpoczęcia";
+$MESS["CRM_COLUMN_ENTITY_TITLE"] = "Tytuł";
+$MESS["CRM_COLUMN_ENTITY_TYPE"] = "Rodzaj";
+$MESS["CRM_COLUMN_ID"] = "ID";
+$MESS["CRM_COLUMN_PRIORITY"] = "Priorytet";
+$MESS["CRM_COLUMN_REAL_STATUS"] = "Status";
+$MESS["CRM_COLUMN_RESPONSIBLE_BY"] = "Osoba odpowiedzialna";
+$MESS["CRM_COLUMN_TITLE"] = "Nazwa";
+$MESS["CRM_COLUMN_UF_CRM_TASK"] = "Pozycja CRM";
+$MESS["CRM_ENTITY_TYPE_COMPANY"] = "Firma";
+$MESS["CRM_ENTITY_TYPE_CONTACT"] = "Kontakt";
+$MESS["CRM_ENTITY_TYPE_DEAL"] = "Deal";
+$MESS["CRM_ENTITY_TYPE_LEAD"] = "Lead";
+$MESS["CRM_MODULE_NOT_INSTALLED"] = "Moduł CRM nie jest zainstalowany.";
+$MESS["CRM_PERMISSION_DENIED"] = "Odmowa dostępu";
+$MESS["CRM_PRESET_CHANGE_MY"] = "Zmodyfikowane przeze mnie";
+$MESS["CRM_PRESET_CHANGE_TODAY"] = "Zmodyfikowane Dziś";
+$MESS["CRM_PRESET_CHANGE_YESTERDAY"] = "Zmodyfikowane wczoraj";
+$MESS["CRM_PRESET_MY"] = "Moje zadania";
+$MESS["CRM_PRESET_NEW"] = "Nowe Zadania";
+$MESS["TASKS_MODULE_NOT_INSTALLED"] = "Moduł Zadania nie jest zainstalowany.";
+$MESS["TASKS_PRIORITY_0"] = "Niski";
+$MESS["TASKS_PRIORITY_1"] = "Normalny";
+$MESS["TASKS_PRIORITY_2"] = "Wysoki";
+$MESS["TASKS_STATUS_1"] = "Nowe";
+$MESS["TASKS_STATUS_2"] = "W toku";
+$MESS["TASKS_STATUS_3"] = "W toku";
+$MESS["TASKS_STATUS_4"] = "Rzekomo zakończone";
+$MESS["TASKS_STATUS_5"] = "Zakończone";
+$MESS["TASKS_STATUS_6"] = "Wstrzymane";
+$MESS["TASKS_STATUS_7"] = "Odrzucone";
+?>

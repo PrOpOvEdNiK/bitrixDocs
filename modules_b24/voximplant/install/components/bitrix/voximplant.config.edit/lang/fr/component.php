@@ -1,0 +1,31 @@
+<?
+$MESS["COMP_VI_ACCESS_DENIED"] = "Autorisations d'accès insuffisantes";
+$MESS["COMP_VI_WRONG_BACKUP_NUMBER"] = "Le numéro de téléphone de secours doit utiliser le format international.";
+$MESS["VI_CONFIG_CURRENT_CONNECTION"] = "connexion actuelle";
+$MESS["VI_CONFIG_EDIT_AUTO_ANSWERING_TUNE"] = "Messagerie vocale";
+$MESS["VI_CONFIG_EDIT_AUTO_ANSWERING_TUNE_TIP"] = "Cette musique ou cet enregistrement sera lu à l'appelant à l'activation de la messagerie vocale. ";
+$MESS["VI_CONFIG_EDIT_ENQUEUE_TUNE"] = "Mélodie de file d'attente";
+$MESS["VI_CONFIG_EDIT_ENQUEUE_TUNE_TIP"] = "Un appelant entendra cette mélodie si son appel a été mis en attente parce qu'il n'y avait pas d'opérateur disponible.";
+$MESS["VI_CONFIG_EDIT_HOLDING_TUNE"] = "Musique d'attente";
+$MESS["VI_CONFIG_EDIT_HOLDING_TUNE_TIP"] = "Cette musique ou cet enregistrement sera utilisé pendant que l'appelant sera en attente. ";
+$MESS["VI_CONFIG_EDIT_RECORDING_TUNE"] = "Musique « Votre appel sera enregistré »";
+$MESS["VI_CONFIG_EDIT_RECORDING_TUNE_TIP"] = "Jouez cette musique avant de commencer à enregistrer";
+$MESS["VI_CONFIG_EDIT_VOTE_END_TUNE"] = "Tonalité de fin d'évaluation de qualité";
+$MESS["VI_CONFIG_EDIT_VOTE_END_TUNE_TIP"] = "Jouer cette musique quand un utilisateur a donné son évaluation de la qualité du service";
+$MESS["VI_CONFIG_EDIT_VOTE_TUNE"] = "Musique de début d'évaluation de qualité";
+$MESS["VI_CONFIG_EDIT_VOTE_TUNE_TIP"] = "Jouez cette musique quand l'option 'Évaluer la qualité du service' est cochée";
+$MESS["VI_CONFIG_EDIT_WAITING_TUNE"] = "Musique d'attente";
+$MESS["VI_CONFIG_EDIT_WAITING_TUNE_TIP"] = "Cette musique ou cet enregistrement sera lu à l'appelant à la place des tonalités, avant toute réponse. ";
+$MESS["VI_CONFIG_EDIT_WELCOMING_TUNE"] = "Accueil";
+$MESS["VI_CONFIG_EDIT_WELCOMING_TUNE_TIP"] = "Cette musique ou cet enregistrement sera utilisé pour accueillir les appels entrants. ";
+$MESS["VOX_CONFIG_EDIT_CALLBACK_ROUTING"] = "Routage de rappels";
+$MESS["VOX_CONFIG_EDIT_CALL_ROUTING"] = "Routage d'appel entrant";
+$MESS["VOX_CONFIG_EDIT_CONNECTION_SETTINGS"] = "Paramètres de connexion";
+$MESS["VOX_CONFIG_EDIT_CRM_INTEGRATION"] = "Intégration CRM";
+$MESS["VOX_CONFIG_EDIT_DELETE_CONNECTION"] = "Supprimer la connexion";
+$MESS["VOX_CONFIG_EDIT_DISCONNECT_NUMBER"] = "Déconnexion de numéro";
+$MESS["VOX_CONFIG_EDIT_MELODIES"] = "Musique d'attente";
+$MESS["VOX_CONFIG_EDIT_OTHER"] = "Autre";
+$MESS["VOX_CONFIG_EDIT_RECORDING_AND_RATING"] = "Enregistrement et évaluation";
+$MESS["VOX_CONFIG_EDIT_WORKTIME"] = "Heures de travail";
+?>

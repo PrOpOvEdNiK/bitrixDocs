@@ -1,0 +1,36 @@
+<?
+$MESS["JS_CORE_FILE_UPLOAD"] = "Įkelti iš kompiuterio";
+$MESS["JS_CORE_FILE_INSERT_PATH"] = "Įkelti bylos kelią";
+$MESS["JS_CORE_FILE_MEDIALIB"] = "Pasirinkti media bibliotekoje";
+$MESS["JS_CORE_FILE_SITE"] = "Pasirinkite iš svetainės naršyklės";
+$MESS["JS_CORE_FILE_CLOUD"] = "Įkelti iš debesų saugyklos";
+$MESS["JS_CORE_FI_UPLOAD_DENIED"] = "Įkėlimas negalimas";
+$MESS["JS_CORE_FI_TOO_MANY_FILES"] = "Bylų skaičius viršijo leidžiamą maksimumą #amount#.";
+$MESS["JS_CORE_FI_TOO_MANY_FILES2"] = "Bylų limitas pasiektas.";
+$MESS["JS_CORE_FI_TOO_MANY_FILES3"] = "Bylų limitas viršytas.";
+$MESS["JS_CORE_FI_FRAME_Y"] = "Naudoti apkarpymus";
+$MESS["JS_CORE_FI_PIN_DESCRIPTION"] = "Prikabinti aprašymo lauką";
+$MESS["JS_CORE_FI_CLEAR"] = "Išvalyti";
+$MESS["JS_CORE_FI_FRAME_IS_LOADING"] = "Vaizdai įkeliami, prašome palaukti. Atšaukti apkirpimą?";
+$MESS["JS_CORE_FI_FRAME_IS_LOADING_CANCEL"] = "Taip";
+$MESS["JS_CORE_FI_LINK"] = "Nuoroda:";
+$MESS["JS_CORE_FI_ADD_LINK"] = "Pridėti nuoroda";
+$MESS["JS_CORE_FI_ADD"] = "Pridėti";
+$MESS["JS_CORE_FI_CANCEL"] = "Atšaukti";
+$MESS["JS_CORE_FI_TITLE"] = "Pavadinimas";
+$MESS["JS_CORE_FI_WIDTH"] = "Plotis";
+$MESS["JS_CORE_FI_HEIGHT"] = "Aukštis";
+$MESS["JS_CORE_FI_ADD_PRESET"] = "Pridėti derinį";
+$MESS["JS_CORE_FI_SAVE_PRESET"] = "Išsaugoti derinį";
+$MESS["JS_CORE_FI_CANCEL_PRESET"] = "Atšaukti<br/> veiksmą";
+$MESS["JS_CORE_FI_FRAMING"] = "Apkarpymas:";
+$MESS["JS_CORE_FI_USE_PRESET"] = "Naudoti derinį";
+$MESS["JS_CORE_FI_EDIT_PRESET"] = "Redaguoti derinį";
+$MESS["JS_CORE_FI_PRESET_IS_TOO_BIG"] = "Vaizdo dydis yra mažesnis negu pasirinktas derinys. Ar norite padidinti vaizdą?";
+$MESS["JS_CORE_FI_SCALE"] = "Padidinti";
+$MESS["JS_CORE_FILE_INFO_SIZE"] = "Dydis";
+$MESS["JS_CORE_FILE_INFO_DIM"] = "Išmatavimai";
+$MESS["JS_CORE_FILE_INFO_LINK"] = "Nuoroda";
+$MESS["JS_CORE_FILE_DESCRIPTION"] = "Aprašymas";
+$MESS["JS_CORE_FILE_APPLY"] = "Taikyti";
+?>

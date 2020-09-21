@@ -1,0 +1,8 @@
+<?
+$MESS["CLO_STORAGE_SEARCH_BUCKET"] = "Chmura";
+$MESS["CLO_STORAGE_SEARCH_CHOOSE_BUCKET"] = "Wybierz chmurę";
+$MESS["CLO_STORAGE_SEARCH_LIST_ERROR"] = "Błąd pobierania listy plików.";
+$MESS["CLO_STORAGE_SEARCH_NAME"] = "Nazwa";
+$MESS["CLO_STORAGE_SEARCH_PATH"] = "Ścieżka";
+$MESS["CLO_STORAGE_SEARCH_SIZE"] = "Rozmiar";
+?>

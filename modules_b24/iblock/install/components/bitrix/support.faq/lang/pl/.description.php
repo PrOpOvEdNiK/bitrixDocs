@@ -1,0 +1,5 @@
+<?
+$MESS["SUPPORT_FAQ_COMPONENTS"] = "FAQ";
+$MESS["SUPPORT_FAQ_COMPONENT_DESCRIPTION"] = "Pokazuje sekcję FAQ i pytania z bloku informacji";
+$MESS["SUPPORT_FAQ_COMPONENT_NAME"] = "FAQ";
+?>

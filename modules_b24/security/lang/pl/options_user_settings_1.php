@@ -1,0 +1,35 @@
+<?
+$MESS["SEC_OTP_CONNECTED"] = "Połączone";
+$MESS["SEC_OTP_CONNECT_DONE"] = "Gotowe";
+$MESS["SEC_OTP_CONNECT_MOBILE_ENTER_CODE"] = "Wprowadź kod";
+$MESS["SEC_OTP_CONNECT_MOBILE_INPUT_NEXT_DESCRIPTION"] = "Algorytm OTP wymaga dwóch kodów do uwierzytelnienia. Proszę wygenerować następny kod i wprowadzić do poniżej.";
+$MESS["SEC_OTP_CONNECT_MOBILE_STEP_2"] = "Uruchom aplikację i kliknij <b>Konfiguruj</b>";
+$MESS["SEC_OTP_DESCRIPTION_ABOUT_TITLE"] = "Opis";
+$MESS["SEC_OTP_DESCRIPTION_ACTIVATION_TITLE"] = "Aktywacja";
+$MESS["SEC_OTP_DESCRIPTION_INTRO_TITLE"] = "Jednorazowe hasło";
+$MESS["SEC_OTP_DESCRIPTION_USING_TITLE"] = "Używając jednorazowych haseł";
+$MESS["SEC_OTP_DISABLE"] = "Wyłączone";
+$MESS["SEC_OTP_ENABLE"] = "Włączone";
+$MESS["SEC_OTP_ERROR_TITLE"] = "Nie można zapisać, ponieważ wystąpił błąd.";
+$MESS["SEC_OTP_INIT"] = "Inicjalizacja";
+$MESS["SEC_OTP_MANDATORY_ALMOST_EXPIRED"] = "Czas w trakcie którego użytkownik musi ustawić dwustopniowe uwierzytelnienie minie #DATE#.";
+$MESS["SEC_OTP_MANDATORY_DISABLED"] = "Wyłączone obowiązkowe dwustopniowe uwierzytelnienie.";
+$MESS["SEC_OTP_MANDATORY_ENABLE"] = "Wymaga aktywacji dwustopniowego uwierzytelnienia z";
+$MESS["SEC_OTP_MANDATORY_ENABLE_DEFAULT"] = "Wymaga aktywacji dwustopniowego uwierzytelnienia";
+$MESS["SEC_OTP_MANDATORY_EXPIRED"] = "Czas w trakcie którego użytkownik miał ustawić dwustopniowe uwierzytelnienie właśnie minął.";
+$MESS["SEC_OTP_MOBILE_INPUT_METHODS_SEPARATOR"] = "lub";
+$MESS["SEC_OTP_NEW_ACCESS_DENIED"] = "Odmowa dostęp do panelu kontrolnego dwustopniowego uwierzytelnienia";
+$MESS["SEC_OTP_NEW_SWITCH_ON"] = "Włącz dwustopniowe uwierzytenienie";
+$MESS["SEC_OTP_PASS1"] = "Pierwsze hasło urządzenia (kliknij i zapisz )";
+$MESS["SEC_OTP_PASS2"] = "Drugie hasło urządzenia (kliknij ponownie i zapisz )";
+$MESS["SEC_OTP_RECOVERY_CODES_BUTTON"] = "Kody odzyskiwania";
+$MESS["SEC_OTP_RECOVERY_CODES_PRINT"] = "Drukuj";
+$MESS["SEC_OTP_RECOVERY_CODES_REGENERATE"] = "generuj nowe kody";
+$MESS["SEC_OTP_RECOVERY_CODES_SAVE_FILE"] = "Zapisz do pliku tekstowego";
+$MESS["SEC_OTP_RECOVERY_CODES_TITLE"] = "Kody odzyskiwania";
+$MESS["SEC_OTP_SECRET_KEY"] = "sekretny klucz ( dostarczany z urządzeniem )";
+$MESS["SEC_OTP_STATUS"] = "Bieżący Status";
+$MESS["SEC_OTP_STATUS_ON"] = "Włączone";
+$MESS["SEC_OTP_SYNC_NOW"] = "Synchronizuj";
+$MESS["SEC_OTP_WARNING_RECOVERY_CODES"] = "Dwustopniowe uwierzytelnienie jest włączone, ale nie utworzyłeś kodów odzyskiwania. Możesz potrzebować ich w przypadku zagubienia komórki lub braku możliwości uzyskania kodu za pomocą aplikacji z innych powodów.";
+?>

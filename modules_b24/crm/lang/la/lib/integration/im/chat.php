@@ -1,0 +1,15 @@
+<?
+$MESS["CRM_INTEGRATION_IM_CHAT_CARD_COMPANY_TITLE"] = "Empresa";
+$MESS["CRM_INTEGRATION_IM_CHAT_CARD_EMAIL"] = "Correo electrónico";
+$MESS["CRM_INTEGRATION_IM_CHAT_CARD_FULL_NAME"] = "Nombre";
+$MESS["CRM_INTEGRATION_IM_CHAT_CARD_PHONE"] = "Teléfono";
+$MESS["CRM_INTEGRATION_IM_CHAT_CARD_POST"] = "Posición";
+$MESS["CRM_INTEGRATION_IM_CHAT_CARD_TITLE_COMPANY"] = "Se creó el chat de discusión de la empresa";
+$MESS["CRM_INTEGRATION_IM_CHAT_CARD_TITLE_CONTACT"] = "Se creó el chat de discusión de los contactos";
+$MESS["CRM_INTEGRATION_IM_CHAT_CARD_TITLE_DEAL"] = "Se creó el chat de discusión de la oferta";
+$MESS["CRM_INTEGRATION_IM_CHAT_CARD_TITLE_LEAD"] = "Se creó el chat de discusión del prospecto";
+$MESS["CRM_INTEGRATION_IM_CHAT_TITLE_COMPANY"] = "Empresa: #TITLE#";
+$MESS["CRM_INTEGRATION_IM_CHAT_TITLE_CONTACT"] = "Contacto: #TITLE#";
+$MESS["CRM_INTEGRATION_IM_CHAT_TITLE_DEAL"] = "Oferta: #TITLE#";
+$MESS["CRM_INTEGRATION_IM_CHAT_TITLE_LEAD"] = "Prospecto: #TITLE#";
+?>

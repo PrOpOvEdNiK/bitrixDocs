@@ -1,0 +1,4 @@
+<?
+$MESS["GD_SONET_GROUP_DESC_DESC"] = "Opis Grupy";
+$MESS["GD_SONET_GROUP_DESC_NAME"] = "Opis";
+?>

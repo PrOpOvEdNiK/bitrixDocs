@@ -1,0 +1,533 @@
+#kanban.leadBoard {
+    .tutorial-wrapper {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 1010;
+        width: 1130px;
+        margin: 0 auto;
+        &:before {
+            content: '';
+            position: fixed;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, .9);
+            z-index: -1;
+        }
+        .tutorial-header {
+            height: 73px;
+            background: #fff;
+            font: 26px/73px 'Open Sans', Arial, sans-serif;
+            color: #737373;
+        }
+        .tutorial-footer {
+            height: 57px;
+            background: #fff;
+            border-top: 3px solid #39c6f7;
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            flex-direction: row;
+            align-content: flex-start;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 46px;
+            .arrows-wrapper {
+                font: 700 13px/37px 'Open Sans', Arial, sans-serif;
+                display: flex;
+                a {
+                    display: inline-block;
+                    color: #fff;
+                    cursor: pointer;
+                    &.disabled {
+                        cursor: default;
+                        visibility: hidden;
+                    }
+                    &:hover:not(.disabled) {
+                        color: #b2b2b2;
+                        .icon-tutorial-prev {
+                            .icon-tutorial-prev-hover();
+                        }
+                        .icon-tutorial-next {
+                            .icon-tutorial-next-hover();
+                        }
+                    }
+                    &:first-child {
+                        margin-right: 50px;
+                        .icon-tutorial-prev {
+                            margin-right: 7px;
+                        }
+                    }
+                    &:last-child {
+                        margin-left: 50px;
+                        .icon-tutorial-next {
+                            margin-left: 7px;
+                        }
+                    }
+                }
+                .pager {
+                    color: #000;
+                }
+            }
+            .skip {
+                display: flex;
+                font: 600 13px/35px 'Open Sans', Arial, sans-serif;
+                color: #fff;
+                background: #39c6f7;
+                border-radius: 24px;
+                padding: 0 24px;
+                border: 1px solid #39c6f7;
+                transition: all ease .2s;
+                text-transform: uppercase;
+                &:hover {
+                    color: #39c6f7;
+                    background: #fff;
+                }
+            }
+        }
+        .step-wrapper {
+            overflow: hidden;
+        }
+        .tutorial-step {
+            position: absolute;
+            top: 73px;
+            bottom: 60px;
+            left: 0;
+            right: 0;
+            margin: auto;
+            width: 1130px;
+            &:before {
+                content: '';
+                background:  rgba(83, 92, 105, .85);
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                right: 0;
+                left: 0;
+            }
+
+            &.add-transition {
+                transition: background-position .5s ease;
+                .step-mask {
+                    transition: all ease .5s;
+                }
+                .step-tip {
+                    transition: all ease .5s;
+                }
+                .step-arrow {
+                    transition: all ease .5s;
+                }
+            }
+            .step-mask {
+                position: absolute;
+                overflow: hidden;
+                will-change: left, top, right, bottom;
+            }
+            .step-tip {
+                font: 600 18px/22px 'Open Sans', Arial, sans-serif;
+                color: #fff;
+                position: absolute;
+                text-align: left;
+            }
+            .step-arrow {
+                position: absolute;
+                width: 56px;
+                height: 68px;
+            }
+            &.step-1 {
+                background: url('@{pathPics}crm/tutorial-step-1.jpg') left bottom no-repeat;
+                .step-mask {
+                    left: 0;
+                    bottom: 0;
+                    background: url('@{pathPics}crm/tutorial-step-1.jpg') left bottom no-repeat;
+                    border-radius: 50%;
+                }
+                .step-arrow {
+                    left: 0;
+                    bottom: 0;
+                    background: url('@{pathPics}crm/tutorial-step-1-arrow.png') 0 0 no-repeat;
+                }
+                .step-tip {
+                    left: 0;
+                    bottom: 0;
+                }
+            }
+            &.step-2 {
+                background: url('@{pathPics}crm/tutorial-step-2.jpg') 0 0 no-repeat;
+                .step-mask {
+                    left: 0;
+                    top: 0;
+                    background: url('@{pathPics}crm/tutorial-step-2.jpg') 0 0 no-repeat;
+                    border-radius: 3px;
+                }
+                .step-tip {
+                    font-size: 16px;
+                }
+                .step-arrow {
+                    background: url('@{pathPics}crm/tutorial-step-1-arrow.png') 0 0 no-repeat;
+                }
+                .smiles-wrapper {
+                    position: absolute;
+                    top: 110px;
+                    .smile-row {
+                        font: 600 16px/39px 'Open Sans', Arial, sans-serif;
+                        color: #fff;
+                        text-align: left;
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        min-width: 190px;
+                        i[class^="icon-"] {
+                            margin-right: 10px;
+                        }
+                    }
+                }
+            }
+            &.step-3 {
+                background: url('@{pathPics}crm/tutorial-step-2.jpg') 0 0 no-repeat;
+                .step-mask {
+                    left: 0;
+                    top: 0;
+                    background: url('@{pathPics}crm/tutorial-step-2.jpg') 0 0 no-repeat;
+                    border-radius: 3px;
+                }
+                .step-tip {
+                    font-size: 16px;
+                    width: 125px;
+                    text-align: right;
+                    left: 0;
+                    top: 0;
+                }
+                .step-arrow {
+                    width: 29px;
+                    height: 16px;
+                    background: url('@{pathPics}crm/tutorial-step-3-arrow.png') 0 0 no-repeat;
+                }
+            }
+            &.step-4 {
+                background: url('@{pathPics}crm/tutorial-step-4.jpg') left top no-repeat;
+                .step-mask {
+                    left: 0;
+                    top: 0;
+                    background: url('@{pathPics}crm/tutorial-step-4.jpg') left top no-repeat;
+                    border-radius: 3px;
+                }
+                .step-tip {
+                    font-size: 16px;
+                    text-align: left;
+                }
+                .step-arrow {
+                    background: url('@{pathPics}crm/tutorial-step-1-arrow.png') 0 0 no-repeat;
+                }
+
+                .border {
+                    border: 3px dotted #39c6f7;
+                    position: absolute;
+                    box-sizing: border-box;
+                    transition: all .5s ease;
+                    transform: scale(1);
+                }
+                .borders-appear {
+                    .border {
+                        transform: scale(50);
+                    }
+                    &.borders-appear-active {
+                        transform: scale(1);
+                    }
+                }
+                .type-border {
+                    left: 118px;
+                    top: 61px;
+                    width: 181px;
+                    height: 31px;
+                    transition-delay: .3s;
+                }
+                .date-border {
+                    left: 315px;
+                    top: 61px;
+                    width: 181px;
+                    height: 31px;
+                    transition-delay: .45s;
+                }
+                .desc-border {
+                    left: 118px;
+                    top: 130px;
+                    width: 559px;
+                    height: 95px;
+                    transition-delay: .6s;
+                }
+                .result-border {
+                    left: 118px;
+                    top: 261px;
+                    width: 559px;
+                    height: 46px;
+                    transition-delay: .75s;
+                }
+                .done-border {
+                    left: 110px;
+                    top: 315px;
+                    width: 91px;
+                    height: 30px;
+                    transition-delay: .9s;
+                }
+            }
+            &.step-5 {
+                background: url('@{pathPics}crm/tutorial-step-4.jpg') left top no-repeat;
+                .step-mask {
+                    left: 0;
+                    top: 0;
+                    background: url('@{pathPics}crm/tutorial-step-4.jpg') left top no-repeat;
+                    border-radius: 3px;
+                }
+                .step-tip {
+                    font-size: 18px;
+                }
+                .step-arrow {
+                    background: url('@{pathPics}crm/tutorial-step-1-arrow.png') 0 0 no-repeat;
+                }
+            }
+            &.step-6 {
+                background: url('@{pathPics}crm/tutorial-step-4.jpg') left top no-repeat;
+                .step-mask {
+                    left: 0;
+                    top: 0;
+                    background: url('@{pathPics}crm/tutorial-step-4.jpg') left top no-repeat;
+                    border-radius: 3px;
+                }
+                .step-tip {
+                    font-size: 14px;
+                }
+                .step-arrow {
+                    background: url('@{pathPics}crm/tutorial-step-6-arrow.png') 0 0 no-repeat;
+                    width: 25px;
+                    height: 38px;
+                }
+
+
+                .hand-appear {
+                    .hand {
+                        top: 300px;
+                        left: 500px;
+                    }
+                    .click {
+                        animation: none;
+                        opacity: 0;
+                    }
+                    &.hand-appear-active {
+                        .hand {
+                            top: 75px;
+                            left: 283px;
+                        }
+                    }
+                }
+
+                .hand {
+                    background: url('@{pathPics}crm/tutorial-hand.png') 0 0 no-repeat;
+                    width: 21px;
+                    height: 26px;
+                    position: absolute;
+                    transition: all linear 2s;
+                    top: 75px;
+                    left: 283px;
+                }
+                .click {
+                    background: url('@{pathPics}crm/tutorial-step-6-click.png') 0 0 no-repeat;
+                    width: 16px;
+                    height: 7px;
+                    position: absolute;
+                    top: -4px;
+                    left: -2px;
+                    animation: blink 1s .4s steps(1, end);
+                    //transition: opacity 0s 2s linear;
+                    opacity: 0;
+                }
+            }
+            &.step-7 {
+                background: url('@{pathPics}crm/tutorial-step-7.jpg') left top no-repeat;
+                .step-mask {
+                    left: 0;
+                    top: 0;
+                    background: url('@{pathPics}crm/tutorial-step-7.jpg') left top no-repeat;
+                    border-radius: 50%;
+                }
+                .step-arrow {
+                    left: 0;
+                    top: 0;
+                    background: url('@{pathPics}crm/tutorial-step-1-arrow.png') 0 0 no-repeat;
+                }
+                .step-tip {
+                    left: 0;
+                    top: 0;
+                    font-size: 16px;
+                    &:before {
+                        content: '';
+                        position: absolute;
+                        left: -42px;
+                        top: 22px;
+                        width: 28px;
+                        height: 27px;
+                        background: url('@{pathPics}crm/tutorial-move-arrows.png') 0 0 no-repeat;
+                    }
+                }
+                .step-arrow-blue {
+                    position: absolute;
+                    width: 53px;
+                    height: 55px;
+                    left: 0;
+                    top: 0;
+                    background: url('@{pathPics}crm/tutorial-step-7-arrow-blue.png') 0 0 no-repeat;
+                }
+                .hand-drag {
+                    position: absolute;
+                    width: 19px;
+                    height: 22px;
+                    left: 216px;
+                    top: 217px;
+                    background: url('@{pathPics}crm/tutorial-hand-drag.png') 0 0 no-repeat;
+                }
+            }
+            &.step-8 {
+                background: url('@{pathPics}crm/tutorial-step-7.jpg') 0 0 no-repeat;
+                .step-mask {
+                    left: 0;
+                    top: 0;
+                    background: url('@{pathPics}crm/tutorial-step-7.jpg') 0 0 no-repeat;
+                    border-radius: 3px;
+                    &:after {
+                        content: '';
+                        position: absolute;
+                        width: 19px;
+                        height: 22px;
+                        right: 46px;
+                        top: 120px;
+                        background: url('@{pathPics}crm/tutorial-hand-drag.png') 0 0 no-repeat;
+                    }
+                }
+                .step-tip {
+                    font-size: 18px;
+                    text-align: center;
+                }
+                .step-arrow {
+                    background: url('@{pathPics}crm/tutorial-step-1-arrow.png') 0 0 no-repeat;
+                }
+
+                .circle {
+                    width: 64px;
+                    height: 64px;
+                    position: absolute;
+                    top: 68px;
+                    transition: all .5s ease;
+                    transform: scale(1);
+                    will-change: all;
+                    background: url('@{pathPics}crm/tutorial-action-circle.png') 0 0 no-repeat;
+                    animation: rotation .7s 2s linear infinite;
+                }
+                .circles-appear {
+                    .circle {
+                        transform: scale(20);
+                    }
+                    &.circles-appear-active {
+                        transform: scale(1);
+                    }
+                }
+                .del-circle {
+                    left: 57px;
+                    transition-delay: .3s;
+                }
+                .end-circle {
+                    left: 266px;
+                    transition-delay: .6s;
+                }
+                .convert-circle {
+                    left: 456px;
+                    transition-delay: .9s;
+                }
+            }
+            &.step-9 {
+                background: url('@{pathPics}crm/tutorial-step-9.jpg') left top no-repeat;
+                .step-mask {
+                    left: 0;
+                    top: 0;
+                    background: url('@{pathPics}crm/tutorial-step-9.jpg') left top no-repeat;
+                    border-radius: 50%;
+                }
+                .step-tip {
+                    font-size: 18px;
+                }
+                .step-arrow {
+                    background: url('@{pathPics}crm/tutorial-step-1-arrow.png') 0 0 no-repeat;
+                    &.step-arrow-2 {
+                        background: url('@{pathPics}crm/tutorial-step-9-arrow.png') 0 0 no-repeat;
+                        width: 74px;
+                        height: 27px;
+                    }
+                }
+            }
+            &.step-10 {
+                background: url('@{pathPics}crm/tutorial-step-10.jpg') left top no-repeat;
+                .step-mask {
+                    left: 0;
+                    top: 0;
+                    background: url('@{pathPics}crm/tutorial-step-10.jpg') left top no-repeat;
+                    border-radius: 3px;
+                }
+                .step-tip {
+                    font-size: 18px;
+                    padding-left: 45px;
+                    .num {
+                        position: absolute;
+                        left: 0;
+                        top: 0;
+                        bottom: 0;
+                        font: 800 40px/54px 'Open Sans', sans-serif;
+
+                    }
+                }
+                .step-arrow {
+                    background: url('@{pathPics}crm/tutorial-step-9-arrow.png') 0 0 no-repeat;
+                    width: 74px;
+                    height: 27px;
+                }
+            }
+            &.step-11 {
+                #kanban.leadBoard > .tutorial-wrapper > .tutorial-step.step-10;
+            }
+        }
+    }
+}
+
+@keyframes blink {
+    0% {
+        opacity: 0;
+    }
+    20% {
+        opacity: 1;
+    }
+    40% {
+        opacity: 0;
+    }
+    60% {
+        opacity: 1;
+    }
+    80% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes rotation {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(17deg);
+    }
+}

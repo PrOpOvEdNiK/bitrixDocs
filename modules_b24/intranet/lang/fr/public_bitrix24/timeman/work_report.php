@@ -1,0 +1,5 @@
+<?
+$MESS["TARIFF_RESTRICTION_TEXT"] = "La collecte automatique des rapports de travail de tous les employés est l'un des moyens les plus utiles permettant d'améliorer l'efficacité. Vous définissez la fréquence (par exemple, chaque vendredi ou à la fin de chaque mois) et le portail ouvrira une fenêtre dans laquelle un employé devra remplir un rapport de ses activités quotidiennes/hebdomadaires/mensuelles et décrire les futurs objectifs. Le superviseur de l'employé peut accepter le rapport avec une évaluation positive ou négative afin de fournir des commentaires utiles à chaque subordonné. <a href=\"javascript:void(0)\" onclick='top.BX.Helper.show(\"redirect=detail&code=5391955\");'>Détails</a>";
+$MESS["TARIFF_RESTRICTION_TEXT2"] = "Les rapports de travail sont uniquement disponibles avec les <a href=\"/settings/license_all.php\" target=\"_blank\">offres commerciales sélectionnées</a>.";
+$MESS["TITLE"] = "Rapports de travail";
+?>

@@ -1,0 +1,6 @@
+<?
+$MESS["TASKS_PRESET_CURRENT_DAY"] = "Dia atual";
+$MESS["TASKS_PRESET_CURRENT_MONTH"] = "Mês atual";
+$MESS["TASKS_PRESET_CURRENT_QUARTER"] = "Trimestre atual";
+$MESS["TASKS_PRESET_CURRENT_YEAR"] = "Ano atual";
+?>

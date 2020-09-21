@@ -1,0 +1,4 @@
+<?
+$MESS["SALE_HPS_BILL_DE_BACKGROUND_STYLE_NONE"] = "Brak";
+$MESS["SALE_HPS_BILL_DE_COLUMN_SORT"] = "Sortowanie";
+?>

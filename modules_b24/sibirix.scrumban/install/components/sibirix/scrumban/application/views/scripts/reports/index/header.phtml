@@ -1,0 +1,45 @@
+<? $userModel = new Model_Db_Backend_User();
+$user = $userModel->getCurrentUser(); ?>
+<div class="header">
+    <a href="javascript:void(0)" class="launchpad-link js-launchpad-link"><i class="ico-launchpad"></i></a>
+    <div class="projectCaption">
+        <div class="logo jsProjectLogo"></div>
+        <div class="projectBlock jsProjectSelect">
+            <div class="popup projectSelectPopup"></div>
+            <div class="hoverArea jsProjectHoverArea" title="<?= $this->t('CLICK_TO_SELECT_THE_PROJECT') ?>">
+                <span class="jsProjectTitle"><?= $this->projectList[$this->projectId]['NAME']; ?></span><i></i>
+            </div>
+        </div>
+        <div class="clear"></div>
+    </div>
+
+    <? if ($user->isManager()) : ?>
+        <div class="typeMenu jsViewTypeMenu"></div>
+    <? else : ?>
+        <div class="typeMenu viewTypePopup view-type-kanban no-selector">
+            <a href="<?= $this->url(array('project' => $this->projectId), 'index-index'); ?>" class="popupOpener"><i></i><span><?= $this->t('TASK_BOARD'); ?></span></a>
+        </div>
+    <? endif; ?>
+
+    <div class="stats-block js-stats-block"></div>
+    <? if (class_exists('XMLWriter')) : ?>
+        <div class="export-block">
+            <i class="ico ico-xls">&nbsp;</i><a href="javascript:void(0)" class="js-export"><?= $this->t('REPORT_EXPORT'); ?></a>
+        </div>
+    <? endif; ?>
+
+    <div class="archive-block">
+        <i class="ico ico-reports-archive">&nbsp;</i>
+        <? if ($this->isArchive) : ?>
+            <a href="<?= $this->url(array('projectId' => $this->projectId), 'projects-reports'); ?>" class="archive"><?= $this->t('PROJECTS_ACTIVE'); ?></a>
+        <? else : ?>
+            <a href="<?= $this->url(array('projectId' => $this->projectId), 'projects-reports-archive'); ?>" class="archive"><?= $this->t('ARCHIVE'); ?></a>
+        <? endif; ?>
+    </div>
+    <div class="clear"></div>
+    <div class="toggle-block">
+        <a href="javascript:void(0)" class="js-toggle-all" data-toggle="true">Развернуть всё</a>
+        <span class="delim">/</span>
+        <a href="javascript:void(0)" class="js-toggle-all" data-toggle="false">Свернуть всё</a>
+    </div>
+</div>

@@ -1,0 +1,29 @@
+<?
+$MESS["SPP_ACCESS_DENIED"] = "Доступ заборонений.";
+$MESS["SPP_ACTIONBOX_APPS"] = "Застосунки24";
+$MESS["SPP_PAYSYSTEM_ADD"] = "Додати платіжну систему";
+$MESS["SPP_PAYSYSTEM_APPLEPAY_ADYENAPPLEPAY_TITLE"] = "Оплата Apple Pay";
+$MESS["SPP_PAYSYSTEM_APP_INTEGRATION_REQUIRED"] = "Потрібна інтеграція?";
+$MESS["SPP_PAYSYSTEM_APP_SEE_ALL"] = "Подивитися все";
+$MESS["SPP_PAYSYSTEM_APP_TOTAL_APPLICATIONS"] = "Всього рішень";
+$MESS["SPP_PAYSYSTEM_CASH_TITLE"] = "Оплата готівкою";
+$MESS["SPP_PAYSYSTEM_ITEM_EXTRA"] = "Інші платіжні системи";
+$MESS["SPP_PAYSYSTEM_LIQPAY_TITLE"] = "Оплата LiqPay";
+$MESS["SPP_PAYSYSTEM_PAYPAL_TITLE"] = "Оплата PayPal";
+$MESS["SPP_PAYSYSTEM_QIWI_TITLE"] = "Оплата Qiwi";
+$MESS["SPP_PAYSYSTEM_SBERBANKONLINE_TITLE"] = "Оплата карткою (Сбербанк)";
+$MESS["SPP_PAYSYSTEM_SETTINGS"] = "Налаштувати #PAYSYSTEM_NAME#";
+$MESS["SPP_PAYSYSTEM_UAPAY_TITLE"] = "Оплата UAPAY";
+$MESS["SPP_PAYSYSTEM_WEBMONEY_TITLE"] = "Оплата WebMoney";
+$MESS["SPP_PAYSYSTEM_YANDEXCHECKOUT_ALFABANK_TITLE"] = "Оплата Альфа-Клік";
+$MESS["SPP_PAYSYSTEM_YANDEXCHECKOUT_BANK_CARD_TITLE"] = "Оплата карткою (Яндекс.Каса)";
+$MESS["SPP_PAYSYSTEM_YANDEXCHECKOUT_EMBEDDED_APPLEPAY_TITLE"] = "Оплата Apple Pay";
+$MESS["SPP_PAYSYSTEM_YANDEXCHECKOUT_EMBEDDED_GOOGLEPAY_TITLE"] = "Оплата Google Pay";
+$MESS["SPP_PAYSYSTEM_YANDEXCHECKOUT_QIWI_TITLE"] = "Оплата Qiwi";
+$MESS["SPP_PAYSYSTEM_YANDEXCHECKOUT_SBERBANK_SMS_TITLE"] = "Оплата Сбербанк по SMS";
+$MESS["SPP_PAYSYSTEM_YANDEXCHECKOUT_SBERBANK_TITLE"] = "Оплата Сбербанк Онлайн";
+$MESS["SPP_PAYSYSTEM_YANDEXCHECKOUT_WEBMONEY_TITLE"] = "Оплата WebMoney";
+$MESS["SPP_PAYSYSTEM_YANDEXCHECKOUT_YANDEX_MONEY_TITLE"] = "Оплата Яндекс.Гроші";
+$MESS["SPP_SALESCENTER_MODULE_ERROR"] = "Модуль \"Продажі в чаті\" не встановлено";
+$MESS["SPP_SALE_MODULE_ERROR"] = "Модуль \"Інтернет-магазин\" не встановлено";
+?>

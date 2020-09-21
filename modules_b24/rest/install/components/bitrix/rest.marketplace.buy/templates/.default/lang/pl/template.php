@@ -1,0 +1,36 @@
+<?
+$MESS["MARKETPLACE_ADD_RIGHTS"] = "Ustwa uprawnienia dostępu";
+$MESS["MARKETPLACE_APP_BUY"] = "Kup";
+$MESS["MARKETPLACE_APP_CLEAN"] = "usuń ustawienia i dane aplikacji";
+$MESS["MARKETPLACE_APP_DELETE_CONFIRM"] = "Na pewno chcesz usunąć aplikację?";
+$MESS["MARKETPLACE_APP_DELETE_ERROR"] = "Błąd! Aplikacja nie została odinstalowana.";
+$MESS["MARKETPLACE_APP_DEMO"] = "Demo";
+$MESS["MARKETPLACE_APP_FREE"] = "darmowa";
+$MESS["MARKETPLACE_APP_INACTIVE"] = "usunięte";
+$MESS["MARKETPLACE_APP_INSTALL"] = "Instaluj";
+$MESS["MARKETPLACE_APP_INSTALL_CANCEL"] = "Anuluj";
+$MESS["MARKETPLACE_APP_INSTALL_PARTNER"] = "Aplikacja nie jest już dostępna. Proszę użyć  <a href=\"http://www.bitrixsoft.com/personal/b24marketplace/\">konta partnerskiego</a> do zainstalowania ukrytych instalacji.";
+$MESS["MARKETPLACE_APP_ISTALL_ERROR"] = "Błąd! Aplikacja nie została zainstalowana.";
+$MESS["MARKETPLACE_APP_POPUP_LOAD"] = "Dodawanie";
+$MESS["MARKETPLACE_APP_PRICE"] = "#PRICE# miesięcznie";
+$MESS["MARKETPLACE_APP_PROLONG"] = "Odnów";
+$MESS["MARKETPLACE_APP_TRIAL"] = "Wypróbuj";
+$MESS["MARKETPLACE_APP_TRIAL_FINISH"] = "Twój okres próbny wygaśnie w #NUM#";
+$MESS["MARKETPLACE_BUYS_EMPTY"] = "Nie masz żadnej aplikacji";
+$MESS["MARKETPLACE_DELETE_BUTTON"] = "Usuń";
+$MESS["MARKETPLACE_INSTALL_BUTTON"] = "Instaluj";
+$MESS["PAYMENT_MESSAGE_D_N_Y"] = "Niektóre funkcje aplikacji są niedostępne. Proszę skontaktować się z administratorem, aby zainstalować pełną wersję.";
+$MESS["PAYMENT_MESSAGE_D_N_Y_A"] = "Niektóre funkcje aplikacji są niedostępne. Proszę zakupić pełną wersję.";
+$MESS["PAYMENT_MESSAGE_D_Y_Y"] = "Twoja subskrypcja dla aplikacji wygasła. Niektóre funkcje aplikacji są niedostępne. Proszę skontaktować się z administratorem, aby zainstalować pełną wersję.";
+$MESS["PAYMENT_MESSAGE_D_Y_Y_A"] = "Subskrypcja twojej aplikacji wygasła. Niektóre z funkcji aplikacji są niedostępne.";
+$MESS["PAYMENT_MESSAGE_P_N_Y"] = "Subskrybcja dla twojej aplikacji wygaśnie w ciagu <b>#DAYS#</b> dni. Proszę skontaktować się ze swoim administratorem, aby odnowić subskrybcję.";
+$MESS["PAYMENT_MESSAGE_P_N_Y_A"] = "Subskrybcja dla twojej aplikacji wygaśnie w ciagu <b>#DAYS#</b> dni.";
+$MESS["PAYMENT_MESSAGE_P_Y_N"] = "Aplkacja nie jest już dostępna, ponieważ twoja subskrybcja wygasła. Proszę skontaktować się ze swoim administratorem, aby odnowić subskrybcję.";
+$MESS["PAYMENT_MESSAGE_P_Y_N_A"] = "Aplkacja nie jest już dostępna, ponieważ twoja subskrybcja wygasła.";
+$MESS["PAYMENT_MESSAGE_P_Y_Y"] = "Subskrybcja dla twojej aplikacji wygasła. Proszę skontaktować się ze swoim administratorem, aby zainstalować pełną wersję.";
+$MESS["PAYMENT_MESSAGE_P_Y_Y_A"] = "Subskrybcja dla twojej aplikacji wygasła.";
+$MESS["PAYMENT_MESSAGE_T_N_Y"] = "Okres próbny wygaśnie w ciągu <b>#DAYS#</b> dni. Proszę skontaktować się ze swoim administratorem, aby zainstalować pełną wersję.";
+$MESS["PAYMENT_MESSAGE_T_N_Y_A"] = "Okres próbny wygaśnie w ciągu <b>#DAYS#</b> dni.";
+$MESS["PAYMENT_MESSAGE_T_Y_N"] = "Okres próbny wygasł. Proszę skontaktować się ze swoim administratorem, aby zainstalować pełną wersję.";
+$MESS["PAYMENT_MESSAGE_T_Y_N_A"] = "Okres próbny wygasł. Proszę zakupić pełną wersję.";
+?>

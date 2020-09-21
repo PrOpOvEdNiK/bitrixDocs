@@ -1,0 +1,30 @@
+<?
+$MESS["CRM_PHASE_SEMANTICS_UNDEFINED"] = "nepasirinkta";
+$MESS["CRM_PHASE_SEMANTICS_DEAL_PROCESS"] = "Etapų grupė \"Sandoris vykdomas\"";
+$MESS["CRM_PHASE_SEMANTICS_DEAL_SUCCESS"] = "\"Sandoris laimėtas\" etapas";
+$MESS["CRM_PHASE_SEMANTICS_DEAL_FAILURE"] = "\"Sandoris pralaimėtas\" etapas";
+$MESS["CRM_PHASE_SEMANTICS_DEAL_CAPTION"] = "Pasirinkite etapus";
+$MESS["CRM_PHASE_SEMANTICS_DEAL_UNDEFINED"] = "nepasirinkta";
+$MESS["CRM_PHASE_SEMANTICS_LEAD_CAPTION"] = "Pasirinkite statusus";
+$MESS["CRM_PHASE_SEMANTICS_LEAD_UNDEFINED"] = "nepasirinkta";
+$MESS["CRM_PHASE_SEMANTICS_LEAD_PROCESS"] = "Statusų grupė \"Iniciatyva vykdoma\"";
+$MESS["CRM_PHASE_SEMANTICS_LEAD_SUCCESS"] = "\"Iniciatyva konvertuota\" statusas";
+$MESS["CRM_PHASE_SEMANTICS_LEAD_FAILURE"] = "Statusų grupė \"Iniciatyva nekokybiška\"";
+$MESS["CRM_PHASE_SEMANTICS_INVOICE_CAPTION"] = "Pasirinkite statusus";
+$MESS["CRM_PHASE_SEMANTICS_INVOICE_UNDEFINED"] = "nepasirinkta";
+$MESS["CRM_PHASE_SEMANTICS_INVOICE_PROCESS"] = "Statusų grupė \"Sąskaita vykdoma\"";
+$MESS["CRM_PHASE_SEMANTICS_INVOICE_SUCCESS"] = "\"Sąskaita apmokėta\" statusas";
+$MESS["CRM_PHASE_SEMANTICS_INVOICE_FAILURE"] = "Statusų grupė \"Sąskaita atmesta\"";
+$MESS["CRM_PHASE_SEMANTICS_PROCESS"] = "\"Sandoris vykdomas\" stadijų grupė";
+$MESS["CRM_PHASE_SEMANTICS_SUCCESS"] = "\"Sandoris laimėtas\" stadija";
+$MESS["CRM_PHASE_SEMANTICS_FAILURE"] = "\"Sandoris prarastas\" stadija";
+$MESS["CRM_PHASE_SEMANTICS_DEAL_GROUP_TITLE"] = "Stadijos";
+$MESS["CRM_PHASE_SEMANTICS_DEAL_SELECTOR_TITLE"] = "Pasirinkite etapą ar kategoriją";
+$MESS["CRM_PHASE_SEMANTICS_LEAD_GROUP_TITLE"] = "Statusai";
+$MESS["CRM_PHASE_SEMANTICS_LEAD_SELECTOR_TITLE"] = "Pasirinkite statusą arba kategoriją";
+$MESS["CRM_PHASE_SEMANTICS_INVOICE_GROUP_TITLE"] = "Statusai";
+$MESS["CRM_PHASE_SEMANTICS_INVOICE_SELECTOR_TITLE"] = "Pasirinkite statusą arba kategoriją";
+$MESS["CRM_PHASE_SEMANTICS_QUOTE_PROCESS"] = "Statuso \"Pasiūlymas atidarytas\" grupė";
+$MESS["CRM_PHASE_SEMANTICS_QUOTE_SUCCESS"] = "Statusas \"Pasiūlymas patvirtintas \" ";
+$MESS["CRM_PHASE_SEMANTICS_QUOTE_FAILURE"] = "Statuso \"Pasiūlymas atmestas\" grupė";
+?>

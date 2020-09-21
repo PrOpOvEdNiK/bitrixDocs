@@ -1,0 +1,4 @@
+<?
+$MESS['LEARNING_TEMPLATE_DESCRIPTION_NAME'] = 'E-apmokymų šablonas';
+$MESS['LEARNING_TEMPLATE_DESCRIPTION_DESC'] = 'E-apmokymų šablonas';
+?>

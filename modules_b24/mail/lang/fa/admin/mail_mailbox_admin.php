@@ -1,0 +1,17 @@
+<?
+$MESS["MAIL_MBOX_ADM_FILT_LANG"] = "سایت";
+$MESS["MAIL_MBOX_ADM_FILT_NAME"] = "نام";
+$MESS["MAIL_MBOX_ADM_DATECH"] = "ویرایش";
+$MESS["MAIL_MBOX_ADM_NAME"] = "نام";
+$MESS["MAIL_MBOX_ADM_LANG"] = "سایت";
+$MESS["MAIL_MBOX_ADM_VIEW"] = "مشاهده";
+$MESS["MAIL_MBOX_ADM_ACTIONS"] = "اقدامات";
+$MESS["MAIL_MBOX_ADM_MESSAGES"] = "پیغامها";
+$MESS["MAIL_MBOX_ADM_CHANGE2"] = "ویرایش";
+$MESS["MAIL_MBOX_ADM_DELETE"] = "حذف";
+$MESS["MAIL_MBOX_ADM_LISTEMPTY"] = "لیست خالی است";
+$MESS["MAIL_MBOX_ADM_LISTTOTAL"] = "مجموع:";
+$MESS["MAIL_MBOX_ADM_RULES_LINK"] = "قوانین";
+$MESS["MAIL_MBOX_ADM_TYPE"] = "نوع";
+$MESS["MAIL_MBOX_ADM_FILT_TYPE"] = "نوع:";
+?>

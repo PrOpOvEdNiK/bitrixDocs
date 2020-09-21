@@ -1,0 +1,6 @@
+<?
+$MESS["CRM_ACTIVITY_NAME"] = "Atividade";
+$MESS["CRM_ACTIVITY_TASK_LIST_DESCRIPTION"] = "Tarefas";
+$MESS["CRM_ACTIVITY_TASK_LIST_NAME"] = "Tarefas";
+$MESS["CRM_NAME"] = "CRM";
+?>

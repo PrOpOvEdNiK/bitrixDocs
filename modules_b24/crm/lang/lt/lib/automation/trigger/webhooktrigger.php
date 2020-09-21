@@ -1,0 +1,5 @@
+<?
+$MESS["CRM_AUTOMATION_TRIGGER_WEBHOOK_NAME"] = "Webhook";
+$MESS["CRM_AUTOMATION_TRIGGER_PASSWORD_TITLE"] = "Išorinė prieiga CRM automatizavimui";
+$MESS["CRM_AUTOMATION_TRIGGER_PASSWORD_COMMENT"] = "Sukūrė trigeris";
+?>

@@ -1,0 +1,33 @@
+<?
+$MESS["V_USER_TYPE_DESCRIPTION"] = "Apklausa";
+$MESS["V_NEW_CHANNEL"] = "Nauja apklausos grupė";
+$MESS["V_CHANNEL_ID_COLON"] = "Apklausos grupė:";
+$MESS["V_CHANNEL_ID_EDIT"] = "redaguoti";
+$MESS["V_CHANNEL_ID_TITLE"] = "Pavadinimas:";
+$MESS["V_CHANNEL_ID_SYMBOLIC_NAME"] = "Simbolinis ID:";
+$MESS["V_CHANNEL_ID_USE_CAPTCHA"] = "Naudoti CAPTCHA";
+$MESS["V_UNIQUE_SESSION"] = "per tą pačią sesiją";
+$MESS["V_UNIQUE_COOKIE_ONLY"] = "su tokiais pačiais slapukais";
+$MESS["V_UNIQUE_IP_ONLY"] = "IP pagrindu";
+$MESS["V_UNIQUE_USER_ID_ONLY"] = "naudotojo ID pagrindu";
+$MESS["V_UNIQUE_IP_DELAY"] = "Uždrausti pakartotinai balsuoti iš to paties IP adreso:";
+$MESS["V_UNIQUE"] = "Uždrausti pakartotinai balsuoti:";
+$MESS["V_UNIQUE_USER_ID_NEW"] = "Atmesti naudotojų, užregistruotų po apklausos pradžios, balsus";
+$MESS["V_SECONDS"] = "sekundės";
+$MESS["V_MINUTES"] = "minutės";
+$MESS["V_HOURS"] = "valandos";
+$MESS["V_DAYS"] = "dienos";
+$MESS["VT_UNKNOWN_ERROR_ADD_VOTE"] = "Nežinoma klaida (apklausa).";
+$MESS["VOTE_NOTIFY"] = "Pranešti autoriui apie kiekvieną balsavimą:";
+$MESS["VOTE_NOTIFY_IM"] = "Taip, momentiniu pranešimu (momentinių pranešimų modulis (im))";
+$MESS["VOTE_NOTIFY_EMAIL"] = "Taip, el. paštu";
+$MESS["VOTE_NOTIFY_N"] = "Nepranešti";
+$MESS["VOTE_VOTES"] = "Balsai:";
+$MESS["VOTE_EDIT_TITLE"] = "Keisti apklausos nustatymus";
+$MESS["VOTE_ACTIVE_RED_LAMP"] = "Apklausa pasibaigė.";
+$MESS["VOTE_NOT_ACTIVE"] = "Apklausa yra neaktyvi.";
+$MESS["VOTE_IS_NOT_EXPECTED"] = "Apklausos rezultatas neatitinka išsaugoto rezultato.";
+$MESS["VOTE_IS_NOT_FOUND"] = "Apklausa nerasta.";
+$MESS["VOTE_EDIT_ACCESS_IS_DENIED"] = "Nėra leidimo redaguoti apklausos.";
+$MESS["VOTE_READ_ACCESS_IS_DENIED"] = "Nėra leidimo peržiūrėti apklausą.";
+?>

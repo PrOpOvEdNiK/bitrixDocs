@@ -1,0 +1,3 @@
+<?
+$MESS["CRM_DOCGEN_DATAPROVIDER_ORDER_TITLE"] = "Zamówienie";
+?>

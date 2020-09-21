@@ -1,0 +1,5 @@
+<?
+$MESS["CRM_AUTOMATION_TRIGGER_PASSWORD_COMMENT"] = "Criado por gatilho";
+$MESS["CRM_AUTOMATION_TRIGGER_PASSWORD_TITLE"] = "Acesso externo de automação de CRM";
+$MESS["CRM_AUTOMATION_TRIGGER_WEBHOOK_NAME"] = "Webhook";
+?>

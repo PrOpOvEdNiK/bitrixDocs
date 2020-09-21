@@ -1,0 +1,30 @@
+<?
+$MESS["group_edit_connector"] = "Types de bénéficiaires : ";
+$MESS["group_edit_connector_add"] = "Ajout du type : ";
+$MESS["group_edit_connector_add_button"] = "Ajouter";
+$MESS["sender_group_add"] = "Ajouter";
+$MESS["sender_group_add_title"] = "Ajouter un groupe";
+$MESS["sender_group_adm_tab_grp"] = "Groupe";
+$MESS["sender_group_adm_tab_grp_title"] = "Commun des paramètres du groupe";
+$MESS["sender_group_adm_tab_param"] = "Paramètres";
+$MESS["sender_group_adm_tab_param_title"] = "Destinataire paramètres ";
+$MESS["sender_group_conn_add"] = "Ajouter un filtre";
+$MESS["sender_group_conn_cnt"] = "Sélectionné";
+$MESS["sender_group_conn_cnt_all"] = "Le nombre Total de destinataires sélectionnés";
+$MESS["sender_group_conn_desc"] = "Groupe de destinataires différents dans une liste de diffusion. Utilisez les filtres pour trouver et sélectionner uniquement les personnes dont vous souhaitez recevoir les messages.";
+$MESS["sender_group_conn_desc_example"] = "Par exemple, vous pouvez annoncer une vente à venir de l'évènement uniquement à la fréquentes acheteurs, ou à toute personne qui a fait des achats dans votre magasin au moins une fois.";
+$MESS["sender_group_conn_not_availabe"] = "Aucune source de destinataires disponibles.";
+$MESS["sender_group_conn_not_selected"] = "Il n'y a pas de filtres. S'il vous plaît créer un filtre.";
+$MESS["sender_group_conn_title"] = "Choisir les destinataires de ce groupe";
+$MESS["sender_group_del"] = "Supprimer";
+$MESS["sender_group_del_confirm"] = "tes-vous sûr de vouloir supprimer ce groupe ?";
+$MESS["sender_group_del_title"] = "Supprimer le groupe";
+$MESS["sender_group_field_active"] = "Active : ";
+$MESS["sender_group_field_desc"] = "Description (2000 caractères max.) : ";
+$MESS["sender_group_field_name"] = "Nom du groupe : ";
+$MESS["sender_group_field_sort"] = "Ordre de tri : ";
+$MESS["sender_group_list"] = "Afficher les groupes";
+$MESS["sender_group_list_title"] = "De retour de groupes de bénéficiaires";
+$MESS["sender_group_title_add"] = "Créer groupe de bénéficiaires";
+$MESS["sender_group_title_edit"] = "Edit de destinataire no de groupe";
+?>

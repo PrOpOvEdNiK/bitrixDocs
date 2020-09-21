@@ -1,0 +1,15 @@
+<?
+$MESS["INTR_ISIA_TPL_ALL"] = "Wszystkie";
+$MESS["INTR_ISIA_TPL_DAYS"] = "dni";
+$MESS["INTR_ISIA_TPL_DAYS_1"] = "Dzień";
+$MESS["INTR_ISIA_TPL_DAYS_2_4"] = "Dzień";
+$MESS["INTR_ISIA_TPL_FROM"] = "od";
+$MESS["INTR_ISIA_TPL_IN"] = "w";
+$MESS["INTR_ISIA_TPL_NOW"] = "Teraz";
+$MESS["INTR_ISIA_TPL_NO_ABSENCES"] = "Brak nieobecności";
+$MESS["INTR_ISIA_TPL_SHOW"] = "Pokaż:";
+$MESS["INTR_ISIA_TPL_THE_DAY_AFTER_TOMORROW"] = "Pojutrze";
+$MESS["INTR_ISIA_TPL_TILL"] = "do";
+$MESS["INTR_ISIA_TPL_TODAY"] = "dzisiaj";
+$MESS["INTR_ISIA_TPL_TOMORROW"] = "Jutro";
+?>

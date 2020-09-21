@@ -1,0 +1,8 @@
+<?
+$MESS["CRM_MODULE_NOT_INSTALLED"] = "Moduł CRM nie jest zainstalowany.";
+$MESS["CRM_PERMISSION_DENIED"] = "Odmowa dostępu";
+$MESS["M_CRM_COMM_SELECTOR_OWNER_NOT_FOUND"] = "Nie znaleziono właściciela.";
+$MESS["M_CRM_COMM_SELECT_SEARCH_PLACEHOLDER_EMAIL"] = "Nazwa lub e-mail";
+$MESS["M_CRM_COMM_SELECT_SEARCH_PLACEHOLDER_PERSON"] = "Nazwa";
+$MESS["M_CRM_COMM_SELECT_SEARCH_PLACEHOLDER_PHONE"] = "Nazwa lub telefon";
+?>

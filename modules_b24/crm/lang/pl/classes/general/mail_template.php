@@ -1,0 +1,9 @@
+<?
+$MESS["CRM_MAIL_TEMPLATE_ERROR_FIELD_NOT_SPECIFIED"] = "Barkuje wartości pola \"#FIELD#\".";
+$MESS["CRM_MAIL_TEMPLATE_ERROR_NOT_EXISTS"] = "Nie można znaleźć przedmiotu ID# #ID#.";
+$MESS["CRM_MAIL_TEMPLATE_FIELD_ENTITY_TYPE_ID"] = "Jednostka";
+$MESS["CRM_MAIL_TEMPLATE_FIELD_OWNER_ID"] = "Właściciel";
+$MESS["CRM_MAIL_TEMPLATE_FIELD_TITLE"] = "Nazwa";
+$MESS["CRM_MAIL_TEMPLATE_SCOPE_COMMON"] = "dla każdego";
+$MESS["CRM_MAIL_TEMPLATE_SCOPE_PERSONAL"] = "tylko dla mnie";
+?>

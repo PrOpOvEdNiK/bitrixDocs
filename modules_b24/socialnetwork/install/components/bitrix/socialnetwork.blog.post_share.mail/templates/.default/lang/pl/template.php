@@ -1,0 +1,6 @@
+<?
+$MESS["SBPSM_TEMPLATE_ADD_COMMENT_LINK"] = "Komentuj";
+$MESS["SBPSM_TEMPLATE_COMMENTS"] = "Komentarze";
+$MESS["SBPSM_TEMPLATE_LIKE"] = "Lubię to";
+$MESS["SBPSM_TEMPLATE_MORE"] = "Więcej";
+?>

@@ -1,0 +1,30 @@
+<?
+$MESS["BLOG_ALL_USERS"] = "tous les utilisateurs";
+$MESS["BLOG_APPLY"] = "Appliquer";
+$MESS["BLOG_AUTO_MSG"] = "Messages automatiques : ";
+$MESS["BLOG_AUTO_MSG_TITLE"] = "Utiliser la protection contre les messages automatiques";
+$MESS["BLOG_CANCEL"] = "Annuler";
+$MESS["BLOG_CAPTHA"] = "Exiger d'introduire le texte depuis l'image lors de l'écriture des commentaires pour des utilisateurs non autorisés";
+$MESS["BLOG_COMMENTS"] = "commentaires";
+$MESS["BLOG_CREATE"] = "Créer un blog";
+$MESS["BLOG_DEF_PERMS"] = "Accès par défaut : ";
+$MESS["BLOG_DESCR"] = "Description du blog : ";
+$MESS["BLOG_DESCR_TITLE"] = "Description volontaire de votre blogue";
+$MESS["BLOG_EMAIL_NOTIFY"] = "Alertes";
+$MESS["BLOG_EMAIL_NOTIFY_HELP"] = "Si c'est activé - vous allez recevoir sur votre adresse email les notifications sur des commentaires et de nouveaux messages dans votre blog.";
+$MESS["BLOG_EMAIL_NOTIFY_TITLE"] = "Envoyer les notifications à l'email";
+$MESS["BLOG_GROUPS"] = "groupe";
+$MESS["BLOG_GRP"] = "Groupe de blogues : ";
+$MESS["BLOG_GRP_TITLE"] = "Le groupe des blogs auquel votre blog appartient le plus précisément";
+$MESS["BLOG_MESSAGES"] = "messages";
+$MESS["BLOG_OPENED_GRPS"] = "Les groupes publics : ";
+$MESS["BLOG_OPENED_TITLE"] = "Indiquez les groupes disponibles à tous sans votre validation";
+$MESS["BLOG_PERMS_TITLE"] = "Ici vous pouvez spécifier les autorisations aux différents groupes d'utilisateurs pour votre blog. Si nécessaire, on peut régler les autorisations pour chaque message séparément.";
+$MESS["BLOG_REGISTERED"] = "utilisateurs enregistrés";
+$MESS["BLOG_SAVE"] = "Enregistrer";
+$MESS["BLOG_TITLE"] = "Nom du blog : ";
+$MESS["BLOG_TITLE_DESCR"] = "Spécifiez un nom unique qui caractérise le mieux votre blog";
+$MESS["BLOG_URL"] = "Nom en caractères latins : ";
+$MESS["BLOG_URL_TITLE"] = "Indiquez le nom unique du blogue en lettres latines. Il sera utilisé lors de la formation de la Web-adresse du votre blogue sous forme de <nobr>http://this-site.com/blog/[blog name]</nobr>";
+$MESS["STOF_REQUIED_FIELDS_NOTE"] = "Le symbole 'astérisque' (<font color='#FF0000'>*</font>) indique les champs qui doivent être obligatoirement remplis.";
+?>

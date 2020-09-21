@@ -1,0 +1,29 @@
+<?
+$MESS["DISK_JS_STATUS_ACTION_SUCCESS"] = "Sėkmė";
+$MESS["DISK_JS_STATUS_ACTION_ERROR"] = "Įvyko klaida";
+$MESS["DISK_JS_SHARING_LABEL_RIGHTS_FOLDER"] = "Bedra aplanko prieiga";
+$MESS["DISK_JS_SHARING_LABEL_NAME_RIGHTS_USER"] = "Naudotojai";
+$MESS["DISK_JS_SHARING_LABEL_NAME_RIGHTS"] = "Prieigos teisės";
+$MESS["DISK_JS_SHARING_LABEL_NAME_ADD_RIGHTS_USER"] = "Pridėti";
+$MESS["DISK_JS_SHARING_LABEL_NAME_ALLOW_SHARING_RIGHTS_USER"] = "Leisti šiems naudotojams keisti bendrus prieigos parametrus";
+$MESS["DISK_JS_SHARING_LABEL_RIGHT_READ"] = "Skaityti";
+$MESS["DISK_JS_SHARING_LABEL_RIGHT_EDIT"] = "Redaguoti";
+$MESS["DISK_JS_SHARING_LABEL_RIGHT_FULL"] = "Pilna prieiga";
+$MESS["DISK_JS_SHARING_LABEL_TOOLTIP_SHARING"] = "Visi naudotojai, kurie turi prieigą prie šio aplanko<br/>galės suteikti prieigą prie aplanko naujiems naudotojams";
+$MESS["DISK_JS_SHARING_LABEL_OWNER"] = "Savininkas";
+$MESS["DISK_JS_SHARING_LABEL_TITLE_MODAL"] = "Bendros prieigos parametrai";
+$MESS["DISK_JS_BTN_CLOSE"] = "Uždaryti";
+$MESS["DISK_JS_BTN_SAVE"] = "Išsaugoti";
+$MESS["DISK_JS_SHARING_LABEL_TITLE_MODAL_2"] = "Bendra prieiga";
+$MESS["DISK_JS_SERVICE_CHOICE_TITLE_SMALL"] = "Dokumentų valdymas";
+$MESS["DISK_JS_SERVICE_CHOICE_TITLE"] = "Pasirinkite, kaip jus dirbsite su savo dokumentais";
+$MESS["DISK_JS_SERVICE_CHANGE_TEXT"] = "Galėsite pasikeisti savo pasirinkimą vėliau paspaudus \"Daugiau\" nuorodą arba Disko nustatymuose.";
+$MESS["DISK_JS_SERVICE_LOCAL_TITLE"] = "Lokaliai";
+$MESS["DISK_JS_SERVICE_LOCAL_TEXT"] = "Dokumentai visada bus atidaromi programa jūsų kompiuteryje";
+$MESS["DISK_JS_SERVICE_CLOUD_TITLE"] = "Debesyje";
+$MESS["DISK_JS_SERVICE_CLOUD_TEXT"] = "Galėsite dirbti su dokumentais, per \"Google Docs\" arba \"MS Office\" Web App ";
+$MESS["DISK_JS_SERVICE_HELP_TEXT"] = "Galėsite pasikeisti savo pasirinkimą vėliau paspaudus \"Daugiau\" nuorodą.";
+$MESS["DISK_JS_SERVICE_HELP_TEXT_2"] = "Jūs galite pakeisti savo pasirinkimą vėliau nustatymuose.";
+$MESS["DISK_JS_SHARING_LABEL_RIGHT_ADD"] = "Pridėti";
+$MESS["DISK_JS_USER_LOCKED_DOCUMENT"] = "Užrakino";
+?>

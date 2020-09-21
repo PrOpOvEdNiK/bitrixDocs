@@ -1,0 +1,27 @@
+<?
+$MESS["MEMBER_ENTITY_ID_FIELD"] = "Svetainės ID";
+$MESS["MEMBER_ENTITY_MEMBER_ID_FIELD"] = "Unikalus ID";
+$MESS["MEMBER_ENTITY_SECRET_ID_FIELD"] = "Bendrinamas slaptas ID";
+$MESS["MEMBER_ENTITY_NAME_FIELD"] = "Pavadinimas";
+$MESS["MEMBER_ENTITY_URL_FIELD"] = "Nuoroda";
+$MESS["MEMBER_ENTITY_EMAIL_FIELD"] = "El. pašto adresas";
+$MESS["MEMBER_ENTITY_CONTACT_PERSON_FIELD"] = "Kontaktinis asmuo";
+$MESS["MEMBER_ENTITY_CONTROLLER_GROUP_ID_FIELD"] = "Grupės ID";
+$MESS["MEMBER_ENTITY_DISCONNECTED_FIELD"] = "Deaktyvuota";
+$MESS["MEMBER_ENTITY_SHARED_KERNEL_FIELD"] = "Bendras branduolys";
+$MESS["MEMBER_ENTITY_ACTIVE_FIELD"] = "Aktyvus";
+$MESS["MEMBER_ENTITY_DATE_ACTIVE_FROM_FIELD"] = "Aktyvumo pradžia";
+$MESS["MEMBER_ENTITY_DATE_ACTIVE_TO_FIELD"] = "Aktyvumo pabaiga";
+$MESS["MEMBER_ENTITY_SITE_ACTIVE_FIELD"] = "Svetainės atidarymas lankytomas";
+$MESS["MEMBER_ENTITY_TIMESTAMP_X_FIELD"] = "Redagavimo data";
+$MESS["MEMBER_ENTITY_MODIFIED_BY_FIELD"] = "Redagavo";
+$MESS["MEMBER_ENTITY_DATE_CREATE_FIELD"] = "Sukūrimo data";
+$MESS["MEMBER_ENTITY_CREATED_BY_FIELD"] = "Sukūrė";
+$MESS["MEMBER_ENTITY_NOTES_FIELD"] = "Aprašymas";
+$MESS["MEMBER_ENTITY_COUNTER_FREE_SPACE_FIELD"] = "Disko vietos skaitiklis";
+$MESS["MEMBER_ENTITY_COUNTER_SITES_FIELD"] = "Svetainių skaitiklis";
+$MESS["MEMBER_ENTITY_COUNTER_USERS_FIELD"] = "Naudotojų skaitiklis";
+$MESS["MEMBER_ENTITY_COUNTER_LAST_AUTH_FIELD"] = "Paskutinio prisijungimo skaitiklis";
+$MESS["MEMBER_ENTITY_COUNTERS_UPDATED_FIELD"] = "Paskutinis skaitiklių atnaujinimas laikas";
+$MESS["MEMBER_ENTITY_HOSTNAME_FIELD"] = "Hosto pavadinimas";
+?>

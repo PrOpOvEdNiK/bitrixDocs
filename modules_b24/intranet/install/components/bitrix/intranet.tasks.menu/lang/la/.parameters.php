@@ -1,0 +1,32 @@
+<?
+$MESS["INTL_ACTION_VAR"] = "Nombre del ID Variable de la acción";
+$MESS["INTL_GROUP_VAR"] = "Nombre del ID Variable del grupo";
+$MESS["INTL_IBLOCK"] = "Block de información";
+$MESS["INTL_IBLOCK_TYPE"] = "Tipo de block de información";
+$MESS["INTL_ITEM_COUNT"] = "Productos por página";
+$MESS["INTL_OWNER_ID"] = "ID del propietario";
+$MESS["INTL_PAGE_VAR"] = "Nombre del ID Variable de la Página";
+$MESS["INTL_PATH_TO_GROUP_TASKS"] = "Ruta a las Tareas";
+$MESS["INTL_PATH_TO_GROUP_TASKS_TASK"] = "Ruta a la tarea";
+$MESS["INTL_PATH_TO_GROUP_TASKS_VIEW"] = "Ruta a la vista";
+$MESS["INTL_SET_NAVCHAIN"] = "Habilitar Breadcrumbs";
+$MESS["INTL_TASKS_FIELDS_SHOW"] = "Propiedades de las tareas";
+$MESS["INTL_TASK_TYPE"] = "Tipo de Tarea";
+$MESS["INTL_TASK_TYPE_GROUP"] = "Para el Grupo";
+$MESS["INTL_TASK_TYPE_USER"] = "Para el usuario";
+$MESS["INTL_TASK_VAR"] = "Nombre del ID Variable de la Tarea";
+$MESS["INTL_TF_CODE"] = "Código Nemónico";
+$MESS["INTL_TF_CREATED_BY"] = "Autor";
+$MESS["INTL_TF_DATE_ACTIVE_FROM"] = "Inicio";
+$MESS["INTL_TF_DATE_ACTIVE_TO"] = "Final";
+$MESS["INTL_TF_DATE_CREATE"] = "Creado en";
+$MESS["INTL_TF_DETAIL_TEXT"] = "Descripción de la Tarea";
+$MESS["INTL_TF_IBLOCK_SECTION"] = "Carpeta";
+$MESS["INTL_TF_ID"] = "ID";
+$MESS["INTL_TF_MODIFIED_BY"] = "Modificado por";
+$MESS["INTL_TF_NAME"] = "Título";
+$MESS["INTL_TF_XML_ID"] = "ID Externo";
+$MESS["INTL_USER_VAR"] = "Nombre del ID Variable del usuario";
+$MESS["INTL_VARIABLE_ALIASES"] = "Alias Variables";
+$MESS["INTL_VIEW_VAR"] = "Nombre del ID Variable de la vista";
+?>

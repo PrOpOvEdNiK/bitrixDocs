@@ -1,0 +1,24 @@
+<?
+$MESS["CRM_WEBFORM_FILL_BUTTON_DEFAULT"] = "Wyślij";
+$MESS["CRM_WEBFORM_FILL_CALLBACK_FREE"] = "Bezpłatne";
+$MESS["CRM_WEBFORM_FILL_COPYRIGHT_BITRIX"] = "Bitrix";
+$MESS["CRM_WEBFORM_FILL_COPYRIGHT_CHARGED_BY"] = "Powered by";
+$MESS["CRM_WEBFORM_FILL_ERROR_FIELD_EMPTY"] = "Wypełnij wszystkie pola wymagane";
+$MESS["CRM_WEBFORM_FILL_ERROR_TITLE"] = "Uwaga!";
+$MESS["CRM_WEBFORM_FILL_FIELD_ADD_OTHER"] = "Dodaj więcej pól";
+$MESS["CRM_WEBFORM_FILL_FILE_NOT_SELECTED"] = "Brak wybranego pliku";
+$MESS["CRM_WEBFORM_FILL_FILE_SELECT"] = "Wybierz";
+$MESS["CRM_WEBFORM_FILL_FILL_AGAIN"] = "Wypełnij formularz ponownie";
+$MESS["CRM_WEBFORM_FILL_LICENCE_ACCEPT"] = "Akceptuję";
+$MESS["CRM_WEBFORM_FILL_LICENCE_DECLINE"] = "Odrzucam";
+$MESS["CRM_WEBFORM_FILL_LICENCE_PROMPT"] = "Warunki Umowy Licencyjnej:";
+$MESS["CRM_WEBFORM_FILL_LICENCE_PROMPT1"] = "Warunki umowy:";
+$MESS["CRM_WEBFORM_FILL_NOT_SELECTED"] = "Nie wybrane";
+$MESS["CRM_WEBFORM_FILL_PRODUCT_SUMMARY"] = "Suma";
+$MESS["CRM_WEBFORM_FILL_PRODUCT_TITLE"] = "Wybrane produkty";
+$MESS["CRM_WEBFORM_FILL_REDIRECT_DESC"] = "Zostaniesz przekierowany do";
+$MESS["CRM_WEBFORM_FILL_REDIRECT_GO_NOW"] = "Otwórz teraz";
+$MESS["CRM_WEBFORM_FILL_REDIRECT_SECONDS"] = "sek";
+$MESS["CRM_WEBFORM_FILL_RESULT_ERROR"] = "Nie można wysłać formularza";
+$MESS["CRM_WEBFORM_FILL_RESULT_SENT"] = "Formularz został pomyślnie ukończony";
+?>

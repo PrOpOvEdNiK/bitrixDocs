@@ -1,0 +1,130 @@
+<?
+$MESS["TASKS_ACCOMPLICE"] = "Uczestnik";
+$MESS["TASKS_ADD_QUICK_TASK"] = "Utwórz szybkie zadanie";
+$MESS["TASKS_ADD_TASK"] = "Nowe zadanie";
+$MESS["TASKS_ADD_TEMPLATE_TASK"] = "Utwórz z szablonu zadania";
+$MESS["TASKS_APPLY"] = "Zastosuj";
+$MESS["TASKS_APPROVE_TASK"] = "Przyjmij jako zakończone";
+$MESS["TASKS_AUDITOR"] = "Obserwator";
+$MESS["TASKS_CANCEL"] = "Anuluj";
+$MESS["TASKS_CONFIGURE_LIST"] = "Konfiguruuj listę";
+$MESS["TASKS_CREATOR"] = "Twórca";
+$MESS["TASKS_DATE_COMPLETED"] = "Zakończone";
+$MESS["TASKS_DATE_END"] = "Data zakończenia";
+$MESS["TASKS_DATE_START"] = "Data rozpoczęcia";
+$MESS["TASKS_DATE_STARTED"] = "Rozpocząło się";
+$MESS["TASKS_DEADLINE"] = "Termin ostateczny";
+$MESS["TASKS_DECLINE_REASON"] = "Powód odrzucenia";
+$MESS["TASKS_DECLINE_TASK"] = "Odrzuć";
+$MESS["TASKS_DEFAULT_SORT"] = "Domyślny porządek sortowania";
+$MESS["TASKS_DOUBLE_CLICK"] = "Naciśnij dwa razy aby obejrzeć";
+$MESS["TASKS_DURATION"] = "Spędzone godziny";
+$MESS["TASKS_EXPORT_EXCEL"] = "Eksport do Excela";
+$MESS["TASKS_EXPORT_OUTLOOK"] = "Eksport do programu Outlook";
+$MESS["TASKS_FILTER_BY_TAG"] = "Przez Tag";
+$MESS["TASKS_FILTER_CREAT_DATE"] = "Utworzony";
+$MESS["TASKS_FILTER_FIND"] = "Szukaj";
+$MESS["TASKS_FILTER_IN_CONTROL"] = "W oczekiwaniu na kontrolę";
+$MESS["TASKS_FILTER_NOT_ACCEPTED"] = "Niezaakceptowane";
+$MESS["TASKS_FILTER_PICK_DATE"] = "Wybierz datę w kalendarzu";
+$MESS["TASKS_FILTER_SELECT"] = "wybierz";
+$MESS["TASKS_FILTER_SHOW_SUBORDINATE"] = "Pokaż zadania podwładnych";
+$MESS["TASKS_FINISHED"] = "Zakończone";
+$MESS["TASKS_GANTT"] = "Wykres Gantta";
+$MESS["TASKS_HELP"] = "Pomoc";
+$MESS["TASKS_LIST_COLUMN_1"] = "ID";
+$MESS["TASKS_LIST_COLUMN_10"] = "Grupa";
+$MESS["TASKS_LIST_COLUMN_11"] = "Szacowany, wymagany czas";
+$MESS["TASKS_LIST_COLUMN_12"] = "Śledzenie spędzonego czasu";
+$MESS["TASKS_LIST_COLUMN_13"] = "Czas spędzony";
+$MESS["TASKS_LIST_COLUMN_14"] = "Osoba odpowiedzialna może zmienić termin ostateczny";
+$MESS["TASKS_LIST_COLUMN_15"] = "Utworzony";
+$MESS["TASKS_LIST_COLUMN_16"] = "Zmodyfikowany";
+$MESS["TASKS_LIST_COLUMN_17"] = "Data zakończenia";
+$MESS["TASKS_LIST_COLUMN_2"] = "Nazwa";
+$MESS["TASKS_LIST_COLUMN_3"] = "Utworzony przez";
+$MESS["TASKS_LIST_COLUMN_4"] = "Osoba odpowiedzialna";
+$MESS["TASKS_LIST_COLUMN_5"] = "Termin ostateczny";
+$MESS["TASKS_LIST_COLUMN_6"] = "Punkty";
+$MESS["TASKS_LIST_COLUMN_7"] = "CRM";
+$MESS["TASKS_LIST_COLUMN_8"] = "Priorytet";
+$MESS["TASKS_LIST_COLUMN_9"] = "Status";
+$MESS["TASKS_LIST_COLUMN_SORTING"] = "Niestandardowe";
+$MESS["TASKS_LIST_CONFIRM_ACTION_FOR_ALL_ITEMS"] = "Chcesz zastosować działanie do wszystkich zadań i podzadań na liście łącznie z kolejnymi stronami?";
+$MESS["TASKS_LIST_CONFIRM_REMOVE_FOR_ALL_ITEMS"] = "Chcesz usunąć wszystkie zadania wraz z podrzędnymi podzadaniami włącznie z zawartymi na kolejnych stronach?";
+$MESS["TASKS_LIST_CONFIRM_REMOVE_FOR_SELECTED_ITEMS"] = "Czy chcesz usunąć wybrane zadania?";
+$MESS["TASKS_LIST_GROUP_ACTION_ADD_ACCOMPLICE"] = "Dodaj uczestnika";
+$MESS["TASKS_LIST_GROUP_ACTION_ADD_AUDITOR"] = "Dodaj obserwatora";
+$MESS["TASKS_LIST_GROUP_ACTION_ADD_FAVORITE"] = "Dodaj do ulubionych";
+$MESS["TASKS_LIST_GROUP_ACTION_ADJUST_DEADLINE"] = "Przenieś termin ostateczny do przodu";
+$MESS["TASKS_LIST_GROUP_ACTION_CHANGE_ORIGINATOR"] = "Zmień twórcę";
+$MESS["TASKS_LIST_GROUP_ACTION_CHANGE_RESPONSIBLE"] = "Ustaw osoby odpowiedzialne";
+$MESS["TASKS_LIST_GROUP_ACTION_COMPLETE"] = "Zakończ";
+$MESS["TASKS_LIST_GROUP_ACTION_DAYS_PLURAL_0"] = "Dzień";
+$MESS["TASKS_LIST_GROUP_ACTION_DAYS_PLURAL_1"] = "dni";
+$MESS["TASKS_LIST_GROUP_ACTION_DAYS_PLURAL_2"] = "dni";
+$MESS["TASKS_LIST_GROUP_ACTION_DELETE_FAVORITE"] = "Usuń z ulubionych";
+$MESS["TASKS_LIST_GROUP_ACTION_FOR_ALL"] = "Dla wszystkich";
+$MESS["TASKS_LIST_GROUP_ACTION_MONTHES_PLURAL_0"] = "Miesiąc";
+$MESS["TASKS_LIST_GROUP_ACTION_MONTHES_PLURAL_1"] = "miesiące";
+$MESS["TASKS_LIST_GROUP_ACTION_MONTHES_PLURAL_2"] = "miesiące";
+$MESS["TASKS_LIST_GROUP_ACTION_PLEASE_WAIT"] = "Proszę czekać…";
+$MESS["TASKS_LIST_GROUP_ACTION_REMOVE"] = "Usuń";
+$MESS["TASKS_LIST_GROUP_ACTION_SET_DEADLINE"] = "Wprowadź termin ostateczny";
+$MESS["TASKS_LIST_GROUP_ACTION_SET_GROUP"] = "Wybierz grupę projektu";
+$MESS["TASKS_LIST_GROUP_ACTION_SUBSTRACT_DEADLINE"] = "Przenieś termin ostateczny do tyłu";
+$MESS["TASKS_LIST_GROUP_ACTION_WEEKS_PLURAL_0"] = "Tydzień";
+$MESS["TASKS_LIST_GROUP_ACTION_WEEKS_PLURAL_1"] = "tygodnie";
+$MESS["TASKS_LIST_GROUP_ACTION_WEEKS_PLURAL_2"] = "tygodnie";
+$MESS["TASKS_LIST_MENU_RESET_TO_DEFAULT_PRESET"] = "Domyślny widok";
+$MESS["TASKS_LIST_SUBMIT"] = "Zastosuj";
+$MESS["TASKS_LIST_TOOLTIP_FOR_ALL_ITEMS"] = "Wybierz zadania włącznie z podzadaniami na wszystkich stronach";
+$MESS["TASKS_LIST_TRIAL_EXPIRED_TEXT"] = "Plan Free pozwoli na posiadanie do 5 zależności pomiędzy zadaniami. Rozszerz plan o zaawansowane zadania i zarządzanie projektami, aby mieć nielimitowane zależności.
+
+Obecnie obsługiwane są cztery typy zależności:
+Zakończ, aby rozpocząć (ZR)
+Rozpocznij, aby rozpocząć (RR)
+Zakończ, aby zakończyć (ZZ) 
+Rozpocznij, aby zakończyć (RZ)
+
+<a href=\"https://bitrix24.com/pro/tasks.php\" target=\"_blank\">Dowiedz się więcej</a>
+
+Zadania zaawansowane + Zaawansowany CRM + Zaawansowana telefonia i inne dodatkowe funkcje są dostępne w wybranych planach płatnych.";
+$MESS["TASKS_LIST_TRIAL_EXPIRED_TITLE_V2"] = "Dostępne tylko w Zaawansowanych zadaniach Bitrix24";
+$MESS["TASKS_MARK"] = "Ocena";
+$MESS["TASKS_MARK_N"] = "Negative";
+$MESS["TASKS_MARK_NONE"] = "brak";
+$MESS["TASKS_MARK_P"] = "Pozytywna";
+$MESS["TASKS_NO_RESPONSIBLE"] = "Osoba odpowiedzialna jest nie określona.";
+$MESS["TASKS_NO_TASKS"] = "Brak zadań";
+$MESS["TASKS_NO_TEMPLATES"] = "Brak dostępnych szablonów";
+$MESS["TASKS_NO_TITLE"] = "Nazwa Zadanie nie została określona.";
+$MESS["TASKS_OK"] = "OK";
+$MESS["TASKS_PLAIN_LIST"] = "Widok płaskich zadań";
+$MESS["TASKS_PRIORITY_V2"] = "Ważne zadanie";
+$MESS["TASKS_QUICK_CANCEL"] = "Anuluj";
+$MESS["TASKS_QUICK_DEADLINE"] = "Termin ostateczny";
+$MESS["TASKS_QUICK_DESCRIPTION"] = "Opis";
+$MESS["TASKS_QUICK_INFO_DETAILS"] = "Szczegóły";
+$MESS["TASKS_QUICK_INFO_EMPTY_DATE"] = "Nie";
+$MESS["TASKS_QUICK_IN_GROUP"] = "zadanie w projekcie";
+$MESS["TASKS_QUICK_SAVE"] = "Zapisz";
+$MESS["TASKS_QUICK_TITLE"] = "Nazwa Zadania";
+$MESS["TASKS_REPORTS"] = "Raporty";
+$MESS["TASKS_RESPONSIBLE"] = "Odpowiedzialny";
+$MESS["TASKS_STATUS"] = "Status";
+$MESS["TASKS_STATUS_ACCEPTED"] = "W toku";
+$MESS["TASKS_STATUS_COMPLETED"] = "Zakończone";
+$MESS["TASKS_STATUS_DECLINED"] = "Odrzucone";
+$MESS["TASKS_STATUS_DELAYED"] = "Wstrzymane";
+$MESS["TASKS_STATUS_IN_PROGRESS"] = "W toku";
+$MESS["TASKS_STATUS_NEW"] = "Nowe";
+$MESS["TASKS_STATUS_OVERDUE"] = "po terminie";
+$MESS["TASKS_STATUS_WAITING"] = "W oczekiwaniu na kontrolę";
+$MESS["TASKS_TASK_FILES"] = "Pliki";
+$MESS["TASKS_TASK_TITLE_LABEL"] = "Nr. zadania";
+$MESS["TASKS_TEMPLATES"] = "Szablony";
+$MESS["TASKS_TEMPLATES_LIST"] = "Zobacz wszystkie szablony zadań";
+$MESS["TASKS_TITLE"] = "Zadania";
+$MESS["TASKS_TREE_LIST"] = "Widok zadań i podzadań";
+?>

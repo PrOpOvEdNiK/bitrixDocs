@@ -1,0 +1,36 @@
+<?
+$MESS["DELETE_ERROR"] = "Wystąpił błąd podczas usuwania obiektu.";
+$MESS["MAIN_ADMIN_LIST_CHECKED"] = "Zaznaczone:";
+$MESS["MAIN_ADMIN_LIST_SELECTED"] = "Wybrany:";
+$MESS["SAVE_ERROR"] = "Wystąpił błąd podczas zapisywania obiektu.";
+$MESS["VOTE_DATE"] = "Data";
+$MESS["VOTE_DELETE"] = "Usuń";
+$MESS["VOTE_DELETE_CONFIRMATION"] = "czy na pewno chcesz usunąć wybrane głosy?";
+$MESS["VOTE_DELETE_U"] = "Usuń";
+$MESS["VOTE_DEVALIDATE"] = "uczyń nieważnym";
+$MESS["VOTE_EDIT_TITLE"] = "Modyfikuj parametry ankiety";
+$MESS["VOTE_EXACT_MATCH"] = "Użyj dokładnego dopasowania";
+$MESS["VOTE_FL_DATE"] = "Data";
+$MESS["VOTE_FL_IP"] = "adres IP";
+$MESS["VOTE_FL_SESS_ID"] = "ID Sesji";
+$MESS["VOTE_FL_USER_ID"] = "ID Gościa";
+$MESS["VOTE_FL_VALID"] = "ważność";
+$MESS["VOTE_F_DATE"] = "Data:";
+$MESS["VOTE_F_SESSION"] = "ID Sesji:";
+$MESS["VOTE_F_USER"] = "ID Gościa:";
+$MESS["VOTE_F_VALID"] = "ważny";
+$MESS["VOTE_F_VALID_TITLE"] = "ważny:";
+$MESS["VOTE_LIST"] = "Ankiety";
+$MESS["VOTE_NOT_FOUND"] = "Nie znaleziono ankiety.";
+$MESS["VOTE_PAGES"] = "Wyniki";
+$MESS["VOTE_PAGE_TITLE"] = "głosowania gości";
+$MESS["VOTE_RESULT"] = "Wyświetl";
+$MESS["VOTE_SAVE_ERROR"] = "błąd podczas zapisu do bazy danych";
+$MESS["VOTE_SESSION"] = "Sesja";
+$MESS["VOTE_SESSIONU_LIST_TITLE"] = "pokaż listę sesji";
+$MESS["VOTE_USER"] = "Gość";
+$MESS["VOTE_USER_LIST_TITLE"] = "pokaż listę gośći";
+$MESS["VOTE_VALID"] = "ważny";
+$MESS["VOTE_VALIDATE"] = "uczyń ważnym";
+$MESS["VOTE_VIEW_RESULTS"] = "Wyniki";
+?>

@@ -1,0 +1,31 @@
+<?
+$MESS["BT_UT_AUTOCOMPLETE_SYM_GRID"] = "#";
+$MESS["BT_UT_AUTOCOMPLETE_SYM_OTHER"] = "Autre";
+$MESS["BT_UT_AUTOCOMPLETE_SYM_SPACE"] = "Blanc";
+$MESS["BT_UT_AUTOCOMPLETE_SYM_STAR"] = "*";
+$MESS["BT_UT_AUTOCOMPLETE_SYM_UNDERLINE"] = "_";
+$MESS["BT_UT_SAUTOCOMPLETE_DESCR"] = "Rattachement aux sections avec le remplissage automatique";
+$MESS["BT_UT_SAUTOCOMPLETE_MESS_ELEMENT_EDIT"] = "Accéder à la page d'édition de la section";
+$MESS["BT_UT_SAUTOCOMPLETE_MESS_INVITE"] = "veuillez saisir un texte";
+$MESS["BT_UT_SAUTOCOMPLETE_MESS_LIST_INVITE"] = "(saisir le nom)";
+$MESS["BT_UT_SAUTOCOMPLETE_MESS_NEW_ELEMENT"] = "Ajouter une section";
+$MESS["BT_UT_SAUTOCOMPLETE_MESS_NEW_ELEMENT_DESCR"] = "Ajouter une nouvelle section et la sélectionner";
+$MESS["BT_UT_SAUTOCOMPLETE_MESS_NO_SEARCH_RESULT_TEXT"] = "rien n'a été trouvé";
+$MESS["BT_UT_SAUTOCOMPLETE_MESS_SEARCH_ELEMENT"] = "...";
+$MESS["BT_UT_SAUTOCOMPLETE_MESS_SEARCH_ELEMENT_DESCR"] = "Choix de la rubrique dans la fenêtre de recherche";
+$MESS["BT_UT_SAUTOCOMPLETE_MESS_SEARCH_ELEMENT_MULTI_DESCR"] = "Sélection de quelques sections dans la fenêtre de recherche";
+$MESS["BT_UT_SAUTOCOMPLETE_SETTING_BAN_SYMBOLS"] = "Symboles remplacés au cours d'affichage";
+$MESS["BT_UT_SAUTOCOMPLETE_SETTING_COMMENT_MAX_HEIGHT"] = "px";
+$MESS["BT_UT_SAUTOCOMPLETE_SETTING_COMMENT_MAX_WIDTH"] = "px";
+$MESS["BT_UT_SAUTOCOMPLETE_SETTING_COMMENT_MIN_HEIGHT"] = "px";
+$MESS["BT_UT_SAUTOCOMPLETE_SETTING_IBLOCK_MESS"] = "Prendre la dénomination de la touche d'ajout à partir des réglages du bloc d'information lié";
+$MESS["BT_UT_SAUTOCOMPLETE_SETTING_MAX_HEIGHT"] = "Champ de saisie hauteur max.(pour de multiples propriétés)";
+$MESS["BT_UT_SAUTOCOMPLETE_SETTING_MAX_WIDTH"] = "Largeur maximale du champ de saisie en pixels (0 - ne pas limiter)";
+$MESS["BT_UT_SAUTOCOMPLETE_SETTING_MIN_HEIGHT"] = "La hauteur minimale de la zone de saisie en pixels, si la propriété est pluriel";
+$MESS["BT_UT_SAUTOCOMPLETE_SETTING_REP_SYMBOL"] = "Le symbole qui remplacera les caractères interdits lors de l'affichage";
+$MESS["BT_UT_SAUTOCOMPLETE_SETTING_SHOW_ADD"] = "Afficher le bouton d'ajout des sections";
+$MESS["BT_UT_SAUTOCOMPLETE_SETTING_TITLE"] = "Configuration de liaison aux sections avec une saisie automatique";
+$MESS["BT_UT_SAUTOCOMPLETE_SETTING_VIEW"] = "Interface de l'affichage";
+$MESS["BT_UT_SAUTOCOMPLETE_VIEW_AUTO"] = "Ligne avec une saisie automatique";
+$MESS["BT_UT_SAUTOCOMPLETE_VIEW_ELEMENT"] = "Ligne de saisie automatique et choix depuis la fenêtre de recherche";
+?>

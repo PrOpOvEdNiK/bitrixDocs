@@ -1,0 +1,4 @@
+<?
+$MESS["UI_BUTTONS_SAVE_BTN_TEXT"] = "Guardar";
+$MESS["UI_BUTTONS_CANCEL_BTN_TEXT"] = "Cancelar";
+?>

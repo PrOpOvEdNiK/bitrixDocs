@@ -1,0 +1,33 @@
+<?
+$MESS["CRM_RQ_IMP_HLPR_ERR_ACCESS_DENIED_COMPANY_UPDATE"] = "Acceso denegado para editar compañía (ID: #ID#)";
+$MESS["CRM_RQ_IMP_HLPR_ERR_ACCESS_DENIED_CONTACT_UPDATE"] = "Acceso denegado para editar ccontacto (ID: #ID#)";
+$MESS["CRM_RQ_IMP_HLPR_ERR_ADDRESS_TYPE_ALREADY_EXISTS"] = "Se especificó el tipo de dirección, pero ya existe en los detalles";
+$MESS["CRM_RQ_IMP_HLPR_ERR_ADDRESS_TYPE_IS_NOT_SET"] = "El tipo de dirección no está especificado";
+$MESS["CRM_RQ_IMP_HLPR_ERR_BD_KEY_FIELDS_NOT_PRESENT"] = "No se especificaron campos clave para los detalles bancarios";
+$MESS["CRM_RQ_IMP_HLPR_ERR_BD_NAME_IS_NOT_SET"] = "El nombre de los detalles bancarios no está especificado";
+$MESS["CRM_RQ_IMP_HLPR_ERR_COMPANY_GENITIVE"] = "detalles de la compañía";
+$MESS["CRM_RQ_IMP_HLPR_ERR_COMPANY_NOT_EXISTS"] = "La compañía no fue encontrada (ID: #ID#)";
+$MESS["CRM_RQ_IMP_HLPR_ERR_CONTACT_GENITIVE"] = "detalles del contacto";
+$MESS["CRM_RQ_IMP_HLPR_ERR_CONTACT_NOT_EXISTS"] = "El contacto no fue encontrado (ID: #ID#)";
+$MESS["CRM_RQ_IMP_HLPR_ERR_CREATE_BANK_DETAIL"] = "Error al crear detalles bancarios para #ENTITY_TYPE_NAME_GENITIVE# (ID: #ID#)";
+$MESS["CRM_RQ_IMP_HLPR_ERR_CREATE_REQUISITE"] = "Error al crear #ENTITY_TYPE_NAME_GENITIVE# (ID: #ID#)";
+$MESS["CRM_RQ_IMP_HLPR_ERR_DEF_IMP_PRESET_NOT_DEFINED"] = "Plantilla de importación de detalles #ENTITY_TYPE_NAME_GENITIVE# no está definido";
+$MESS["CRM_RQ_IMP_HLPR_ERR_EMPTY_BD_KEY_FIELDS"] = "Faltan campos de clave de detalles bancarios";
+$MESS["CRM_RQ_IMP_HLPR_ERR_EMPTY_KEY_FIELDS"] = "Faltan campos clave faltan";
+$MESS["CRM_RQ_IMP_HLPR_ERR_EMPTY_RQ_KEY_FIELDS"] = "Faltan los campos clave de los detalles";
+$MESS["CRM_RQ_IMP_HLPR_ERR_IMP_PRESET_HAS_NO_ADDR_FIELD"] = "La plantilla de importación de detalles no incluye el campo de dirección (ID: #ID#)";
+$MESS["CRM_RQ_IMP_HLPR_ERR_IMP_PRESET_NOT_EXISTS"] = "No se encontró la plantilla de importación de detalles (ID: #ID#)";
+$MESS["CRM_RQ_IMP_HLPR_ERR_INVALID_ENTITY_ID"] = "Ninguna entidad especificada para su uso con detalles.";
+$MESS["CRM_RQ_IMP_HLPR_ERR_INVALID_ENTITY_TYPE"] = "Tipo de entidad de detalles incorrectos";
+$MESS["CRM_RQ_IMP_HLPR_ERR_INVALID_IMP_PRESET_ID"] = "ID de la plantilla de importación de detalles no válidos";
+$MESS["CRM_RQ_IMP_HLPR_ERR_NEXT_ENTITY"] = "Los datos pertenecen a la entidad";
+$MESS["CRM_RQ_IMP_HLPR_ERR_NEXT_ROW_LIMIT"] = "Filas por límite de entidad excedidas: #ROW_LIMIT#.";
+$MESS["CRM_RQ_IMP_HLPR_ERR_NO_ADDRESSES_TO_IMPORT"] = "Sin direcciones para importar";
+$MESS["CRM_RQ_IMP_HLPR_ERR_PRESET_ASSOC"] = "No se puede hacer coincidir la plantilla para importar detalles";
+$MESS["CRM_RQ_IMP_HLPR_ERR_ROW_NUMBER_TEXT"] = "(fila #ROW_NUMBER#)";
+$MESS["CRM_RQ_IMP_HLPR_ERR_RQ_KEY_FIELDS_NOT_PRESENT"] = "Las palabras claves de detalles no están especificadas";
+$MESS["CRM_RQ_IMP_HLPR_ERR_RQ_NAME_IS_NOT_SET"] = "El nombre de los detalles no está especificado";
+$MESS["CRM_RQ_IMP_HLPR_ERR_UNKNOWN_ADDRESS_TYPE"] = "Tipo de dirección desconocido";
+$MESS["CRM_RQ_IMP_HLPR_ERR_UPDATE_BANK_DETAIL"] = "Error al actualizar los detalles bancarios para #ENTITY_TYPE_NAME_GENITIVE# (ID: #ID#)";
+$MESS["CRM_RQ_IMP_HLPR_ERR_UPDATE_REQUISITE"] = "Error al actualizar los detalles para #ENTITY_TYPE_NAME_GENITIVE# (ID: #ID#)";
+?>

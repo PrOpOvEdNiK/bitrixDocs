@@ -1,0 +1,5 @@
+<?
+$MESS["CRM_PS_LIST_BLOCK_ACTIVE"] = "Aktyvus";
+$MESS["CRM_PS_LIST_BLOCK_CONNECT"] = "sujungti";
+$MESS["CRM_PS_LIST_BLOCK_DISCONNECT"] = "atjungti";
+?>

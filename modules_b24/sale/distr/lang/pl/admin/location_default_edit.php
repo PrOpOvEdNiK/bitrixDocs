@@ -1,0 +1,3 @@
+<?
+$MESS["SALE_LOCATION_E_HEADER_LOC_MORE"] = "Więcej";
+?>

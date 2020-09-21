@@ -1,0 +1,10 @@
+<?
+$MESS["TASKS_COLUMN_CLOSED_DATE"] = "Cerrado el";
+$MESS["TASKS_COLUMN_CREATED_DATE"] = "Creado el";
+$MESS["TASKS_COLUMN_DEADLINE"] = "Fecha límite";
+$MESS["TASKS_COLUMN_GROUP"] = "Grupo";
+$MESS["TASKS_COLUMN_ORIGINATOR"] = "Creado por";
+$MESS["TASKS_COLUMN_STATUS"] = "Estado";
+$MESS["TASKS_COLUMN_TASK"] = "Tarea";
+$MESS["TASKS_COLUMN_USER_TYPE2"] = "Rol";
+?>

@@ -1,0 +1,34 @@
+<?
+$MESS["REST_UF_ACTIVE_FILTER"] = "Afficher uniquement les actifs";
+$MESS["REST_UF_CRM_COMPANY"] = "Société";
+$MESS["REST_UF_CRM_CONTACT"] = "Contact";
+$MESS["REST_UF_CRM_DEAL"] = "Transaction";
+$MESS["REST_UF_CRM_LEAD"] = "Prospect";
+$MESS["REST_UF_DEFAULT_VALUE"] = "Valeur par défaut";
+$MESS["REST_UF_DISPLAY"] = "Design";
+$MESS["REST_UF_EDIT_FORM_LABEL"] = "Éditer l'étiquette du formulaire";
+$MESS["REST_UF_EDIT_IN_LIST"] = "Utilisateur modifiable";
+$MESS["REST_UF_ENTITY_ID"] = "Objet";
+$MESS["REST_UF_ENTITY_TYPE"] = "Entité disponible";
+$MESS["REST_UF_ERROR_MESSAGE"] = "Message d'erreur";
+$MESS["REST_UF_FIELD_NAME"] = "Code";
+$MESS["REST_UF_HELP_MESSAGE"] = "Aide";
+$MESS["REST_UF_IBLOCK_ID"] = "ID du bloc d'information";
+$MESS["REST_UF_IBLOCK_TYPE_ID"] = "ID du type de bloc d'information";
+$MESS["REST_UF_ID"] = "ID";
+$MESS["REST_UF_IS_SEARCHABLE"] = "Ouvert à la recherche";
+$MESS["REST_UF_LIST"] = "Lister les éléments";
+$MESS["REST_UF_LIST_COLUMN_LABEL"] = "Lister les textes des colonnes";
+$MESS["REST_UF_LIST_FILTER_LABEL"] = "Filtrer l'étiquette";
+$MESS["REST_UF_LIST_HEIGHT"] = "Hauteur de la liste";
+$MESS["REST_UF_MANDATORY"] = "Obligatoire";
+$MESS["REST_UF_MULTIPLE"] = "Multiple";
+$MESS["REST_UF_PRECISION"] = "Précision";
+$MESS["REST_UF_SETTINGS"] = "Propriétés supplémentaires (en fonction du type)";
+$MESS["REST_UF_SHOW_FILTER"] = "Afficher dans les filtres";
+$MESS["REST_UF_SHOW_IN_LIST"] = "Afficher en liste";
+$MESS["REST_UF_SORT"] = "Trier";
+$MESS["REST_UF_USER_TYPE_ID"] = "Type de donnée";
+$MESS["REST_UF_VALUE"] = "Valeur";
+$MESS["REST_UF_XML_ID"] = "ID externe(XML ID)";
+?>

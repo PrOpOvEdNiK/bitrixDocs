@@ -1,0 +1,33 @@
+<?
+$MESS["IBLOCK_DEFAULT_UF"] = "Galería por defecto";
+$MESS["INTERANET_MODULE_NOT_INSTALL"] = "El modulo de Intranet no esta instalado.";
+$MESS["INTR_IRM_NAME_TEMPLATE_DEFAULT"] = "#NOBR##NAME# #LAST_NAME##/NOBR#";
+$MESS["SONET_ACCESS_DENIED"] = "Acceso denegado.";
+$MESS["SONET_CREATE_WEBDAV"] = "Crear Librería";
+$MESS["SONET_FILES"] = "Archivos";
+$MESS["SONET_FILES_IS_NOT_ACTIVE"] = "La característica \"Archivos\" no esta habilitada";
+$MESS["SONET_FILES_LOG"] = "#AUTHOR_NAME# agregado a un archivo #TITLE#.";
+$MESS["SONET_FILES_LOG_TEXT"] = "Nuevo archivo #TITLE# de #URL#.";
+$MESS["SONET_GALLERIES_IS_NOT_ACTIVE"] = "Sus galerías de foto están actualmente inactivas. Por favor contactar al administrador.";
+$MESS["SONET_GALLERY_IS_NOT_ACTIVE"] = "Su galería de foto esta actualmente inactiva. Por favor contactar al administrador.";
+$MESS["SONET_GALLERY_NOT_FOUND"] = "Sin fotos.";
+$MESS["SONET_GROUP"] = "Grupo";
+$MESS["SONET_GROUP_NOT_EXISTS"] = "El grupo no existe.";
+$MESS["SONET_GROUP_PREFIX"] = "Grupo:";
+$MESS["SONET_IBLOCK_ID_EMPTY"] = "El bloque informativo no esta especificado.";
+$MESS["SONET_IB_MODULE_IS_NOT_INSTALLED"] = "El modulo de los bloques informativos no esta instalado.";
+$MESS["SONET_LOADING"] = "Cargando...";
+$MESS["SONET_LOG_GUEST"] = "Invitado";
+$MESS["SONET_LOG_TEMPLATE_AUTHOR"] = "Autor: <a href=\"#AUTHOR_URL#\">#AUTHOR_NAME#</a>.";
+$MESS["SONET_LOG_TEMPLATE_AUTHOR_MAIL"] = "Autor: #AUTHOR_NAME# (#AUTHOR_URL#).";
+$MESS["SONET_LOG_TEMPLATE_GUEST"] = "Autor: #AUTHOR_NAME# ";
+$MESS["SONET_PHOTO"] = "Foto";
+$MESS["SONET_PHOTO_IS_NOT_ACTIVE"] = "La característica \"Foto\" no esta habilitada";
+$MESS["SONET_PHOTO_LOG_1"] = "#AUTHOR_NAME# agregado a un archivo #TITLE#.";
+$MESS["SONET_PHOTO_LOG_2"] = "Fotos (#COUNT#)";
+$MESS["SONET_PHOTO_LOG_MAIL_TEXT"] = "Nuevas fotos: #LINKS# y otra.";
+$MESS["SONET_PHOTO_LOG_TEXT"] = "Nuevas fotos: <div class='notificationlog'>#LINKS#</div> <a href=\"#HREF#\">Open album</a>.";
+$MESS["SONET_P_MODULE_IS_NOT_INSTALLED"] = "El modulo de Galería de fotos no esta instalada.";
+$MESS["SONET_WD_MODULE_IS_NOT_INSTALLED"] = "El modulo de la librería de documento no esta instalada.";
+$MESS["SONET_WEBDAV_NOT_EXISTS"] = "Sin documentos.";
+?>

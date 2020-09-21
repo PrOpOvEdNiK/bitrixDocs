@@ -1,0 +1,36 @@
+<?
+$MESS["BT_SALE_DISCOUNT_ADM_TITLE_NAME"] = "Nazwa";
+$MESS["BT_SALE_DISCOUNT_LIST_ERR_DELETE_DISCOUNT"] = "Błąd w usuwaniu reguły";
+$MESS["BT_SALE_DISCOUNT_LIST_MESS_ACTIVATE_DISCOUNT_SHORT"] = "aktywuj";
+$MESS["BT_SALE_DISCOUNT_LIST_MESS_COPY_DISCOUNT_SHORT"] = "Kopiuj";
+$MESS["BT_SALE_DISCOUNT_LIST_MESS_DEACTIVATE_DISCOUNT_SHORT"] = "deaktywuj";
+$MESS["BT_SALE_DISCOUNT_LIST_MESS_DELETE_DISCOUNT_CONFIRM"] = "Czy na pewno chcesz usunąć tę regułę?";
+$MESS["BT_SALE_DISCOUNT_LIST_MESS_DELETE_DISCOUNT_SHORT"] = "Usuń";
+$MESS["BT_SALE_DISCOUNT_LIST_MESS_EDIT_DISCOUNT"] = "Zmień parametry reguły";
+$MESS["BT_SALE_DISCOUNT_LIST_MESS_EDIT_DISCOUNT_SHORT"] = "zmień";
+$MESS["BT_SALE_DISCOUNT_LIST_MESS_NAV"] = "Profil";
+$MESS["BT_SALE_DISCOUNT_LIST_MESS_NEW_DISCOUNT"] = "Dodaj regułę";
+$MESS["BT_SALE_DISCOUNT_LIST_MESS_NEW_DISCOUNT_TITLE"] = "Dodaj regułę";
+$MESS["BT_SALE_DISCOUNT_LIST_MESS_TITLE"] = "Reguły koszyka";
+$MESS["BX_SALE_DISCOUNT_LIST_FILTER_NAME"] = "Nazwa";
+$MESS["DSC_NO"] = "Nie";
+$MESS["DSC_YES"] = "Tak";
+$MESS["DS_ALL"] = "(Wszystko)";
+$MESS["ERROR_UPDATE_REC"] = "Błąd aktualizacji rekordu";
+$MESS["FILTER_ACTIVE"] = "Aktywne";
+$MESS["LANG_FILTER_NAME"] = "Strona";
+$MESS["PERS_TYPE_ACTIVE"] = "Aktywne";
+$MESS["PERS_TYPE_ID"] = "ID";
+$MESS["PERS_TYPE_LID"] = "Strona";
+$MESS["PERS_TYPE_SORT"] = "Sortuj";
+$MESS["SDSN_ACTIVE_FROM"] = "Aktywne od";
+$MESS["SDSN_ACTIVE_TO"] = "Aktywny do";
+$MESS["SDSN_CREATED_BY_NEW"] = "Utworzony przez";
+$MESS["SDSN_DATE_CREATE"] = "Utworzony";
+$MESS["SDSN_LAST_DISCOUNT_NEW"] = "Nie używaj reguł";
+$MESS["SDSN_MODIFIED_BY_NEW"] = "Zmodyfikowane przez";
+$MESS["SDSN_PRIORITY"] = "Priorytet dla aplikacji";
+$MESS["SDSN_TIMESTAMP_X"] = "Zmodyfikowany";
+$MESS["SDSN_USE_COUPONS"] = "Kupony";
+$MESS["SDSN_XML_ID"] = "ID";
+?>

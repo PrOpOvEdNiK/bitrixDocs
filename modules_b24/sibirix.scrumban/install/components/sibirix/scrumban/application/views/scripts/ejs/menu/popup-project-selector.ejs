@@ -1,0 +1,80 @@
+<script type='text/ejs' id='popupProjectSelector'>
+    <select name="projectSelector">
+        <%
+        var projectIdReplaceToken = '';
+        var projectSelectorLineUrl = '';
+
+        if (hasArchived) {
+            %><optgroup label="<?= $this->t('PROJECTS_ACTIVE'); ?>"><%
+        }
+
+        for (var i = 0; i < projectList.length; i++) {
+            if (!isNaN(parseInt(projectList[i].groupId, 10))) continue;
+            projectIdReplaceToken = projectList[i].groupId;
+            if (projectList[i].siteId) {
+                projectIdReplaceToken += '/site/' + projectList[i].siteId;
+            }
+
+            projectSelectorLineUrl = $.String.sub(projectSelectorBaseUrl, {'projectId': projectIdReplaceToken});
+
+            %><? /* projectList[i].site - TODO only bitrix */ ?>
+            <option value="<%= projectList[i].siteId ? projectList[i].siteId : projectList[i].groupId %>"
+                    data-url="<%= projectSelectorLineUrl %>"
+                    data-image="<% if (projectList[i].image) { %><%= projectList[i].image %><% } %>"
+            <% if (projectList[i].siteId == selected) { %>selected<% } %>
+            >
+            <%= projectList[i].name %>
+            </option><%
+        }
+
+        for (var i = 0; i < projectList.length; i++) {
+            if (isNaN(parseInt(projectList[i].groupId, 10)) || projectList[i].closed == 'Y') continue;
+
+            projectSelectorLineUrl = $.String.sub(projectSelectorBaseUrl, {'projectId': projectList[i].groupId});
+
+            if (projectList[i].avatarColor) {
+                %><option value="<%= projectList[i].groupId %>"
+                        data-html="<a href='<%= projectSelectorLineUrl %>'><span class='img' style='background-color: <%= projectList[i].avatarColor %>'><%= projectList[i].avatarLetters %></span><%= projectList[i].name %></a>"
+                <% if (projectList[i].groupId == selected) { %>selected<% } %>
+                ><%= projectList[i].name %></option><%
+            } else {
+                %><option value="<%= projectList[i].groupId %>"
+                        data-url="<%= projectSelectorLineUrl %>"
+                        data-image="<% if (projectList[i].image) { %><%= projectList[i].image %><% } %>"
+                <% if (projectList[i].groupId == selected) { %>selected<% } %>
+                >
+                <%= projectList[i].name %>
+                </option><%
+            }
+        }
+
+        if (hasArchived) {
+            %></optgroup><optgroup label="<?= $this->t('PROJECTS_ARCHIVED'); ?>"><%
+        }
+
+        for (var i = 0; i < projectList.length; i++) {
+            if (isNaN(parseInt(projectList[i].groupId, 10)) || projectList[i].closed != 'Y') continue;
+
+            projectSelectorLineUrl = $.String.sub(projectSelectorBaseUrl, {'projectId': projectList[i].groupId});
+
+            if (projectList[i].avatarColor) {
+                %><option value="<%= projectList[i].groupId %>"
+                        data-html="<a href='<%= projectSelectorLineUrl %>'><span class='img' style='background-color: <%= projectList[i].avatarColor %>'><%= projectList[i].avatarLetters %></span><%= projectList[i].name %></a>"
+                <% if (projectList[i].groupId == selected) { %>selected<% } %>
+                ><%= projectList[i].name %></option><%
+            } else {
+                %><option value="<%= projectList[i].groupId %>"
+                        data-url="<%= projectSelectorLineUrl %>"
+                        data-image="<% if (projectList[i].image) { %><%= projectList[i].image %><% } %>"
+                <% if (projectList[i].groupId == selected) { %>selected<% } %>
+                >
+                <%= projectList[i].name %>
+                </option><%
+            }
+        }
+
+        if (hasArchived) {
+            %></optgroup><%
+        } %>
+    </select>
+</script>

@@ -1,0 +1,30 @@
+<?
+$MESS["LEARNING_SITE_PATH_SITE"] = "Ruta a las Plantillas para el sitio web &quot;#SITE#&quot;";
+$MESS["MAIN_OPT_APPLY"] = "Aplicar";
+$MESS["MAIN_OPT_APPLY_TITLE"] = "Guardar los cambios y quedarse aquí";
+$MESS["MAIN_OPT_CANCEL"] = "Cancelar";
+$MESS["MAIN_OPT_CANCEL_TITLE"] = "No guardar los cambios y retornar";
+$MESS["MAIN_OPT_SAVE_TITLE"] = "Guardar los cambios y Regresar";
+$MESS["TASKS_COMMENTS_ALLOW_EDIT_REMOVE"] = "Los usuarios pueden editar y eliminar los comentarios";
+$MESS["TASKS_COMMENTS_FORUM"] = "Foro para los comentarios de la tarea";
+$MESS["TASKS_HTML_SANITIZE_LEVEL"] = "Saneamiento de HTML en la descripción de la tarea";
+$MESS["TASKS_HTML_SANITIZE_LEVEL_HIGH"] = "Alta";
+$MESS["TASKS_HTML_SANITIZE_LEVEL_LOW"] = "Baja";
+$MESS["TASKS_HTML_SANITIZE_LEVEL_MIDDLE"] = "Promedio";
+$MESS["TASKS_HTML_SANITIZE_LEVEL_NONE"] = "No utilice Saneamiento";
+$MESS["TASKS_LIST_ALLOW_SORT_FILTER_UF"] = "Habilitar clasificación y filtrado de campos personalizados en la lista de tareas";
+$MESS["TASKS_OPTION_PATHS"] = "Links";
+$MESS["TASKS_PATHS_TASK_GROUP"] = "Plantilla URL de la página de las tareas del grupo";
+$MESS["TASKS_PATHS_TASK_GROUP_ACTION"] = "Plantilla del link de la acción del grupo de trabajo";
+$MESS["TASKS_PATHS_TASK_GROUP_EDIT"] = "Plantilla de las Propiedades de la Tareas del Grupo";
+$MESS["TASKS_PATHS_TASK_GROUP_ENTRY"] = "Plantilla del link de la vista de la tarea del grupo de trabajo";
+$MESS["TASKS_PATHS_TASK_USER"] = "Plantilla URL de la página de las tareas del usuario";
+$MESS["TASKS_PATHS_TASK_USER_ACTION"] = "Plantilla del link de la página del usuario";
+$MESS["TASKS_PATHS_TASK_USER_EDIT"] = "Plantilla de las propiedades de la tarea del usuario ";
+$MESS["TASKS_PATHS_TASK_USER_ENTRY"] = "Plantilla del link de la vista de tareas";
+$MESS["TASKS_PATHS_USER"] = "Plantilla URL de la página del perfil del usuario";
+$MESS["TASKS_RESTORE_DEFAULTS"] = "Predeterminado";
+$MESS["TASKS_SETTINGS"] = "Configuración del módulo Tareas";
+$MESS["TASKS_SETTINGS_TITLE"] = "Configuraciones globales del módulo Tareas";
+$MESS["TASKS_SUBTAB_TITLE_SITE"] = "Configuración para el sitio web";
+?>

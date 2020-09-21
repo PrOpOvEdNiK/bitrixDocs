@@ -1,0 +1,36 @@
+<?
+$MESS["CRM_MODULE_NOT_INSTALLED"] = "CRM modulis nėra įdiegtas.";
+$MESS["CRM_SALE_MODULE_NOT_INSTALLED"] = "E-parduotuvės modulis nėra įdiegtas.";
+$MESS["CRM_PERMISSION_DENIED"] = "Negalima įeiti";
+$MESS["CRM_LOC_NOT_FOUND"] = "Vieta nerasta";
+$MESS["CRM_LOC_SECTION_MAIN"] = "Vieta ";
+$MESS["CRM_LOC_SECTION_ZIP"] = "Pašto kodai";
+$MESS["CRM_LOC_SECTION_COUNTRY"] = "Šalis";
+$MESS["CRM_LOC_FIELD_ID"] = "ID";
+$MESS["CRM_LOC_FIELD_SORT"] = "Rūšiavimas";
+$MESS["CRM_LOC_FIELD_LOC_DEFAULT"] = "Numatytasis";
+$MESS["CRM_LOC_FIELD_COUNTRY_ID"] = "Pasirinkti šalį";
+$MESS["CRM_LOC_FIELD_CHANGE_COUNTRY"] = "Redaguoti dabartinį šalį";
+$MESS["CRM_LOC_FIELD_NAME"] = "Pilnas vardas";
+$MESS["CRM_LOC_FIELD_SHORT_NAME"] = "Trumpas vardas";
+$MESS["CRM_LOC_NEW_COUNTRY"] = "Nauja šalis";
+$MESS["CRM_LOC_WITHOUT_COUNTRY"] = "Nėra šalies";
+$MESS["CRM_LOC_SECTION_REGION"] = "Regionas/Valstija /Provincija";
+$MESS["CRM_LOC_NEW_REGION"] = "Naujas regionas";
+$MESS["CRM_LOC_WITHOUT_REGION"] = "Nėra regiono";
+$MESS["CRM_LOC_FIELD_REGION_ID"] = "Pasirinkti regioną";
+$MESS["CRM_LOC_SECTION_CITY"] = "Miestas";
+$MESS["CRM_LOC_FIELD_WITHOUT_CITY"] = "Nėra miesto";
+$MESS["CRM_LOC_FIELD_LOC_ZIP"] = "Pašto kodai";
+$MESS["CRM_ADD_ZIP"] = "Pridėti pašto kodą";
+$MESS["CRM_LOC_ADD_UNKNOWN_ERROR"] = "Klaida kuriant vietą.";
+$MESS["CRM_LOC_UPDATE_UNKNOWN_ERROR"] = "Klaida atnaujinant vietą.";
+$MESS["CRM_LOC_DELETE_UNKNOWN_ERROR"] = "Klaida šalinant vietą.";
+$MESS["CRM_ERROR_SELECT_COUNTRY"] = "Pasirinkite šalį, norėdami pakeisti arba pridėti naują, įsitikinkite, kad dėžutė \"Redaguoti dabartinę šalį\" yra nepažymėta.";
+$MESS["CRM_ERROR_COUNTRY_NAME"] = "Šalis: pilnas šalies pavadinimas nenurodytas.";
+$MESS["CRM_ERROR_COUNTRY_NAME_LANG"] = "Šalis: pilnas šalies pavadinimas nėra numatytas kalbai:";
+$MESS["CRM_ERROR_CITY_NAME"] = "Miestas: pilnas miesto pavadinimas nenurodytas.";
+$MESS["CRM_ERROR_CITY_NAME_LANG"] = "Miestas: pilnas miesto pavadinimas nėra numatytas kalbai:";
+$MESS["CRM_ERROR_REGION_NAME_LANG"] = "Pilnas regiono vardas nėra numatytas kalbai:";
+$MESS["CRM_DEL_ZIP"] = "Pašalinti";
+?>

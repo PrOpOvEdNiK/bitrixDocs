@@ -1,0 +1,33 @@
+<?
+$MESS["FORUM_MAIN_WAIT"] = "Proszę czekać…";
+$MESS["F_ANCHOR"] = "Odnośnik do tego postu";
+$MESS["F_ATTACH_FILES"] = "Załączone Pliki";
+$MESS["F_AUTHOR_PROFILE"] = "Profil Autora Wiadomości";
+$MESS["F_BAD_TOPIC"] = "Nie znaleziono tematu.";
+$MESS["F_BUTTON_MOVE"] = "Przenieś";
+$MESS["F_DATE_REGISTER"] = "Data Rejestracji:";
+$MESS["F_DELETE"] = "Usuń";
+$MESS["F_DELETE_MESSAGES_CONFIRM"] = "Spowoduje to nieodwracalne usunięcie wiadomości. Kontynuować?";
+$MESS["F_EDIT"] = "Modyfikuj";
+$MESS["F_EDIT_HEAD"] = "Edytowane:";
+$MESS["F_EMAIL_TITLE"] = "Wyślij wiadomość E-mail";
+$MESS["F_HEAD_TO_EXIST_TOPIC"] = "istniejący temat";
+$MESS["F_HEAD_TO_NEW_TOPIC"] = "nowy temat";
+$MESS["F_HIDE"] = "Ukryj";
+$MESS["F_MOVE_TO"] = "Przenieś do";
+$MESS["F_NUM_MESS"] = "Łącznie Wiadomości:";
+$MESS["F_POINTS"] = "Punkty:";
+$MESS["F_PRIVATE_MESSAGE"] = "Wiadomość";
+$MESS["F_PRIVATE_MESSAGE_TITLE"] = "Wyślij wiadomość prywatną";
+$MESS["F_REAL_IP"] = "/ real";
+$MESS["F_SHOW"] = "Pokaż";
+$MESS["F_TITLE"] = "Przenieś Posty";
+$MESS["F_TITLE_ON_FORUM"] = "na forum";
+$MESS["F_TOPIC_DESCR"] = "Opis tematu";
+$MESS["F_TOPIC_ID"] = "ID Tematu";
+$MESS["F_TOPIC_NAME"] = "Przedmiot tematu";
+$MESS["F_TOPIC_NOT_FOUND"] = "nie znaleziono tematu";
+$MESS["F_TOPIC_TAGS"] = "Tagi";
+$MESS["F_USER_ID"] = "ID gościa";
+$MESS["F_USER_ID_USER"] = "ID użytkownika";
+?>

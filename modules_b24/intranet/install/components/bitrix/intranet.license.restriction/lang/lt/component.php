@@ -1,0 +1,3 @@
+<?
+$MESS["LICENSE_RESTRICTION_TITLE"] = "EULA pažeidimas";
+?>

@@ -1,0 +1,4 @@
+<?
+$MESS["SOPE_SHIPMENT_DELETE"] = "Usuń";
+$MESS["SOPE_SHIPMENT_DELETE_TITLE"] = "Usuń";
+?>

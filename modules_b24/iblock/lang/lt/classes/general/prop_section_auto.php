@@ -1,0 +1,31 @@
+<?
+$MESS["BT_UT_SAUTOCOMPLETE_DESCR"] = "Susieti su skyriais su automatiniu užpildymu";
+$MESS["BT_UT_SAUTOCOMPLETE_SETTING_TITLE"] = "Skyrių su automatiniu užpildymu nustatymai";
+$MESS["BT_UT_SAUTOCOMPLETE_SETTING_SHOW_ADD"] = "Rodyti \"Pridėti skyrių\" mygtuką";
+$MESS["BT_UT_SAUTOCOMPLETE_SETTING_IBLOCK_MESS"] = "Naudoti infobloko elemento pavadinimą kaip mygtuko tekstą";
+$MESS["BT_UT_SAUTOCOMPLETE_SETTING_MAX_WIDTH"] = "Įvesties lauko maksimalus plotis, px (0 - neribojamas)";
+$MESS["BT_UT_SAUTOCOMPLETE_SETTING_COMMENT_MAX_WIDTH"] = "px";
+$MESS["BT_UT_SAUTOCOMPLETE_SETTING_MIN_HEIGHT"] = "Įvesties lauko min. aukštis (kelios savybė)";
+$MESS["BT_UT_SAUTOCOMPLETE_SETTING_COMMENT_MIN_HEIGHT"] = "px";
+$MESS["BT_UT_SAUTOCOMPLETE_SETTING_MAX_HEIGHT"] = "Įvesties lauko maks. aukštis (kelios savybė)";
+$MESS["BT_UT_SAUTOCOMPLETE_SETTING_COMMENT_MAX_HEIGHT"] = "px";
+$MESS["BT_UT_SAUTOCOMPLETE_SETTING_VIEW"] = "Sąsajos valdymas";
+$MESS["BT_UT_SAUTOCOMPLETE_SETTING_BAN_SYMBOLS"] = "Pakeičiami simboliai";
+$MESS["BT_UT_SAUTOCOMPLETE_SETTING_REP_SYMBOL"] = "Simbolis, kuriuo bus pakeisti draudžiamai parodymui simboliai";
+$MESS["BT_UT_SAUTOCOMPLETE_MESS_INVITE"] = "įveskite tekstą";
+$MESS["BT_UT_SAUTOCOMPLETE_VIEW_AUTO"] = "Eilutė su automatiniu užpildymu";
+$MESS["BT_UT_SAUTOCOMPLETE_VIEW_ELEMENT"] = "Eilutė su automatiniu užpildymu ir paieškos langu";
+$MESS["BT_UT_SAUTOCOMPLETE_MESS_LIST_INVITE"] = "(įveskite pavadinimą)";
+$MESS["BT_UT_SAUTOCOMPLETE_MESS_NO_SEARCH_RESULT_TEXT"] = "nieko nerasta";
+$MESS["BT_UT_AUTOCOMPLETE_SYM_SPACE"] = "Tarpas";
+$MESS["BT_UT_AUTOCOMPLETE_SYM_GRID"] = "#";
+$MESS["BT_UT_AUTOCOMPLETE_SYM_STAR"] = "*";
+$MESS["BT_UT_AUTOCOMPLETE_SYM_UNDERLINE"] = "_";
+$MESS["BT_UT_AUTOCOMPLETE_SYM_OTHER"] = "Kitas";
+$MESS["BT_UT_SAUTOCOMPLETE_MESS_SEARCH_ELEMENT"] = "...";
+$MESS["BT_UT_SAUTOCOMPLETE_MESS_SEARCH_ELEMENT_DESCR"] = "Skyriaus pasirinkimas paieškos lange";
+$MESS["BT_UT_SAUTOCOMPLETE_MESS_SEARCH_ELEMENT_MULTI_DESCR"] = "Kelių skyrių pasirinkimas paieškos lange";
+$MESS["BT_UT_SAUTOCOMPLETE_MESS_NEW_ELEMENT"] = "Pridėti skyrių";
+$MESS["BT_UT_SAUTOCOMPLETE_MESS_NEW_ELEMENT_DESCR"] = "Pridėti skyrių ir jį pasirinkti";
+$MESS["BT_UT_SAUTOCOMPLETE_MESS_ELEMENT_EDIT"] = "Pereiti į skyriaus redagavimo puslapį";
+?>

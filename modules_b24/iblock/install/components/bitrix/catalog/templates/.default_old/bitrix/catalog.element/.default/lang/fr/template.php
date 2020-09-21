@@ -1,0 +1,34 @@
+<?
+$MESS["CATALOG_NO_VAT"] = "sans taxe";
+$MESS["CATALOG_PRICE_NOVAT"] = "Prix HT";
+$MESS["CATALOG_PRICE_VAT"] = "Prix TTC";
+$MESS["CATALOG_QUANTITY"] = "Quantité";
+$MESS["CATALOG_QUANTITY_FROM"] = "#FROM# et plus";
+$MESS["CATALOG_QUANTITY_FROM_TO"] = "de #FROM# à #TO#";
+$MESS["CATALOG_QUANTITY_TO"] = "jusqu'à #TO#";
+$MESS["CATALOG_VAT"] = "Taux d'imposition";
+$MESS["CATALOG_VAT_INCLUDED"] = "TVA incluse dans le prix";
+$MESS["CATALOG_VAT_NOT_INCLUDED"] = "TVA non incluse dans le prix";
+$MESS["COMMENTARY"] = "Commentaires";
+$MESS["CT_BCE_CATALOG_ADD"] = "Ajouter au panier";
+$MESS["CT_BCE_CATALOG_ADD_TO_BASKET_OK"] = "Ajouté au panier";
+$MESS["CT_BCE_CATALOG_BASKET_UNKNOWN_ERROR"] = "Erreur inconnue lors de l'ajout de l'article au panier";
+$MESS["CT_BCE_CATALOG_BTN_MESSAGE_BASKET_REDIRECT"] = "Afficher le panier";
+$MESS["CT_BCE_CATALOG_BTN_MESSAGE_CLOSE"] = "Fermer";
+$MESS["CT_BCE_CATALOG_BTN_MESSAGE_CLOSE_POPUP"] = "Continuer les achats";
+$MESS["CT_BCE_CATALOG_BTN_MESSAGE_COMPARE_REDIRECT"] = "Comparer des produits";
+$MESS["CT_BCE_CATALOG_BTN_SEND_PROPS"] = "Sélectionner";
+$MESS["CT_BCE_CATALOG_BUY"] = "Acheter";
+$MESS["CT_BCE_CATALOG_COMPARE"] = "Comparer";
+$MESS["CT_BCE_CATALOG_ECONOMY_INFO"] = "(Économie - #ECONOMY#)";
+$MESS["CT_BCE_CATALOG_MESS_BASIS_PRICE"] = "#PRICE# pour 1 #MEASURE#";
+$MESS["CT_BCE_CATALOG_MESS_COMPARE_OK"] = "Le produit a été ajouté au graphique comparatif";
+$MESS["CT_BCE_CATALOG_MESS_COMPARE_TITLE"] = "Comparaison des produits";
+$MESS["CT_BCE_CATALOG_MESS_COMPARE_UNKNOWN_ERROR"] = "Erreur lors de l'ajout du produit au graphique comparatif";
+$MESS["CT_BCE_CATALOG_NOT_AVAILABLE"] = "indisponible en stock";
+$MESS["CT_BCE_CATALOG_TITLE_BASKET_PROPS"] = "Les propriétés de l'article à passer au panier";
+$MESS["CT_BCE_CATALOG_TITLE_ERROR"] = "Erreur";
+$MESS["CT_BCE_QUANTITY"] = "Quantité";
+$MESS["FULL_DESCRIPTION"] = "Description complète";
+$MESS["OSTATOK"] = "Quantité en stock";
+?>

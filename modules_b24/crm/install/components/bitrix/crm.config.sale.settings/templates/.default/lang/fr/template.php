@@ -1,0 +1,4 @@
+<?
+$MESS["CRM_STATUS_BUTTONS_SAVE"] = "Enregistrer";
+$MESS["CRM_STATUS_BUTTONS_CANCEL"] = "Annuler";
+?>

@@ -1,0 +1,29 @@
+<?
+$MESS["CRM_ACTION_DEFAULT_SUBJECT"] = "Nouvelle action (#DATE#)";
+$MESS["CRM_ACTIVITY_COULD_NOT_CREATE_POSTING"] = "Impossible d'enregistrer le message de l'e-mail.";
+$MESS["CRM_ACTIVITY_COULD_NOT_SAVE_POSTING_FILE"] = "Impossible de joindre le \"#FILE_NAME#\" au message.";
+$MESS["CRM_ACTIVITY_EMAIL_CREATION_CANCELED"] = "Message e-mail annulé.";
+$MESS["CRM_ACTIVITY_EMAIL_EMPTY_FROM_FIELD"] = "Veuillez indiquer l'expéditeur dans le champ 'de'.";
+$MESS["CRM_ACTIVITY_EMAIL_EMPTY_TO_FIELD"] = "Veuillez indiquer le destinataire dans le champ 'à qui'.";
+$MESS["CRM_ACTIVITY_INVALID_EMAIL"] = "#VALUE#' n'est pas adresseemail correcte.";
+$MESS["CRM_ACTIVITY_RESPONSIBLE_NOT_FOUND"] = "Impossible de trouver l'utilisateur responsable de l'action.";
+$MESS["CRM_CALL_ACTION_DEFAULT_SUBJECT"] = "Nouvel appel (#DATE#)";
+$MESS["CRM_COMMUNICATION_TAB_COMPANY"] = "Entreprise";
+$MESS["CRM_COMMUNICATION_TAB_CONTACT"] = "Contact";
+$MESS["CRM_COMMUNICATION_TAB_DEAL"] = "Transaction";
+$MESS["CRM_COMMUNICATION_TAB_LEAD"] = "Prospect";
+$MESS["CRM_COMPANY_UPDATE_PERMISSION_DENIED"] = "Vous n'êtes pas autorisé à modifier activités de la société #TITLE#'.  S'il vous plaît contactez votre administrateur intranet.";
+$MESS["CRM_CONTACT_UPDATE_PERMISSION_DENIED"] = "Vous n'êtes pas autorisé à modifier activités du contact #TITLE#'. S'il vous plaît contactez votre administrateur intranet.";
+$MESS["CRM_DEAL_UPDATE_PERMISSION_DENIED"] = "Vous n'êtes pas autorisé à modifier activités de la transaction  #TITLE#'.  S'il vous plaît contactez votre administrateur intranet.";
+$MESS["CRM_EMAIL_ACTION_DEFAULT_DESCRIPTION"] = "[sans texte]";
+$MESS["CRM_EMAIL_ACTION_DEFAULT_SUBJECT"] = "Une nouvelle lettre (#DATE#)";
+$MESS["CRM_INCOMING_CALL_ACTION_DEFAULT_SUBJECT_EXT"] = "Appel entrant #TITLE#";
+$MESS["CRM_LEAD_UPDATE_PERMISSION_DENIED"] = "Vous n'êtes pas autorisé à modifier activités du prospect #TITLE#'.  S'il vous plaît contactez votre administrateur intranet.";
+$MESS["CRM_MEETING_ACTION_DEFAULT_SUBJECT"] = "Nouveau rendez-vous (#DATE#)";
+$MESS["CRM_MEETING_ACTION_DEFAULT_SUBJECT_EXT"] = "Rencontre avec #TITLE#";
+$MESS["CRM_OUTGOING_CALL_ACTION_DEFAULT_SUBJECT_EXT"] = "Appel sortant #TITLE#";
+$MESS["CRM_PERMISSION_DENIED"] = "Accès refusé";
+$MESS["CRM_TITLE_EMAIL_FROM"] = "De qui";
+$MESS["CRM_TITLE_EMAIL_SUBJECT"] = "Objet";
+$MESS["CRM_TITLE_EMAIL_TO"] = "Dans";
+?>

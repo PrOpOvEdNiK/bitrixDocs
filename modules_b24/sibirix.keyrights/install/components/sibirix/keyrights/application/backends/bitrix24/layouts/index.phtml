@@ -1,0 +1,67 @@
+<!doctype html>
+<!--[if lt IE 7 ]><html lang="en" class="no-js ie6"><![endif]-->
+<!--[if IE 7 ]>   <html lang="en" class="no-js ie7"><![endif]-->
+<!--[if IE 8 ]>   <html lang="en" class="no-js ie8"><![endif]-->
+<!--[if IE 9 ]>   <html lang="en" class="no-js ie9"><![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--><html lang="en" class="no-js"><!--<![endif]-->
+<head>
+    <meta charset="UTF-8">
+    <title>KeyRights by Sibirix — <%= domain %></title>
+    <link rel="stylesheet" href="/static/css/style.css?_=<?= filemtime($_SERVER['DOCUMENT_ROOT'] . KEYRIGHTS_PATH_STATIC . '/css/style.css'); ?>" />
+    <script type="text/javascript" src="//api.bitrix24.com/api/v1/"></script>
+    <script type="text/javascript" data-skip-moving="true">
+        /**
+         * Константы
+         */
+        // Права доступа
+        CONST = {};
+        CONST.ACCESS = {
+            NO: 0,
+            CAN_READ: 1,
+            CAN_WRITE: 2,
+            CAN_OWN: 3
+        };
+
+        CONST.BX24 = {
+            ENTITY: 'keyrights',
+            USER_PASS_NAME: 'passPhrase',
+            USER_PASS_ENTITY: 'keyrights.user'
+        };
+
+        CONST.backend = '<?= APPLICATION_BACKEND; ?>';
+
+        <? $isAdmin = SibirixKeyrightsBackend_Model_Api::isAdmin(); ?>
+        CONST.appDomain = "";
+        CONST.isAdmin = <?= $isAdmin ? '1' : '0'; ?>;
+        CONST.staticPath = '<?= KEYRIGHTS_PATH_STATIC; ?>/';
+        CONST.translator = <?= $this->modelOutput($this->t()->getMessages()); ?>;
+        CONST.key = '';
+
+        <? $userData = SibirixKeyrightsBackend_Model_Api::getCurrentUser();
+        $userData['admin'] = $isAdmin; ?>
+        window.userData = <?= $this->modelOutput($userData); ?>;
+        window.csrfToken = '<?= Core_Helper::generateCsrfToken(); ?>';
+
+        window.String._ = function(messageId) {
+            if (window.CONST && window.CONST.translator && window.CONST.translator[messageId]) {
+                return window.CONST.translator[messageId];
+            }
+            return messageId;
+        };
+    </script>
+</head>
+<body>
+    <div id="keyrights">
+        <?= $this->layout()->content ?>
+    </div>
+
+    <script src="/static/js/libs/aes.js"></script>
+    <script src="/static/js/libs/papaparse.js"></script>
+    <? if (APPLICATION_ENV == 'development') : ?>
+        <script src="https://localhost:8032/webpack-dev-server.js"></script>
+        <script src="https://localhost:8032/static/js/bundle.js"></script>
+    <? else : ?>
+        <script src="/static/js/bundle.js"></script>
+    <? endif; ?>
+</body>
+</html>

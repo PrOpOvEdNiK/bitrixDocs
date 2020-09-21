@@ -1,0 +1,12 @@
+<?
+$MESS["CRM_NEW_TITLE"] = "Wyślij wiadomość";
+$MESS["CRM_SUBSCRIBE_ADD_BUTTON"] = "Wyślij";
+$MESS["CRM_SUBSCRIBE_ADD_FILE"] = "Dołącz plik";
+$MESS["CRM_SUBSCRIBE_ADD_TITLE"] = "Wyślij wiadomość";
+$MESS["CRM_SUBSCRIBE_FROM"] = "od";
+$MESS["CRM_SUBSCRIBE_SUBJECT"] = "Tytuł";
+$MESS["CRM_SUBSCRIBE_TITLE"] = "Temat";
+$MESS["CRM_SUBSCRIBE_TO"] = "do";
+$MESS["CRM_SUBSCRIBE_TO_HIDE"] = "Ukryj";
+$MESS["CRM_SUBSCRIBE_TO_SHOW"] = "Pokaż";
+?>

@@ -1,0 +1,37 @@
+<?
+$MESS["SONET_SGM_T_MODULE_NOT_INSTALLED"] = "O módulo de rede social não está instalado.";
+$MESS["SONET_SGM_T_NOTIFY_HINT_OFF"] = "Você não receberá mais atualizações no seu grupo <br> mensageiro";
+$MESS["SONET_SGM_T_NOTIFY_HINT_ON"] = "Você receberá atualizações em seu grupo <br> mensageiro";
+$MESS["SONET_SGM_T_NOTIFY_TITLE_OFF"] = "Notificações desabilitado";
+$MESS["SONET_SGM_T_NOTIFY_TITLE_ON"] = "Notificações habilitados";
+$MESS["SONET_SGM_T_NOT_ATHORIZED"] = "Você ainda não se identificou";
+$MESS["SONET_SGM_T_SESSION_WRONG"] = "Sua sessão expirou. Por favor, tente novamente.";
+$MESS["SONET_SGM_T_WAIT"] = "Please wait&hellip;";
+$MESS["SONET_UM_ARCHIVE_GROUP"] = "(arquivo grupo)";
+$MESS["SONET_UM_BAN"] = "lista de proibição";
+$MESS["SONET_UM_BLACKLIST"] = "lista de proibição";
+$MESS["SONET_UM_BLOG"] = "Conversas";
+$MESS["SONET_UM_CALENDAR"] = "calendario";
+$MESS["SONET_UM_DELETE"] = "Excluir grupo";
+$MESS["SONET_UM_EDIT"] = "Parâmetros do grupo";
+$MESS["SONET_UM_FEATURES"] = "Definições das Características";
+$MESS["SONET_UM_FILES"] = "arquivos";
+$MESS["SONET_UM_FORUM"] = "forum";
+$MESS["SONET_UM_GENERAL"] = "geral";
+$MESS["SONET_UM_INVITE"] = "convidar grupo";
+$MESS["SONET_UM_IS_EXTRANET"] = "(Extranet)";
+$MESS["SONET_UM_JOIN"] = "participar do grupo";
+$MESS["SONET_UM_LEAVE"] = "deixar o grupo";
+$MESS["SONET_UM_MEMBERS"] = "Editar usuários";
+$MESS["SONET_UM_MEMBERS1"] = "Membros";
+$MESS["SONET_UM_MOD"] = "Editar Moderadores";
+$MESS["SONET_UM_MOD1"] = "Moderadores";
+$MESS["SONET_UM_MODS"] = "Moderadores";
+$MESS["SONET_UM_PHOTO"] = "Foto";
+$MESS["SONET_UM_REQUESTS"] = "Convites e pedidos";
+$MESS["SONET_UM_REQUESTS_OUT"] = "convite do grupo";
+$MESS["SONET_UM_SEARCH"] = "Pesquisar";
+$MESS["SONET_UM_SEND_MESSAGE"] = "Enviar mensagem para os participantes";
+$MESS["SONET_UM_SUBSCRIBE"] = "inscrever";
+$MESS["SONET_UM_USERS"] = "Membros";
+?>

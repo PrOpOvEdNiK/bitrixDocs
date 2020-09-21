@@ -1,0 +1,37 @@
+<?
+$MESS["IAC_MONTH_1"] = "ژانویه";
+$MESS["IAC_MONTH_2"] = "فوریه";
+$MESS["IAC_MONTH_3"] = "مارس";
+$MESS["IAC_MONTH_4"] = "آوریل";
+$MESS["IAC_MONTH_5"] = "می";
+$MESS["IAC_MONTH_6"] = "ژوئن";
+$MESS["IAC_MONTH_7"] = "جولای";
+$MESS["IAC_MONTH_8"] = "آگوست";
+$MESS["IAC_MONTH_9"] = "سپتامبر";
+$MESS["IAC_MONTH_10"] = "اکتبر";
+$MESS["IAC_MONTH_11"] = "نوامبر";
+$MESS["IAC_MONTH_12"] = "دسامبر";
+$MESS["IAC_MONTH_R_1"] = "ژانویه";
+$MESS["IAC_MONTH_R_2"] = "فوریه";
+$MESS["IAC_MONTH_R_3"] = "مارس";
+$MESS["IAC_MONTH_R_4"] = "آوریل";
+$MESS["IAC_MONTH_R_5"] = "می";
+$MESS["IAC_MONTH_R_6"] = "ژوئن";
+$MESS["IAC_MONTH_R_7"] = "جولای";
+$MESS["IAC_MONTH_R_8"] = "آگوست";
+$MESS["IAC_MONTH_R_9"] = "سپتامبر";
+$MESS["IAC_MONTH_R_10"] = "اکتبر";
+$MESS["IAC_MONTH_R_11"] = "نوامبر";
+$MESS["IAC_MONTH_R_12"] = "دسامبر";
+$MESS["IAC_VIEW_DAY"] = "روز";
+$MESS["IAC_VIEW_WEEK"] = "هفته";
+$MESS["IAC_VIEW_MONTH"] = "ماه";
+$MESS["IAC_FILTER_DEPARTMENT"] = "بخش";
+$MESS["INTR_ABSC_TPL_EDIT"] = "ویرایش";
+$MESS["INTR_ABSC_TPL_DELETE"] = "حذف";
+$MESS["INTR_ABSC_TPL_REPEATING_EVENT_DAILY"] = "روزانه";
+$MESS["INTR_ABSC_TPL_REPEATING_EVENT_WEEKLY"] = "هفتگی";
+$MESS["INTR_ABSC_TPL_REPEATING_EVENT_MONTHLY"] = "ماهانه";
+$MESS["INTR_ABSC_TPL_REPEATING_EVENT_YEARLY"] = "سالیانه";
+$MESS["INTR_ABSC_TPL_INFO_CLOSE"] = "ببند";
+?>

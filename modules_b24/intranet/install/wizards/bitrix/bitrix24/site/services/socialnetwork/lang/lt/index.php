@@ -1,0 +1,39 @@
+<?
+$MESS["SONET_GROUP_SUBJECT_0"] = "Darbo grupės";
+$MESS["SONET_GROUP_NAME_1"] = "Rinkodara ir reklama";
+$MESS["SONET_GROUP_DESCRIPTION_1"] = "Rinkodaros ir PR grupė";
+$MESS["SONET_GROUP_KEYWORDS_1"] = "rinka, produktai, reklama, PR, rinkodara";
+$MESS["SONET_GROUP_NAME_2"] = "Pardavimai";
+$MESS["SONET_GROUP_DESCRIPTION_2"] = "Pardavimų ir rinkodaros grupė";
+$MESS["SONET_GROUP_KEYWORDS_2"] = "pardavimai, gaminiai, rinkodara, rinka";
+$MESS["SONET_GROUP_NAME_3"] = "R&R";
+$MESS["SONET_GROUP_DESCRIPTION_3"] = "Sporto ir laisvalaikio veikla";
+$MESS["SONET_GROUP_KEYWORDS_3"] = "sportas, savaitgaliai, futbolas, žaidimai";
+$MESS["SONET_GROUP_NAME_4"] = "Technologija";
+$MESS["SONET_GROUP_DESCRIPTION_4"] = "Gamybos technologijų darbo grupė";
+$MESS["SONET_GROUP_KEYWORDS_4"] = "gamyba, gaminiai, technologijos";
+$MESS["SONET_GROUP_NAME_5"] = "Laisvai samdomi";
+$MESS["SONET_GROUP_DESCRIPTION_5"] = "Laisvai samdomas darbas";
+$MESS["SONET_GROUP_KEYWORDS_5"] = "Laisvai samdomas darbas";
+$MESS["SONET_TASK_TITLE_1"] = "Užpildykite profilio duomenis";
+$MESS["SONET_TASK_DESCRIPTION_1"] = "Užpildykite savo profilio duomenis ir įkelkite savo nuotrauką.";
+$MESS["SONET_TASK_TITLE_2"] = "Kviesti naujus darbuotojus";
+$MESS["SONET_TASK_DESCRIPTION_2"] = "Pakvieskite naujus darbuotojus prisijungti prie intraneto portalo";
+$MESS["GENERAL_GROUP_NAME"] = "Bendri forumai";
+$MESS["COMMENTS_GROUP_NAME"] = "Forumas komentarams";
+$MESS["HIDDEN_GROUP_NAME"] = "Paslėpti forumai";
+$MESS["SONET_GROUP_NAME_0"] = "Pardavimai ir rinkodara
+";
+$MESS["SONET_GROUP_NAME_NEW_1"] = "Privati matoma grupė";
+$MESS["SONET_GROUP_DESCRIPTION_NEW_1"] = "Naudokite šią grupę aptarti esamus projektus. Prieiga naujiems nariams turi būti patvirtinta grupės savininko arba administratoriaus. Ši grupė matoma visiems.";
+$MESS["SONET_GROUP_KEYWORDS_NEW_1"] = "projektai, kasdienis darbas, tyrimai";
+$MESS["SONET_GROUP_NAME_NEW_2"] = "Privati paslėpta grupė";
+$MESS["SONET_GROUP_DESCRIPTION_NEW_2"] = "Naudokite diskusijoms, kurios reikalauja suskaidymo (pvz., finansinės temos). Gauti prieigą gali tik pakviesti asmenys. Ši grupė matoma tik jos nariams.";
+$MESS["SONET_GROUP_KEYWORDS_NEW_2"] = "prekyba, pinigai, finansai, konkursas";
+$MESS["SONET_GROUP_NAME_NEW_3"] = "Atvira vieša grupė";
+$MESS["SONET_GROUP_DESCRIPTION_NEW_3"] = "Ši grupė skirta visiems. Aptarkite viską, ką mėgstate: sportą, muziką, keliones, atostogas. Ši grupė matoma visiems; kiekvienas gali prisijungti prie jos, be kvietimo.";
+$MESS["SONET_GROUP_KEYWORDS_NEW_3"] = "sportas, kelionės, malonumai, futbolas, muzika.";
+$MESS["SONET_GROUP_NAME_NEW_4"] = "Extranet: grupė išoriniams vartotojams";
+$MESS["SONET_GROUP_DESCRIPTION_NEW_4"] = "Ši grupė šiuo metu matoma, bet privati. Atnaujinkite planą iki \"Standartinio\" arba \"Profesionalaus\", kad naudotumėte ją kaip išorės naudotojų grupę: rangovai, partneriai, klientai - visi žmonės, kurie nėra jūsų įmonės darbuotojai. Naudotojai turi būti pakviesti prisijungti prie šios grupės. Ši grupė yra vienintelė, matytina išoriniams vartotojams; jie neturės prieigos prie jokios kitos jūsų Bitrix24 informacijos.";
+$MESS["SONET_GROUP_KEYWORDS_NEW_4"] = "projektai, laisvai samdomi darbuotojai, partneriai";
+?>

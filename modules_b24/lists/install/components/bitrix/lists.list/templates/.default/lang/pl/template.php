@@ -1,0 +1,37 @@
+<?
+$MESS["CT_BLL_ADD_SECTION_POPUP_BUTTON_ADD"] = "Dodaj";
+$MESS["CT_BLL_ADD_SECTION_POPUP_BUTTON_CLOSE"] = "Anuluj";
+$MESS["CT_BLL_ADD_SECTION_POPUP_BUTTON_EDIT"] = "Zapisz";
+$MESS["CT_BLL_ADD_SECTION_POPUP_ERROR_NAME"] = "Pole \"Nazwa\" jest wymagane";
+$MESS["CT_BLL_ADD_SECTION_POPUP_INPUT_NAME"] = "Nazwa";
+$MESS["CT_BLL_ADD_SECTION_POPUP_TITLE"] = "Utwórz sekcję";
+$MESS["CT_BLL_DELETE_POPUP_ACCEPT_BUTTON"] = "Usuń";
+$MESS["CT_BLL_DELETE_POPUP_CANCEL_BUTTON"] = "Anuluj";
+$MESS["CT_BLL_DELETE_POPUP_TITLE"] = "Potwierdź usunięcie";
+$MESS["CT_BLL_EDIT_SECTION_POPUP_TITLE"] = "Edytuj sekcje";
+$MESS["CT_BLL_EXPORT_EXCEL"] = "Eksport do Microsoft Excel";
+$MESS["CT_BLL_EXPORT_EXCEL_TITLE"] = "Eksport do Microsoft Excel";
+$MESS["CT_BLL_EXPORT_IN_EXCEL"] = "Eksport do Microsoft Excel";
+$MESS["CT_BLL_HIDE_SECTION_GRID"] = "Ukryj sekcje";
+$MESS["CT_BLL_MOVE_TO_SECTION"] = "przenieś do sekcji";
+$MESS["CT_BLL_REBUILD_SEARCH_CONTENT_STATE"] = "#processed# z #total#";
+$MESS["CT_BLL_REBUILD_SEARCH_CONTENT_TITLE"] = "Przebuduj indeks wyszukiwania";
+$MESS["CT_BLL_SECTION_RETURN"] = "Powrót";
+$MESS["CT_BLL_SELECTED"] = "Wybrane";
+$MESS["CT_BLL_SHOW_SECTION_GRID"] = "Pokaż sekcje";
+$MESS["CT_BLL_TOOLBAR_ACTION"] = "Działania";
+$MESS["CT_BLL_TOOLBAR_ADD"] = "Dodaj";
+$MESS["CT_BLL_TOOLBAR_ADD_ELEMENT_TITLE"] = "Dodaj nowy element do bieżącej sekcji";
+$MESS["CT_BLL_TOOLBAR_BIZPROC"] = "Proces Biznesowy";
+$MESS["CT_BLL_TOOLBAR_BIZPROC_SETTINGS"] = "Konfiguruj workflowy";
+$MESS["CT_BLL_TOOLBAR_BIZPROC_TITLE"] = "Proces Biznesowy";
+$MESS["CT_BLL_TOOLBAR_EDIT_SECTION"] = "Zarządzanie Sekcją";
+$MESS["CT_BLL_TOOLBAR_EDIT_SECTION_TITLE"] = "Edytuj i usuń sekcje";
+$MESS["CT_BLL_TOOLBAR_ELEMENT_DELETE_WARNING"] = "Czy na pewno usunąć ten element?";
+$MESS["CT_BLL_TOOLBAR_FIELDS"] = "Personalizuj pola";
+$MESS["CT_BLL_TOOLBAR_LIST"] = "Ustawienia listy";
+$MESS["CT_BLL_TOOLBAR_LIST_TITLE"] = "Konfiguruj ustawienia listy";
+$MESS["CT_BLL_TOOLBAR_PROCESS"] = "Ustawienia workflow";
+$MESS["CT_BLL_TOOLBAR_PROCESS_TITLE"] = "Zmień preferencje workflow";
+$MESS["CT_BLL_TOOLBAR_SECTION_DELETE_WARNING"] = "Na pewno chcesz usunąć tę sekcję?";
+?>

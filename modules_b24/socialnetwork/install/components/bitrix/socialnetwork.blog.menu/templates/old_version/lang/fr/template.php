@@ -1,0 +1,32 @@
+<?
+$MESS["BLOG_MENU_ADD_MESSAGE"] = "Nouveau message";
+$MESS["BLOG_MENU_ADD_MESSAGE_TITLE"] = "Ajouter un nouveau message";
+$MESS["BLOG_MENU_BLOGS_LIST"] = "Liste des blogs";
+$MESS["BLOG_MENU_BLOGS_LIST_TITLE"] = "Blogs ";
+$MESS["BLOG_MENU_BLOG_EDIT"] = "Paramètres du blog";
+$MESS["BLOG_MENU_BLOG_EDIT_TITLE"] = "Paramètres de mon blog";
+$MESS["BLOG_MENU_CATEGORY_EDIT"] = "Paramètres des balises";
+$MESS["BLOG_MENU_CATEGORY_EDIT_TITLE"] = "Paramètres des balises de mon blog";
+$MESS["BLOG_MENU_CURRENT_BLOG"] = "Blog actuel";
+$MESS["BLOG_MENU_CURRENT_BLOG_TITLE"] = "Page d'accueil du blog &quot;#NAME#&quot;";
+$MESS["BLOG_MENU_DRAFT_MESSAGES"] = "Brouillons";
+$MESS["BLOG_MENU_DRAFT_MESSAGES_TITLE"] = "Brouillons";
+$MESS["BLOG_MENU_FRIENDS"] = "Page des amis";
+$MESS["BLOG_MENU_FRIENDS_TITLE"] = "Page des amis";
+$MESS["BLOG_MENU_FR_A_F"] = "Ajouter aux utilisateurs";
+$MESS["BLOG_MENU_FR_B_F"] = "Devenir un ami";
+$MESS["BLOG_MENU_GROUP_EDIT"] = "Paramètres des groupes";
+$MESS["BLOG_MENU_GROUP_EDIT_TITLE"] = "Paramètres des groupes de mon blog";
+$MESS["BLOG_MENU_LOGIN"] = "Connexion";
+$MESS["BLOG_MENU_LOGIN_TITLE"] = "Connexion";
+$MESS["BLOG_MENU_LOGOUT"] = "Déconnexion";
+$MESS["BLOG_MENU_LOGOUT_TITLE"] = "Déconnexion";
+$MESS["BLOG_MENU_MY_BLOG"] = "Mon blog";
+$MESS["BLOG_MENU_MY_BLOG_TITLE"] = "Mon blog";
+$MESS["BLOG_MENU_PROFILE"] = "Mon profil";
+$MESS["BLOG_MENU_PROFILE_TITLE"] = "Mon profil";
+$MESS["BLOG_MENU_REGISTER"] = "Inscription";
+$MESS["BLOG_MENU_REGISTER_TITLE"] = "Inscription";
+$MESS["BLOG_MENU_USER_SETTINGS"] = "Paramètres des utilisateurs";
+$MESS["BLOG_MENU_USER_SETTINGS_TITLE"] = "Paramètres des utilisateurs de mon blog";
+?>

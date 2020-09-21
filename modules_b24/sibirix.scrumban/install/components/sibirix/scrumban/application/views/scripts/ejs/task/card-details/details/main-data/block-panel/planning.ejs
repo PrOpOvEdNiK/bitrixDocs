@@ -1,0 +1,29 @@
+<script type='text/ejs' id='taskPlanDetailEditBlockMainDataPanel'>
+    <div class="block mainData">
+        <div class="header">
+            <div class="inner">
+                <div class="author-block"></div>
+                <div class="taskType">
+                    <div class="taskAddPopup taskTypePopup popup">
+                        <ul><%
+                            var localTaskTypeId;
+                            for (i in window.SCRUMBAN.taskTypeSorted) {
+                                if (!window.SCRUMBAN.taskTypeSorted.hasOwnProperty(i)) continue;
+
+                                localTaskTypeId = window.SCRUMBAN.taskTypeSorted[i].id;
+                                %><li data-task-type="<%= localTaskTypeId %>" class="<%= window.SCRUMBAN.taskType[localTaskTypeId].cssClass %>" title="<%= window.SCRUMBAN.taskType[localTaskTypeId].title %>"><i></i><span><%= window.SCRUMBAN.taskType[localTaskTypeId].title %></span></li><%
+                            }
+                            %></ul>
+                    </div>
+                    <span class='createdDate' title='<?= $this->t("CREATED_DATE"); ?>'><%= createdDate %></span>
+                    <i class="popupOpener" title="<%= window.SCRUMBAN.taskType[taskTypeId].title %>">&nbsp; <%= window.SCRUMBAN.taskType[taskTypeId].title %>: </i><span class="popupOpener task-code"><%= id %></span>
+                </div>
+            </div>
+        </div>
+        <h3 class="title jsTitle"><%= $.htmlspecialchars(title) %></h3>
+        <div class="content jsDescription">
+            <i class='hiddenCopyableText'><br><?= $this->t('TASK_DESCRIPTION') ?>: <br></i>
+            <% if (description) { %><%== description %><% } else { %><i><?= $this->t('ENTER_A_DESCRIPTION_TASK') ?></i><% } %>
+        </div>
+    </div>
+</script>

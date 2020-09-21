@@ -1,0 +1,37 @@
+<?
+$MESS["BPATT_AE_CREATE"] = "Ajouter";
+$MESS["BPATT_AE_DELETE"] = "Supprimer";
+$MESS["BPATT_AE_EDIT"] = "Mettre à jour";
+$MESS["BPATT_AE_NONE"] = "Non";
+$MESS["BPATT_ANY"] = "aléatoire";
+$MESS["BPATT_AUTO_EXECUTE"] = "Autochargement";
+$MESS["BPATT_BACK"] = "Précédent";
+$MESS["BPATT_BACK_TITLE"] = "Revenir à la page précédente";
+$MESS["BPATT_DO_CREATE_TEMPLATE"] = "Créer un Modèle";
+$MESS["BPATT_DO_CREATE_TEMPLATE1"] = "Ajouter un nouveau modèle";
+$MESS["BPATT_DO_DELETE1"] = "Supprimer";
+$MESS["BPATT_DO_DELETE1_CONFIRM"] = "tes-vous sûr de vouloir supprimer le modèle ?";
+$MESS["BPATT_DO_EDIT"] = "Edition du modèle du processus business";
+$MESS["BPATT_DO_EDIT1"] = "Éditer";
+$MESS["BPATT_ERROR"] = "Erreur";
+$MESS["BPATT_F_AUTOEXECUTE"] = "Autochargement";
+$MESS["BPATT_F_CREATE"] = "création";
+$MESS["BPATT_F_EDIT"] = "diter";
+$MESS["BPATT_F_NAME"] = "Dénomination";
+$MESS["BPATT_MODIFIED"] = "Modifié";
+$MESS["BPATT_NAME"] = "Dénomination";
+$MESS["BPATT_NAV"] = "Liste des modèles de processus d'affaires";
+$MESS["BPATT_NO_DOC_TYPE"] = "Le type de document n'a pas été indiqué.";
+$MESS["BPATT_NO_EDIT_PAGE"] = "La page de modification du modèle n'est pas indiquée.";
+$MESS["BPATT_NO_ENTITY"] = "Entité du document non définie.";
+$MESS["BPATT_NO_PERMS"] = "Vous n'avez pas le droit d'accéder aux modèles de documents du type donné.";
+$MESS["BPATT_SUBMENU1_TEXT"] = "Processus business avec des statuts";
+$MESS["BPATT_SUBMENU1_TEXT_TITLE"] = "Le processus d'affaires avec les statuts est une longue procédure d'entreprise avec le partage des droits d'accès lors du travail avec les documents dans de différents statuts";
+$MESS["BPATT_SUBMENU2_TEXT"] = "Créer un processus d'affaires consécutif";
+$MESS["BPATT_SUBMENU2_TEXT_TITLE"] = "Un processus d'affaires simple qui lance le document pour le traitement séquentiel";
+$MESS["BPATT_TITLE"] = "Liste des modèles de processus d'affaires";
+$MESS["BPATT_USER"] = "Modifié par";
+$MESS["BPATT_USER_PROFILE"] = "Profil de l'utilisateur";
+$MESS["BPWFADM_ACT"] = "Act.";
+$MESS["BPWFADM_ERR"] = "Erreur de sauvegarde de ##ID# : #ERROR_TEXT#";
+?>

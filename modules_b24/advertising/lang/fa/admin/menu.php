@@ -1,0 +1,30 @@
+<?
+$MESS["AD_MENU_MAIN"] = "تبلیغات";
+$MESS["AD_MENU_BANNER_LIST"] = "بنرها";
+$MESS["AD_MENU_BANNER_LIST_ALT"] = "فهرست بنر";
+$MESS["AD_MENU_TYPE_LIST"] = "انواع بنر";
+$MESS["AD_MENU_TYPE_LIST_ALT"] = "فهرست انواع بنر";
+$MESS["AD_MENU_CONTRACT_LIST"] = "قراردادها";
+$MESS["AD_MENU_CONTRACT_LIST_ALT"] = "List of advertising contracts";
+$MESS["AD_MENU_STATISTICS_GRAPH"] = "گراف";
+$MESS["AD_MENU_STATISTICS_ALT_GRAPH"] = "گراف دیدن و کلیک بنر";
+$MESS["AD_MENU_STATISTICS_DIAGRAM"] = "دیاگرام";
+$MESS["AD_MENU_STATISTICS_ALT_DIAGRAM"] = "دیاگرام دیدن و کلیک بنر";
+$MESS["AD_MENU_BANNER_LIST_GRAPH"] = "بنر";
+$MESS["AD_MENU_CONTRACT_LIST_GRAPH"] = "قرارداد";
+$MESS["AD_MENU_TYPE_LIST_GRAPH"] = "انواع بنر";
+$MESS["AD_MENU_BANNER_LIST_DIAGRAM"] = "بنرها";
+$MESS["AD_MENU_CONTRACT_LIST_DIAGRAM"] = "قراردادها";
+$MESS["AD_MENU_TYPE_LIST_DIAGRAM"] = "انواع بنر";
+$MESS["AD_MENU_STATISTICS"] = "دیاگرامها";
+$MESS["AD_MENU_STATISTICS_ALT"] = "Banner diagrams";
+$MESS["AD_MENU_MAIN_TITLE"] = "Advertisement Management";
+$MESS["AD_MENU_REPORTS"] = "گزارشات";
+$MESS["AD_MENU_REPORTS_TITLE"] = "Banners and contracts graphic reports";
+$MESS["AD_MENU_BAN_GR"] = "گرافهای بنر";
+$MESS["AD_MENU_BAN_CO"] = "گرافهای قرارداد";
+$MESS["AD_MENU_BAN_CO_TITLE"] = "Contracts graphs";
+$MESS["AD_MENU_DIAG_BAN"] = "دیاگرامهای بنر";
+$MESS["AD_MENU_DIAG_CO"] = "دیاگرامهای قرارداد";
+$MESS["AD_MENU_DIAG_CO_TITLE"] = "Contracts diagrams";
+?>

@@ -1,0 +1,6 @@
+<?
+$MESS["SALE_DSE_CHOOSE_GROUP_SAVE"] = "Kopiuj";
+$MESS["SALE_SDL_ADD_NEW"] = "Dodaj";
+$MESS["SALE_SDL_COPY_DESCR"] = "Kopiuj";
+$MESS["SALE_SDL_DELETE_DESCR"] = "Usuń";
+?>

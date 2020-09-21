@@ -1,0 +1,11 @@
+<?
+$MESS["MAIN_USER_CONSENT_EDIT_TMPL_NAME"] = "Pavadinimas";
+$MESS["MAIN_USER_CONSENT_EDIT_TMPL_TYPE"] = "Tipas: pagal užsakymą arba standartas";
+$MESS["MAIN_USER_CONSENT_EDIT_TMPL_DATA_PROVIDER"] = "Duomenų šaltinis
+";
+$MESS["MAIN_USER_CONSENT_EDIT_TMPL_DATA_PROVIDER_DEF"] = "(įveskite rankiniu būdu)";
+$MESS["MAIN_USER_CONSENT_EDIT_TMPL_BTN_SAVE"] = "Įrašyti";
+$MESS["MAIN_USER_CONSENT_EDIT_TMPL_BTN_APPLY"] = "Taikyti";
+$MESS["MAIN_USER_CONSENT_EDIT_TMPL_BTN_BACK_TO_LIST"] = "Grįžti į sąrašą
+";
+?>

@@ -1,0 +1,32 @@
+<?
+$MESS["CRM_DEDUPE_WIZARD_BACK_TO_LIST"] = "Повернутися в CRM";
+$MESS["CRM_DEDUPE_WIZARD_CHANGE_CONFIGURATION"] = "змінити";
+$MESS["CRM_DEDUPE_WIZARD_CONFIGURATION_TITLE"] = "За якими полями шукати дублікати";
+$MESS["CRM_DEDUPE_WIZARD_CONFLICT_RESOLVING_LEGEND"] = "<p>При об'єднанні відбулися конфлікти, здатні викликати втрату даних,</p> <p>необхідно вручну обрати поля, які потраплять у підсумкову картку</p>";
+$MESS["CRM_DEDUPE_WIZARD_DETAILS"] = "Детальніше";
+$MESS["CRM_DEDUPE_WIZARD_DUPLICATES_COMPLETE"] = "Об'єднано дублікатів: #COUNT#";
+$MESS["CRM_DEDUPE_WIZARD_DUPLICATES_COMPLETE_EMPTY"] = "Дублікати не знайдені";
+$MESS["CRM_DEDUPE_WIZARD_DUPLICATES_CONFLICTED"] = "Дублікати, що потребують уваги: #COUNT#";
+$MESS["CRM_DEDUPE_WIZARD_DUPLICATES_FOUND"] = "Знайдено дублікатів: #COUNT#";
+$MESS["CRM_DEDUPE_WIZARD_DUPLICATES_PROCESSED"] = "Опрацьовано дублікатів: #COUNT#";
+$MESS["CRM_DEDUPE_WIZARD_EMPTY_CONFIGURATION"] = "Будь ласка, оберіть за якими полями потрібно шукати дублікати.";
+$MESS["CRM_DEDUPE_WIZARD_FINISH_TITLE"] = "Чудова робота!";
+$MESS["CRM_DEDUPE_WIZARD_MANUAL_MERGE"] = "об'єднати дублікати вручну";
+$MESS["CRM_DEDUPE_WIZARD_MANUAL_MERGING_LEGEND"] = "Формується список дублікатів для об'єднання вручну.";
+$MESS["CRM_DEDUPE_WIZARD_MATCHES_CONFLICTED"] = "Загальна кількість збігів, що вимагають обробки: #COUNT#";
+$MESS["CRM_DEDUPE_WIZARD_MATCHES_FOUND"] = "Загальна кількість збігів за обраними полями: #COUNT#";
+$MESS["CRM_DEDUPE_WIZARD_MATCHES_PROCESSED"] = "Загальна кількість оброблених збігів: #COUNT#";
+$MESS["CRM_DEDUPE_WIZARD_MERGE"] = "виконати об'єднання";
+$MESS["CRM_DEDUPE_WIZARD_MERGE_AUTO"] = "виконати об'єднання автоматично";
+$MESS["CRM_DEDUPE_WIZARD_MERGING_LEGEND"] = "Дублікати, у яких немає конфліктів, будуть об'єднані автоматично. Решту елементів ви зможете об'єднати вручну або пропустити.";
+$MESS["CRM_DEDUPE_WIZARD_NEXT"] = "наступний крок";
+$MESS["CRM_DEDUPE_WIZARD_REBUILD_DEDUPE_INDEX"] = "Тривалість сканування залежить від обсягу вашої бази й може заняти багато часу.";
+$MESS["CRM_DEDUPE_WIZARD_SCANNING_CONFIG_CRITERION"] = "Вибір полів для порівняня";
+$MESS["CRM_DEDUPE_WIZARD_SCANNING_CONFIG_SCOPE"] = "Країна реквізитів";
+$MESS["CRM_DEDUPE_WIZARD_SCANNING_CONFIG_TITLE"] = "Налаштування пошуку дублікатів";
+$MESS["CRM_DEDUPE_WIZARD_SCANNING_TITLE"] = "Пошук дублікатів";
+$MESS["CRM_DEDUPE_WIZARD_SELECT_ALL"] = "Обрати все";
+$MESS["CRM_DEDUPE_WIZARD_SHOW_DEDUPE_LIST"] = "Список знайдених збігів";
+$MESS["CRM_DEDUPE_WIZARD_START_SEARCH"] = "почати сканування";
+$MESS["CRM_DEDUPE_WIZARD_UNSELECT_ALL"] = "Скасувати все";
+?>

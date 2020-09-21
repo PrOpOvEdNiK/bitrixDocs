@@ -1,0 +1,32 @@
+<?
+$MESS["BITRIXTV_GROUP_PREVIEW_TV"] = "Réglages du player";
+$MESS["BITRIXTV_GROUP_PREVIEW_TV_PLAYER"] = "Paramètres de la liste";
+$MESS["BITRIXTV_GROUP_SETTINGS"] = "Réglages généraux du composant";
+$MESS["BITRIXTV_SETTING_ALLOW_SWF"] = "Autoriser la lecture des fichiers swf (pas recommandé)";
+$MESS["BITRIXTV_SETTING_DEFAULT_BIG_IMAGE"] = "Une grande image par défaut";
+$MESS["BITRIXTV_SETTING_DEFAULT_SMALL_IMAGE"] = "Petite image par défaut";
+$MESS["BITRIXTV_SETTING_DURATION"] = "Le paramètre qui stocke la durée de vidéo";
+$MESS["BITRIXTV_SETTING_IBLOCK_ID"] = "Bloc d'information";
+$MESS["BITRIXTV_SETTING_IBLOCK_TYPE"] = "Type de bloc d'information";
+$MESS["BITRIXTV_SETTING_LOGO"] = "Logo";
+$MESS["BITRIXTV_SETTING_PATH_TO_FILE"] = "Propriété avec un chemin vers la vidéo";
+$MESS["BITRIXTV_SETTING_PREVIEW_HEIGHT"] = "Hauteur du domaine du player";
+$MESS["BITRIXTV_SETTING_PREVIEW_TV_ELEMENT"] = "Elément";
+$MESS["BITRIXTV_SETTING_PREVIEW_TV_SECTION"] = "Section";
+$MESS["BITRIXTV_SETTING_PREVIEW_WIDTH"] = "Largeur de la zone player";
+$MESS["BITRIXTV_SETTING_SHOW_COUNTER_EVENT"] = "Faire progresser le compteur d'affichages de l'élément";
+$MESS["BITRIXTV_SETTING_STAT"] = "Vues statistiques";
+$MESS["BITRIXTV_SETTING_STAT_EVENT"] = "Prendre en compte les évènements dans le module des statistiques";
+$MESS["BITRIXTV_SETTING_STAT_EVENT1"] = "event1";
+$MESS["BITRIXTV_SETTING_STAT_EVENT2"] = "event2";
+$MESS["CP_BIT_CACHE_GROUPS"] = "Prendre en compte les droits d'accès";
+$MESS["T_IBLOCK_DESC_ASC"] = "Croissant";
+$MESS["T_IBLOCK_DESC_DESC"] = "Décroissant";
+$MESS["T_IBLOCK_DESC_FACT"] = "A partir de la date";
+$MESS["T_IBLOCK_DESC_FID"] = "ID";
+$MESS["T_IBLOCK_DESC_FNAME"] = "Dénomination";
+$MESS["T_IBLOCK_DESC_FSORT"] = "Classification";
+$MESS["T_IBLOCK_DESC_FTSAMP"] = "Date de la dernière modification";
+$MESS["T_IBLOCK_DESC_IBBY1"] = "Direction pour le premier tri d'actualités";
+$MESS["T_IBLOCK_DESC_IBORD1"] = "Champ pour le premier triage des nouvelles";
+?>

@@ -1,0 +1,31 @@
+<?
+$MESS["PERFMON_MNU_SECT"] = "Veikla";
+$MESS["PERFMON_MNU_SECT_TITLE"] = "Veiklos monitorius";
+$MESS["PERFMON_MNU_HIT_LIST"] = "Peržiūros";
+$MESS["PERFMON_MNU_HIT_LIST_ALT"] = "Peržiūrų ataskaita";
+$MESS["PERFMON_MNU_COMP_LIST"] = "Komponentai";
+$MESS["PERFMON_MNU_COMP_LIST_ALT"] = "Komponentų ataskaita";
+$MESS["PERFMON_MNU_SQL_LIST2"] = "SQL užklausos";
+$MESS["PERFMON_MNU_SQL_LIST_ALT"] = "SQL užklausų ataskaita";
+$MESS["PERFMON_MNU_TABLES"] = "Lentelės";
+$MESS["PERFMON_MNU_TABLES_ALT"] = "Rodyti lentelių turinį";
+$MESS["PERFMON_MNU_ERROR_LIST"] = "PHP klaidos";
+$MESS["PERFMON_MNU_ERROR_LIST_ALT"] = "PHP klaidų žurnalas";
+$MESS["PERFMON_MNU_DB_SERVER"] = "DB serveris";
+$MESS["PERFMON_MNU_DB_SERVER_ALT"] = "Duomenų bazės serverio veiklos suvestinė.";
+$MESS["PERFMON_MNU_INDEXES"] = "Duomenų bazės indeksai";
+$MESS["PERFMON_MNU_INDEX_SUGGEST"] = "Analizės indeksai";
+$MESS["PERFMON_MNU_INDEX_SUGGEST_ALT"] = "Rodo rekomendacijas kuriant indeksus sukauptoms SQL užklausoms";
+$MESS["PERFMON_MNU_INDEX_COMPLETE"] = "Esami indeksai";
+$MESS["PERFMON_MNU_INDEX_COMPLETE_ALT"] = "Peržiūrėti esamus indeksus";
+$MESS["PERFMON_MNU_PHP"] = "PHP";
+$MESS["PERFMON_MNU_PHP_ALT"] = "PHP nustatymai";
+$MESS["PERFMON_MNU_PANEL"] = "Veiklos skydelis";
+$MESS["PERFMON_MNU_PANEL_ALT"] = "Peržiūrėti pagrindinius su veikla susijusius parametrus";
+$MESS["PERFMON_MNU_PAGES"] = "Puslapiai";
+$MESS["PERFMON_MNU_PAGES_ALT"] = "Puslapiai, rodantys suvestinių ataskaitas";
+$MESS["PERFMON_MNU_HISTORY"] = "Istorija";
+$MESS["PERFMON_MNU_HISTORY_ALT"] = "Peržiūrėti visus rezultatus, išmatuotus veiklos monitoriaus";
+$MESS["PERFMON_MNU_CACHE_LIST"] = "Talpinimas";
+$MESS["PERFMON_MNU_CACHE_LIST_ALT"] = "Talpyklos ataskaita";
+?>

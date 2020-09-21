@@ -1,0 +1,3 @@
+<?
+$MESS["SALE_COMPANY_RULES_BY_ENTITY_NONE"] = "Nie";
+?>

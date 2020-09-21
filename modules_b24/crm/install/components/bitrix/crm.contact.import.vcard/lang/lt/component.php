@@ -1,0 +1,41 @@
+<?
+$MESS["CRM_MODULE_NOT_INSTALLED"] = "CRM modulis nėra įdiegtas.";
+$MESS["CRM_PERMISSION_DENIED"] = "Negalima įeiti";
+$MESS["CRM_CONTACT_NAV_TITLE_LIST"] = "Importuoti kontaktus iš \"vCard\"";
+$MESS["CRM_FIELD_IMPORT_FILE"] = "Duomenų failas (vCard formatas)";
+$MESS["CRM_FIELD_IMPORT_FILE_ENCODING"] = "Duomenų failo koduotė";
+$MESS["CRM_FIELD_IMPORT_DEFAULT_FILE_ENCODING"] = "numatytasis";
+$MESS["CRM_FILE_NOT_FOUND_ERROR"] = "Failas nepasirinktas.";
+$MESS["CRM_FIELD_DUP_CONTROL_NO_CONTROL_CAPTION"] = "Leisti";
+$MESS["CRM_FIELD_DUP_CONTROL_REPLACE_CAPTION"] = "Pakeisti";
+$MESS["CRM_FIELD_DUP_CONTROL_MERGE_CAPTION"] = "Sujungti";
+$MESS["CRM_FIELD_DUP_CONTROL_SKIP_CAPTION"] = "Praleisti";
+$MESS["CRM_FIELD_DUP_CONTROL_NO_CONTROL_DESCR"] = "Visi duomenis faile bus importuoti įskaitant visus pasikartojančius įrašus.";
+$MESS["CRM_FIELD_DUP_CONTROL_REPLACE_DESCR"] = "Jei kontaktas jau yra sistemoje, kontakto lauko vertės bus pakeistos importuojamais iš failo.";
+$MESS["CRM_FIELD_DUP_CONTROL_MERGE_DESCR"] = "Jei kontaktas jau yra sistemoje, kontakto tušti laukai bus užpildyti importuojamais iš failo.";
+$MESS["CRM_FIELD_DUP_CONTROL_SKIP_DESCR"] = "Dublikatai, jei tokių bus, bus praleisti. Kai įkėlimas baigsis, failą su surastais dublikatais bus galima atsisiųsti.";
+$MESS["CRM_FIELD_DUP_CONTROL_TITLE"] = "Esami įrašai ir dublikatai";
+$MESS["CRM_GROUP_DUP_CONTROL_CRITERION"] = "Unikalumo kontrolė";
+$MESS["CRM_FIELD_DUP_CONTROL_ENABLE_PERSON"] = "Pilnas vardas";
+$MESS["CRM_FIELD_DUP_CONTROL_ENABLE_PHONE"] = "Telefonas";
+$MESS["CRM_FIELD_DUP_CONTROL_ENABLE_EMAIL"] = "El. paštas";
+$MESS["CRM_IMPORT_FINISH"] = "Sėkmingai importuoti kontaktai";
+$MESS["CRM_IMPORT_ERROR"] = "Kontaktai nėra importuojami";
+$MESS["CRM_IMPORT_ERRATA"] = "Parsisiųsti kontaktus kurių nepavyko importuoti";
+$MESS["CRM_PROCESSED_DUPLICATES"] = "Dublikatų sutvarkyta";
+$MESS["CRM_IMPORT_DUPLICATE_URL"] = "Byla, kurioje sukeli dublikatai";
+$MESS["CRM_FIELD_IMPORT_DEFAULT_TYPE_ID"] = "Kontakto tipas (numatytasis)";
+$MESS["CRM_FIELD_IMPORT_DEFAULT_SOURCE_ID"] = "Šaltinis (numatytasis)";
+$MESS["CRM_FIELD_IMPORT_DEFAULT_SOURCE_DESCRIPTION"] = "Aprašymas (numatytasis)";
+$MESS["CRM_FIELD_IMPORT_DEFAULT_OPENED"] = "Prieinama visiems (numatytasis)";
+$MESS["CRM_FIELD_IMPORT_DEFAULT_EXPORT"] = "Įtraukti į eksportą (numatytasis)";
+$MESS["CRM_FIELD_IMPORT_DEFAULT_RESPONSIBLE"] = "Atsakingas asmuo (numatytasis)";
+$MESS["CRM_REQUISITE_PRESET_NAME_EMPTY"] = "Šablonas be pavadinimo";
+$MESS["CRM_SECTION_IMPORT_ADDR_PARAMS"] = "Adresų importo parametrai";
+$MESS["CRM_FIELD_IMPORT_ADDR_TO_REQUISITE"] = "Importuoti adresą detalesnei informacijai";
+$MESS["CRM_FIELD_IMPORT_ADDR_PRESET"] = "Duomenų šablonas";
+$MESS["CRM_FIELD_IMPORT_ADDR_PRESET_UNDEFINED"] = "[nepasirinkta]";
+$MESS["CRM_INVALID_IMP_ADDR_PRESET_ID"] = "Pasirinkite šabloną, norėdami importuoti adresus detalesnei informacijai";
+$MESS["CRM_FIELD_IMPORT_AUTO_DETECT_ENCODING"] = "Automatiškai aptikti
+";
+?>

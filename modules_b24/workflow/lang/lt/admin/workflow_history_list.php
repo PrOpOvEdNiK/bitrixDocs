@@ -1,0 +1,32 @@
+<?
+$MESS["FLOW_PAGE_TITLE"] = "Pakeisti istoriją";
+$MESS["FLOW_F_DOCUMENT"] = "Dokumento ID";
+$MESS["FLOW_F_FILENAME"] = "Failo pavadinimas";
+$MESS["FLOW_F_TITLE"] = "Antraštė";
+$MESS["FLOW_F_STATUS"] = "Dokumento statusas";
+$MESS["FLOW_F_DATE_MODIFY"] = "Pakeista";
+$MESS["FLOW_F_MODIFIED_BY"] = "Pakeitė (ID)";
+$MESS["FLOW_F_BODY"] = "Turinys";
+$MESS["FLOW_PAGES"] = "Pakeitimai";
+$MESS["FLOW_DATE_MODIFY"] = "Pakeistas";
+$MESS["FLOW_MODIFIED_BY"] = "Pakeitė";
+$MESS["FLOW_TITLE"] = "Antraštė";
+$MESS["FLOW_FILENAME"] = "Failo pavadinimas";
+$MESS["FLOW_STATUS"] = "Statusas";
+$MESS["FLOW_F_LOGIC"] = "Logika tarp laukų";
+$MESS["FLOW_VIEW"] = "Peržiūra";
+$MESS["FLOW_DOCUMENT"] = "Dokumento ID";
+$MESS["FLOW_DELETE_CONFIRM"] = "Ar tikrai norite pašalinti įrašą iš dokumentų istorijos?";
+$MESS["FLOW_USER_ALT"] = "Peržiūrėti naudotojo informaciją";
+$MESS["FLOW_STATUS_ALT"] = "Peržiūrėti statuso informaciją";
+$MESS["FLOW_COMPARE"] = "Palyginti";
+$MESS["FLOW_COMPARE_ALERT"] = "Pasirinkite du dokumentus palyginimui.";
+$MESS["FLOW_DELETE"] = "Pašallinti";
+$MESS["FLOW_RECORDS_LIST"] = "Dokumentų sąrašas";
+$MESS["MAIN_ADMIN_LIST_SELECTED"] = "Pasirinkta:";
+$MESS["MAIN_FIND"] = "Ieškoti";
+$MESS["MAIN_ADMIN_LIST_CHECKED"] = "Pažymėta:";
+$MESS["MAIN_FIND_TITLE"] = "Įvesti tekstą paieškai";
+$MESS["MAIN_ADMIN_LIST_DELETE"] = "pašalinti";
+$MESS["MAIN_ALL"] = "(visi)";
+?>

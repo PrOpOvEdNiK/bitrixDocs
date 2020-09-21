@@ -1,0 +1,29 @@
+<?
+$MESS["SPOL_NAV_TEMPLATE"] = "Nom du modèle pour navigation page par page";
+$MESS["SPO_ACTIVE_DATE_FORMAT"] = "Format de la date";
+$MESS["SPO_ALLOW_INNER"] = "Activer le paiement en utilisant le compte interne";
+$MESS["SPO_CACHE_GROUPS"] = "Prendre en compte les droits d'accès";
+$MESS["SPO_CANCEL_DESC"] = "Annuler de la commande";
+$MESS["SPO_DESC_NO"] = "Non";
+$MESS["SPO_DESC_YES"] = "Oui";
+$MESS["SPO_DETAIL_DESC"] = "Détails de la commande";
+$MESS["SPO_HISTORIC_STATUSES"] = "Statuts historiques";
+$MESS["SPO_LIST_DESC"] = "Liste des commandes";
+$MESS["SPO_NOT_CHOSEN"] = "(non sélectionné)";
+$MESS["SPO_ONLY_INNER_FULL"] = "Autoriser que le montant total de la commande puisse être payé avec le compte interne";
+$MESS["SPO_ORDERS_PER_PAGE"] = "Nombre de commandes par page";
+$MESS["SPO_ORDER_LIST_DEFAULT_SORT"] = "Tri de la commande";
+$MESS["SPO_ORDER_LIST_SORT_ACCOUNT_NUMBER"] = "Commande #";
+$MESS["SPO_ORDER_LIST_SORT_DATE_CREATE"] = "Date de création";
+$MESS["SPO_ORDER_LIST_SORT_ID"] = "ID de la commande";
+$MESS["SPO_ORDER_LIST_SORT_PRICE"] = "Total de la commande";
+$MESS["SPO_ORDER_LIST_SORT_STATUS"] = "Statut";
+$MESS["SPO_PARAM_CUSTOM_SELECT_PROPS"] = "Propriétés supplémentaires du bloc d'information";
+$MESS["SPO_PATH_TO_BASKET"] = "La page du panier";
+$MESS["SPO_PATH_TO_CATALOG"] = "Chemin d'accès au catalogue";
+$MESS["SPO_PATH_TO_PAYMENT"] = "Page de connexion au système de paiement";
+$MESS["SPO_PROPS_NOT_SHOW"] = "Ne pas afficher les qualités pour le Type de Payeur";
+$MESS["SPO_RESTRICT_CHANGE_PAYSYSTEM"] = "Les commandes dotées de ces statuts ne peuvent modifier leur statut";
+$MESS["SPO_SAVE_IN_SESSION"] = "Enregistrer les installations du filtre dans la session de l'utilisateur";
+$MESS["SPO_SHOW_ALL"] = "(afficher tout)";
+?>

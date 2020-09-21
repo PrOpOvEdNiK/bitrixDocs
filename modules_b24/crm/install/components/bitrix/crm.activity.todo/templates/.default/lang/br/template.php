@@ -1,0 +1,7 @@
+<?
+$MESS["CRM_ACTIVITY_TODO_CLOSE"] = "Fechar";
+$MESS["CRM_ACTIVITY_TODO_CONTACT"] = "Com";
+$MESS["CRM_ACTIVITY_TODO_DEADLINE"] = "Prazo";
+$MESS["CRM_ACTIVITY_TODO_HOT"] = "(Alta Prioridade)";
+$MESS["CRM_ACTIVITY_TODO_VIEW_TITLE"] = "Visualizar atividade";
+?>

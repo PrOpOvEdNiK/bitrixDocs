@@ -1,0 +1,4 @@
+<?
+$MESS["TASKS_CHECKLIST_MOBILE_COMPONENT_JS_NEW_CHECKLIST_TITLE"] = "Lista de verificação ##ITEM_NUMBER#";
+$MESS["TASKS_CHECKLIST_MOBILE_TEMPLATE_ADD_CHECKLIST"] = "Adicionar uma lista de verificação";
+?>

@@ -1,0 +1,6 @@
+<?
+$MESS["CRM_PRODUCT_FILE_FIELD_ID"] = "Laukas";
+$MESS["CRM_PRODUCT_FILE_FILE_ID"] = "Failas";
+$MESS["CRM_PRODUCT_FILE_CATALOG_ID"] = "Katalogas";
+$MESS["CRM_PRODUCT_FILE_PRODUCT_ID"] = "Prekė";
+?>

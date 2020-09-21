@@ -1,0 +1,31 @@
+<?
+$MESS["LEARNING_CHECK_PERMISSIONS"] = "Vérifier le droit d'accès";
+$MESS["LEARNING_COURSE_ID_NAME"] = "Identificateur du cours";
+$MESS["LEARNING_DESC_NO"] = "Non";
+$MESS["LEARNING_DESC_YES"] = "Oui";
+$MESS["LEARNING_PAGE_WINDOW_NAME"] = "Quantité de questions dans une chaîne de navigation";
+$MESS["LEARNING_SHOW_TIME_LIMIT"] = "Afficher le compteur de la limite du temps";
+$MESS["LEARNING_TESTS_PER_PAGE"] = "Nombre de tests par page";
+$MESS["LEARN_CHAPTER_DETAIL_DESC"] = "Chapitre détail URL de la page";
+$MESS["LEARN_CHAPTER_ID_DESC"] = "ID du chapitre";
+$MESS["LEARN_COURSE_CONTENTS_DESC"] = "URL qui mène vers la page avec tous matériaux du cours";
+$MESS["LEARN_COURSE_ID_DESC"] = "Identificateur du cours";
+$MESS["LEARN_FOR_TEST_ID_DESC"] = "Identificateur du test dans le journal";
+$MESS["LEARN_GRADEBOOK_DESC"] = "Page de carnet de notes URL";
+$MESS["LEARN_GRADEBOOK_ID_DESC"] = "Gradebook ID";
+$MESS["LEARN_INDEX_DESC"] = "Indice URL de la page";
+$MESS["LEARN_INDEX_ID_DESC"] = "L'identificateur de page d'index";
+$MESS["LEARN_LESSON_DETAIL_DESC"] = "Leçon détail URL de la page";
+$MESS["LEARN_LESSON_ID_DESC"] = "Identifiant de la leçon";
+$MESS["LEARN_PATH_TO_USER_PROFILE"] = "Chemin vers la page de l'utilisateur";
+$MESS["LEARN_SELF_TEST_DESC"] = "Identifiant du test pour l'auto-contrôle";
+$MESS["LEARN_TEST_DETAIL_DESC"] = "URL, conduisant à la page de test";
+$MESS["LEARN_TEST_ID_DESC"] = "Identificateur du texte";
+$MESS["LEARN_TEST_LIST_DESC"] = "Test de la liste URL de la page";
+$MESS["LEARN_TEST_LIST_ID_DESC"] = "Identificateur de la liste de tests";
+$MESS["LEARN_TEST_SELF_DESC"] = "Page d'auto-teste URL";
+$MESS["LEARN_TYPE_ID_DESC"] = "Identifiant de tous les supports de cours";
+$MESS["TEST_DETAIL_GROUP"] = "Paramètres de test";
+$MESS["TEST_LIST_GROUP"] = "Paramètres de la liste de test";
+$MESS["T_LEARNING_PAGE_NUMBER_VARIABLE"] = "Identificateur de la question";
+?>

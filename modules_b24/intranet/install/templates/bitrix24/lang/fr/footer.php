@@ -1,0 +1,33 @@
+<?
+$MESS["BITRIX24_COPYRIGHT1"] = "Travaille avec plaisir pour";
+$MESS["BITRIX24_COPYRIGHT2"] = "&copy; #CURRENT_YEAR# Bitrix, Inc.";
+$MESS["BITRIX24_CS_CONNECTING"] = "Connexion au serveur maintenant...";
+$MESS["BITRIX24_CS_OFFLINE"] = "Pas de connexion au serveur";
+$MESS["BITRIX24_CS_ONLINE"] = "La connexion au serveur établie";
+$MESS["BITRIX24_CS_RELOAD"] = "Redémarrer";
+$MESS["BITRIX24_ERROR_EXTERNAL_307"] = "Oups ! Il y a eu un problème, ou vous avez déjà prolongé votre abonnement. Veuillez envoyer une nouvelle commande.";
+$MESS["BITRIX24_FEEDBACK_URL"] = "http://www.bitrixsoft.com/bitrix24en/";
+$MESS["BITRIX24_LANG_DE"] = "Allemand";
+$MESS["BITRIX24_LANG_EN"] = "Anglais";
+$MESS["BITRIX24_LANG_INTERFACE"] = "Langue";
+$MESS["BITRIX24_LANG_LA"] = "Espagnol";
+$MESS["BITRIX24_LANG_RU"] = "Russe";
+$MESS["BITRIX24_LANG_UA"] = "Ukrainien";
+$MESS["BITRIX24_MENU_CLOUDMAN"] = "Support24";
+$MESS["BITRIX24_MENU_HELP"] = "Aide";
+$MESS["BITRIX24_MENU_POPUP"] = "Les éléments du menu peuvent être personnalisés";
+$MESS["BITRIX24_PARTNER_CONNECT"] = "Contacter le partenaire";
+$MESS["BITRIX24_PARTNER_ORDER"] = "Demande d'implémentation";
+$MESS["BITRIX24_PRINT"] = "Imprimer";
+$MESS["BITRIX24_REVIEW"] = "Discutez Bitrix24";
+$MESS["BITRIX24_SEARCHTITLE_ALL"] = "Tous les résultats";
+$MESS["BITRIX24_SSL_URL"] = "https://www.bitrix24.com/support/";
+$MESS["BITRIX24_THEME"] = "Thèmes";
+$MESS["BITRIX24_URL"] = "https://www.bitrix24.fr";
+$MESS["BX24_CLOSE_BUTTON"] = "Fermer";
+$MESS["BX24_LOADING"] = "chargement";
+$MESS["BX24_SITE_BUTTON"] = "Envoyer";
+$MESS["BX24_SITE_PARTNER"] = "Support du partenaire local";
+$MESS["BX24_SITE_PASS_INPUT"] = "Confirmez votre mot de passe pour #CPNAME#";
+$MESS["BX24_SITE_TITLE"] = "Accéder au site bitrix24.fr";
+?>

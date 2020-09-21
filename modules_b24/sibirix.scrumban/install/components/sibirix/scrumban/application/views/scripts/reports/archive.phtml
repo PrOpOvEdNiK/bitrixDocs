@@ -1,0 +1,59 @@
+<? $this->initCss();
+
+$userModel = new Model_Db_Backend_User();
+$user = $userModel->getCurrentUser();
+
+$this->headScript()->captureStart(Zend_View_Helper_Placeholder_Container_Abstract::APPEND, 'text/javascript', array('charset'=>'UTF-8')); ?>
+    /* BX_DEBUG_INFO */
+    var projectList = <?= $this->modelOutput($this->projectList); ?>;
+    var boardSettings = <?= $this->modelOutput($this->board) ?>;
+    var sprintList = <?= $this->modelOutput($this->sprintList); ?>;
+    var currentUser = <?= $this->modelOutput($user); ?>;
+    var groupId = <?= $this->projectId; ?>;
+    var SCRUMBAN = <?= $this->modelOutput($this->jsConstants(), true) ?>;
+    var lastProjects = <?= $this->modelOutput($this->lastProjects); ?>;
+    var userFeed = <?= $this->modelOutput($this->userFeed); ?>;
+    SCRUMBAN.reportDataUrl = '<?= $this->url(array('projectId' => $this->projectId), 'projects-reports-archive-data'); ?>';
+    SCRUMBAN.periodStatExportUrl = '<?= $this->url(array('projectId' => $this->projectId), 'projects-reports-period-stat-export'); ?>';
+    SCRUMBAN.actExportUrl = '<?= $this->url(array('projectId' => $this->projectId), 'projects-reports-get-act'); ?>';
+<? $this->headScript()->captureEnd();
+$this->initJs();
+
+$userModel = new Model_Db_Backend_User();
+$user = $userModel->getCurrentUser();
+
+?>
+
+<div id="kanban" class="withBitrixHeader reports reports-archive loading">
+    <div class="frameHoverOverlay" id="jsFrameHoverOverlay"></div>
+
+    <?= $this->render('reports/index/header.phtml'); ?>
+
+    <? if (APPLICATION_BACKEND != 'bitrix24') : ?>
+        <div class="text-search-wrapper">
+            <input type="text" placeholder="Название задачи или ID" class="js-text-search" />
+            <a href="javascript:void(0)" class="thin-green-button js-apply"><?= $this->t('APPLY'); ?></a>
+            <a href="javascript:void(0)" class="reset js-reset"><i class="ico ico-reset"></i><?= $this->t('RESET'); ?></a>
+        </div>
+    <? endif; ?>
+
+    <div class="period-form js-period-form">
+        <div id="periodBlock" class="period-block js-tab">
+            <div class="js-content"></div>
+            <div class="loader" style="text-align: center;"><canvas class="shortLoader"></canvas></div>
+        </div>
+    </div>
+</div>
+
+<div id="ejs">
+    <?= $this->render('ejs/task/card-details.ejs'); ?>
+    <?= $this->render('ejs/task.ejs'); ?>
+    <?= $this->render('ejs/panel/filter.ejs'); ?>
+    <?= $this->render('ejs/viewTypeMenu.ejs'); ?>
+    <?= $this->render('ejs/reports-period.ejs'); ?>
+    <?= $this->render('ejs/confirm/common.ejs'); ?>
+    <?= $this->render('ejs/menu/popup-project-selector.ejs'); ?>
+    <?= $this->render('ejs/planning/tasks-move-to-sprint.ejs'); ?>
+    <?= $this->render('ejs/backend.ejs'); ?>
+    <?= $this->render('ejs/launchpad.ejs'); ?>
+</div>

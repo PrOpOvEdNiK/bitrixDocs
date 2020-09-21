@@ -1,0 +1,6 @@
+<?
+$MESS["ALIAS_ENTITY_ALIAS_FIELD"] = "Alias";
+$MESS["ALIAS_ENTITY_ENTITY_ID_FIELD"] = "ID jednostki";
+$MESS["ALIAS_ENTITY_ENTITY_TYPE_FIELD"] = "Rodzaj jednostki";
+$MESS["ALIAS_ENTITY_ID_FIELD"] = "ID";
+?>

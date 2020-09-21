@@ -1,0 +1,34 @@
+<?
+$MESS["BLOG_BUTTON_SEND"] = "Siųsti";
+$MESS["BLOG_BUTTON_CANCEL"] = "Atšaukti";
+$MESS["BLOG_BUTTON_DRAFT"] = "Išsaugoti kaip juodraštį";
+$MESS["BLOG_TITLE"] = "Tema";
+$MESS["BLOG_P_PHOTO"] = "Nuotrauka:";
+$MESS["BLOG_GRATMEDAL_1"] = "Pridėti darbuotojus";
+$MESS["BLOG_GRATMEDAL_2"] = "Pridėti daugiau";
+$MESS["BLOG_TITLE_GRAT"] = "Gavėjas:";
+$MESS["BLOG_TITLE_GRAT_OTHER"] = "kiti";
+$MESS["BLOG_GRAT_POPUP_TITLE"] = "Pasirinkite vieną";
+$MESS["BLOG_TAB_POST"] = "Pranešimas";
+$MESS["BLOG_TAB_FILE"] = "Failas";
+$MESS["BLOG_TAB_LISTS"] = "Procesai";
+$MESS["BLOG_TAB_TASK"] = "Užduotis";
+$MESS["BLOG_TAB_VOTE"] = "Apklausa";
+$MESS["BLOG_TAB_GRAT"] = "Padėka";
+$MESS["BLOG_LINK_SHOW_NEW"] = "Siųsti pranešimą";
+$MESS["BLOG_UPLOAD"] = "Įkelti failą ar paveikslėlį";
+$MESS["BLOG_PICKUP"] = "Pasirinkite failą savo kompiuteryje";
+$MESS["BLOG_DIALOG"] = "Pasirinkite dokumentą iš bibliotekos";
+$MESS["BLOG_DRAG"] = "arba vilkite ir numeskite failą į šią vietą";
+$MESS["BLOG_DIALOG_ALT"] = "atverskite Bitrix24 dokumentų bibliotekų sąrašą";
+$MESS["SBPE_MORE"] = "Daugiau";
+$MESS["SBPE_IMPORTANT_MESSAGE"] = "Pranešimas";
+$MESS["SBPE_CALENDAR_EVENT"] = "Įvykis";
+$MESS["BLOG_POST_AUTOSAVE"] = "Tinklaraščio duomenys nebuvo išsaugoti.";
+$MESS["BLOG_POST_AUTOSAVE2"] = "Grąžinti automatiškai išsaugotas vertes?";
+$MESS["LISTS_CATALOG_PROCESSES_ACCESS_DENIED"] = "Nėra prieigos";
+$MESS["BLOG_POST_EDIT_T_CREATE_TASK_SUCCESS_TITLE"] = "Užduotis sukurta";
+$MESS["BLOG_POST_EDIT_T_CREATE_TASK_SUCCESS_DESCRIPTION"] = "Dabar Jūs galite peržiūrėti ir redaguoti užduotį.";
+$MESS["BLOG_POST_EDIT_T_CREATE_TASK_BUTTON_TITLE"] = "Peržiūrėti užduotį";
+$MESS["MPF_DRAG_ATTACHMENTS2"] = "Įkelti failus?";
+?>

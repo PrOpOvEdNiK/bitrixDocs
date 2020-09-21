@@ -1,0 +1,11 @@
+<script type='text/ejs' id='boardDataTaskTypes'>
+    <%
+    var localTaskTypeId;
+    for (i in window.SCRUMBAN.taskTypeSorted) {
+    if (!window.SCRUMBAN.taskTypeSorted.hasOwnProperty(i)) continue;
+    localTaskTypeId = window.SCRUMBAN.taskTypeSorted[i].id;
+    %><option value="<%= localTaskTypeId %>" data-description="<%= window.SCRUMBAN.taskType[localTaskTypeId].title %>" data-class="<%= window.SCRUMBAN.taskType[localTaskTypeId].cssClass %>" title="<%= window.SCRUMBAN.taskType[localTaskTypeId].title %>" <% if (this.data && this.data.selected.indexOf(localTaskTypeId) != -1) { %> selected <% } %>><%=
+    window.SCRUMBAN.taskType[localTaskTypeId].title
+    %></option><%
+    } %>
+</script>

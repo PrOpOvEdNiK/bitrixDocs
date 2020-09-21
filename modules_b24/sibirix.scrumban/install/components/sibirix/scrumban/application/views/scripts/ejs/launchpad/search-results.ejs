@@ -1,0 +1,95 @@
+<script type="text/ejs" id="launchpadSearchResults">
+    <div class="column">
+        <div class="column-title"><?= $this->t('PROJECTS'); ?></div>
+        <div class="column-content js-column-content">
+            <div class="search-page js-search-page">
+                <% if (this.projectList.length) { %>
+                    <% for (var i = 0; i < this.projectList.length; i++) {
+                        var project = this.projectList[i];
+                        if (i && i % 5 == 0) { %>
+                            </div>
+                            <div class="search-page js-search-page">
+                        <% } %>
+                        <a href="<%= project.url %>" class="project search-result <% if (parseInt(project.supportEnabled, 10) > 0) { %>support<% } %>">
+                            <div class="image-wrapper"><img src="<%= project.image %>" width="48" height="48" alt=""></div>
+                            <div class="name-wrapper"><span class="project-name"><%= project.name %></span></div>
+                            <div class="clearfix"></div>
+                        </a>
+                    <% } %>
+                <% } else { %>
+                    <div class="no-results"><i class="ico-smile-sad">&nbsp;</i><?= $this->t('LAUNCHPAD_SEARCH_EMPTY'); ?></div>
+                <% } %>
+            </div>
+        </div>
+    </div>
+    <div class="column">
+        <div class="column-title"><?= $this->t('TASKI'); ?></div>
+        <div class="column-content js-column-content">
+            <div class="search-page js-search-page">
+                <% if (this.taskList.length) { %>
+                    <% for (var i = 0; i < this.taskList.length; i++) {
+                        var task = this.taskList[i];
+                        if (i && i % 3 == 0) { %>
+                            </div>
+                            <div class="search-page js-search-page">
+                        <% } %>
+                        <a href="<%= task.url %>" class="task search-result">
+                            <% if (task.taskAuthor.noAvatar || !task.taskAuthor.bigAvatar) { %>
+                                <div title="<%= task.taskAuthor.getFullName() %>" <%
+                                    %> style="background-color: <%= task.taskAuthor.avatarColor %>;"<%
+                                    %> class="image-wrapper item peopleItem person <%= task.taskAuthor.getStatus() %>">
+                                    <span></span>
+                                    <%= task.taskAuthor.avatarLetters %>
+                                    <u></u>
+                                </div>
+                            <% } else { %>
+                                <div title="<%= task.taskAuthor.getFullName() %>" <%
+                                if (task.taskAuthor.bigAvatar) { %>style="background-image: url('<%= task.taskAuthor.bigAvatar %>');"<% }
+                                %> class="image-wrapper responsible item peopleItem person <%= task.taskAuthor.getStatus() %>">
+                                <span></span>
+                                </div><%
+                            } %>
+
+                            <div class="name-wrapper">
+                                <span class="task-projectName"><%= task.projectName ? task.projectName : String._('TASK_WO_PROJECT') %></span><br/>
+                                <span class="task-name">
+                                    <%= task.title %>
+                                    <%= task.description %>
+                                </span>
+                            </div>
+                            <div class="clearfix"></div>
+                        </a>
+                    <% } %>
+                <% } else { %>
+                    <div class="no-results"><i class="ico-smile-sad">&nbsp;</i><?= $this->t('LAUNCHPAD_SEARCH_EMPTY'); ?></div>
+                <% } %>
+            </div>
+        </div>
+    </div>
+    <div class="column">
+        <div class="column-title"><?= $this->t('SPRINTS'); ?></div>
+        <div class="column-content js-column-content">
+            <div class="search-page js-search-page">
+                <% if (this.sprintList.length) { %>
+                    <% for (var i = 0; i < this.sprintList.length; i++) {
+                        var sprint = this.sprintList[i];
+                        if (i && i % 5 == 0) { %>
+                            </div>
+                            <div class="search-page js-search-page">
+                        <% } %>
+                        <a href="<%= sprint.url %>" class="sprint search-result">
+                            <div class="image-wrapper"><img src="<%= sprint.image %>" width="48" height="48" alt=""></div>
+                            <div class="name-wrapper">
+                                <span class="task-projectName"><%= sprint.projectName %></span><br/>
+                                <span class="sprint-name"><%= sprint.title %></span>
+                            </div>
+                            <div class="clearfix"></div>
+                        </a>
+                    <% } %>
+                <% } else { %>
+                    <div class="no-results"><i class="ico-smile-sad">&nbsp;</i><?= $this->t('LAUNCHPAD_SEARCH_EMPTY'); ?></div>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</script>

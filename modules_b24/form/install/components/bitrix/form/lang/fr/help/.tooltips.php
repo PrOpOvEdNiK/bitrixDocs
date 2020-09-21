@@ -1,0 +1,34 @@
+<?
+$MESS["AJAX_MODE_TIP"] = "Inclusion pour le composant du mode AJAX.";
+$MESS["AJAX_OPTION_HISTORY_TIP"] = "Lorsqu'un utilisateur effectue les transitions AJAX, alors si l'option est cochée, vous pouvez utiliser les boutons 'Retour' et 'Suivant' du navigateur.";
+$MESS["AJAX_OPTION_JUMP_TIP"] = "Si l'utilisateur effectue la transition AJAX, alors après l'achèvement du chargement le défilement vers le début du composant aura lieu.";
+$MESS["AJAX_OPTION_SHADOW_TIP"] = "Au cours du passage l'espace qui doit être modifié sera ombré.";
+$MESS["AJAX_OPTION_STYLE_TIP"] = "Lors des transitions AJAX le chargement et le traitement de la liste de styles provoqués par le composant auront lieu.";
+$MESS["CACHE_TIME_TIP"] = "Veuillez indiquer la période de temps durant laquelle la mémoire cache reste valide.";
+$MESS["CACHE_TYPE_TIP"] = "<i>Auto</i>: cache est valide pendant un temps prédéterminé dans les paramètres;<br /><i>Mettre en cache</i>: pour la mise en cache il faut déterminer seulement le temps de la mise en cache;<br /><i>Ne pas mettre en cache</i>: pas de mise en cache en tout cas.";
+$MESS["CHAIN_ITEM_LINK_TIP"] = "Le champ permet d'ajouter un lien sur un point supplémentaire dans la chaîne de navigation. Par exemple: <b>/myfolder/</b>.";
+$MESS["CHAIN_ITEM_TEXT_TIP"] = "Dans ce champ vous pouvez spécifier le nom du point de la chaîne de navigation. Par exemple,  <b>'une nouvelle forme'</b>.";
+$MESS["EDIT_ADDITIONAL_TIP"] = "Si le drapeau est installé, les champs supplémentaires seront affichés pour l'édition.";
+$MESS["EDIT_STATUS_TIP"] = "Si l'option <i>Afficher le statut courant du résultat</i> est choisie, il est possible soit d'afficher le formulaire de changement du statut (si l'option est cochée), soit de laisser les données sur le statut courant du résultat (si le drapeau est enlevé).";
+$MESS["IGNORE_CUSTOM_TEMPLATE_TIP"] = "Si elle est cochée, le modèle de formulaire par défaut sera utilisé.";
+$MESS["NOT_SHOW_FILTER_TIP"] = "Le réglage vous permet d'exclure les champs du formulaire Web qui ne doivent pas apparaître dans le filtre sur la page avec la liste de résultats.";
+$MESS["NOT_SHOW_TABLE_TIP"] = "Add-in permet d'exclure les champs du formulaire WEB qui ne doivent pas être visualisés dans la table sur la page avec la liste des résultats du formulaire WEB.";
+$MESS["RESULT_ID_TIP"] = "Par défaut le champ contient <i>={\$_REQUEST['RESULT_Id']}</i>. Dans ce champ on peut aussi écrire un code php qui rend RESULT_ID";
+$MESS["SEF_FOLDER_TIP"] = "Le chemin jusqu'au dossier avec lequel travaille le composant. Ce chemin peut exister ou non sous forme physique.";
+$MESS["SEF_MODE_TIP"] = "Cocher cette option active le mode SEF.";
+$MESS["SEF_URL_TEMPLATES_edit_TIP"] = "A la page de l'édition du résultat est transmis ID du résultat du remplissage de la forme web, par exemple, <b>éditer/#RESULT_ID#/</b>.";
+$MESS["SEF_URL_TEMPLATES_list_TIP"] = "Si vous choisissez <i>Liste des résultats</i> que la page principale, vous pouvez laisser ce champ vide. Sinon, indiquez ici le nom du dossier (par exemple <b>Liste /</b>) qui sera ajouté à un dossier SEF quand un visiteur ouvre une page contenant une liste de résultats.";
+$MESS["SEF_URL_TEMPLATES_new_TIP"] = "Si la page d'addition du résultat est sélectionnée comme la page d'accueil, ce champ peut être laissé vide. Sinon, vous devez spécifier le nom du répertoire,  (par exemple, <b>new/</b>).";
+$MESS["SEF_URL_TEMPLATES_view_TIP"] = "La page d'affichage du résultat doit être transmis le ID du résultat de remplissage de la forme web, par exemple, view/#RESULT_ID#/.";
+$MESS["SHOW_ADDITIONAL_TIP"] = "Avec une option marquée, les champs supplémentaires de la forme seront affichés (si ils existent).";
+$MESS["SHOW_ANSWER_VALUE_TIP"] = "Une option marquée permet d'afficher la valeur du paramètre <b>ANSWER_VALUE</b> de la question de forme web.";
+$MESS["SHOW_EDIT_PAGE_TIP"] = "Si l'option a été choisie, le lien <i>Modifier</i> pour aller à l'édition du résultat sera présent à la page avec la liste des résultats.";
+$MESS["SHOW_LIST_PAGE_TIP"] = "Si <i>Page d'ajout de résultat</i> initiale, pour l'option choisie, après avoir rempli le formulaire, l'utilisateur sera transféré sur la page avec la liste des résultats.";
+$MESS["SHOW_STATUS_TIP"] = "Avec une option marquée, à la page avec une liste des résultats le statut d'un résultat courant sera affiché.";
+$MESS["SHOW_VIEW_PAGE_TIP"] = "L'option étant choisie, la page avec la liste des résultats comportera un lien pour aller à la consultation du résultat.";
+$MESS["START_PAGE_TIP"] = "Si vous sélectionnez <i>Liste des résultats</i> alors la liste des résultats de ce formulaire s'affichera comme page d'accueil. <br /> Si vous choisissez comme page d'accueil <i>Page d'ajout de résultat</i> alors dans la partie publique le formulaire web à remplir sera affiché.";
+$MESS["SUCCESS_URL_TIP"] = "Ici il est indiqué le chemin vers la page avec un message de l'envoi réussi du résultat de la forme. ll est utilisé pour l'envoi du résultat par l'utilisateur n'ayant pas de droit de l'édition des résultats. Il est possible de laisser ce champ vide; dans ce cas l'utilisateur sera transféré à la page avec la forme de l'affichage du message.";
+$MESS["USE_EXTENDED_ERRORS_TIP"] = "Quand l'option est cochée les messages sur les erreurs seront affichés et les champs remplis inexactement seront marqués.";
+$MESS["VARIABLE_ALIASES_action_TIP"] = "Ce champ permet d'indiquer la variable dans laquelle le nom de l'opération est transmis. La valeur de la variable edit - aller à la rédaction du résultat, 'list' - aller à la page contenant la liste des résultats.";
+$MESS["WEB_FORM_ID_TIP"] = "La liste déroulante présente tous les formulaires web de la page <i>Liste de formulaires. Le point <i>autre</i> peut être utilisé si ID du formulaire est transmis vers le composant 'de dehors', c'est-à-dire par _REQUEST.";
+?>

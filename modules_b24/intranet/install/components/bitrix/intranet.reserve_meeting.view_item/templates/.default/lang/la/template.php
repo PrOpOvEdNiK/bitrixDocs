@@ -1,0 +1,34 @@
+<?
+$MESS["INTASK_C29T_AUTHOR"] = "Usuario que reserva";
+$MESS["INTASK_C29T_DATE_FROM"] = "Fecha de inicio";
+$MESS["INTASK_C29T_DATE_TO"] = "Fecha de finalización";
+$MESS["INTASK_C29T_DESCR"] = "Descripción";
+$MESS["INTASK_C29T_DURATION"] = "Duración";
+$MESS["INTASK_C29T_FLOOR"] = "Piso";
+$MESS["INTASK_C29T_FROM_TIME"] = "Hora de inicio";
+$MESS["INTASK_C29T_HOURS"] = "horas";
+$MESS["INTASK_C29T_NAME"] = "Nombre";
+$MESS["INTASK_C29T_NO"] = "No";
+$MESS["INTASK_C29T_PERSONS"] = "Personas";
+$MESS["INTASK_C29T_PHONE"] = "Teléfono";
+$MESS["INTASK_C29T_PLACE"] = "Capacidad";
+$MESS["INTASK_C29T_PREP"] = "Preparación de la sala de reunión";
+$MESS["INTASK_C29T_REGULAR"] = "Repetir";
+$MESS["INTASK_C29T_REGULARITY_NONE"] = "Nunca";
+$MESS["INTASK_C29T_REGULARITY_UNTIL"] = "repetir hasta";
+$MESS["INTASK_C29T_RWD_1"] = "Lunes";
+$MESS["INTASK_C29T_RWD_2"] = "Martes";
+$MESS["INTASK_C29T_RWD_3"] = "Miércoles";
+$MESS["INTASK_C29T_RWD_4"] = "Jueves";
+$MESS["INTASK_C29T_RWD_5"] = "Viernes";
+$MESS["INTASK_C29T_RWD_6"] = "Sábado";
+$MESS["INTASK_C29T_RWD_7"] = "Domingo";
+$MESS["INTASK_C29T_SAVE"] = "Reservar";
+$MESS["INTASK_C29T_TO_TIME"] = "Hora de finalización";
+$MESS["INTASK_C29T_TRANSS_DAILY"] = "cada #VAL# días ";
+$MESS["INTASK_C29T_TRANSS_MONTHLY"] = "cada #VAL#  meses";
+$MESS["INTASK_C29T_TRANSS_WEEKLY"] = "cada #VAL# semanas #VAL# ";
+$MESS["INTASK_C29T_TRANSS_YEARLY"] = "cada #VAL# años";
+$MESS["INTASK_C29T_TYPE"] = "Tipo de reunión";
+$MESS["INTASK_C29T_YES"] = "Si";
+?>

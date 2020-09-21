@@ -1,0 +1,26 @@
+<?
+$MESS["INTASK_TD_FIELD_CREATED"] = "Utworzony przez";
+$MESS["INTASK_TD_FIELD_DATE_ACTIVE_FROM"] = "Początek";
+$MESS["INTASK_TD_FIELD_DATE_ACTIVE_TO"] = "Koniec";
+$MESS["INTASK_TD_FIELD_DATE_CREATE"] = "Data utworzenia zadania";
+$MESS["INTASK_TD_FIELD_DETAIL_TEXT"] = "Opis Zadania";
+$MESS["INTASK_TD_FIELD_IBLOCK_SECTION_ID"] = "Teczka zadań";
+$MESS["INTASK_TD_FIELD_ID"] = "ID Zadania";
+$MESS["INTASK_TD_FIELD_MODIFIED"] = "Zadanie zmodyfikowane przez";
+$MESS["INTASK_TD_FIELD_NAME"] = "Nazwa Zadania";
+$MESS["INTASK_TD_FIELD_TIMESTAMP_X"] = "Data modyfikacji zadania";
+$MESS["INTASK_TD_OPERATIONS_COMMENT"] = "Komentarz";
+$MESS["INTASK_TD_OPERATIONS_DELETE"] = "Usuń";
+$MESS["INTASK_TD_OPERATIONS_READ"] = "Wyświetl";
+$MESS["INTASK_TD_OPERATIONS_WRITE"] = "Aktualizacja";
+$MESS["INTASK_TD_USER_GROUPS_ALL"] = "Wszyscy odwiedzający";
+$MESS["INTASK_TD_USER_GROUPS_AUTHOR"] = "Autor";
+$MESS["INTASK_TD_USER_GROUPS_AUTHORIZED"] = "Autoryzowani użytkownicy";
+$MESS["INTASK_TD_USER_GROUPS_FRIEND"] = "Znajomi";
+$MESS["INTASK_TD_USER_GROUPS_FRIEND2"] = "Przyjaciele przyjaciele";
+$MESS["INTASK_TD_USER_GROUPS_MEMBERS"] = "Członkowie";
+$MESS["INTASK_TD_USER_GROUPS_MODS"] = "Moderatorzy";
+$MESS["INTASK_TD_USER_GROUPS_OWNER"] = "Właściciel";
+$MESS["INTASK_TD_USER_GROUPS_RESP"] = "Odpowiedzialny";
+$MESS["INTASK_TD_USER_GROUPS_TRACK"] = "Abstrakty";
+?>

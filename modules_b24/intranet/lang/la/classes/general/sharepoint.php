@@ -1,0 +1,31 @@
+<?
+$MESS["SP_ERROR_CLASS_NOT_EXISTS"] = "no existe la clase de controlador.";
+$MESS["SP_ERROR_IBLOCK_EXISTS"] = "El Block de información ya esta vinculado a la lista SharePoint";
+$MESS["SP_ERROR_LIST_EXISTS"] = "La lista del SharePoint ya se ha vinculado al Block de información.";
+$MESS["SP_ERROR_MAX_ERRORS"] = "Usted ha superado los errores máximos posibles de servicios.";
+$MESS["SP_ERROR_METHOD_NOT_EXISTS"] = "El cliente #CLASS# no soporta el método #METHOD#.";
+$MESS["SP_ERROR_MODULE_NOT_INSTALLED"] = "El módulo no está instalado.";
+$MESS["SP_ERROR_WRONG_IBLOCK_ID"] = "El Block de información no es válido.";
+$MESS["SP_ERROR_WRONG_SP_LIST_ID"] = "El ID de la Lista es inválido.";
+$MESS["SP_ERROR_WRONG_URL"] = "El URL del servidor del SharePoint es inválido.";
+$MESS["SP_IGNORE"] = "(no especificado)";
+$MESS["SP_LIST_FIELD_ACTIVE_FROM"] = "Activar desde";
+$MESS["SP_LIST_FIELD_ACTIVE_TO"] = "Activar hasta";
+$MESS["SP_LIST_FIELD_CREATED_BY"] = "Creado Por";
+$MESS["SP_LIST_FIELD_CREATE_NONE"] = "(seleccionar un tipo de campo)";
+$MESS["SP_LIST_FIELD_DATE_CREATE"] = "Creado En";
+$MESS["SP_LIST_FIELD_DETAIL_PICTURE"] = "Cuadro Detallado";
+$MESS["SP_LIST_FIELD_DETAIL_TEXT"] = "Texto Detallado";
+$MESS["SP_LIST_FIELD_E"] = "Se unen a los Elementos";
+$MESS["SP_LIST_FIELD_F"] = "Archivo";
+$MESS["SP_LIST_FIELD_G"] = "Se unen a las secciones";
+$MESS["SP_LIST_FIELD_L"] = "Lista";
+$MESS["SP_LIST_FIELD_MODIFIED_BY"] = "Modificado Por";
+$MESS["SP_LIST_FIELD_N"] = "Número";
+$MESS["SP_LIST_FIELD_NAME"] = "Nombre";
+$MESS["SP_LIST_FIELD_PREVIEW_PICTURE"] = "Imagen Anterior";
+$MESS["SP_LIST_FIELD_PREVIEW_TEXT"] = "Texto Previo";
+$MESS["SP_LIST_FIELD_S"] = "Cadena";
+$MESS["SP_LIST_FIELD_SORT"] = "Orden";
+$MESS["SP_LIST_FIELD_TIMESTAMP_X"] = "Modificado En";
+?>

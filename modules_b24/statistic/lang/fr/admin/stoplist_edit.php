@@ -1,0 +1,34 @@
+<?
+$MESS["STAT_ACTIONS"] = "Actions";
+$MESS["STAT_ACTIVE"] = "Actif(ve) : ";
+$MESS["STAT_ACTIVITY"] = "l'activité d'enregistrement";
+$MESS["STAT_COMMENT"] = "Commentaire de l'administrateur";
+$MESS["STAT_COMMENT_S"] = "Commentaire";
+$MESS["STAT_CONDITIONS"] = "Caractéristiques de filtrer les visiteurs ('et' logique)";
+$MESS["STAT_DEFAULT_MESSAGE"] = "L'accès au site est interdit (bloqué) par l'administrateur du site";
+$MESS["STAT_DELETE_STOPLIST"] = "Supprimer stop-liste enregistrement";
+$MESS["STAT_DELETE_STOPLIST_CONFIRM"] = "tes-vous sûr de vouloir supprimer ce stop-liste fiche ?";
+$MESS["STAT_EDIT_RECORD"] = "Paramètres de liste d'arrêt notice # #ID#";
+$MESS["STAT_EMPTY"] = "vide";
+$MESS["STAT_END_DATE"] = "Date de clôture";
+$MESS["STAT_ERROR"] = "Sauvegarde de l'enregistrement Erreur";
+$MESS["STAT_GREEN_LAMP"] = "actif";
+$MESS["STAT_IP"] = "Adresse IP Net : ";
+$MESS["STAT_MASK"] = "Masque Net : ";
+$MESS["STAT_MESSAGE"] = "Afficher un message : ";
+$MESS["STAT_MESSAGE_LID"] = "Encodage : ";
+$MESS["STAT_NEW_RECORD"] = "Nouveau record de liste d'arrêt";
+$MESS["STAT_NEW_STOPLIST"] = "Nouveau record de liste d'arrêt";
+$MESS["STAT_PARAMS"] = "Paramètres";
+$MESS["STAT_PARAMS_S"] = "Document";
+$MESS["STAT_RECORDS_LIST"] = "Stop-liste";
+$MESS["STAT_REDIRECT"] = "Rediriger vers l'URL : ";
+$MESS["STAT_RED_LAMP"] = "inactif";
+$MESS["STAT_SAVE_STATISTIC"] = "Enregistrer les statistiques : ";
+$MESS["STAT_START_DATE"] = "A partir de la date";
+$MESS["STAT_TIMESTAMP"] = "Changé:";
+$MESS["STAT_URL_FROM"] = "De la part de : ";
+$MESS["STAT_URL_TO"] = "A qui : ";
+$MESS["STAT_USER_AGENT"] = "UserAgent : ";
+$MESS["STAT_WHAT_TO_DO"] = "Définir les mesures à prendre";
+?>

@@ -1,0 +1,29 @@
+<?
+$MESS["ME_AGENDA"] = "Darbotvarkė";
+$MESS["ME_PROTO"] = "Minutės";
+$MESS["ME_PROTO_OUTSIDE"] = "Temos, apart darbotvarkės";
+$MESS["ME_PROTO_ADD"] = "Pridėti minučių elementą";
+$MESS["ME_AGENDA_ADD"] = "Pridėti temą";
+$MESS["ME_AGENDA_ADD_DESCRIPTION"] = "Pridėti aprašymą";
+$MESS["ME_AGENDA_TASK"] = "Užduotis";
+$MESS["ME_AGENDA_ADD_TASK"] = "Sukurti užduotį";
+$MESS["ME_AGENDA_TASK_ADDED"] = "Sujungti užduotis";
+$MESS["ME_ADD_EX"] = "Pridėti iš susitikimo";
+$MESS["ME_TASK_ADD"] = "Pridėti iš užduoties";
+$MESS["ME_AGENDA_DEADLINE_DEFAULT"] = "Tiksliai iki";
+$MESS["ME_AGENDA_REPORT"] = "Ataskaita";
+$MESS["ME_AGENDA_HIDE_COMMENTS"] = "Slėpti komentarus";
+$MESS["ME_AGENDA_CONFIRM_AGENDA"] = "Pašalinti šią darbotvarkės temą?";
+$MESS["ME_AGENDA_CONFIRM_PROTO"] = "Pašalinti minučių elementą?";
+$MESS["ME_AGENDA_TT_DRAG"] = "Sukeisti temas";
+$MESS["ME_AGENDA_TT_SHIFT"] = "Pertvarkyti temas";
+$MESS["ME_AGENDA_TT_ADDSUB"] = "Pridėti potemę";
+$MESS["ME_AGENDA_TT_TASKS_C"] = "Prikabintos užduotys";
+$MESS["ME_AGENDA_TT_COMMENTS_C"] = "Komentarai";
+$MESS["ME_AGENDA_TT_DELETE"] = "Pašalinti";
+$MESS["ME_AGENDA_TT_EDIT"] = "Redaguoti";
+$MESS["ME_AGENDA_TT_SAVE"] = "Išsaugoti";
+$MESS["ME_AGENDA_TT_CANCEL"] = "Atšaukti";
+$MESS["ME_AGENDA_TT_CHECK"] = "Pažymėti kaip atlikta";
+$MESS["ME_AGENDA_NO_RESPONSIBLE"] = "(nenurodyta)";
+?>

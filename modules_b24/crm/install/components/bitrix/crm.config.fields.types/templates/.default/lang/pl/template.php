@@ -1,0 +1,13 @@
+<?
+$MESS["CRM_FIELDS_ADD_FIELD"] = "Dodaj pole";
+$MESS["CRM_FIELDS_ADD_FIELD_TITLE"] = "Dodaj nowe pole";
+$MESS["CRM_FIELDS_LIST_FIELD"] = "Pola";
+$MESS["CRM_FIELDS_LIST_FIELD_TITLE"] = "Pokaż listę pól";
+$MESS["CRM_FIELDS_LIST_IS_REQUIRED"] = "Wymagany";
+$MESS["CRM_FIELDS_LIST_MULTIPLE"] = "Powiel";
+$MESS["CRM_FIELDS_LIST_NAME"] = "Nazwa";
+$MESS["CRM_FIELDS_LIST_SORT"] = "Sortowanie";
+$MESS["CRM_FIELDS_LIST_TYPE"] = "Rodzaj";
+$MESS["CRM_FIELDS_TOOLBAR_ADD"] = "Dodaj pole";
+$MESS["CRM_FIELDS_TOOLBAR_ADD_TITLE"] = "Dodaj nowe pole";
+?>

@@ -1,0 +1,11 @@
+<?
+$MESS["LISTS_LCP_TEMPLATE_BUTTON_INSTALL"] = "Installer";
+$MESS["LISTS_LCP_TEMPLATE_DESCRIPTION_PAGE"] = "Sélectionnez flux de travail pour être installé";
+$MESS["LISTS_LCP_TEMPLATE_DESCRIPTION_PAGE_ALL_INSTALL"] = "Tous les flux de travail disponibles sont installés.";
+$MESS["LISTS_LCP_TEMPLATE_PROCESS_INSTALLED"] = "(Installé)";
+$MESS["LISTS_LCP_TEMPLATE_STATUS_ACTION_ERROR"] = "C'est une erreur.";
+$MESS["LISTS_LCP_TEMPLATE_STATUS_ACTION_SUCCESS"] = "Succès";
+$MESS["LISTS_LCP_TEMPLATE_TITLE_SYSTEM_PROCESSES"] = "Des flux de travail Standard";
+$MESS["LISTS_LCP_TEMPLATE_TITLE_USER_PROCESSES"] = "Flux de travail personnalisés";
+$MESS["LISTS_LCP_TEMPLATE_TRANSITION_PROCESSES"] = "Workflow";
+?>

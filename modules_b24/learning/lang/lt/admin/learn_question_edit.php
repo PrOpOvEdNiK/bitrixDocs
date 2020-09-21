@@ -1,0 +1,30 @@
+<?
+$MESS["LEARNING_LESSON"] = "Pamoka";
+$MESS["LEARNING_ADMIN_TAB1"] = "Klausimas";
+$MESS["LEARNING_ADMIN_TAB1_EX"] = "Klausimo nustatymai";
+$MESS["LEARNING_ADMIN_TAB2"] = "Atsakymai";
+$MESS["LEARNING_ADMIN_TAB2_EX"] = "Atsakymų variantai";
+$MESS["LEARNING_ADMIN_TAB3"] = "Aprašymas";
+$MESS["LEARNING_ADMIN_TAB3_EX"] = "Detalus klausimo aprašymas";
+$MESS["LEARNING_ERROR"] = "Klaida išsaugojant klausimą";
+$MESS["LEARNING_QUESTION_LIST"] = "Klausimų sąrašas";
+$MESS["LEARNING_QUESTION_NAME"] = "Klausimas";
+$MESS["LEARNING_CONFIRM_DEL_MESSAGE"] = "Ar tikrai norite pašalinti ši klausimą?";
+$MESS["LEARNING_CONFIRM_CHECK_ANSWER"] = "Klausimas neturi teisingų atsakymų. Tęsti?";
+$MESS["LEARNING_PATH_TO_FILE"] = "Kelias į bylą";
+$MESS["LEARNING_WIDTH"] = "Plotis";
+$MESS["LEARNING_HEIGHT"] = "Aukštis";
+$MESS["LEARNING_SAVE"] = "Išsaugoti";
+$MESS["LEARNING_VIDEO_AUDIO"] = "Video/audio";
+$MESS["LEARNING_CORRECT_REQUIRED"] = "Būtinas teisingas atsakymas";
+$MESS["LEARNING_INCORRECT_MESSAGE"] = "Pranešimas esant neteisingam atsakymui";
+$MESS["LEARNING_EMAIL_ANSWER"] = "Pranešti mokytojui atsakymą";
+$MESS["LEARNING_TEXT_ANSWER"] = "Tekstinis atsakymas";
+$MESS["LEARNING_SORTING"] = "Rūšiavimas";
+$MESS["LEARNING_ANSWERS"] = "Atsakymų variantai:";
+$MESS["LEARNING_NO_ANSWERS"] = "Šitam klausimo tipui atsakymo variantai nenumatyti";
+$MESS["LEARNING_ADD_ANSWER"] = "Pridėti atsakymą";
+$MESS["LEARNING_ADD_RIGHT_ANSWER_NOT_SELECTED"] = "Teisingas atsakymas nepasirinktas";
+$MESS["LEARNING_COMMENT"] = "Komentaras";
+$MESS["LEARNING_CHANGE_ATTACHED_LESSON"] = "keisti";
+?>

@@ -1,0 +1,5 @@
+<?
+$MESS["TASKS_KANBAN_VIEWS_DIALOG"] = "Wybierz widok etapów";
+$MESS["TASKS_KANBAN_VIEWS_DIALOG_DEFAULT"] = "Domyślne";
+$MESS["TASKS_KANBAN_VIEWS_DIALOG_OK"] = "Wybierz";
+?>

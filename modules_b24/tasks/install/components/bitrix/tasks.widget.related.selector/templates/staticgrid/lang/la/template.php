@@ -1,0 +1,7 @@
+<?
+$MESS["TASKS_TWRS_SGRID_FIELD_DEADLINE"] = "Fecha límite";
+$MESS["TASKS_TWRS_SGRID_FIELD_END_DATE_PLAN"] = "Fecha de finalización";
+$MESS["TASKS_TWRS_SGRID_FIELD_RESPONSIBLE_ID"] = "Persona responsable";
+$MESS["TASKS_TWRS_SGRID_FIELD_START_DATE_PLAN"] = "Fecha de inicio";
+$MESS["TASKS_TWRS_SGRID_FIELD_TITLE"] = "Nombre";
+?>

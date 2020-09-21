@@ -1,0 +1,37 @@
+<?
+$MESS["SAVE_ERROR"] = "Błąd podczas aktualizowania rekordu #";
+$MESS["STAT_ACTIVE"] = "Aktywne";
+$MESS["STAT_COMMENT"] = "Komentarz";
+$MESS["STAT_CONFIRM_DEL_STOP"] = "Na pewno chcesz usunąc rekord?";
+$MESS["STAT_DATE_END"] = "Koniec";
+$MESS["STAT_DATE_START"] = "Początek";
+$MESS["STAT_F_ACTIVE"] = "Aktywne";
+$MESS["STAT_F_COMMENTS"] = "Komentarz";
+$MESS["STAT_F_DATE_END"] = "Data zakończenia";
+$MESS["STAT_F_DATE_START"] = "Data rozpoczęcia";
+$MESS["STAT_F_FROM"] = "od";
+$MESS["STAT_F_ID"] = "ID";
+$MESS["STAT_F_IP"] = "adres IP";
+$MESS["STAT_F_LOGIC"] = "Logika pomiędzy polami";
+$MESS["STAT_F_MESSAGE"] = "Wiadomość";
+$MESS["STAT_F_REDIRECT"] = "Przekierowanie";
+$MESS["STAT_F_SITE"] = "Strona";
+$MESS["STAT_F_STATISTIC"] = "Dodaj do statystyk";
+$MESS["STAT_F_TO"] = "do";
+$MESS["STAT_F_USER_AGENT"] = "Aplikacja użytkownika";
+$MESS["STAT_GREEN_LAMP"] = "Aktywny zapis";
+$MESS["STAT_IP"] = "adres IP";
+$MESS["STAT_LAMP_ACTIVE"] = "Zapis aktywny.";
+$MESS["STAT_LAMP_NOT_ACTIVE"] = "Zapis niekatywny.";
+$MESS["STAT_MASK"] = "Maska sieci";
+$MESS["STAT_MESSAGE"] = "Wiadomość";
+$MESS["STAT_RECORDS_LIST"] = "zatrzymaj listę";
+$MESS["STAT_RECORD_STATUS"] = "Stan aktywności";
+$MESS["STAT_REDIRECT"] = "Przekierowanie (URL)";
+$MESS["STAT_RED_LAMP"] = "Rekord nieaktywny";
+$MESS["STAT_REFERER"] = "od";
+$MESS["STAT_STAT"] = "Stat.";
+$MESS["STAT_STOP_PAGES"] = "Zapis";
+$MESS["STAT_URL_TO"] = "do";
+$MESS["STAT_USER_AGENT"] = "Aplikacja użytkownika";
+?>

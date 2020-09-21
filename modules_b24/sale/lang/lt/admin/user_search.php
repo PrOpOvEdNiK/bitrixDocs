@@ -1,0 +1,34 @@
+<?
+$MESS["SALE_WRONG_TIMESTAMP_FROM"] = "Įveskite teisingą pakeitimo datą \"nuo\" filtre";
+$MESS["SALE_WRONG_TIMESTAMP_TILL"] = "Įveskite teisingą pakeitimo datą \"iki\" filtre";
+$MESS["SALE_FROM_TILL_TIMESTAMP"] = "Pakeitimo data \"iki\" filtre turi būti didesnė už \"nuo\"";
+$MESS["SALE_WRONG_LAST_LOGIN_FROM"] = "Įveskite teisingą paskutinio autorizavimo datą \"nuo\"";
+$MESS["SALE_WRONG_LAST_LOGIN_TILL"] = "Įveskite teisingą paskutinio autorizavimo datą \"iki\"";
+$MESS["SALE_FROM_TILL_LAST_LOGIN"] = "Paskutinio autorizavimo data \"iki\" filtre turi būti didesnė už \"nuo\"";
+$MESS["SALE_F_ID"] = "ID:";
+$MESS["SALE_F_LAST_LOGIN"] = "Paskutinis autorizavimas";
+$MESS["SALE_F_TIMESTAMP"] = "Pakeista";
+$MESS["SALE_F_EMAIL"] = "El.paštas:";
+$MESS["SALE_F_KEYWORDS"] = "Profilio laukai:";
+$MESS["SALE_PAGE_TITLE"] = "Naudotojo paieška";
+$MESS["SALE_F_LOGIN"] = "Prisijungimo vardas:";
+$MESS["SALE_F_ACTIVE"] = "Aktyvus:";
+$MESS["SALE_YES"] = "Taip";
+$MESS["SALE_NO"] = "Ne";
+$MESS["SALE_ALL"] = "(visi)";
+$MESS["SALE_F_NAME"] = "Pavadinimas:";
+$MESS["SALE_F_GROUP"] = "Grupės:";
+$MESS["SALE_F_SET_FILTER"] = "Nustatyti filtrą";
+$MESS["SALE_F_DEL_FILTER"] = "Pašalinti filtrą";
+$MESS["SALE_PAGES"] = "Naudotojai";
+$MESS["SALE_TIMESTAMP"] = "Pakeista";
+$MESS["SALE_ACTIVE"] = "Aktyvus";
+$MESS["SALE_LOGIN"] = "Prisijungimo vardas";
+$MESS["SALE_NAME"] = "Vardas";
+$MESS["SALE_LAST_NAME"] = "Pavardė";
+$MESS["SALE_EMAIL"] = "El.paštas";
+$MESS["SALE_ACTION"] = "Veiksmai";
+$MESS["SALE_SELECT"] = "asirinkti";
+$MESS["SALE_TOTAL"] = "Iš viso";
+$MESS["SALE_CLOSE"] = "Uždaryti";
+?>

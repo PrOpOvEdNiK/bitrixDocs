@@ -1,0 +1,5 @@
+<?
+$MESS["SOD_TEMPLATE_MODE"] = "Modo de exibição";
+$MESS["SOD_TEMPLATE_MODE_DARK_VALUE"] = "Escuro";
+$MESS["SOD_TEMPLATE_MODE_LIGHT_VALUE"] = "Claro";
+?>

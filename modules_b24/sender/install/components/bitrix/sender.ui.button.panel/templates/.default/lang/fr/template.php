@@ -1,0 +1,5 @@
+<?
+$MESS["SENDER_UI_BUTTON_PANEL_CANCEL"] = "Annuler";
+$MESS["SENDER_UI_BUTTON_PANEL_CLOSE"] = "Fermer";
+$MESS["SENDER_UI_BUTTON_PANEL_SAVE"] = "Enregistrer";
+?>

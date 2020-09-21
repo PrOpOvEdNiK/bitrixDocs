@@ -1,0 +1,4 @@
+<?
+$MESS["TASKS_WARNING_RESPONSIBLE_IS_ABSENCE"] = "#FORMATTED_USER_NAME# (responsável) está fora desde #DATE_FROM# até #DATE_TO# (#ABSCENCE_REASON#).";
+$MESS["TASKS_WARNING_RESPONSIBLE_NOT_IN_TASK_GROUP"] = "#FORMATTED_USER_NAME# (responsável) não é um membro de \"#GROUP_NAME#\".";
+?>

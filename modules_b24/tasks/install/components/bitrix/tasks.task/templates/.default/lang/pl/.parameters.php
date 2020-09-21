@@ -1,0 +1,3 @@
+<?
+$MESS["TASKS_TASK_TEMPLATE_RATING_TYPE_CONFIG"] = "domyślne";
+?>

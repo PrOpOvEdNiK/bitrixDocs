@@ -1,0 +1,7 @@
+<?
+$MESS["SALE_LOCATION_BROWSE_TITLE"] = "Vietovių medis 2.0";
+$MESS["SALE_LOCATION_BROWSE_TAB"] = "Vietovių medis";
+$MESS["SALE_LOCATION_BROWSE_HELP"] = "";
+$MESS["SALE_LOCATION_BROWSE_FAIL"] = "Klaida.";
+$MESS["SALE_LOCATION_AJAX_FAIL"] = "Įvyko AJAX klaida";
+?>

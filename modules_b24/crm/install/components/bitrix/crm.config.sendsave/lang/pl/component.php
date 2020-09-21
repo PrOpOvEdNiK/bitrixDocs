@@ -1,0 +1,62 @@
+<?
+$MESS["CRM_EMAIL_MAILBOX_NEW"] = "[nowe konto POP3]";
+$MESS["CRM_EMAIL_MAILBOX_SEL"] = "(wybierz skrzynkę pocztową)";
+$MESS["CRM_ERROR_CHECK_SERVER_CONNECTION"] = "Nie można połączyć do \"#SERVER#\". #ERROR#";
+$MESS["CRM_ERROR_CONNECT"] = "Błąd połączenia.";
+$MESS["CRM_ERROR_EMAIL"] = "Pole E-mail jest nieprawidłowe";
+$MESS["CRM_ERROR_LOGIN"] = "Pole \"Login\" jest wymagane";
+$MESS["CRM_ERROR_MAILBOX_NOT_SELECTED"] = "Proszę wybrać skrzynkę pocztową.";
+$MESS["CRM_ERROR_MAIL_BOX_NOT_FOUND"] = "Nie można znaleźć skrzynki pocztowej [#ID#].";
+$MESS["CRM_ERROR_POP3_MAIL_NOT_DEFINED"] = "Wewnętrzny adres e-mail jest wymagany.";
+$MESS["CRM_ERROR_SERVER"] = "Pole \"Serwer\" jest wymagane";
+$MESS["CRM_ERROR_SMTP_DOMAIN_NOT_DEFINED"] = "Domena dla wewnętrznego adresu e-mail nie jest określona.";
+$MESS["CRM_ERROR_SMTP_MAIL_NOT_DEFINED"] = "Zewnętrzny adres e-mail jest wymagany.";
+$MESS["CRM_FIELD_CONTACT_RESPONSIBLE"] = "Menadżer kontaktu";
+$MESS["CRM_FIELD_CONTACT_RESPONSIBLE_HINT"] = "Ta osoba będzie odpowiedzialna za relacje z kontaktem utworzonym przez załącznik email vCard.";
+$MESS["CRM_FIELD_CREATE_LEAD_FOR_NEW_ADDRESSER"] = "Twórz leady z e-maili od nieznanych nadawców";
+$MESS["CRM_FIELD_CREATE_LEAD_FOR_NEW_ADDRESSER_HINT"] = "Jeżeli żaden z istniejących elementów CRM nie może zostać powiązany z przychodzącym e-mailem, zostanie utworzony dla niego nowy lead.";
+$MESS["CRM_FIELD_LEAD_RESPONSIBLE"] = "Odpowiedzialny za nowy lead";
+$MESS["CRM_FIELD_LEAD_RESPONSIBLE_HINT"] = "Wybrany użytkownik zostanie ustawiony jako osoba odpowiedzialna za nowe leady utworzone dla przychodzących wiadomościach e-mail.";
+$MESS["CRM_FIELD_LEAD_SOURCE_ID"] = "Źródło leada";
+$MESS["CRM_FIELD_MAILBOX"] = "Skrzynka pocztowa";
+$MESS["CRM_FIELD_MAILBOX_ACTIVE"] = "Aktywne";
+$MESS["CRM_FIELD_MAILBOX_DELETE"] = "Usuń Wiadomości Z Serwera Po Dostarczeniu";
+$MESS["CRM_FIELD_MAILBOX_DELETE_CONFIRM"] = "Uwaga!
+Ta akcja usunie wszstkie emaile wraz z tymi niepowiązanymi z CRM.
+Możesz utracić całą swoją korespondencję.
+Jesteś pewien, że chcesz włączyć tą opcję?";
+$MESS["CRM_FIELD_MAILBOX_DELETE_HINT"] = "Uwaga! Ta opcja usunie wszystkie wiadomości e-mail łącznie z niezwiązanymi z CRM. Użyj tej opcji tylko wtedy, gdy skrzynka e-mail jest wykorzystywana wyłącznie do celów CRM lub nie przechowuje wiadomości e-mail na serwerze dla historii.";
+$MESS["CRM_FIELD_MAILBOX_DOMAIN"] = "Domena";
+$MESS["CRM_FIELD_MAILBOX_LOGIN"] = "Login";
+$MESS["CRM_FIELD_MAILBOX_MAIL"] = "Adres e-mail CRM";
+$MESS["CRM_FIELD_MAILBOX_NAME"] = "Nazwa";
+$MESS["CRM_FIELD_MAILBOX_PASSWORD"] = "Hasło";
+$MESS["CRM_FIELD_MAILBOX_PERIOD_CHECK"] = "Sprawdź, czy są nowe wiadomości co (minut)";
+$MESS["CRM_FIELD_MAILBOX_PORT"] = "Port";
+$MESS["CRM_FIELD_MAILBOX_SERVER"] = "Serwer";
+$MESS["CRM_FIELD_MAILBOX_SSL"] = "SSL";
+$MESS["CRM_FIELD_POP3_EMAL"] = "Zewnętrzny adres e-mail";
+$MESS["CRM_FIELD_POP3_SERVER"] = "Serwer POP-3";
+$MESS["CRM_FIELD_REGEXP_COMPANY"] = "Firma";
+$MESS["CRM_FIELD_REGEXP_CONTACT"] = "Kontakt";
+$MESS["CRM_FIELD_REGEXP_DEAL"] = "Deal";
+$MESS["CRM_FIELD_REGEXP_LEAD"] = "Lead";
+$MESS["CRM_FIELD_SELF_CERT"] = "Certyfikat z auto-podpisem";
+$MESS["CRM_FIELD_SERVICE_CODE_ALLOCATION"] = "Kod serwisowy";
+$MESS["CRM_FIELD_SKIP_CERT"] = "Nie sprawdzaj certyfikatu";
+$MESS["CRM_FIELD_SMTP_EMAL"] = "Wewnętrzny adres e-mail";
+$MESS["CRM_FIELD_USE_SSL"] = "Użyj protokołu SSL";
+$MESS["CRM_FIELD_USE_SSL2"] = "Użyj protokołu SSL";
+$MESS["CRM_MODULE_NOT_INSTALLED"] = "Moduł CRM nie jest zainstalowany.";
+$MESS["CRM_PERMISSION_DENIED"] = "Odmowa dostępu";
+$MESS["CRM_SAVE_CONFIG"] = "Ustawienia zostały zapisane.";
+$MESS["CRM_SECTION_MAIL_CONFIG"] = "Rozwiąż Podmiot Używając Wyrażenia";
+$MESS["CRM_SECTION_MAIL_CONFIG2"] = "(typowe wyrażenie; pierwsza grupa nawiasu kwadratowego musi zawierać ID elementu)";
+$MESS["CRM_SECTION_MAIL_INFO"] = "Skrzynka pocztowa";
+$MESS["CRM_SECTION_MAIL_PROCESSING"] = "Przetwarzanie poczty przychodzącej";
+$MESS["CRM_SECTION_MAIL_RULES"] = "Filteruj przychodzące wiadomości według tematu (dla zaawansowanych użytkowników)";
+$MESS["CRM_SECTION_OUTGOING_MAIL_PROCESSING"] = "Przetwarzanie poczty wychodzącej";
+$MESS["CRM_SS_LIST"] = "Integracja E-mail";
+$MESS["CRM_SS_RULE"] = "Dodaj wydarzenia do CRM";
+$MESS["MAIL_MODULE_NOT_INSTALLED"] = "Moduł MAIL nie jest zainstalowany.";
+?>

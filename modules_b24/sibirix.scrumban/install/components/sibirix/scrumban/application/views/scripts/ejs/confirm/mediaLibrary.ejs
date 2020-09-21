@@ -1,0 +1,13 @@
+<script type='text/ejs' id='tplMediaLibrary'>
+    <% if (!model.files || (model.files.length == 0)) {
+    %><h4><?= $this->t('MEDIALIBRARY_NO_IMAGES'); ?></h4><%
+    } else { %>
+    <div class="files">
+        <% for (var i=0; i<model.files.length;i++) { if (!model.files[i].image) continue; %>
+        <div class="file">
+            <div class="image" data-image-id="<%= model.files[i].id %>"><div style="background-image:url('<%= model.files[i].image %>');"></div></div>
+        </div>
+        <% } %>
+    </div>
+    <% } %>
+</script>

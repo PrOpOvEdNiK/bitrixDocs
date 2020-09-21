@@ -1,0 +1,21 @@
+<?
+$MESS["CTRL_LOG_ADMIN_COLUMN_CREATED"] = "Utworzony";
+$MESS["CTRL_LOG_ADMIN_COLUMN_NAME"] = "Nazwa";
+$MESS["CTRL_LOG_ADMIN_COLUMN_STATUS_ERR"] = "Błąd";
+$MESS["CTRL_LOG_ADMIN_COLUMN_STATUS_OK"] = "Zakończone Pomyślnie";
+$MESS["CTRL_LOG_ADMIN_COLUMN_USER"] = "Użytkownik";
+$MESS["CTRL_LOG_ADMIN_ERR_DELETE"] = "Błąd usunięcia zapisu";
+$MESS["CTRL_LOG_ADMIN_FILTER_ANY"] = "(jakikolwiek)";
+$MESS["CTRL_LOG_ADMIN_FILTER_CLIENT"] = "Klient";
+$MESS["CTRL_LOG_ADMIN_FILTER_CREATED"] = "Utworzony";
+$MESS["CTRL_LOG_ADMIN_FILTER_DESC"] = "Opis";
+$MESS["CTRL_LOG_ADMIN_FILTER_IDCLIENT"] = "ID Klienta";
+$MESS["CTRL_LOG_ADMIN_FILTER_STATUS"] = "Status";
+$MESS["CTRL_LOG_ADMIN_FILTER_TASK"] = "Zadanie";
+$MESS["CTRL_LOG_ADMIN_FILTER_TASKID"] = "ID Zadania";
+$MESS["CTRL_LOG_ADMIN_MENU_DEL"] = "Usuń";
+$MESS["CTRL_LOG_ADMIN_MENU_DEL_CONFIRM"] = "Spowoduje to usunięcie zapisu z lity. Kontynuować?";
+$MESS["CTRL_LOG_ADMIN_MENU_DETAIL"] = "Szczegółowy";
+$MESS["CTRL_LOG_ADMIN_PAGETITLE"] = "Dziennik Zapisów";
+$MESS["CTRL_LOG_ADMIN_TITLE"] = "Dziennik Sterownika Strony";
+?>

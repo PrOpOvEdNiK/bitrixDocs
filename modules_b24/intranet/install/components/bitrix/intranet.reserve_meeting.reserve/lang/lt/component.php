@@ -1,0 +1,37 @@
+<?
+$MESS["EC_INTRANET_MODULE_NOT_INSTALLED"] = "Intraneto modulis nėra įdiegtas.";
+$MESS["EC_IBLOCK_MODULE_NOT_INSTALLED"] = "Informacijos blokų modulis nėra įdiegtas.";
+$MESS["INTASK_C29_NO_RPERMS_MODIFY"] = "Jūs neturite teisių redaguoti šį užsakymą";
+$MESS["INTASK_C36_PAGE_TITLE"] = "Konferencijų salės užsakymas";
+$MESS["INTASK_C36_PAGE_TITLE1"] = "Konferencijų salės užsakymas";
+$MESS["INAF_F_ID"] = "ID";
+$MESS["INAF_F_NAME"] = "Pavadinimas";
+$MESS["INAF_F_DESCRIPTION"] = "Aprašymas";
+$MESS["INAF_F_FLOOR"] = "Aukštas";
+$MESS["INAF_F_PLACE"] = "Talpumas";
+$MESS["INAF_F_PHONE"] = "Telefonas";
+$MESS["INAF_MEETING_NOT_FOUND"] = "Konferencijų salė nerasta.";
+$MESS["INAF_ITEM_NOT_FOUND"] = "Užsakymas nerastas";
+$MESS["INTASK_C29_UF_PERSONS"] = "Asmenys";
+$MESS["INTASK_C29_UF_RES_TYPE"] = "Susitikimo tipas";
+$MESS["INTASK_C29_UF_RES_TYPEA"] = "Konsultacija";
+$MESS["INTASK_C29_UF_RES_TYPEB"] = "Prezentacija";
+$MESS["INTASK_C29_UF_RES_TYPEC"] = "Derybos";
+$MESS["INTASK_C29_UF_RES_TYPED"] = "Kita";
+$MESS["INTASK_C29_UF_PREPARE_ROOM"] = "Konferencijų salės paruošimas";
+$MESS["INTASK_C29_NEED_AUTH"] = "Jūs turite autorizuotis, norint užsakyti konferencijų salę.";
+$MESS["INTASK_C29_NO_RPERMS"] = "Jūs neturite leidimo užsakyti konferencijų salę.";
+$MESS["INTASK_C29_EMPTY_DATE"] = "Nenurodyta rezervavimo data. ";
+$MESS["INTASK_C29_WRONG_DATE"] = "Rezervavimo data neteisinga. Prašome patikrinti datos formatą: #FORMAT#";
+$MESS["INTASK_C29_EMPTY_TIME"] = "Nenurodytas rezervavimo laikas. ";
+$MESS["INTASK_C29_HM"] = "valandos: minutės ";
+$MESS["INTASK_C29_WRONG_TIME"] = "Rezervavimo laikas neteisingas. Prašome patikrinti laiko formatą: #FORMAT#";
+$MESS["INTASK_C29_EMPTY_DURATION"] = "Nenurodyta rezervavimo trukmė.";
+$MESS["INTASK_C29_WRONG_DURATION"] = "Susitikimo trukmė neteisinga.";
+$MESS["INTASK_C29_EMPTY_NAME"] = "Nenurodytas susitikimo pavadinimas.";
+$MESS["INTASK_C29_CONFLICT"] = "Konferencijų salė rezervuota nuo #TIME1# iki #TIME2#: #RES#";
+$MESS["INTASK_C29_PERIOD_TYPE"] = "Laikotarpio tipas";
+$MESS["INTASK_C29_WRONG_REG_DATE"] = "Pasikartojančio įvykio pabaigos data yra neteisinga. Prašome patikrinti formatą:  #FORMAT#";
+$MESS["INTR_IRMR_NAME_TEMPLATE_DEFAULT"] = "#NOBR##NAME# #LAST_NAME##/NOBR#";
+$MESS["INTS_NO_IBLOCK_PERMS"] = "Jūs neturite leidimo peržiūrėti konferencijų salės informacijos bloką.";
+?>

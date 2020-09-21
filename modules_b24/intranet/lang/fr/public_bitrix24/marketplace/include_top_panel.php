@@ -1,0 +1,6 @@
+<?
+$MESS["MARKETPLACE_APP_TIME_LIMIT_12"] = "12 mois";
+$MESS["MARKETPLACE_APP_TIME_LIMIT_3"] = "1 mois";
+$MESS["MARKETPLACE_APP_TIME_LIMIT_6"] = "6 mois";
+$MESS["MARKETPLACE_CATEGORY_ALL"] = "Toutes les applications";
+?>

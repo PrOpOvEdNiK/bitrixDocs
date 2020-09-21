@@ -1,0 +1,37 @@
+<?
+$MESS["CRM_COMPANY_LINK"] = "Firma";
+$MESS["CRM_CONTACT_LINK"] = "Osoba kontaktowa";
+$MESS["CRM_DEAL_CLIENT_NOT_ASSIGNED"] = "[nie przypisane]";
+$MESS["CRM_DEAL_LINK"] = "Faktura deala";
+$MESS["CRM_DEAL_NOT_OPENED"] = "Wyświetlanie tego deala jest ograniczone";
+$MESS["CRM_DEAL_OPENED"] = "Wyświetlanie dozwolone dla wszystkich użytkowników";
+$MESS["CRM_EDIT_BTN_TTL"] = "Kliknij, aby edytować";
+$MESS["CRM_INVOICE_CLIENT"] = "Kontrahent";
+$MESS["CRM_INVOICE_COMMENT"] = "Komentarz przedstawiciela handlowego";
+$MESS["CRM_INVOICE_DATE_BILL"] = "Data faktury";
+$MESS["CRM_INVOICE_DATE_INSERT"] = "Utworzony";
+$MESS["CRM_INVOICE_DATE_PAY_BEFORE"] = "Termin płatności";
+$MESS["CRM_INVOICE_DATE_UPDATE"] = "Zmodyfikowany";
+$MESS["CRM_INVOICE_FIELD_DATE_MARKED"] = "Data anulowania";
+$MESS["CRM_INVOICE_FIELD_PAY_VOUCHER_DATE"] = "Data płatności";
+$MESS["CRM_INVOICE_FIELD_PAY_VOUCHER_NUM"] = "Dokument #";
+$MESS["CRM_INVOICE_FIELD_REASON_MARKED"] = "Komentarz";
+$MESS["CRM_INVOICE_PRICE_SHORT"] = "Razem";
+$MESS["CRM_INVOICE_PUBLIC_LINK_COPY"] = "Kopiuj";
+$MESS["CRM_INVOICE_RECUR_SHOW_TITLE"] = "Faktura cykliczna ##ACCOUNT_NUMBER# &mdash; #ORDER_TOPIC#";
+$MESS["CRM_INVOICE_SHOW_LEGEND"] = "faktura ##ACCOUNT_NUMBER#";
+$MESS["CRM_INVOICE_SHOW_TITLE"] = "Faktura ##ACCOUNT_NUMBER# &mdash; #ORDER_TOPIC#";
+$MESS["CRM_INVOICE_SIDEBAR_STATUS"] = "Status";
+$MESS["CRM_INVOICE_TITLE"] = "Faktura";
+$MESS["CRM_LOCK_BTN_TTL"] = "Nie można edytować tego elementu";
+$MESS["CRM_QUOTE_LINK"] = "Oferta";
+$MESS["CRM_TAB_1"] = "Informacje o fakturze";
+$MESS["CRM_TAB_1_TITLE"] = "Parametry faktury";
+$MESS["CRM_TAB_HISTORY"] = "Historia";
+$MESS["CRM_TAB_HISTORY_TITLE"] = "Historia zmiany faktury";
+$MESS["CRM_TAB_PRODUCT_ROWS"] = "Produkty";
+$MESS["CRM_TAB_PRODUCT_ROWS_TITLE"] = "Produkty na fakturze";
+$MESS["CRM_TAB_TREE"] = "Zależności";
+$MESS["CRM_TAB_TREE_TITLE"] = "Odnośniki do innych elementów i pozycji";
+$MESS["INVOICE_USER_DESCRIPTION"] = "Uwagi do faktury (pojawią się na fakturze)";
+?>

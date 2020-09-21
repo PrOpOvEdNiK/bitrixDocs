@@ -1,0 +1,7 @@
+<?
+$MESS["LEARNING_ADMIN_ATTEMPTS"] = "تعداد تلاش";
+$MESS["LEARNING_ADMIN_TITLE"] = "گواهینامه";
+$MESS["LEARNING_ADMIN_COURSE_ID"] = "دوره";
+$MESS["LEARNING_ADMIN_APPROVED"] = "گذرانده شده";
+$MESS["LEARNING_ADMIN_SUMMARY"] = "امتیاز";
+?>

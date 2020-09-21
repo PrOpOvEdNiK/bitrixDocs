@@ -1,0 +1,30 @@
+<?
+$MESS['AD_MENU_MAIN'] = 'Reklama';
+$MESS['AD_MENU_BANNER_LIST'] = 'Baneriai';
+$MESS['AD_MENU_BANNER_LIST_ALT'] = 'Banerių sąrašas';
+$MESS['AD_MENU_TYPE_LIST'] = 'Banerių tipai';
+$MESS['AD_MENU_TYPE_LIST_ALT'] = 'Banerių tipų sąrašas';
+$MESS['AD_MENU_CONTRACT_LIST'] = 'Kontraktai';
+$MESS['AD_MENU_CONTRACT_LIST_ALT'] = 'Sąrašas reklamos kontraktų';
+$MESS['AD_MENU_STATISTICS_GRAPH'] = 'Grafikai';
+$MESS['AD_MENU_STATISTICS_ALT_GRAPH'] = 'Banerių parodymų ir paspaudimų grafikai';
+$MESS['AD_MENU_STATISTICS_DIAGRAM'] = 'Diagramos';
+$MESS['AD_MENU_STATISTICS_ALT_DIAGRAM'] = 'Banerių parodymų ir paspaudimų diagramos';
+$MESS['AD_MENU_BANNER_LIST_GRAPH'] = 'Baneriai';
+$MESS['AD_MENU_CONTRACT_LIST_GRAPH'] = 'Kontraktai';
+$MESS['AD_MENU_TYPE_LIST_GRAPH'] = 'Banerių tipai';
+$MESS['AD_MENU_BANNER_LIST_DIAGRAM'] = 'Baneriai';
+$MESS['AD_MENU_CONTRACT_LIST_DIAGRAM'] = 'Kontraktai';
+$MESS['AD_MENU_TYPE_LIST_DIAGRAM'] = 'Banerių tipai';
+$MESS['AD_MENU_STATISTICS'] = 'Diagramos';
+$MESS['AD_MENU_STATISTICS_ALT'] = 'Banerių diagramos';
+$MESS['AD_MENU_MAIN_TITLE'] = 'Reklamos valdymas';
+$MESS['AD_MENU_REPORTS'] = 'Ataskaitos';
+$MESS['AD_MENU_REPORTS_TITLE'] = 'Banerių ir kontraktų grafinės ataskaitos';
+$MESS['AD_MENU_BAN_GR'] = 'Banerių grafikai';
+$MESS['AD_MENU_BAN_CO'] = 'Kontraktų grafikai';
+$MESS['AD_MENU_BAN_CO_TITLE'] = 'Kontraktų grafikai';
+$MESS['AD_MENU_DIAG_BAN'] = 'Banerių diagramos';
+$MESS['AD_MENU_DIAG_CO'] = 'Kontraktų diagramos';
+$MESS['AD_MENU_DIAG_CO_TITLE'] = 'Kontraktų diagramos';
+?>

@@ -1,0 +1,5 @@
+<?
+$MESS["CRM_DEAL_INVOICE_STAT_PRESET_OVERALL_COUNT"] = "Sąskaitų skaičius";
+$MESS["CRM_DEAL_INVOICE_STAT_PRESET_OVERALL_SUM"] = "Išstatytų sąskaitų suma";
+$MESS["CRM_DEAL_INVOICE_STAT_PRESET_OVERALL_OWED_SUM"] = "Neišstatytų sąskaitų suma";
+?>

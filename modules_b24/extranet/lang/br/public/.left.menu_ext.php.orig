@@ -1,0 +1,8 @@
+<?
+$MESS["EXTRANET_LEFT_MENU_BLOG"] = "Conversas";
+$MESS["EXTRANET_LEFT_MENU_CALENDAR"] = "Calendário";
+$MESS["EXTRANET_LEFT_MENU_DISK"] = "Meu Drive";
+$MESS["EXTRANET_LEFT_MENU_LIVE_FEED"] = "Fluxo de Atividades";
+$MESS["EXTRANET_LEFT_MENU_PHOTO"] = "Fotos";
+$MESS["EXTRANET_LEFT_MENU_TASKS"] = "Tarefas";
+?>

@@ -1,0 +1,7 @@
+<?
+$MESS["LANDING_BLOCK_35_8_HEADER--CONTAINER"] = "Bloc";
+$MESS["LANDING_BLOCK_35_8_HEADER--ELEMENTS"] = "Articles";
+$MESS["LANDING_BLOCK_35_8_HEADER--LOGO"] = "Logo";
+$MESS["LANDING_BLOCK_35_8_HEADER--NAME"] = "En-tête avec logo à gauche et devise à droite";
+$MESS["LANDING_BLOCK_35_8_HEADER--SLOGAN"] = "Devise";
+?>

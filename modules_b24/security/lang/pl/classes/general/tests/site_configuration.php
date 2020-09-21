@@ -1,0 +1,35 @@
+<?
+$MESS["SECURITY_SITE_CHECKER_ADMIN_SECURITY_LEVEL"] = "Poziom bezpieczeństwa grupy użytkownika administratora nie jest podwyższony.";
+$MESS["SECURITY_SITE_CHECKER_ADMIN_SECURITY_LEVEL_DETAIL"] = "Zmniejszony poziom bezpieczeństwa może być wykorzystany przez atakującego.";
+$MESS["SECURITY_SITE_CHECKER_ADMIN_SECURITY_LEVEL_RECOMMENDATION"] = "Podniesienie poziomu bezpieczeństwa grupy użytkownika administratora";
+$MESS["SECURITY_SITE_CHECKER_DB_DEBUG"] = "Debugowanie zapytań SQL jest na (\$ DBDebug jest prawdą)";
+$MESS["SECURITY_SITE_CHECKER_DB_DEBUG_DETAIL"] = "debugowanie informacji SQL może ujawnić poufne informacje.";
+$MESS["SECURITY_SITE_CHECKER_DB_DEBUG_RECOMMENDATION"] = "Wyłącz poprzez ustawienie \$ DBDebug false.";
+$MESS["SECURITY_SITE_CHECKER_DB_EMPTY_PASS"] = "Hasło bazy danych jest pusta";
+$MESS["SECURITY_SITE_CHECKER_DB_EMPTY_PASS_DETAIL"] = "Puste hasło bazy danych jest jednym ze sposobów, aby włamać się do konta użytkownika z bazą danych.";
+$MESS["SECURITY_SITE_CHECKER_DB_EMPTY_PASS_RECOMMENDATION"] = "Ustaw hasło";
+$MESS["SECURITY_SITE_CHECKER_DB_MIN_LEN_PASS"] = "Hasło bazy danych jest krótsze niż 8 znaków.";
+$MESS["SECURITY_SITE_CHECKER_DB_MIN_LEN_PASS_DETAIL"] = "Hasło jest zbyt słabe. Twoje konto użytkownika bazy danych jest zagrożone.";
+$MESS["SECURITY_SITE_CHECKER_DB_MIN_LEN_PASS_RECOMMENDATION"] = "zrób dłuższe hasło";
+$MESS["SECURITY_SITE_CHECKER_DB_NO_DIT_PASS"] = "Hasło bazy danych nie zawierają numerów";
+$MESS["SECURITY_SITE_CHECKER_DB_NO_DIT_PASS_DETAIL"] = "Hasło jest zbyt słabe. Twoje konto użytkownika bazy danych jest zagrożone.";
+$MESS["SECURITY_SITE_CHECKER_DB_NO_DIT_PASS_RECOMMENDATION"] = "Dodać numery do hasła.";
+$MESS["SECURITY_SITE_CHECKER_DB_NO_SIGN_PASS"] = "Hasło bazy danych nie zawierają znaków interpunkcyjnych.";
+$MESS["SECURITY_SITE_CHECKER_DB_NO_SIGN_PASS_DETAIL"] = "Hasło jest zbyt słabe. Twoje konto użytkownika bazy danych jest zagrożone.";
+$MESS["SECURITY_SITE_CHECKER_DB_NO_SIGN_PASS_RECOMMENDATION"] = "Dodaj znaki interpunkcyjne do hasła.";
+$MESS["SECURITY_SITE_CHECKER_DB_SAME_REGISTER_PASS"] = "Hasło bazy danych zawiera znaki tylko w dolnych lub górnych przypadkach.";
+$MESS["SECURITY_SITE_CHECKER_DB_SAME_REGISTER_PASS_DETAIL"] = "Hasło jest zbyt słabe. Twoje konto użytkownika bazy danych jest zagrożone.";
+$MESS["SECURITY_SITE_CHECKER_DB_SAME_REGISTER_PASS_RECOMMENDATION"] = "Użyj dolnych i górnych znaków w haśle.";
+$MESS["SECURITY_SITE_CHECKER_ERROR_REPORTING_DETAIL"] = "Ostrzeżenia PHP mogą wyświetlać pełną ścieżkę do twojego projektu internetowego";
+$MESS["SECURITY_SITE_CHECKER_EXCEPTION_DEBUG"] = "Rozszerzone raportowanie błędów jest włączona.";
+$MESS["SECURITY_SITE_CHECKER_EXCEPTION_DEBUG_DETAIL"] = "Rozszerzone raportowanie błędów może ujawnić prywatne informacje o projekcie.";
+$MESS["SECURITY_SITE_CHECKER_EXCEPTION_DEBUG_RECOMMENDATION"] = "Wyłącz przedłużony tryb raportowania. Ustawienia.php.";
+$MESS["SECURITY_SITE_CHECKER_MODULES_VERSION"] = "Przestarzałe moduły są nadal w użytku.";
+$MESS["SECURITY_SITE_CHECKER_MODULES_VERSION_ARRITIONAL"] = "Aktualizacje są dostępne dla:<br>#MODULES#";
+$MESS["SECURITY_SITE_CHECKER_MODULES_VERSION_DETAIL"] = "dostępne są nowe wersje";
+$MESS["SECURITY_SITE_CHECKER_MODULES_VERSION_ERROR"] = "Nie można sprawdzić aktualizacji platformy";
+$MESS["SECURITY_SITE_CHECKER_MODULES_VERSION_ERROR_DETAIL"] = "Aktualizacja dla SiteUpdate może być dostępna lub twój okres aktualizacji wygasł.";
+$MESS["SECURITY_SITE_CHECKER_SiteConfigurationTest_NAME"] = "Test konfiguracji WWW";
+$MESS["SECURITY_SITE_CHECKER_WAF_OFF"] = "Filtr proaktywny jest wyłączony.";
+$MESS["SECURITY_SITE_CHECKER_WAF_OFF_DETAIL"] = "Wyłączony proaktywna na pewno nie pomoże twojej stronie internetowej.";
+?>

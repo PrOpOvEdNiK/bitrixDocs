@@ -1,0 +1,8 @@
+<?
+$MESS["BOT_TOKEN_ENTITY_ID_FIELD"] = "Pranešimo skelbti leidimo rakto ID";
+$MESS["BOT_TOKEN_ENTITY_TOKEN_FIELD"] = "Leidimo raktas";
+$MESS["BOT_TOKEN_ENTITY_DATE_CREATE_FIELD"] = "Sukūrimo data";
+$MESS["BOT_TOKEN_ENTITY_DATE_EXPIRE_FIELD"] = "Galiojimo pabaiga";
+$MESS["BOT_TOKEN_ENTITY_BOT_ID_FIELD"] = "Boto ID";
+$MESS["BOT_TOKEN_ENTITY_DIALOG_ID_FIELD"] = "Pokalbio ID";
+?>

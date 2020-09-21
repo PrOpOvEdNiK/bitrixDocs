@@ -1,0 +1,31 @@
+<?
+$MESS["RDB_CONNECT_ERROR"] = "Klaida. Nepavyko prisijungti prie duomenų bazės";
+$MESS["RDB_TABLE_NAME"] = "Lentelės pavadinimas";
+$MESS["RDB_ROWS_COUNT"] = "Įrašų kiekis";
+$MESS["RDB_TABLE_SIZE"] = "Įrašų dydis baitais";
+$MESS["RDB_CHECK_RESULT"] = "Patikrinimo rezultatas";
+$MESS["RDB_REPAIR_RESULT"] = "Atkūrimo rezultatas";
+$MESS["RDB_EXEC_TIME"] = "Užklausos vykdymo trukmė:";
+$MESS["RDB_SEC"] = " sek.";
+$MESS["RDB_DATABASE_ERROR"] = "Galima atkurti arba tikrinti tik MySQL dyomenų bazės lenteles";
+$MESS["RDB_CHECK_TABLES"] = "Patikrinti/ atkurti lenteles";
+$MESS["RDB_REPAIR_DATABASE"] = "Lentelių patikrinimas/ atkūrimas";
+$MESS["RDB_TIP_1"] = "Čia galite patikrinti bei atkurti duomenų bazės lenteles. Galima atkurti arba tikrinti tik MySQL dyomenų bazės MyISAM tipo lenteles .";
+$MESS["RDB_TIP_2"] = "Dėmesio!";
+$MESS["RDB_TIP_3"] = "Neatidarinėkite to pačio puslapio skirtinguose languose vienu metu, tai gali pakenkti duomenų bazei. Jei duomenų bazėje sauomas labai didelis kiekis duomenų, operacija gali užtrūkti!";
+$MESS["RDB_OPTIMIZE_TIP"] = "Čia galite analizuoti ir optimizuoti duomenų bazės lenteles. Tai leis padidinti duomenų bazės užklausos rezultatus.";
+$MESS["RDB_OPTIMIZE_WARNING_TITLE"] = "Dėmesio! ";
+$MESS["RDB_OPTIMIZE_WARNING_DETAILS"] = "Niekada neatidarykite kelis šio puslapio egzempliorius, kitaip galite pakenkti duomenų bazei. Ši operacija gali trukti labai ilgai, patartina ją atlikti, kai serverio apkrova bus minimali.";
+$MESS["RDB_OPTIMIZE_INIT"] = "Inicializavimas";
+$MESS["RDB_OPTIMIZE_ERROR"] = "Klaida!";
+$MESS["RDB_OPTIMIZE_TABLE_NOT_FOUND"] = "Nežinoma lentelė";
+$MESS["RDB_OPTIMIZE_DONE"] = "Atlikta";
+$MESS["RDB_OPTIMIZE_ALL_DONE"] = "Lentelės analizė ir optimizavimas baigtas.";
+$MESS["RDB_OPTIMIZE_PROGRESS"] = "#done# iš #todo#";
+$MESS["RDB_OPTIMIZE_CHECK_FIRST"] = "Aptikta blogai lentelė (#table_name#). Prašome prieš tęsdami atlikti lentelės patikrinimą ir atstatymą.";
+$MESS["RDB_OPTIMIZE_OPTIMIZE"] = "optimizavimas";
+$MESS["RDB_OPTIMIZE_ANALYZE"] = "analizė";
+$MESS["RDB_OPTIMIZE_BTN_START"] = "Optimizuoti";
+$MESS["RDB_OPTIMIZE_BTN_PAUSE"] = "Pauzė";
+$MESS["RDB_OPTIMIZE_BTN_CONTINUE"] = "Tęsti";
+?>

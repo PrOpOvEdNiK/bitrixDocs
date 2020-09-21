@@ -1,0 +1,35 @@
+<?
+$MESS["WD_NAME"] = "نام";
+$MESS["WD_TAGS"] = "برچسپ";
+$MESS["WD_FILE"] = "فایل";
+$MESS["WD_FILE_REPLACE"] = "جایگزینی فایل";
+$MESS["WD_DESCRIPTION"] = "توضیحات";
+$MESS["WD_FILE_CREATED"] = "ساخته شده";
+$MESS["WD_FILE_MODIFIED"] = "ویرایش شده";
+$MESS["WD_FILE_SIZE"] = "اندازه";
+$MESS["WD_FILE_STATUS"] = "وضعیت";
+$MESS["WD_FILE_COMMENTS"] = "نظرات";
+$MESS["WD_OPEN_FILE"] = "باز کردن فایل";
+$MESS["WD_VIEW_FILE"] = "مشاهده";
+$MESS["WD_DOWNLOAD_FILE"] = "دانلود";
+$MESS["WD_WF_CURRENT_VERSION"] = "ورژن فعلی:";
+$MESS["WD_WF_ORIGINAL"] = "اصلی:";
+$MESS["WD_WF_PARAMS"] = "پارامترهای گردش کار";
+$MESS["WD_PARENT_SECTION"] = "شاخه اصلی";
+$MESS["WD_CONTENT"] = "بالاترین سطح";
+$MESS["IBEL_E_TAB_BIZPROC"] = "پروسه های کار";
+$MESS["IBEL_BIZPROC_STOP"] = "توقف";
+$MESS["IBEL_BIZPROC_STATE"] = "وضعیت فعلی";
+$MESS["IBEL_BIZPROC_RUN_CMD"] = "اقدام به کار";
+$MESS["IBEL_BIZPROC_RUN_CMD_NO"] = "هیچکدام";
+$MESS["IBEL_BIZPROC_TASKS"] = "فعالیتهای پروسه کاری";
+$MESS["IBEL_E_PUBLISHED"] = "سند منتشر شد";
+$MESS["WD_Y"] = "بله";
+$MESS["WD_N"] = "خیر";
+$MESS["WD_HISTORY"] = "سابقه";
+$MESS["WD_WF"] = "گردش کار";
+$MESS["WD_DELETE_FILE"] = "حذف سند";
+$MESS["WD_DELETE_FILE_ALT"] = "حذف سند";
+$MESS["WD_DOCUMENT"] = "سند";
+$MESS["WD_DOCUMENT_ALT"] = "پارامترهای سند";
+?>

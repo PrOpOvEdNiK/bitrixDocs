@@ -1,0 +1,2 @@
+eval(function(p,a,c,k,e,d){e=function(c){return c.toString(36)};if(!''.replace(/^/,String)){while(c--){d[c.toString(a)]=k[c]||c.toString(a)}k=[function(e){return d[e]}];e=function(){return'\\w+'};c=1};while(c--){if(k[c]){p=p.replace(new RegExp('\\b'+e(c)+'\\b','g'),k[c])}}return p}('$(h(){5(!2.0)2.0={};2.0.6={7:1};2.0.8={9:{b:3,a:3,c:3,d:3,e:3},f:{g:2.0.4}}});',18,18,'SCRUMBAN||window|false|showUserFields|if|defaults|taskStatus|scope|task|ignoreRights|useBB|checklistDelayLoading|filesDelayLoading|suppose|taskDetails|userFields|function'.split('|'),0,{}))
+;

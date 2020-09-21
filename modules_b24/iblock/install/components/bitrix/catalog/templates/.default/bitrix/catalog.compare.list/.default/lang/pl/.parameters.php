@@ -1,0 +1,8 @@
+<?
+$MESS["CP_BCCL_TPL_PARAM_POSITION_BOTTOM_LEFT"] = "Poniżej Po Lewej";
+$MESS["CP_BCCL_TPL_PARAM_POSITION_BOTTOM_RIGHT"] = "Poniżej Po Prawej";
+$MESS["CP_BCCL_TPL_PARAM_POSITION_TOP_LEFT"] = "Na Górze Po Lewej";
+$MESS["CP_BCCL_TPL_PARAM_POSITION_TOP_RIGHT"] = "Na Górze Po Prawej";
+$MESS["CP_BCCL_TPL_PARAM_TITLE_POSITION"] = "Stanowisko";
+$MESS["CP_BCCL_TPL_PARAM_TITLE_POSITION_FIXED"] = "Wykres porównawczy powyżej strony";
+?>

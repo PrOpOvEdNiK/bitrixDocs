@@ -1,0 +1,34 @@
+<?
+$MESS["CAT_1C_CREATE"] = "Sukurti, jei privaloma";
+$MESS["CAT_1C_CURRENT"] = "Dabartinis";
+$MESS["CAT_1C_NONE"] = "palikti";
+$MESS["CAT_1C_DEACTIVATE"] = "išjungti";
+$MESS["CAT_1C_DELETE"] = "pašalinti";
+$MESS["CAT_1C_IBLOCK_TYPE"] = "Informacijos bloko tipas";
+$MESS["CAT_1C_ELEMENT_ACTION_2"] = "Veiksmas, kurį reikia atlikti su esamais objektais, nerastas importuojamame faile";
+$MESS["CAT_1C_SECTION_ACTION_2"] = "Veiksmas, kurį reikia atlikti su esamomis grupėmis, nerastas importuojamame faile";
+$MESS["CAT_1C_GROUP_PERMISSIONS"] = "Naudotojų grupės, kurioms leidžiama įkelti";
+$MESS["CAT_1C_SITE_LIST"] = "Susieti naujus informacinius blokus su svetainėmis";
+$MESS["CAT_1C_INTERVAL"] = "Žingsnio trukmė, sec. (0 - eksportuoti per vieną žingsnį)";
+$MESS["CAT_1C_FILE_SIZE_LIMIT"] = "Įkelto failo gabaliukų dydis, baitai";
+$MESS["CAT_1C_USE_CRC"] = "Naudokite elementų kontrolinę sumą, norėdami optimizuoti katalogo atnaujinimus";
+$MESS["CAT_1C_PICTURE"] = "Peržiūros vaizdas";
+$MESS["CAT_1C_GENERATE_PREVIEW"] = "Generuoti peržiūros vaizdą";
+$MESS["CAT_1C_PREVIEW_WIDTH"] = "Peržiūros vaizdo maksimalus plotis";
+$MESS["CAT_1C_PREVIEW_HEIGHT"] = "Peržiūros vaizdo maksimalus aukštis";
+$MESS["CAT_1C_USE_ZIP"] = "Naudoti ZIP kompresiją, jei yra";
+$MESS["CAT_1C_DETAIL_RESIZE"] = "Pritaikyti detalųjį vaizdą";
+$MESS["CAT_1C_DETAIL_WIDTH"] = "Detaliojo vaizdo maksimalus plotis";
+$MESS["CAT_1C_DETAIL_HEIGHT"] = "Detaliojo vaizdo maksimalus aukštis";
+$MESS["CAT_1C_USE_OFFERS_2"] = "Importuoti SKU (savybes) į atskirą informacinį bloką";
+$MESS["CAT_1C_FORCE_OFFERS_2"] = "Išsaugoti kainas tik į SKU informacijos bloką";
+$MESS["CAT_1C_USE_IBLOCK_TYPE_ID"] = "Eksportuoti atsižvelgiant į informacijos bloko tipą";
+$MESS["CAT_1C_USE_IBLOCK_PICTURE_SETTINGS"] = "Naudoti informacijos bloko nustatymus vaizdui apdoroti";
+$MESS["CAT_1C_TRANSLIT_ON_ADD_2"] = "Išvesti simbolinį kodą iš produkto ar produktų grupės pavadinimo (naudoti transliteraciją, jei reikia)";
+$MESS["CAT_1C_TRANSLIT_ON_UPDATE_2"] = "Išvesti simbolinį kodą iš produkto ar produktų grupės pavadinimo atnaujinant (naudoti transliteraciją, jei reikia)";
+$MESS["CAT_1C_TRANSLIT_REPLACE_CHAR"] = "Pakeisti neabėcėlinius simbolius su";
+$MESS["CAT_1C_SKIP_ROOT_SECTION_2"] = "Neimportuoti vienišų šaknies grupės mazgų";
+$MESS["CAT_1C_EXTENDED_SETTINGS"] = "Išplėsti parametrai";
+$MESS["CAT_1C_DISABLE_CHANGE_PRICE_NAME"] = "Nekeiskite kainos tipo pavadinimą, jei naudojamas išorinis ID (XML_ID)";
+$MESS["CAT_1C_SETTINGS_SAVE_DENIED"] = "Jums reikia turėti branduolio (pagrindinio) modulio \"Redaguoti PHP kodą\" prieigos leidimą (edit_php), kad galėtumėte redaguoti parametrus šiame skirtuke.";
+?>

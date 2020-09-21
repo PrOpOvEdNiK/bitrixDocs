@@ -1,0 +1,3 @@
+<?
+$MESS["STATWIZ_DESCR_COPYRIGHT"] = "Bitrix";
+?>

@@ -1,0 +1,31 @@
+<?
+$MESS['STAT_RECORDS_LIST'] = '';
+$MESS['STAT_F_SESSION'] = 'Sesijos ID:';
+$MESS['STAT_F_ID'] = 'ID:';
+$MESS['STAT_F_FROM'] = '';
+$MESS['STAT_F_TO'] = '';
+$MESS['STAT_F_GROUP'] = '';
+$MESS['STAT_BY_SERVER'] = '';
+$MESS['STAT_BY_LINK'] = '';
+$MESS['STAT_NO_GROUP'] = '';
+$MESS['STAT_SESSION'] = 'Sesija';
+$MESS['STAT_URL_FROM'] = '';
+$MESS['STAT_QUANTITY'] = 'Kiekis';
+$MESS['STAT_DATE_HIT'] = 'Data';
+$MESS['STAT_PAGE_TO'] = '';
+$MESS['STAT_REF_PAGES'] = 'Įrašai';
+$MESS['STAT_PERCENT'] = '%';
+$MESS['STAT_AVERAGE_HITS'] = '';
+$MESS['STAT_GO_LINK'] = '';
+$MESS['STAT_FL_SID'] = 'Sesija';
+$MESS['STAT_FL_URL'] = '';
+$MESS['STAT_FL_PRD'] = 'Laikotarpis';
+$MESS['STAT_FL_LGC'] = '';
+$MESS['STAT_EDIT_SITE'] = '';
+$MESS['STAT_SESS_OPEN'] = 'Pereiti prie sesijų sąrašo';
+$MESS['STAT_F_PROTOCOL'] = '';
+$MESS['STAT_F_DOMAIN'] = '';
+$MESS['STAT_F_PAGE'] = 'Puslapis';
+$MESS['STAT_NUM'] = 'Numeris';
+$MESS['STAT_GRAPH'] = 'Grafikas';
+?>

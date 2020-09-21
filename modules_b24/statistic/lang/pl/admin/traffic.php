@@ -1,0 +1,37 @@
+<?
+$MESS["STAT_DATE"] = "Data";
+$MESS["STAT_EVENTS"] = "Wydarzenia";
+$MESS["STAT_EVENTS_2"] = "Wydarzenia";
+$MESS["STAT_GRAPH_BY_DATES"] = "daty";
+$MESS["STAT_GRAPH_BY_HOURS"] = "godziny";
+$MESS["STAT_GRAPH_BY_MONTHS"] = "miesiące";
+$MESS["STAT_GRAPH_BY_WEEKDAYS"] = "dni tygodnia";
+$MESS["STAT_GROUPED"] = "Zgrupowane przez";
+$MESS["STAT_GROUP_BY"] = "Grupy według";
+$MESS["STAT_GUESTS"] = "Odwiedzający";
+$MESS["STAT_GUESTS_2"] = "Odwiedzający";
+$MESS["STAT_HITS"] = "Trafienia";
+$MESS["STAT_HITS_2"] = "Trafienia";
+$MESS["STAT_HOUR"] = "godzina(y)";
+$MESS["STAT_MONTH"] = "Miesiąc";
+$MESS["STAT_NEW_GUESTS_2"] = "nowi goście";
+$MESS["STAT_NEW_GUESTS_S"] = "Nowe";
+$MESS["STAT_PAGES_DATES"] = "dni";
+$MESS["STAT_PAGES_HOURS"] = "godziny";
+$MESS["STAT_PAGES_MONTHS"] = "miesiące";
+$MESS["STAT_PAGES_WEEKDAYS"] = "Dni tygodnia";
+$MESS["STAT_PAGE_TITLE"] = "Ruch na stronie\"";
+$MESS["STAT_PERIOD"] = "Okres";
+$MESS["STAT_SESSIONS"] = "Sesje";
+$MESS["STAT_SESSIONS_2"] = "Sesje";
+$MESS["STAT_SHOW"] = "Wykres wyświetli";
+$MESS["STAT_TRAFFIC_DATE_GRAPH_TITLE"] = "Wykres ruchu według dat";
+$MESS["STAT_TRAFFIC_DATE_TABLE_TITLE"] = "Ruch na stronie tabela według dat";
+$MESS["STAT_TRAFFIC_HOUR_GRAPH_TITLE"] = "Wykres ruchu według godzin";
+$MESS["STAT_TRAFFIC_HOUR_TABLE_TITLE"] = "Ruch na stronie tabela według godzin";
+$MESS["STAT_TRAFFIC_MONTH_GRAPH_TITLE"] = "Wykres ruchu według miesięcy";
+$MESS["STAT_TRAFFIC_MONTH_TABLE_TITLE"] = "Ruch na stronie tabela według miesięcy";
+$MESS["STAT_TRAFFIC_WEEKDAY_GRAPH_TITLE"] = "Wykres ruchu według dni tygodnia";
+$MESS["STAT_TRAFFIC_WEEKDAY_TABLE_TITLE"] = "Ruch na stronie tabela według dni tygodnia";
+$MESS["STAT_WEEKDAY"] = "Dzień tygodnia";
+?>

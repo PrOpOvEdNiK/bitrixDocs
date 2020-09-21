@@ -1,0 +1,3 @@
+<?
+$MESS["BLOG_EMPTY_TITLE_PLACEHOLDER"] = "Obraz";
+?>

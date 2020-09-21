@@ -1,0 +1,32 @@
+<?
+$MESS["VI_CONFIG_BUY"] = "Alugar número de telefone";
+$MESS["VI_CONFIG_BUY_DESC_1"] = "rotear chamadas entre funcionários";
+$MESS["VI_CONFIG_BUY_DESC_2"] = "gravar chamadas";
+$MESS["VI_CONFIG_BUY_DESC_3"] = "integração total de CRM";
+$MESS["VI_CONFIG_BUY_DESC_4"] = "preços preços competitivos";
+$MESS["VI_CONFIG_BUY_DESC_5"] = "números de telefone em mais de 50 países";
+$MESS["VI_CONFIG_LINK"] = "Vincular ao seu número";
+$MESS["VI_CONFIG_LINK_DESC_1"] = "apenas chamadas realizadas";
+$MESS["VI_CONFIG_LINK_DESC_2"] = "não comprar número de telefone no Bitrix24";
+$MESS["VI_CONFIG_LINK_DESC_3"] = "registrar chamada telefônica no perfil do cliente";
+$MESS["VI_CONFIG_LINK_DESC_4"] = "gravar chamadas realizadas";
+$MESS["VI_CONFIG_LINK_DESC_5"] = "oferece suporte a retornos de chamada";
+$MESS["VI_CONFIG_NOTICE_NEW"] = "Selecione o padrão de número de chamada realizada aqui: \"#LINK_CONFIG#\" Definir números de telefone de ramal aqui: \"#LINK_USERS#\"";
+$MESS["VI_CONFIG_OWN"] = "Conecte seu PBX";
+$MESS["VI_CONFIG_OWN_DESC_1"] = "rotear chamadas entre funcionários";
+$MESS["VI_CONFIG_OWN_DESC_2"] = "gravar chamadas";
+$MESS["VI_CONFIG_OWN_DESC_3"] = "integração total de CRM";
+$MESS["VI_CONFIG_OWN_DESC_4"] = "pague seu provedor de telefonia";
+$MESS["VI_CONFIG_PAGE_CONFIG"] = "Outras Configurações";
+$MESS["VI_CONFIG_PAGE_CONFIG_USERS"] = "Usuários de Telefonia";
+$MESS["VI_CONFIG_PARTNERS_TITLE"] = "Telefonia de Parceiro";
+$MESS["VI_CONFIG_RENT"] = "Assinar um número";
+$MESS["VI_CONFIG_RENT_2_DESC"] = "Conecte um número de telefone, faça ligações e receba chamadas no Bitrix24. Desfrute da comodidade, pague menos!";
+$MESS["VI_CONFIG_RENT_DESC"] = "Assinar um número conosco e aceite chamadas diretamente dentro Bitrix24. É fácil, conveniente e ajuda a sua empresa!";
+$MESS["VI_CONFIG_SET"] = "Vincular ao seu número";
+$MESS["VI_CONFIG_SET_ACTIVE"] = "Vinculado";
+$MESS["VI_CONFIG_SET_OTHER"] = "Conectar via aplicativo marketplace";
+$MESS["VI_CONFIG_SIP"] = "Conectar SIP PBX";
+$MESS["VI_CONFIG_SIP_DESC"] = "Você tem o seu próprio PABX? Vincule-o e ligue diretamente do Bitrix24.";
+$MESS["VI_CONFIG_WELCOME_MESSAGE"] = "Faça chamadas para os seus clientes de Bitrix24 a preços acessíveis. Assine número para receber chamadas. Grave conversas, adcione eventos das chamada diretamente para o CRM, crie contatos a partir das chamadas além de ter acesso a relatórios de chamadas diretamente no Bitrix24.";
+?>

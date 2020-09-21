@@ -1,0 +1,5 @@
+<?
+$MESS["CRM_DEAL_WGT_DATA_EMPLOYEE_1"] = "Pracownik 1";
+$MESS["CRM_DEAL_WGT_DATA_EMPLOYEE_2"] = "Pracownik 2";
+$MESS["CRM_DEAL_WGT_DATA_EMPLOYEE_3"] = "Pracownik 3";
+?>

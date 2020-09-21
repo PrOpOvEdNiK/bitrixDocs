@@ -1,0 +1,4 @@
+<?
+$MESS["LANDING_SOURCE_ACTION_TITLE_DETAIL"] = "Strona szczegółów";
+$MESS["LANDING_SOURCE_ACTION_TITLE_LINK"] = "Odnośnik";
+?>

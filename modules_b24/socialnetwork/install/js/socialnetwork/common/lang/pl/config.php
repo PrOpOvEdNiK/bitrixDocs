@@ -1,0 +1,29 @@
+<?
+$MESS["SONET_EXT_COMMON_AJAX_ERROR"] = "Błąd przetwarzania żądania.";
+$MESS["SONET_EXT_COMMON_B24_SONET_GROUP_FEATURES_TEXT"] = "<p>Prawa dostępu pozwalają w łatwy i wygodny sposób usprawnić przepływ pracy w grupie roboczej. Umożliwiają wybór narzędzi, do których pracownicy mają lub nie mają dostępu.<p>Opcja ta jest dostępna tylko w głównych planach.";
+$MESS["SONET_EXT_COMMON_B24_SONET_GROUP_FEATURES_TITLE"] = "Uzyskaj więcej opcji dla swojego Bitrix24";
+$MESS["SONET_EXT_COMMON_GROUP_MENU_DELETE"] = "Usuń grupę roboczą";
+$MESS["SONET_EXT_COMMON_GROUP_MENU_DELETE_PROJECT"] = "Usuń projekt";
+$MESS["SONET_EXT_COMMON_GROUP_MENU_EDIT"] = "Edytuj grupę roboczą";
+$MESS["SONET_EXT_COMMON_GROUP_MENU_EDIT_PROJECT"] = "Edytuj projekt";
+$MESS["SONET_EXT_COMMON_GROUP_MENU_EXIT"] = "Opuść";
+$MESS["SONET_EXT_COMMON_GROUP_MENU_EXIT_PROJECT"] = "Opuść projekt";
+$MESS["SONET_EXT_COMMON_GROUP_MENU_FAVORITES_ADD"] = "Dodaj do ulubionych";
+$MESS["SONET_EXT_COMMON_GROUP_MENU_FAVORITES_REMOVE"] = "Usuń z ulubionych";
+$MESS["SONET_EXT_COMMON_GROUP_MENU_FEAT"] = "Uprawnienia dostępu";
+$MESS["SONET_EXT_COMMON_GROUP_MENU_JOIN"] = "Dołącz do grupy roboczej";
+$MESS["SONET_EXT_COMMON_GROUP_MENU_JOIN_PROJECT"] = "Dołącz do projektu";
+$MESS["SONET_EXT_COMMON_GROUP_MENU_MEMBERS_EDIT"] = "Edytuj członków";
+$MESS["SONET_EXT_COMMON_GROUP_MENU_MEMBERS_VIEW"] = "Członkowie";
+$MESS["SONET_EXT_COMMON_GROUP_MENU_REQU"] = "Zaproś do grupy roboczej";
+$MESS["SONET_EXT_COMMON_GROUP_MENU_REQU_PROJECT"] = "Zaproś do projektu";
+$MESS["SONET_EXT_COMMON_GROUP_MENU_REQ_IN"] = "Żądania dołączenia";
+$MESS["SONET_EXT_COMMON_GROUP_MENU_REQ_OUT"] = "Zaproszenia do grup roboczych";
+$MESS["SONET_EXT_COMMON_GROUP_MENU_REQ_OUT_PROJECT"] = "Zaproszenia do projektów";
+$MESS["SONET_EXT_COMMON_RECALL_JOIN_POPUP_BUTTON"] = "Odwołaj żądanie dołączenia do grupy roboczej";
+$MESS["SONET_EXT_COMMON_RECALL_JOIN_POPUP_BUTTON_PROJECT"] = "Odwołaj żądanie dołączenia do projektu";
+$MESS["SONET_EXT_COMMON_RECALL_JOIN_POPUP_TEXT"] = "Twoja żądanie dołączenia do grupy roboczej zostało przesłane. Zobaczysz grupę roboczą na liście swoich projektów i grup roboczych, gdy administracja zatwierdzi żądanie.";
+$MESS["SONET_EXT_COMMON_RECALL_JOIN_POPUP_TEXT_PROJECT"] = "Twoja żądanie dołączenia do projektu zostało przesłane. Zobaczysz projekt na liście swoich projektów i grup roboczych, gdy administracja zatwierdzi żądanie.";
+$MESS["SONET_EXT_COMMON_RECALL_JOIN_POPUP_TITLE"] = "Ostrzeżenie";
+$MESS["SONET_EXT_COMMON_WAIT"] = "Proszę czekać&hellip;";
+?>

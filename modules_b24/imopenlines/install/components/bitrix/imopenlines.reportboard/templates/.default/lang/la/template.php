@@ -1,0 +1,4 @@
+<?
+$MESS["IMOPENLINES_REPORT_PAGE_LIMITATION_POPUP_TEXT_1"] = "Obtenga acceso a las funciones avanzadas de Bitrix24";
+$MESS["IMOPENLINES_REPORT_PAGE_LIMITATION_POPUP_TEXT_2_NEW"] = "Los informes de los Canales abiertos están diseñados para ayudarle a mejorar el servicio y la experiencia del cliente. Nuestros paneles de control presentan toda la información esencial en un solo sitio: cuáles agentes son más eficientes, qué canales de comunicación son los más demandados, qué tan satisfechos están sus clientes, tiempo de respuesta promedio, hora más ocupada del día, etc. También puede seleccionar diferentes tipos de informes: números absolutos, tablas, gráficas, histogramas y otros.";
+?>

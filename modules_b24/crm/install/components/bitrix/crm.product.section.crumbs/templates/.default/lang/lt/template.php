@@ -1,0 +1,4 @@
+<?
+$MESS["CRM_JS_STATUS_ACTION_SUCCESS"] = "Sėkmė";
+$MESS["CRM_JS_STATUS_ACTION_ERROR"] = "Įvyko klaida.";
+?>

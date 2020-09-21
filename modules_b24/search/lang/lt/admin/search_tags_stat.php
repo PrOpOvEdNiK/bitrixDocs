@@ -1,0 +1,12 @@
+<?
+$MESS["SEARCH_TAGSTAT_TITLE"] = "Paieškos frazių statistiką";
+$MESS["SEARCH_TAGSTAT_ID"] = "ID";
+$MESS["SEARCH_TAGSTAT_DATE"] = "Data";
+$MESS["SEARCH_TAGSTAT_SITE_ID"] = "Svetainė";
+$MESS["SEARCH_TAGSTAT_SITE"] = "(svetainė)";
+$MESS["SEARCH_TAGSTAT_TAGS"] = "Žymės";
+$MESS["SEARCH_TAGSTAT_STAT_SESS_ID"] = "Sesijos ID";
+$MESS["SEARCH_TAGSTAT_URL_TO"] = "Kur atėjo";
+$MESS["SEARCH_TAGSTAT_404"] = "(404 klaida)";
+$MESS["SEARCH_TAGSTAT_COUNT"] = "Kiekis";
+?>

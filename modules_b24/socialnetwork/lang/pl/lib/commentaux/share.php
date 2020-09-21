@@ -1,0 +1,5 @@
+<?
+$MESS["SONET_COMMENTAUX_SHARE_HIDDEN"] = "Ukryty odbiorca";
+$MESS["SONET_COMMENTAUX_SHARE_TEXT"] = "Współdzielone z: #SHARE_LIST#";
+$MESS["SONET_COMMENTAUX_SHARE_TEXT_1"] = "Współdzielone z: #SHARE_LIST#";
+?>

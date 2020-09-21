@@ -1,0 +1,31 @@
+<?
+$MESS["INTR_MAIL_AJAX_ERROR"] = "Erreur lors du traitement de la requête.";
+$MESS["INTR_MAIL_AUTH"] = "Erreur d'autorisation";
+$MESS["INTR_MAIL_B24_PAGE_TITLE"] = "Bitrix24.Messagerie";
+$MESS["INTR_MAIL_CONTROLLER_INVALID"] = "Service indisponible.";
+$MESS["INTR_MAIL_CSRF"] = "Erreur de sécurité au cours d'envoi de la forme. Rechargez la page et essayez encore une fois.";
+$MESS["INTR_MAIL_DOMAIN_ICON"] = "b24mail-ru.png";
+$MESS["INTR_MAIL_DOMAIN_PAGE_TITLE"] = "Ajouter un domaine de messagerie";
+$MESS["INTR_MAIL_FORM_ERROR"] = "Erreur lors du traitement du formulaire";
+$MESS["INTR_MAIL_IMAP_AUTH_ERR_EXT"] = "Erreur d'authentification. Veuillez vérifier que l'identifiant et le mot de passe sont corrects.<br>Notez que si vous utilisez les mots de passe de l'application et si la double authentification est activée, vous devez utiliser un mot de passe d'intégration spécial.";
+$MESS["INTR_MAIL_IMAP_DIRS"] = "Sélectionnez les dossiers à synchroniser";
+$MESS["INTR_MAIL_IMAP_OAUTH_ACC"] = "Erreur lors de l'obtention des données de boîtes mail";
+$MESS["INTR_MAIL_INP_DOMAINTOKEN_BAD"] = "Le jeton ne correspond pas au domaine.";
+$MESS["INTR_MAIL_INP_DOMAIN_EMPTY"] = "Champ 'nom de domaine' non renseigné";
+$MESS["INTR_MAIL_INP_DOMAIN_REMOVE"] = "Le domaine est bien déconnecté.";
+$MESS["INTR_MAIL_INP_DOMAIN_WAIT"] = "L'achèvement du rattachement du domaine à la Messagerie Yandex est en cours";
+$MESS["INTR_MAIL_INP_EMAIL_BAD"] = "invalid e-mail";
+$MESS["INTR_MAIL_INP_PASSWORD2_BAD"] = "La validation du mot de passe ne coïncide pas avec le mot de passe.";
+$MESS["INTR_MAIL_INP_TOKEN_EMPTY"] = "Champ 'jeton' non renseigné";
+$MESS["INTR_MAIL_MAILBOX_OCCUPIED"] = "La boîte est utilisée par un autre utilisateur.";
+$MESS["INTR_MAIL_MANAGE_CHANGE"] = "Éditer";
+$MESS["INTR_MAIL_MANAGE_CREATE"] = "Ajouter";
+$MESS["INTR_MAIL_MANAGE_DELETE"] = "Eliminer la boîte postale";
+$MESS["INTR_MAIL_MANAGE_PAGE_TITLE"] = "Gestion des boîtes à lettres";
+$MESS["INTR_MAIL_MANAGE_PASSWORD"] = "Aller vers le formulaire pour changer le mot de passe";
+$MESS["INTR_MAIL_MAX_AGE_ERROR"] = "Veuillez préciser une intervale de synchronisation.";
+$MESS["INTR_MAIL_SAVE_ERROR"] = "Erreur de la sauvegarde des données";
+$MESS["INTR_MAIL_UNAVAILABLE"] = "Les services postaux ne sont pas disponibles. Contactez l'administrateur du portail.";
+$MESS["MAIL_MODULE_NOT_INSTALLED"] = "Module E-mail non installé.";
+$MESS["NTR_MAIL_PAGE_TITLE"] = "liste de boîtes aux lettres";
+?>

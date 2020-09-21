@@ -1,0 +1,7 @@
+<<<<<<< mine
+<?
+$MESS["VI_PAGE_STAT_DETAIL"] = "Informações de chamada";
+?>=======
+<?
+$MESS["VI_PAGE_STAT_DETAIL"] = "Informações de Chamada";
+?>>>>>>>> theirs

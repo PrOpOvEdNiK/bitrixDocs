@@ -1,0 +1,37 @@
+<?
+$MESS["EC_IBLOCK_MODULE_NOT_INSTALLED"] = "Le module des blocs d'informations n'a pas été installé.";
+$MESS["EC_INTRANET_MODULE_NOT_INSTALLED"] = "Le module 'Intranet' n'a pas été installé.";
+$MESS["INAF_F_DESCRIPTION"] = "Description";
+$MESS["INAF_F_FLOOR"] = "Etage";
+$MESS["INAF_F_ID"] = "ID";
+$MESS["INAF_F_NAME"] = "Dénomination";
+$MESS["INAF_F_PHONE"] = "Numéro de téléphone";
+$MESS["INAF_F_PLACE"] = "Nombre de places";
+$MESS["INAF_ITEM_NOT_FOUND"] = "La réservation n'est pas trouvée";
+$MESS["INAF_MEETING_NOT_FOUND"] = "Une salle de réunion n'est pas retrouvée.";
+$MESS["INTASK_C29_CONFLICT"] = "Lasalle de conférences est occupée dans la période du #TIME1# au #TIME2# : #RES#";
+$MESS["INTASK_C29_EMPTY_DATE"] = "La date de réservation n'est pas indiquée.";
+$MESS["INTASK_C29_EMPTY_DURATION"] = "La durée de la rencontre n'est pas indiquée.";
+$MESS["INTASK_C29_EMPTY_NAME"] = "La dénomination du rendez-vous n'est pas indiquée.";
+$MESS["INTASK_C29_EMPTY_TIME"] = "Le temps du commencement de la rencontre n'est pas indiqué.";
+$MESS["INTASK_C29_HM"] = "heures : minutes";
+$MESS["INTASK_C29_NEED_AUTH"] = "Pour réserver la salle de réunion vous devez vous autoriser.";
+$MESS["INTASK_C29_NO_RPERMS"] = "Vous n'avez pas de droits pour réserver une salle de réunion vidéo.";
+$MESS["INTASK_C29_NO_RPERMS_MODIFY"] = "Vous ne disposez pas de droits requis pour modifier cette réservation";
+$MESS["INTASK_C29_PERIOD_TYPE"] = "Type de la période";
+$MESS["INTASK_C29_UF_PERSONS"] = "Personnes";
+$MESS["INTASK_C29_UF_PREPARE_ROOM"] = "Préparation de la chambre";
+$MESS["INTASK_C29_UF_RES_TYPE"] = "Type de rencontre";
+$MESS["INTASK_C29_UF_RES_TYPEA"] = "Conférence";
+$MESS["INTASK_C29_UF_RES_TYPEB"] = "Présentation";
+$MESS["INTASK_C29_UF_RES_TYPEC"] = "Négociations";
+$MESS["INTASK_C29_UF_RES_TYPED"] = "Autre";
+$MESS["INTASK_C29_WRONG_DATE"] = "La date de la mise en réserve est indiquée incorrectement. Le format correct #FORMAT#";
+$MESS["INTASK_C29_WRONG_DURATION"] = "La durée de la rencontre n'est pas correctement indiquée.";
+$MESS["INTASK_C29_WRONG_REG_DATE"] = "La date de fin de renouvellement n'est pas valide. Le format correct est #FORMAT#";
+$MESS["INTASK_C29_WRONG_TIME"] = "Le temps du début de la rencontre n'est pas indiqué correctement. Le format correct est #FORMAT#";
+$MESS["INTASK_C36_PAGE_TITLE"] = "Points de négociations";
+$MESS["INTASK_C36_PAGE_TITLE1"] = "Points de négociations";
+$MESS["INTR_IRMR_NAME_TEMPLATE_DEFAULT"] = "#NOBR##NAME# #LAST_NAME##/NOBR#";
+$MESS["INTS_NO_IBLOCK_PERMS"] = "Vous n'avez pas la permission d'afficher le bloc d'information de la salle de réunion.";
+?>

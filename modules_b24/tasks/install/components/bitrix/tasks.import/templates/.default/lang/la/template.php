@@ -1,0 +1,33 @@
+<?
+$MESS["TASKS_IMPORT_BUTTONS_BACK"] = "Volver";
+$MESS["TASKS_IMPORT_BUTTONS_CANCEL"] = "Cancelar";
+$MESS["TASKS_IMPORT_BUTTONS_DONE"] = "Listo";
+$MESS["TASKS_IMPORT_BUTTONS_NEW"] = "Importar otro archivo";
+$MESS["TASKS_IMPORT_BUTTONS_NEXT"] = "Siguiente";
+$MESS["TASKS_IMPORT_BUTTONS_STOP"] = "Detener";
+$MESS["TASKS_IMPORT_FIELDS_DEFAULT_ORIGINATOR"] = "Autor predeterminado de la tarea";
+$MESS["TASKS_IMPORT_FIELDS_DEFAULT_RESPONSIBLE"] = "Persona responsable predeterminada";
+$MESS["TASKS_IMPORT_FIELDS_FILE_ENCODING"] = "Codificación del archivo de datos";
+$MESS["TASKS_IMPORT_FIELDS_FILE_SEPARATOR"] = "Separador de columna";
+$MESS["TASKS_IMPORT_FIELDS_FILE_TEMPLATE"] = "Plantilla de archivo";
+$MESS["TASKS_IMPORT_FIELDS_FILE_TEMPLATE_DOWNLOAD"] = "Descargar";
+$MESS["TASKS_IMPORT_FIELDS_HEADERS_IN_FIRST_ROW"] = "La primera fila es un encabezado";
+$MESS["TASKS_IMPORT_FIELDS_IMPORT_ERROR_IMPORTS"] = "Errores";
+$MESS["TASKS_IMPORT_FIELDS_IMPORT_FILE"] = "Archivo de datos (formato CSV)";
+$MESS["TASKS_IMPORT_FIELDS_IMPORT_FILE_CHOOSE"] = "Seleccionar";
+$MESS["TASKS_IMPORT_FIELDS_IMPORT_PROCESSED_TASKS_COUNT"] = "Tareas procesadas";
+$MESS["TASKS_IMPORT_FIELDS_IMPORT_PROGRESS"] = "Importar progreso";
+$MESS["TASKS_IMPORT_FIELDS_IMPORT_STOP"] = "Detener";
+$MESS["TASKS_IMPORT_FIELDS_IMPORT_SUCCESSFUL_IMPORTS"] = "Importado con éxito";
+$MESS["TASKS_IMPORT_FIELDS_IMPORT_TOTAL_TASKS_COUNT"] = "Tarea total para importar";
+$MESS["TASKS_IMPORT_FIELDS_NAME_FORMAT"] = "Formato de nombre";
+$MESS["TASKS_IMPORT_FIELDS_REQUIRED_FIELDS"] = "Los siguientes campos son necesarios para que el procedimiento de importación tenga éxito:";
+$MESS["TASKS_IMPORT_FIELDS_SECTION_FILE_FORMAT"] = "Formato de archivo";
+$MESS["TASKS_IMPORT_FIELDS_SECTION_FILE_TEMPLATE"] = "Importar plantilla de archivo";
+$MESS["TASKS_IMPORT_FIELDS_SECTION_IMPORT_DATA_EXAMPLE"] = "Ejemplo de datos de importación";
+$MESS["TASKS_IMPORT_FIELDS_SECTION_IMPORT_PARAMETERS"] = "Editar la configuración de importación";
+$MESS["TASKS_IMPORT_FIELDS_SECTION_IMPORT_RESULTS"] = "Resultado de importación";
+$MESS["TASKS_IMPORT_FIELDS_SECTION_MATCHING_FIELDS"] = "Configurar mapeo de campo";
+$MESS["TASKS_IMPORT_FIELDS_SKIP_EMPTY_COLUMNS"] = "Saltar columnas vacías";
+$MESS["TASKS_IMPORT_FORM_TITLE"] = "Importar Tareas";
+?>

@@ -1,0 +1,9 @@
+<?
+$MESS["INTASK_C31T_SEARCH"] = "جستجو";
+$MESS["INTASK_C31T_FROM"] = "از";
+$MESS["INTASK_C31T_TO"] = "تا";
+$MESS["INTASK_C31T_STIME"] = "زمان";
+$MESS["INTASK_C31T_FFLOOR"] = "طبقه";
+$MESS["INTASK_C31T_FPLACE"] = "صندلی ها";
+$MESS["INTASK_C31T_FRESERVE"] = "رزرو";
+?>

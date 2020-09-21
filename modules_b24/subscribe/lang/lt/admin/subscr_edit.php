@@ -1,0 +1,30 @@
+<?
+$MESS['subscr_title_edit'] = 'Redaguoti adresą #';
+$MESS['subscr_title_add'] = 'Pridėti adresą';
+$MESS['subscr_list'] = 'Adresų sąrašas';
+$MESS['subscr_conf'] = 'Prenumerata patvirtinta:';
+$MESS['subscr_conf_code'] = 'Prenumeratos patvirtinimo kodas:';
+$MESS['subscr_date_conf'] = 'Patvirtinimo kodo generacijos data:';
+$MESS['subscr_user'] = 'Naudotojas (ID):';
+$MESS['subscr_active'] = 'Prenumerata aktyvuota:';
+$MESS['subscr_send_conf'] = 'Siųsti prenumeratoriui patvirtinimo kodą keičiant (pridedant) adresą:';
+$MESS['subscr_rub'] = 'Naujienlaiškių kategorijos:';
+$MESS['subscr_fmt'] = 'Formatas:';
+$MESS['subscr_fmt_text'] = 'Tekstas';
+$MESS['subscr_date_add'] = 'Pridėjimo data:';
+$MESS['subscr_date_upd'] = 'Atnaujinimo data:';
+$MESS['subscr_anonym'] = 'Anonimus prenumeratorius:';
+$MESS['subscr_mnu_add'] = 'Pridėti naują prenumeratorių';
+$MESS['subscr_mnu_del'] = 'Šalinti prenumeratorių';
+$MESS['subscr_mnu_del_conf'] = 'Šalinti prenumeratoriaus adresą?';
+$MESS['subscr_templ'] = 'Siųsti laišką naudojant svetainės šablonus: ';
+$MESS['subscr_tab_subscriber'] = 'Prenumeratorius';
+$MESS['subscr_tab_subscriber_title'] = 'Prenumeratos parametrai';
+$MESS['subscr_tab_subscription'] = 'Prenumeratos';
+$MESS['subscr_tab_subscription_title'] = 'Naujienlaiškių kategorijos';
+$MESS['subs_save_error'] = 'Klaida išsaugojant prenumeratos ardesą.';
+$MESS['subscr_list_text'] = 'Sąrašas';
+$MESS['subscr_add_text'] = 'Pridėti';
+$MESS['subscr_del_text'] = 'Šalinti';
+$MESS['subs_saved'] = 'Prenumeratos adresas sekmingai išsaugotas.';
+?>

@@ -1,0 +1,33 @@
+<?
+$MESS["F_ADD_VOTE"] = "Dodaj ankietę";
+$MESS["F_CAPTCHA_PROMT"] = "Wprowadź Tekst z Obrazu";
+$MESS["F_CAPTCHA_TITLE"] = "Proszę wpisać słowo znajdujące się na obrazku";
+$MESS["F_CREATE_FORM"] = "Nowy temat";
+$MESS["F_EDIT_ADD_REASON"] = "Zawiera informację o modyfikacji";
+$MESS["F_EDIT_FORM"] = "Modyfikuj wiadomość w temacie";
+$MESS["F_EDIT_REASON"] = "Powód modyfikacji:";
+$MESS["F_MESSAGE_TEXT"] = "Wprowadż swój Post";
+$MESS["F_REPLY_FORM"] = "Formularz odpowiedzi";
+$MESS["F_TOPIC_DESCR"] = "Opis";
+$MESS["F_TOPIC_NAME"] = "Tytuł";
+$MESS["F_TOPIC_TAGS"] = "Tagi";
+$MESS["F_TOPIC_TAGS_DESCRIPTION"] = "Określ oznaczenia, które w pełni opisują przedmiot tematu.";
+$MESS["F_TYPE_EMAIL"] = "Poda swój adres e-mail";
+$MESS["F_TYPE_NAME"] = "Podaj swoje Imię";
+$MESS["F_VIEW"] = "Wyświetl";
+$MESS["F_VOTE"] = "Ankieta";
+$MESS["F_VOTE_ADD_ANSWER"] = "Dodaj odpowiedź";
+$MESS["F_VOTE_ADD_QUESTION"] = "Dodaj pytanie";
+$MESS["F_VOTE_DROP_ANSWER"] = "Usuń odpowiedź";
+$MESS["F_VOTE_DROP_ANSWER_CONFIRM"] = "Na pewno chcesz usunąć odpowiedź?";
+$MESS["F_VOTE_DROP_QUESTION"] = "Usuń pytanie";
+$MESS["F_VOTE_DROP_QUESTION_CONFIRM"] = "Na pewno chcesz usunąć pytanie?";
+$MESS["F_VOTE_MULTI"] = "Zezwól na Wybieranie Kilku Odpowiedzi";
+$MESS["F_WANT_ALLOW_SMILES"] = "Czy chcesz <b>używać</b> emotikon w tej wiadomości?";
+$MESS["JERROR_MAX_LEN"] = "Maksymalna długość wiadomości to #MAX_LENGTH# znaków. Całkowita liczba znaków: #LENGTH#.";
+$MESS["JERROR_NO_MESSAGE"] = "Proszę podać wiadomość.";
+$MESS["JERROR_NO_TOPIC_NAME"] = "Proszę podać tytuł wiadomości.";
+$MESS["JQOUTE_AUTHOR_WRITES"] = "pisał";
+$MESS["MPL_HAVE_WRITTEN"] = "napisał";
+$MESS["VOTE_DURATION"] = "Data zamknięcia ankiety:";
+?>

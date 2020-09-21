@@ -1,0 +1,50 @@
+<?
+$MESS["MAIN_AGENT_LIST_PAGE"] = "Agentų sąrašas:";
+$MESS["MAIN_AGENT_ID"] = "ID";
+$MESS["MAIN_AGENT_MODULE_ID"] = "Modulis";
+$MESS["MAIN_AGENT_USER_ID"] = "Prisijungimo vardas";
+$MESS["MAIN_AGENT_SORT"] = "Rūšiavimas";
+$MESS["MAIN_AGENT_NAME"] = "Agento pareiga";
+$MESS["MAIN_AGENT_ACTIVE"] = "Aktyvus:";
+$MESS["MAIN_AGENT_LAST_EXEC"] = "Paskutinis paleidimas";
+$MESS["MAIN_AGENT_NEXT_EXEC"] = "Kitas paleidimas";
+$MESS["MAIN_AGENT_INTERVAL"] = "Intervalas";
+$MESS["MAIN_AGENT_ACTIVE_YES"] = "Taip";
+$MESS["MAIN_AGENT_ACTIVE_NO"] = "ne";
+$MESS["MAIN_AGENT_SYSTEM_USER"] = "Sistema";
+$MESS["MAIN_AGENT_PAGE_TITLE"] = "Agentų sąrašas";
+$MESS["MAIN_AGENT_FLT_ID"] = "Agento ID";
+$MESS["MAIN_AGENT_FLT_MODULE_ID"] = "Modulis";
+$MESS["MAIN_AGENT_FLT_USER_ID"] = "Naudotojo ID";
+$MESS["MAIN_AGENT_FLT_NAME"] = "Agento vardas";
+$MESS["MAIN_AGENT_FLT_ACTIVE"] = "Aktyvus:";
+$MESS["MAIN_AGENT_FLT_LAST_EXEC"] = "Paskutinio paleidimo data";
+$MESS["MAIN_AGENT_FLT_NEXT_EXEC"] = "Kito paleidimo data";
+$MESS["MAIN_AGENT_FLT_SEARCH"] = "Ieškoti:";
+$MESS["MAIN_AGENT_FLT_SEARCH_TITLE"] = "Įrašykite paieškos žodžius";
+$MESS["MAIN_AGENT_WRONG_LAST_EXEC"] = "Filtravimo langelyje įrašykite teisingą paskutinio paleidimo datą!";
+$MESS["MAIN_AGENT_WRONG_NEXT_EXEC"] = "Filtravimo langelyje įrašykite teisingą kito paleidimo datą!";
+$MESS["MAIN_AGENT_EDIT"] = "Redaguoti";
+$MESS["MAIN_AGENT_ADD_AGENT"] = "Pridėti agentą";
+$MESS["MAIN_AGENT_ADD_AGENT_TITLE"] = "Pridėti naują agentą";
+$MESS["MAIN_AGENT_DELETE"] = "Trinti";
+$MESS["MAIN_AGENT_ALERT_DELETE"] = "Ar tikrai norite pašalinti agentą?";
+$MESS["MAIN_AGENT_ACTIVATE"] = "Aktyvuoti";
+$MESS["MAIN_AGENT_DEACTIVATE"] = "Deaktyvuoti";
+$MESS["MAIN_YES"] = "taip";
+$MESS["MAIN_ALL"] = "(visi)";
+$MESS["MAIN_AGENT_FLT_IS_PERIOD"] = "Periodinis";
+$MESS["MAIN_AGENT_LIST_DATE_CHECK"] = "Patikrinti datą";
+$MESS["MAIN_AGENT_LIST_RUNNING"] = "Veikiantis";
+$MESS["MAIN_AGENT_LIST_PERIODICAL"] = "Darbo režimas";
+$MESS["MAIN_AGENT_LIST_PERIODICAL_TIME"] = "Tikslus laikas
+";
+$MESS["MAIN_AGENT_LIST_PERIODICAL_INTERVAL"] = "Reguliarūs intervalai";
+$MESS["MAIN_AGENT_FLT_PERIODICAL1"] = "Darbo režimas:";
+$MESS["MAIN_AGENT_FLT_PERIODICAL_INTERVAL"] = "Reguliarūs intervalai";
+$MESS["MAIN_AGENT_FLT_PERIODICAL_TIME"] = "Tikslus laikas
+";
+$MESS["MAIN_AGENT_PERIOD"] = "Periodinis";
+$MESS["MAIN_AGENT_PERIOD_YES"] = "Taip";
+$MESS["MAIN_AGENT_PERIOD_NO"] = "Ne";
+?>

@@ -1,0 +1,22 @@
+<?
+$MESS["CTRL_LOG_ADMIN_FILTER_STATUS"] = "Statusas";
+$MESS["CTRL_LOG_ADMIN_FILTER_DESC"] = "Aprašymas";
+$MESS["CTRL_LOG_ADMIN_FILTER_CLIENT"] = "Klientas";
+$MESS["CTRL_LOG_ADMIN_FILTER_IDCLIENT"] = "Kliento ID";
+$MESS["CTRL_LOG_ADMIN_FILTER_TASK"] = "Užduotis";
+$MESS["CTRL_LOG_ADMIN_FILTER_TASKID"] = "Užduoties ID";
+$MESS["CTRL_LOG_ADMIN_FILTER_CREATED"] = "Sukūrimo periodas";
+$MESS["CTRL_LOG_ADMIN_ERR_DELETE"] = "Nepavyko ištrinti įrašo";
+$MESS["CTRL_LOG_ADMIN_PAGETITLE"] = "Žurnalo įrašai";
+$MESS["CTRL_LOG_ADMIN_COLUMN_CREATED"] = "Sukūrimo data";
+$MESS["CTRL_LOG_ADMIN_COLUMN_NAME"] = "Pavadinimas";
+$MESS["CTRL_LOG_ADMIN_COLUMN_USER"] = "Naudotojas";
+$MESS["CTRL_LOG_ADMIN_COLUMN_STATUS_OK"] = "Sėkmė";
+$MESS["CTRL_LOG_ADMIN_COLUMN_STATUS_ERR"] = "Klaida";
+$MESS["CTRL_LOG_ADMIN_MENU_DEL"] = "Ištrinti";
+$MESS["CTRL_LOG_ADMIN_MENU_DEL_CONFIRM"] = "Tai ištrins visus įrašus iš sąrašo. Tęsti?";
+$MESS["CTRL_LOG_ADMIN_TITLE"] = "Kontroliuojančios svetainės žurnalas";
+$MESS["CTRL_LOG_ADMIN_FILTER_ANY"] = "(visi)";
+$MESS["CTRL_LOG_ADMIN_MENU_DETAIL"] = "Detaliau";
+$MESS["CTRL_LOG_ADMIN_FILTER_ID"] = "ID";
+?>

@@ -1,0 +1,25 @@
+<script type="text/ejs" id="tplProjectMemberList">
+    <%
+    var del;
+
+    if (this.model.userList && this.model.userList.length) {
+        for (var i = 0; i < this.model.userList.length; i++) {
+            del = false;
+            if (this.model.ownerId == window.scrumbanBoard.currentUserId) {
+                if (window.scrumbanBoard.currentUserId != this.model.userList[i].id) {
+                    del = true;
+                }
+            } else {
+                if (window.scrumbanBoard.currentUserId == this.model.userList[i].id) {
+                    del = true;
+                }
+            }
+            %><%== $.View('projectMemberItem', {'user': this.model.userList[i], 'del': del, ownerId: this.model.ownerId}) %><%
+        }
+
+        if (canAdd) {
+            %><div title="<?= $this->t('ADD_A_MEMBER') ?>" class="add person"></div><%
+        }
+    } %>
+    <div class="clear"></div>
+</script>

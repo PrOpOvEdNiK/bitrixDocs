@@ -1,0 +1,36 @@
+<?
+$MESS["CT_BSP_ADVANCED_SEARCH"] = "Pesquisa Avançada";
+$MESS["CT_BSP_ALL"] = "(Tudo)";
+$MESS["CT_BSP_AND"] = "e";
+$MESS["CT_BSP_AND_ALT"] = "Operadores <i>logical and</i> is implied and can be omitted: a query &quot;contact information&quot; is fully equivalent to &quot;contact and information&quot;.";
+$MESS["CT_BSP_BRACKETS_ALT"] = "<i>Round brackets</i> definir a precedência do operador lógico.";
+$MESS["CT_BSP_CORRECT_AND_CONTINUE"] = "Corrija a frase de pesquisa e tente novamente.";
+$MESS["CT_BSP_DATES_ALL"] = "Tudo";
+$MESS["CT_BSP_DATES_FROM"] = "A parti de #FROM#";
+$MESS["CT_BSP_DATES_FROM_TO"] = "A parti de #FROM# to #TO#";
+$MESS["CT_BSP_DATES_TO"] = "para #TO#";
+$MESS["CT_BSP_DATE_CHANGE"] = "Modificado";
+$MESS["CT_BSP_DESCRIPTION"] = "Descrição";
+$MESS["CT_BSP_ERROR"] = "Erro em busca frase:";
+$MESS["CT_BSP_EVERYWHERE"] = "tudo";
+$MESS["CT_BSP_FOUND"] = "encontrado";
+$MESS["CT_BSP_GO"] = "Pesquisar";
+$MESS["CT_BSP_ITEM_TAGS"] = "tags";
+$MESS["CT_BSP_KEYBOARD_WARNING"] = "Idioma de entrada de consulta mudou para \"#query#\".";
+$MESS["CT_BSP_LOGIC"] = "operadores lógicos:";
+$MESS["CT_BSP_NOT"] = "Não";
+$MESS["CT_BSP_NOTHING_TO_FOUND"] = "Infelizmente, não encontrou nenhum documento a sua pesquisa.";
+$MESS["CT_BSP_NOT_ALT"] = "Operadores <i>logical not</i> restringe as pesquisas a páginas não recipiente que contém o operando.";
+$MESS["CT_BSP_OPERATOR"] = "Operadores";
+$MESS["CT_BSP_OR"] = "ou";
+$MESS["CT_BSP_ORDER"] = "Organizados por";
+$MESS["CT_BSP_ORDER_BY_DATE"] = "data";
+$MESS["CT_BSP_ORDER_BY_RANK"] = "relevância";
+$MESS["CT_BSP_OR_ALT"] = "Operadores <i>logical and</i> is implied and can be omitted: a query &quot;contact information&quot; is fully equivalent to &quot;contact and information&quot;.";
+$MESS["CT_BSP_SINTAX"] = "<b>Search query syntax:</b><br /><br />A consulta de pesquisa comum é uma ou mais palavras, por exemplo:<br /><i>contact information</i><br />Esta consulta irá encontrar páginas";
+$MESS["CT_BSP_SYNONIM"] = "Sinônimos";
+$MESS["CT_BSP_TAGS"] = "tags";
+$MESS["CT_BSP_WHEN"] = "data";
+$MESS["CT_BSP_WHERE"] = "Seção";
+$MESS["CT_BSP_WHERE_LABEL"] = "Onde";
+?>

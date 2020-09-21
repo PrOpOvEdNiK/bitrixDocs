@@ -1,0 +1,33 @@
+<?
+$MESS["SONET_C30_COMMENT_SUBMIT"] = "Envoyer";
+$MESS["SONET_C30_COUNTER_TEXT_1"] = "Nouveaux messages : ";
+$MESS["SONET_C30_DIALOG_CANCEL_BUTTON"] = "Annuler";
+$MESS["SONET_C30_DIALOG_CLOSE_BUTTON"] = "Fermer";
+$MESS["SONET_C30_DIALOG_SUBMIT_BUTTON"] = "Enregistrer";
+$MESS["SONET_C30_DIALOG_TRANSPORT_TITLE"] = "Réglages de notifications : ";
+$MESS["SONET_C30_INHERITED"] = "Par défaut";
+$MESS["SONET_C30_MENU_TITLE_CREATETASK"] = "Créer une tâche";
+$MESS["SONET_C30_MENU_TITLE_DELETE"] = "Supprimer des actions";
+$MESS["SONET_C30_MENU_TITLE_DELETE_CONFIRM"] = "tes-vous sûr de vouloir supprimer ce poste et tous les commentaires ajoutés ?";
+$MESS["SONET_C30_MENU_TITLE_DELETE_FAILURE"] = "Erreur de suppression du message.";
+$MESS["SONET_C30_MENU_TITLE_DELETE_SUCCESS"] = "Le poste a été supprimé.";
+$MESS["SONET_C30_MENU_TITLE_FAVORITES_N"] = "Ajouter aux favoris";
+$MESS["SONET_C30_MENU_TITLE_FAVORITES_Y"] = "Effacer de vos favoris";
+$MESS["SONET_C30_MENU_TITLE_HREF"] = "Passer au message";
+$MESS["SONET_C30_MENU_TITLE_LINK"] = "Référence au message";
+$MESS["SONET_C30_MENU_TITLE_LINK2"] = "Copier le lien";
+$MESS["SONET_C30_MENU_TITLE_TRANSPORT"] = "Alertes";
+$MESS["SONET_C30_MORE"] = "Plus d'évènements";
+$MESS["SONET_C30_NO_SUBSCRIPTIONS"] = "Il n'y a pas des inscriptions disponibles";
+$MESS["SONET_C30_T_EMPTY"] = "Il n'y aucune publication dans le Flux d'activités";
+$MESS["SONET_C30_T_EMPTY_SEARCH"] = "Rien n'a été trouvé";
+$MESS["SONET_C30_T_LINK_COPIED"] = "Lien copié";
+$MESS["SONET_C30_T_MESSAGE_EXPAND"] = "Agrandir";
+$MESS["SONET_C30_T_MESSAGE_HIDE"] = "cacher";
+$MESS["SONET_C30_T_MESSAGE_SHOW"] = "afficher";
+$MESS["SONET_C30_T_MORE_WAIT"] = "En cours de chargement...";
+$MESS["SONET_C30_T_RELOAD_ERROR"] = "Erreur de mise à jour de Flux d'Activité";
+$MESS["SONET_C30_T_RELOAD_NEEDED"] = "Mettez à jour la bande passante";
+$MESS["SONET_C30_T_USER"] = "Utilisateur";
+$MESS["SONET_ERROR_SESSION"] = "Le temps de votre session s'est écoulé. Veuillez ajouter le commentaire encore une fois.";
+?>

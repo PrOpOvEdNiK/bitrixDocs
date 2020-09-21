@@ -1,0 +1,9 @@
+<?
+$MESS["CRM_MAIL_TEMPLATE_ERROR_FIELD_NOT_SPECIFIED"] = "El valor \"#FIELD#\" no está presente.";
+$MESS["CRM_MAIL_TEMPLATE_ERROR_NOT_EXISTS"] = "No se puede encontrar el artículo ID# #ID#.";
+$MESS["CRM_MAIL_TEMPLATE_FIELD_ENTITY_TYPE_ID"] = "Entidad";
+$MESS["CRM_MAIL_TEMPLATE_FIELD_OWNER_ID"] = "Propietario";
+$MESS["CRM_MAIL_TEMPLATE_FIELD_TITLE"] = "Nombre";
+$MESS["CRM_MAIL_TEMPLATE_SCOPE_COMMON"] = "a cualquiera";
+$MESS["CRM_MAIL_TEMPLATE_SCOPE_PERSONAL"] = "sólo a mí";
+?>

@@ -1,0 +1,5 @@
+<?
+$MESS["TARIFF_RESTRICTION_TEXT"] = "La gestion du temps de travail est un outil essentiel pour tout superviseur. Sachez quand chaque employé a commencé et terminé sa journée de travail, combien d'heures il a travaillé, sur quoi il a travaillé et si quelqu'un est arrivé en retard ou est parti en avance. L'horloge de pointage numérique de Bitrix24 fonctionne sur n'importe quel appareil et vous fournit un rapport détaillé sur le temps de travail pour chaque employé, sur place ou à distance. <a href=\"javascript:void(0)\" onclick='top.BX.Helper.show(\"redirect=detail&code=1429531\");'>Détails</a>";
+$MESS["TARIFF_RESTRICTION_TEXT2"] = "La gestion du temps de travail est uniquement disponible avec les <a href=\"/settings/license_all.php\" target=\"_blank\">offres commerciales sélectionnées</a>.";
+$MESS["TITLE"] = "Rapport sur le temps de travail";
+?>

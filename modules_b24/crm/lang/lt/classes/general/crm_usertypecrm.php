@@ -1,0 +1,8 @@
+<?
+$MESS["USER_TYPE_CRM_DESCRIPTION"] = "Susieti su CRM elementais";
+$MESS["USER_TYPE_CRM_ENTITY_TYPE"] = "Prieinamas subjektas";
+$MESS["USER_TYPE_CRM_ENTITY_TYPE_LEAD"] = "Iniciatyva";
+$MESS["USER_TYPE_CRM_ENTITY_TYPE_CONTACT"] = "Kontaktas";
+$MESS["USER_TYPE_CRM_ENTITY_TYPE_COMPANY"] = "Įmonė";
+$MESS["USER_TYPE_CRM_ENTITY_TYPE_DEAL"] = "Sandoris";
+?>

@@ -1,0 +1,5 @@
+<?
+$MESS["SENDER_ADS_SEGMENT_SELECTOR_INCLUDE_EDIT_TITLE"] = "Sélectionner des segments";
+$MESS["SENDER_ADS_SEGMENT_SELECTOR_INCLUDE_VIEW_TITLE"] = "Segments sélectionnés";
+$MESS["SENDER_ADS_SEGMENT_SELECTOR_RECIPIENT_COUNT"] = "Actuellement sélectionnés";
+?>

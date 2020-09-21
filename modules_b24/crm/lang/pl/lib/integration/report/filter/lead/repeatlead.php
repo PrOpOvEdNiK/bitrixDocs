@@ -1,0 +1,3 @@
+<?
+$MESS["CRM_REPORT_FILTER_REPEATED_LEAD_LAST_30_DAYS_PRESET_TITLE"] = "Powtórzenia ostatnie 30 dni";
+?>

@@ -1,0 +1,31 @@
+<?
+$MESS["CRM_KANBAN_ACTIVITY_LETSGO_DEAL"] = "Zaplanuj nowe działania, aby przesunąć deale w dół lejka.";
+$MESS["CRM_KANBAN_ACTIVITY_LETSGO_LEAD"] = "Zaplanuj nowe działania, aby przesunąć leady w dół lejka.";
+$MESS["CRM_KANBAN_ACTIVITY_MORE"] = "Więcej";
+$MESS["CRM_KANBAN_ACTIVITY_MY"] = "Aktywności";
+$MESS["CRM_KANBAN_ACTIVITY_PLAN"] = "Plan";
+$MESS["CRM_KANBAN_ACTIVITY_PLAN_CALL"] = "Rozmowa";
+$MESS["CRM_KANBAN_ACTIVITY_PLAN_MEETING"] = "Spotkanie";
+$MESS["CRM_KANBAN_ACTIVITY_PLAN_TASK"] = "Zadanie";
+$MESS["CRM_KANBAN_CONVERT_POPUP_TITLE"] = "Utwórz w oparciu o lead:";
+$MESS["CRM_KANBAN_CONVERT_SELECT_ENTITY"] = "Wybierz";
+$MESS["CRM_KANBAN_ERROR_DISABLE_CONVERTED_LEAD"] = "Nie można zmienić statusu skonwertowanych leadów.";
+$MESS["CRM_KANBAN_FAIL_CONFIRM_APPLY"] = "Zastosuj";
+$MESS["CRM_KANBAN_FAIL_CONFIRM_CANCEL"] = "Anuluj";
+$MESS["CRM_KANBAN_FAIL_CONFIRM_DEAL"] = "Czy chcesz zmienić status deala na \"#STATUS_NAME#\"? Taki status oznacza, że deal został stracony.";
+$MESS["CRM_KANBAN_FAIL_CONFIRM_INVOICE"] = "Czy chcesz zmienić status deala na \"#STATUS_NAME#\"? Taki status oznacza, że deal przepadł.";
+$MESS["CRM_KANBAN_FAIL_CONFIRM_LEAD"] = "Czy chcesz zmienić status leada na \"#STATUS_NAME#\"? Taki status oznacza, że lead przepadł.";
+$MESS["CRM_KANBAN_FAIL_CONFIRM_QUOTE"] = "Czy chcesz zmienić status oferty na \"#STATUS_NAME#\"? Taki status oznacza, że kosztorys został stracony.";
+$MESS["CRM_KANBAN_FINAL_ALERT"] = "Czy chcesz zamknąć jako nieudane?";
+$MESS["CRM_KANBAN_INVOICE_PARAMS"] = "Sfinalizuj status faktury";
+$MESS["CRM_KANBAN_INVOICE_PARAMS_CANCEL"] = "Anuluj";
+$MESS["CRM_KANBAN_INVOICE_PARAMS_COMMENT"] = "Komentarz";
+$MESS["CRM_KANBAN_INVOICE_PARAMS_DATE"] = "Data";
+$MESS["CRM_KANBAN_INVOICE_PARAMS_DOCNUM"] = "Faktura #";
+$MESS["CRM_KANBAN_INVOICE_PARAMS_SAVE"] = "Zapisz";
+$MESS["CRM_KANBAN_NO_DATA"] = "Obecnie na tej stronie nie ma danych.";
+$MESS["CRM_KANBAN_NO_EMAIL"] = "Brak e-maila";
+$MESS["CRM_KANBAN_NO_IMOL"] = "Brak komunikacji poprzez chat";
+$MESS["CRM_KANBAN_NO_PHONE"] = "Brak telefonu";
+$MESS["CRM_KANBAN_RELOAD_PAGE"] = "Odśwież stronę.";
+?>

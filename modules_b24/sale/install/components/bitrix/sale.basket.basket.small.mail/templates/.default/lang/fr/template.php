@@ -1,0 +1,32 @@
+<?
+$MESS["SALE_ADD_TO_BASKET"] = "Ajouter au panier";
+$MESS["SALE_CONTENT_DISCOUNT"] = "Réduction";
+$MESS["SALE_DELAY"] = "Reporter";
+$MESS["SALE_DELAYED_TITLE"] = "Dans la liste des souhaits";
+$MESS["SALE_DELETE"] = "Supprimer";
+$MESS["SALE_DISCOUNT"] = "Réduction";
+$MESS["SALE_NAME"] = "Produits";
+$MESS["SALE_PRICE"] = "Prix";
+$MESS["SALE_PROPS"] = "Propriétés";
+$MESS["SALE_QUANTITY"] = "Quantité";
+$MESS["SALE_SUM"] = "Montant";
+$MESS["SALE_TOTAL"] = "Total : ";
+$MESS["SALE_TOTAL_WEIGHT"] = "Poids total : ";
+$MESS["SALE_TYPE"] = "Type de prix";
+$MESS["SALE_UNAVAIL_TITLE"] = "Épuisé";
+$MESS["SALE_VAT"] = "Taxe : ";
+$MESS["SALE_VAT_EXCLUDED"] = "Prix total : ";
+$MESS["SALE_VAT_INCLUDED"] = "Taxes : ";
+$MESS["SALE_WEIGHT"] = "Poids";
+$MESS["SALE_WEIGHT_G"] = "g";
+$MESS["STB_COUPON_PROMT"] = "Entrez le code de votre coupon : ";
+$MESS["STB_ORDER_PROMT"] = "Cliquez sur \"Payer\" pour finaliser votre commande.";
+$MESS["TSBS_2BASKET"] = "Changer quantité";
+$MESS["TSBS_2ORDER"] = "Ordre";
+$MESS["TSBS_DELAY"] = "Tenez-dessus : ";
+$MESS["TSBS_PRICE"] = "Prix : ";
+$MESS["TSBS_QUANTITY"] = "Quantité:";
+$MESS["TSBS_READY"] = "Articles dans votre panier : ";
+$MESS["TSBS_SUBSCRIBE"] = "Souscription : ";
+$MESS["TSBS_UNAVAIL"] = "Actuellement indisponible : ";
+?>

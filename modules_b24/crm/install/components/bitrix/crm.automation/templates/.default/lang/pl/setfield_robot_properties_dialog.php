@@ -1,0 +1,3 @@
+<?
+$MESS["CRM_AUTOMATION_SFA_DELETE"] = "Usuń";
+?>

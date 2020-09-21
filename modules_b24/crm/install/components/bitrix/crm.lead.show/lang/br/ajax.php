@@ -1,0 +1,3 @@
+<?
+$MESS["CRM_LEAD_CONVERSION_ACCESS_DENIED"] = "Acesso negado";
+?>

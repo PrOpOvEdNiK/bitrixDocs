@@ -1,0 +1,32 @@
+<?
+$MESS["CTRLR_TASK_BUTTON_START"] = "Uruchom";
+$MESS["CTRLR_TASK_COLUMN_ARGS"] = "Argument";
+$MESS["CTRLR_TASK_COLUMN_DATE_CRE"] = "Utworzony";
+$MESS["CTRLR_TASK_COLUMN_DATE_MOD"] = "Zmodyfikowany";
+$MESS["CTRLR_TASK_COLUMN_EXEC"] = "Wykonany";
+$MESS["CTRLR_TASK_COLUMN_RESULT"] = "Wynik";
+$MESS["CTRLR_TASK_COLUMN_STATUS"] = "Status";
+$MESS["CTRLR_TASK_COLUMN_TASK"] = "Zadanie";
+$MESS["CTRLR_TASK_COLUMN_URL"] = "URL Klienta";
+$MESS["CTRLR_TASK_ERR_DELETE"] = "Błąd anulowania zadania";
+$MESS["CTRLR_TASK_ERR_LOCK"] = "Błąd bazy danych próba zamknięcia zadania:";
+$MESS["CTRLR_TASK_ERR_LOCK_ADVICE"] = "Proszę skontaktować się z administratorem bazy danych celem uzyskania pozwolenia na uruchomienie dbms_lock.";
+$MESS["CTRLR_TASK_FLR_ANY"] = "(jakikolwiek)";
+$MESS["CTRLR_TASK_FLR_ST"] = "Status wykonania";
+$MESS["CTRLR_TASK_FLT_CLIENT"] = "Klient";
+$MESS["CTRLR_TASK_FLT_CREATED"] = "Utworzony";
+$MESS["CTRLR_TASK_FLT_EXECUTED"] = "Ostatnie uruchomienie";
+$MESS["CTRLR_TASK_FLT_MODYFIED"] = "Zmodyfikowany";
+$MESS["CTRLR_TASK_FLT_OPERATION"] = "Operacja";
+$MESS["CTRLR_TASK_MENU_CANCEL"] = "Anuluj";
+$MESS["CTRLR_TASK_MENU_CANCEL_CONFIRM"] = "Zadanie zostanie usunięte.Kontynuować?";
+$MESS["CTRLR_TASK_MENU_REPEAT"] = "Powtórz";
+$MESS["CTRLR_TASK_MENU_REPEAT_CONFIRM"] = "Zadanie zostanie wykonane ponownie.Kontynuować?";
+$MESS["CTRLR_TASK_NAV"] = "Zadania";
+$MESS["CTRLR_TASK_PROGRESS"] = "Postęp zadania";
+$MESS["CTRLR_TASK_PROGRESS_BAR"] = "Zrobione:";
+$MESS["CTRLR_TASK_PROGRESS_BAR_FROM"] = "do";
+$MESS["CTRLR_TASK_REPEAT"] = "Powtórz";
+$MESS["CTRLR_TASK_REP_DELETE"] = "Błąd powtórzenia zadania";
+$MESS["CTRLR_TASK_TITLE"] = "Zdalne Zadania Klienta";
+?>

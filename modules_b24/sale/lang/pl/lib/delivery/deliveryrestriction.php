@@ -1,0 +1,3 @@
+<?
+$MESS["DELIVERY_RESTRICTION_ENTITY_SORT_FIELD"] = "Sortowanie";
+?>

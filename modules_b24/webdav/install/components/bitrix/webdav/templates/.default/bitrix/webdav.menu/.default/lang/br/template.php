@@ -1,0 +1,29 @@
+<?
+$MESS["IBLIST_A_BP_H"] = "Processos de Negócios";
+$MESS["WD_ALL"] = "Total";
+$MESS["WD_CONTENT"] = "Nível Superior";
+$MESS["WD_COPY_CONFIRM_TITLE"] = "Confirmar a cópia";
+$MESS["WD_COPY_LINK_HELP"] = "Copiar link do documento para a área de transferência";
+$MESS["WD_COPY_LINK_TITLE"] = "Copiar Link do documento";
+$MESS["WD_MOVE_CONFIRM_TITLE"] = "Confirmar mover";
+$MESS["WD_MOVE_TO"] = "Mover para";
+$MESS["WD_TITLE_ADMIN_DCREATE"] = "Criado em";
+$MESS["WD_TITLE_ADMIN_WCREATE2"] = "Criado por";
+$MESS["WD_TITLE_EXTERNAL_COM"] = "Comentário do Administrador";
+$MESS["WD_TITLE_EXTERNAL_DET_TEXT"] = "Texto detalhado";
+$MESS["WD_TITLE_EXTERNAL_LOCK"] = "Bloquear ";
+$MESS["WD_TITLE_EXTERNAL_LOCK_BY"] = "Bloqueado por";
+$MESS["WD_TITLE_EXTERNAL_LOCK_WHEN"] = "Bloqueado";
+$MESS["WD_TITLE_EXTERNAL_PREV_TEXT"] = "Texto de visualização";
+$MESS["WD_TITLE_EXTERNAL_SHOWS"] = "Impressões";
+$MESS["WD_TITLE_EXTERNAL_WFNEW"] = "Inédito";
+$MESS["WD_TITLE_FILE_SIZE"] = "Tamanho";
+$MESS["WD_TITLE_PUBLIC"] = "Publicado";
+$MESS["WD_TITLE_TAGS"] = "Tags";
+$MESS["WD_VERSIONS"] = "Versões";
+$MESS["WD_WF_ATTENTION1"] = "Você tem permissão para excluir documentos.";
+$MESS["WD_WF_ATTENTION2"] = "Você tem permissão para editar documentos que estão em status #STATUS#.";
+$MESS["WD_WF_ATTENTION3"] = "Você tem permissão para editar documentos que estão em status #STATUS#.";
+$MESS["WD_WF_COMMENT1"] = "Você tem permissão para editar documentos.";
+$MESS["WD_WF_COMMENT2"] = "Você não tem permissão para editar documentos.";
+?>

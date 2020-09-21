@@ -1,0 +1,4 @@
+<?
+$MESS["SEARCH_INSTALL_PUBLIC_MENU_MAP"] = "Plan du portail";
+$MESS["SEARCH_INSTALL_PUBLIC_MENU_SEARCH"] = "Recherche";
+?>

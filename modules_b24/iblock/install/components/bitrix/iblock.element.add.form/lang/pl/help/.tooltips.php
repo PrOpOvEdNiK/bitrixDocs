@@ -1,0 +1,29 @@
+<?
+$MESS["CUSTOM_TITLE_DATE_ACTIVE_FROM_TIP"] = "Wyszczególnia tytuł pola jak to będzie pokazane użytkownikom.";
+$MESS["CUSTOM_TITLE_DATE_ACTIVE_TO_TIP"] = "Wyszczególnia tytuł pola jak to będzie pokazane użytkownikom.";
+$MESS["CUSTOM_TITLE_DETAIL_PICTURE_TIP"] = "Wyszczególnia tytuł pola jak to będzie pokazane użytkownikom.";
+$MESS["CUSTOM_TITLE_DETAIL_TEXT_TIP"] = "Wyszczególnia tytuł pola jak to będzie pokazane użytkownikom.";
+$MESS["CUSTOM_TITLE_IBLOCK_SECTION_TIP"] = "Wyszczególnia tytuł pola jak to będzie pokazane użytkownikom.";
+$MESS["CUSTOM_TITLE_NAME_TIP"] = "Wyszczególnia tytuł pola jak to będzie pokazane użytkownikom.";
+$MESS["CUSTOM_TITLE_PREVIEW_PICTURE_TIP"] = "Wyszczególnia tytuł pola jak to będzie pokazane użytkownikom.";
+$MESS["CUSTOM_TITLE_PREVIEW_TEXT_TIP"] = "Wyszczególnia tytuł pola jak to będzie pokazane użytkownikom.";
+$MESS["CUSTOM_TITLE_TAGS_TIP"] = "Wyszczególnia tytuł pola jak to będzie pokazane użytkownikom.";
+$MESS["DEFAULT_INPUT_SIZE_TIP"] = "Wielkość pola.";
+$MESS["GROUPS_TIP"] = "Wyszczególnij tutaj grupy użytkowników czyi członkowie mają pozwolenie by tworzyć i zredagować elementy.";
+$MESS["IBLOCK_ID_TIP"] = "Wybierz jeden z bloków informacji wybranego typu. Jeżeli wybierasz <b><i>(inne)</i></b>, określ ID bloku informacji w polu obok.";
+$MESS["IBLOCK_TYPE_TIP"] = "Wybierz tutaj jeden z istniejących typów bloku informacji. Kliknij <b><i>OK</i></b> aby załadować bloki informacji wybranego typu. Jeżeli wybierzesz <b><i>(inne)</i></b>, będziesz musiał określić ID bloku informacji w polu obok.";
+$MESS["LEVEL_LAST_TIP"] = "Jeżeli zaznaczony, użytkownicy będą mogli dodać elementy tylko do niższego poziomu drzewa sekcji bloku informacji.";
+$MESS["LIST_URL_TIP"] = "Określa ścieżkę do strony z listą prywatnych elementów użytkownika. Ta strona może być tworzona przez użycie komponentu <i>Prywatnye elementy</i>.";
+$MESS["MAX_FILE_SIZE_TIP"] = "Wyszczególnia maksymalny rozmiar pliku dozwolony dla każdego załadowanego pliku.";
+$MESS["MAX_LEVELS_TIP"] = "Wyszczególnia maksymalną liczba sekcji bloku informacji, do których użytkownik może dodać ten sam element.";
+$MESS["MAX_USER_ENTRIES_TIP"] = "Maksymalna liczba elementów, które użytkownik może tworzyć.";
+$MESS["PROPERTY_CODES_REQUIRED_TIP"] = "Wyszczególnij tutaj wymagane pola i własności.";
+$MESS["PROPERTY_CODES_TIP"] = "Wybierz tutaj pola bloku informacji i właściwości pola, które chcesz pokazać w formularzu tworzenia elementu.";
+$MESS["SEF_FOLDER_TIP"] = "Wyszczególnia folder komponentu. Folder może być przedstawiony przez rzeczywistą ścieżkę systemu plików, albo to może być wirtualne.";
+$MESS["SEF_MODE_TIP"] = "Zaznaczając opcję umożliwiasz tryb SEF i URL polom konfiguracji.";
+$MESS["STATUS_NEW_TIP"] = "Jeżeli moduł Workflow <b>nie jest</b> zainstalowany, możesz określić statusy (aktywny albo nieaktywny) dla nowych lub zmodyfikowanych dokumentów.<br /><br />Jeżeli moduł Workflow jest zainstalowany, możesz wybrać status, który będzie stosowany do nowych albo zmodyfikowanych elementów.";
+$MESS["STATUS_TIP"] = "Jeżeli moduł Workflow <b>nie jest</b> zainstalowany, możesz zezwolić użytkownikowi na edycję albo wszystkich albo tylko nieaktywnych elementów.<br /><br />Jeżeli moduł Workflow jest zainstalowany, możesz określić statusy, w których elementy mogą być widoczne dla użytkowników.";
+$MESS["USER_MESSAGE_ADD_TIP"] = "Wyszczególnia wiadomość tekstu, która będzie pokazana do użytkownika po tym, jak element był tworzony.";
+$MESS["USER_MESSAGE_EDIT_TIP"] = "Wyszczególnia wiadomość tekstu, która będzie pokazana do użytkownika po tym, jak zmodyfikowany element był zapisany.";
+$MESS["USE_CAPTCHA_TIP"] = "Wyszczególnia by pokazać i użyć CAPTCHA kiedy dodawanie nowego elementu.";
+?>

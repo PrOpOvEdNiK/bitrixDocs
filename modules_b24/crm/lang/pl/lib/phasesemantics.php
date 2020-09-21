@@ -1,0 +1,30 @@
+<?
+$MESS["CRM_PHASE_SEMANTICS_DEAL_CAPTION"] = "Wybierz stany";
+$MESS["CRM_PHASE_SEMANTICS_DEAL_FAILURE"] = "Stan \"Deal stracony\"";
+$MESS["CRM_PHASE_SEMANTICS_DEAL_GROUP_TITLE"] = "Stany";
+$MESS["CRM_PHASE_SEMANTICS_DEAL_PROCESS"] = "Grupa stanów \"Deal w toku\"";
+$MESS["CRM_PHASE_SEMANTICS_DEAL_SELECTOR_TITLE"] = "Wybierz stan lub kategorię";
+$MESS["CRM_PHASE_SEMANTICS_DEAL_SUCCESS"] = "Stan \"Deal wygrany\"";
+$MESS["CRM_PHASE_SEMANTICS_DEAL_UNDEFINED"] = "Nie wybrane";
+$MESS["CRM_PHASE_SEMANTICS_FAILURE"] = "Przegrane deale";
+$MESS["CRM_PHASE_SEMANTICS_INVOICE_CAPTION"] = "Wybierz statusy";
+$MESS["CRM_PHASE_SEMANTICS_INVOICE_FAILURE"] = "Grupa statusów \"Faktura odrzucona\"";
+$MESS["CRM_PHASE_SEMANTICS_INVOICE_GROUP_TITLE"] = "Statusy";
+$MESS["CRM_PHASE_SEMANTICS_INVOICE_PROCESS"] = "Grupa statusów \"Faktura w toku\"";
+$MESS["CRM_PHASE_SEMANTICS_INVOICE_SELECTOR_TITLE"] = "Wybierz status lub kategorię";
+$MESS["CRM_PHASE_SEMANTICS_INVOICE_SUCCESS"] = "Status \"Faktura zapłacona\"";
+$MESS["CRM_PHASE_SEMANTICS_INVOICE_UNDEFINED"] = "Nie wybrane";
+$MESS["CRM_PHASE_SEMANTICS_LEAD_CAPTION"] = "Wybierz statusy";
+$MESS["CRM_PHASE_SEMANTICS_LEAD_FAILURE"] = "Grupa statusów \"Lead przegrany\"";
+$MESS["CRM_PHASE_SEMANTICS_LEAD_GROUP_TITLE"] = "Statusy";
+$MESS["CRM_PHASE_SEMANTICS_LEAD_PROCESS"] = "Grupa statusów \"Lead w toku\"";
+$MESS["CRM_PHASE_SEMANTICS_LEAD_SELECTOR_TITLE"] = "Wybierz status lub kategorię";
+$MESS["CRM_PHASE_SEMANTICS_LEAD_SUCCESS"] = "Status \"Lead skonwertowany\"";
+$MESS["CRM_PHASE_SEMANTICS_LEAD_UNDEFINED"] = "Nie wybrane";
+$MESS["CRM_PHASE_SEMANTICS_PROCESS"] = "Deale w toku";
+$MESS["CRM_PHASE_SEMANTICS_QUOTE_FAILURE"] = "Grupa o statusie \"Oferta odrzucona\"";
+$MESS["CRM_PHASE_SEMANTICS_QUOTE_PROCESS"] = "Grupa o statusie \"Oferta otwarta\"";
+$MESS["CRM_PHASE_SEMANTICS_QUOTE_SUCCESS"] = "Statusu \"Oferta otwarta\"";
+$MESS["CRM_PHASE_SEMANTICS_SUCCESS"] = "Wygrane deale";
+$MESS["CRM_PHASE_SEMANTICS_UNDEFINED"] = "nie wybrane";
+?>

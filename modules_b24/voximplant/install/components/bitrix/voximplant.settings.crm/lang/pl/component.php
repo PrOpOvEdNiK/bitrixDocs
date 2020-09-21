@@ -1,0 +1,4 @@
+<?
+$MESS["VI_CRM_INTEGRATION_WORKFLOW_EXECUTION_DEFERRED"] = "Przy zakończeniu połączenia";
+$MESS["VI_CRM_INTEGRATION_WORKFLOW_EXECUTION_IMMEDIATE"] = "Przy odbieraniu połączenia";
+?>

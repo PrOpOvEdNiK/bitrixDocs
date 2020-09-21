@@ -1,0 +1,32 @@
+<?
+$MESS["TASKS_KANBAN_STATUS_NEW"] = "Nauja";
+$MESS["TASKS_KANBAN_STATUS_PAUSE"] = "Pristabdyta";
+$MESS["TASKS_KANBAN_STATUS_PROGRESS"] = "Vykdoma";
+$MESS["TASKS_KANBAN_STATUS_DEFERRED"] = "Atidėta";
+$MESS["TASKS_KANBAN_STATUS_COMPLETED"] = "Užbaigta";
+$MESS["TASKS_KANBAN_STATUS_COMPLETED_SUPPOSEDLY"] = "Laukia peržiūros";
+$MESS["TASKS_KANBAN_STATUS_OVERDUE"] = "Pavėluota";
+$MESS["TASKS_KANBAN_TITLE_COMMENTS"] = "Komentarai (#count#)";
+$MESS["TASKS_KANBAN_TITLE_CHECKLIST"] = "Kontrolinis sąrašas (baigta #complete# iš #all#)";
+$MESS["TASKS_KANBAN_TITLE_FILES"] = "Failai (#count#)";
+$MESS["TASKS_KANBAN_TITLE_DEADLINE"] = "Terminas";
+$MESS["TASKS_KANBAN_TITLE_DEADLINE_SET"] = "Nustatyti terminą";
+$MESS["TASKS_KANBAN_MORE_USERS"] = "daugiau";
+$MESS["TASKS_KANBAN_TITLE_START"] = "Pradėti užduotį";
+$MESS["TASKS_KANBAN_TITLE_PAUSE"] = "Pristabdyti užduotį";
+$MESS["TASKS_KANBAN_TITLE_COMPLETE"] = "Užbaigti užduotį";
+$MESS["TASKS_KANBAN_WO_GROUP_LABEL"] = "Grupė (projektas)";
+$MESS["TASKS_KANBAN_WO_GROUP_VALUE"] = "nėra";
+$MESS["TASKS_TASK_CONFIRM_START_TIMER"] = "Jūs jau naudojate laiko stebėjimo priemonę \"{{TITLE}}\". Ši užduotis bus pristabdyta. Tęsti?";
+$MESS["TASKS_TASK_CONFIRM_START_TIMER_TITLE"] = "Jūs jau naudojate laiko stebėjimo priemonę \"{{TITLE}}\". Ši užduotis bus pristabdyta. Tęsti?";
+$MESS["TASKS_KANBAN_ME_DISABLE_DEADLINE"] = "Užduočių datas negalima pakeisti nekeičiant galutinio termino";
+$MESS["TASKS_KANBAN_ME_DISABLE_DEADLINE_PART"] = "Užduoties terminas riboja galimą datų seką";
+$MESS["TASKS_KANBAN_ME_DISABLE_FROM_OVERDUE"] = "Pakeiskite užduoties terminą arba uždarykite ją prieš perkeldami";
+$MESS["TASKS_KANBAN_ME_DISABLE_COMPLETE"] = "Užduotis uždaryta. Paleiskite ją, norėdami perkelti ją į kitą stulpelį.";
+$MESS["TASKS_KANBAN_NOTIFY_TITLE"] = "Nepakankami leidimai";
+$MESS["TASKS_KANBAN_NOTIFY_HEADER"] = "Nepakankami leidimai redaguoti stadijas.";
+$MESS["TASKS_KANBAN_NOTIFY_TEXT"] = "Tik Jūsų Bitrix24 administratorius ar projekto vadovas gali sukurti naują stadiją. Prašome nusiųsti jiems pranešimą arba pasikalbėti su jais, kad pridėtų  reikalingas uždduočių stadijas.";
+$MESS["TASKS_KANBAN_NOTIFY_BUTTON"] = "Siųsti pranešimą";
+$MESS["TASKS_KANBAN_DIABLE_SORT_TOOLTIP"] = "Jūs neturite leidimų redaguoti projekto nuostatas";
+$MESS["MAIN_KANBAN_TITLE_PLACEHOLDER"] = "Pavadinimas #tag";
+?>

@@ -1,0 +1,32 @@
+<?
+$MESS["SALESCENTER_SP_ADD_PAYMENT_BUTTON"] = "Configurar";
+$MESS["SALESCENTER_SP_BUTTON_CLOSE"] = "Cancelar";
+$MESS["SALESCENTER_SP_CAHSBOX_HINT"] = "Não há caixas registradoras. <a href='#CASHBOX_SETTINGS_LINK#'>Configurar caixas registradoras</a>";
+$MESS["SALESCENTER_SP_CONNECT_HINT"] = "Use uma conta Yandex para autenticar";
+$MESS["SALESCENTER_SP_CONNECT_PAYMENT_BUTTON"] = "Conectar";
+$MESS["SALESCENTER_SP_ERROR_POPUP_TITLE"] = "Erro";
+$MESS["SALESCENTER_SP_LINK_CONNECT"] = "Como conectar um sistema de pagamento";
+$MESS["SALESCENTER_SP_PARAMS_FORM_CAN_PRINT_CHECK"] = "Ativar impressões de recibo";
+$MESS["SALESCENTER_SP_PARAMS_FORM_CASHBOX"] = "Caixas registradoras";
+$MESS["SALESCENTER_SP_PARAMS_FORM_DESCRIPTION"] = "Descrição";
+$MESS["SALESCENTER_SP_PARAMS_FORM_IS_CASH"] = "Tipo de pagamento";
+$MESS["SALESCENTER_SP_PARAMS_FORM_IS_CASH_ACQUIRING"] = "Transação com cartão";
+$MESS["SALESCENTER_SP_PARAMS_FORM_IS_CASH_CASH"] = "Em dinheiro";
+$MESS["SALESCENTER_SP_PARAMS_FORM_IS_CASH_NO_CASH"] = "Transferência bancária";
+$MESS["SALESCENTER_SP_PARAMS_FORM_LOGOTIP"] = "Logotipo do sistema de pagamento";
+$MESS["SALESCENTER_SP_PARAMS_FORM_LOGOTIP_HINT"] = "Tamanho recomendado: 100 por 45 pixels";
+$MESS["SALESCENTER_SP_PARAMS_FORM_LOGOTIP_LOAD_BUTTON"] = "Carregar";
+$MESS["SALESCENTER_SP_PARAMS_FORM_NAME"] = "Nome";
+$MESS["SALESCENTER_SP_PARAMS_FORM_NAME_HINT"] = "Exemplo: \"Pagamento com Visa e MasterCard\". Esse é o nome que seus clientes verão na lista de opções de pagamento";
+$MESS["SALESCENTER_SP_PARAMS_FORM_TITLE"] = "Parâmetros";
+$MESS["SALESCENTER_SP_PAYSYSTEM_CASH_DESCRIPTION"] = "Pagamento em dinheiro no local de retirada ou para o serviço de entrega rápida.";
+$MESS["SALESCENTER_SP_PAYSYSTEM_CASH_TITLE"] = "Pagamento em dinheiro";
+$MESS["SALESCENTER_SP_PAYSYSTEM_DELETE_CONFIRM"] = "Tem certeza de que deseja excluir este sistema de pagamento?";
+$MESS["SALESCENTER_SP_PAYSYSTEM_PAYPAL_DESCRIPTION"] = "Pagamento por PayPal";
+$MESS["SALESCENTER_SP_PAYSYSTEM_PAYPAL_TITLE"] = "PayPal";
+$MESS["SALESCENTER_SP_POPUP_BUTTON_CANCEL"] = "Cancelar";
+$MESS["SALESCENTER_SP_POPUP_BUTTON_CLOSE"] = "Fechar";
+$MESS["SALESCENTER_SP_POPUP_CONTENT"] = "As alterações não foram salvas. Tem certeza de que deseja fechar o painel de controle deslizante?";
+$MESS["SALESCENTER_SP_POPUP_TITLE"] = "Confirmar ação";
+$MESS["SALESCENTER_SP_YANDEX_LOGOUT"] = "Desativar";
+?>

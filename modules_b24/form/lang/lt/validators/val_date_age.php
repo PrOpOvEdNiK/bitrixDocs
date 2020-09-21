@@ -1,0 +1,7 @@
+<?
+$MESS["FORM_VALIDATOR_VAL_DATE_AGE_DESCRIPTION"] = "Amžius";
+$MESS["FORM_VALIDATOR_VAL_DATE_AGE_SETTINGS_DATE_FROM"] = "Minimalus amžius";
+$MESS["FORM_VALIDATOR_VAL_DATE_AGE_SETTINGS_DATE_TO"] = "Maksimalus amžius";
+$MESS["FORM_VALIDATOR_VAL_DATE_AGE_ERROR_LESS"] = "#FIELD_NAME#: amžius yra mažesnis, nei įmanoma";
+$MESS["FORM_VALIDATOR_VAL_DATE_AGE_ERROR_MORE"] = "#FIELD_NAME#: amžius yra didesnis, nei įmanoma";
+?>

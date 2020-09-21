@@ -1,0 +1,30 @@
+<?
+$MESS["CRM_PHASE_SEMANTICS_DEAL_CAPTION"] = "Sélectionner les étapes";
+$MESS["CRM_PHASE_SEMANTICS_DEAL_FAILURE"] = "Étape \"Transaction perdue\"";
+$MESS["CRM_PHASE_SEMANTICS_DEAL_GROUP_TITLE"] = "Étape";
+$MESS["CRM_PHASE_SEMANTICS_DEAL_PROCESS"] = "Groupe des étapes \"Transaction en cours\"";
+$MESS["CRM_PHASE_SEMANTICS_DEAL_SELECTOR_TITLE"] = "Sélectionner une étape ou une catégorie";
+$MESS["CRM_PHASE_SEMANTICS_DEAL_SUCCESS"] = "Étape \"Transaction gagnée\"";
+$MESS["CRM_PHASE_SEMANTICS_DEAL_UNDEFINED"] = "pas sélectionné";
+$MESS["CRM_PHASE_SEMANTICS_FAILURE"] = "Échec";
+$MESS["CRM_PHASE_SEMANTICS_INVOICE_CAPTION"] = "Sélectionner les états";
+$MESS["CRM_PHASE_SEMANTICS_INVOICE_FAILURE"] = "Groupe d'états \"Facture refusée\"";
+$MESS["CRM_PHASE_SEMANTICS_INVOICE_GROUP_TITLE"] = "États";
+$MESS["CRM_PHASE_SEMANTICS_INVOICE_PROCESS"] = "Groupe d'états \"Facturation en cours\"";
+$MESS["CRM_PHASE_SEMANTICS_INVOICE_SELECTOR_TITLE"] = "Sélectionner un statut ou une catégorie";
+$MESS["CRM_PHASE_SEMANTICS_INVOICE_SUCCESS"] = "Statut \"Facture payée\"";
+$MESS["CRM_PHASE_SEMANTICS_INVOICE_UNDEFINED"] = "pas sélectionné";
+$MESS["CRM_PHASE_SEMANTICS_LEAD_CAPTION"] = "Sélectionner les états";
+$MESS["CRM_PHASE_SEMANTICS_LEAD_FAILURE"] = "Groupe d'états \"Prospect échouée\"";
+$MESS["CRM_PHASE_SEMANTICS_LEAD_GROUP_TITLE"] = "États";
+$MESS["CRM_PHASE_SEMANTICS_LEAD_PROCESS"] = "Groupe d'états \"Prospect en cours\"";
+$MESS["CRM_PHASE_SEMANTICS_LEAD_SELECTOR_TITLE"] = "Sélectionner un statut ou une catégorie";
+$MESS["CRM_PHASE_SEMANTICS_LEAD_SUCCESS"] = "Statut \"Prospect convertie\"";
+$MESS["CRM_PHASE_SEMANTICS_LEAD_UNDEFINED"] = "pas sélectionné";
+$MESS["CRM_PHASE_SEMANTICS_PROCESS"] = "En cours";
+$MESS["CRM_PHASE_SEMANTICS_QUOTE_FAILURE"] = "Groupe du statut \"Devis refusé\"";
+$MESS["CRM_PHASE_SEMANTICS_QUOTE_PROCESS"] = "Groupe du statut \"Devis ouvert\"";
+$MESS["CRM_PHASE_SEMANTICS_QUOTE_SUCCESS"] = "Statut \"Devis approuvé\"";
+$MESS["CRM_PHASE_SEMANTICS_SUCCESS"] = "Réussi";
+$MESS["CRM_PHASE_SEMANTICS_UNDEFINED"] = "pas sélectionné";
+?>

@@ -1,0 +1,3 @@
+<?
+$MESS["EXTERNAL_AVATAR_ENTITY_ID_FIELD"] = "ID";
+?>

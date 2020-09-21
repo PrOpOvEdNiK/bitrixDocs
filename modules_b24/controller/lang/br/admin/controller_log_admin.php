@@ -1,0 +1,21 @@
+<?
+$MESS["CTRL_LOG_ADMIN_COLUMN_CREATED"] = "Criado";
+$MESS["CTRL_LOG_ADMIN_COLUMN_NAME"] = "Nome";
+$MESS["CTRL_LOG_ADMIN_COLUMN_STATUS_ERR"] = "Erro";
+$MESS["CTRL_LOG_ADMIN_COLUMN_STATUS_OK"] = "Sucesso";
+$MESS["CTRL_LOG_ADMIN_COLUMN_USER"] = "Usuário";
+$MESS["CTRL_LOG_ADMIN_ERR_DELETE"] = "Erro ao excluir um registro";
+$MESS["CTRL_LOG_ADMIN_FILTER_ANY"] = "(Qualquer)";
+$MESS["CTRL_LOG_ADMIN_FILTER_CLIENT"] = "Cliente";
+$MESS["CTRL_LOG_ADMIN_FILTER_CREATED"] = "Criado";
+$MESS["CTRL_LOG_ADMIN_FILTER_DESC"] = "Descrição";
+$MESS["CTRL_LOG_ADMIN_FILTER_IDCLIENT"] = "ID de cliente";
+$MESS["CTRL_LOG_ADMIN_FILTER_STATUS"] = "Status";
+$MESS["CTRL_LOG_ADMIN_FILTER_TASK"] = "Tarefa";
+$MESS["CTRL_LOG_ADMIN_FILTER_TASKID"] = "ID da tarefa";
+$MESS["CTRL_LOG_ADMIN_MENU_DEL"] = "Excluir";
+$MESS["CTRL_LOG_ADMIN_MENU_DEL_CONFIRM"] = "Isto irá remover o registro da lista. Continuar?";
+$MESS["CTRL_LOG_ADMIN_MENU_DETAIL"] = "Detalhado";
+$MESS["CTRL_LOG_ADMIN_PAGETITLE"] = "Registros do diário";
+$MESS["CTRL_LOG_ADMIN_TITLE"] = "Diário do controlador do site";
+?>

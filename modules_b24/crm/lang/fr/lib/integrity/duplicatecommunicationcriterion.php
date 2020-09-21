@@ -1,0 +1,6 @@
+<?
+$MESS["CRM_DUP_CRITERION_COMM_EMAIL_ENTITY_TOTAL"] = "#QTY# pour adresse email'#DESCR#'";
+$MESS["CRM_DUP_CRITERION_COMM_EMAIL_ENTITY_TOTAL_EXCEEDED"] = "Au cours #QTY#  Adresse email pour '#DESCR#'";
+$MESS["CRM_DUP_CRITERION_COMM_PHONE_ENTITY_TOTAL"] = "#QTY# pour le téléphone '#DESCR#'";
+$MESS["CRM_DUP_CRITERION_COMM_PHONE_ENTITY_TOTAL_EXCEEDED"] = "Au cours #QTY#  pour téléphone '#DESCR#'";
+?>

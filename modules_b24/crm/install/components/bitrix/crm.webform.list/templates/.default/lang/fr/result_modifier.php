@@ -1,0 +1,17 @@
+<?
+$MESS["CRM_WEBFORM_LIST_ACTIONS_APPLY_CONSENT"] = "Appliquer le consentement";
+$MESS["CRM_WEBFORM_LIST_ACTIONS_COPY"] = "Créer à l'aide de";
+$MESS["CRM_WEBFORM_LIST_ACTIONS_COPY1"] = "Copier";
+$MESS["CRM_WEBFORM_LIST_ACTIONS_EDIT"] = "Éditer";
+$MESS["CRM_WEBFORM_LIST_ACTIONS_REMOVE"] = "Supprimer le formulaire";
+$MESS["CRM_WEBFORM_LIST_ACTIONS_RESET_COUNTERS1"] = "Réinitialiser les compteurs";
+$MESS["CRM_WEBFORM_LIST_ACTIONS_VIEW"] = "Vue";
+$MESS["CRM_WEBFORM_LIST_FORMS_MINE"] = "Les formulaires de mon entreprise";
+$MESS["CRM_WEBFORM_LIST_FORMS_PRESET"] = "Formulaires prédéfinis";
+$MESS["CRM_WEBFORM_LIST_VIEWS_CONVERSION"] = "conversion";
+$MESS["CRM_WEBFORM_LIST_VIEWS_CONVERSION_MENU"] = "Conversion";
+$MESS["CRM_WEBFORM_LIST_VIEWS_NUMBER"] = "bien rempli";
+$MESS["CRM_WEBFORM_LIST_VIEWS_NUMBER_MENU"] = "Formulaires remplis";
+$MESS["CRM_WEBFORM_LIST_VIEWS_PRICE"] = "montant";
+$MESS["CRM_WEBFORM_LIST_VIEWS_PRICE_MENU"] = "Total des articles";
+?>

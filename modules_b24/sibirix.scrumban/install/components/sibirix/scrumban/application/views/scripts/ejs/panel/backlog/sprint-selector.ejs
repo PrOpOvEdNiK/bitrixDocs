@@ -1,0 +1,42 @@
+<script type='text/ejs' id='backlogSprintSelector'>
+    <select name="sprintSelector">
+        <%
+        var excludeId = (typeof(excludeSprintId) !== 'undefined') ? excludeSprintId : false;
+        var itemSelected;
+        if (!hasArchived) {
+            if (excludeId !== 0) {
+                %><option value="0" selected><?= $this->t("BOARD_UNASSIGNED") ?></option><%
+            }
+
+            for (var i in sprintList) {
+                if (!sprintList[i].sprintId) continue;
+                if (sprintList[i].sprintId == excludeId) continue;
+                itemSelected = (sprintList[i].sprintId == sprint.sprintId) ? 'selected' : '';
+                %><option value="<%= sprintList[i].sprintId %>" <%= itemSelected %>><%= sprintList[i].title %></option><%
+            }
+        } else {
+            %><optgroup label="<?= $this->t('SPRINTS_ACTIVE'); ?>"><%
+            if (excludeId !== 0) {
+                %><option value="0" selected><?= $this->t("BOARD_UNASSIGNED") ?></option><%
+            }
+            for (var i in sprintList) {
+                if (!sprintList[i].sprintId) continue;
+                if (sprintList[i].archived == "Y") continue;
+                if (sprintList[i].sprintId == excludeId) continue;
+                itemSelected = (sprintList[i].sprintId == sprint.sprintId) ? 'selected' : '';
+                %><option value="<%= sprintList[i].sprintId %>" <%= itemSelected %>><%= sprintList[i].title %></option><%
+            }
+
+            %></optgroup><optgroup label="<?= $this->t('SPRINTS_FINISHED'); ?>"><%
+            for (var i in sprintList) {
+                if (!sprintList[i].sprintId) continue;
+                if (sprintList[i].archived != "Y") continue;
+                if (sprintList[i].sprintId == excludeId) continue;
+
+                itemSelected = (sprintList[i].sprintId == sprint.sprintId) ? 'selected' : '';
+                %><option value="<%= sprintList[i].sprintId %>" <%= itemSelected %>><%= sprintList[i].title %></option><%
+            }
+        %></optgroup><%
+        } %>
+    </select>
+</script>

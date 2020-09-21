@@ -1,0 +1,14 @@
+<?
+$MESS["MB_TASKS_GENERAL_TITLE"] = "Zadania";
+$MESS["MB_TASKS_PANEL_TAB_ALL"] = "Wszystko";
+$MESS["MB_TASKS_PANEL_TAB_PROJECTS"] = "Projekty";
+$MESS["MB_TASKS_ROLES_TASK_ADD"] = "Nowe zadanie";
+$MESS["MB_TASKS_TASKS_LIST_MENU_CREATE_NEW_TASK"] = "Nowe zadanie";
+$MESS["MB_TASKS_TASKS_LIST_MENU_GOTO_FILTER"] = "Konfiguruj filtr";
+$MESS["MB_TASKS_TASKS_LIST_NO_TASKS"] = "Brak zadań";
+$MESS["MB_TASKS_TASKS_LIST_PULLDOWN_DOWN"] = "Puść, aby odświeżyć";
+$MESS["MB_TASKS_TASKS_LIST_PULLDOWN_LOADING"] = "Aktualizuję dane ...";
+$MESS["MB_TASKS_TASKS_LIST_PULLDOWN_PULL"] = "Ściągnij, aby odświeżyć";
+$MESS["MB_TASKS_TASK_ERROR_TITLE"] = "Błąd";
+$MESS["MB_TASKS_TASK_SNMROUTER_TASK_WAS_REMOVED"] = "Zadanie zostało usunięte.";
+?>

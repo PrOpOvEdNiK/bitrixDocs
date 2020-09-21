@@ -1,0 +1,9 @@
+<?
+$MESS["CRM_STATUS_BUTTONS_CANCEL"] = "Anuluj";
+$MESS["CRM_STATUS_BUTTONS_SAVE"] = "Zapisz";
+$MESS["CRM_STATUS_LIST_ADD"] = "Dodaj";
+$MESS["CRM_STATUS_LIST_DELETE"] = "Usuń";
+$MESS["CRM_STATUS_LIST_DOWN"] = "W dół";
+$MESS["CRM_STATUS_LIST_RECOVERY_NAME"] = "Powrócić do pierwotnej nazwy";
+$MESS["CRM_STATUS_LIST_UP"] = "W górę";
+?>

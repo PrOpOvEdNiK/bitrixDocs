@@ -1,0 +1,3 @@
+<?
+$MESS["SALE_REPORT_DEFAULT_LEFT_BASKETS_ALIAS_4"] = "Utworzone";
+?>

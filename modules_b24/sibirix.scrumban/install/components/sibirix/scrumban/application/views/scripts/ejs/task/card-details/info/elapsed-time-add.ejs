@@ -1,0 +1,7 @@
+<script type="text/ejs" id="elapsedTimeAdd">
+    <ul class="ui-widget-content ui-menu">
+        <% for (var i=0; i<window.SCRUMBAN.menus.timeadd.length; i++) { %>
+            <li data-value="<%= window.SCRUMBAN.menus.timeadd[i].value %>" class="ui-menu-item"><a><%= window.SCRUMBAN.menus.timeadd[i].label %></a></li>
+        <% } %>
+    </ul>
+</script>

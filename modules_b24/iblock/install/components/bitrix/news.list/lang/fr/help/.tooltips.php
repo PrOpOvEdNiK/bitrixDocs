@@ -1,0 +1,38 @@
+<?
+$MESS["ACTIVE_DATE_FORMAT_TIP"] = "Sélectionnez ici le format de la date requise. Si vous sélectionnez <i><b>autres</b></i>, vous pouvez créer votre propre format en utilisant le <i><b>date</b></i> fonction PHP.";
+$MESS["ADD_SECTIONS_CHAIN_TIP"] = "Si l'option est installée et les sections du bloc info sont créées, au cours du passage par sections ces noms seront ajoutés dans la chaîne de la navigation.";
+$MESS["AJAX_MODE_TIP"] = "Inclusion pour le composant du mode AJAX.";
+$MESS["AJAX_OPTION_HISTORY_TIP"] = "Lorsqu'un utilisateur effectue les transitions AJAX, alors si l'option est cochée, vous pouvez utiliser les boutons 'Retour' et 'Suivant' du navigateur.";
+$MESS["AJAX_OPTION_JUMP_TIP"] = "Si l'utilisateur effectue la transition AJAX, alors après l'achèvement du chargement le défilement vers le début du composant aura lieu.";
+$MESS["AJAX_OPTION_SHADOW_TIP"] = "Au cours du passage l'espace qui doit être modifié sera ombré.";
+$MESS["AJAX_OPTION_STYLE_TIP"] = "Lors des transitions AJAX le chargement et le traitement de la liste de styles provoqués par le composant auront lieu.";
+$MESS["CACHE_FILTER_TIP"] = "Si elle est cochée, le système met en cache chaque résultat de filtre. Cela peut être utile si de nombreux visiteurs utilisent fréquemment les mêmes paramètres de filtre.";
+$MESS["CACHE_TIME_TIP"] = "Veuillez indiquer la période de temps durant laquelle la mémoire cache reste valide.";
+$MESS["CACHE_TYPE_TIP"] = "<i>Auto</i>: cache est valide pendant un temps prédéterminé dans les paramètres;<br /><i>Mettre en cache</i>: pour la mise en cache il faut déterminer seulement le temps de la mise en cache;<br /><i>Ne pas mettre en cache</i>: pas de mise en cache en tout cas.";
+$MESS["CHECK_DATES_TIP"] = "L'option sert à afficher uniquement les éléments actifs du bloc d'information.";
+$MESS["DETAIL_URL_TIP"] = "Il convient d'indiquer le modèle du lien à la page de l'affichage détaillé. Par exemple, <b>news_detail.php?ID=#ELEMENT_ID#</b>";
+$MESS["DISPLAY_BOTTOM_PAGER_TIP"] = "Lorsque l'option est cochée, la navigation dans les éléments sera affichée en bas de la page, au-desous de la liste.";
+$MESS["DISPLAY_PANEL_TIP"] = "Si elle est cochée, le gestionnaire sera de retour l'ID de l'emplacement.";
+$MESS["DISPLAY_TOP_PAGER_TIP"] = "Lorsque l'option est cochée, la navigation dans les éléments sera affichée en haut de la page, au-dessus de la liste.";
+$MESS["FIELD_CODE_TIP"] = "Dans ce champ il est possible de sélectionner les champs nécessaires des éléments du bloc d'information pour le filtrage. Il est également possible d'ajouter d'autres champs dans la forme d'un code de symboles (dans les champs ci-dessous).";
+$MESS["FILTER_NAME_TIP"] = "Spécifier le nom de la variable à laquelle on transmet l'ensemble de paramètres depuis le filtre. Il sert pour déterminer les éléments sortant du filtre. Le champ peut être laissé vide, dans ce cas la valeur par défaut est utilisée.";
+$MESS["HIDE_LINK_WHEN_NO_DETAIL_TIP"] = "L'option permet de cacher le lien, s'il n'y a pas d'information détaillée sur l'élément ou l'utilisateur n'a pas de droits nécessaires pour son aperçu.";
+$MESS["IBLOCK_ID_TIP"] = "Sélectionnez ici l'un des blocs d'information existants. Si vous sélectionnez <b><i>(autre)</i></b>, vous devrez spécifier l'ID de bloc d'information dans le domaine de côté. Par exemple: <b>={\$_REQUEST['IBLOCK_Id']}</b>";
+$MESS["IBLOCK_TYPE_TIP"] = "Dans une liste déroulante il est possible de choisir un type des blocs d'information créés dans le système. Les blocs d'information créés pour le type sélectionné seront rajoutés après la pression sur le bouton <b><i>OK</i></b>. Il est possible de ne pas choisir le type ici.";
+$MESS["INCLUDE_IBLOCK_INTO_CHAIN_TIP"] = "Lorsque l'option est cochée le nom du bloc d'information sera ajouté dans la chaîne de navigation.";
+$MESS["NEWS_COUNT_TIP"] = "Ce chiffre détermine le nombre d'éléments affichés sur la page.";
+$MESS["PAGER_DESC_NUMBERING_CACHE_TIME_TIP"] = "Indiquer le temps de mise en cache des pages pour la navigation inverse en secondes.";
+$MESS["PAGER_DESC_NUMBERING_TIP"] = "Le mécanisme est utilisé, si, en cas d'ajout d'un élément du bloc d'information, il se retrouve dans le haut de la liste. Donc, seule la dernière page change. Toutes les pages précédentes peuvent être placées en cache pour longtemps.";
+$MESS["PAGER_SHOW_ALWAYS_TIP"] = "Si le fanion n'est pas marqué, la navigation par page ne sera pas affichée à condition que tous les éléments soient placés sur une seule page. Si le fanion est marqué, la navigation par page sera toujours affichée.";
+$MESS["PAGER_TEMPLATE_TIP"] = "Le nom du modèle de navigation fil d'Ariane. Vous pouvez laisser le champ vide pour utiliser le modèle par défaut (<b><i>.default</i></b>). (Le système fournit un autre modèle:. <i>Orange</i>)";
+$MESS["PAGER_TITLE_TIP"] = "Indique le nom d'une unité de l'article pour la navigation. Par exemple: la page, chapitre, etc.";
+$MESS["PARENT_SECTION_TIP"] = "Ce champ permet d'indiquer ID de la 'section-parent' pour limiter l'échantillonnage des éléments.";
+$MESS["PREVIEW_TRUNCATE_LEN_TIP"] = "Si le type d'annonce d'un élément du bloc d'information est 'le texte', on peut indiquer sa longueur maximum après le dépassement de laquelle l'annonce sera coupée.";
+$MESS["PROPERTY_CODE_TIP"] = "Enumération des propriétés des éléments du bloc d'information parmi lesquelles vous pouvez choisir celles qui peuvent être filtrées. Il est également possible d'ajouter d'autres champs sous forme du code de symbole (dans les champs ci-dessous).";
+$MESS["SET_BROWSER_TITLE_TIP"] = "Si elle est sélectionnée, un titre d'information d'élément de bloc (ou le titre de SEO si actif) seront utilisés comme titre de la fenêtre du navigateur.";
+$MESS["SET_TITLE_TIP"] = "Avec une option activée, le nom d'un bloc d'information courant sera mis comme le titre de la page.";
+$MESS["SORT_BY1_TIP"] = "Dans la liste sont énumérés les champs qui permettent de trier des nouvelles. Il est possible aussi de choisir le point <b><i>(autre)</i></b> et mettre dans un champ à côté le code du champ nécessaire.";
+$MESS["SORT_BY2_TIP"] = "La liste énumère les champs par lesquels le deuxième triage des actualités peut être effectué en cas de coïncidence des valeurs des champs du premier triage. Il est aussi possible de choisir le point <b><i>(autre)</i></b> et spécifier le code du champ nécessaire dans le champ voisin.";
+$MESS["SORT_ORDER1_TIP"] = "Par ordre croissant ou décroissant.";
+$MESS["SORT_ORDER2_TIP"] = "Par ordre croissant ou décroissant.";
+?>

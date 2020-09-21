@@ -1,0 +1,31 @@
+<?
+$MESS["FORM_COPY"] = "Copie";
+$MESS["FORM_COPY_ALT"] = "Copier le statut";
+$MESS["FORM_C_SORT"] = "Classification";
+$MESS["FORM_DEFAULT"] = "Par défaut";
+$MESS["FORM_DELETE_STATUS_CONFIRM"] = "tes-vous sûr de vouloir supprimer ce statut ?";
+$MESS["FORM_DESCRIPTION"] = "Description";
+$MESS["FORM_EDIT_ALT"] = "Modifier les paramètres de statut";
+$MESS["FORM_ERROR"] = "Erreur !";
+$MESS["FORM_FL_ACTIVE"] = "Actif(ve)";
+$MESS["FORM_FL_DESCR"] = "Description";
+$MESS["FORM_FL_ID"] = "L'identificateur du statut";
+$MESS["FORM_FL_RESULTS"] = "Nombre de résultats";
+$MESS["FORM_FORM_EDIT"] = "Paramètres de formulaire";
+$MESS["FORM_FORM_EDIT_TITLE"] = "Modifier les paramètres de forme";
+$MESS["FORM_FORM_LIST"] = "Liste des formulaires";
+$MESS["FORM_FORM_NAME"] = "Formulaire : ";
+$MESS["FORM_F_ACTIVE"] = "Actif(ve) : ";
+$MESS["FORM_F_DESCRIPTION"] = "Description";
+$MESS["FORM_F_RESULTS"] = "Résultats : ";
+$MESS["FORM_F_TITLE"] = "Dénomination : ";
+$MESS["FORM_NOT_FOUND"] = "Formulaire Web introuvable";
+$MESS["FORM_PAGES"] = "Statuts";
+$MESS["FORM_PAGE_TITLE"] = "Liste de statut pour la résultats de formulaire # #ID#";
+$MESS["FORM_RESULT_TITLE"] = "Ouvrez les résultats de formulaire";
+$MESS["FORM_STATUS_ACTIVE_ERROR"] = "Erreur lors de l'activation/désactivation du statut";
+$MESS["FORM_STATUS_DELETE"] = "Supprimer";
+$MESS["FORM_STATUS_DELETE_ALT"] = "Supprimer le statut";
+$MESS["FORM_STATUS_DELETE_ERROR"] = "Erreur lors de la suppression du statut";
+$MESS["FORM_TIMESTAMP"] = "Modifié";
+?>

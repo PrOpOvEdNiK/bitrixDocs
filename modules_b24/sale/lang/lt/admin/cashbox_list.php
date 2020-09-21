@@ -1,0 +1,30 @@
+<?
+$MESS["SALE_ACCESS_DENIED"] = "Prieigos nėra.";
+$MESS["SALE_CASHBOX_TITLE"] = "Kasos aparatai";
+$MESS["SALE_F_ACTIVE"] = "Aktyvus";
+$MESS["SALE_ALL"] = "Visi";
+$MESS["SALE_YES"] = "Taip";
+$MESS["SALE_NO"] = "Ne";
+$MESS["SALE_CASHBOX_ADD_NEW"] = "Prijungti kasos aparatą";
+$MESS["SALE_CASHBOX_ID"] = "ID";
+$MESS["SALE_CASHBOX_NAME"] = "Pavadinimas";
+$MESS["SALE_CASHBOX_ACTIVE"] = "Aktyvus";
+$MESS["SALE_CASHBOX_SORT"] = "Rūšys";
+$MESS["SALE_CASHBOX_DATE_CREATE"] = "Sukurtas";
+$MESS["SALE_CASHBOX_NUMBER_FN"] = "FN numeris";
+$MESS["SALE_CASHBOX_NUMBER_KKM"] = "Kasos aparatas #";
+$MESS["SALE_CASHBOX_IS_ONLINE"] = "Prisijungęs";
+$MESS["SALE_CASHBOX_EDIT"] = "Redaguoti";
+$MESS["SALE_CASHBOX_COPY"] = "Kopijuoti URL";
+$MESS["SALE_CASHBOX_WINDOW_TITLE"] = "Prijungti kasos aparatą";
+$MESS["SALE_CASHBOX_POPUP_TITLE"] = "Kasos aparato prijungimo nuoroda";
+$MESS["SALE_CASHBOX_EDIT_DESCR"] = "Redaguoti kasos aparato parametrus";
+$MESS["SALE_CASHBOX_DELETE"] = "Pašalinti";
+$MESS["SALE_CASHBOX_DELETE_DESCR"] = "Pašalinti";
+$MESS["SALE_CASHBOX_ONLINE_Y"] = "Taip";
+$MESS["SALE_CASHBOX_ONLINE_N"] = "Ne";
+$MESS["SPSAN_ERROR_DELETE_1C"] = "Negali pašalinti 1C kasos aparato, kadangi jis priklauso sistemai. ";
+$MESS["SPSAN_ERROR_DELETE"] = "Klaida šalinant kasos aparatą";
+$MESS["SPSAN_ERROR_UPDATE"] = "Klaida atnaujinant kasos aparatą";
+$MESS["SALE_CASHBOX_DATE_LAST_CHECK"] = "Paskutinio kvito data";
+?>

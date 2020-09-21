@@ -1,0 +1,35 @@
+<?
+$MESS["EC_T_CALENDARS"] = "تقویم";
+$MESS["EC_T_CALENDAR"] = "تقویم";
+$MESS["EC_T_NAME"] = "نام";
+$MESS["EC_T_DESC"] = "توضیحات";
+$MESS["EC_T_REPEAT"] = "تکرار";
+$MESS["EC_T_REPEAT_NONE"] = "هرگز";
+$MESS["EC_T_REPEAT_DAILY"] = "روزانه";
+$MESS["EC_T_REPEAT_WEEKLY"] = "هفتگی";
+$MESS["EC_T_REPEAT_MONTHLY"] = "ماهانه";
+$MESS["EC_T_REPEAT_YEARLY"] = "سالیانه";
+$MESS["EC_T_DIALOG_STOP_REPEAT"] = "تکرار تا";
+$MESS["EC_T_SAVE"] = "ذخیره";
+$MESS["EC_T_CLOSE"] = "لغو";
+$MESS["EC_T_ADD"] = "افزودن";
+$MESS["EC_T_EDIT"] = "ویرایش";
+$MESS["EC_T_DELETE"] = "حذف";
+$MESS["EC_T_COLOR"] = "رنگ";
+$MESS["EC_T_CALEN_EXP_SET_ALL"] = "همه";
+$MESS["EC_SP_DIALOG_USERS_NOT_FOUND"] = "کاربری پیدا نشد.";
+$MESS["EC_TAB_MONTH"] = "ماه";
+$MESS["EC_TAB_WEEK"] = "هفته";
+$MESS["EC_TAB_DAY"] = "روز";
+$MESS["EC_EXT_DIAL"] = "بیشتر...";
+$MESS["EC_EDEV_HOST"] = "مالک";
+$MESS["EC_EDEV_DATE_FROM"] = "تاریخ شروع";
+$MESS["EC_EDEV_TIME_FROM"] = "زمان شروع";
+$MESS["EC_EDEV_TIME_TO"] = "زمان پایان";
+$MESS["EC_EDEV_ADD_TAB"] = "بیشتر";
+$MESS["EC_MORE_BUT_TITLE"] = "بیشتر";
+$MESS["EC_ACCESSIBILITY_A"] = "دور";
+$MESS["EC_IMPORTANCE_H"] = "بالا";
+$MESS["EC_IMPORTANCE_N"] = "نرمال";
+$MESS["EC_IMPORTANCE_L"] = "پایین";
+?>

@@ -1,0 +1,29 @@
+<?
+$MESS["IBLOCK_CACHE_FILTER"] = "Mettre en cache si un filtre est installé";
+$MESS["IBLOCK_FIELD"] = "Correspondance des champs";
+$MESS["IBLOCK_SECTION_ID"] = "ID de la section";
+$MESS["T_IBLOCK_DESC_ACTIVE_DATE_FORMAT"] = "Format d'affichage de la date";
+$MESS["T_IBLOCK_DESC_ADD_SECTIONS_CHAIN"] = "Ajouter une section dans le fil d'Ariane";
+$MESS["T_IBLOCK_DESC_ASC"] = "Croissant";
+$MESS["T_IBLOCK_DESC_DESC"] = "Décroissant";
+$MESS["T_IBLOCK_DESC_DETAIL_PAGE_URL"] = "URL de la page destinée à une consultation détaillée (par défaut - à partir des réglages du bloc d'information)";
+$MESS["T_IBLOCK_DESC_DOCS_PANEL"] = "Ajouter les boutons au panneau admin. Pour ce composant";
+$MESS["T_IBLOCK_DESC_FACT"] = "Date de l'activation";
+$MESS["T_IBLOCK_DESC_FID"] = "ID";
+$MESS["T_IBLOCK_DESC_FNAME"] = "Dénomination";
+$MESS["T_IBLOCK_DESC_FSORT"] = "Classification";
+$MESS["T_IBLOCK_DESC_FTSAMP"] = "Date de la dernière modification";
+$MESS["T_IBLOCK_DESC_HIDE_LINK_WHEN_NO_DETAIL"] = "Lien caché vers la page de détails si aucune description détaillée disponible";
+$MESS["T_IBLOCK_DESC_IBBY1"] = "Direction pour le premier tri de documents";
+$MESS["T_IBLOCK_DESC_IBBY2"] = "Direction pour le deuxième tri de documents";
+$MESS["T_IBLOCK_DESC_IBORD1"] = "Champ pour le premier tri des documents";
+$MESS["T_IBLOCK_DESC_IBORD2"] = "Champ pour le deuxième tri des documents";
+$MESS["T_IBLOCK_DESC_INCLUDE_IBLOCK_INTO_CHAIN"] = "Inclure le bloc d'information dans la chaîne de navigation";
+$MESS["T_IBLOCK_DESC_LIST_CONT"] = "Nombre de documents par page";
+$MESS["T_IBLOCK_DESC_LIST_ID"] = "Bloc d'information";
+$MESS["T_IBLOCK_DESC_LIST_TYPE"] = "Type du bloc d'information (n'est utilisé que pour la vérification)";
+$MESS["T_IBLOCK_DESC_PAGER_DOCS"] = "Documents";
+$MESS["T_IBLOCK_DESC_PREVIEW_TRUNCATE_LEN"] = "Longueur maximale d'annonce à afficher (uniquement pour le texte)";
+$MESS["T_IBLOCK_FILTER"] = "Filtre";
+$MESS["T_IBLOCK_PROPERTY"] = "Propriétés";
+?>

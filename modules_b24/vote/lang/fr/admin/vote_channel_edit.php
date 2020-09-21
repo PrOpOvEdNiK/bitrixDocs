@@ -1,0 +1,31 @@
+<?
+$MESS["VOTE_ACCESS"] = "Accès";
+$MESS["VOTE_ACTIVE"] = "Actif(ve) : ";
+$MESS["VOTE_CHANNEL_IS_NOT_EXISTS"] = "Le groupe de sondage au numéro #ID# est introuvable.";
+$MESS["VOTE_CREATE"] = "Ajouter";
+$MESS["VOTE_CREATE_NEW_RECORD"] = "Créer nouvelle chaîne";
+$MESS["VOTE_CREATE_VOTE"] = "Créer un sondage";
+$MESS["VOTE_DELETE"] = "Supprimer";
+$MESS["VOTE_DELETE_RECORD"] = "Supprimer le groupe";
+$MESS["VOTE_DELETE_RECORD_CONFIRM"] = "Etes-vous sûr que vous voulez supprimer à la fois le canal de vote et les sondages inclus ?";
+$MESS["VOTE_EDIT_RECORD"] = "Réglages de canaux Sondage # #ID#";
+$MESS["VOTE_GOT_ERROR"] = "L'enregistrement d'un canal Erreur";
+$MESS["VOTE_GRP_PROP"] = "Propriétés de la Manche";
+$MESS["VOTE_HIDDEN"] = "Cachée : ";
+$MESS["VOTE_LIST"] = "Liste";
+$MESS["VOTE_NEW_RECORD"] = "Nouveau groupe de sondages";
+$MESS["VOTE_PROP"] = "Propriétés";
+$MESS["VOTE_RECORDS_LIST"] = "Liste des groupes";
+$MESS["VOTE_RIGHTS"] = "Permission de groupes d'utilisateurs";
+$MESS["VOTE_SITE"] = "Quantité des sites : ";
+$MESS["VOTE_SITE_EDIT"] = "Modifier le site";
+$MESS["VOTE_SORTING"] = "Index du tri : ";
+$MESS["VOTE_SYMBOLIC_NAME"] = "Code symbole : ";
+$MESS["VOTE_TIMESTAMP"] = "Changé:";
+$MESS["VOTE_TITLE"] = "Dénomination : ";
+$MESS["VOTE_USE_CAPTCHA"] = "Utiliser CAPTCHA";
+$MESS["VOTE_VOTES"] = "Sondages : ";
+$MESS["VOTE_VOTES_TITLE"] = "liste des sondages pour le groupe actuel";
+$MESS["VOTE_VOTE_ADD"] = "Ajouter sondage";
+$MESS["VOTE_VOTE_SINGLE"] = "Autoriser seulement un sondage courant dans le groupe : ";
+?>

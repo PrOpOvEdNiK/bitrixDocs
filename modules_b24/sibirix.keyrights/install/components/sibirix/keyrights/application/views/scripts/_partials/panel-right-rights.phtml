@@ -1,0 +1,130 @@
+<div ng-controller="SectionRightsCtrl">
+    <div ng-if="!(rights && rights.owner)"
+         class="rights-loader">
+        <div class="loader"></div>
+    </div>
+
+    <div class="list-allowed"
+         ng-if="rights && rights.owner">
+        <div class="panel-heading">
+            <?= $this->t('HAVE_RIGHTS'); ?>
+        </div>
+
+        <div class="panel-body"
+             ng-class="{disabled: loading}">
+            <table class="table rights">
+                <tbody>
+                    <tr ng-if="folder.ID > 0 || entity">
+                        <td class="avatar"><i class="icon-crown">&nbsp;</i><img ng-src="{{getUserImage(rights.owner)}}" width="26" height="26"/></td>
+                        <td class="name"><div title="{{ getUserFullTitle(rights.owner) }}">{{getUserTitle(rights.owner)}}</div></td>
+                        <td colspan="3" class="owner-change"><a data-target="#change-owner" data-toggle="modal" class="change-owner" ng-show="canChangeOwner" ng-disabled="loading"><?= $this->t('OWNER_CHANGE_ACTION'); ?></a></td>
+                    </tr>
+
+                    <tr ng-repeat="(i, right) in rights.all | filter: { blocked: false } | orderBy: ['type', 'item.NAME + item.LAST_NAME']">
+                        <td class="avatar">
+                            <img ng-src="{{getUserImage(right.item)}}" width="26" height="26" />
+                        </td>
+                        <td class="name">
+                            <div title="{{ getUserFullTitle(right.item) }}">{{getUserTitle(right.item)}}</div>
+                        </td>
+                        <td class="date-to">
+                            <a href="javascript:void(0)"
+                               ng-click="canEditRights && openDatepicker(i, $event)"
+                               datepicker-popup="{{format}}"
+                               datepicker-append-to-body="true"
+                               ng-model="right.timed"
+                               is-open="opened[i]"
+                               datepicker-options="dateOptions"
+                               close-text="<?= $this->t('CLOSE'); ?>"
+                               clear-text="<?= $this->t('CLEAR'); ?>"
+                               current-text="<?= $this->t('TODAY'); ?>"
+                               min-date="{{today}}"
+                               ng-disabled="loading">
+                                <span ng-show="right.timed">{{formatDate(right.timed)}}</span>
+                                <i ng-hide="right.timed || !canEditRights" class="icon-cal" title="<?= $this->t('SET_TO_DATE'); ?>">&nbsp;</i>
+                            </a>
+                        </td>
+
+                        <td>
+                            <label>
+                                <select
+                                    ng-if="canEditRights"
+                                    ng-model="right.edit"
+                                    ng-disabled="!canEditRights || loading"
+                                    ng-options="label for (label, value) in rightList"
+                                    >
+                                </select>
+                            </label>
+
+                            <span class="right-type" ng-if="!canEditRights">{{ getRightTypeLabel(right.edit) }}</span>
+                        </td>
+
+                        <td class="delete"><a href="javascript:void(0);"
+                            class="close"
+                            ng-click="remove($event, right)"
+                            ng-show="canEditRights"
+                            ng-disabled="loading"
+                            title="<?= $this->t('FORBID_ACCESS'); ?>">&times;</a></td>
+                    </tr>
+
+                    <tr class="inherited" ng-repeat="(i, right) in rightsInherited | filter: { blocked: false } | orderBy: ['type', 'item.NAME + item.LAST_NAME']">
+                        <td class="avatar"><img ng-src="{{getUserImage(right.item)}}" width="26" height="26" /></td>
+                        <td class="name"><div title="{{ getUserFullTitle(right.item) }}">{{getUserTitle(right.item)}}</div></td>
+                        <td><span ng-show="right.timed">{{formatDate(right.timed)}}</span></td>
+                        <td class="check">
+                            <label>
+                                <select
+                                        ng-if="canEditRights"
+                                        ng-model="right.edit"
+                                        ng-disabled="!canEditRights || loading"
+                                        ng-options="label for (label, value) in rightList"
+                                        ng-change="inheritedChange(right)"
+                                        >
+                                </select>
+                            </label>
+
+                            <span class="right-type" ng-if="!canEditRights">{{ getRightTypeLabel(right.edit) }}</span>
+                        </td>
+                        <td><a href="javascript:void(0);"
+                               class="close"
+                               ng-click="remove($event, right, true)"
+                               ng-show="canEditRights"
+                               ng-disabled="loading"
+                               title="<?= $this->t('FORBID_ACCESS'); ?>">&times;</a></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <button data-target="#add-user"
+                    data-toggle="modal"
+                    class="btn btn-primary center-block"
+                    ng-show="canEditRights"
+                    ng-disabled="loading"
+                    ng-click="setRightsType(false)"><?= $this->t('USERS_ADD'); ?></button>
+
+            <button
+                ng-if="!canRead && !loading"
+                ng-click="requestAccess()"
+                class="btn btn-primary center-block">
+                <?= $this->t('REQUEST_ACCESS'); ?>
+            </button>
+        </div>
+    </div>
+
+    <div class="sidepanel-body" ng-if="folder.ID > 0 || entity">
+        <div ng-controller="UpdatedCtrl" class="folder-info">
+            <div>
+                <span class="left"><?= $this->t('CREATED'); ?>:</span>
+                <span>{{dates.created}}</span>
+            </div>
+            <div>
+                <span class="left"><?= $this->t('LAST_CHANGE'); ?>:</span>
+                <span>{{dates.modified}}</span>
+            </div>
+            <!--<div>
+                <span class="left">Последнее использование:</span>
+                <span>{{dates.used}}</span>
+            </div>-->
+        </div>
+    </div>
+</div>

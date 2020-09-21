@@ -1,0 +1,1487 @@
+/* Боковые панели */
+/* пролистывание вверх */
+#kanban .scrollTopPanel {
+    background: url("data:image/gif;base64,R0lGODlhEAATAIABANze4f///yH5BAEAAAEALAAAAAAQABMAAAIqjB8AyKja2HvR0ATbtfls330OJEpTNaJqumJdNb3m4kafWG4lt+ygPyoAADs=") 6px 50% no-repeat #959BA3;
+    width: 31px;
+    height: 39px;
+    border-radius: 0 10px 10px 0;
+
+    display: block;
+    opacity: 0;
+    position: fixed;
+    z-index: 130;
+    left: 0;
+    top: 40%;
+
+    -webkit-transition: opacity 0.5s ease;
+    -moz-transition: opacity 0.5s ease;
+    -o-transition: opacity 0.5s ease;
+    -ms-transition: opacity 0.5s ease;
+    transition: opacity 0.5s ease;
+}
+#kanban .scrollTopPanel.visible {
+    cursor: pointer;
+    opacity: 1;
+}
+#kanban.overlayOpened .panels .scrollTopPanel { display: none !important; }
+.ie7 #kanban .scrollTopPanel, .ie8 #kanban .scrollTopPanel { display: none; }
+.ie7 #kanban .scrollTopPanel.visible, .ie8 #kanban .scrollTopPanel.visible { display: block; }
+
+#kanban .fixedPanel .panelBody {
+    width: 250px;
+    z-index: 50;
+    position: fixed;
+    background: #959ba3;
+    text-align: left;
+}
+#kanban .fixedPanel .header {
+    height: 42px;
+}
+#kanban .fixedPanel .header .title {
+    font: normal 18px/42px Arial, sans-serif;
+    color: #fff;
+    text-align: left;
+    padding-left: 20px;
+}
+#kanban .fixedPanel .header .lines {
+    height: 5px;
+    border-top: 1px solid #959ba4;
+    margin-left: 1px;
+}
+#kanban .fixedPanel .header .hide {
+    position: absolute;
+    cursor: pointer;
+    top: 10px;
+    right: 10px;
+    height: 23px;
+    width: 23px;
+    background: url("@{pathImages}sprite-icons.png") 0 -210px;
+    opacity: 0.5;
+}
+#kanban .fixedPanel .header .hide:hover {
+    opacity: 1;
+}
+
+#kanban .fixedPanel .panelBody > .body {
+    padding: 15px 10px 0 10px;
+}
+#kanban .fixedPanel .label {
+    font: bold 14px/14px Arial, sans-serif;
+    color: #6d7681;
+    margin-bottom: 8px;
+}
+#kanban .fixedPanel .field {
+    padding: 0 0 20px 0;
+}
+#kanban .fixedPanel .miniblock.hours {
+    color: #fff;
+    background: #a6b774;
+    border-color: #a6b774;
+}
+#kanban .fixedPanel .miniblock.hours b {
+    background-position: -220px -24px;
+}
+
+/* Бэклог */
+#kanban .backlogPanel {
+    position: fixed;
+    z-index: 110;
+    left: 0;
+    top: 70px;
+    bottom: 10px;
+    .body {
+        > .field {
+            padding-bottom: 12px;
+        }
+    }
+
+    .sprint-add {
+        .show-form {
+            color: #fff;
+            border-bottom: 1px dotted;
+            &:hover {
+                border-bottom-color: transparent;
+            }
+        }
+        .value {
+            display: none;
+        }
+        .title {
+            input {
+                font: 700 14px Arial,sans-serif;
+                color: #000;
+                width: 198px;
+                padding: 0 5px;
+                border: 1px solid #bdc6c9;
+                display: block;
+                height: 24px;
+            }
+        }
+        .buttons {
+            padding-top: 10px;
+            .cancelLink {
+                color: #fff;
+                border-bottom-color: #fff;
+                &:hover {
+                    border-bottom-color: transparent;
+                }
+            }
+        }
+    }
+}
+#kanban.withBitrixHeader .backlogPanel { top: 133px; }
+#kanban.fullScreen .backlogPanel { top: 70px; }
+
+#kanban .backlogPanel .panelButton {
+    float:right;
+    background: #959BA3;
+    width: 31px;
+    height: 83px;
+    border-radius: 0 3px 3px 0;
+
+    cursor: pointer;
+    display: block;
+    position: fixed;
+    z-index: 50;
+    top: 40%;
+    margin-top: 100px;
+}
+#kanban .backlogPanel .panelButton:hover {
+    padding-right: 4px;
+}
+#kanban .backlogPanel .panelButton span {
+    display: block;
+    font: bold 14px/31px Arial, sans-serif;
+    color:#fff;
+    width: 83px;
+    height: 31px;
+    text-align: center;
+    margin: 26px 0 0 -28px;
+    -webkit-transform: rotate(-90deg);
+    -moz-transform: rotate(-90deg);
+    -ms-transform: rotate(-90deg);
+    -o-transform: rotate(-90deg);
+    filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+}
+.ie9 #kanban .backlogPanel .panelButton span { filter: none; }
+.ie7 #kanban .backlogPanel .panelButton span,
+.ie8 #kanban .backlogPanel .panelButton span {
+    margin: 0;
+    background: #a7adb3;
+}
+#kanban .backlogPanel .panelBody { display: none; }
+#kanban .backlogPanel.visible + .scrollTopPanel {
+    background-color: #6d7681;
+    left: 250px;
+}
+#kanban .backlogPanel.visible .panelButton { left: 260px; }
+#kanban .backlogPanel.visible .panelBody {
+    display: block;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    overflow: hidden;
+}
+
+
+#kanban .backlogPanel .backlogSprintSelector {
+    width: 210px;
+}
+#kanban .backlogPanel .panelBody { width: 260px; }
+#kanban .backlogPanel .panelBody > .body {
+    padding: 15px 30px 0 20px;
+}
+#kanban .backlogPanel .body > .icons {
+    height: 18px;
+    margin: 0 0 12px;
+}
+#kanban .backlogPanel .chzn-container-single .chzn-single {
+}
+
+#kanban .backlogPanel .chzn-container-single .chzn-drop {
+    font-weight:bold;
+    margin-top: 1px;
+}
+#kanban .backlogPanel .chzn-container-single .chzn-single span { font-weight: bold; }
+#kanban .backlogPanel .scrollBlock {
+    margin-left: -15px;
+    padding:0 15px 0 10px;
+}
+#kanban .backlogPanel .scrollBlock .jspHorizontalBar {
+    visibility: hidden;
+}
+#kanban .backlogPanel .jspVerticalBar { right: 5px; }
+#kanban .backlogPanel .backlogSprintSelector .jspVerticalBar { right: 0; }
+#kanban .backlogPanel .scrollBlock.dropOver {
+    background: #c0c9d4;
+}
+#kanban .archivePanel .scrollBlock .jspDrag,
+#kanban .backlogPanel .scrollBlock .jspDrag {
+    /*noinspection CssOverwrittenProperties*/ background: #bfc3c8;
+    /*noinspection CssOverwrittenProperties*/ background: rgba(255, 255, 255, 0.4);
+}
+#kanban .archivePanel .scrollBlock .jspTrack,
+#kanban .backlogPanel .scrollBlock .jspTrack {
+    background: transparent;
+}
+
+#kanban .backlogPanel .resizer.resizer-bottom {
+    height: 12px !important;
+    position: absolute;
+    text-align:right;
+    bottom: 3px;
+    right: 1px;
+    left: 0;
+    top: auto !important;
+    margin-top: -14px;
+}
+#kanban .backlogPanel .resizer.resizer-bottom i {
+    width: 12px;
+    height: 12px;
+    background: url("@{pathImages}sprite-icons.png") -250px -260px no-repeat;
+    margin: 0 1px 0 247px;
+    display: inline-block;
+}
+#kanban .backlogPanel .resizer .ui-resizable-e { right: 0; width: 13px; }
+
+/* Панель архива задач */
+#kanban .archivePanel {
+    position: fixed;
+    z-index: 100;
+    right: 0;
+    top: 70px;
+    bottom: 10px;
+}
+#kanban.withBitrixHeader .archivePanel { top: 133px; }
+#kanban.fullScreen .archivePanel { top: 70px; }
+
+#kanban .archivePanel .panelBody {
+    display: none;
+    width: 260px;
+    z-index: 50;
+    position: fixed;
+    background: #959ba3;
+    text-align: left;
+}
+#kanban .backlogPanel .panelBody .loader,
+#kanban .archivePanel .panelBody .loader {
+    background: url("@{pathImages}loader-gray.gif") 50% 50% no-repeat;
+    height: 64px;
+}
+
+#kanban .archivePanel .panelBody > .body {
+    padding: 15px 30px 0 20px;
+}
+#kanban .archivePanel.visible + .scrollTopPanel {
+    background-color: #6d7681;
+    left: 250px;
+}
+#kanban .archivePanel.visible .panelButton { display: none; }
+#kanban .archivePanel.visible .panelBody {
+    display: block;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+}
+
+#kanban .archivePanel .header .lines { display: none; }
+#kanban .archivePanel .header:before {
+    content: "";
+    display: block;
+    height: 5px;
+    border-top: 1px solid #959ba4;
+    margin-left: 1px;
+}
+
+#kanban .archivePanel .scrollBlock {
+    height: 600px;
+    margin-left: -15px;
+    padding:0 15px 0 10px;
+}
+#kanban .archivePanel .scrollBlock .jspHorizontalBar {
+    visibility: hidden;
+}
+#kanban .archivePanel .scrollBlock.dropOver {
+    background: #c0c9d4;
+}
+#kanban .archivePanel .jspVerticalBar { right: 5px; }
+#kanban .archivePanel .body > .icons {
+    height: 18px;
+    padding: 0 0 20px;
+}
+#kanban.hideColumnStatistics .archivePanel .body > .icons { display: none; }
+
+#kanban .archivePanel .resizer {
+    height: 12px !important;
+    position: absolute;
+    text-align:left;
+    bottom: 3px;
+    left: 0;
+    top: auto !important;
+    margin-top: -14px;
+}
+#kanban .archivePanel .resizer .ui-resizable-e { right: 0; }
+#kanban .archivePanel .resizer i {
+    width: 12px;
+    height: 12px;
+    background: url("@{pathImages}sprite-icons.png") -200px -260px no-repeat;
+    margin: 0 247px 0 2px;
+    display: inline-block;
+}
+#kanban .archivePanel .resizer .ui-resizable-w {
+    left: 0;
+    width: 13px;
+}
+
+#kanban .archivePanel .task .menuIcon,
+#kanban .backlogPanel .task .menuIcon {
+    margin-left: 178px;
+}
+
+#kanban .scrollTopPanel:hover {
+    width: 35px;
+    background-position: 10px 50%;
+}
+
+
+#kanban .filterPanel {
+    position: fixed;
+    z-index: 100;
+    right: 0;
+    top: 0;
+    width: 0;
+}
+#kanban .filterPanel .panelBody {
+    width: 260px;
+    display: none;
+}
+#kanban .filterPanel .panelButton {
+    background: #959ba3;
+    width: 30px;
+    height: 83px;
+    border-radius: 3px 0 0 3px;
+    cursor: pointer;
+    display: block;
+    position: fixed;
+    z-index: 50;
+    top: 40%;
+    margin-left: -30px;
+}
+#kanban .filterPanel .chzn-container .chzn-choices input {
+    font-weight: normal;
+    font-size: 12px;
+    font-family: Arial, sans-serif;
+}
+#kanban .filterPanel .panelButton + .panelButton { margin-top: 100px; }
+#kanban .filterPanel .panelButton:hover { padding-right: 4px; }
+#kanban .filterPanel.visible .panelButton {
+    background-color: #6d7681;
+}
+#kanban .filterPanel.visible .panelButton:first-child {
+    background-color: #959ba3;
+}
+#kanban .archivePanel.visible + .filterPanel .panelButton {
+    background-color: #6d7681;
+}
+#kanban .archivePanel.visible + .filterPanel .panelButton.highlight:first-child {
+    background-image: url("data:image/gif;base64,R0lGODlhDQAMANU/AG92fnuCiOHq03iGeHiBhHmChpaudqe1mq3Bja24prG5rsHLunZ/fZqnlaCqo5WkiJ6pnbzJr3F5gZ+yi4ygd3eBgZ+8c7bGonN/dY21UMfNw36HibHWcIeOknB4fdDkrqK/c32GhsTOvHJ5gn+HjK/GjtrnwMPek3yGgrnKo8DNsYaOjYenWHF4f4GMg4GbYYONiX2Le6OqqbO6s4GHjZfKRPL445vTP292f8vpleT0x9rvsuz317jgb251fv///yH/C05FVFNDQVBFMi4wAwEAAAAh+QQFFAA/ACwAAAAADQAMAAAGS0CfEPPK1GqZF0YoHGRu0GhmMHyyMAAAhnXLLF83lofp83Bf5LQP0426mYBbzR2Fy9VkdsYHFpPNN2gYVlhaXF5NT3RTeUVHSUs+QQAh+QQFAAA/ACwAAAAADQAMAAAGScCfkEEBcTggCkMojFl60KglNnwaBj/cwNCzLCk9A5PJpYzPv0EPFG2Pe5x29M1Bj9WgH1h8Lv8YVgM4aVxeTU9yU2NERkhKQkEAIfkEBQAAPwAsAAAAAA0ADAAABkzAn7DyKJ1OpUdFKHQhctAowjV8TlA/AGqSQywfuUmL+WtxH+T0D5UrRd/k3OkdjZ/UZHbpBxaTzTloFVYoAGtcXk1PdFNkREZISkJBACH5BAUAAD8ALAAAAAANAAwAAAZMwJ+Q0Eh9PqkGQSiEXXbQ6AU2fB5COFzosLssG7uDhPmTcBvk9C+0S0XfTNzu847G52oyO/UDi8lmO2gEVlhaXF5NT3VTZERGSEpCQQAh+QQFAAA/ACwAAAAADQAMAAAGR8CfsABRmUwqSEEoXEV00GhkNXwmNsJNQhdZQnQJJnMLEZt/G50qyhbrTOyo23QWp1W/b9hM/hWsWGhbXU1PcVNiREZISkJBACH5BAUAAD8ALAAAAAANAAwAAAZKwJ8w4BAJBCJHQCjsLHjQ6KIzfCpIQpKCt1g6eIoR8zfaOsboH4knirrHPIE7Chekx2vR7xsel3lnAVZYaltdTU9zU2NERkhKQkEAIfkEBTIAPwAsAAAAAA0ADAAABjvAn/An0wg1suFQY2s6jUvbjCakzWxQmVQpvCa5ShrWSVbafmSnGcwVG7UzsPcopf6sWCUzDVUWj18/QQAh+QQFAAA/ACwAAAAADQAMAAAGPMCf8OcQCUWO4XDBazoXSqaCJCQpeFAiT6EUXpNdJYkncpqVvJ/ZiQ53x0bHNvwVSqk/Kza63neLR2A/QQAh+QQFAAA/ACwAAAAADQAMAAAGSsCfsABRmUwqSEEoXEV00GhkNXwmNsJNQhdZQnQJCfMn2ULG6N9Gp4q6xzqTOwo3pcdr1e8bHpd1ZwVWWGpbXU1Pc1NjREZISkJBACH5BAUAAD8ALAAAAAANAAwAAAZHwJ+Q0Eh9PqkGQSiEXXbQ6AU2fB5CwtBhd1k2dgcmc9sQm3+hXSrKFu8+7Kj7cxanU79v2Ez+EaxYaFtdTU9xU2JERkhKQkEAIfkEBQAAPwAsAAAAAA0ADAAABkzAn7DyKJ1OpUdFKHQhctAowjV8TlAAAGqSQywfuUmL+WtxH+T0D5UrRd9MQO70jsbnajK79AOLyWY5aBVWWFpcXk1PdVNkREZISkJBACH5BAUAAD8ALAAAAAANAAwAAAZMwJ+QQQFxOCAKQyiMWXrQqCU2fBoGP9zA0LMsKT2Dh/nzcCnk9G/QA0Xf5B7nHY1z1GQ26AcWk809aAxWAzhrXF5NT3RTZERGSEpCQQA7");
+}
+#kanban .panelButton:hover {
+    margin-left: -34px;
+    padding-right: 4px;
+}
+#kanban .archivePanel.visible + .filterPanel .panelButton + .panelButton {
+    background: #959ba3;
+}
+
+#kanban .filterPanel .panelButton.highlight {
+    background: url('data:image/gif;base64,R0lGODlhDQAMANU/AJacpJaco6Cmq5+mqa6+nb3LrZifpdbd0cfPwsPNucrQyJykorzEu7bInJ2lpb3Smp6lqM7Zv9LbybnDtb7FwLXBq8fWr6SqrqOqrKGpptfqtKKpqcrkl9XeyuDuyOzy4snZsNDcwJ6pnr/Umtjf0ufw1ZmfpqrDgqqws6KtoK/NepeeosDFxJiepKmwr6evrJqkm6W6iqWup8zRzNre16Wqr7fcbrriaff77c/rlt3xtfP65ef1y+742pWbo////yH/C05FVFNDQVBFMi4wAwEAAAAh+QQFFAA/ACwAAAAADQAMAAAGS0CfEBZT2WyqGEwoFKlu0KhKNHyeYIEA7HRTLWO304rpW3Fj5LQP1o26mYGbzR2Fy9VktsoHFpPNN2gwVlhaXF5NT3RTeUVHSUs+QQAh+QQFAAA/ACwAAAAADQAMAAAGScCfcEEYcTgjwkIoTD1y0OgjNXw2RD+AqJF7LAm5BpPJJYzPP1FuFG2Pc5x29M1Bj9WjH1h8Lv8WViIAaVxeTU9yU2NERkhKQkEAIfkEBQAAPwAsAAAAAA0ADAAABkzAn9BRAWk0oIpDKJRZdNCoRTZ8FjK/QKagsywrukKL+WtxK+T0L6MDRd9kneYdjWvUZDboBxaTzTpoDlYZAWtcXk1PdFNkREZISkJBACH5BAUAAD8ALAAAAAANAAwAAAZMwJ8QMgl5PKEJRCh8RXjQaOQ1fCY2AMAmwYssJ7yEgfkzcCfk9G/DC0XfTADP847G52oyO/QDi8lmPGgQVlhaXF5NT3VTZERGSEpCQQAh+QQFAAA/ACwAAAAADQAMAAAGR8CfcMDolEodxkAodEl60KjENXwiMEIMoidZMnoIJnPLEJt/mF4nyhb3Suyou3QWpzu/b9hM/g2sWGhbXU1PcVNiREZISkJBACH5BAUAAD8ALAAAAAANAAwAAAZKwJ9QQCF9PiSKQChEHXbQ6AE1fCouwotid1hSdgoT82faUsbo32VHirrHu487Cv+kx2vS7xsel3dnAlZYaltdTU9zU2NERkhKQkEAIfkEBTIAPwAsAAAAAA0ADAAABjvAn/DHoglprOGQhms6jUvcrCaszXBQllQpvCa5yhrWSVbifmSnGcwVG7UzsPcopf6sWCUzDVUWj18/QQAh+QQFAAA/ACwAAAAADQAMAAAGPMCf8EchCUmU4fCwazoPSqbiIrwodlDiTqEUXpNd5WVHcpqVu5/ZiQ53x0bKNvwVSqk/Kza63neLR2A/QQAh+QQFAAA/ACwAAAAADQAMAAAGSsCfcMDolEodxkAodEl60KjENXwiMEIMoidZMnoIA/Nn2DLG6B+m14m6x72SOwovpcfrzu8bHpd7ZwNWWGpbXU1Pc1NjREZISkJBACH5BAUAAD8ALAAAAAANAAwAAAZHwJ8QMgl5PKEJRCh8RXjQaOQ1fCY2wk2CF1lOeAkmczsRm38bXijKFvM87KjbcxanQ79v2Ez+QaxYaFtdTU9xU2JERkhKQkEAIfkEBQAAPwAsAAAAAA0ADAAABkzAn9BRAWk0oIpDKJRZdNCoRTZ8FjKBQKagsywrukKL+WtxK+T0L6MDRd/MgE7zjsbnajIb9AOLyWY6aA5WWFpcXk1PdVNkREZISkJBACH5BAUAAD8ALAAAAAANAAwAAAZMwJ9wQRhxOCPCQihMPXLQ6CM1fDZEP4CokXssCbnGivlbcQnk9E+UG0Xf5BznHY1z1GT26AcWk805aAtWIgBrXF5NT3RTZERGSEpCQQA7') 10px 13px no-repeat #959ba3;
+    padding-top: 20px;
+}
+
+#kanban .filterPanel .panelButton.highlight:first-child {
+    margin-top: -20px;
+}
+
+#kanban .filterPanel .panelButton span {
+    display: block;
+    font: bold 14px/31px Arial, sans-serif;
+    color:#fff;
+    width: 83px;
+    height: 30px;
+    text-align: center;
+    margin: 26px 0 0 -27px;
+    -webkit-transform: rotate(-90deg);
+    -moz-transform: rotate(-90deg);
+    -ms-transform: rotate(-90deg);
+    -o-transform: rotate(-90deg);
+    filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+}
+.ie9 #kanban .filterPanel .panelButton span { filter: none; }
+.ie7 #kanban .filterPanel .panelButton span,
+.ie8 #kanban .filterPanel .panelButton span {
+    margin: 0;
+    background: #a7adb3;
+}
+
+#kanban .filterPanel.visible { width: 260px; }
+#kanban .filterPanel.visible .panelButton:hover { padding-left: 0; }
+#kanban .filterPanel.visible .panelBody {
+    display: block;
+}
+
+#kanban .filterPanel .body {
+    padding: 14px 10px 0 10px;
+}
+#kanban .filterPanel .field {
+    padding: 0 0 15px 0;
+}
+#kanban .filterPanel .field.task-responsible {
+    padding-bottom: 10px;
+}
+#kanban .filterPanel .field .label {
+    padding-left: 10px;
+    font: bold 14px/14px Arial, sans-serif;
+    color: #fff;
+    margin-bottom: 8px;
+}
+#kanban .filterPanel .field .value {
+    padding: 0;
+}
+#kanban .filterPanel .field .title {
+    font: bold 14px Arial, sans-serif;
+    color: #fff;
+}
+#kanban .filterPanel .add-user {
+    font-weight: normal;
+    display: inline-block;
+    width: 19px;
+    height: 16px;
+}
+#kanban .filterPanel .add-user > i {
+    display: inline-block;
+    width: 19px;
+    height: 16px;
+    background: url('data:image/gif;base64,R0lGODlhEwAQALMAAN7m6GltclNcaIiOlfP09djh5evu746Um+To6+Hn6dvk5+fq7IGGjd7l6Ors7tri5iH5BAAAAAAALAAAAAATABAAAARv8MhJq0Uk663LNGAojoRxMIajrmxrMGgrsy+63Pgi5Hi9IMAgQiAMLmCLhFIpaDaXyiMD0ahaG4KrFQFLKL5ghSAMTnQf6LR6bWYk1nB1u/Ao2O/4e50xOBQAgIGCgQUDfQwBiYqLjAwUhpCRkhIRADs=') 0 0 no-repeat;
+    margin: 0 0 -3px 3px;
+}
+#kanban .filterPanel .add-user > i:hover {
+    opacity: 0.8;
+}
+#kanban .filterPanel .add-user .chzn-container {
+    display: block;
+}
+#kanban .filterPanel .add-user .popup {
+    background: #fff;
+    margin: 0;
+    border: 1px solid #CBDBDE;
+    min-width: 240px;
+    max-width: 240px;
+    z-index: 120;
+    right: 10px;
+}
+#kanban .filterPanel .task-author .jspPane,
+#kanban .filterPanel .task-responsible .jspPane {
+    min-height: 44px;
+}
+#kanban .filterPanel .task-author .value,
+#kanban .filterPanel .task-author + .task-responsible .value {
+    padding-top: 7px;
+}
+
+#kanban .filterPanel .group .people {
+    padding: 6px 0 5px 6px;
+}
+#kanban .filterPanel .group .people .jspVerticalBar { right: 3px; }
+
+/* блок группы */
+#kanban .peopleItem.inTheAir { z-index: 150; border-color: #d5d5d5; background: #fff; }
+#kanban .filterPanel .peopleItem {
+    float: left;
+    border: 2px solid transparent;
+    padding: 1px;
+    margin: 1px;
+}
+#kanban .filterPanel .peopleItem i {
+    width: 37px;
+    height: 37px;
+}
+#kanban .filterPanel .peopleItem span {
+    width: 37px;
+}
+#kanban .filterPanel .group .item {
+    margin-right: 0;
+    margin-bottom: 0;
+}
+#kanban .filterPanel .group .item.selected {
+    border-color: #fff;
+}
+
+#kanban .filterPanel .group .scroll-pane,
+#kanban .filterPanel .group .users-scroll-pane {
+    height: 48px;
+}
+#kanban .filterPanel .group .users-scroll-pane.doubleLine { height: 90px; }
+
+#kanban .peopleItem:hover > i {
+    opacity: 0.8;
+}
+
+/*#kanban .filterPanel .value > input[type="text"]::-webkit-input-placeholder {color:#fff;}*/
+/*#kanban .filterPanel .value > input[type="text"]::-moz-placeholder          {color:#fff;}!* Firefox 19+ *!*/
+/*#kanban .filterPanel .value > input[type="text"]:-moz-placeholder           {color:#fff;}!* Firefox 18- *!*/
+/*#kanban .filterPanel .value > input[type="text"]:-ms-input-placeholder      {color:#fff;}*/
+#kanban .filterPanel .value > input[type="text"] {
+    display: block;
+    font: normal 13px/16px Arial, sans-serif;
+    width: 100%;
+    height: 28px;
+    padding: 0 20px 0 4px;
+
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    /*color: #fff;*/
+
+    /*background: transparent;*/
+    border: 1px solid #a7acb3;
+}
+#kanban .filterPanel .value > input.placeholder[type="text"] {
+    /*color: #fff;*/
+}
+
+.ie9 #kanban .filterPanel .chzn-container-multi .chzn-choices .search-field input {
+    line-height: 15px;
+    top: 5px;
+}
+.ie8 #kanban .filterPanel .chzn-container-multi .chzn-choices .search-field input {
+    line-height: 15px;
+}
+#kanban .filterPanel .chzn-container-multi .chzn-choices .search-field input {
+    line-height: 17px;
+}
+#kanban .filterPanel .field.search .value {
+    position: relative;
+}
+#kanban .filterPanel .field.search .value i {
+    z-index: 51;
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 15px;
+    height: 15px;
+    background: url("@{pathImages}sprite-icons.png") -48px -261px no-repeat;
+    cursor: pointer;
+}
+#kanban .filterPanel .field.search .value i:hover {
+    opacity: 0.6;
+}
+#kanban .filterPanel .field .value ul {
+    list-style-type: none;
+    margin-left: 0;
+}
+#kanban .filterPanel .field .value li label {
+    color: #fff;
+    font: normal 12px/24px Arial, sans-serif;
+}
+#kanban .filterPanel .field .value li input + i {
+    margin: 0 9px -3px 0;
+}
+
+#kanban .filterPanel .markers .list {
+    padding: 0 4px 0 4px;
+}
+
+#kanban .markerItem,
+#kanban .filterPanel .markers .item {
+    padding: 2px;
+    width:20px;
+    height:20px;
+    border: 2px solid #fff;
+    float: left;
+    cursor: pointer;
+    margin-right: 1px;
+    margin-bottom: 2px;
+}
+#kanban .filterPanel .markers .item {
+    border-color: #959ba3;
+}
+#kanban .markerItem.inTheAir {
+    z-index: 150;
+    border-radius: 50%;
+    background-color: #fff;
+    border-color: #ccc;
+}
+#kanban .markerItem.inTheAir i { border-radius: 50%; }
+#kanban .filterPanel .markers .item.selected { border-color: #fff; }
+#kanban .markerItem i,
+#kanban .filterPanel .markers .item i {
+    display: block;
+    width: 20px;
+    height: 20px;
+    position: absolute;
+}
+
+#kanban .markerItem i,
+#kanban .filterPanel .markers .list i {
+    background: url('@{pathImages}sprite-task.png') 0 0 repeat;
+}
+#kanban .markerItem.label-1 i, #kanban .filterPanel .markers .label-1 i { background-position: 0 0; }
+#kanban .markerItem.label-2 i, #kanban .filterPanel .markers .label-2 i { background-position: 0 -25px; }
+#kanban .markerItem.label-3 i, #kanban .filterPanel .markers .label-3 i { background-position: 0 -50px; }
+#kanban .markerItem.label-4 i, #kanban .filterPanel .markers .label-4 i { background-position: 0 -75px; }
+#kanban .markerItem.label-5 i, #kanban .filterPanel .markers .label-5 i { background-position: 0 -100px; }
+#kanban .markerItem.label-6 i, #kanban .filterPanel .markers .label-6 i { background-position: 0 -125px; }
+#kanban .markerItem.label-7 i, #kanban .filterPanel .markers .label-7 i { background-position: 0 -150px; }
+#kanban .markerItem.label-8 i, #kanban .filterPanel .markers .label-8 i { background-position: 0 -175px; }
+#kanban .filterPanel .markers .item:hover i {
+    opacity: 0.8;
+}
+
+#kanban .filterPanel select {
+    width: 100%;
+}
+
+#kanban .filterPanel .chzn-container-multi .chzn-choices {
+    /*background: transparent;*/
+    border-color: #a7acb3;
+}
+
+/*#kanban .filterPanel .chzn-container-multi .chzn-choices .search-field input {color:#fff;}*/
+/*#kanban .filterPanel .chzn-container-multi .chzn-choices .search-field input::-webkit-input-placeholder {color:#fff;}*/
+/*#kanban .filterPanel .chzn-container-multi .chzn-choices .search-field input::-moz-placeholder          {color:#fff;}!* Firefox 19+ *!*/
+/*#kanban .filterPanel .chzn-container-multi .chzn-choices .search-field input:-moz-placeholder           {color:#fff;}!* Firefox 18- *!*/
+/*#kanban .filterPanel .chzn-container-multi .chzn-choices .search-field input:-ms-input-placeholder      {color:#fff;}*/
+
+#kanban .filterPanel .chzn-container .chzn-drop,
+#kanban .frameHover .chzn-drop {
+    margin-top: 1px;
+}
+#kanban .filterPanel .chzn-results { padding: 5px 5px; }
+
+#kanban .filterPanel .tags .search-choice {
+    margin: 4px 0 0 2px;
+    border: 0 none;
+}
+#kanban .filterPanel .tags .search-choice span,
+#kanban .taskDetails .search-choice span {
+    padding-right: 9px;
+}
+#kanban .filterPanel .tags .search-choice-focus span {
+    color: #f0f0f0;
+}
+#kanban .filterPanel .tags .search-choice .search-choice-close,
+#kanban .taskDetails .tags > span > i,
+#kanban .taskDetails .search-choice .search-choice-close {
+    padding-right: 1px;
+    top: 4px;
+    width: 8px;
+    height: 9px;
+    background: url('@{pathImages}sprite-icons.png') -150px -263px no-repeat;
+    display: inline-block;
+}
+#kanban .taskDetails .tags > span > i { margin: 1px 0 -1px 4px; padding-right: 5px; }
+
+#kanban .boardDetailsEditor .taskTypesBlock .chzn-choices li { height: 28px; }
+#kanban .boardDetailsEditor .taskTypesBlock .chzn-choices .search-choice {
+    height: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 207px;
+}
+#kanban .boardDetailsEditor .taskTypesBlock input {
+    padding: 2px 5px;
+    vertical-align: top;
+    line-height: 24px;
+    height: 20px;
+}
+#kanban .boardDetailsEditor .taskTypesBlock i,
+#kanban .chzn-container .search-choice span i {
+    display: inline-block;
+    width: 9px;
+    height: 9px;
+    margin-right: 2px;
+}
+
+#kanban .chzn-container .chzn-drop i,
+#kanban .filterPanel .chzn-results i {
+    display: inline-block;
+    width: 9px;
+    height: 9px;
+    margin-right: 5px;
+}
+
+#kanban .chzn-container .chzn-drop i,
+#kanban .chzn-container .search-choice span i {
+    background: url('@{pathImages}sprite-task.png') 0 0 no-repeat;
+}
+#kanban .chzn-container .search-choice .type-task,
+#kanban .chzn-container .chzn-drop .type-task {
+    background-position: -64px -4px;
+}
+#kanban .chzn-container .chzn-drop .type-feature,
+#kanban .chzn-container .search-choice .type-feature {
+    background-position: -64px -24px;
+}
+#kanban .chzn-container .chzn-drop .type-bug,
+#kanban .chzn-container .search-choice .type-bug {
+    background-position: -64px -44px;
+}
+#kanban .chzn-container .chzn-drop .type-info,
+#kanban .chzn-container .search-choice .type-info {
+    background-position: -64px -64px;
+}
+#kanban .chzn-container .chzn-drop .type-lead,
+#kanban .chzn-container .search-choice .type-lead {
+    background-position: -64px -84px;
+}
+#kanban .chzn-container .chzn-drop .type-contract,
+#kanban .chzn-container .search-choice .type-contract {
+    background-position: -64px -104px;
+}
+#kanban .chzn-container .chzn-drop .type-project,
+#kanban .chzn-container .search-choice .type-project {
+    background-position: -64px -124px;
+}
+#kanban .chzn-container .chzn-drop .type-epic,
+#kanban .chzn-container .search-choice .type-epic {
+    background-position: -64px -144px;
+}
+#kanban .chzn-container .chzn-drop .type-request,
+#kanban .chzn-container .search-choice .type-request {
+    background-position: -64px -164px;
+}
+#kanban .chzn-container .chzn-drop .type-userstory,
+#kanban .chzn-container .search-choice .type-userstory {
+    background-position: -64px -184px;
+}
+
+#kanban .sprintTaskList .header .gridTaskStatusFilter select {
+    width: 120px;
+}
+
+#kanban .gridTaskStatusFilter .chzn-container .chzn-drop i,
+#kanban .gridTaskStatusFilter .chzn-container .search-choice i {
+    width: 11px;
+    height: 11px;
+}
+#kanban .gridTaskStatusFilter .chzn-container .search-choice i {
+    margin-top: 1px;
+}
+#kanban .chzn-container .chzn-drop i.step-accepted,
+#kanban .chzn-container .search-choice i.step-accepted { background-position: -200px -203px; }
+#kanban .chzn-container .chzn-drop i.step-accept-wait,
+#kanban .chzn-container .search-choice i.step-accept-wait { background-position: -200px -224px; }
+#kanban .chzn-container .chzn-drop i.step-rejected,
+#kanban .chzn-container .search-choice i.step-rejected { background-position: -219px -245px; }
+#kanban .chzn-container .chzn-drop i.step-control-wait,
+#kanban .chzn-container .search-choice i.step-control-wait { background-position: -200px -264px; }
+#kanban .chzn-container .chzn-drop i.step-inprogress,
+#kanban .chzn-container .search-choice i.step-inprogress { background-position: -200px -284px; width: 13px; margin-right: 4px; }
+#kanban .chzn-container .chzn-drop i.step-paused,
+#kanban .chzn-container .search-choice i.step-paused { background-position: -198px -304px; }
+#kanban .chzn-container .chzn-drop i.step-finished,
+#kanban .chzn-container .search-choice i.step-finished { background-position: -200px -325px; }
+
+#kanban .filterPanel .priority-task .search-choice span i,
+#kanban .filterPanel .priority-task .chzn-results i {
+    width: 12px;
+    height: 12px;
+    margin-bottom: -1px;
+    background: #fff;
+    border-radius: 6px;
+}
+
+#kanban .filterPanel .priority-task .search-choice span .priority-med,
+#kanban .filterPanel .priority-task .chzn-results .priority-med {
+    background: #888;
+
+}
+#kanban .filterPanel .priority-task .search-choice span .priority-low,
+#kanban .filterPanel .priority-task .chzn-results .priority-low {
+    background: #c2d6ad;
+    border: 1px solid #c2d6ad;
+    width: 10px;
+    height: 10px;
+}
+#kanban .filterPanel .priority-task .search-choice span .priority-high,
+#kanban .filterPanel .priority-task .chzn-results .priority-high {
+    background: #f66;
+}
+.chzn-container-multi .chzn-choices .search-field input {
+    font: bold 14px/25px Arial, sans-serif;
+}
+
+#kanban .panelBody .field > .label {
+    color: #fff;
+}
+
+
+.jsArchiveScrollArea .ui-sortable {
+    min-height: 100%;
+}
+
+.jsArchiveScrollArea .task-sortable-placeholder {
+    background: #E0E0E0;
+}
+
+#kanban.overlayOpened .filterPanel,
+#kanban.overlayOpened .archivePanel { z-index: 100; }
+
+
+/* Панель списка спринтов на доске паннинга */
+#kanban .sprintPanel {
+    position: fixed;
+    z-index: 120;
+    left: 22px;
+    top: 70px;
+    bottom: 10px;
+    background: #d9dfe0;
+    width: 253px;
+}
+#kanban .sprintPanel .panel-collapse-ph {
+    height: 100%;
+    width: 6px;
+    float: right;
+    cursor: pointer;
+    position:relative;
+    background: url("data:image/gif;base64,R0lGODlhBgABAKIAAOvr6+np6fPz8/Dw8NPT0+fn5wAAAAAAACH5BAAAAAAALAAAAAAGAAEAAAMEGDJQlAA7") 100% 0 repeat-y #fafafa;
+}
+#kanban .sprintPanel .jspVerticalBar {
+    opacity: 0;
+    -moz-transition: opacity 0.3s ease;
+    -webkit-transition: opacity 0.3s ease;
+    -o-transition: opacity 0.3s ease;
+    transition: opacity 0.3s ease;
+    right: 5px;
+}
+#kanban .sprintPanel:hover .jspVerticalBar { opacity: 1; }
+
+#kanban.withBitrixHeader .sprintPanel { top: 133px; }
+#kanban.withBitrixHeader .sprintPanel .panelBody { top: 133px; }
+#kanban.fullScreen .sprintPanel { top: 70px; }
+#kanban.fullScreen .sprintPanel .panelBody { top: 70px; }
+
+#kanban .sprintPanel .menuIcon {
+    right: 15px;
+    top: -1px;
+    cursor: pointer;
+    display: none;
+}
+#kanban .sprintPanel:hover .menuIcon,
+#kanban .sprintPanel .menuIcon.pinned { display: block; }
+
+#kanban .sprintPanel .panelBody {
+    display: block;
+    width: 253px;
+
+    top: 70px;
+    bottom: 10px;
+    z-index: auto;
+    position: fixed;
+
+    background: url("data:image/gif;base64,R0lGODlhBgABAKIAAOvr6+np6fPz8/Dw8NPT0+fn5wAAAAAAACH5BAAAAAAALAAAAAAGAAEAAAMEGDJQlAA7") 100% 0 repeat-y #fafafa;
+
+    text-align: left;
+}
+
+#kanban .sprintPanel .panelBody > .body {
+    padding: 15px 30px 0 20px;
+}
+
+#kanban .sprintPanel .scrollBlock {
+    height: 600px;
+    margin-left: -15px;
+    padding:0 15px 0 10px;
+}
+#kanban .sprintPanel .scrollBlock.dropOver {
+    background: #c0c9d4;
+}
+#kanban .sprintPanel .jspVerticalBar { right: 5px; }
+
+
+/* Панель детального просмотра задачи на доске планнинга */
+#kanban .taskDetailsPanel,
+#kanban .projectDetailsPanel {
+    position: fixed;
+    z-index: 100;
+    right: 22px !important;
+    top: 70px;
+    left: inherit !important;
+    bottom: 84px;
+
+    background: #d9dfe0;
+    width: 40%;
+}
+#kanban.withBitrixHeader .taskDetailsPanel,
+#kanban.withBitrixHeader .projectDetailsPanel {
+    top: 133px !important;
+}
+#kanban.withBitrixHeader .taskDetailsPanel .panelBody,
+#kanban.withBitrixHeader .projectDetailsPanel .panelBody {
+    top: 133px;
+}
+
+#kanban.fullScreen .taskDetailsPanel,
+#kanban.fullScreen .projectDetailsPanel {
+    top: 70px;
+}
+
+#kanban.fullScreen .taskDetailsPanel .panelBody,
+#kanban.fullScreen .projectDetailsPanel .panelBody {
+    top: 70px;
+}
+
+#kanban .taskDetailsPanel .panelBody {
+    display: none;
+    width: 40%;
+
+    top: 70px;
+    bottom: 84px;
+    z-index: auto;
+    position: fixed;
+
+    background: #fff;
+
+    padding: 0 0 0 6px;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    text-align: left;
+}
+#kanban .taskDetailsPanel.visible .panelBody {
+    display: block;
+}
+
+#kanban .taskDetailsPanel .ui-resizable-handle {
+    float: left;
+    cursor: e-resize;
+    height: 100%;
+    width: 6px;
+    position:relative;
+    background: url("data:image/gif;base64,R0lGODlhBgABAKIAAOvr6+np6fPz8/Dw8NPT0+fn5wAAAAAAACH5BAAAAAAALAAAAAAGAAEAAAMEGDJQlAA7") 100% 0 repeat-y #fafafa;
+    padding: 0;
+    top: 0;
+    right: 0;
+    display: block!important;
+}
+
+#kanban .sprintPanel .panelBody > .body {
+    padding: 15px 30px 0 20px;
+}
+
+#kanban .sprintPanel h3 {
+    height: 43px;
+    border-bottom: 1px solid #eee;
+    margin: 0 12px 20px 25px;
+    font: normal 18px/43px Arial, sans-serif;
+    color: #999;
+}
+
+#kanban .sprintPanel .scrollBlock {
+    height: 600px;
+    margin-left: -15px;
+    padding:0 15px 0 10px;
+}
+#kanban .sprintPanel .scrollBlock.dropOver {
+    background: #c0c9d4;
+}
+#kanban .sprintPanel .jspVerticalBar { right: 5px; }
+
+#kanban .sprintPanel .sprint {
+    display: block;
+    width: 195px;
+    margin: 0 0 20px 10px;
+    padding: 14px 15px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.25);
+    cursor: pointer;
+    position: relative;
+}
+    #kanban .sprintPanel .sprint.unassigned { box-shadow: 0 0 5px rgba(0, 0, 0, 0.15); }
+    #kanban .sprintPanel .sprint:hover {
+        box-shadow: 0 5px 5px rgba(0, 0, 0, .15), 0 -1px 3px rgba(0, 0, 0, .15);
+    }
+.ie8 #kanban .sprintPanel .sprint, .ie8 #kanban .sprintPanel .sprint {
+    border: 1px solid #eee;
+}
+
+#kanban .sprintPanel .sprint .menuIcon {
+    right: 10px;
+    top: -2px;
+    display: none;
+}
+#kanban .sprintPanel .sprint .menuIcon.pinned,
+#kanban .sprintPanel .sprint:hover .menuIcon { display: block; }
+
+#kanban .sprintPanel .sprint .sprintStatus {
+    display: none;
+    float: left;
+    margin-right: 15px;
+    min-height: 48px;
+}
+#kanban .sprintPanel .sprint .sprintStatus.visible { display: block; }
+#kanban .sprintPanel .sprint .sprintStatus.visible + .body {
+    padding-left: 63px;
+}
+
+#kanban .sprintPanel .sprint h4 {
+    font: bold 14px/20px Arial, sans-serif;
+    color: #000;
+    padding-bottom: 3px;
+    word-wrap: break-word;
+    max-height: 60px;
+    overflow: hidden;
+}
+#kanban .sprintPanel .sprint.selected {
+    box-shadow: 0 5px 5px rgba(0, 0, 0, .15), 0 -1px 3px rgba(0, 0, 0, .15);
+}
+.ie8 #kanban .sprintPanel .sprint.unassigned { border: 1px solid #f8f8f8; }
+#kanban .sprintPanel .sprint.unassigned h4 { color: #888; }
+#kanban .sprintPanel .sprint.dnd-target { box-shadow: 0 0 5px 2px rgba(55, 55, 55, 0.5); }
+
+#kanban .sprintPanel .sprint.new {
+    width: 191px;
+    border: 2px dashed #cbd7da;
+    padding: 32px 15px;
+    box-shadow: none;
+    cursor: pointer;
+}
+#kanban .sprintPanel .sprint.new:hover {
+    background-color: #f4f4f4;
+}
+#kanban .sprintPanel .sprint.new.dnd-target {
+    box-shadow: inset 0 0 8px 2px rgba(55, 55, 55, 0.35);
+}
+#kanban .sprintPanel .sprint.new h4 {
+    font-weight: bold;
+    color: #999;
+    padding-left: 54px;
+    background: url("data:image/gif;base64,R0lGODlhNwAaAIABAJmZmf///yH5BAEAAAEALAAAAAA3ABoAAAJUjI+pywYPX5u0phit3hdLDlreF5bMCJiqgq6uM75uK6t0PaG6jsP7D+kFgMRUrwgUIn/KJe/ovNWiUmHHYwVVs5Qtt+H9LsLiK6ZcIaN95zU4xigAADs=") -15px 50% no-repeat;
+    padding-bottom: 0;
+}
+#kanban .sprintPanel .sprint.edit b {
+    display: inline-block;
+    width: 80px;
+}
+#kanban .sprintPanel .sprint .title { padding-bottom: 10px; }
+
+/*noinspection CssInvalidPseudoSelector*/ #kanban .sprintPanel .sprint .title input::-webkit-input-placeholder { color: #666; } /* WebKit browsers */
+/*noinspection CssInvalidPseudoSelector*/ #kanban .sprintPanel .sprint .title input:-moz-placeholder           { color: #666; } /* Mozilla Firefox 4 to 18 */
+/*noinspection CssInvalidPseudoSelector*/ #kanban .sprintPanel .sprint .title input::-moz-placeholder          { color: #666; } /* Mozilla Firefox 19+ */
+/*noinspection CssInvalidPseudoSelector*/ #kanban .sprintPanel .sprint .title input:-ms-input-placeholder      { color: #666; } /* Internet Explorer 10+ */
+
+/*noinspection CssInvalidPseudoSelector*/ #kanban .sprintPanel .sprint .timepicker input::-webkit-input-placeholder { color: #666; } /* WebKit browsers */
+/*noinspection CssInvalidPseudoSelector*/ #kanban .sprintPanel .sprint .timepicker input:-moz-placeholder           { color: #666; } /* Mozilla Firefox 4 to 18 */
+/*noinspection CssInvalidPseudoSelector*/ #kanban .sprintPanel .sprint .timepicker input::-moz-placeholder          { color: #666; } /* Mozilla Firefox 19+ */
+/*noinspection CssInvalidPseudoSelector*/ #kanban .sprintPanel .sprint .timepicker input:-ms-input-placeholder      { color: #666; } /* Internet Explorer 10+ */
+
+#kanban .sprintPanel .sprint .sprint-property { line-height: 24px; }
+
+#kanban .sprintPanel .sprint .standup input {
+    border: 0 none;
+    /*background: transparent;*/
+    outline: none;
+    width: 100px;
+    height: 14px;
+    font: normal 14px/14px Arial, sans-serif;
+    color: #666;
+    margin: -2px 0 0 5px;
+    display: inline-block;
+    cursor: pointer;
+    border-bottom: 1px dotted #ccc;
+}
+
+#kanban .sprintPanel .sprint .standup input:focus {
+    border-bottom-color: transparent !important;
+}
+
+#kanban .sprintPanel .sprint .standup input[value] {
+/*    width: 38px; */
+}
+.bx-ie10 #kanban .sprintPanel .sprint .standup input.placeholder[value] {
+    width: 100px;
+    text-indent: 2px;
+}
+#kanban .sprintPanel .sprint .standup input:hover { border-bottom-color: transparent; }
+
+#kanban .sprintPanel .sprint .title input {
+    font: bold 14px Arial, sans-serif;
+    color: #000;
+    width: 180px;
+    padding: 0 5px;
+    border: 1px solid #bdc6c9;
+    display: block;
+    height: 24px;
+}
+#kanban .sprintPanel .sprint .title input.error {
+    border-color: #fc9d9d;
+    box-shadow: 0 0 5px rgba(204, 51, 51, 0.5);
+}
+#kanban .sprintPanel .sprint .ui-datetimepicker-time { display: none; }
+#kanban .sprintPanel .sprint .ui-datetimepicker-date {
+    line-height: 16px;
+    color: #666;
+    margin: 0 5px;
+    width: auto;
+    border-bottom: 1px dotted #ccc;
+}
+
+#kanban .sprintPanel .sprint .ui-datetimepicker-date:hover { border-bottom-color: transparent; }
+
+#kanban .sprintPanel .sprint.edit { cursor: default; }
+#kanban .sprintPanel .sprint.edit .buttons {
+    padding-top: 10px;
+}
+
+
+#sprintTaskList .responsibles > div.add {
+    margin: 0 auto;
+}
+#kanban .planningTaskDetailsPanel .line .value span.dateSelectorOpener { height: 21px; }
+
+#kanban .sprintPanel .container .current { padding: 6px 0 10px; }
+#kanban .sprintPanel .container .archived { padding-bottom: 15px; }
+#kanban .sprintPanel .container .archived.hidden {
+    display: none;
+}
+
+#kanban .backlogPanel .panelButton:hover {
+    padding-left: 4px;
+    padding-right: 0;
+    margin-left: 0;
+}
+#kanban .backlogPanel select {
+    width: 100%;
+}
+#kanban .backlogPanel .task .responsible:hover u {
+    display: none;
+}
+#kanban .backlogPanel .task:hover .descr .startEdit,
+#kanban .backlogPanel .task.fuckup .problem:hover i {
+    display: none;
+}
+#kanban .backlogPanel label {
+    color: #fff;
+}
+#kanban .backlogPanel.hide-ended-tasks .task.ended {
+    display: none;
+}
+#kanban .backlogPanel .task.filterFail {
+    display: none;
+}
+#kanban .backlogPanel .show-ended + i {
+    position: absolute;
+    left: 215px;
+}
+#kanban .backlogPanel .resizer .ui-resizable-e {
+    right: 0;
+    width: 13px;
+}
+#kanban .backlogPanel .columnPanel {
+    min-height: 100%;
+}
+
+#kanban .backlogPanel .task-sortable-placeholder {
+    display: none;
+}
+
+#kanban .panelDetailsBody .block .line *::selection,
+#kanban .panelDetailsBody .block .responsibles *::selection,
+#kanban .panelDetailsBody .block .problem::selection,      #kanban .frameHover .taskInfo .problem *::selection,
+#kanban .panelDetailsBody .block::selection,      #kanban .panelDetailsBody .block *::selection
+{ background: #094ab7; color: #fff; }
+
+#kanban .panelDetailsBody .block .line *::-moz-selection,
+#kanban .panelDetailsBody .block .responsibles *::-moz-selection,
+#kanban .panelDetailsBody .block .problem::-moz-selection, #kanban .frameHover .taskInfo .problem *::-moz-selection,
+#kanban .panelDetailsBody .block::-moz-selection, #kanban .panelDetailsBody .block *::-moz-selection
+{ background: #094ab7; color: #fff; }
+
+#kanban .projectDetailsPanel {
+
+}
+#kanban .projectDetailsPanel .projectDetails {
+    padding-bottom: 30px;
+}
+#kanban .projectDetailsPanel .panelBody {
+    width: 100%;
+    height: 100%;
+    background: url("data:image/gif;base64,R0lGODlhBgABAKIAAOvr6+np6fPz8/Dw8NPT0+fn5wAAAAAAACH5BAAAAAAALAAAAAAGAAEAAAMEGDJQlAA7") 0 0 repeat-y #fff;
+}
+#kanban .projectDetailsPanel .jspPane { padding-left: 6px; }
+#kanban .projectDetailsPanel .jspVerticalBar {
+    right: 5px;
+    opacity: 0;
+    -moz-transition: opacity 0.3s ease;
+    -webkit-transition: opacity 0.3s ease;
+    -o-transition: opacity 0.3s ease;
+    transition: opacity 0.3s ease;
+}
+#kanban .projectDetailsPanel:hover .jspVerticalBar { opacity: 1; }
+#kanban .projectDetailsPanel .jspHorizontalBar { display: none; }
+
+#kanban .projectDetailsPanel .block {
+    padding: 0 19px;
+    margin-left: 6px;
+
+}
+#kanban .projectDetailsPanel .block + .block {
+    border-top: 1px solid #f4f4f4;
+}
+
+#kanban .projectDetailsPanel .block.owner .header {
+    height: auto;
+}
+#kanban .projectDetailsPanel .block.owner .checkitem {
+    padding: 0 0 15px 43px;
+    margin-left: 6px;
+}
+#kanban .projectDetailsPanel .block.owner i + .checkitem {
+    display: inline-block;
+    vertical-align: top;
+    line-height: 75px;
+    padding: 0;
+    margin: 0;
+}
+
+#kanban .projectDetailsPanel .block.owner i + .selectitem {
+    padding-left: 43px;
+    margin-top: -54px;
+    line-height: 20px;
+    padding-bottom: 20px;
+}
+
+#kanban .projectDetailsPanel .block.owner i + .selectitem select {
+    width: 260px;
+}
+
+#kanban .projectDetailsPanel .block.owner i + .selectitem .chzn-container {
+    margin-bottom: 10px;
+}
+
+
+#kanban .projectDetailsPanel .block .header { height: 75px; }
+#kanban .projectDetailsPanel .block .header > .peopleItem {
+    display: inline-block;
+    vertical-align: top;
+    padding-top: 21px;
+    margin-left: 10px;
+    cursor: default;
+}
+#kanban .projectDetailsPanel .block .header > .peopleItem.usersPopup {
+    cursor: pointer;
+}
+
+#kanban .projectDetailsPanel .block .header > i {
+    display: inline-block;
+    width: 34px;
+    height: 34px;
+    margin: 20px 10px 21px 0;
+    line-height: 75px;
+    background: url('@{pathImages}sprite-icons.png') 0 0 no-repeat;
+}
+#kanban .projectDetailsPanel .block .header h3 {
+    display: inline-block;
+    vertical-align: top;
+    height: 75px;
+    font: normal 18px/75px Arial, sans-serif;
+    color: #000;
+}
+
+#kanban .projectDetailsPanel .owner    .header > i { background-position: -240px -300px; }
+#kanban .projectDetailsPanel .members  .header > i { background-position: -280px -300px; }
+#kanban .projectDetailsPanel .sprints  .header > i { background-position: -320px -300px; }
+#kanban .projectDetailsPanel .counters .header > i { background-position: -360px -300px; }
+#kanban .projectDetailsPanel .kanban24 .header > i {
+    background-image: data-uri('@{pathImages}sprite-svg/kanban24.png');
+    background-position: -3px;
+}
+
+#kanban .projectDetailsPanel .main {
+    padding: 13px 19px 20px;
+}
+#kanban .projectDetailsPanel .main .title {
+    margin: 0;
+    padding: 0;
+    font: normal 18px/46px Arial, sans-serif;
+    color: #000;
+}
+#kanban .projectDetailsPanel .main .description {
+    margin: 0;
+    border-top: 1px solid #e6e6e6;
+    padding: 13px 0 0;
+    font: normal 12px/20px Arial, sans-serif;
+    color: #666;
+}
+
+#kanban .projectDetailsPanel .main textarea {
+    width: 100%;
+}
+#kanban .projectDetailsPanel .main .content {
+    cursor: pointer;
+}
+#kanban .projectDetailsPanel.noEdit .main .content { cursor: default; }
+#kanban .projectDetailsPanel .main .content.edit {
+    cursor: default;
+}
+#kanban .projectDetailsPanel .main .image {
+    width: 48px;
+    height: 48px;
+    padding: 5px;
+    border: 2px dashed #cbd7da;
+    margin: 0 0 0 -7px;
+    cursor: pointer;
+    overflow: hidden;
+}
+#kanban .projectDetailsPanel .main .image.noEdit {
+    cursor: default;
+}
+#kanban .projectDetailsPanel .main .image img {
+    max-width: 48px;
+    max-height: 48px;
+}
+#kanban .projectDetailsPanel .main .image.noLogo img {
+    background: url("@{pathImages}no-project-logo.png") 50% 50% no-repeat;
+    width: 48px;
+    height: 48px;
+}
+
+#kanban .projectDetailsPanel .sprints .content a { text-decoration: underline; }
+#kanban .projectDetailsPanel .sprints .content a:hover { text-decoration: none; }
+
+#kanban .projectDetailsPanel .sprints .button {
+    float: right;
+    margin: 25px 0;
+    padding: 0 10px;
+}
+
+#kanban .projectDetailsPanel .sprints table {
+    width: 100%;
+}
+#kanban .projectDetailsPanel .sprints td {
+    border-left: 1px solid #e6e6e6;
+    border-top: 1px solid #e6e6e6;
+    border-bottom: 1px solid #e6e6e6;
+    font: bold 14px/18px Arial, sans-serif;
+    color: #333;
+    padding: 9px 13px;
+}
+#kanban .projectDetailsPanel .sprints .status {
+    width: 17px;
+    padding: 0 15px;
+}
+#kanban .projectDetailsPanel .sprints .statistics {
+    border-left: none;
+    border-right: 1px solid #e6e6e6;
+    width: 60px;
+    padding: 0 10px;
+}
+#kanban .projectDetailsPanel .sprints .status i {
+    display: inline-block;
+    width: 17px;
+    height: 17px;
+    background: #dedede;
+    vertical-align: middle;
+}
+#kanban .projectDetailsPanel .sprints .status b {
+    display: inline-block;
+    width: 11px;
+    height: 11px;
+    margin: 3px;
+    background: #fff;
+    vertical-align: top;
+}
+#kanban .projectDetailsPanel .sprints .active i,
+#kanban .projectDetailsPanel .sprints .active b {
+    background: #9c3;
+}
+
+#kanban .projectDetailsPanel .sprints .statistics span {
+    display: block;
+    width: 60px;
+    height: 4px;
+    background: #c00;
+}
+#kanban .projectDetailsPanel .sprints .statistics .empty {
+    background: #ccc;
+}
+#kanban .projectDetailsPanel .sprints .statistics u {
+    height: 4px;
+    display: block;
+    float: right;
+    background-color: #090;
+}
+#kanban .projectDetailsPanel .sprints .statistics i {
+    height: 4px;
+    display: block;
+    float: right;
+    background-color: #f7de2e;
+}
+
+#kanban .projectDetailsPanel .members .person {
+    width: 37px;
+    height: 37px;
+    background-size: cover;
+    margin: 0 10px 10px 0;
+    font: bold 14px/37px Arial, sans-serif;
+}
+#kanban .projectDetailsPanel .members .person span {
+    width: 37px;
+    margin-top: 29px;
+    margin-bottom: -37px;
+}
+#kanban .projectDetailsPanel .members .person.admin span {
+    background: url("@{pathImages}sprite-task.png") -90px -28px #f90;
+}
+#kanban .projectDetailsPanel .members .person.online span {
+    background: url("@{pathImages}sprite-task.png") -90px -20px #98c837;
+}
+#kanban .projectDetailsPanel .members .person.add {
+    background: url("@{pathImages}sprite-icons.png") -300px -30px;
+}
+
+#kanban .projectDetailsPanel .logo-image {
+    position: relative;
+    cursor: pointer;
+}
+#kanban .projectDetailsPanel .project-logo-input {
+    width: 48px;
+    height: 52px;
+    opacity: 0;
+    cursor: pointer;
+    position: absolute;
+    top: 0;
+}
+#kanban .projectDetailsPanel .counters .loader {
+    position: absolute;
+    top: -60px;
+}
+#kanban .projectDetailsPanel .counters .ga-block,
+#kanban .projectDetailsPanel .counters .ym-block {
+    margin-bottom: 15px;
+    position: relative;
+}
+
+#kanban .projectDetailsPanel .counters .ym-block .ym-confirm input[type="text"] {
+    line-height: 19px;
+    vertical-align: baseline;
+}
+#kanban .projectDetailsPanel .counters .ga-block.loading .ga-auth,
+#kanban .projectDetailsPanel .counters .ga-block.loading .ga-confirm,
+#kanban .projectDetailsPanel .counters .ym-block.loading .ym-confirm {
+    opacity: .3;
+}
+#kanban .projectDetailsPanel .counters .ga-auth {
+    border: none;
+    background: url("@{pathImages}sprite-icons.png") 0 -479px;
+    text-indent: -9999px;
+    width: 54px;
+    height: 17px;
+}
+#kanban .projectDetailsPanel .counters .ym-auth {
+    border: none;
+    background: url("@{pathImages}sprite-icons.png") -56px -479px;
+    text-indent: -9999px;
+    width: 45px;
+    height: 19px;
+}

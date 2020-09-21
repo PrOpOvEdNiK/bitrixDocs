@@ -1,0 +1,62 @@
+<?
+$MESS["CRM_EMAIL_MAILBOX_NEW"] = "[nueva cuenta POP3]";
+$MESS["CRM_EMAIL_MAILBOX_SEL"] = "(seleccione un correo electrónico)";
+$MESS["CRM_ERROR_CHECK_SERVER_CONNECTION"] = "No se puede conectar a \"#SERVER#\". #ERROR#";
+$MESS["CRM_ERROR_CONNECT"] = "Error de conexión";
+$MESS["CRM_ERROR_EMAIL"] = "El campo del E-mail es incorrecto";
+$MESS["CRM_ERROR_LOGIN"] = "El campo  \"Login\" es requerido.";
+$MESS["CRM_ERROR_MAILBOX_NOT_SELECTED"] = "Por favor seleccione un buzón.";
+$MESS["CRM_ERROR_MAIL_BOX_NOT_FOUND"] = "No se puede encontrar el buzón [#ID#].";
+$MESS["CRM_ERROR_POP3_MAIL_NOT_DEFINED"] = "Se requiere dirección de e-mail interno.";
+$MESS["CRM_ERROR_SERVER"] = "El campo \"Servidor\" es requerido.";
+$MESS["CRM_ERROR_SMTP_DOMAIN_NOT_DEFINED"] = "No se especifica la dirección de e-mail del dominio interno.";
+$MESS["CRM_ERROR_SMTP_MAIL_NOT_DEFINED"] = "Se requiere dirección de e-mail externo.";
+$MESS["CRM_FIELD_CONTACT_RESPONSIBLE"] = "Gestor de contactos";
+$MESS["CRM_FIELD_CONTACT_RESPONSIBLE_HINT"] = "Esta persona será responsable de las relaciones con los contactos creados en la vCard adjunto de correo electrónico.";
+$MESS["CRM_FIELD_CREATE_LEAD_FOR_NEW_ADDRESSER"] = "Crear remitente desconocido";
+$MESS["CRM_FIELD_CREATE_LEAD_FOR_NEW_ADDRESSER_HINT"] = "Si no se puede asociar ningún elemento de CRM existente con un correo electrónico entrante, se creará un nuevo prospecto en él.";
+$MESS["CRM_FIELD_LEAD_RESPONSIBLE"] = "Responsable del nuevo prospecto";
+$MESS["CRM_FIELD_LEAD_RESPONSIBLE_HINT"] = "El usuario seleccionado se establece como persona responsable para nuevos prospectos creado en correos electrónicos entrantes.";
+$MESS["CRM_FIELD_LEAD_SOURCE_ID"] = "Origen del prospecto";
+$MESS["CRM_FIELD_MAILBOX"] = "Bandeja de Correo";
+$MESS["CRM_FIELD_MAILBOX_ACTIVE"] = "Activo";
+$MESS["CRM_FIELD_MAILBOX_DELETE"] = "Eliminar mensajes en el servidor cuando sean entregados";
+$MESS["CRM_FIELD_MAILBOX_DELETE_CONFIRM"] = "¡Atención!
+Esto eliminará todos los mensajes de correo electrónico, incluyendo aquellos no relacionados con CRM.
+Usted puede perder la totalidad de su correspondencia.
+¿Está seguro que desea habilitar esta opción?";
+$MESS["CRM_FIELD_MAILBOX_DELETE_HINT"] = "Atención! Esta opción eliminará todos los e-mails incluidos aquellos que no tengan relación alguna con CRM. Utilice esta opción sólo si la casilla de correo electrónico se utiliza exclusivamente para fines o CRM nunca mantiene e-mails en el servidor para el historial.";
+$MESS["CRM_FIELD_MAILBOX_DOMAIN"] = "Dominio";
+$MESS["CRM_FIELD_MAILBOX_LOGIN"] = "Inicio de sesión";
+$MESS["CRM_FIELD_MAILBOX_MAIL"] = "Dirección del E-Mail del CRM";
+$MESS["CRM_FIELD_MAILBOX_NAME"] = "Nombre";
+$MESS["CRM_FIELD_MAILBOX_PASSWORD"] = "Contraseña";
+$MESS["CRM_FIELD_MAILBOX_PERIOD_CHECK"] = "Comprobar si hay mensajes nuevos cada (minutos)";
+$MESS["CRM_FIELD_MAILBOX_PORT"] = "Puerto";
+$MESS["CRM_FIELD_MAILBOX_SERVER"] = "Servidor";
+$MESS["CRM_FIELD_MAILBOX_SSL"] = "SSL";
+$MESS["CRM_FIELD_POP3_EMAL"] = "Dirección de e-mail externo";
+$MESS["CRM_FIELD_POP3_SERVER"] = "Servidor POP-3";
+$MESS["CRM_FIELD_REGEXP_COMPANY"] = "Compañía";
+$MESS["CRM_FIELD_REGEXP_CONTACT"] = "Contacto";
+$MESS["CRM_FIELD_REGEXP_DEAL"] = "Negociación";
+$MESS["CRM_FIELD_REGEXP_LEAD"] = "Prospecto";
+$MESS["CRM_FIELD_SELF_CERT"] = "Certificado autofirmado";
+$MESS["CRM_FIELD_SERVICE_CODE_ALLOCATION"] = "Código de servicio";
+$MESS["CRM_FIELD_SKIP_CERT"] = "No comprobar certificación";
+$MESS["CRM_FIELD_SMTP_EMAL"] = "Dirección de e-mail interno";
+$MESS["CRM_FIELD_USE_SSL"] = "Use SSL";
+$MESS["CRM_FIELD_USE_SSL2"] = "Use SSL";
+$MESS["CRM_MODULE_NOT_INSTALLED"] = "El módulo CRM no está instalado.";
+$MESS["CRM_PERMISSION_DENIED"] = "Acceso Denegado";
+$MESS["CRM_SAVE_CONFIG"] = "Las configuraciones han sido guardadas.";
+$MESS["CRM_SECTION_MAIL_CONFIG"] = "Resolver el ID de la entidad mediante la expresión";
+$MESS["CRM_SECTION_MAIL_CONFIG2"] = "(expresión regular; los primeros espacios del grupo deben contener el ID de la entidad)";
+$MESS["CRM_SECTION_MAIL_INFO"] = "Bandeja de Entrada";
+$MESS["CRM_SECTION_MAIL_PROCESSING"] = "Procesar el mail entrante";
+$MESS["CRM_SECTION_MAIL_RULES"] = "Filtrar los mensajes entrantes por tema (para usuarios avanzados)";
+$MESS["CRM_SECTION_OUTGOING_MAIL_PROCESSING"] = "Procesar mail saliente";
+$MESS["CRM_SS_LIST"] = "Integración del E-mail";
+$MESS["CRM_SS_RULE"] = "Agregar eventos al CRM";
+$MESS["MAIL_MODULE_NOT_INSTALLED"] = "El módulo Mail no está instalado.";
+?>

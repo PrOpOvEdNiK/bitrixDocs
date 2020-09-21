@@ -1,0 +1,5 @@
+<?
+$MESS["IM_CALL_INTEGRATION_CHAT_CALL_FINISHED"] = "Chamada terminada";
+$MESS["IM_CALL_INTEGRATION_CHAT_CALL_STARTED_F"] = "#NAME# iniciou a chamada";
+$MESS["IM_CALL_INTEGRATION_CHAT_CALL_STARTED_M"] = "#NAME# iniciou a chamada";
+?>

@@ -1,0 +1,30 @@
+<?
+$MESS["DAV_AGENT_CALENDAR"] = "Włącz synchronizację kalendarza Exchange";
+$MESS["DAV_AGENT_CALENDAR_CALDAV"] = "Włącz synchronizację kalendarza CalDAV";
+$MESS["DAV_AGENT_CONTACTS"] = "Włącz synchronizację kontaktu Exchange";
+$MESS["DAV_AGENT_MAIL"] = "Włącz żądanie nieprzeczytanych wiadomości";
+$MESS["DAV_AGENT_TASKS"] = "Włącz synchronizację zadań Exchange";
+$MESS["DAV_EXCHANGE_MAILBOX"] = "Szablon skrzynki mailowej serwera Exchange";
+$MESS["DAV_EXCHANGE_MAILBOX_NAME"] = "Nazwa";
+$MESS["DAV_EXCHANGE_MAILBOX_PATH"] = "Ścieżka aplikacji sieciowej Outlook";
+$MESS["DAV_EXCHANGE_PASSWORD"] = "Hasło serwera Exchange";
+$MESS["DAV_EXCHANGE_PORT"] = "Port serwera Exchange";
+$MESS["DAV_EXCHANGE_SCHEME"] = "Schemat połączenia serwera Exchange";
+$MESS["DAV_EXCHANGE_SERVER"] = "Adres serwera Exchange";
+$MESS["DAV_EXCHANGE_USERNAME"] = "Nazwa użytkownika serwera Exchange";
+$MESS["DAV_EXCHANGE_USER_FIELD"] = "Skrzynka mailowa Exchange";
+$MESS["DAV_EXCHANGE_USE_LOGIN"] = "Użyj loginu jako nazwy skrzynki mailowej serwera Exchange";
+$MESS["DAV_PROXY_PASSWORD"] = "Hasło proxy";
+$MESS["DAV_PROXY_PORT"] = "Port Proxy";
+$MESS["DAV_PROXY_SCHEME"] = "Schemat połączeń Proxy";
+$MESS["DAV_PROXY_SERVER"] = "Adres Proxy";
+$MESS["DAV_PROXY_USERNAME"] = "Login Proxy";
+$MESS["DAV_TAB_SET"] = "DAV";
+$MESS["DAV_TAB_TITLE_SET"] = "Parametry Klienta i Serwera DAV";
+$MESS["DAV_TIMEZONE"] = "Strefa czasowa";
+$MESS["DAV_USE_PROXY"] = "Użyj proxy";
+$MESS["EXCHANGE_TAB_SET"] = "Exchange";
+$MESS["EXCHANGE_TAB_TITLE_SET"] = "Parametry Połączenia Exchange";
+$MESS["PROXY_TAB_SET"] = "Proxy";
+$MESS["PROXY_TAB_TITLE_SET"] = "Ustawienia Proxy";
+?>

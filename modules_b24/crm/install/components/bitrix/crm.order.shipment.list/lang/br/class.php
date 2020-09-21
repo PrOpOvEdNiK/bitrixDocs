@@ -1,0 +1,35 @@
+<?
+$MESS["CRM_COLUMN_ALLOW_DELIVERY"] = "Permitido";
+$MESS["CRM_COLUMN_BASE_PRICE_DELIVERY"] = "Preço base";
+$MESS["CRM_COLUMN_COMMENTS"] = "Comentário do representante de vendas";
+$MESS["CRM_COLUMN_CURRENCY"] = "Moeda";
+$MESS["CRM_COLUMN_CUSTOM_PRICE_DELIVERY"] = "Preço personalizado";
+$MESS["CRM_COLUMN_DATE_ALLOW_DELIVERY"] = "Entrega aprovada em";
+$MESS["CRM_COLUMN_DATE_DEDUCTED"] = "Enviado em";
+$MESS["CRM_COLUMN_DATE_INSERT"] = "Criado em";
+$MESS["CRM_COLUMN_DATE_MARKED"] = "Problema ocorrido em";
+$MESS["CRM_COLUMN_DATE_RESPONSIBLE_ID"] = "Pessoa responsável alterada em";
+$MESS["CRM_COLUMN_DEDUCTED"] = "Enviado";
+$MESS["CRM_COLUMN_DELIVERY_DOC_DATE"] = "Data do documento de envio";
+$MESS["CRM_COLUMN_DELIVERY_DOC_NUM"] = "Documento de envio No.";
+$MESS["CRM_COLUMN_DELIVERY_SERVICE"] = "Serviço de entrega";
+$MESS["CRM_COLUMN_DISCOUNT_PRICE"] = "Desconto";
+$MESS["CRM_COLUMN_EMP_ALLOW_DELIVERY"] = "Entrega aprovada por";
+$MESS["CRM_COLUMN_EMP_DEDUCTED"] = "Status enviado alterado por";
+$MESS["CRM_COLUMN_EMP_MARKED"] = "Marcado como problema por";
+$MESS["CRM_COLUMN_ID"] = "ID";
+$MESS["CRM_COLUMN_MARKED"] = "Problema";
+$MESS["CRM_COLUMN_ORDER_ID"] = "ID do pedido";
+$MESS["CRM_COLUMN_PRICE_DELIVERY_CURRENCY"] = "Preço";
+$MESS["CRM_COLUMN_REASON_MARKED"] = "Descrição do problema";
+$MESS["CRM_COLUMN_REASON_UNDO_DEDUCTED"] = "Motivo do cancelamento do envio";
+$MESS["CRM_COLUMN_RESPONSIBLE"] = "Pessoa responsável";
+$MESS["CRM_COLUMN_SHIPMENT_SUMMARY"] = "Documento de envio";
+$MESS["CRM_COLUMN_STATUS_ID"] = "Status";
+$MESS["CRM_COLUMN_TRACKING_DESCRIPTION"] = "Descrição do status do envio";
+$MESS["CRM_COLUMN_TRACKING_NUMBER"] = "Número de rastreamento";
+$MESS["CRM_COLUMN_TRACKING_STATUS"] = "Status de envio";
+$MESS["CRM_PERMISSION_DENIED"] = "Acesso negado";
+$MESS["CRM_SHIPMENT_DELETE_ERROR"] = "Erro ao excluir envio";
+$MESS["CRM_SHIPMENT_SUMMARY"] = "Envio ##NUMBER# - #DATE#";
+?>

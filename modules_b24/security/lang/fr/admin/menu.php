@@ -1,0 +1,34 @@
+<?
+$MESS["SEC_MENU_ACTIVITY_ITEM"] = "Contrôle de l'activité";
+$MESS["SEC_MENU_ACTIVITY_TITLE"] = "Réglage de limite d'activité à l'aide de module Analyse Web";
+$MESS["SEC_MENU_ADMINIP_ITEM"] = "Protection de Section Administrative";
+$MESS["SEC_MENU_ADMINIP_TITLE"] = "Protégez l'accès à la section administrative sur les adresses IP";
+$MESS["SEC_MENU_ANTIVIRUS_ITEM"] = "Antivirus-web";
+$MESS["SEC_MENU_ANTIVIRUS_TITLE"] = "Gestion et configuration de l'antivirus";
+$MESS["SEC_MENU_FILE_ITEM"] = "Contrôle de l'intégrité";
+$MESS["SEC_MENU_FILE_TITLE"] = "Vérification de l'intégrité des fichiers";
+$MESS["SEC_MENU_FILTER_ITEM"] = "Filtre proactif";
+$MESS["SEC_MENU_FILTER_LOG_ITEM"] = "Journal des intrusions";
+$MESS["SEC_MENU_FILTER_LOG_TITLE"] = "Affichage du journal des tentatives d'intrusion";
+$MESS["SEC_MENU_FILTER_TITLE"] = "Gestion et personnalisation du filtre proactif";
+$MESS["SEC_MENU_FRAME_ITEM"] = "Protection contre les trames";
+$MESS["SEC_MENU_FRAME_TITLE"] = "Activation de la protection en limitant les cadres";
+$MESS["SEC_MENU_HOSTS_ITEM"] = "hébergeurs/domaines";
+$MESS["SEC_MENU_HOSTS_TITLE"] = "Préférences de l'hébergeur restriction";
+$MESS["SEC_MENU_IP_ITEM"] = "Stop-liste";
+$MESS["SEC_MENU_IP_TITLE"] = "Conditions de blocage d'adresses IP";
+$MESS["SEC_MENU_ITEM"] = "Protection proactive";
+$MESS["SEC_MENU_OTP_NEW_ITEM"] = "Validation en 2 étapes";
+$MESS["SEC_MENU_OTP_NEW_ITEM_TITLE"] = "Activer et configurer l'authentification en deux étapes";
+$MESS["SEC_MENU_PANEL_ITEM"] = "Panneau de sécurité";
+$MESS["SEC_MENU_PANEL_TITLE"] = "Information générale sur les paramètres de sécurité";
+$MESS["SEC_MENU_PHP_ITEM"] = "Les recommandations sur la configuration de PHP";
+$MESS["SEC_MENU_PHP_TITLE"] = "Les recommandations sur la configuration de PHP";
+$MESS["SEC_MENU_REDIRECT_ITEM"] = "Confidentialité des redirections";
+$MESS["SEC_MENU_REDIRECT_TITLE"] = "Activation de la protection des reroutages contre le phishing.";
+$MESS["SEC_MENU_SCANNER_ITEM"] = "Scanneur de sécurité";
+$MESS["SEC_MENU_SCANNER_TITLE"] = "Lancement du scanner de la sécurité";
+$MESS["SEC_MENU_SESSION_ITEM"] = "Protection des sessions";
+$MESS["SEC_MENU_SESSION_TITLE"] = "Configuration des paramètres de protection des sessions";
+$MESS["SEC_MENU_TITLE"] = "Gérer une protection proactive";
+?>

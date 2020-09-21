@@ -1,0 +1,32 @@
+<?
+$MESS["SALE_HPS_ASSIST_SHOP_IDP"] = "Parduotuvės ID";
+$MESS["SALE_HPS_ASSIST_SHOP_IDP_DESCR"] = "Parduotuvės ID gautas iš Assist.ru";
+$MESS["SALE_HPS_ASSIST_SHOP_LOGIN"] = "Prisijungimo vardas";
+$MESS["SALE_HPS_ASSIST_SHOP_LOGIN_DESCR"] = "Prisijungimo vardas gautas iš Assist.ru";
+$MESS["SALE_HPS_ASSIST_SHOP_PASSWORD"] = "Slaptažodis";
+$MESS["SALE_HPS_ASSIST_SHOP_PASSWORD_DESCR"] = "Slaptažodis gautas iš Assist.ru";
+$MESS["SALE_HPS_ASSIST_FIRST_NAME"] = "Pirkėjo vardas";
+$MESS["SALE_HPS_ASSIST_LAST_NAME"] = "Pirkėjo pavardė";
+$MESS["SALE_HPS_ASSIST_DEMO"] = "Testinis rėžimas";
+$MESS["SALE_HPS_ASSIST_EMAIL"] = "Kliento el.paštas";
+$MESS["SALE_HPS_ASSIST_PHONE"] = "Pirkėjo telefonas";
+$MESS["SALE_HPS_ASSIST_ADDRESS"] = "Pirkėjo adresas";
+$MESS["SALE_HPS_ASSIST_MIDDLE"] = "Kliento antras vardas";
+$MESS["SALE_HPS_ASSIST_PAYMENT"] = "Mokėjimo būdas";
+$MESS["SALE_HPS_ASSIST_PAYMENT_CardPayment"] = "Naudokite Assist prisijungimo puslapį autorizacijai";
+$MESS["SALE_HPS_ASSIST_PAYMENT_WebMoneyPayment"] = "Naudoti WebMoney Transfer mokėjimo sistemą";
+$MESS["SALE_HPS_ASSIST"] = "Assist";
+$MESS["SALE_HPS_ASSIST_ASSIST_DELAY"] = "Metodas";
+$MESS["SALE_HPS_ASSIST_PAYMENT_YMPayment"] = "naudoti mokėjimo sistemą \"Yandex Money\"";
+$MESS["SALE_HPS_ASSIST_PAYMENT_QIWIPayment"] = "naudoti mokėjimo sistemą \"QIWI\"";
+$MESS["SALE_HPS_ASSIST_AUTOPAY"] = "Automatiškai mokėti gavus \"Atlikta sėkmingai\" statusą";
+$MESS["SALE_HPS_ASSIST_SHOP_SECRET_WORLD"] = "Slaptas žodis";
+$MESS["SALE_HPS_ASSIST_SHOULD_PAY"] = "Užsakymo suma";
+$MESS["SALE_HPS_ASSIST_CURRENCY"] = "Sąskaitos faktūros valiuta";
+$MESS["SALE_HPS_ASSIST_ORDER_ID"] = "Mokėjimo numeris #";
+$MESS["SALE_HPS_ASSIST_SUCCESS_URL"] = "Adresas po sėkmingo apmokėjimo";
+$MESS["SALE_HPS_ASSIST_FAIL_URL"] = "Adresas po mokėjimo klaidos";
+$MESS["SALE_HPS_ASSIST_DATE_INSERT"] = "Mokėjimo sukūrimo data";
+$MESS["SALE_HPS_ASSIST_MIDDLE_NAME"] = "Pirkėjo antras vardas";
+$MESS["SALE_HPS_ASSIST_PAYMENT_AssistIDCCPayment"] = "Mokėti kreditine kortele naudojant Assist";
+?>

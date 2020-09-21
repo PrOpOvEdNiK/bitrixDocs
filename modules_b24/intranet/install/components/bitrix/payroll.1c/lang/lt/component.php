@@ -1,0 +1,32 @@
+<?
+$MESS["SERVER_UNREACHABLE"] = "Serveris neprienamas";
+$MESS["AUTH_ERROR"] = "Autentifikacijos klaida";
+$MESS["USER_AUTH_ERROR"] = "Naudotojo autentifikacijos klaida";
+$MESS["EMPTY_PIN_ERROR"] = "Tuščias PIN";
+$MESS["UNKNOW_METHOD_ERROR"] = "Nežinoma klaida";
+$MESS["EMPTY_ACTIVATION_CODE_ERROR"] = "Aktyvacijos kodo klaida";
+$MESS["WRONG_RESPONSE"] = "Neteisingas atsakymas";
+$MESS["EMPTY_ORG_LIST"] = "Sąrašas yra tuščias";
+$MESS["UNKNOW_ORG"] = "Nežinoma įmonė";
+$MESS["TITLE_PAYROLL"] = "Algalapis";
+$MESS["PIN_ACTIVATION"] = "PIN aktyvavimas";
+$MESS["WEBSERVICE_MODULE_NOT_INSTALLED"] = "Web serverio modulis nėra įdiegtas.";
+$MESS["HTTP_WRITE_ERROR"] = "Įrašymo klaida";
+$MESS["HTTP_READ_TIMEOUT"] = "Viršytas laukimo laikas HTTP atsakymui iš serverio 1C.";
+$MESS["HTTP_READ_ERROR"] = "Skaitymo klaida";
+$MESS["SOAP_PORTAL_EMP_ID"] = "Tuščias ID";
+$MESS["SOAP_EMP_PIN"] = "Tuščias PIN";
+$MESS["SOAP_MONTH"] = "Mėnuo";
+$MESS["SOAP_YEAR"] = "Metai";
+$MESS["SOAP_DATETIME"] = "Data ir laikas";
+$MESS["SOAP_IP"] = "IP";
+$MESS["SOAP_LOGIN"] = "Prisijungimo vardas";
+$MESS["SOAP_ADDINFO"] = "Papildoma informacija";
+$MESS["SOAP_ACTIVATION_CODE"] = "Aktyvacijos kodas";
+$MESS["SOAP_PAYROLL_METHOD"] = "Algalapio metodas";
+$MESS["SOAP_HOLIDAY_METHOD"] = "Atostogų algalapio metodas";
+$MESS["SOAP_ACTIVATION_METHOD"] = "Aktyvavimo metodas";
+$MESS["PAYROLL"] = "Algalapis";
+$MESS["TITLE_HOLIDAY"] = "Atostogų algalapis";
+$MESS["ERROR_RESP_MESSAGE"] = "Klaidos pranešimas";
+?>

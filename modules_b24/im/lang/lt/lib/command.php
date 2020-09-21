@@ -1,0 +1,30 @@
+<?
+$MESS["COMMAND_IM_CATEGORY"] = "Pokalbių programa";
+$MESS["COMMAND_DEF_ME_TITLE"] = "Taikoma kursyvinis stilius";
+$MESS["COMMAND_DEF_ME_PARAMS"] = "tekstas";
+$MESS["COMMAND_DEF_LOUD_TITLE"] = "Taikoma pastorintas stilius";
+$MESS["COMMAND_DEF_LOUD_PARAMS"] = "tekstas";
+$MESS["COMMAND_DEF_QUOTE_TITLE"] = "Tekstas bus atvaizduotas kaip citata";
+$MESS["COMMAND_DEF_QUOTE_PARAMS"] = "tekstas";
+$MESS["COMMAND_DEF_RENAME_TITLE"] = "Redaguoti pokalbių antraštę";
+$MESS["COMMAND_DEF_RENAME_PARAMS"] = "nauja antraštė";
+$MESS["COMMAND_DEF_WD_TITLE"] = "Įjungti vaizdo skambučių derinimo rėžimą (debug mode)";
+$MESS["COMMAND_DEF_CATEGORY_CHAT"] = "Pokalbiai";
+$MESS["COMMAND_DEF_CATEGORY_DEBUG"] = "Derinimas (Debug)";
+$MESS["COMMAND_BOT_ANSWER"] = "#BOT_NAME# pokalbių botas";
+$MESS["COMMAND_SYSTEM_ANSWER"] = "#COMMAND# komandos atsakymas";
+$MESS["COMMAND_DEF_STTS_TITLE"] = "Įjunti statuso \"prisijungęs\" stebėjimą";
+$MESS["COMMAND_DEF_SPTS_TITLE"] = "Išjunti statuso \"prisijungęs\" stebėjimą";
+$MESS["COMMAND_DEF_CATEGORY_DIALOG"] = "Pokalbis";
+$MESS["COMMAND_ENTITY_ID_FIELD"] = "Komandos ID";
+$MESS["COMMAND_ENTITY_BOT_ID_FIELD"] = "Pokalbių boto ID";
+$MESS["COMMAND_ENTITY_COMMAND_FIELD"] = "Komanda";
+$MESS["COMMAND_ENTITY_HIDDEN_FIELD"] = "Komandos paslėpimo statusas";
+$MESS["COMMAND_ENTITY_SONET_SUPPORT_FIELD"] = "Veiklos srauto palaikymo statusas";
+$MESS["COMMAND_ENTITY_CLASS_FIELD"] = "Komandos apdorojimo programos klasė";
+$MESS["COMMAND_ENTITY_METHOD_COMMAND_ADD_FIELD"] = "Apdorojimo programos klasės metodas įeinančioms komandoms";
+$MESS["COMMAND_ENTITY_METHOD_LANG_GET_FIELD"] = "Klasės metodas lokalizacijos gavimui";
+$MESS["COMMAND_ENTITY_APP_ID_FIELD"] = "REST programos ID";
+$MESS["COMMAND_ENTITY_MODULE_ID_FIELD"] = "Modulio ID";
+$MESS["COMMAND_ENTITY_COMMON_FIELD"] = "Komandos globališkumo statusas";
+?>

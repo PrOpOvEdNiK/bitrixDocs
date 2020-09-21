@@ -1,0 +1,6 @@
+<?
+$MESS["STORE_PRODUCT_ENTITY_ID_FIELD"] = "Įrašo ID, kuriame nurodomas prekių kiekis sandėlyje";
+$MESS["STORE_PRODUCT_ENTITY_STORE_ID_FIELD"] = "Sandėlio ID";
+$MESS["STORE_PRODUCT_ENTITY_PRODUCT_ID_FIELD"] = "Prekės ID";
+$MESS["STORE_PRODUCT_ENTITY_AMOUNT_FIELD"] = "Kiekis";
+?>

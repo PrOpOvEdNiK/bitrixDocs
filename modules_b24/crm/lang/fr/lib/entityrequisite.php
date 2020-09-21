@@ -1,0 +1,34 @@
+<?
+$MESS["CRM_BANK_DETAIL_FILTER_PREFIX"] = "Informations bancaires";
+$MESS["CRM_REQUISITE_ERR_ACCESS_DENIED_COMPANY_UPDATE"] = "Accès de modification de l'entreprise refusé (ID : #ID#)";
+$MESS["CRM_REQUISITE_ERR_ACCESS_DENIED_CONTACT_UPDATE"] = "Accès de modification du contact refusé (ID : #ID#)";
+$MESS["CRM_REQUISITE_ERR_COMPANY_GENITIVE"] = "données de l'entreprise";
+$MESS["CRM_REQUISITE_ERR_COMPANY_NOT_EXISTS"] = "Entreprise introuvable (ID : #ID#)";
+$MESS["CRM_REQUISITE_ERR_CONTACT_GENITIVE"] = "données de contact";
+$MESS["CRM_REQUISITE_ERR_CONTACT_NOT_EXISTS"] = "Contact introuvable (ID : #ID#)";
+$MESS["CRM_REQUISITE_ERR_CREATE_REQUISITE"] = "Erreur lors de la création de #ENTITY_TYPE_NAME_GENITIVE# (ID :#ID#)";
+$MESS["CRM_REQUISITE_ERR_DEF_IMP_PRESET_NOT_DEFINED"] = "Aucun modèle défini pour importer les détails de l'entité \"#ENTITY_TYPE#\"";
+$MESS["CRM_REQUISITE_ERR_DUP_CTRL_MODE_SKIP"] = "Les détails ne peuvent pas être importés dans le mode d'omission des doublons";
+$MESS["CRM_REQUISITE_ERR_IMP_PRESET_HAS_NO_ADDR_FIELD"] = "Le modèle d'importation des détails ne comprend pas le champ d'adresse (ID : #ID#)";
+$MESS["CRM_REQUISITE_ERR_IMP_PRESET_NOT_EXISTS"] = "Le modèle d'importation des détails n'a pas été trouvé (ID : #ID#)";
+$MESS["CRM_REQUISITE_ERR_INVALID_ENTITY_ID"] = "Aucune entité n'utilise ces détails.";
+$MESS["CRM_REQUISITE_ERR_INVALID_ENTITY_TYPE"] = "Type d'entité de détails incorrect";
+$MESS["CRM_REQUISITE_ERR_INVALID_IMP_PRESET_ID"] = "ID du modèle d'importation des détails non valide";
+$MESS["CRM_REQUISITE_ERR_NOTHING_TO_DELETE"] = "Aucun détail à supprimer.";
+$MESS["CRM_REQUISITE_ERR_NO_ADDRESSES_TO_IMPORT"] = "Aucune adresse à importer";
+$MESS["CRM_REQUISITE_ERR_ON_DELETE"] = "Erreur lors de la suppression des détails.";
+$MESS["CRM_REQUISITE_EXPORT_ADDRESS_TYPE_LABEL"] = "Type";
+$MESS["CRM_REQUISITE_EXPORT_FIELD_ACTIVE"] = "Actif";
+$MESS["CRM_REQUISITE_EXPORT_FIELD_ID"] = "ID";
+$MESS["CRM_REQUISITE_EXPORT_FIELD_NAME"] = "Prénom";
+$MESS["CRM_REQUISITE_EXPORT_FIELD_PRESET_COUNTRY_ID"] = "ID du pays";
+$MESS["CRM_REQUISITE_EXPORT_FIELD_PRESET_COUNTRY_NAME"] = "Pays";
+$MESS["CRM_REQUISITE_EXPORT_FIELD_PRESET_ID"] = "Identifiant du modèle";
+$MESS["CRM_REQUISITE_EXPORT_FIELD_PRESET_NAME"] = "Modèle";
+$MESS["CRM_REQUISITE_EXPORT_FIELD_SORT"] = "Classification";
+$MESS["CRM_REQUISITE_FILTER_PREFIX"] = "Détails";
+$MESS["CRM_REQUISITE_FIXED_PRESET_COMPANY"] = "Organisation";
+$MESS["CRM_REQUISITE_FIXED_PRESET_INDIVIDUAL"] = "Seul propriétaire";
+$MESS["CRM_REQUISITE_FIXED_PRESET_LEGALENTITY"] = "Société";
+$MESS["CRM_REQUISITE_FIXED_PRESET_PERSON"] = "Personne";
+?>

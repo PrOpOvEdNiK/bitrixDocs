@@ -1,0 +1,34 @@
+<?
+$MESS["BPABL_RES_1"] = "Nie";
+$MESS["BPABL_RES_2"] = "Zakończone Pomyślnie";
+$MESS["BPABL_RES_3"] = "Anuluowane";
+$MESS["BPABL_RES_4"] = "Błąd";
+$MESS["BPABL_RES_5"] = "Nie zainicjowano";
+$MESS["BPABL_RES_6"] = "Niezdefiniowany";
+$MESS["BPABL_STATUS_1"] = "Zainicjowany";
+$MESS["BPABL_STATUS_2"] = "W toku";
+$MESS["BPABL_STATUS_3"] = "Anulowanie";
+$MESS["BPABL_STATUS_4"] = "Zakończone";
+$MESS["BPABL_STATUS_5"] = "Błąd";
+$MESS["BPABL_STATUS_6"] = "Niezdefiniowany";
+$MESS["BPABL_TYPE_1"] = "Uruchomione działanie '#ACTIVITY#'#NOTE#";
+$MESS["BPABL_TYPE_2"] = "Zakończone działanie '#ACTIVITY#', status zwrotny: '#STATUS#', wynik: '#RESULT#'#NOTE#";
+$MESS["BPABL_TYPE_3"] = "Anulowane działanie '#ACTIVITY#'#NOTE#";
+$MESS["BPABL_TYPE_4"] = "Błąd działania '#ACTIVITY#'#NOTE#";
+$MESS["BPABL_TYPE_5"] = "Działanie '#ACTIVITY#'#NOTE#";
+$MESS["BPABL_TYPE_6"] = "Coś wykonywane na działaniu '#ACTIVITY#'#NOTE#";
+$MESS["IBEL_BIZPROC_APPLY"] = "Zastosuj";
+$MESS["IBEL_BIZPROC_CANCEL"] = "Anuluj";
+$MESS["IBEL_BIZPROC_DATE"] = "Data Bieżącego Statusu";
+$MESS["IBEL_BIZPROC_DEL"] = "Usuń";
+$MESS["IBEL_BIZPROC_LOG"] = "Zapis";
+$MESS["IBEL_BIZPROC_MODIFICATION"] = "Ostatnie zmiany";
+$MESS["IBEL_BIZPROC_NEW"] = "Nowy proces biznesowy";
+$MESS["IBEL_BIZPROC_RUN_CMD"] = "Przeprowadź Działanie";
+$MESS["IBEL_BIZPROC_RUN_CMD_NO"] = "brak";
+$MESS["IBEL_BIZPROC_SAVE"] = "Zapisz";
+$MESS["IBEL_BIZPROC_START"] = "Przeprowadź nowy proces biznesowy";
+$MESS["IBEL_BIZPROC_STATE"] = "Bieżący Status";
+$MESS["IBEL_BIZPROC_STOP"] = "zatrzymaj";
+$MESS["IBEL_BIZPROC_TASKS"] = "Zadania procesu biznesowego";
+?>

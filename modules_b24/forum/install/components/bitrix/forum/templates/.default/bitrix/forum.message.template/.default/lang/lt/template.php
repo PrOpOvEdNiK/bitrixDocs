@@ -1,0 +1,34 @@
+<?
+$MESS["F_REPLY"] = "Atsakyti";
+$MESS["F_QUOTE"] = "Citata";
+$MESS["F_ANCHOR"] = "Nuoroda";
+$MESS["F_EDIT"] = "Redaguoti";
+$MESS["F_EDIT_TOPIC"] = "Modifikuoti temą";
+$MESS["F_DELETE"] = "Pašalinti";
+$MESS["F_DELETE_TOPIC"] = "Trinti temą";
+$MESS["F_HIDE"] = "Paslėpti";
+$MESS["F_HIDE_TOPIC"] = "Slėpti temą";
+$MESS["F_SHOW"] = "Parodyti";
+$MESS["F_AUTHOR_PROFILE"] = "Pranešimo autoriaus profilis";
+$MESS["F_ATTACH_FILES"] = "Prisegtos bylos";
+$MESS["F_POINTS"] = "Balų:";
+$MESS["F_NUM_MESS"] = "Pranešimų: ";
+$MESS["F_DATE_REGISTER"] = "Registravosi:";
+$MESS["F_PRIVATE_MESSAGE"] = "Pranešimai";
+$MESS["F_PRIVATE_MESSAGE_TITLE"] = "Siųsti privačią žinutę";
+$MESS["F_EMAIL_TITLE"] = "Siųsti el. laišką";
+$MESS["F_NO_VOTE_DO"] = "Balsuoti";
+$MESS["F_NO_VOTE_UNDO"] = "Anuliuoti balsą";
+$MESS["F_REAL_IP"] = "/ realus";
+$MESS["F_EDIT_HEAD"] = "Redaguota:";
+$MESS["F_INSERT_NAME"] = "Nukopijuokite naudotojo vardą į atsakymą";
+$MESS["F_NAME"] = "Pavadinimas";
+$MESS["F_SHOW_TOPIC"] = "Rodyti temą";
+$MESS["F_USER_ID"] = "Svečio ID";
+$MESS["F_USER_ID_USER"] = "Naudotojo ID";
+$MESS["F_QUOTE_HINT"] = "Jei atsakymo formoje norite cituoti pranešimą, pažymėkite tekstą ir spustelėkite čia";
+$MESS["F_DELETE_CONFIRM"] = "Ar tikrai norite negrįžtamai pašalinti pranešimą?";
+$MESS["F_DELETE_TOPIC_CONFIRM"] = "Tema bus ištrinta be galimybės atkurti. Trinti?";
+$MESS["F_GOTO"] = "Pereiti";
+$MESS["F_USER_PROFILE"] = "Naudotojo profilis";
+?>

@@ -1,0 +1,6 @@
+<script type='text/ejs' id='taskAccompliceList'>
+    <dt><?= $this->t('ACCOMPLICES') ?>:<i class='hiddenCopyableText'> </i></dt>
+    <dd class="responsibles">
+        <% for (var indexAccomplice=0; accomplices.length > indexAccomplice;indexAccomplice++) { %><%== $.View('taskWatcherItem', accomplices[indexAccomplice]) %><% } %><div title="<?= $this->t('ADD_A_MEMBER') ?>" class="add"></div>
+    </dd>
+</script>

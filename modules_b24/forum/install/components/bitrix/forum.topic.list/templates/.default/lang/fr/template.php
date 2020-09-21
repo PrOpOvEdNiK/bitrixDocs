@@ -1,0 +1,38 @@
+<?
+$MESS["F_AUTHOR"] = "auteur : ";
+$MESS["F_CLOSED"] = "Accompli";
+$MESS["F_CLOSED_TOPIC"] = "Sujet fermé";
+$MESS["F_CREATE_NEW_TOPIC"] = "<noindex><a rel='nofollow' href='#HREF#'>Créer le premier sujet</a></noindex>sur ce forum.";
+$MESS["F_HAVE_NEW_MESS"] = "Il y a des nouveaux messages.";
+$MESS["F_HEAD_AUTHOR"] = "Auteur";
+$MESS["F_HEAD_LAST_POST"] = "Dernière lu par";
+$MESS["F_HEAD_POSTS"] = "Messages";
+$MESS["F_HEAD_TOPICS"] = "Gestion des thèmes";
+$MESS["F_HEAD_VIEWS"] = "vues";
+$MESS["F_MANAGE_CLOSE"] = "Fermer les thèmes";
+$MESS["F_MANAGE_DELETE"] = "Supprimer les sujets";
+$MESS["F_MANAGE_MOVE"] = "Transférer les sujets";
+$MESS["F_MANAGE_OPEN"] = "Ouvrir les sujets";
+$MESS["F_MANAGE_PIN"] = "Attacher les thèmes";
+$MESS["F_MANAGE_TOPICS"] = "Gestion des thèmes";
+$MESS["F_MANAGE_UNPIN"] = "Détacher les sujets";
+$MESS["F_MESSAGE_NOT_APPROVED"] = "Messages dissimulés";
+$MESS["F_MOVED"] = "Transféré";
+$MESS["F_MOVED_TOPIC"] = "Le thème est transféré dans un autre forum";
+$MESS["F_NEW_TOPIC"] = "Créer un nouveau sujet";
+$MESS["F_NEW_TOPIC_TITLE"] = "Créer un nouveau sujet sur ce forum";
+$MESS["F_NO_NEW_MESS"] = "Pas de nouveaux messages";
+$MESS["F_NO_TOPICS_HERE"] = "Ici il n'y a pas de thèmes pour l'instant.";
+$MESS["F_PINNED"] = "Important";
+$MESS["F_PINNED_CLOSED_TOPIC"] = "Thème important est fermé";
+$MESS["F_PINNED_TOPIC"] = "Important";
+$MESS["F_SELECT_ALL"] = "Choisir tout";
+$MESS["F_SET_FORUM_READ"] = "Marquer le forum comme lu";
+$MESS["F_SUBSCRIBE"] = "Abonnement";
+$MESS["F_SUBSCRIBE_TO_NEW_POSTS"] = "Recevoir des notifications sur les nouveaux messages d'e-mail";
+$MESS["F_TOPIC_START"] = "A partir de la date";
+$MESS["F_USER_PROFILE"] = "Evènements du profil utilisateur";
+$MESS["JS_DEL_TOPICS"] = "Les thèmes seront supprimés sans possibilité de récupération. Continuer ?";
+$MESS["JS_NO_ACTION"] = "Aucune action sélectionnée pour la liste de thèmes. Veuillez sélectionnez une action.";
+$MESS["JS_NO_TOPICS"] = "La liste de thèmes n'est pas indiquée. Sélectionnez les thèmes.";
+?>

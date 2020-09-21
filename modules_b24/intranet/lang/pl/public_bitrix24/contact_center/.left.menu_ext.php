@@ -1,0 +1,5 @@
+<?
+$MESS["MENU_CONTACT_CENTER"] = "Centrum kontaktowe";
+$MESS["MENU_CONTACT_CENTER_IMOL_DETAILED_STATISTICS"] = "Lista czatów";
+$MESS["MENU_CONTACT_CENTER_IMOL_STATISTICS"] = "Statystyki czatów";
+?>

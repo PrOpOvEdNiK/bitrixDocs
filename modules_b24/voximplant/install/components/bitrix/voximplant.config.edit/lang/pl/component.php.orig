@@ -1,0 +1,31 @@
+<?
+$MESS["COMP_VI_ACCESS_DENIED"] = "Niewystarczające uprawnienia dostępu";
+$MESS["COMP_VI_WRONG_BACKUP_NUMBER"] = "Rezerwowy numer telefonu musi być w formacie międzynarodowym.";
+$MESS["VI_CONFIG_CURRENT_CONNECTION"] = "bieżące połączenie";
+$MESS["VI_CONFIG_EDIT_AUTO_ANSWERING_TUNE"] = "Poczta głosowa";
+$MESS["VI_CONFIG_EDIT_AUTO_ANSWERING_TUNE_TIP"] = "Ta muzyka lub nagranie będą odtwarzane osobie dzwoniącej po włączeniu poczty głosowej. ";
+$MESS["VI_CONFIG_EDIT_ENQUEUE_TUNE"] = "Melodia oczekiwania w kolejce";
+$MESS["VI_CONFIG_EDIT_ENQUEUE_TUNE_TIP"] = "Osoba dzwoniąca usłyszy tę melodię, jeśli jej połączenie zostanie ustawione w kolejce ze względu na brak dostępnych konsultantów.";
+$MESS["VI_CONFIG_EDIT_HOLDING_TUNE"] = "Muzyka oczekiwania";
+$MESS["VI_CONFIG_EDIT_HOLDING_TUNE_TIP"] = "Ta muzyka lub nagranie będą odtwarzane osobie dzwoniącej podczas wstrzymania połączenia. ";
+$MESS["VI_CONFIG_EDIT_RECORDING_TUNE"] = "Melodia wskazująca, że rozmowa zostanie nagrana";
+$MESS["VI_CONFIG_EDIT_RECORDING_TUNE_TIP"] = "Odtwarzaj tę melodię przed rozpoczęciem nagrywania";
+$MESS["VI_CONFIG_EDIT_VOTE_END_TUNE"] = "Melodia zakończenia oceny jakości";
+$MESS["VI_CONFIG_EDIT_VOTE_END_TUNE_TIP"] = "Odtwarzaj tę melodię po dokonaniu przez użytkownika oceny jakości usługi";
+$MESS["VI_CONFIG_EDIT_VOTE_TUNE"] = "Melodia rozpoczęcia oceny jakości";
+$MESS["VI_CONFIG_EDIT_VOTE_TUNE_TIP"] = "Odtwarzaj tę melodię, gdy zaznaczona jest opcja "Oceń jakość usługi”";
+$MESS["VI_CONFIG_EDIT_WAITING_TUNE"] = "Muzyka oczekiwania";
+$MESS["VI_CONFIG_EDIT_WAITING_TUNE_TIP"] = "Ta muzyka lub nagranie będą odtwarzane osobie dzwoniącej, zamiast dzwonków, przed odebraniem połączenia. ";
+$MESS["VI_CONFIG_EDIT_WELCOMING_TUNE"] = "Powitanie";
+$MESS["VI_CONFIG_EDIT_WELCOMING_TUNE_TIP"] = "Ta muzyka lub nagranie będą odtwarzane osobie dzwoniącej jako powitanie podczas połączenia przychodzącego. ";
+$MESS["VOX_CONFIG_EDIT_CALLBACK_ROUTING"] = "Przekierowanie oddzwaniania";
+$MESS["VOX_CONFIG_EDIT_CALL_ROUTING"] = "Przekierowanie połączeń przychodzących";
+$MESS["VOX_CONFIG_EDIT_CONNECTION_SETTINGS"] = "Parametry połączenia";
+$MESS["VOX_CONFIG_EDIT_CRM_INTEGRATION"] = "Integracja systemu CRM";
+$MESS["VOX_CONFIG_EDIT_DELETE_CONNECTION"] = "Usuń połączenie";
+$MESS["VOX_CONFIG_EDIT_DISCONNECT_NUMBER"] = "Odłącz numer";
+$MESS["VOX_CONFIG_EDIT_MELODIES"] = "Muzyka oczekiwania";
+$MESS["VOX_CONFIG_EDIT_OTHER"] = "Inne";
+$MESS["VOX_CONFIG_EDIT_RECORDING_AND_RATING"] = "Nagrywanie i ocena";
+$MESS["VOX_CONFIG_EDIT_WORKTIME"] = "Godziny pracy";
+?>

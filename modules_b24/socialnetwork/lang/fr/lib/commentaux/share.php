@@ -1,0 +1,5 @@
+<?
+$MESS["SONET_COMMENTAUX_SHARE_HIDDEN"] = "Destinataire masqué";
+$MESS["SONET_COMMENTAUX_SHARE_TEXT"] = "Partagé avec : #SHARE_LIST#";
+$MESS["SONET_COMMENTAUX_SHARE_TEXT_1"] = "Partagé avec : #SHARE_LIST#";
+?>

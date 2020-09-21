@@ -1,0 +1,4 @@
+<?
+$MESS["SALE_HANDLERS_DISCOUNTPRESET_PAYSYSTEMEXTRA_LABEL_DISCOUNT_VALUE"] = "Surtaxe de la commande";
+$MESS["SALE_HANDLERS_DISCOUNTPRESET_PAYSYSTEMEXTRA_NAME"] = "Surtaxe pour le système de paiement sélectionné";
+?>

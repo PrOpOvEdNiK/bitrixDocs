@@ -1,0 +1,40 @@
+<?
+$MESS["BPWC_WNCTS_BTN_CANCEL"] = "Annuler";
+$MESS["BPWC_WNCTS_BTN_SYNC"] = "Lancer l'importation";
+$MESS["BPWC_WNCTS_TAB1"] = "Charger";
+$MESS["BPWC_WNCTS_TAB1T"] = "Importation de données depuis la boutique en ligne";
+$MESS["BPWC_WNCT_2EDIT"] = "Éditer";
+$MESS["BPWC_WNCT_2LIST"] = "Boutiques en ligne";
+$MESS["BPWC_WNCT_ACTIVE"] = "Actif(ve)";
+$MESS["BPWC_WNCT_DATA_SYNC_PERIOD"] = "Période d'importation (minutes; 0 - désactiver)";
+$MESS["BPWC_WNCT_DATE_CREATE"] = "Créé le";
+$MESS["BPWC_WNCT_DATE_UPDATE"] = "Date de la dernière modification";
+$MESS["BPWC_WNCT_IMPORT_PERIOD"] = "Au premier téléchargement sélectionnez les données pour les derniers (jours)";
+$MESS["BPWC_WNCT_IMPORT_PREFIX"] = "Préfixe de la dénomination de la transaction";
+$MESS["BPWC_WNCT_IMPORT_PROBABILITY"] = "Probabilité de la transaction par défaut, %";
+$MESS["BPWC_WNCT_IMPORT_PUBLIC"] = "La transaction est disponible pour tous (par défaut)";
+$MESS["BPWC_WNCT_IMPORT_RESPONSIBLE"] = "Responsable de la transaction (par défaut)";
+$MESS["BPWC_WNCT_LABEL"] = "Date de la dernière commande chargée";
+$MESS["BPWC_WNCT_LOGIN"] = "Connexion";
+$MESS["BPWC_WNCT_NAME"] = "Dénomination";
+$MESS["BPWC_WNCT_NOTE_HINT"] = "Il faut indiquer le mot d'utilisateur et le mot de passe de l'utilisateur du e-commerce qui a le droit d'éditer les commandes dans tous les statut et auquel l'exportation est autorisée";
+$MESS["BPWC_WNCT_PASSWORD"] = "Mot de passe";
+$MESS["BPWC_WNCT_SIZE"] = "Nombre de commandes chargées par une étape";
+$MESS["BPWC_WNCT_STATUS"] = "Dernier statut de l'importation";
+$MESS["BPWC_WNCT_STATUS_CUR"] = "Progression de l'importation";
+$MESS["BPWC_WNCT_SYNC_COMPANIES"] = "Nombre de compagnies téléchargées";
+$MESS["BPWC_WNCT_SYNC_CONTACTS"] = "Nombre de contacts chargés";
+$MESS["BPWC_WNCT_SYNC_DEALS"] = "Transactions chargées";
+$MESS["BPWC_WNCT_SYNC_ERROR_SYNC"] = "Erreur de chargement des données";
+$MESS["BPWC_WNCT_SYNC_LOAD"] = "Chargement";
+$MESS["BPWC_WNCT_SYNC_STOPPING"] = "Suspension";
+$MESS["BPWC_WNCT_SYNC_STOP_LOAD"] = "Arrêter le chargement";
+$MESS["BPWC_WNCT_SYNC_SUCCESS_SYNC"] = "Importation réussie.";
+$MESS["BPWC_WNCT_SYNC_TERMINATE"] = "Importation interrompu par un utilisateur. Toutes les données peuvent avoir été importés.";
+$MESS["BPWC_WNCT_TAB2"] = "Paramètres";
+$MESS["BPWC_WNCT_TAB2T"] = "Paramètres avancés";
+$MESS["BPWC_WNCT_URL"] = "Adresse";
+$MESS["CRM_EXT_SALE_CLIST_RESULT"] = "Les résultats d'importation : ";
+$MESS["CRM_EXT_SALE_CLIST_STEP"] = "L'étape #STEP# est terminé : on a créé #CreatedDeals# transactions, #CreatedContacts# contacts, #CreatedCompanies# compagnies; mise à jour #UpdatedDeals# transactions, #UpdatedContacts# contacts, #UpdatedCompanies# compagnies.";
+$MESS["CRM_EXT_SALE_CLIST_SUCCESS"] = "Importation terminée avec succès.";
+?>

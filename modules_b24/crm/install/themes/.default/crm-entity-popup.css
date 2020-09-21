@@ -1,0 +1,8 @@
+.bx-crm-dialog-wrap .popup-window-top-row .popup-window-center-column {background:url("images/crm/mini-sprite.png") repeat-x 0 -698px; height:37px;}
+.bx-crm-dialog-wrap .popup-window-top-row .popup-window-left-column {background:url("images/crm/mini-sprite.png") repeat-x 0 -740px !important; height:37px; width:15px;}
+.bx-crm-dialog-wrap .popup-window-top-row .popup-window-right-column {background:url("images/crm/mini-sprite.png") repeat-x -1px -780px !important; height:37px; width:15px;}
+.bx-crm-dialog-wrap .popup-window-content-row .popup-window-left-column {background:url("images/crm/popup-shadow.png") repeat-y 0 0!important; width:15px;}
+.bx-crm-dialog-wrap .popup-window-content-row .popup-window-right-column {background:url("images/crm/popup-shadow.png") repeat-y -35px 0 !important; width:15px;}
+.bx-crm-dialog-wrap .popup-window-bottom-row .popup-window-right-column {background:url("images/crm/mini-sprite.png") no-repeat -5px -852px !important; height:18px; width:15px;}
+.bx-crm-dialog-wrap .popup-window-bottom-row .popup-window-left-column {background:url("images/crm/mini-sprite.png") no-repeat 0 -824px !important; height:18px; width:15px;}
+.bx-crm-dialog-wrap .popup-window-bottom-row .popup-window-center-column {background:url("images/crm/mini-sprite.png") repeat-x 0 -873px !important; height:18px;}

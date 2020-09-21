@@ -1,0 +1,5 @@
+<?
+$MESS["IBLOCK_SORT_FIELDS_CATALOG_AVAILABLE_EXT"] = "galima įsigyti";
+$MESS["IBLOCK_SORT_FIELDS_CATALOG_WEIGHT"] = "produkto svoris";
+$MESS["IBLOCK_SORT_FIELDS_CATALOG_AVAILABLE"] = "prieinama sandėliuose";
+?>

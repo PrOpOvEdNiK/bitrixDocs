@@ -1,0 +1,35 @@
+<?
+$MESS["INTR_HIRED"] = "Contratado";
+$MESS["INTR_IBLOCK_REQUIRED"] = "O módulo Intranet requer o módulo Blocos de Informações.";
+$MESS["INTR_IBLOCK_TOP_SECTION_WARNING"] = "A estrutura da empresa pode conter apenas uma seção de nível superior.";
+$MESS["INTR_OUTLOOK_PREFIX_CONTACTS"] = "Portal da intranet";
+$MESS["INTR_OUTLOOK_TASK_NO_TITLE"] = "(sem título)";
+$MESS["INTR_OUTLOOK_TITLE_CONTACTS"] = "Empregados";
+$MESS["INTR_OUTLOOK_TITLE_CONTACTS_EXTRANET"] = "Contatos";
+$MESS["INTR_OUTLOOK_TITLE_TASKS"] = "Minhas Tarefas";
+$MESS["INTR_SET_BUT_HINT"] = "Executar o Assistente do Portal da Intranet para configurar seu portal novamente.<br /><br />";
+$MESS["INTR_SET_BUT_HINT_CLEARING"] = "O <b>Assistente de Limpeza</b> ajuda a limpar os dados de demonstração do seu portal antes de adicionar conteúdo real.";
+$MESS["INTR_SET_BUT_HINT_EXTRANET"] = "O <b>Assistente da Extranet</b> guiará você na criação do site de extranet e processo de configuração.<br /><br />";
+$MESS["INTR_SET_BUT_TEXT"] = "Site#BR#Wizard";
+$MESS["INTR_SET_BUT_TITLE"] = "Executar o assistente de configuração para alterar o tema de design do portal";
+$MESS["INTR_SET_CLEAN_TEXT"] = "Assistente de Limpeza";
+$MESS["INTR_SET_CLEAN_TITLE"] = "Executar Assistente de Limpeza de Dados de Demonstração";
+$MESS["INTR_SET_EXT_TEXT"] = "Assistente de Configuração da Extranet";
+$MESS["INTR_SET_EXT_TITLE"] = "Executar Assistente de Configuração da Extranet";
+$MESS["INTR_SET_WIZ_TEXT"] = "Assistente de Configuração";
+$MESS["INTR_SET_WIZ_TITLE"] = "Executar o assistente de configuração para alterar o tema de design do portal";
+$MESS["INTR_SOCNET_LOG_ENTITY_MAIL"] = "feed de notícias";
+$MESS["INTR_SOCNET_LOG_LIST_N_ALL"] = "Todas as Notícias";
+$MESS["INTR_SOCNET_LOG_N"] = "Feed de notícias";
+$MESS["INTR_SOCNET_LOG_NEWS"] = "Item de Notícias";
+$MESS["INTR_SOCNET_LOG_NEWS_COMMENT_TITLE"] = "comentário sobre \"#TITLE#\"";
+$MESS["INTR_SOCNET_LOG_NEWS_COMMENT_TITLE_MAIL"] = "Um comentário sobre \"#TITLE#\" foi adicionado ao feed de notícias \"#ENTITY#\"";
+$MESS["INTR_SOCNET_LOG_NEWS_SETTINGS"] = "Todos os eventos neste feed de notícias";
+$MESS["INTR_SOCNET_LOG_NEWS_SETTINGS_1"] = "Feed de notícias #TITLE#";
+$MESS["INTR_SOCNET_LOG_NEWS_SETTINGS_2"] = "Inserções do feed de notícias #TITLE#";
+$MESS["INTR_SOCNET_LOG_NEWS_TITLE"] = "Item de notícias adicionado ou atualizado: \"#TITLE#\"";
+$MESS["INTR_SOCNET_LOG_NEWS_TITLE_MAIL"] = "Item de notícias \"#TITLE#\" adicionado ou atualizado no feed de notícias \"#ENTITY#\"";
+$MESS["INTR_SOCNET_LOG_XDI_N"] = "feed de notícias";
+$MESS["INTR_SONET_ADD_COMMENT_SOURCE_ERROR"] = "Falha ao adicionar um comentário a uma fonte de evento.";
+$MESS["INTR_SONET_LOG_DATA_TITLE_IMPORTANT_24"] = "Importante!";
+?>

@@ -1,0 +1,16 @@
+<script type='text/ejs' id='kanbanColumnDetailDodsEdit'>
+    <div class="sortableHere">
+        <% for (var i = 0; i<dodList.length; i++) {
+        %><label class="view checkitem" data-itemid="<%= dodList[i].dodId %>">
+        <input type="text" class="styled" value="<%= dodList[i].description %>" maxlength="100">
+        <b class="move"></b>
+        <b class="delete"></b>
+    </label><%
+        } %>
+    </div>
+    <div class="addCheckItem">
+        <div class="checkitem">
+            <span class="add"><i></i><?= $this->t('ADD_COLUMN_DOD') ?></span>
+        </div>
+    </div>
+</script>

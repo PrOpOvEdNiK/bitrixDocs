@@ -1,0 +1,37 @@
+<?
+$MESS["LOG_TYPE_DOCUMENTS"] = "Biblioteca de Documentos";
+$MESS["LOG_TYPE_ELEMENT_ADD"] = "Adicionar arquivo";
+$MESS["LOG_TYPE_ELEMENT_DELETE"] = "Excluir arquivo";
+$MESS["LOG_TYPE_ELEMENT_MOVE"] = "Mover o arquivo";
+$MESS["LOG_TYPE_ELEMENT_RENAME"] = "Renomear o arquivo";
+$MESS["LOG_TYPE_ELEMENT_RESTORE"] = "Restaurar arquivo da lixeira";
+$MESS["LOG_TYPE_ELEMENT_TRASH"] = "Mover o arquivo para lixeira";
+$MESS["LOG_TYPE_ELEMENT_UPDATE"] = "Atualizar o arquivo";
+$MESS["LOG_TYPE_SECTION_ADD"] = "Criar pasta";
+$MESS["LOG_TYPE_SECTION_DELETE"] = "Excluir pasta";
+$MESS["LOG_TYPE_SECTION_MOVE"] = "Mover pasta";
+$MESS["LOG_TYPE_SECTION_RENAME"] = "Renomear pasta";
+$MESS["LOG_TYPE_SECTION_RESTORE"] = "Restaurar pasta da lixeira";
+$MESS["LOG_TYPE_SECTION_TRASH"] = "Mover a pasta para a reciclagem";
+$MESS["LOG_WEBDAV_ELEMENT_ADD"] = "Ficheiro #NAME# foi adicionada";
+$MESS["LOG_WEBDAV_ELEMENT_DELETE"] = "Arquivo #NAME# excluido";
+$MESS["LOG_WEBDAV_ELEMENT_MOVE"] = "Arquivo #NAME# movido para \"#MOVE_TO#\"";
+$MESS["LOG_WEBDAV_ELEMENT_RESTORE"] = "Arquivo #NAME# foi restaurado";
+$MESS["LOG_WEBDAV_ELEMENT_TRASH"] = "Arquivo #NAME# movida para a lixeira";
+$MESS["LOG_WEBDAV_SECTION_ADD"] = "Pasta #NAME# adicionada";
+$MESS["LOG_WEBDAV_SECTION_DELETE"] = "Pasta #NAME# excluida";
+$MESS["LOG_WEBDAV_SECTION_RESTORE"] = "Pasta #NAME# restaurada";
+$MESS["LOG_WEBDAV_SECTION_TRASH"] = "Pasta #NAME# movida para a lixeira";
+$MESS["OP_NAME_WEBDAV_CHANGE_SETTINGS"] = "Editar configurações da biblioteca de documentos";
+$MESS["TASK_NAME_WEBDAV_FULL_ACCESS"] = "O acesso total";
+$MESS["library_wizard_iblock_name_error1"] = "O nome da biblioteca não deve conter os seguintes caracteres: / \\ \\: *? | {%} & ~";
+$MESS["library_wizard_lib_resource"] = "Fonte de dados:";
+$MESS["library_wizard_lib_resource_folder"] = "Pasta disco físico";
+$MESS["library_wizard_lib_resource_iblock"] = "Bloco de informação";
+$MESS["library_wizard_path_to_folder"] = "Caminho da pasta (em relação Ã  raiz do site)";
+$MESS["library_wizard_path_to_folder_error1"] = "O caminho deve começar com '/'.";
+$MESS["library_wizard_path_to_folder_error2"] = "/ Bitrix / não pode ser uma pasta de armazenamento.";
+$MESS["library_wizard_perm_folder"] = "Permissões de pasta";
+$MESS["library_wizard_perm_forum_write"] = "Escrever";
+$MESS["library_wizard_perm_write"] = "Escrever";
+?>

@@ -1,0 +1,34 @@
+<?
+$MESS["CRM_WEBFORM_EDIT_V2_ATTENTION"] = "¡Atención!";
+$MESS["CRM_WEBFORM_EDIT_V2_ATTENTION_TEXT"] = "El formulario muestra los cambios más recientes que se guardaron automáticamente.";
+$MESS["CRM_WEBFORM_EDIT_V2_AUTO"] = "Automático";
+$MESS["CRM_WEBFORM_EDIT_V2_BORDER"] = "Forma de los bordes";
+$MESS["CRM_WEBFORM_EDIT_V2_BORDER_BOTTOM"] = "Inferior";
+$MESS["CRM_WEBFORM_EDIT_V2_BORDER_LEFT"] = "Izquierdo";
+$MESS["CRM_WEBFORM_EDIT_V2_BORDER_RIGHT"] = "Derecho";
+$MESS["CRM_WEBFORM_EDIT_V2_BORDER_TOP"] = "Superior";
+$MESS["CRM_WEBFORM_EDIT_V2_COLOR_BRIGHT"] = "Color para elementos claros";
+$MESS["CRM_WEBFORM_EDIT_V2_COLOR_BRIGHT_TEXT"] = "Color del texto para elementos claros";
+$MESS["CRM_WEBFORM_EDIT_V2_COLOR_FIELD"] = "Color de fondo del campo";
+$MESS["CRM_WEBFORM_EDIT_V2_COLOR_FIELD_BORDER"] = "Color del borde del campo";
+$MESS["CRM_WEBFORM_EDIT_V2_COLOR_FIELD_FOCUS"] = "Color de fondo del campo concentrado";
+$MESS["CRM_WEBFORM_EDIT_V2_COLOR_FORM"] = "Color de fondo del formulario";
+$MESS["CRM_WEBFORM_EDIT_V2_COLOR_FORM_TEXT"] = "Color del texto del formulario";
+$MESS["CRM_WEBFORM_EDIT_V2_DEF"] = "Predeterminado";
+$MESS["CRM_WEBFORM_EDIT_V2_ENABLE_DESIGN"] = "Habilitar el nuevo diseño para este formulario en el widget del sitio web o mediante un enlace directo (para que el diseño del formulario incrustado pueda cambiarse mediante el código nuevo o el antiguo).";
+$MESS["CRM_WEBFORM_EDIT_V2_FONT"] = "Fuente";
+$MESS["CRM_WEBFORM_EDIT_V2_FONT_FAMILY_HINT"] = "Nombre de la fuente (font-family).<br>Ejemplo: Abrir Sans";
+$MESS["CRM_WEBFORM_EDIT_V2_FONT_URI_HINT"] = "Enlace a la fuente proporcionada en fonts.google.com";
+$MESS["CRM_WEBFORM_EDIT_V2_FORM_TRANSPARENT_HINT"] = "Puede hacer que el formulario sea translúcido cambiando el parámetro de transparencia del color de fondo del formulario y los valores de color de fondo del campo.";
+$MESS["CRM_WEBFORM_EDIT_V2_MANUAL"] = "Personalizado";
+$MESS["CRM_WEBFORM_EDIT_V2_MODE"] = "Modo";
+$MESS["CRM_WEBFORM_EDIT_V2_MORE_FIELDS"] = "Parámetros adicionales";
+$MESS["CRM_WEBFORM_EDIT_V2_PRIMARY_COLOR"] = "Color primario";
+$MESS["CRM_WEBFORM_EDIT_V2_SETUP"] = "configurar";
+$MESS["CRM_WEBFORM_EDIT_V2_SETUP_COLOR"] = "Establecer el color";
+$MESS["CRM_WEBFORM_EDIT_V2_SETUP_OPACITY"] = "Establecer el nivel de transparencia ";
+$MESS["CRM_WEBFORM_EDIT_V2_SHADOW"] = "Sombra del formulario";
+$MESS["CRM_WEBFORM_EDIT_V2_STANDARD"] = "Estándar";
+$MESS["CRM_WEBFORM_EDIT_V2_STYLE"] = "Estilo del campo";
+$MESS["CRM_WEBFORM_EDIT_V2_THEME"] = "Tema";
+?>

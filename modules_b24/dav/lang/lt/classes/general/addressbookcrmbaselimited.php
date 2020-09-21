@@ -1,0 +1,4 @@
+<?
+$MESS["DAV_EXPORT_FILTER_RESPONSIBLE"] = "Asmeninis";
+$MESS["DAV_EXPORT_FILTER_ALL"] = "Visi";
+?>

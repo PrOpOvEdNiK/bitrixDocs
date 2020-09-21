@@ -1,0 +1,5 @@
+<?
+$MESS["IDEA_INPUT_TITLE_IDEA"] = "Tu idea...";
+$MESS["IDEA_PATH_IDEA_INDEX"] = "Más";
+$MESS["IDEA_POPUP_CATEGORY_ALL"] = "Todas";
+?>

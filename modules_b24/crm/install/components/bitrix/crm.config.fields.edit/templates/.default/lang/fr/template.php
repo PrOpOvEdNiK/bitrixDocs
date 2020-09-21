@@ -1,0 +1,31 @@
+<?
+$MESS["CRM_FE_DELETE_TITLE"] = "Supprimer";
+$MESS["CRM_FE_ENUM_DEFAULT"] = "Valeur par défaut";
+$MESS["CRM_FE_ENUM_DEFAULTS"] = "Valeurs par défaut";
+$MESS["CRM_FE_ENUM_IMPORT"] = "Importation de liste";
+$MESS["CRM_FE_ENUM_IMPORT_HINT"] = "Chaque ligne unique va devenir une valeur séparée de la liste.";
+$MESS["CRM_FE_ENUM_NO_DEFAULT"] = "(non)";
+$MESS["CRM_FE_FIELD_COMMON_LABEL"] = "Dénomination";
+$MESS["CRM_FE_FIELD_IS_REQUIRED"] = "Oblig.";
+$MESS["CRM_FE_FIELD_MULTIPLE"] = "Multiple";
+$MESS["CRM_FE_FIELD_NAME"] = "Dénomination";
+$MESS["CRM_FE_FIELD_SHOW_FILTER"] = "Montrer dans le filtre";
+$MESS["CRM_FE_FIELD_SHOW_IN_LIST"] = "Afficher en liste";
+$MESS["CRM_FE_FIELD_SORT"] = "Classification";
+$MESS["CRM_FE_FIELD_TYPE"] = "Type";
+$MESS["CRM_FE_FIELD_USE_MULTI_LANG_LABEL"] = "Demandez les noms en toutes les langues";
+$MESS["CRM_FE_LIST_ITEM_ADD"] = "Ajouter";
+$MESS["CRM_FE_SORT_DOWN_TITLE"] = "Déplacer vers le bas";
+$MESS["CRM_FE_SORT_UP_TITLE"] = "Déplacer vers le haut";
+$MESS["CRM_FE_TAB_EDIT"] = "Paramètres";
+$MESS["CRM_FE_TAB_EDIT_TITLE"] = "Paramètres communs";
+$MESS["CRM_FE_TAB_LIST"] = "Liste";
+$MESS["CRM_FE_TAB_LIST_TITLE"] = "Valeurs pour la qualité de liste";
+$MESS["CRM_FE_TOOLBAR_ADD"] = "Ajouter le champ";
+$MESS["CRM_FE_TOOLBAR_ADD_TITLE"] = "Ajouter un nouveau champ";
+$MESS["CRM_FE_TOOLBAR_DELETE"] = "Supprimer le Champ";
+$MESS["CRM_FE_TOOLBAR_DELETE_TITLE"] = "Supprimer le champ et aller à la liste des champs";
+$MESS["CRM_FE_TOOLBAR_DELETE_WARNING"] = "Êtes-vous sûr de vouloir supprimer ce champ ?";
+$MESS["CRM_FE_TOOLBAR_FIELDS"] = "Correspondance des champs";
+$MESS["CRM_FE_TOOLBAR_FIELDS_TITLE"] = "Liste de champs disponibles";
+?>

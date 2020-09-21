@@ -1,0 +1,62 @@
+<?
+$MESS["CRM_EMAIL_MAILBOX_NEW"] = "[La nouvelle boîte aux lettres POP3]";
+$MESS["CRM_EMAIL_MAILBOX_SEL"] = "(selectionner une boite aux lettres)";
+$MESS["CRM_ERROR_CHECK_SERVER_CONNECTION"] = "Échec de la connexion au serveur '#SERVER#'. #ERROR#";
+$MESS["CRM_ERROR_CONNECT"] = "Erreur de connexion.";
+$MESS["CRM_ERROR_EMAIL"] = "Champ 'Adresseemail de CRM' mal renseigné";
+$MESS["CRM_ERROR_LOGIN"] = "Champ 'Identifiant' non renseigné.";
+$MESS["CRM_ERROR_MAILBOX_NOT_SELECTED"] = "Veuillez choisir une boîte aux lettres.";
+$MESS["CRM_ERROR_MAIL_BOX_NOT_FOUND"] = "La messagerie [#ID#] n'est pas retrouvée.";
+$MESS["CRM_ERROR_POP3_MAIL_NOT_DEFINED"] = "Champ 'adresse email interne' non renseigné.";
+$MESS["CRM_ERROR_SERVER"] = "Champ 'Serveur' non renseigné.";
+$MESS["CRM_ERROR_SMTP_DOMAIN_NOT_DEFINED"] = "Le domaine pour l'adresse postale interne n'a pas été renseigné.";
+$MESS["CRM_ERROR_SMTP_MAIL_NOT_DEFINED"] = "Champ 'adresse email interne' non renseigné.";
+$MESS["CRM_FIELD_CONTACT_RESPONSIBLE"] = "Responsable du contact";
+$MESS["CRM_FIELD_CONTACT_RESPONSIBLE_HINT"] = "Cette personne sera responsable des relations avec le contact créé sur la pièce jointe vCard de l'e-mail.";
+$MESS["CRM_FIELD_CREATE_LEAD_FOR_NEW_ADDRESSER"] = "Créer un prospect pour l'expéditeur inconnu";
+$MESS["CRM_FIELD_CREATE_LEAD_FOR_NEW_ADDRESSER_HINT"] = "Si il n'est pas possible de lier une lettre reçue à aucun des éléments existants du CRM, un nouveau prospect sera créé sur sa base.";
+$MESS["CRM_FIELD_LEAD_RESPONSIBLE"] = "Responsable du prospect créé";
+$MESS["CRM_FIELD_LEAD_RESPONSIBLE_HINT"] = "L'utilisateur choisi ici sera nommé responsable du prospect créé à la base d'e-mail reçu.";
+$MESS["CRM_FIELD_LEAD_SOURCE_ID"] = "Source de prospect";
+$MESS["CRM_FIELD_MAILBOX"] = "Boîte aux lettres";
+$MESS["CRM_FIELD_MAILBOX_ACTIVE"] = "Actif(ve)";
+$MESS["CRM_FIELD_MAILBOX_DELETE"] = "Supprimer les messages sur le serveur après avoir reçu";
+$MESS["CRM_FIELD_MAILBOX_DELETE_CONFIRM"] = "Attention !
+Toutes les lettres seront supprimées même celle qui n'ont pas de rapport à CRM.
+Cela peut provoquer la perte de toute l'historique de correspondance.
+Êtes-vous sûr de vouloir activer cette option ?";
+$MESS["CRM_FIELD_MAILBOX_DELETE_HINT"] = "Attention ! Seront supprimées toutes les lettres, même celles qui n'ont aucun rapport au CRM. Activez cette option seulement au cas où la boîte aux lettres est destinée exclusivement au travail de la CRM ou ne contient pas d'historique de la correspondance.";
+$MESS["CRM_FIELD_MAILBOX_DOMAIN"] = "Domaine";
+$MESS["CRM_FIELD_MAILBOX_LOGIN"] = "Connexion";
+$MESS["CRM_FIELD_MAILBOX_MAIL"] = "adresse email dans CRM";
+$MESS["CRM_FIELD_MAILBOX_NAME"] = "Dénomination";
+$MESS["CRM_FIELD_MAILBOX_PASSWORD"] = "Mot de passe";
+$MESS["CRM_FIELD_MAILBOX_PERIOD_CHECK"] = "Intervalle du contrôle d'e-mail (min)";
+$MESS["CRM_FIELD_MAILBOX_PORT"] = "Port";
+$MESS["CRM_FIELD_MAILBOX_SERVER"] = "Adresse du serveur";
+$MESS["CRM_FIELD_MAILBOX_SSL"] = "SSL";
+$MESS["CRM_FIELD_POP3_EMAL"] = "Adresse postale externe";
+$MESS["CRM_FIELD_POP3_SERVER"] = "Serveur POP3";
+$MESS["CRM_FIELD_REGEXP_COMPANY"] = "Entreprise";
+$MESS["CRM_FIELD_REGEXP_CONTACT"] = "Client";
+$MESS["CRM_FIELD_REGEXP_DEAL"] = "Transaction";
+$MESS["CRM_FIELD_REGEXP_LEAD"] = "Prospect";
+$MESS["CRM_FIELD_SELF_CERT"] = "Certificat auto-signé";
+$MESS["CRM_FIELD_SERVICE_CODE_ALLOCATION"] = "Code de service";
+$MESS["CRM_FIELD_SKIP_CERT"] = "Ne pas vérifier le certificat";
+$MESS["CRM_FIELD_SMTP_EMAL"] = "Adresse email interne";
+$MESS["CRM_FIELD_USE_SSL"] = "Connexion protégée";
+$MESS["CRM_FIELD_USE_SSL2"] = "Connexion protégée";
+$MESS["CRM_MODULE_NOT_INSTALLED"] = "Le module du CRM n'a pas été installé.";
+$MESS["CRM_PERMISSION_DENIED"] = "Accès interdit";
+$MESS["CRM_SAVE_CONFIG"] = "Les réglages sont sauvegardés";
+$MESS["CRM_SECTION_MAIL_CONFIG"] = "Modèle du thème pour déterminer l'entité";
+$MESS["CRM_SECTION_MAIL_CONFIG2"] = "(expressions régulières, entre premières parenthèses doit être l'identificateur de l'entité)";
+$MESS["CRM_SECTION_MAIL_INFO"] = "Boîte aux lettres";
+$MESS["CRM_SECTION_MAIL_PROCESSING"] = "Traitement de lettres reçues";
+$MESS["CRM_SECTION_MAIL_RULES"] = "Définition de règles pour le traitement de messages entrants sur le sujet (pour les utilisateurs avancés)";
+$MESS["CRM_SECTION_OUTGOING_MAIL_PROCESSING"] = "Traitement d'e-mails sortants";
+$MESS["CRM_SS_LIST"] = "Intégration avec E-mail";
+$MESS["CRM_SS_RULE"] = "Ajoutet des évènements au CRM";
+$MESS["MAIL_MODULE_NOT_INSTALLED"] = "Module de la messagerie non installé.";
+?>

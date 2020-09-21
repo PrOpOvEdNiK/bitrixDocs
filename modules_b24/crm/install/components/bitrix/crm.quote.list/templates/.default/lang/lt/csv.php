@@ -1,0 +1,7 @@
+<?
+$MESS["ERROR_QUOTE_IS_EMPTY"] = "Šiuo metu nėra jokių kontaktų.";
+$MESS["CRM_COLUMN_PRODUCT_NAME"] = "Produktas";
+$MESS["CRM_COLUMN_PRODUCT_PRICE"] = "Kaina";
+$MESS["CRM_COLUMN_PRODUCT_QUANTITY"] = "Kiekis";
+$MESS["ERROR_QUOTE_IS_EMPTY_2"] = "Šiuo metu pasiūlymų nėra.";
+?>

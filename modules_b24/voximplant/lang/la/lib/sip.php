@@ -1,0 +1,15 @@
+<?
+$MESS["SIP_CONFIG_ENTITY_APP_ID_FIELD"] = "ID de aplicación";
+$MESS["SIP_CONFIG_ENTITY_AUTH_USER_FIELD"] = "Ingresar como usuario";
+$MESS["SIP_CONFIG_ENTITY_CONFIG_ID_FIELD"] = "ID de configuración";
+$MESS["SIP_CONFIG_ENTITY_ID_FIELD"] = "ID";
+$MESS["SIP_CONFIG_ENTITY_INCOMING_LOGIN_FIELD"] = "Inicio de sesión (entrante)";
+$MESS["SIP_CONFIG_ENTITY_INCOMING_PASSWORD_FIELD"] = "Contraseña (entrante)";
+$MESS["SIP_CONFIG_ENTITY_INCOMING_SERVER_FIELD"] = "Dirección del servidor (entrante)";
+$MESS["SIP_CONFIG_ENTITY_LOGIN_FIELD"] = "Usuario";
+$MESS["SIP_CONFIG_ENTITY_OUTBOUND_PROXY_FIELD"] = "Servidor proxy";
+$MESS["SIP_CONFIG_ENTITY_PASSWORD_FIELD"] = "Contraseña";
+$MESS["SIP_CONFIG_ENTITY_REG_ID_FIELD"] = "ID de registro";
+$MESS["SIP_CONFIG_ENTITY_SERVER_FIELD"] = "Dirección del servidor";
+$MESS["SIP_CONFIG_ENTITY_TYPE_FIELD"] = "Tipo";
+?>

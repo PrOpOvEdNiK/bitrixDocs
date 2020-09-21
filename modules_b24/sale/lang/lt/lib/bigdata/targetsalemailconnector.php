@@ -1,0 +1,10 @@
+<?
+$MESS["SALE_BIGDATA_TARGET_CONNECTOR_NAME"] = "Asmeniniai prekės pasiūlymai";
+$MESS["SALE_BIGDATA_TARGET_CONNECTOR_PRODUCTS_TITLE"] = "Prekės";
+$MESS["SALE_BIGDATA_TARGET_CONNECTOR_PRODUCTS_DESC"] = "Prekės rekomenduojamos individualiai kiekvienam klientui";
+$MESS["SALE_BIGDATA_TARGET_CONNECTOR_SELECT_LIMIT_TITLE"] = "Prekių kiekis";
+$MESS["SALE_BIGDATA_TARGET_CONNECTOR_SELECT_LIMIT_MSG"] = "Jūs galite pasirinkti ne daugiau #LIMIT# prekių vienam naujienlaiškiui.";
+$MESS["SALE_BIGDATA_TARGET_CONNECTOR_SELECT_LIMIT_CLOSE"] = "Uždaryti";
+$MESS["SALE_BIGDATA_TARGET_CONNECTOR_SELECT_DEL"] = "ištrinti";
+$MESS["SALE_BIGDATA_TARGET_CONNECTOR_SELECT_TITLE"] = "Pasirinkti prekes";
+?>

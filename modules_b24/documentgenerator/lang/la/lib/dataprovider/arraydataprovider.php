@@ -1,0 +1,4 @@
+<?
+$MESS["DOCGEN_DATAPROVIDER_ARRAY_INDEX_TITLE"] = "Artículo actual";
+$MESS["DOCGEN_DATAPROVIDER_ARRAY_NUMBER_TITLE"] = "Recuento de artículos";
+?>

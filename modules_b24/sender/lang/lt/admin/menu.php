@@ -1,0 +1,36 @@
+<?
+$MESS["mnu_sender_report"] = "Statistika";
+$MESS["mnu_sender_report_alt"] = "Statistika";
+$MESS["mnu_sender_group"] = "Gavėjų grupės";
+$MESS["mnu_sender_group_alt"] = "Gavėjų grupių valdymas";
+$MESS["mnu_sender_contact_admin"] = "Gavėjai";
+$MESS["mnu_sender_contact_admin_alt"] = "Peržiūrėti ir importuoti gavėjus";
+$MESS["mnu_sender_template_admin"] = "Mano šablonai";
+$MESS["mnu_sender_template_admin_alt"] = "Redaguoti išsaugotus šablonus";
+$MESS["mnu_sender_mailing_admin"] = "Naujienlaiškio vedlys";
+$MESS["mnu_sender_mailing_admin_alt"] = "Naujienlaiškio vedlys";
+$MESS["mnu_sender_site_mailing"] = "Naujienlaiškiai";
+$MESS["mnu_sender_site_mailing_alt"] = "Naujienlaiškiai";
+$MESS["mnu_sender_site_mailing_one_alt"] = "Naujienlaiškis";
+$MESS["mnu_sender_site_mailing_chain"] = "Leidiniai";
+$MESS["mnu_sender_site_mailing_chain_alt"] = "Leidiniai";
+$MESS["mnu_sender_site_mailing_stat"] = "Leidinių statistika";
+$MESS["mnu_sender_site_mailing_stat_alt"] = "Leidinių statistika";
+$MESS["mnu_sender_site_mailing_addr"] = "Gavėjai";
+$MESS["mnu_sender_site_mailing_addr_alt"] = "Gavėjai";
+$MESS["mnu_sender_sect"] = "Elektroninio pašto rinkodara";
+$MESS["mnu_sender_sect_title"] = "Elektroninio pašto rinkodara";
+$MESS["mnu_sender_mailing_trig_admin"] = "Sąrašas";
+$MESS["mnu_sender_mailing_admin_trig_alt"] = "Automatinių laiškų siuntimo valdymas";
+$MESS["mnu_sender_mailing_trig"] = "Automatinių laiškų siuntimas";
+$MESS["mnu_sender_mailing_trig_alt"] = "Automatinių laiškų peržiūra ir valdymas";
+$MESS["mnu_sender_site_mailing_trig"] = "Naujienlaiškiai";
+$MESS["mnu_sender_site_mailing_trig_alt"] = "Naujienlaiškiai";
+$MESS["mnu_sender_site_mailing_trig_one_alt"] = "Automatinių laiškų siuntimas";
+$MESS["mnu_sender_site_mailing_trig_chain"] = "Laiškai";
+$MESS["mnu_sender_site_mailing_trig_chain_alt"] = "Laiškų redagavimas ir jų testinis siuntimas";
+$MESS["mnu_sender_site_mailing_trig_stat"] = "Statistika";
+$MESS["mnu_sender_site_mailing_trig_stat_alt"] = "Statistika";
+$MESS["mnu_sender_stat"] = "Pradėti";
+$MESS["mnu_sender_stat_alt"] = "Visų naujienlaiškių statistika";
+?>

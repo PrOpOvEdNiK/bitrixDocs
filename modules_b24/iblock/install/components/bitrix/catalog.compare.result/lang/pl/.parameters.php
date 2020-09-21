@@ -1,0 +1,30 @@
+<?
+$MESS["CP_BCCR_CONVERT_CURRENCY"] = "Użyj tylko jednej waluty do pokazywania cen";
+$MESS["CP_BCCR_CURRENCY_ID"] = "Konwertuj wszystkie ceny do waluty";
+$MESS["CP_BCCR_HIDE_NOT_AVAILABLE"] = "Ukryj przedmioty, których nie ma na magazynie";
+$MESS["CP_BCCR_OFFERS_FIELD_CODE"] = "Pola SKU";
+$MESS["CP_BCCR_OFFERS_PROPERTY_CODE"] = "Właściwości SKU";
+$MESS["IBLOCK_ACTIONS"] = "Ustawienia działania";
+$MESS["IBLOCK_BASKET"] = "Dodawanie przedmiotów do koszyka";
+$MESS["IBLOCK_BASKET_URL"] = "URL do strony koszyka klienta";
+$MESS["IBLOCK_COMPARE_NAME"] = "Unikalna nazwa dla tabeli porównania";
+$MESS["IBLOCK_DETAIL_URL"] = "URL do strony detali zawartości";
+$MESS["IBLOCK_ELEMENT_SORT_FIELD"] = "Pole do sortowania elementów";
+$MESS["IBLOCK_ELEMENT_SORT_FIELD_BOX"] = "Pole do sortowania elementów w oknie wyboru";
+$MESS["IBLOCK_ELEMENT_SORT_FIELD_BOX2"] = "Pole drugiego sortowania dla listy przedmiotów";
+$MESS["IBLOCK_ELEMENT_SORT_ORDER"] = "Kolejność sortowania dla elementów";
+$MESS["IBLOCK_ELEMENT_SORT_ORDER_BOX"] = "Kolejność sortowania dla elementów";
+$MESS["IBLOCK_ELEMENT_SORT_ORDER_BOX2"] = "Porządek drugiego sortowania dla listy przedmiotów";
+$MESS["IBLOCK_FIELD"] = "Pola";
+$MESS["IBLOCK_IBLOCK"] = "Info-blok";
+$MESS["IBLOCK_PRICES"] = "Ceny";
+$MESS["IBLOCK_PRICE_CODE"] = "Rodzaj ceny";
+$MESS["IBLOCK_PROPERTY"] = "Właściwości";
+$MESS["IBLOCK_SHOW_PRICE_COUNT"] = "Pokaż cenę dla ilości";
+$MESS["IBLOCK_SORT_ASC"] = "Rosnąco";
+$MESS["IBLOCK_SORT_DESC"] = "Malejąco";
+$MESS["IBLOCK_TYPE"] = "Typ info-blok";
+$MESS["IBLOCK_USE_PRICE_COUNT"] = "Pokaż ilościowy zakres cen";
+$MESS["IBLOCK_VAT_INCLUDE"] = "Podatek zawarty w cenie";
+$MESS["T_IBLOCK_DESC_ELEMENT_BOX"] = "Pokazuje listę elementu";
+?>

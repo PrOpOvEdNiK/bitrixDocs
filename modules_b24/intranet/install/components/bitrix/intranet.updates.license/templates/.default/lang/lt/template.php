@@ -1,0 +1,40 @@
+<?
+$MESS["UPDATES_ACTIVATE_SITE_TEXT"] = "Jei nesate užsiregistravęs <a href=\"http://www.bitrixsoft.com\" target=\"_blank\">www.bitrixsoft.com</a>, įsitikinkite, kad parinktis \"Sukurkite naudotoją\"  <br/> pažymėta, ir įveskite savo informaciją (vardas ir pavardė, prisijungimo vardas ir slaptažodis)<br/>formos laukuose. Registracija www.bitrixsoft.com leis Jums naudotis <br/><a href=\"http://www.bitrixsoft.com/support/\" target=\"_blank\">techninės pagalbos tarnyba</a> ir <a href=\"http://www.bitrixsoft.com/support/forum/\" target=\"_blank\">privačiu forumu</a> išspręsti savo problemas ir gauti atsakymus
+<br/> į savo klausimus.";
+$MESS["UPDATES_ACTIVATE_GENERATE_USER"] = "Sukurti naudotoją www.bitrixsoft.com";
+$MESS["UPDATES_ACTIVATE_GENERATE_USER_NO"] = "Aš jau turiu naudotojo paskyrą ir noriu ją naudoti, kad galėčiau pasiekti skiltis \"Pagalba\" ir \"Atsisiųsti\";";
+$MESS["SUP_REGISTERED"] = "Registruota";
+$MESS["SUP_LICENSE_KEY"] = "Licencijos raktas";
+$MESS["SUP_EDITION"] = "Leidimas";
+$MESS["SUP_SITES"] = "Svetainių skaičius";
+$MESS["SUP_USERS"] = "Daugiausia naudotojų";
+$MESS["SUP_CURRENT_NUMBER_OF_USERS"] = "; dabartinis naudotojų skaičius: #NUM#";
+$MESS["SUP_USERS_IS_NOT_LIMITED"] = "Jūsų licencijoje nėra naudotojų skaičiaus apribojimų.";
+$MESS["SUP_CURRENT_NUMBER_OF_USERS1"] = "Aktyvūs naudotojai: #NUM#.";
+$MESS["UPDATES_LICENSE_TITLE"] = "Bitrix24 licencija";
+$MESS["UPDATES_LICENSE_KEY"] = "Licencijos raktas";
+$MESS["UPDATES_LICENSE_SAVE"] = "Įrašyti";
+$MESS["UPDATES_LICENSE_ACTIVATE"] = "Aktyvuoti";
+$MESS["UPDATES_ACTIVATE_LICENSE_TITLE"] = "Licenzijos rakto aktyvinimas";
+$MESS["UPDATES_ACTIVATE_NAME"] = "Pilnas savininko vardas (įmonė ar asmuo)";
+$MESS["UPDATES_ACTIVATE_SITE_URL"] = "Visi domenai, kurie veiks su<br/> šiuo \"Bitrix Site Manager\" egzemplioriumi, įskaitant bandymų domenus";
+$MESS["UPDATES_ACTIVATE_PHONE"] = "Produkto kopijos savininko telefonas";
+$MESS["UPDATES_ACTIVATE_EMAIL"] = "Licencijavimas ir naudojimo kontaktinis el. paštas";
+$MESS["UPDATES_ACTIVATE_CONTACT_PERSON"] = "Kontaktinis asmuo, atsakingas už šio produkto kopiją";
+$MESS["UPDATES_ACTIVATE_CONTACT_EMAIL"] = "Kontaktinio asmens el. paštas";
+$MESS["UPDATES_ACTIVATE_CONTACT_PHONE"] = "Kontaktinio asmens telefonas";
+$MESS["UPDATES_ACTIVATE_CONTACT_INFO"] = "Kiti svarbūs kontaktai";
+$MESS["UPDATES_ACTIVATE_USER_NAME"] = "Vardas";
+$MESS["UPDATES_ACTIVATE_USER_LAST_NAME"] = "Pavardė";
+$MESS["UPDATES_ACTIVATE_USER_LOGIN_A"] = "Prisijungimo vardas (3 ar daugiau simbolių)";
+$MESS["UPDATES_ACTIVATE_USER_PASSWORD"] = "Slaptažodis (6 ar daugiau simbolių)";
+$MESS["UPDATES_ACTIVATE_USER_PASSWORD_CONFIRM"] = "Patvirtinti slaptažodį";
+$MESS["UPDATES_ACTIVATE_USER_EMAIL"] = "El.paštas";
+$MESS["UPDATES_COUPON_TITLE"] = "Aktyvuoti kuponą";
+$MESS["UPDATES_COUPON_KEY"] = "Įveskite kupono kodą";
+$MESS["UPDATES_COUPON_SUCCESS"] = "Kuponas sėkmingai pritaikytas";
+$MESS["UPDATES_ACTIVATE_SUCCESS"] = "Raktas sėkmingai pritaikytas";
+$MESS["SUP_ACTIVE_TITLE"] = "Licencijos raktas galioja";
+$MESS["SUP_ACTIVE_PERIOD_TO"] = "iki #DATE_TO#";
+$MESS["UPDATES_ACTIVATE_SITE_URL_NEW"] = "Visi domenai, kurie veiks su<br/> šiuo \"sistemos egzemplioriumi, įskaitant bandymų domenus";
+?>

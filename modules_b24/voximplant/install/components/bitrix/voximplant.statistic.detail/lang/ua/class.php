@@ -1,0 +1,36 @@
+<?
+$MESS["TELEPHONY_STATUS_1"] = "Зняття бонусних коштів. Для отримання детальної інформації, будь ласка, зверніться в технічну підтримку.";
+$MESS["TELEPHONY_STATUS_2"] = "Зняття бонусних коштів";
+$MESS["TELEPHONY_STATUS_3"] = "Внесення грошових коштів";
+$MESS["TELEPHONY_STATUS_409"] = "Коригування балансу після звірки з оператором. Для отримання детальної інформації, будь ласка, зверніться в технічну підтримку.";
+$MESS["TELEPHONY_HEADER_USER"] = "Співробітник";
+$MESS["TELEPHONY_HEADER_PHONE"] = "Номер телефону";
+$MESS["TELEPHONY_HEADER_INCOMING"] = "Тип дзвінка";
+$MESS["TELEPHONY_HEADER_DURATION"] = "Час дзвінка";
+$MESS["TELEPHONY_HEADER_START_DATE"] = "Дата виклику";
+$MESS["TELEPHONY_HEADER_STATUS"] = "Статус";
+$MESS["TELEPHONY_HEADER_COST"] = "Вартість";
+$MESS["TELEPHONY_HEADER_RECORD"] = "Запис";
+$MESS["TELEPHONY_BILLING"] = "Біллінг";
+$MESS["TELEPHONY_HEADER_PORTAL_PHONE"] = "Номер порталу";
+$MESS["TELEPHONY_PORTAL_PHONE_EMPTY"] = "Не визначений";
+$MESS["TELEPHONY_HEADER_LOG"] = "Журнал";
+$MESS["TELEPHONY_PORTAL_PHONE_SIP_OFFICE"] = "Офісна АТС (#ID#)";
+$MESS["TELEPHONY_PORTAL_PHONE_SIP_CLOUD"] = "Віртуальна АТС (#ID#)";
+$MESS["TELEPHONY_HEADER_VOTE"] = "Оцінка";
+$MESS["TELEPHONY_FILTER_STATUS_UNSET"] = "(ні)";
+$MESS["TELEPHONY_FILTER_STATUS_SUCCESSFUL"] = "Успішний дзвінок";
+$MESS["TELEPHONY_FILTER_STATUS_FAILED"] = "Неуспішний дзвінок";
+$MESS["TEL_STAT_EXPORT_LOCK_ERROR"] = "У даний момент вивантаження вже формується, спробуйте, будь ласка пізніше.";
+$MESS["TELEPHONY_HEADER_TRANSCRIPT_COST"] = "Вартість розшифровки";
+$MESS["TELEPHONY_HEADER_CRM"] = "CRM";
+$MESS["TELEPHONY_FILTER_TRANSCRIPT_TEXT"] = "Розшифровка містить";
+$MESS["TELEPHONY_FILTER_CRM"] = "CRM";
+$MESS["TEL_STAT_SHOW_TRANSCRIPT"] = "Відкрити розшифровку";
+$MESS["TEL_STAT_ACTION_DOWNLOAD"] = "Завантажити запис";
+$MESS["TEL_STAT_ACTION_SHOW_TRANSCRIPTION"] = "Відкрити розшифровку";
+$MESS["TEL_STAT_ACTION_SHOW_LOG"] = "Відкрити журнал";
+$MESS["TELEPHONY_FILTER_HAS_RECORD"] = "Запис дзвінка";
+$MESS["TELEPHONY_HEADER_COMMENT"] = "Коментар";
+$MESS["TELEPHONY_FILTER_COMMENT"] = "Коментар";
+?>

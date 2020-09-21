@@ -1,0 +1,35 @@
+<?
+$MESS["FILE_SIZE_Gb"] = "Gb";
+$MESS["FILE_SIZE_Kb"] = "Kb";
+$MESS["FILE_SIZE_Mb"] = "Mb";
+$MESS["FILE_SIZE_Tb"] = "Tb";
+$MESS["FILE_SIZE_b"] = "b";
+$MESS["FORM_AUTHORIZED"] = "autorisé";
+$MESS["FORM_DATE_CREATE"] = "Date -";
+$MESS["FORM_FILLING"] = "formulaire Web rempli";
+$MESS["FORM_FILLING_S"] = "web formulaire rempli";
+$MESS["FORM_GENERATED_AUTOMATICALLY"] = "Un message généré automatiquement.";
+$MESS["FORM_GENERATING_FINISHED"] = "Modèle de courrier a été créé.";
+$MESS["FORM_L_DATE_CREATE"] = "Date de remplissage du formulaire";
+$MESS["FORM_L_FORM_ID"] = "image de formulaire";
+$MESS["FORM_L_NAME"] = "Nom de la forme";
+$MESS["FORM_L_RAW"] = "valeur originale";
+$MESS["FORM_L_RESULT_ID"] = "ID du résultat";
+$MESS["FORM_L_SID"] = "SID du formulaire";
+$MESS["FORM_L_STAT_GUEST_ID"] = "Identifiant du visiteur";
+$MESS["FORM_L_STAT_SESSION_ID"] = "ID de la session";
+$MESS["FORM_L_USER_AUTH"] = "L'utilisateur a-t-il été autorisé ?";
+$MESS["FORM_L_USER_EMAIL"] = "Adresse emailde l'utilisateur";
+$MESS["FORM_L_USER_ID"] = "Identifiant de l'utilisateur";
+$MESS["FORM_L_USER_NAME"] = "Nom, prénom de l'utilisateur";
+$MESS["FORM_NOT_AUTHORIZED"] = "non autorisé";
+$MESS["FORM_NOT_REGISTERED"] = "non enregistré";
+$MESS["FORM_PAGE_TITLE"] = "Des modèles de courrier génération";
+$MESS["FORM_RESULT_ID"] = "Résultat -";
+$MESS["FORM_STAT_GUEST_ID"] = "visiteur -";
+$MESS["FORM_STAT_SESSION_ID"] = "Session -";
+$MESS["FORM_USER"] = "Utilisateur -";
+$MESS["FORM_VIEW"] = "Suivez ce lien pour voir : ";
+$MESS["FORM_VIEW_TEMPLATE"] = "consultation des modèles";
+$MESS["FORM_WEB_FORMS"] = "[webformes]";
+?>

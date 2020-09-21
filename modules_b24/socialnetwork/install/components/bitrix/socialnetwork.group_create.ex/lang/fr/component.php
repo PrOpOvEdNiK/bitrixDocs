@@ -1,0 +1,33 @@
+<?
+$MESS["SONET_GCE_CANNOT_EMAILS_ADD"] = "Des adresses #EMAIL# sont déjà utilisées par d'autres utilisateurs";
+$MESS["SONET_GCE_CANNOT_EMAIL_ADD"] = "L'adresse email saisie #EMAIL# est déjà utilisée par un autre utilisateur.";
+$MESS["SONET_GCE_CANNOT_USER_ADD"] = "L'utilisateur avec l'adresse e-mail \"#EMAIL#\"  n'a pas été ajouté : ";
+$MESS["SONET_GCE_ERR_CANT_CREATE"] = "Vous n'avez pas le droit de créer un nouveau groupe.";
+$MESS["SONET_GCE_ERR_NAME"] = "Le nom du groupe n'est pas spécifié";
+$MESS["SONET_GCE_ERR_NAME_PROJECT"] = "Le nom du projet n'est pas spécifié";
+$MESS["SONET_GCE_ERR_PERMS"] = "Les droits d'invitation des utilisateurs au groupe ne sont pas indiqués.";
+$MESS["SONET_GCE_ERR_PERMS_PROJECT"] = "Les autorisations d'invitation au projet ne sont pas attribuées";
+$MESS["SONET_GCE_ERR_SECURITY"] = "Vous n'êtes pas autorisés à modifier les paramètres du groupe.";
+$MESS["SONET_GCE_ERR_SPAM_PERMS"] = "Les droits pour l'envoi des messages dans le groupe ne sont pas indiqués";
+$MESS["SONET_GCE_ERR_SUBJECT"] = "Le thème du groupe n'est pas indiqué.";
+$MESS["SONET_GCE_ERR_SUBJECT_PROJECT"] = "Le sujet du projet n'est pas spécifié";
+$MESS["SONET_GCE_INVITE_MESSAGE_TEXT"] = "Je vous invite au portail corporatif de notre compagnie. Ici nous pourrons travailler ensemble sur nos projets et tâches, gérer les documents, planifier nos entretiens et réunions, être en contact dans les blogs et beaucoup d'autres choses.";
+$MESS["SONET_GCE_IP_ALL"] = "A tous les utilisateurs";
+$MESS["SONET_GCE_IP_MOD"] = "Propriétaire du groupe et modérateurs du groupe";
+$MESS["SONET_GCE_IP_MOD_PROJECT"] = "Propriétaire et modérateurs du projet";
+$MESS["SONET_GCE_IP_OWNER"] = "Seulement le propriétaire du groupe";
+$MESS["SONET_GCE_IP_OWNER_PROJECT"] = "Propriétaire du projet uniquement";
+$MESS["SONET_GCE_IP_USER"] = "Tous les membres du groupe";
+$MESS["SONET_GCE_IP_USER_PROJECT"] = "Tous les participants au projet";
+$MESS["SONET_GCE_NO_USERS"] = "Les utilisateurs à envoyer l'invitation ne sont pas indiqués.";
+$MESS["SONET_GCE_TITLE_CREATE"] = "Créer un groupe de travail ou un projet";
+$MESS["SONET_GCE_TITLE_EDIT"] = "Éditer le groupe de travail";
+$MESS["SONET_GCE_TITLE_EDIT_PROJECT"] = "Éditer le projet";
+$MESS["SONET_GCE_TITLE_INVITE"] = "Inviter à rejoindre le groupe de travail";
+$MESS["SONET_GCE_TITLE_INVITE_PROJECT"] = "Inviter à rejoindre le projet";
+$MESS["SONET_GCE_USER_BANNED_IN_GROUP"] = "L'utilisateur avec l'adresse email #EMAIL# est bloqué dans ce groupe.";
+$MESS["SONET_GCE_USER_IN_GROUP"] = "Utilisateur avec l'adresse email #EMAIL# est déjà membre du groupe.";
+$MESS["SONET_GCE_USER_IN_GROUP_PROJECT"] = "Un utilisateur avec l'adresse e-mail #EMAIL# est déjà membre du projet";
+$MESS["SONET_GCE_USER_REQUEST_SENT"] = "L'invitation pour l'utilisateur avec une adresse #EMAIL# a été déjà envoyée.";
+$MESS["SONET_MODULE_NOT_INSTALL"] = "Le module du réseau social n'a pas été installé.";
+?>

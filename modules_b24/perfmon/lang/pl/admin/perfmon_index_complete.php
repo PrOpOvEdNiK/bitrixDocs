@@ -1,0 +1,14 @@
+<?
+$MESS["PERFMON_ICOMPLETE_COLUMN_NAMES"] = "Kolumny";
+$MESS["PERFMON_ICOMPLETE_DELETE_BAN"] = "Analizuj ponownie";
+$MESS["PERFMON_ICOMPLETE_DELETE_INDEX"] = "Usuń indeks";
+$MESS["PERFMON_ICOMPLETE_GREEN_ALT"] = "Utworzono indeks";
+$MESS["PERFMON_ICOMPLETE_INDEX_NAME"] = "Indeks";
+$MESS["PERFMON_ICOMPLETE_NO_INDEX"] = "Nie pytaj, aby utworzyć";
+$MESS["PERFMON_ICOMPLETE_PAGE"] = "Indeksy bazy danych";
+$MESS["PERFMON_ICOMPLETE_RED_ALT"] = "Indeks nie jest wymagany";
+$MESS["PERFMON_ICOMPLETE_STATUS"] = "Status";
+$MESS["PERFMON_ICOMPLETE_TABLE_NAME"] = "Tabela";
+$MESS["PERFMON_ICOMPLETE_TITLE"] = "Istniejące indeksy";
+$MESS["PERFMON_ICOMPLETE_YELLOW_ALT"] = "Status niezdefiniowany";
+?>

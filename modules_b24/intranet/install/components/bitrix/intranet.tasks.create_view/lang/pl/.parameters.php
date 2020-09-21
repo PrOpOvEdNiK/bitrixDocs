@@ -1,0 +1,32 @@
+<?
+$MESS["INTL_ACTION_VAR"] = "Działanie ID zmienna nazwa";
+$MESS["INTL_GROUP_VAR"] = "Grpa ID zmienna nazwa";
+$MESS["INTL_IBLOCK"] = "Blok informacji";
+$MESS["INTL_IBLOCK_TYPE"] = "Typ Bloku Informacji";
+$MESS["INTL_ITEM_COUNT"] = "Przedmiotów na stronę";
+$MESS["INTL_OWNER_ID"] = "Właściciel ID";
+$MESS["INTL_PAGE_VAR"] = "Strona ID zmienna nazwa";
+$MESS["INTL_PATH_TO_GROUP_TASKS"] = "Ścieżka do zadania";
+$MESS["INTL_PATH_TO_GROUP_TASKS_TASK"] = "Ścieżka do zadania";
+$MESS["INTL_PATH_TO_GROUP_TASKS_VIEW"] = "Ścieżka do widoku";
+$MESS["INTL_SET_NAVCHAIN"] = "Włącz ścieżkę";
+$MESS["INTL_TASKS_FIELDS_SHOW"] = "Właściwości zadania";
+$MESS["INTL_TASK_TYPE"] = "Typ Zadania";
+$MESS["INTL_TASK_TYPE_GROUP"] = "Dla grupy";
+$MESS["INTL_TASK_TYPE_USER"] = "Dla użytkownika";
+$MESS["INTL_TASK_VAR"] = "Zadanie ID zmienna nazwa";
+$MESS["INTL_TF_CODE"] = "Kod podatku";
+$MESS["INTL_TF_CREATED_BY"] = "Autor";
+$MESS["INTL_TF_DATE_ACTIVE_FROM"] = "Początek";
+$MESS["INTL_TF_DATE_ACTIVE_TO"] = "Koniec";
+$MESS["INTL_TF_DATE_CREATE"] = "Utworzony";
+$MESS["INTL_TF_DETAIL_TEXT"] = "Opis Zadania";
+$MESS["INTL_TF_IBLOCK_SECTION"] = "Folder";
+$MESS["INTL_TF_ID"] = "ID";
+$MESS["INTL_TF_MODIFIED_BY"] = "Zmodyfikowane przez";
+$MESS["INTL_TF_NAME"] = "Tytuł";
+$MESS["INTL_TF_XML_ID"] = "Zewnętrzne ID";
+$MESS["INTL_USER_VAR"] = "Użytkownik ID zmienna nazwa";
+$MESS["INTL_VARIABLE_ALIASES"] = "Zmienne aliasów";
+$MESS["INTL_VIEW_VAR"] = "Widok ID zmienna nazwa";
+?>

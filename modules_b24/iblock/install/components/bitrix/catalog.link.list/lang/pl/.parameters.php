@@ -1,0 +1,35 @@
+<?
+$MESS["COMPARE_PATH_TIP"] = "Określa ścieżkę do strony, która zawiera komponent porównywania produktów. Jeżeli puste, zostanie użyta bieżąca strona.";
+$MESS["CP_BCLL_CACHE_GROUPS"] = "Respektuj prawa dostępu";
+$MESS["CP_BCLL_COMPARE_PATH"] = "Strona porównywania produktu";
+$MESS["CP_BCLL_CONVERT_CURRENCY"] = "Użyj tylko jednej waluty do pokazywania cen";
+$MESS["CP_BCLL_CURRENCY_ID"] = "Konwertuj wszystkie ceny do waluty";
+$MESS["CP_BCLL_DISPLAY_COMPARE"] = "Włącz porównywanie produktu";
+$MESS["CP_BCLL_HIDE_NOT_AVAILABLE"] = "Ukryj przedmioty, których nie ma na magazynie";
+$MESS["DISPLAY_COMPARE_TIP"] = "Zaznacz tę opcję, aby pokazać przycisk <b>Porównaj</b> umożliwiając klientowi dodawanie produktu do wykresu porównawczego.";
+$MESS["IBLOCK_ACTIONS"] = "Ustawienia działania";
+$MESS["IBLOCK_BASKET_URL"] = "URL do strony koszyka klienta";
+$MESS["IBLOCK_CACHE_FILTER"] = "Buforuj, jeżeli filtr jest aktywny";
+$MESS["IBLOCK_COMPARE"] = "Porównanie produktu";
+$MESS["IBLOCK_DETAIL_URL"] = "URL do strony detali zawartości";
+$MESS["IBLOCK_ELEMENT_ID"] = "Element ID";
+$MESS["IBLOCK_ELEMENT_SORT_FIELD"] = "Pole do sortowania elementów";
+$MESS["IBLOCK_ELEMENT_SORT_FIELD2"] = "Drugie pole sortowania";
+$MESS["IBLOCK_ELEMENT_SORT_ORDER"] = "Kolejność sortowania dla elementów";
+$MESS["IBLOCK_ELEMENT_SORT_ORDER2"] = "Drugi porządek sortowania";
+$MESS["IBLOCK_FILTER_NAME_IN"] = "Nazwa wyboru z wartościami używania filtrowania elementów";
+$MESS["IBLOCK_IBLOCK"] = "Info-blok";
+$MESS["IBLOCK_LINK_PROPERTY_SID"] = "Właściwość do przechowywania linku";
+$MESS["IBLOCK_PAGE_ELEMENT_COUNT"] = "Eelementów na stronie";
+$MESS["IBLOCK_PRICES"] = "Ceny";
+$MESS["IBLOCK_PRICE_CODE"] = "Rodzaj ceny";
+$MESS["IBLOCK_PROPERTY"] = "Właściwości";
+$MESS["IBLOCK_SECTION_URL"] = "URL do strony z zawartością sekcji";
+$MESS["IBLOCK_SHOW_PRICE_COUNT"] = "Pokaż cenę dla ilości";
+$MESS["IBLOCK_SORT_ASC"] = "Rosnąco";
+$MESS["IBLOCK_SORT_DESC"] = "Malejąco";
+$MESS["IBLOCK_TYPE"] = "Typ info-blok";
+$MESS["IBLOCK_USE_PRICE_COUNT"] = "Pokaż ilościowy zakres cen";
+$MESS["IBLOCK_VAT_INCLUDE"] = "Podatek zawarty w cenie";
+$MESS["T_IBLOCK_DESC_PAGER_CATALOG"] = "Produkty";
+?>

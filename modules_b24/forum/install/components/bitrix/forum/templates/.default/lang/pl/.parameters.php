@@ -1,0 +1,36 @@
+<?
+$MESS["F_AJAX_POST"] = "Użyj AJAX w oknach dialogowych";
+$MESS["F_DEFAULT_PATH_TO_ICON"] = "Ścieżka do folderu Tematycznych Ikon (względem folderu głównego)";
+$MESS["F_DEFAULT_PATH_TO_SMILE"] = "Ścieżka do folderu z Emotikonami (względem folderu głównego)";
+$MESS["F_PAGE_NAVIGATION_TEMPLATE"] = "Nazwa szablonu pager`a";
+$MESS["F_PAGE_NAVIGATION_WINDOW"] = "Liczba stron w nawigacji strony";
+$MESS["F_SEO_USER_1"] = "Opcje wyświetlania nazwy użytkownika";
+$MESS["F_SEO_USER_2"] = "Odnośnik ukryty przed botami wyszukiwania";
+$MESS["F_SEO_USER_3"] = "Link";
+$MESS["F_SEO_USER_4"] = "Tylko tekst";
+$MESS["F_SEO_USE_AN_EXTERNAL_SERVICE"] = "Użyj zewnetrznej usługi do tłumaczenia nazwy motywu (SEO)";
+$MESS["F_SHOW_ADDITIONAL_MARKER"] = "Dodatkowy znak dla nowych wiadomości";
+$MESS["F_SHOW_AUTH"] = "Pokaż formularz autoryzacji";
+$MESS["F_SHOW_FIRST_POST"] = "Zawsze Pokazuj Początkowy Post";
+$MESS["F_SHOW_FORUMS"] = "Pokaż Skróty Forum";
+$MESS["F_SHOW_FORUM_USERS"] = "Pokaż listę użytkowników";
+$MESS["F_SHOW_LEGEND"] = "Pokaż Legendę";
+$MESS["F_SHOW_NAVIGATION"] = "Pokaż Nawigacę Ścieżki";
+$MESS["F_SHOW_STATISTIC"] = "Pokaż Statystyki";
+$MESS["F_SHOW_STATISTIC_BLOCK"] = "Pokaż bloki statystyk";
+$MESS["F_SHOW_SUBSCRIBE_LINK"] = "Pokaż link Subskrypcji";
+$MESS["F_SHOW_TAGS"] = "Pokaż tagi";
+$MESS["F_SMILES_COUNT"] = "Liczba Statycznych Emotikon do Pokazania (ustaw 0, aby wliczyć dynamiczne emotikony)";
+$MESS["F_STATISTIC_BLOCK_BIRTHDAY"] = "Urodziny";
+$MESS["F_STATISTIC_BLOCK_ONLINE"] = "Użytkownicy online";
+$MESS["F_STATISTIC_BLOCK_STATISTIC"] = "Liczba postów i tematów";
+$MESS["F_THEMES"] = "Tematy";
+$MESS["F_THEME_BEIGE"] = "Beżowy";
+$MESS["F_THEME_BLUE"] = "Niebieski";
+$MESS["F_THEME_FLUXBB"] = "FluxBB";
+$MESS["F_THEME_GRAY"] = "szary";
+$MESS["F_THEME_GREEN"] = "Zielony";
+$MESS["F_THEME_ORANGE"] = "Pomarańczowy";
+$MESS["F_THEME_RED"] = "Czerwony";
+$MESS["F_THEME_WHITE"] = "Biały";
+?>

@@ -1,0 +1,18 @@
+<?
+$MESS["CRM_REQUISITE_CUSTOM_SAVE_BUTTON_TITLE"] = "Zapisz i wróć";
+$MESS["CRM_REQUISITE_EDIT_DUP_CTRL_BANK_DETAIL_SUMMARY_TITLE"] = "według danych bankowych";
+$MESS["CRM_REQUISITE_EDIT_DUP_CTRL_REQUISITE_SUMMARY_TITLE"] = "według danych kontaktu/firmy";
+$MESS["CRM_REQUISITE_EDIT_DUP_CTRL_SHORT_SUMMARY_TITLE"] = "znalezione";
+$MESS["CRM_REQUISITE_EDIT_DUP_CTRL_WARNING_ACCEPT_BTN_TITLE"] = "Ignoruj i zachowaj";
+$MESS["CRM_REQUISITE_EDIT_DUP_CTRL_WARNING_CANCEL_BTN_TITLE"] = "Anuluj";
+$MESS["CRM_REQUISITE_EDIT_DUP_CTRL_WARNING_DLG_TITLE"] = "Możliwe klony";
+$MESS["CRM_REQUISITE_SERCH_RESULT_NOT_FOUND"] = "Wyszukiwanie nie zwróciło wyników.";
+$MESS["CRM_REQUISITE_SHOW_NEW_TITLE_COMPANY"] = "Nowe dane firmy";
+$MESS["CRM_REQUISITE_SHOW_NEW_TITLE_CONTACT"] = "Nowe dane kontraktu";
+$MESS["CRM_REQUISITE_SHOW_TITLE_COMPANY"] = "Szczegółowe dane firmy";
+$MESS["CRM_REQUISITE_SHOW_TITLE_CONTACT"] = "Dane kontaktu";
+$MESS["CRM_TAB_1_COMPANY"] = "Dane firmy";
+$MESS["CRM_TAB_1_CONTACT"] = "Dane kontaktu";
+$MESS["CRM_TAB_1_TITLE_COMPANY"] = "Szczegółowe dane firmy";
+$MESS["CRM_TAB_1_TITLE_CONTACT"] = "Szczegółowe dane kontaktowe";
+?>

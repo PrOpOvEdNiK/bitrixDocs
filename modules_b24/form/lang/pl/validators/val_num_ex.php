@@ -1,0 +1,10 @@
+<?
+$MESS["FORM_VALIDATOR_VAL_NUM_EX_DESCRIPTION"] = "Zakres weryfikacji";
+$MESS["FORM_VALIDATOR_VAL_NUM_EX_ERROR_LESS"] = "#FIELD_NAME#: wartość jest za niska";
+$MESS["FORM_VALIDATOR_VAL_NUM_EX_ERROR_MORE"] = "#FIELD_NAME#: wartość jest za wysoka";
+$MESS["FORM_VALIDATOR_VAL_NUM_EX_ERROR_NAN"] = "#FIELD_NAME#: wartość musi być liczbowa";
+$MESS["FORM_VALIDATOR_VAL_NUM_EX_ERROR_NOTINT"] = "#FIELD_NAME#: wartość musi być całkowita";
+$MESS["FORM_VALIDATOR_VAL_NUM_EX_SETTINGS_NUMBER_FLOAT"] = "Nie tylko całkowita";
+$MESS["FORM_VALIDATOR_VAL_NUM_EX_SETTINGS_NUMBER_FROM"] = "Dolna granica";
+$MESS["FORM_VALIDATOR_VAL_NUM_EX_SETTINGS_NUMBER_TO"] = "Górna granica";
+?>

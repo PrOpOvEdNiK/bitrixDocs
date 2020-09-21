@@ -1,0 +1,30 @@
+<?
+$MESS["STAT_AH_1"] = "1 hit";
+$MESS["STAT_AH_10_13"] = "De 10 à 13 de hits";
+$MESS["STAT_AH_14_17"] = "De 14 à 17 hits";
+$MESS["STAT_AH_18_21"] = "De 18 à 21 hits";
+$MESS["STAT_AH_22_25"] = "De 21 à 24 hits";
+$MESS["STAT_AH_26_29"] = "?e 26 à 29 hits";
+$MESS["STAT_AH_2_5"] = "De 2 à 3 hits";
+$MESS["STAT_AH_30_33"] = "De 30 à 33 hits";
+$MESS["STAT_AH_34"] = "plus de 34 coups";
+$MESS["STAT_AH_6_9"] = "De 6 à 9 hits";
+$MESS["STAT_AM_1"] = "moins de 1 min.";
+$MESS["STAT_AM_12_15"] = "De 12 à 15 min";
+$MESS["STAT_AM_15_18"] = "de 12 à 15 min";
+$MESS["STAT_AM_18_21"] = "De 18 à 21 min";
+$MESS["STAT_AM_1_3"] = "De 2 à 3 min";
+$MESS["STAT_AM_21_24"] = "De 21 de 24 min.";
+$MESS["STAT_AM_24"] = "plus de 24 min.";
+$MESS["STAT_AM_3_6"] = "De 3 à 6 min";
+$MESS["STAT_AM_6_9"] = "De 6 à 9 min";
+$MESS["STAT_AM_9_12"] = "De 9 à 12 min";
+$MESS["STAT_F_PERIOD"] = "Délais";
+$MESS["STAT_F_SITE"] = "Site";
+$MESS["STAT_HITS_DIAGRAM"] = "Le graphique circulaire de nombre de visites dans les sessions";
+$MESS["STAT_HITS_GRAPH"] = "Le graphique du nombre moyen de hits des sessions";
+$MESS["STAT_NOT_ENOUGH_DATA"] = "Données insuffisantes pour faire une abaque.";
+$MESS["STAT_PAGE_TITLE"] = "Visiteur Écoute";
+$MESS["STAT_TIME_DIAGRAM"] = "Le graphique circulaire de la durée de la session";
+$MESS["STAT_TIME_GRAPH"] = "Graphique de la durée moyenne des sessions (min.)";
+?>

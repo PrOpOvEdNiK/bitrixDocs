@@ -1,0 +1,3 @@
+<?
+$MESS["SALE_REPORT_LIST_CREATED_DATE"] = "Utworzone";
+?>

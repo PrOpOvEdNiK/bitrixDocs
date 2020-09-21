@@ -1,0 +1,4 @@
+<?
+$MESS["IMOPENLINES_REPORT_PAGE_LIMITATION_POPUP_TEXT_1"] = "Uzyskaj dostęp do zaawansowanych funkcji Bitrix24";
+$MESS["IMOPENLINES_REPORT_PAGE_LIMITATION_POPUP_TEXT_2_NEW"] = "Raporty dotyczące otwartych kanałów mają na celu poprawę obsługi klienta. Nasze panele prezentują wszystkie niezbędne informacje w jednym miejscu – którzy konsultanci pracują najwydajniej, które kanały komunikacji są najbardziej oblegane, jak bardzo zadowoleni są klienci, średni czas reakcji, najruchliwsza pora dnia, itd. Możesz także wybrać różne typy raportów – liczby bezwzględne, tabele, wykresy, histogramy i inne.";
+?>

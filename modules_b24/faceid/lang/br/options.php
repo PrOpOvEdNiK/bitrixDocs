@@ -1,0 +1,3 @@
+<?
+$MESS["FACEID_ADM_STATS_USAGE_FTRACKER"] = "Face Tracker";
+?>

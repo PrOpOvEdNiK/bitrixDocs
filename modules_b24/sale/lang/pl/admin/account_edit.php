@@ -1,0 +1,34 @@
+<?
+$MESS["SAEN_2FLIST"] = "Lista kont";
+$MESS["SAEN_2FLIST_TITLE"] = "Wyświetl listę kont";
+$MESS["SAEN_DELETE_ACCOUNT"] = "Usuń konto";
+$MESS["SAEN_DELETE_ACCOUNT_CONFIRM"] = "Na pewno chcesz usunąć to konto?";
+$MESS["SAEN_NEW_ACCOUNT"] = "Utwórz nowe konto";
+$MESS["SAEN_NEW_ACCOUNT_TITLE"] = "Utwórz nowe konto";
+$MESS["SAEN_TAB_ACCOUNT"] = "Konto użytkownika";
+$MESS["SAEN_TAB_ACCOUNT_DESCR"] = "Konto użytkownika";
+$MESS["SAE_ADDING"] = "Dodaj nowe konto";
+$MESS["SAE_ALREADY_EXISTS"] = "Konto użytkownika ##USER# dla waluty #CURRENCY# już istnieje";
+$MESS["SAE_APPLY"] = "Zastosuj";
+$MESS["SAE_CANCEL"] = "Anuluj";
+$MESS["SAE_ERROR"] = "Błąd zapisu!";
+$MESS["SAE_ERROR_SAVING"] = "Błąd zapisywania konta";
+$MESS["SAE_ERROR_SAVING_COMMENT"] = "Błąd zapisywania komentarzy do konta";
+$MESS["SAE_ERROR_SAVING_SUM"] = "Błąd zapisywania konta. Proszę sprawdzić kwotę ważności";
+$MESS["SAE_LOCK"] = "Zablokowane konto:";
+$MESS["SAE_LOCKED"] = "(Zablokowane";
+$MESS["SAE_NOTES"] = "Uwagi:";
+$MESS["SAE_NO_ACCOUNT"] = "Nie znaleziono konta ##ID#";
+$MESS["SAE_NO_PERMS2ADD"] = "Nie masz wystarczających uprawnień, aby dodać nowe konto";
+$MESS["SAE_OSN"] = "Powód zmiany kwoty:";
+$MESS["SAE_OSN_NOTE"] = "(powinno być wypełnione w razie zmiany kwoty)";
+$MESS["SAE_SAVE"] = "Zapisz";
+$MESS["SAE_SAVE_ADD"] = "Dodawanie";
+$MESS["SAE_SUM"] = "Kwota konta:";
+$MESS["SAE_TIMESTAMP"] = "Data ostatniej modyfikacji:";
+$MESS["SAE_TO_LIST"] = "Lista kont";
+$MESS["SAE_UNLOCK"] = "Odblokuj konto:";
+$MESS["SAE_UPDATING"] = "Edytuj parametry konta";
+$MESS["SAE_USER1"] = "Użytkownik:";
+$MESS["SAE_USER_PROFILE"] = "Profil Użytkownika";
+?>

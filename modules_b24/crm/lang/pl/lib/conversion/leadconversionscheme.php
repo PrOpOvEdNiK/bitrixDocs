@@ -1,0 +1,9 @@
+<?
+$MESS["CRM_LEAD_CONV_COMPANY"] = "Firma";
+$MESS["CRM_LEAD_CONV_CONTACT"] = "Kontakt";
+$MESS["CRM_LEAD_CONV_CONTACT_COMPANY"] = "Kontakt + Firma";
+$MESS["CRM_LEAD_CONV_DEAL"] = "Deal";
+$MESS["CRM_LEAD_CONV_DEAL_COMPANY"] = "Deal + Firma";
+$MESS["CRM_LEAD_CONV_DEAL_CONTACT"] = "Deal + Kontakt";
+$MESS["CRM_LEAD_CONV_DEAL_CONTACT_COMPANY"] = "Deal + Kontakt + Firma";
+?>

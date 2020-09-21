@@ -1,0 +1,31 @@
+<?
+$MESS ['AD_PAGE_TITLE'] = "ประเภทแบนเนอร์";
+$MESS ['AD_F_ID'] = "ID:";
+$MESS ['AD_F_DATE_MODIFY'] = "ปรับปรุงเมื่อ:";
+$MESS ['AD_F_ACTIVE'] = "Active:";
+$MESS ['AD_F_NAME'] = "ชื่อ:";
+$MESS ['AD_F_DESCRIPTION'] = "รายละเอียด:";
+$MESS ['AD_PAGES'] = "ประเภทแบนเนอร์";
+$MESS ['AD_DATE_MODIFY'] = "ปรับปรุงเมื่อ";
+$MESS ['AD_NAME'] = "ชื่อ";
+$MESS ['AD_DESCRIPTION'] = "รายละเอียด";
+$MESS ['AD_ACTIVE'] = "Act.";
+$MESS ['AD_SORT'] = "Sort.";
+$MESS ['AD_BANNERS'] = "แบนเนอร์";
+$MESS ['AD_TYPE_EDIT'] = "ปรับปรุงประเภท";
+$MESS ['AD_DELETE_TYPE'] = "คุณต้องการลบข้อมูลประเภทและแบนเนอร์ที่อยู่ในประเภทนี้ทั้งหมดหรือไม่?";
+$MESS ['AD_DELETE_TYPE_CONFIRM'] = "คุณต้องการลบข้อมูลประเภทของการโฆษณาและแบนเนอร์ที่อยู่ในประเภทนี้ทั้งหมดหรือไม่?";
+$MESS ['AD_TYPE_STATISTICS_VIEW'] = "กราฟอัตราแบบ CTR ของประเภทแบนเนอร์นี้";
+$MESS ['AD_TYPE_VIEW'] = "ดูการตั้งค่าประเภทแบนเนอร์";
+$MESS ['ADV_BANNER_LIST'] = "รายการแบนเนอร์";
+$MESS ['ADV_FLT_SEARCH'] = "ค้นหา";
+$MESS ['AD_ADD'] = "เพิ่มประเภท";
+$MESS ['AD_ADD_TITLE'] = "เพิ่มประเภทแบนเนอร์ใหม่";
+$MESS ['ADV_EDIT_TITLE'] = "แก้ไขประเภทแบนเนอร์";
+$MESS ['AD_TYPE_VIEW_SETTINGS'] = "ดูประเภท parameters";
+$MESS ['AD_TYPE_STATISTICS_VIEW_TITLE'] = "ดูกราฟสัญญาบริการ CTR ";
+$MESS ['SAVE_ERROR'] = "พบข้อผิดพลาดขณะบันทึก";
+$MESS ['DELETE_ERROR'] = "พบข้อผิดพลาดขณะลบ";
+$MESS ['MAIN_EDIT_ERROR'] = "พบข้อผิดพลาดขณะปรับปรุง element";
+$MESS ['ADV_FLT_SEARCH_TITLE'] = "ระบุข้อความเพื่อใช้ค้นหา";
+?>

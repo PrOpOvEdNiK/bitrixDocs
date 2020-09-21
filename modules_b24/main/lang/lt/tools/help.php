@@ -1,0 +1,34 @@
+<?
+$MESS ['HELP_TITLE'] = "Pagalba";
+$MESS ['HELP_HEADER'] = "Pavadinimas:";
+$MESS ['HELP_FILENAME'] = "Pavadinimas diske:";
+$MESS ['HELP_CREATE'] = "Sukurti";
+$MESS ['HELP_RESET'] = "Išvalyti";
+$MESS ['HELP_DELETE'] = "Šalinti";
+$MESS ['HELP_CONFIRM_DELETE'] = "Ar tikrai norite šalinti šį katalogą/ šią bylą?";
+$MESS ['HELP_ACCESS_DENIED'] = "Nėra prieigos teisių";
+$MESS ['HELP_BACK'] = "Grįžti";
+$MESS ['HELP_EXPAND_ALL'] = "Išskleisti viską";
+$MESS ['HELP_COLLAPSE_ALL'] = "Suskleisti viską";
+$MESS ['HELP_KERNEL'] = "Pagrindinis modulis";
+$MESS ['HELP_HIDE'] = "Paslėpti";
+$MESS ['HELP_CLOSE'] = "Uždaryti";
+$MESS ['HELP_TREE'] = "Suderinti su sąrašu";
+$MESS ['HELP_EDIT'] = "Redaguoti";
+$MESS ['HELP_FILE_NOT_FOUND'] = "Pagalbos byla nerasta";
+$MESS ['HELP_CURRENT_FOLDER'] = "Esamas katalogas:";
+$MESS ['HELP_IS_FOLDER'] = "Sukurti katalogą:";
+$MESS ['HELP_FORGOT_FILENAME'] = "Neįrašėte pavadnimo \"Diske\"";
+$MESS ['HELP_FILE_EXISTS'] = "Katalogas arba byla tokiu pavadinimu jau yra";
+$MESS ['HELP_FILE_SAVE_ERROR'] = "Nepavyko išsaugoti bylos";
+$MESS ['HELP_CREATE_FOLDER_ERROR'] = "Nepavyko sukurti bylos";
+$MESS ['HELP_FILE_NOT_EXIST'] = "Bylos pavadinimu  #FILE# nėra";
+$MESS ['HELP_FOLDER_NOT_EXIST'] = "Katalogo pavadinimu #FOLDER# nėra";
+$MESS ['HELP_FOLDER_NOT_EMPTY'] = "Nepavyko pašalinti katalogo pavadinimu #FOLDER# (kataloge yra informacijos)";
+$MESS ['HELP_ERROR_DELETE_FOLDER'] = "nepavyko pašalinti katalogo pavadinimu  #FOLDER#";
+$MESS ['HELP_DELETE_ERROR'] = "Nepavyko pašalinti bylos";
+$MESS ['HELP_SEARCH'] = "Paieška";
+$MESS ['HELP_MOVE_UP'] = "Perkelti aukštyn";
+$MESS ['HELP_MOVE_DOWN'] = "Perkelti žemyn";
+$MESS ['HELP_SORT'] = "Rūšiavimas:";
+?>

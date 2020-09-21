@@ -1,0 +1,6 @@
+<?
+$MESS["ISS_TPL_SIMPLE_FILTER_DEPARTMENT"] = "Skyrius";
+$MESS["ISS_TPL_SIMPLE_FILTER_FIO"] = "Pavadinimas";
+$MESS["ISS_TPL_FILTER_SUBMIT"] = "Paieška";
+$MESS["ISS_TPL_FILTER_CANCEL"] = "Atšaukti";
+?>

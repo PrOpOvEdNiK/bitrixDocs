@@ -1,0 +1,32 @@
+<?
+$MESS["NO_LOC_FILE"] = "Plik lokalizacji nie został załadowany.";
+$MESS["WSL_CANCELSTEP_BUTTONTITLE"] = "Zamknij";
+$MESS["WSL_CANCELSTEP_CONTENT"] = "Działanie kreatora zostało przerwane. Nie zaimportowano żadnych danych.";
+$MESS["WSL_CANCELSTEP_TITLE"] = "Działanie kreatora zostało przerwane";
+$MESS["WSL_FINALSTEP_BUTTONTITLE"] = "Zakończ";
+$MESS["WSL_FINALSTEP_CONTENT"] = "Gratulacje! Kreator importu lokalizacji zakończył pomyślnie.";
+$MESS["WSL_FINALSTEP_TITLE"] = "Kreator zakończył";
+$MESS["WSL_STEP1_TITLE"] = "Kreator importu lokalizacji";
+$MESS["WSL_STEP2_GFILE_CNTR"] = "Świata (kraje0";
+$MESS["WSL_STEP2_GFILE_ERROR"] = "Plik źródłowy nie jest określony";
+$MESS["WSL_STEP2_GFILE_FILE"] = "Dodaj plik";
+$MESS["WSL_STEP2_GFILE_NONE"] = "brak";
+$MESS["WSL_STEP2_GFILE_TITLE"] = "Plik źródłowy:";
+$MESS["WSL_STEP2_GFILE_USA"] = "USA (miasta)";
+$MESS["WSL_STEP2_GFILE_USSR"] = "Rosja i CIS (kraje i miasta)";
+$MESS["WSL_STEP2_GFILE_ZIP"] = "załaduj bazę kodów pocztowych (tylko Rosja)";
+$MESS["WSL_STEP2_GSYNC_HINT"] = "Baza danych kodów pocztowych nie może być zsynchronizowana";
+$MESS["WSL_STEP2_GSYNC_N"] = "usuń istniejące dane";
+$MESS["WSL_STEP2_GSYNC_TITLE"] = "Synchronizacja";
+$MESS["WSL_STEP2_GSYNC_Y"] = "synchronizuj nowe i istniejące dane";
+$MESS["WSL_STEP2_TITLE"] = "Pliki źródłowe";
+$MESS["WSL_STEP3_ERROR_TRY"] = "Spróbuj ponownie";
+$MESS["WSL_STEP3_LOADING"] = "Ładowanie";
+$MESS["WSL_STEP3_TITLE"] = "Źródło importowania plików.";
+$MESS["WSL_STEP4_LOADING"] = "Przetwarzanie…";
+$MESS["WSL_STEP4_TITLE"] = "Przetwarzanie danych";
+$MESS["WSL_STEP5_STEP_LENGTH_ERROR"] = "Czas trwania kroku nie może wynosić zero.";
+$MESS["WSL_STEP5_STEP_LENGTH_HINT"] = "Określ pożądany czas trwania jednego kroku przetwarzania. Zmień ten parametr, jeżeli tylko jesteś pewny, że ta strona wykona w określonym czasie.";
+$MESS["WSL_STEP5_STEP_LENGTH_TITLE"] = "Czas trwania kroku (sek)";
+$MESS["WSL_STEP5_TITLE"] = "Parametry";
+?>

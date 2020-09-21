@@ -1,0 +1,36 @@
+<?
+$MESS["IBP_ADM_TO_ADD"] = "Pridėti objektą";
+$MESS["IBP_ADM_TO_ADD_TITLE"] = "Įdėti naują objektą";
+$MESS["IBP_ADM_ID"] = "ID";
+$MESS["IBP_ADM_NAME"] = "Pavadinimas";
+$MESS["IBP_ADM_CODE"] = "Simbolinis kodas";
+$MESS["IBP_ADM_SORT"] = "Rūšiuoti";
+$MESS["IBP_ADM_ACTIVE"] = "Aktyvus";
+$MESS["IBP_ADM_PROPERTY_TYPE"] = "Tipas";
+$MESS["IBP_ADM_MULTIPLE"] = "Keli";
+$MESS["IBP_ADM_XML_ID"] = "Išorinis ID";
+$MESS["IBP_ADM_WITH_DESCRIPTION"] = "Turi aprašymą";
+$MESS["IBP_ADM_SEARCHABLE"] = "Paieška";
+$MESS["IBP_ADM_FILTRABLE"] = "Rodyti filtre";
+$MESS["IBP_ADM_IS_REQUIRED"] = "Būtina";
+$MESS["IBP_ADM_HINT"] = "Užuomina";
+$MESS["IBP_ADM_CONFIRM_DEL_MESSAGE"] = "Tai bus ištrinti visos objektų reikšmės. Tęsti?";
+$MESS["IBP_ADM_TITLE"] = "#IBLOCK_NAME#: Savybės";
+$MESS["IBP_ADM_DELETE_ERROR"] = "Trinant objektą įvyko klaida.";
+$MESS["IBP_ADM_SAVE_ERROR"] = "Klaida išsaugant įrašą ##ID#: #ERROR_TEXT#";
+$MESS["IBP_ADM_PAGER"] = "Savybės";
+$MESS["IBLOCK_PROP_S"] = "Eilutė";
+$MESS["MAIN_ADMIN_LIST_SELECTED"] = "Pasirinkta:";
+$MESS["IBLOCK_PROP_N"] = "Numeris";
+$MESS["MAIN_ADMIN_LIST_CHECKED"] = "Pažymėta:";
+$MESS["IBLOCK_PROP_L"] = "Sąrašas";
+$MESS["MAIN_ADMIN_LIST_DELETE"] = "ištrinti";
+$MESS["IBLOCK_PROP_F"] = "Failas";
+$MESS["MAIN_ADMIN_LIST_ACTIVATE"] = "įjungti";
+$MESS["IBLOCK_PROP_G"] = "Susieti su skyriais";
+$MESS["MAIN_ADMIN_LIST_DEACTIVATE"] = "išjungti";
+$MESS["IBLOCK_PROP_E"] = "Susieti su elementais";
+$MESS["IBLOCK_YES"] = "Taip";
+$MESS["IBLOCK_NO"] = "Ne";
+$MESS["IBLOCK_ALL"] = "(bet koks)";
+?>

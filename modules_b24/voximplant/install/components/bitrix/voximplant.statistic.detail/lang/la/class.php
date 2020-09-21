@@ -1,0 +1,36 @@
+<?
+$MESS["TELEPHONY_BILLING"] = "Facturación";
+$MESS["TELEPHONY_FILTER_COMMENT"] = "Comentario";
+$MESS["TELEPHONY_FILTER_CRM"] = "CRM";
+$MESS["TELEPHONY_FILTER_HAS_RECORD"] = "Grabacion de llamada";
+$MESS["TELEPHONY_FILTER_STATUS_FAILED"] = "Llamada sin éxito";
+$MESS["TELEPHONY_FILTER_STATUS_SUCCESSFUL"] = "Llamada exitosa";
+$MESS["TELEPHONY_FILTER_STATUS_UNSET"] = "(ninguno)";
+$MESS["TELEPHONY_FILTER_TRANSCRIPT_TEXT"] = "La transcripción contiene";
+$MESS["TELEPHONY_HEADER_COMMENT"] = "Comentario";
+$MESS["TELEPHONY_HEADER_COST"] = "Costo";
+$MESS["TELEPHONY_HEADER_CRM"] = "CRM";
+$MESS["TELEPHONY_HEADER_DURATION"] = "Duración de la llamada";
+$MESS["TELEPHONY_HEADER_INCOMING"] = "Tipo de llamada";
+$MESS["TELEPHONY_HEADER_LOG"] = "Detalles";
+$MESS["TELEPHONY_HEADER_PHONE"] = "Teléfono";
+$MESS["TELEPHONY_HEADER_PORTAL_PHONE"] = "Número de teléfono del portal";
+$MESS["TELEPHONY_HEADER_RECORD"] = "Grabar";
+$MESS["TELEPHONY_HEADER_START_DATE"] = "Fecha de la llamada";
+$MESS["TELEPHONY_HEADER_STATUS"] = "Estados";
+$MESS["TELEPHONY_HEADER_TRANSCRIPT_COST"] = "Costo de la transcripción";
+$MESS["TELEPHONY_HEADER_USER"] = "Empleado";
+$MESS["TELEPHONY_HEADER_VOTE"] = "Evaluación";
+$MESS["TELEPHONY_PORTAL_PHONE_EMPTY"] = "No identificado";
+$MESS["TELEPHONY_PORTAL_PHONE_SIP_CLOUD"] = "Hosted cloud PBX (#ID#)";
+$MESS["TELEPHONY_PORTAL_PHONE_SIP_OFFICE"] = "Oficina PBX (#ID#)";
+$MESS["TELEPHONY_STATUS_1"] = "Regístrese en bonificación de crédito cargada. Para más detalles, póngase en contacto con el soporte técnico.";
+$MESS["TELEPHONY_STATUS_2"] = "Regístrese en bonificación de crédito cargada";
+$MESS["TELEPHONY_STATUS_3"] = "Crédito de recarga";
+$MESS["TELEPHONY_STATUS_409"] = "Saldo corregido después de ser comprobado por un especialista. Para obtener más información, póngase en contacto con soporte técnico.";
+$MESS["TEL_STAT_ACTION_DOWNLOAD"] = "Descargar grabación";
+$MESS["TEL_STAT_ACTION_SHOW_LOG"] = "Ver registro";
+$MESS["TEL_STAT_ACTION_SHOW_TRANSCRIPTION"] = "Transcripción abierta";
+$MESS["TEL_STAT_EXPORT_LOCK_ERROR"] = "Los datos de exportación se están preparando en este momento. Vuelve a intentarlo más tarde.";
+$MESS["TEL_STAT_SHOW_TRANSCRIPT"] = "Transcripción abierta";
+?>

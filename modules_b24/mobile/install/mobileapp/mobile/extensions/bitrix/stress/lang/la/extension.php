@@ -1,0 +1,32 @@
+<?
+$MESS["DESC_LOADING"] = "Cargando...";
+$MESS["STRESS_GREEN_1"] = "El equilibrio perfecto entre trabajo y estrés";
+$MESS["STRESS_GREEN_2"] = "Ocupado, productivo y feliz";
+$MESS["STRESS_GREEN_3"] = "Yo estoy bien, Tú estás bien.";
+$MESS["STRESS_GREEN_4"] = "Todo fluye";
+$MESS["STRESS_GREEN_5"] = "¡Todo bien!";
+$MESS["STRESS_HINT_ACCESS"] = "Puede ocultar su nivel de estrés de los demás usuarios";
+$MESS["STRESS_MENU_ACCESS_ACCEPT"] = "Mostrar en el perfil";
+$MESS["STRESS_MENU_ACCESS_DENIED"] = "No mostrar en el perfil";
+$MESS["STRESS_MENU_SHOW_IN_PROFILE"] = "Mostrar en el perfil";
+$MESS["STRESS_RED_1"] = "Amigo, necesitas relajarte";
+$MESS["STRESS_RED_2"] = "Estás a punto de explotar";
+$MESS["STRESS_RED_3"] = "¡Demasiado estresado!";
+$MESS["STRESS_RED_4"] = "No me toquen y todo estará bien";
+$MESS["STRESS_RED_5"] = "Necesitas un descanso, en serio";
+$MESS["STRESS_SAVING_DONE"] = "Listo";
+$MESS["STRESS_SAVING_RESULT"] = "Guardando...";
+$MESS["STRESS_SHARE_ALERT_GOTIT"] = "¡Entendido!";
+$MESS["STRESS_SHARE_ALERT_TITLE"] = "Esta función aún no está disponible";
+$MESS["STRESS_SHARE_COMING_SOON"] = "¡Pronto podrá compartir sus resultados!";
+$MESS["STRESS_UNKNOWN_1"] = "¿Trabajas duro o apenas si trabajas?";
+$MESS["STRESS_UNKNOWN_2"] = "No te preocupes, sé feliz";
+$MESS["STRESS_UNKNOWN_3"] = "Vida sin estrés: objetivo alcanzado";
+$MESS["STRESS_UNKNOWN_4"] = "No es mi problema";
+$MESS["STRESS_UNKNOWN_5"] = "Alérgico al estrés";
+$MESS["STRESS_YELLOW_1"] = "Puedo manejarlo, probablemente...";
+$MESS["STRESS_YELLOW_2"] = "Toma. Un. Break.";
+$MESS["STRESS_YELLOW_3"] = "¿Cuánto falta para el fin de semana?";
+$MESS["STRESS_YELLOW_4"] = "Posibles problemas a la vista";
+$MESS["STRESS_YELLOW_5"] = "¿Ya es demasiado?";
+?>

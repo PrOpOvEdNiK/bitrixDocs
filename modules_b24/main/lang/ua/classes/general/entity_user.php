@@ -1,0 +1,7 @@
+<?
+$MESS["USER_ENTITY_ID"] = "ID";
+$MESS["USER_ENTITY_NAME"] = "Ім'я";
+$MESS["USER_ENTITY_LAST_NAME"] = "Прізвище";
+$MESS["USER_ENTITY_WORK_POSITION"] = "Посада";
+$MESS["USER_ENTITY_SHORT_NAME"] = "П.І.Б.";
+?>

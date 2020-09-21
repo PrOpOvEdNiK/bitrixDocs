@@ -1,0 +1,34 @@
+<?
+$MESS["CRM_QUOTE_CONV_ACCESS_DENIED"] = "Il vous faut une transaction et une facture pour créer la permission de poursuivre.";
+$MESS["CRM_QUOTE_CONV_DIALOG_CANCEL_BTN"] = "Annuler";
+$MESS["CRM_QUOTE_CONV_DIALOG_CONTINUE_BTN"] = "Continuer";
+$MESS["CRM_QUOTE_CONV_DIALOG_SYNC_ENTITY_LIST_TITLE"] = "Choisissez les entités pour y créer des champs supplémentaires";
+$MESS["CRM_QUOTE_CONV_DIALOG_SYNC_FILED_LIST_TITLE"] = "Quels champs seront créés";
+$MESS["CRM_QUOTE_CONV_DIALOG_SYNC_LEGEND"] = "Les entités sélectionnées ne disposent pas de champ où placer les données UGS. Veuillez choisir les entités pour y créer des champs supplémentaires afin d'enregistrer toutes les informations disponibles.";
+$MESS["CRM_QUOTE_CONV_DIALOG_TITLE"] = "Créer une entité de devis";
+$MESS["CRM_QUOTE_CONV_GENERAL_ERROR"] = "Erreur générique.";
+$MESS["CRM_QUOTE_CUSTOM_SAVE_BUTTON_TITLE"] = "Enregistrer et revenir";
+$MESS["CRM_QUOTE_DISK_ATTACHED_FILES"] = "Pièces jointes";
+$MESS["CRM_QUOTE_DISK_ATTACH_FILE"] = "Attacher des fichiers";
+$MESS["CRM_QUOTE_DISK_SELECT_FILE"] = "Rechercher dans Bitrix24";
+$MESS["CRM_QUOTE_DISK_SELECT_FILE_LEGEND"] = "Ouvrir la fenêtre Bitrix24.Drive";
+$MESS["CRM_QUOTE_DISK_UPLOAD_FILE"] = "Charger à partir du fichier";
+$MESS["CRM_QUOTE_DISK_UPLOAD_FILE_LEGEND"] = "Déplacer à l'aide du drag'n'drop";
+$MESS["CRM_QUOTE_EDIT_BUTTON_CANCEL"] = "Annuler";
+$MESS["CRM_QUOTE_EDIT_BUTTON_SAVE"] = "Enregistrer";
+$MESS["CRM_QUOTE_EDIT_CONV_DEAL_CATEGORY_DLG_FIELD"] = "Pipeline";
+$MESS["CRM_QUOTE_EDIT_CONV_DEAL_CATEGORY_DLG_TITLE"] = "Préférences de la transaction";
+$MESS["CRM_QUOTE_SHOW_NEW_TITLE"] = "Nouveau devis";
+$MESS["CRM_QUOTE_SHOW_TITLE"] = "Devis n°#QUOTE_NUMBER# du #BEGINDATE#";
+$MESS["CRM_QUOTE_WEBDAV_ATTACH_FILE"] = "Attacher le fichier";
+$MESS["CRM_QUOTE_WEBDAV_DRAG_FILE"] = "Faites glisser un ou quelques fichiers dans cette zone";
+$MESS["CRM_QUOTE_WEBDAV_FILE_ACCESS_DENIED"] = "Accès interdit.";
+$MESS["CRM_QUOTE_WEBDAV_FILE_ALREADY_EXISTS"] = "Le fichier du même nom existe déjà. Vous pouvez choisir le dossier en cours, dans ce cas l'ancienne version du fichier sera sauvegardée dans l'historique du document.";
+$MESS["CRM_QUOTE_WEBDAV_FILE_LOADING"] = "Chargement";
+$MESS["CRM_QUOTE_WEBDAV_LOAD_FILES"] = "Chargement de fichiers";
+$MESS["CRM_QUOTE_WEBDAV_SELECT_FILE"] = "ou choisissez un fichier sur l'ordinateur";
+$MESS["CRM_QUOTE_WEBDAV_SELECT_FROM_LIB"] = "Choisissez les groupes (sections) : ";
+$MESS["CRM_QUOTE_WEBDAV_TITLE"] = "Fichiers";
+$MESS["CRM_TAB_1"] = "Devis";
+$MESS["CRM_TAB_1_TITLE"] = "Propriétés du devis";
+?>

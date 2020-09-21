@@ -1,0 +1,33 @@
+<?
+$MESS["OL_COMPONENT_KPI_FIRST_ANSWER_TEXT"] = "Співробітник #OPERATOR# перевищив допустимий час відповіді клієнту на перше повідомлення. Діалог №#DIALOG#.";
+$MESS["OL_COMPONENT_KPI_FURTHER_ANSWER_TEXT"] = "Співробітник #OPERATOR# перевищив допустимий час відповіді клієнту на повідомлення. Діалог №#DIALOG#.";
+$MESS["OL_COMPONENT_LE_BOT_LIST"] = "чат-бот не вибрано";
+$MESS["OL_COMPONENT_LE_CRM_SOURCE_CREATE"] = "Джерело відкритої лінії";
+$MESS["OL_COMPONENT_LE_ERROR_PERMISSION"] = "Немає доступу до даної дії з відкритою лінією";
+$MESS["OL_COMPONENT_LE_KPI_ANSWER_TIME_MINUTES"] = "хвилин";
+$MESS["OL_COMPONENT_LE_KPI_ANSWER_TIME_MINUTES_1"] = "хвилина";
+$MESS["OL_COMPONENT_LE_KPI_ANSWER_TIME_OWN"] = "Своє";
+$MESS["OL_COMPONENT_LE_KPI_ANSWER_TIME_SECONDS"] = "секунд";
+$MESS["OL_COMPONENT_LE_MENU_AGREEMENTS"] = "Угоди";
+$MESS["OL_COMPONENT_LE_MENU_AUTOMATIC_ACTIONS"] = "Автоматичні дії";
+$MESS["OL_COMPONENT_LE_MENU_BOTS"] = "Чат-боти";
+$MESS["OL_COMPONENT_LE_MENU_KPI"] = "KPI";
+$MESS["OL_COMPONENT_LE_MENU_OTHERS"] = "Інше";
+$MESS["OL_COMPONENT_LE_MENU_QUALITY_MARK"] = "Оцінка якості";
+$MESS["OL_COMPONENT_LE_MENU_QUEUE"] = "Черга";
+$MESS["OL_COMPONENT_LE_MENU_WORKTIME"] = "Робочий час";
+$MESS["OL_COMPONENT_LE_OPTION_BOT"] = "Підключити чат-бота";
+$MESS["OL_COMPONENT_LE_OPTION_BOT_ID"] = "Чат-бот";
+$MESS["OL_COMPONENT_LE_OPTION_FORM"] = "Відправити CRM-форму";
+$MESS["OL_COMPONENT_LE_OPTION_FORM_ID"] = "CRM-форма";
+$MESS["OL_COMPONENT_LE_OPTION_NONE"] = "Нічого не робити";
+$MESS["OL_COMPONENT_LE_OPTION_QUALITY"] = "Відправити текст та оцінку якості";
+$MESS["OL_COMPONENT_LE_OPTION_TEXT"] = "Відправити текст";
+$MESS["OL_COMPONENT_LE_QUICK_ANSWERS_NO_ACCESS_CREATE"] = "У вас немає прав на редагування цієї відкритої лінії";
+$MESS["OL_COMPONENT_LE_QUICK_ANSWERS_STORAGE_CREATE"] = "Буде створено автоматично";
+$MESS["OL_COMPONENT_LE_QUICK_ANSWERS_STORAGE_CREATE_ERROR"] = "Помилка при створенні списку швидких відповідей. Будь ласка, зверніться у техпідтримку";
+$MESS["OL_COMPONENT_LE_QUICK_ANSWERS_STORAGE_CREATE_ERROR_UNIQUE"] = "До цієї відкритої лінії вже прив'язаний список швидких відповідей.";
+$MESS["OL_COMPONENT_MODULE_IM_NOT_INSTALLED"] = "Модуль веб-месенджера не встановлений";
+$MESS["OL_COMPONENT_MODULE_NOT_INSTALLED"] = "Модуль відкритих ліній не встановлено";
+$MESS["OL_COMPONENT_MODULE_SOCIALNETWORK_NOT_INSTALLED"] = "Модуль соціальної мережі не встановлено";
+?>

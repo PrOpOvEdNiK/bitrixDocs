@@ -1,0 +1,36 @@
+<?
+$MESS["PERFMON_CACHE_AVG_CACHE_SIZE"] = "Pamięć podręczna (avg)";
+$MESS["PERFMON_CACHE_BASE_DIR"] = "Rodzaj";
+$MESS["PERFMON_CACHE_CACHE_PATH"] = "Ścieżka pliku pamięci podręcznej";
+$MESS["PERFMON_CACHE_CACHE_SIZE"] = "Rozmiar";
+$MESS["PERFMON_CACHE_COMPONENT_ID"] = "Element przykładowy";
+$MESS["PERFMON_CACHE_COMPONENT_NAME"] = "Komponent";
+$MESS["PERFMON_CACHE_COUNT"] = "Działania pamięci podręcznej";
+$MESS["PERFMON_CACHE_COUNT_C"] = "Reset pamięci podręcznej";
+$MESS["PERFMON_CACHE_COUNT_R"] = "Odczyty pamięci podręcznej";
+$MESS["PERFMON_CACHE_COUNT_W"] = "Zapisy pamięci podręcznej";
+$MESS["PERFMON_CACHE_FILE_NAME"] = "Plik";
+$MESS["PERFMON_CACHE_FIND"] = "Szukaj";
+$MESS["PERFMON_CACHE_GROUP_BASE_DIR"] = "Grupuj rodzajami";
+$MESS["PERFMON_CACHE_GROUP_COMP"] = "Grupuj komponentami";
+$MESS["PERFMON_CACHE_GROUP_FILE_NAME"] = "Grupuj plikami";
+$MESS["PERFMON_CACHE_GROUP_INIT_DIR"] = "Grupuj katalogami";
+$MESS["PERFMON_CACHE_GROUP_NONE"] = "Rozgrupuj";
+$MESS["PERFMON_CACHE_HIT_ID"] = "Trafienie";
+$MESS["PERFMON_CACHE_HIT_RATIO"] = "Procent trafień";
+$MESS["PERFMON_CACHE_ID"] = "ID";
+$MESS["PERFMON_CACHE_INIT_DIR"] = "Katalog";
+$MESS["PERFMON_CACHE_MANAGED"] = "zarządzane";
+$MESS["PERFMON_CACHE_MAX_CACHE_SIZE"] = "Pamięć podręczna (max)";
+$MESS["PERFMON_CACHE_MIN_CACHE_SIZE"] = "Pamięć podręczna (min)";
+$MESS["PERFMON_CACHE_MODULE_NAME"] = "Moduł";
+$MESS["PERFMON_CACHE_NN"] = "Nie.";
+$MESS["PERFMON_CACHE_OP_MODE"] = "Operacja";
+$MESS["PERFMON_CACHE_OP_MODE_C"] = "Wyczyść";
+$MESS["PERFMON_CACHE_OP_MODE_R"] = "Odczyt";
+$MESS["PERFMON_CACHE_OP_MODE_W"] = "Napisz";
+$MESS["PERFMON_CACHE_PAGE"] = "Schowek";
+$MESS["PERFMON_CACHE_SUM_CACHE_SIZE"] = "Pamięć podręczna (łącznie)";
+$MESS["PERFMON_CACHE_TITLE"] = "Monitor wydajności: Pamięć podręczna";
+$MESS["PERFMON_CACHE_UNMANAGED"] = "niezarzadzane";
+?>

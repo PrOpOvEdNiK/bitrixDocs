@@ -1,0 +1,33 @@
+<?
+$MESS["TASKS_BTN_ADD_TASK"] = "Nauja užduotis";
+$MESS["TASKS_BTN_ADD_TASK_BY_TEMPLATE"] = "Nauja užduotis naudojant šabloną";
+$MESS["TASKS_BTN_LIST_TASK_TEMPLATE"] = "Visi šablonai";
+$MESS["TASKS_AJAX_ERROR_LOAD_TEMPLATES"] = "Klaida įkeliant šablonų sąrašą";
+$MESS["TASKS_AJAX_LOAD_TEMPLATES"] = "Įkeliamas sąrašas...";
+$MESS["TASKS_AJAX_EMPTY_TEMPLATES"] = "Užduočių šablonų nėra";
+$MESS["TASKS_BTN_GROUP_BY_SUBTASKS"] = "Grupuoti pagal atntrines užduotis";
+$MESS["TASKS_BTN_EXPORT"] = "Eksportuoti sąrašą";
+$MESS["TASKS_BTN_EXPORT_OUTLOOK"] = "į Microsoft Outlook";
+$MESS["TASKS_BTN_EXPORT_EXCEL"] = "į Microsoft Excel";
+$MESS["TASKS_BTN_GROUP_WO"] = "Nėra projektų";
+$MESS["TASKS_BTN_GROUP_SELECT"] = "Pasirinkti...";
+$MESS["TASKS_ADD_QUICK_TASK"] = "Sukurti greitą užduotį";
+$MESS["TASKS_USER_SORT"] = "Rūšiuoti";
+$MESS["TASKS_BTN_SORT_DIR_ASC"] = "Didėjančia tvarka";
+$MESS["TASKS_BTN_SORT_DIR_DESC"] = "Mažėjančia tvarka";
+$MESS["TASKS_BTN_SORT_ID"] = "ID";
+$MESS["TASKS_BTN_SORT_TITLE"] = "Pavadinimas";
+$MESS["TASKS_BTN_SORT_DEADLINE"] = "Terminas";
+$MESS["TASKS_BTN_SORT_ORIGINATOR_NAME"] = "Sukūrė";
+$MESS["TASKS_BTN_SORT_RESPONSIBLE_NAME"] = "Atsakingas asmuo";
+$MESS["TASKS_BTN_SORT_PRIORITY"] = "Prioritetas";
+$MESS["TASKS_BTN_SORT_MARK"] = "Skaičius";
+$MESS["TASKS_BTN_SORT_TIME_ESTIMATE"] = "Numatomas laikas privalomas";
+$MESS["TASKS_BTN_SORT_ALLOW_TIME_TRACKING"] = "Sekti išleistą laiką";
+$MESS["TASKS_BTN_SORT_CREATED_DATE"] = "Sukurta";
+$MESS["TASKS_BTN_SORT_CHANGED_DATE"] = "Pakeista";
+$MESS["TASKS_BTN_SORT_CLOSED_DATE"] = "Uždaryta";
+$MESS["TASKS_BTN_SORT_SORTING"] = "Mano rūšiavimas";
+$MESS["TASKS_BTN_SYNC"] = "Sinchronizuoti sąrašą";
+$MESS["TASKS_BTN_SYNC_OUTLOOK"] = "su Microsoft Outlook";
+?>

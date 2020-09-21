@@ -1,0 +1,31 @@
+<?
+$MESS["IBLOCK_ENTITY_ID_FIELD"] = "ID";
+$MESS["IBLOCK_ENTITY_TIMESTAMP_X_FIELD"] = "Redaguota";
+$MESS["IBLOCK_ENTITY_IBLOCK_TYPE_ID_FIELD"] = "Infobloko tipas";
+$MESS["IBLOCK_ENTITY_CODE_FIELD"] = "Simbolinis kodas";
+$MESS["IBLOCK_ENTITY_NAME_FIELD"] = "Pavadinimas";
+$MESS["IBLOCK_ENTITY_ACTIVE_FIELD"] = "Aktyvus";
+$MESS["IBLOCK_ENTITY_SORT_FIELD"] = "Rūšiavimas";
+$MESS["IBLOCK_ENTITY_LIST_PAGE_URL_FIELD"] = "Informacinio bloko puslapio nuoroda";
+$MESS["IBLOCK_ENTITY_DETAIL_PAGE_URL_FIELD"] = "Detalaus puslapio nuoroda";
+$MESS["IBLOCK_ENTITY_SECTION_PAGE_URL_FIELD"] = "Skyriaus puslapio nuoroda";
+$MESS["IBLOCK_ENTITY_PICTURE_FIELD"] = "Vaizdas";
+$MESS["IBLOCK_ENTITY_DESCRIPTION_FIELD"] = "Aprašymas";
+$MESS["IBLOCK_ENTITY_DESCRIPTION_TYPE_FIELD"] = "Aprašymo tipas";
+$MESS["IBLOCK_ENTITY_XML_ID_FIELD"] = "Išorinis ID";
+$MESS["IBLOCK_ENTITY_TMP_ID_FIELD"] = "Laikinas ID";
+$MESS["IBLOCK_ENTITY_INDEX_ELEMENT_FIELD"] = "Indeksuoti elementus paieškos moduliui";
+$MESS["IBLOCK_ENTITY_INDEX_SECTION_FIELD"] = "Indeksuoti skyrius paieškos moduliui";
+$MESS["IBLOCK_ENTITY_WORKFLOW_FIELD"] = "Dalyvauja dokumentų sraute";
+$MESS["IBLOCK_ENTITY_BIZPROC_FIELD"] = "Dalyvauja verslo procesuose";
+$MESS["IBLOCK_ENTITY_LIST_MODE_FIELD"] = "Skyrių ir elementų peržiūros rėžimas";
+$MESS["IBLOCK_ENTITY_RIGHTS_MODE_FIELD"] = "Prieigos teisių rėžimas";
+$MESS["IBLOCK_ENTITY_VERSION_FIELD"] = "Savybių saugojimo nustatymai";
+$MESS["IBLOCK_ENTITY_LAST_CONV_ELEMENT_FIELD"] = "Paskutinis konvertuotas elementas";
+$MESS["IBLOCK_ENTITY_SOCNET_GROUP_ID_FIELD"] = "Socialinio tinklo grupė";
+$MESS["IBLOCK_ENTITY_EDIT_FILE_BEFORE_FIELD"] = "Byla elemento redagavimui, leidžiantis redaguoti laukus prieš saugojimą";
+$MESS["IBLOCK_ENTITY_EDIT_FILE_AFTER_FIELD"] = "Byla su elemento redagavimo forma";
+$MESS["IBLOCK_ENTITY_SECTION_CHOOSER_FIELD"] = "Elemento ir skyrių sąryšio valdymas";
+$MESS["IBLOCK_ENTITY_SECTION_PROPERTY_FIELD"] = "Naudojamas savybių su skyriais sąryšis";
+$MESS["IBLOCK_ENTITY_CANONICAL_PAGE_URL_FIELD"] = "Elemento kanoninė nuoroda";
+?>

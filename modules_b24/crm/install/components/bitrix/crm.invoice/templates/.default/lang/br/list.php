@@ -1,0 +1,4 @@
+<?
+$MESS["CRM_INVOICE_LIST_SWITCHER_RECUR"] = "Recorrentes";
+$MESS["CRM_INVOICE_LIST_SWITCHER_STANDART"] = "Standard";
+?>

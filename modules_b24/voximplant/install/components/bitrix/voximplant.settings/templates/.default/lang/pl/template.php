@@ -1,0 +1,31 @@
+<?
+$MESS["VI_AUTOPAY_LABEL_2"] = "Automatycznie zasil saldo kredytów telefonicznych, jeśli spadnie poniżej progu 3,00 USD (3,00 &euro;) lub poniżej kwoty wymaganej do odnowienia usług wynajęcia numeru telefonu.";
+$MESS["VI_AUTOPAY_OFF"] = "Wyłącz";
+$MESS["VI_AUTOPAY_ON"] = "Włącz";
+$MESS["VI_AUTOPAY_TITLE"] = "Automatycznie zasilaj";
+$MESS["VI_BACKUP_LINE_LABEL"] = "Przekazuj połączenia na numer rezerwowy z";
+$MESS["VI_BACKUP_LINE_SAVE"] = "Zapisz";
+$MESS["VI_BACKUP_LINE_TITLE"] = "Zapasowy numer telefonu";
+$MESS["VI_BACKUP_NUMBER"] = "Przekieruj połączenie do";
+$MESS["VI_BACKUP_NUMBER_LABEL"] = "Określ numer, na który mają być przekierowywane połączenia, gdyby Twoje konto Bitrix24 było z jakiegokolwiek powodu niedostępne";
+$MESS["VI_COMBINATIONS_SAVE"] = "Zapisz";
+$MESS["VI_COMBINATIONS_TITLE"] = "Numery kierunkowe";
+$MESS["VI_COMBINATION_INTERCEPT_GROUP"] = "Przechwytywanie połączeń w grupie kolejki:";
+$MESS["VI_CRM_INTEGRATION_SAVE"] = "Zapisz";
+$MESS["VI_CRM_INTEGRATION_TITLE"] = "Integracja systemu CRM";
+$MESS["VI_CRM_INTEGRATION_WORKFLOW_EXECUTION_TITLE"] = "Uruchom proces tworzenia nowego leadu:";
+$MESS["VI_INTERFACE_CHAT_ADD"] = "Utwórz osobny czat dla każdego połączenia";
+$MESS["VI_INTERFACE_CHAT_APPEND"] = "Utwórz jeden czat dla wszystkich połączeń";
+$MESS["VI_INTERFACE_CHAT_NONE"] = "Nie wyświetlaj połączeń telefonicznych w komunikatorze";
+$MESS["VI_INTERFACE_CHAT_TITLE"] = "Wyświetl połączenia telefoniczne w komunikatorze: ";
+$MESS["VI_INTERFACE_SAVE"] = "Zapisz";
+$MESS["VI_INTERFACE_TITLE"] = "Konfiguruj interfejs połączeń";
+$MESS["VI_NUMBERS_APPLY"] = "Zastosuj";
+$MESS["VI_NUMBERS_CANCEL"] = "Anuluj";
+$MESS["VI_NUMBERS_CONFIG"] = "Konfiguruj";
+$MESS["VI_NUMBERS_CONFIG_BACKPHONE"] = "Numer domyślny do połączeń wychodzących";
+$MESS["VI_NUMBERS_CONFIG_BACKPHONE_TITLE"] = "Rozmówca zobaczy ten numer, gdy zadzwonisz do niego za pomocą Bitrix24";
+$MESS["VI_NUMBERS_EDIT"] = "Edytuj";
+$MESS["VI_NUMBERS_SAVE"] = "Zapisz";
+$MESS["VI_NUMBERS_TITLE_2"] = "Konfiguruj numery domyślne";
+?>

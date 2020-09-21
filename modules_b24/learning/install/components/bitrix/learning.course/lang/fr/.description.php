@@ -1,0 +1,6 @@
+<?
+$MESS["LEARNING_COURSE_COMPLEX_DESC"] = "Formation";
+$MESS["LEARNING_COURSE_COMPLEX_NAME"] = "Formation";
+$MESS["LEARNING_COURSE_SERVICE"] = "Cours";
+$MESS["LEARNING_SERVICE"] = "apprentissage";
+?>

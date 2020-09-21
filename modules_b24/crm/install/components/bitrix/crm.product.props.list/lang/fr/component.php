@@ -1,0 +1,29 @@
+<?
+$MESS["CRM_INTS_TASKS_NAV"] = "Inscriptions";
+$MESS["CRM_MODULE_NOT_INSTALLED"] = "Le module du CRM n'a pas été installé.";
+$MESS["CRM_PERMISSION_DENIED"] = "Accès interdit";
+$MESS["CRM_PRODUCT_PROP_IBLOCK_ALL"] = "(n'importe lesquel(el)s)";
+$MESS["CRM_PRODUCT_PROP_IBLOCK_PROP_E"] = "Rattachement aux éléments";
+$MESS["CRM_PRODUCT_PROP_IBLOCK_PROP_F"] = "Fichier";
+$MESS["CRM_PRODUCT_PROP_IBLOCK_PROP_G"] = "Liste des rubriques à rattacher";
+$MESS["CRM_PRODUCT_PROP_IBLOCK_PROP_L"] = "Liste";
+$MESS["CRM_PRODUCT_PROP_IBLOCK_PROP_N"] = "Chiffre";
+$MESS["CRM_PRODUCT_PROP_IBLOCK_PROP_S"] = "Ligne";
+$MESS["CRM_PRODUCT_PROP_PL_ACTIVE"] = "Actif(ve)";
+$MESS["CRM_PRODUCT_PROP_PL_CODE"] = "Code symbolique";
+$MESS["CRM_PRODUCT_PROP_PL_DELETE_ERROR"] = "Échec de suppression.";
+$MESS["CRM_PRODUCT_PROP_PL_FILTRABLE"] = "Montrer dans le filtre";
+$MESS["CRM_PRODUCT_PROP_PL_HINT"] = "Invite";
+$MESS["CRM_PRODUCT_PROP_PL_ID"] = "ID";
+$MESS["CRM_PRODUCT_PROP_PL_IS_REQUIRED"] = "Oblig.";
+$MESS["CRM_PRODUCT_PROP_PL_MULTIPLE"] = "Multiple";
+$MESS["CRM_PRODUCT_PROP_PL_NAME"] = "Dénomination";
+$MESS["CRM_PRODUCT_PROP_PL_PROPERTY_TYPE"] = "Type";
+$MESS["CRM_PRODUCT_PROP_PL_SAVE_ERROR"] = "Erreur de sauvegarde de note ##ID# : #ERROR_TEXT#";
+$MESS["CRM_PRODUCT_PROP_PL_SEARCHABLE"] = "Recherche";
+$MESS["CRM_PRODUCT_PROP_PL_SORT"] = "Trier";
+$MESS["CRM_PRODUCT_PROP_PL_WITH_DESCRIPTION"] = "A une description";
+$MESS["CRM_PRODUCT_PROP_PL_XML_ID"] = "ID externe";
+$MESS["CRM_SALE_MODULE_NOT_INSTALLED"] = "Le module 'Boutique en ligne' n'a pas été installé.";
+$MESS["IBLOCK_MODULE_NOT_INSTALLED"] = "Le module des blocs d'informations n'a pas été installé.";
+?>

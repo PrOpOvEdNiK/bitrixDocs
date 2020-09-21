@@ -1,0 +1,34 @@
+<?
+$MESS["F_ANCHOR"] = "Odnośnik do tego postu";
+$MESS["F_ATTACH_FILES"] = "Załączone Pliki";
+$MESS["F_AUTHOR_PROFILE"] = "Profil Użytkownika";
+$MESS["F_DATE_REGISTER"] = "Dołączył:";
+$MESS["F_DELETE"] = "Usuń";
+$MESS["F_DELETE_CONFIRM"] = "Wiadomość będzie nieodwracalnie usunięta. Kontynuować?";
+$MESS["F_DELETE_TOPIC"] = "Usuń Temat";
+$MESS["F_DELETE_TOPIC_CONFIRM"] = "Spowoduje to nieodwracalne usunięcie tematu. Kontynuować?";
+$MESS["F_EDIT"] = "Modyfikuj";
+$MESS["F_EDIT_HEAD"] = "Edytowane:";
+$MESS["F_EDIT_TOPIC"] = "Modyfikuj Temat";
+$MESS["F_EMAIL_TITLE"] = "Wyślij wiadomość E-mail";
+$MESS["F_GOTO"] = "Idź do";
+$MESS["F_HIDE"] = "Ukryj";
+$MESS["F_HIDE_TOPIC"] = "Ukryj temat";
+$MESS["F_INSERT_NAME"] = "Wklej nazwę użytkownika w odpowiedzi";
+$MESS["F_NAME"] = "Nazwa";
+$MESS["F_NO_VOTE_DO"] = "Głosowanie";
+$MESS["F_NO_VOTE_UNDO"] = "Anuluj głos";
+$MESS["F_NUM_MESS"] = "Posty:";
+$MESS["F_POINTS"] = "Punkty:";
+$MESS["F_PRIVATE_MESSAGE"] = "Wiadomość";
+$MESS["F_PRIVATE_MESSAGE_TITLE"] = "Wyślij wiadomość prywatną";
+$MESS["F_QUOTE"] = "Oferta";
+$MESS["F_QUOTE_HINT"] = "Aby Zacytować Wiadomość w formularzu Odpowiedzi zaznacz tekst i kliknij tutaj";
+$MESS["F_REAL_IP"] = "/ real";
+$MESS["F_REPLY"] = "Odpowiedź";
+$MESS["F_SHOW"] = "Pokaż";
+$MESS["F_SHOW_TOPIC"] = "Pokaż temat";
+$MESS["F_USER_ID"] = "ID gościa";
+$MESS["F_USER_ID_USER"] = "ID użytkownika";
+$MESS["F_USER_PROFILE"] = "Profil Użytkownika";
+?>

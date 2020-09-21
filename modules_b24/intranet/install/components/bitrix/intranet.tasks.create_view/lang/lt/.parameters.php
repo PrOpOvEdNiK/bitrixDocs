@@ -1,0 +1,32 @@
+<?
+$MESS["INTL_VARIABLE_ALIASES"] = "Kintamieji slapyvardžiai";
+$MESS["INTL_IBLOCK_TYPE"] = "Informacijos bloko tipas";
+$MESS["INTL_IBLOCK"] = "Informacijos blokas";
+$MESS["INTL_TASKS_FIELDS_SHOW"] = "Užduoties savybės";
+$MESS["INTL_TASK_TYPE"] = "Užduoties tipas";
+$MESS["INTL_OWNER_ID"] = "Savininko ID";
+$MESS["INTL_TASK_VAR"] = "Užduoties ID kintamojo pavadinimas";
+$MESS["INTL_USER_VAR"] = "Naudotojo ID kintamojo pavadinimas";
+$MESS["INTL_GROUP_VAR"] = "Grupės ID kintamojo pavadinimas";
+$MESS["INTL_VIEW_VAR"] = "Peržiūros ID kintamojo pavadinimas";
+$MESS["INTL_ACTION_VAR"] = "Veiksmo ID kintamojo pavadinimas";
+$MESS["INTL_PAGE_VAR"] = "Puslapio ID kintamojo pavadinimas";
+$MESS["INTL_PATH_TO_GROUP_TASKS"] = "Kelias į užduotis";
+$MESS["INTL_PATH_TO_GROUP_TASKS_TASK"] = "Kelias į užduotį";
+$MESS["INTL_PATH_TO_GROUP_TASKS_VIEW"] = "Kelias į peržiūrą";
+$MESS["INTL_SET_NAVCHAIN"] = "Įjungti džiūvėsėlius";
+$MESS["INTL_ITEM_COUNT"] = "Elementų puslapyje";
+$MESS["INTL_TF_ID"] = "ID";
+$MESS["INTL_TF_NAME"] = "Antraštė";
+$MESS["INTL_TF_CODE"] = "Mnemoninis kodas";
+$MESS["INTL_TF_XML_ID"] = "Išorinis ID";
+$MESS["INTL_TF_MODIFIED_BY"] = "Pakeitė";
+$MESS["INTL_TF_DATE_CREATE"] = "Sukurta";
+$MESS["INTL_TF_CREATED_BY"] = "Autorius";
+$MESS["INTL_TF_DATE_ACTIVE_FROM"] = "Pradėti";
+$MESS["INTL_TF_DATE_ACTIVE_TO"] = "Baigti";
+$MESS["INTL_TF_IBLOCK_SECTION"] = "Aplankas";
+$MESS["INTL_TF_DETAIL_TEXT"] = "Užduoties aprašymas";
+$MESS["INTL_TASK_TYPE_GROUP"] = "Grupei";
+$MESS["INTL_TASK_TYPE_USER"] = "Naudotojui";
+?>
