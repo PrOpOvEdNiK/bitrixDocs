@@ -145,7 +145,7 @@ abstract class DataManager
 	final public static function getObjectClassName()
 	{
 		$class = static::getObjectClass();
-		return substr($class, strrpos($class, '\\')+1);
+		return substr($class, strrpos($class, '\\') + 1);
 	}
 
 	protected static function getObjectClassByDataClass($dataClass)
@@ -153,7 +153,7 @@ abstract class DataManager
 		$objectClass = static::getEntityClass()::normalizeName($dataClass);
 
 		// make class name more unique
-		$namespace = substr($objectClass, 0, strrpos($objectClass, '\\')+1);
+		$namespace = substr($objectClass, 0, strrpos($objectClass, '\\') + 1);
 		$className = substr($objectClass, strrpos($objectClass, '\\') + 1);
 
 		$className = static::getEntityClass()::getDefaultObjectClassName($className);
@@ -184,7 +184,7 @@ abstract class DataManager
 	final public static function getCollectionClassName()
 	{
 		$class = static::getCollectionClass();
-		return substr($class, strrpos($class, '\\')+1);
+		return substr($class, strrpos($class, '\\') + 1);
 	}
 
 	protected static function getCollectionClassByDataClass($dataClass)
@@ -192,7 +192,7 @@ abstract class DataManager
 		$objectClass = static::getEntityClass()::normalizeName($dataClass);
 
 		// make class name more unique
-		$namespace = substr($objectClass, 0, strrpos($objectClass, '\\')+1);
+		$namespace = substr($objectClass, 0, strrpos($objectClass, '\\') + 1);
 		$className = substr($objectClass, strrpos($objectClass, '\\') + 1);
 
 		$className = static::getEntityClass()::getDefaultCollectionClassName($className);
@@ -558,20 +558,15 @@ abstract class DataManager
 	 */
 	protected static function replaceFieldName($data = array())
 	{
+		$newData = [];
 		$entity = static::getEntity();
+
 		foreach ($data as $fieldName => $value)
 		{
-			/** @var ScalarField $field */
-			$field = $entity->getField($fieldName);
-			$columnName = $field->getColumnName();
-			if($columnName != $fieldName)
-			{
-				$data[$columnName] = $data[$fieldName];
-				unset($data[$fieldName]);
-			}
+			$newData[$entity->getField($fieldName)->getColumnName()] = $value;
 		}
 
-		return $data;
+		return $newData;
 	}
 
 	/**
@@ -933,7 +928,7 @@ abstract class DataManager
 
 			if (!empty($id))
 			{
-				if (strlen($entity->getAutoIncrement()))
+				if($entity->getAutoIncrement() <> '')
 				{
 					$primary = array($entity->getAutoIncrement() => $id);
 					static::normalizePrimary($primary);
@@ -951,7 +946,7 @@ abstract class DataManager
 
 			// fill result
 			$result->setPrimary($primary);
-			$result->setData($fields);
+			$result->setData($fields + $ufdata);
 			$result->setObject($object);
 
 			foreach ($primary as $primaryName => $primaryValue)
@@ -967,7 +962,7 @@ abstract class DataManager
 
 			$entity->cleanCache();
 
-			static::callOnAfterAddEvent($object, $fields, $id);
+			static::callOnAfterAddEvent($object, $fields + $ufdata, $id);
 		}
 		catch (\Exception $e)
 		{
@@ -1137,7 +1132,7 @@ abstract class DataManager
 
 				if (!empty($id))
 				{
-					if (strlen($entity->getAutoIncrement()))
+					if($entity->getAutoIncrement() <> '')
 					{
 						$primary = array($entity->getAutoIncrement() => $id);
 						static::normalizePrimary($primary);
@@ -1175,7 +1170,7 @@ abstract class DataManager
 			{
 				foreach ($objects as $k => $object)
 				{
-					$fields = $allFields[$k];
+					$fields = $allFields[$k] + $allUfData[$k];
 					$id = $forceSeparateQueries ? $ids[$k] : null;
 
 					static::callOnAfterAddEvent($object, $fields, $id);
@@ -1217,7 +1212,7 @@ abstract class DataManager
 
 		// check primary
 		static::normalizePrimary(
-			$primary, isset($fields["fields"]) && is_array($data["fields"]) ? $data["fields"] : $data
+			$primary, isset($data["fields"]) && is_array($data["fields"]) ? $data["fields"] : $data
 		);
 		static::validatePrimary($primary);
 
@@ -1297,7 +1292,7 @@ abstract class DataManager
 				$result->setAffectedRowsCount($connection);
 			}
 
-			$result->setData($fields);
+			$result->setData($fields + $ufdata);
 			$result->setPrimary($primary);
 			$result->setObject($object);
 
@@ -1310,7 +1305,7 @@ abstract class DataManager
 			$entity->cleanCache();
 
 			// event after update
-			static::callOnAfterUpdateEvent($object, $fields);
+			static::callOnAfterUpdateEvent($object, $fields + $ufdata);
 		}
 		catch (\Exception $e)
 		{
@@ -1560,7 +1555,7 @@ abstract class DataManager
 			{
 				foreach ($objects as $k => $object)
 				{
-					$fields = $allFields[$k];
+					$fields = $allFields[$k] + $allUfData[$k];
 
 					static::callOnAfterUpdateEvent($object, $fields);
 				}

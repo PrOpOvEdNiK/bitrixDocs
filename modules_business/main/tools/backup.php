@@ -1,9 +1,10 @@
 <?php
-if (ini_get('short_open_tag') == 0 && strtoupper(ini_get('short_open_tag')) != 'ON')
+if (ini_get('short_open_tag') == 0 && mb_strtoupper(ini_get('short_open_tag')) != 'ON')
 	die("Error: short_open_tag parameter must be turned on in php.ini\n");
 ?><?
 error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT & ~E_DEPRECATED);
 define('START_TIME', microtime(1));
+define('BX_FORCE_DISABLE_SEPARATED_SESSION_MODE', true);
 define('CLI', defined('BX_CRONTAB') && BX_CRONTAB === true || !$_SERVER['DOCUMENT_ROOT']);
 @define('LANGUAGE_ID', 'en');
 @define('NOT_CHECK_PERMISSIONS', true);
@@ -97,6 +98,7 @@ elseif (!CLI) // hit from bitrixcloud service
 		RaiseErrorAndDie('Backup is disabled', 4);
 
 	session_write_close();
+	ini_set("session.use_strict_mode", "0");
 	session_id(md5($backup_secret_key));
 	session_start();
 	$NS =& $_SESSION['BX_DUMP_STATE'];
@@ -193,7 +195,7 @@ else
 
 $skip_mask_array = $arParams['skip_mask_array'];
 
-if (strtolower($DB->type) != 'mysql')
+if ($DB->type!= 'MYSQL')
 	$arParams['dump_base'] = 0;
 
 if (!$NS['step'])
@@ -227,7 +229,7 @@ if (!$NS['step'])
 	else
 	{
 		$prefix = str_replace('/', '', COption::GetOptionString("main", "server_name", ""));
-		$arc_name = CBackup::GetArcName(preg_match('#^[a-z0-9\.\-]+$#i', $prefix) ? substr($prefix, 0, 20).'_' : '');
+		$arc_name = CBackup::GetArcName(preg_match('#^[a-z0-9\.\-]+$#i', $prefix) ? mb_substr($prefix, 0, 20).'_' : '');
 	}
 
 	$NS['arc_name'] = $arc_name.($NS['dump_encrypt_key'] ? ".enc" : ".tar").($arParams['dump_use_compression'] ? ".gz" : '');
@@ -535,7 +537,7 @@ if ($NS['step'] == 6)
 		while(CheckPoint())
 		{
 			$file_size = filesize($NS["arc_name"]);
-			$file_name = $NS['BUCKET_ID'] == -1 ? basename($NS['arc_name']) : substr($NS['arc_name'],strlen(DOCUMENT_ROOT));
+			$file_name = $NS['BUCKET_ID'] == -1? basename($NS['arc_name']) : mb_substr($NS['arc_name'], mb_strlen(DOCUMENT_ROOT));
 			$obUpload = new CCloudStorageUpload($file_name);
 
 			if ($NS['BUCKET_ID'] == -1)

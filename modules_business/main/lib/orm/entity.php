@@ -116,14 +116,20 @@ class Entity
 		if (empty(self::$instances[$className]))
 		{
 			/** @var Entity $entity */
-			$entity = new static;
-			$entity->initialize($className);
-			$entity->postInitialize();
+			$entityClass = $className::getEntityClass();
 
-			// call user-defined postInitialize
-			$className::postInitialize($entity);
+			// in case of calling Table class was not ended with entity initialization
+			if (empty(self::$instances[$className]))
+			{
+				$entity = new $entityClass;
+				$entity->initialize($className);
+				$entity->postInitialize();
 
-			self::$instances[$className] = $entity;
+				// call user-defined postInitialize
+				$className::postInitialize($entity);
+
+				self::$instances[$className] = $entity;
+			}
 		}
 
 		return self::$instances[$className];
@@ -336,7 +342,7 @@ class Entity
 	{
 		$className = $entityName;
 
-		if (!strlen($className))
+		if ($className == '')
 		{
 			// entity without name
 			$className = 'NNM_Object';
@@ -604,18 +610,18 @@ class Entity
 		{
 			$this->u_fields = array();
 
-			if (strlen($this->uf_id))
+			if($this->uf_id <> '')
 			{
 				/** @var \CUserTypeManager $USER_FIELD_MANAGER */
 				global $USER_FIELD_MANAGER;
 
-				foreach ($USER_FIELD_MANAGER->getUserFields($this->uf_id) as $info)
+				foreach($USER_FIELD_MANAGER->getUserFields($this->uf_id) as $info)
 				{
 					$this->u_fields[$info['FIELD_NAME']] = new UField($info);
 					$this->u_fields[$info['FIELD_NAME']]->setEntity($this);
 
 					// add references for ufield (UF_DEPARTMENT_BY)
-					if ($info['USER_TYPE_ID'] == 'iblock_section')
+					if($info['USER_TYPE_ID'] == 'iblock_section')
 					{
 						$info['FIELD_NAME'] .= '_BY';
 						$this->u_fields[$info['FIELD_NAME']] = new UField($info);
@@ -640,7 +646,7 @@ class Entity
 
 	public function getNamespace()
 	{
-		return substr($this->className, 0, strrpos($this->className, '\\')+1);
+		return substr($this->className, 0, strrpos($this->className, '\\') + 1);
 	}
 
 	public function getModule()
@@ -763,9 +769,9 @@ class Entity
 		}
 		else
 		{
-			$namespace = substr($class, 1, $lastPos-1);
+			$namespace = substr($class, 1, $lastPos - 1);
 		}
-		$name = substr($class, $lastPos+1, -5);
+		$name = substr($class, $lastPos + 1, -5);
 
 		return compact('namespace', 'name');
 	}
@@ -875,7 +881,7 @@ class Entity
 	{
 		if ($entity_name === null)
 		{
-			$entity_name = 'Tmp'.randString();
+			$entity_name = 'Tmp'.randString().'x';
 		}
 		elseif (!preg_match('/^[a-z0-9_]+$/i', $entity_name))
 		{
@@ -1005,7 +1011,7 @@ class Entity
 		{
 			$namespace = $parameters['namespace'];
 
-			if (!preg_match('/^[a-z0-9\\\\]+$/i', $namespace))
+			if (!preg_match('/^[a-z0-9_\\\\]+$/i', $namespace))
 			{
 				throw new Main\ArgumentException(sprintf(
 					'Invalid namespace name `%s`', $namespace
@@ -1327,54 +1333,34 @@ class Entity
 	 */
 	public function cleanCache()
 	{
-		$cache = Main\Application::getInstance()->getManagedCache();
-		$cache->cleanDir($this->getCacheDir());
+		if($this->getCacheTtl(100) > 0)
+		{
+			//cache might be disabled in .settings.php via *_max_ttl = 0 option
+			$cache = Main\Application::getInstance()->getManagedCache();
+			$cache->cleanDir($this->getCacheDir());
+		}
 	}
 
 	/**
 	 * Sets a flag indicating full text index support for a field.
 	 *
+	 * @deprecated Does nothing, mysql 5.6 has fulltext always enabled.
 	 * @param string $field
 	 * @param bool   $mode
-	 *
-	 * @throws Main\ArgumentNullException
-	 * @throws Main\ArgumentOutOfRangeException
 	 */
 	public function enableFullTextIndex($field, $mode = true)
 	{
-		$table = $this->getDBTableName();
-		$options = array();
-		$optionString = Main\Config\Option::get("main", "~ft_".$table);
-		if($optionString <> '')
-		{
-			$options = unserialize($optionString);
-		}
-		$options[StringHelper::strtoupper($field)] = $mode;
-		Main\Config\Option::set("main", "~ft_".$table, serialize($options));
 	}
 
 	/**
 	 * Returns true if full text index is enabled for a field.
 	 *
+	 * @deprecated Always returns true, mysql 5.6 has fulltext always enabled.
 	 * @param string $field
-	 *
 	 * @return bool
-	 * @throws Main\ArgumentNullException
-	 * @throws Main\ArgumentOutOfRangeException
 	 */
 	public function fullTextIndexEnabled($field)
 	{
-		$table = $this->getDBTableName();
-		$optionString = Main\Config\Option::get("main", "~ft_".$table);
-		if($optionString <> '')
-		{
-			$field = StringHelper::strtoupper($field);
-			$options = unserialize($optionString);
-			if(isset($options[$field]) && $options[$field] === true)
-			{
-				return true;
-			}
-		}
-		return false;
+		return true;
 	}
 }

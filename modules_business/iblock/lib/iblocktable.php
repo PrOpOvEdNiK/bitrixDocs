@@ -10,6 +10,7 @@ use Bitrix\Main\Entity;
 use Bitrix\Main\Localization\Loc;
 use Bitrix\Main\ORM\Data\DataManager;
 use Bitrix\Main\ORM\Fields\Relations\CascadePolicy;
+use Bitrix\Main\ORM\Fields\Relations\ManyToMany;
 use Bitrix\Main\ORM\Fields\Relations\OneToMany;
 use Bitrix\Main\ORM\Fields\Relations\Reference;
 use Bitrix\Main\ORM\Fields\StringField;
@@ -320,7 +321,7 @@ class IblockTable extends DataManager
 		$iblockNamespace = static::DATA_CLASS_NAMESPACE;
 		$iblockDataClassName = $iblock->getEntityDataClassName();
 
-		if (!strlen($iblockDataClassName))
+		if ($iblockDataClassName == '')
 		{
 			return false;
 		}
@@ -354,6 +355,18 @@ class IblockTable extends DataManager
 		// set iblock to the entity
 		$elementEntity->setIblock($iblock);
 
+		// set relation with sections
+		SectionElementTable::getEntity()->addField(
+			(new Reference('REGULAR_ELEMENT_'.$iblock->getId(), $elementEntity,
+			Join::on('this.IBLOCK_ELEMENT_ID', 'ref.ID')->whereNull('this.ADDITIONAL_PROPERTY_ID')))
+		);
+
+		$elementEntity->addField((new ManyToMany('SECTIONS', SectionTable::class))
+			->configureMediatorEntity(SectionElementTable::class)
+			->configureLocalReference('REGULAR_ELEMENT_'.$iblock->getId())
+			->configureRemoteReference('IBLOCK_SECTION')
+		);
+
 		//$baseTypeList = \Bitrix\Iblock\Helpers\Admin\Property::getBaseTypeList(true);
 		$userTypeList = CIBlockProperty::GetUserType();
 
@@ -366,7 +379,7 @@ class IblockTable extends DataManager
 			}
 
 			// build property entity with base fields
-			$propertyValueEntity = $property->getValueEntity();
+			$propertyValueEntity = $property->getValueEntity($elementEntity);
 
 			// add custom fields
 			if (!empty($property->getUserType()) && !empty($userTypeList[$property->getUserType()]['GetORMFields']))

@@ -578,14 +578,14 @@ class Field
 	 * @param bool $lightweight
 	 * @return array
 	 */
-	public static function destSelector($name, $label = "", $placeholder = "", $multiple = false, $params = array(), $lightweight = false)
+	public static function destSelector($name, $label = "", $placeholder = "", $multiple = false, $params = array(), $lightweight = false, $filterName = '')
 	{
 		\CJSCore::init(array('socnetlogdest'));
 
 		global $APPLICATION;
 
 		$field = array(
-			"ID" => "field_".$name,
+			"ID" => "field_".$name.($filterName <> '' ? '_'.$filterName : ''),
 			"TYPE" => Type::DEST_SELECTOR,
 			"NAME" => $name,
 			"LABEL" => $label,
@@ -656,7 +656,8 @@ class Field
 						'unSelect' => '',
 						'openDialog' => 'BX.Filter.DestinationSelectorManager.onDialogOpen',
 						'closeDialog' => 'BX.Filter.DestinationSelectorManager.onDialogClose',
-						'openSearch' => ''
+						'openSearch' => '',
+						'closeSearch' => 'BX.Filter.DestinationSelectorManager.onDialogClose',
 					),
 					'OPTIONS' => $optionsList,
 					'LOAD_JS' => true
