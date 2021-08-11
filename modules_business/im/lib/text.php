@@ -26,8 +26,9 @@ class Text
 			"IMG" => "N",
 			"QUOTE" => "N",
 			"CODE" => "N",
-			"FONT" => "N",
+			"FONT" => $params["FONT"] === "Y" ? "Y": "N",
 			"LIST" => "N",
+			"SPOILER" => "N",
 			"SMILES" => $params['SMILES'] == 'N'? 'N': 'Y',
 			"EMOJI" => "Y",
 			"NL2BR" => "Y",
@@ -50,6 +51,10 @@ class Text
 			$parser->maxAnchorLength = intval($params['LINK_LIMIT'])? $params['LINK_LIMIT']: 55;
 			$parser->maxStringLen = intval($params['TEXT_LIMIT']);
 			$parser->allow = $allowTags;
+			if ($params['LINK_TARGET_SELF'] === 'Y')
+			{
+				$parser->link_target = "_self";
+			}
 
 			self::$parsers[$parseId] = $parser;
 		}
@@ -58,6 +63,7 @@ class Text
 		$text = preg_replace_callback("/\[PUT(?:=(.+?))?\](.+?)?\[\/PUT\]/i", Array('\Bitrix\Im\Text', 'setReplacement'), $text);
 		$text = preg_replace_callback("/\[SEND(?:=(.+?))?\](.+?)?\[\/SEND\]/i", Array('\Bitrix\Im\Text', 'setReplacement'), $text);
 		$text = preg_replace_callback("/\[CODE\](.*?)\[\/CODE\]/si", Array('\Bitrix\Im\Text', 'setReplacement'), $text);
+		$text = preg_replace_callback("/\[USER=([0-9]{1,})\]\[\/USER\]/i", Array('\Bitrix\Im\Text', 'modifyShortUserTag'), $text);
 
 		if (isset($params['CUT_STRIKE']) && $params['CUT_STRIKE'] == 'Y')
 		{
@@ -79,7 +85,7 @@ class Text
 	 */
 	public static function getDateConverterParams($text)
 	{
-		if (strlen($text) <= 0)
+		if ($text == '')
 			return Array();
 
 		$text = preg_replace_callback("/\[PUT(?:=(.+?))?\](.+?)?\[\/PUT\]/i", Array('\Bitrix\Im\Text', 'setReplacement'), $text);
@@ -139,6 +145,13 @@ class Text
 		return $text;
 	}
 
+	public static function modifyShortUserTag($matches)
+	{
+		$userId = $matches[1];
+		$userName = \Bitrix\Im\User::getInstance($userId)->getFullName(false);
+		return '[USER='.$userId.']'.$userName.'[/USER]';
+	}
+
 	public static function removeBbCodes($text, $withFile = false, $withAttach = false)
 	{
 		$text = preg_replace("/\[[buis]\](.*?)\[\/[buis]\]/i", "$1", $text);
@@ -146,6 +159,7 @@ class Text
 		$text = preg_replace("/\[url\\s*=\\s*((?:[^\\[\\]]++|\\[ (?: (?>[^\\[\\]]+) | (?:\\1) )* \\])+)\\s*\\](.*?)\\[\\/url\\]/ixs".BX_UTF_PCRE_MODIFIER, "$2", $text);
 		$text = preg_replace("/\[RATING=([1-5]{1})\]/i", " [".Loc::getMessage('IM_MESSAGE_RATING')."] ", $text);
 		$text = preg_replace("/\[ATTACH=([0-9]{1,})\]/i", " [".Loc::getMessage('IM_MESSAGE_ATTACH')."] ", $text);
+		$text = preg_replace_callback("/\[USER=([0-9]{1,})\]\[\/USER\]/i", Array('\Bitrix\Im\Text', 'modifyShortUserTag'), $text);
 		$text = preg_replace("/\[USER=([0-9]{1,})\](.*?)\[\/USER\]/i", "$2", $text);
 		$text = preg_replace("/\[CHAT=([0-9]{1,})\](.*?)\[\/CHAT\]/i", "$2", $text);
 		$text = preg_replace("/\[SEND(?:=(.+?))?\](.+?)?\[\/SEND\]/i", "$2", $text);
@@ -170,7 +184,7 @@ class Text
 			$text = trim($text);
 		}
 
-		if (strlen($text) <= 0)
+		if ($text == '')
 		{
 			$text = Loc::getMessage('IM_MESSAGE_DELETE');
 		}

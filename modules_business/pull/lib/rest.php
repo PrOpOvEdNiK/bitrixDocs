@@ -170,7 +170,11 @@ class Rest extends \IRestService
 				$params['USER_ID'] = \CUtil::JsObjectToPhp($params['USER_ID']);
 			}
 
-			if (is_array($params['USER_ID']))
+			if (!isset($params['USER_ID']))
+			{
+				$users = [Event::SHARED_CHANNEL];
+			}
+			else if (is_array($params['USER_ID']))
 			{
 				foreach ($params['USER_ID'] as $userId)
 				{
@@ -202,7 +206,7 @@ class Rest extends \IRestService
 			}
 			else
 			{
-				$users = Event::SHARED_CHANNEL;
+				$users = [Event::SHARED_CHANNEL];
 			}
 		}
 
@@ -290,7 +294,7 @@ class Rest extends \IRestService
 			$users = (int)$params['USER_ID'];
 		}
 
-		if (!$params['TEXT'] || strlen($params['TEXT']) <= 0)
+		if (!$params['TEXT'] || $params['TEXT'] == '')
 		{
 			throw new \Bitrix\Rest\RestException("Text can't be empty", "TEXT_ERROR", \CRestServer::STATUS_WRONG_REQUEST);
 		}

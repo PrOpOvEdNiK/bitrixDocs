@@ -13,6 +13,8 @@ use Bitrix\Main\Authentication\ApplicationPasswordTable;
 use Bitrix\Main\Context;
 use Bitrix\Main\Type\DateTime;
 use Bitrix\Main\UserTable;
+use Bitrix\Rest\Engine\Access;
+use Bitrix\Rest\Engine\Access\HoldEntity;
 
 class Auth
 {
@@ -39,6 +41,7 @@ class Auth
 
 		if(count($auth) === count(static::$authQueryParams))
 		{
+
 			if(!defined('REST_APAUTH_ALLOW_HTTP') && !Context::getCurrent()->getRequest()->isHttps())
 			{
 				$res = array('error' => 'INVALID_REQUEST', 'error_description' => 'Https required.');
@@ -50,6 +53,33 @@ class Auth
 			if(is_array($tokenInfo))
 			{
 				$error = array_key_exists('error', $tokenInfo);
+
+				if (!$error && HoldEntity::is(HoldEntity::TYPE_WEBHOOK, $auth[static::$authQueryParams['PASSWORD']]))
+				{
+					$tokenInfo = [
+						'error' => 'OVERLOAD_LIMIT',
+						'error_description' => 'REST API is blocked due to overload.'
+					];
+					$error = true;
+				}
+
+				if (
+					!$error
+					&& (
+						!Access::isAvailable()
+						|| (
+							Access::needCheckCount()
+							&& !Access::isAvailableCount(Access::ENTITY_TYPE_WEBHOOK, $tokenInfo['password_id'])
+						)
+					)
+				)
+				{
+					$tokenInfo = [
+						'error' => 'ACCESS_DENIED',
+						'error_description' => 'REST is available only on commercial plans.'
+					];
+					$error = true;
+				}
 
 				if(!$error && $tokenInfo['user_id'] > 0)
 				{
@@ -206,7 +236,9 @@ class Auth
 			return true;
 		}
 
-		return in_array($scope, static::getPasswordScope($passwordId));
+		$scopeList = static::getPasswordScope($passwordId);
+		$scopeList = \Bitrix\Rest\Engine\RestManager::fillAlternativeScope($scope, $scopeList);
+		return in_array($scope, $scopeList);
 	}
 
 	protected static function getPasswordScope($passwordId)

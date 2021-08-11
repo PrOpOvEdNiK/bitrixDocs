@@ -102,7 +102,7 @@ class CControllerClient
 			if(!$ar_mem)
 				return false;
 
-			$arGroupsMap = unserialize(COption::GetOptionString("controller", "auth_controller", serialize(array())));
+			$arGroupsMap = unserialize(COption::GetOptionString("controller", "auth_controller", serialize(array())), ['allowed_classes' => false]);
 			$res = CControllerMember::CheckUserAuth($ar_mem["ID"], $login, $password, $arGroupsMap);
 
 			if(!is_array($res))
@@ -200,7 +200,7 @@ class CControllerClient
 			$arFields["PERSONAL_BIRTHDAY"] = $DB->FormatDate($arFields["PERSONAL_BIRTHDAY"], $FORMAT_DATE, FORMAT_DATE);
 		}
 
-		$dbr_user = CUser::GetList($O = '', $B = '', array(
+		$dbr_user = CUser::GetList('', '', array(
 			"LOGIN_EQUAL_EXACT" => $arFields["LOGIN"],
 			"EXTERNAL_AUTH_ID" => "__controller",
 		));
@@ -556,7 +556,7 @@ class CControllerClient
 	{
 		static $arCachedData;
 		if(!isset($arCachedData) || $bRefresh)
-			$arCachedData = unserialize(COption::GetOptionString("main", "~controller_backup", ""));
+			$arCachedData = unserialize(COption::GetOptionString("main", "~controller_backup", ""), ['allowed_classes' => false]);
 
 		return $arCachedData;
 	}
@@ -939,7 +939,7 @@ class __CControllerPacket
 	{
 		if (CheckSerializedData($parameters))
 		{
-			$arParameters = unserialize($parameters);
+			$arParameters = unserialize($parameters, ['allowed_classes' => false]);
 			if ($encoding)
 			{
 				if (array_key_exists("file", $arParameters))

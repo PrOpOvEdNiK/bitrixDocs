@@ -20,7 +20,6 @@ class BasketBuilderNew implements IBasketBuilderDelegate
 
 		$basket = $basketClass::create($this->builder->getOrder()->getSiteId());
 		$res = $this->builder->getOrder()->setBasket($basket);
-
 		if(!$res->isSuccess())
 		{
 			$this->builder->getErrorsContainer()->addErrors($res->getErrors());
@@ -38,7 +37,14 @@ class BasketBuilderNew implements IBasketBuilderDelegate
 
 	public function getItemFromBasket($basketCode, $productData)
 	{
-		$item = $this->builder->getBasket()->getExistsItem($productData["MODULE"], $productData["OFFER_ID"], $productData["PROPS"]);
+		if(empty($productData['MANUALLY_EDITED']))
+		{
+			$item = $this->builder->getBasket()->getExistsItem($productData["MODULE"], $productData["OFFER_ID"], $productData["PROPS"]);
+		}
+		else
+		{
+			$item = $this->builder->getBasket()->getItemByBasketCode($basketCode);
+		}
 
 		if($item == null && $basketCode != BasketBuilder::BASKET_CODE_NEW)
 		{
@@ -58,7 +64,7 @@ class BasketBuilderNew implements IBasketBuilderDelegate
 		//Let's extract cached provider product data from field
 		if(!empty($productData["PROVIDER_DATA"]) && CheckSerializedData($productData["PROVIDER_DATA"]))
 		{
-			if($providerData = unserialize($productData["PROVIDER_DATA"]))
+			if($providerData = unserialize($productData["PROVIDER_DATA"], ['allowed_classes' => false]))
 			{
 				$this->builder->sendProductCachedDataToProvider($item, $this->builder->getOrder(), $providerData);
 			}
@@ -66,7 +72,7 @@ class BasketBuilderNew implements IBasketBuilderDelegate
 
 		if(!empty($productData["SET_ITEMS_DATA"]) && CheckSerializedData($productData["SET_ITEMS_DATA"]))
 		{
-			$productData["SET_ITEMS"] = unserialize($productData["SET_ITEMS_DATA"]);
+			$productData["SET_ITEMS"] = unserialize($productData["SET_ITEMS_DATA"], ['allowed_classes' => false]);
 		}
 
 		$res = $item->setField("QUANTITY", $item->getField("QUANTITY")+$productData["QUANTITY"]);

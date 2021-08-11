@@ -68,6 +68,9 @@ use Bitrix\Main\Text\StringHelper;
  * @method $this whereNotMatch($column, $value)
  * @see Filter::whereNotMatch()
  *
+ * @method $this whereExpr($expr, $arguments)
+ * @see Filter::whereExpr()
+ *
  * Virtual HAVING methods (proxy to Filter):
  *
  * @method $this having(...$filter)
@@ -782,7 +785,7 @@ class Query
 						'Private field %s.%s is restricted in query, use Query::enablePrivateFields() to allow it',
 						$columnField->getEntity()->getDataClass(),
 						$columnField->getName()
-					));
+					), E_USER_WARNING);
 				}
 			}
 		}
@@ -1154,6 +1157,12 @@ class Query
 						&& fnmatch($localDefinition, $field->getName())
 					)
 					{
+						// skip private fields
+						if ($field instanceof ScalarField && $field->isPrivate())
+						{
+							continue;
+						}
+
 						// skip uf utm single
 						if (
 							substr($field->getName(), 0, 3) == 'UF_' && substr($field->getName(), -7) == '_SINGLE'
@@ -1255,6 +1264,12 @@ class Query
 					// except for references and expressions
 					if ($exp_field instanceof ScalarField)
 					{
+						// skip private fields
+						if ($exp_field->isPrivate())
+						{
+							continue;
+						}
+
 						$exp_chain = clone $chain;
 						$exp_chain->addElement(new ChainElement(
 							$exp_field
@@ -1494,7 +1509,8 @@ class Query
 					}
 
 					// check for base linking
-					if ($dstField instanceof TextField && $dstEntity->hasField($dstField->getName().'_SINGLE'))
+					if (($dstField instanceof TextField || $dstField instanceof ArrayField)
+						&& $dstEntity->hasField($dstField->getName().'_SINGLE'))
 					{
 						$utmLinkField = $dstEntity->getField($dstField->getName().'_SINGLE');
 
@@ -1837,7 +1853,7 @@ class Query
 
 					// register primary's chain
 					$idChain = $this->getRegisteredChain($primaryName);
-					$this->registerChain($section, $idChain);
+					$this->registerChain($section, $idChain, $primaryName);
 				}
 			}
 		}
@@ -3416,6 +3432,7 @@ class Query
 		if (!isset($this->{$storage_name}[$alias]))
 		{
 			$this->{$storage_name}[$alias] = $reg_chain;
+			// should we store by definition too?
 		}
 
 		if (!is_null($opt_key))

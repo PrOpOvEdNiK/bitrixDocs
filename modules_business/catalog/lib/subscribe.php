@@ -35,7 +35,20 @@ Loc::loadMessages(__FILE__);
  *
  * @package Bitrix\Catalog
  *
- **/
+ *
+ * DO NOT WRITE ANYTHING BELOW THIS
+ *
+ * <<< ORMENTITYANNOTATION
+ * @method static EO_Subscribe_Query query()
+ * @method static EO_Subscribe_Result getByPrimary($primary, array $parameters = array())
+ * @method static EO_Subscribe_Result getById($id)
+ * @method static EO_Subscribe_Result getList(array $parameters = array())
+ * @method static EO_Subscribe_Entity getEntity()
+ * @method static \Bitrix\Catalog\EO_Subscribe createObject($setDefaultValues = true)
+ * @method static \Bitrix\Catalog\EO_Subscribe_Collection createCollection()
+ * @method static \Bitrix\Catalog\EO_Subscribe wakeUpObject($row)
+ * @method static \Bitrix\Catalog\EO_Subscribe_Collection wakeUpCollection($rows)
+ */
 class SubscribeTable extends Entity\DataManager
 {
 	const EVENT_ADD_CONTACT_TYPE = 'onAddContactType';
@@ -217,7 +230,7 @@ class SubscribeTable extends Entity\DataManager
 			if(!$userId || empty($listProductId))
 				return;
 
-			$user = \CUser::getList($by = 'ID', $order = 'ASC',
+			$user = \CUser::getList('ID', 'ASC',
 				array('ID' => $userId) , array('FIELDS' => array('EMAIL'))
 			)->fetch();
 			if($user['EMAIL'])
@@ -588,8 +601,8 @@ class SubscribeTable extends Entity\DataManager
 		/* Compatibility with the sale subscribe option */
 		$notifyOption = Option::get('sale', 'subscribe_prod');
 		$notify = array();
-		if(strlen($notifyOption) > 0)
-			$notify = unserialize($notifyOption);
+		if($notifyOption <> '')
+			$notify = unserialize($notifyOption, ['allowed_classes' => false]);
 		if(is_array($notify))
 		{
 			$listSiteId = array();
@@ -655,7 +668,7 @@ class SubscribeTable extends Entity\DataManager
 		foreach($listSubscribe as $key => $subscribeData)
 		{
 			$pageUrl = self::getPageUrl($subscribeData, $detailPageUrlGroupByItemId);
-			if (!strlen($pageUrl))
+			if ($pageUrl == '')
 			{
 				continue;
 			}
@@ -735,7 +748,7 @@ class SubscribeTable extends Entity\DataManager
 
 		if ($protocol = Option::get('main', 'mail_link_protocol'))
 		{
-			if (strrpos($protocol, '://') === false)
+			if (mb_strrpos($protocol, '://') === false)
 				$protocol .= '://';
 		}
 		else

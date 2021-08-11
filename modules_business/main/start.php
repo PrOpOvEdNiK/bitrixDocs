@@ -6,26 +6,19 @@
  * @copyright 2001-2013 Bitrix
  */
 
-use Bitrix\Main\Loader;
-
 error_reporting(E_COMPILE_ERROR|E_ERROR|E_CORE_ERROR|E_PARSE);
 
-require_once(mb_substr(__FILE__, 0, mb_strlen(__FILE__) - mb_strlen("/start.php"))."/bx_root.php");
-
-require_once($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/lib/loader.php");
+require_once(__DIR__."/bx_root.php");
+require_once(__DIR__."/lib/loader.php");
 require_once(__DIR__.'/include/autoload.php');
 
-function getmicrotime()
-{
-	list($usec, $sec) = explode(" ", microtime());
-	return ((float)$usec + (float)$sec);
-}
-
-define("START_EXEC_TIME", getmicrotime());
+define("START_EXEC_TIME", microtime(true));
 define("B_PROLOG_INCLUDED", true);
 
-require_once($_SERVER["DOCUMENT_ROOT"].BX_ROOT."/modules/main/classes/general/version.php");
-require_once($_SERVER["DOCUMENT_ROOT"].BX_ROOT."/modules/main/tools.php");
+require_once(__DIR__."/classes/general/version.php");
+
+// global functions
+require_once(__DIR__."/tools.php");
 
 //TODO remove this
 if(@ini_get_bool("register_long_arrays") != true)
@@ -46,8 +39,15 @@ $application->initializeBasicKernel();
 //Defined in dbconn.php
 global $DBType, $DBDebug, $DBDebugToFile, $DBHost, $DBName, $DBLogin, $DBPassword;
 
-//read database connection parameters
+//read various parameters
 require_once($_SERVER["DOCUMENT_ROOT"].BX_PERSONAL_ROOT."/php_interface/dbconn.php");
+
+// not used anymore
+$DBType = "mysql";
+$DBHost = "";
+$DBLogin = "";
+$DBPassword = "";
+$DBName = "";
 
 if(defined('BX_UTF'))
 {
@@ -81,22 +81,22 @@ if(!defined("CACHED_b_group_subordinate")) define("CACHED_b_group_subordinate", 
 if(!defined("CACHED_b_smile")) define("CACHED_b_smile", 31536000);
 if(!defined("TAGGED_user_card_size")) define("TAGGED_user_card_size", 100);
 
-//connect to database, from here global variable $DB is available (CDatabase class)
-require_once($_SERVER["DOCUMENT_ROOT"].BX_ROOT."/modules/main/classes/".$DBType."/database.php");
+// From here global variable $DB is available (CDatabase class)
+require_once(__DIR__."/classes/mysql/database.php");
 
 $GLOBALS["DB"] = new CDatabase;
 $GLOBALS["DB"]->debug = $DBDebug;
 if ($DBDebugToFile)
 {
 	$GLOBALS["DB"]->DebugToFile = true;
-	$application->getConnection()->startTracker()->startFileLog($_SERVER["DOCUMENT_ROOT"]."/".$DBType."_debug.sql");
+	$application->getConnection()->startTracker()->startFileLog($_SERVER["DOCUMENT_ROOT"]."/mysql_debug.sql");
 }
 
 //magic parameters: show sql queries statistics
 $show_sql_stat = "";
 if(array_key_exists("show_sql_stat", $_GET))
 {
-	$show_sql_stat = (mb_strtoupper($_GET["show_sql_stat"]) == "Y"? "Y":"");
+	$show_sql_stat = (strtoupper($_GET["show_sql_stat"]) == "Y"? "Y":"");
 	setcookie("show_sql_stat", $show_sql_stat, false, "/");
 }
 elseif(array_key_exists("show_sql_stat", $_COOKIE))
@@ -110,12 +110,6 @@ if ($show_sql_stat == "Y")
 	$application->getConnection()->startTracker();
 }
 
-if(!($GLOBALS["DB"]->Connect($DBHost, $DBName, $DBLogin, $DBPassword)))
-{
-	CDatabase::showConnectionError();
-	die();
-}
-
 //licence key
 $LICENSE_KEY = "";
 if(file_exists(($_fname = $_SERVER["DOCUMENT_ROOT"].BX_ROOT."/license_key.php")))
@@ -126,17 +120,13 @@ else
 	define("LICENSE_KEY", $LICENSE_KEY);
 
 //language independed classes
-require_once($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/classes/general/punycode.php");
-require_once($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/classes/general/charset_converter.php");
-require_once($_SERVER["DOCUMENT_ROOT"].BX_ROOT."/modules/main/classes/".$DBType."/main.php");	//main class
-require_once($_SERVER["DOCUMENT_ROOT"].BX_ROOT."/modules/main/classes/".$DBType."/option.php");	//options and settings class
-require_once($_SERVER["DOCUMENT_ROOT"].BX_ROOT."/modules/main/classes/general/cache.php");	//various cache classes
-require_once($_SERVER["DOCUMENT_ROOT"].BX_ROOT."/modules/main/classes/general/module.php");
-require_once($_SERVER["DOCUMENT_ROOT"].BX_ROOT."/modules/main/classes/".$DBType."/sqlwhere.php");
+require_once(__DIR__."/classes/mysql/main.php");	//main class
+require_once(__DIR__."/classes/general/cache.php");	//various cache classes
+require_once(__DIR__."/classes/general/module.php");
 
 error_reporting(E_COMPILE_ERROR|E_ERROR|E_CORE_ERROR|E_PARSE);
 
-if (file_exists(($fname = $_SERVER["DOCUMENT_ROOT"].BX_ROOT."/modules/main/classes/general/update_db_updater.php")))
+if (file_exists(($fname = __DIR__."/classes/general/update_db_updater.php")))
 {
 	$US_HOST_PROCESS_MAIN = True;
 	include($fname);

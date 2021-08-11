@@ -5,6 +5,7 @@ namespace Bitrix\Rest\APAuth;
 use Bitrix\Main;
 use Bitrix\Main\Localization\Loc;
 use Bitrix\Main\Security\Random;
+use Bitrix\Rest\Preset\EventController;
 
 Loc::loadMessages(__FILE__);
 
@@ -25,7 +26,20 @@ Loc::loadMessages(__FILE__);
  * </ul>
  *
  * @package Bitrix\Rest
- **/
+ *
+ * DO NOT WRITE ANYTHING BELOW THIS
+ *
+ * <<< ORMENTITYANNOTATION
+ * @method static EO_Password_Query query()
+ * @method static EO_Password_Result getByPrimary($primary, array $parameters = array())
+ * @method static EO_Password_Result getById($id)
+ * @method static EO_Password_Result getList(array $parameters = array())
+ * @method static EO_Password_Entity getEntity()
+ * @method static \Bitrix\Rest\APAuth\EO_Password createObject($setDefaultValues = true)
+ * @method static \Bitrix\Rest\APAuth\EO_Password_Collection createCollection()
+ * @method static \Bitrix\Rest\APAuth\EO_Password wakeUpObject($row)
+ * @method static \Bitrix\Rest\APAuth\EO_Password_Collection wakeUpCollection($rows)
+ */
 class PasswordTable extends Main\Entity\DataManager
 {
 	const ACTIVE = 'Y';
@@ -125,18 +139,24 @@ class PasswordTable extends Main\Entity\DataManager
 				));
 			}
 
+			$passwordData['ID'] = $res->getId();
 			if(!$returnArray)
 			{
 				$return = $password;
 			}
 			else
 			{
-				$passwordData['ID'] = $res->getId();
 				$return = $passwordData;
 			}
+
 			return $return;
 		}
 
 		return false;
+	}
+
+	public static function onAfterAdd(Main\Entity\Event $event)
+	{
+		EventController::onAfterAddAp($event);
 	}
 }

@@ -11,7 +11,6 @@ use Bitrix\Main\Config\Configuration;
 use Bitrix\Main\Data;
 use Bitrix\Main\DI\ServiceLocator;
 use Bitrix\Main\Diag;
-use Bitrix\Main\IO;
 use Bitrix\Main\Routing\Route;
 use Bitrix\Main\Routing\Router;
 use Bitrix\Main\Session\CompositeSessionManager;
@@ -242,9 +241,11 @@ abstract class Application
 
 			//it's possible to have open buffers
 			$content = '';
-			while(($c = ob_get_clean()) !== false)
+			$n = ob_get_level();
+			while(($c = ob_get_clean()) !== false && $n > 0)
 			{
 				$content .= $c;
+				$n--;
 			}
 
 			if($content <> '')
@@ -280,24 +281,23 @@ abstract class Application
 	 */
 	public function terminate($status = 0)
 	{
-		global $DB;
-
 		//old kernel staff
 		\CMain::RunFinalActionsInternal();
 
 		//Release session
 		session_write_close();
 
-		$this->getConnectionPool()->useMasterOnly(true);
+		$pool = $this->getConnectionPool();
+
+		$pool->useMasterOnly(true);
 
 		$this->runBackgroundJobs();
 
-		$this->getConnectionPool()->useMasterOnly(false);
+		$pool->useMasterOnly(false);
 
 		Data\ManagedCache::finalize();
 
-		//todo: migrate to the d7 connection
-		$DB->Disconnect();
+		$pool->disconnect();
 
 		exit($status);
 	}

@@ -206,7 +206,7 @@ class RestClient
 		{
 			$jsonResult = Json::decode($postResult);
 		}
-		catch(Exception $e)
+		catch(\Exception $e)
 		{
 			$result->addError(new Error($e->getMessage()));
 			return $result;
@@ -258,7 +258,7 @@ class RestClient
 
 		if($accessSettings != '')
 		{
-			$accessSettings =  unserialize($accessSettings);
+			$accessSettings =  unserialize($accessSettings, ['allowed_classes' => false]);
 
 			if($accessSettings)
 				return $accessSettings;
@@ -322,8 +322,8 @@ class RestClient
 	{
 		$result = Option::get('sale', static::UNSUCCESSFUL_CALL_OPTION, "");
 
-		if(strlen($result) > 0)
-			$result = unserialize($result);
+		if($result <> '')
+			$result = unserialize($result, ['allowed_classes' => false]);
 
 		return is_array($result) ? $result : array();
 	}

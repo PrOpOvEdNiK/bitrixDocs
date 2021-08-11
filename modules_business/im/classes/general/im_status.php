@@ -15,12 +15,21 @@ class CIMStatus
 
 	public static function Set($userId, $params)
 	{
+		global $CACHE_MANAGER;
+
 		$userId = intval($userId);
 		if ($userId <= 0)
 			return false;
 
 		if (isset($params['STATUS']))
+		{
 			$params['IDLE'] = null;
+		}
+
+		if (isset($params['STATUS']) || isset($params['COLOR']))
+		{
+			$CACHE_MANAGER->ClearByTag("USER_NAME_".$userId);
+		}
 
 		$previousStatus = Array(
 			'USER_ID' => $userId,
@@ -332,7 +341,7 @@ class CIMStatus
 			while ($user = $orm->fetch())
 			{
 				$color = null;
-				if (isset($user['COLOR']) && strlen($user['COLOR']) > 0)
+				if (isset($user['COLOR']) && $user['COLOR'] <> '')
 				{
 					$color = IM\Color::getColor($user['COLOR']);
 				}
@@ -348,9 +357,10 @@ class CIMStatus
 					'id' => $user["ID"],
 					'status' => in_array($user['STATUS'], self::$AVAILABLE_STATUSES)? $user['STATUS']: 'online',
 					'color' => $color,
-					'idle' => $user['IDLE'],
-					'last_activity_date' => $user['LAST_ACTIVITY_DATE'],
-					'mobile_last_date' => $user['MOBILE_LAST_DATE'],
+					'idle' => $user['IDLE']?: false,
+					'last_activity_date' => $user['LAST_ACTIVITY_DATE']?: false,
+					'mobile_last_date' => $user['MOBILE_LAST_DATE']?: false,
+					'absent' => \CIMContactList::formatAbsentResult($user["ID"]),
 				);
 
 				self::$CACHE_USERS[$user["ID"]] = $users[$user["ID"]];
@@ -455,7 +465,7 @@ class CIMStatus
 		if (in_array($status['EXTERNAL_AUTH_ID'], $externalUser))
 		{
 			$result['STATUS'] = 'online';
-			$result['STATUS_TEXT'] = GetMessage('IM_STATUS_EAID_'.strtoupper($status['EXTERNAL_AUTH_ID']));
+			$result['STATUS_TEXT'] = GetMessage('IM_STATUS_EAID_'.mb_strtoupper($status['EXTERNAL_AUTH_ID']));
 			$result['LAST_SEEN_TEXT'] = '';
 
 			return $result;
@@ -488,7 +498,7 @@ class CIMStatus
 		else if (in_array($status['STATUS'], Array('dnd', 'away')))
 		{
 			$result['STATUS'] = $status['STATUS'];
-			$result['STATUS_TEXT'] = GetMessage('IM_STATUS_'.strtoupper($status['STATUS']));
+			$result['STATUS_TEXT'] = GetMessage('IM_STATUS_'.mb_strtoupper($status['STATUS']));
 		}
 
 		/** @var \Bitrix\Main\Type\DateTime $idleDate */

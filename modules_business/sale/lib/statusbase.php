@@ -240,7 +240,7 @@ abstract class StatusBase
 
 		foreach ($names as $name)
 		{
-			$operations[] = 'sale_status_'.strtolower($name);
+			$operations[] = 'sale_status_'.mb_strtolower($name);
 		}
 
 		return $operations;
@@ -340,7 +340,7 @@ abstract class StatusBase
 		if (!is_array($groupId))
 			$groupId = array($groupId);
 
-		$cacheHash = md5(static::TYPE."|".join($groupId, '_')."|".join($operations, '_'));
+		$cacheHash = md5(static::TYPE."|".join('_', $groupId)."|".join('_', $operations));
 
 		if (!empty($cacheStatuses[$cacheHash]))
 		{

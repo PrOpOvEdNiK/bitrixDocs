@@ -135,7 +135,7 @@ HTML
 				<span class="container-doc-title" id="#id#Name">#name#</span>
 			</div>
 			<div class="adm-fileinput-item-preview-img" id="#id#Canvas"></div>
-			<input style="display: none;" type="hidden" id="#id#Value" readonly="readonly" name="#input_name#" value="#id#" />
+			<input style="display: none;" type="hidden" id="#id#Value" readonly="readonly" name="#input_name#" value="#input_value#" />
 		</div>
 		#description#
 		<div class="adm-fileinput-item-panel">
@@ -469,7 +469,7 @@ HTML;
 			$name = ($ar['ORIGINAL_NAME'] <> ''?$ar['ORIGINAL_NAME']:$ar['FILE_NAME']);
 			$result = array(
 				'fileId' => $fileId,
-				'id' => $fileId,
+				'id' => $this->id.'_'.$fileId,
 				'name' => $name,
 				'description_name' => self::getInputName($inputName, "_descr"),
 				'description' => str_replace('"', "&quot;", $ar['DESCRIPTION']),
@@ -509,7 +509,6 @@ HTML;
 			if (is_array($file) && ($paths = Uploader::getPaths($file["tmp_name"])) &&
 				($flTmp = \CBXVirtualIo::GetInstance()->GetFile($paths["tmp_name"])) && $flTmp->IsExists())
 			{
-				$ar = \CFile::GetImageSize($paths["tmp_name"]);
 				$name = is_string($file["name"]) && $file["name"] <> '' ? $file["name"] : $flTmp->getName();
 				$result = array(
 					'id' => md5($file["tmp_name"]),
@@ -524,14 +523,16 @@ HTML;
 					'ext' => GetFileExtension($name),
 					'real_url' => $paths["tmp_url"]
 				);
-				if (is_array($ar))
+
+				$info = (new \Bitrix\Main\File\Image($paths["tmp_name"]))->getInfo();
+				if ($info)
 				{
 					$result['entity'] = "image";
 					$result['tmp_url'] = $paths["tmp_url"];
-					if (isset($ar["mime"]))
-						$result['type'] = $ar["mime"];
-					$result['width'] = $ar[0];
-					$result['height'] = $ar[1];
+					if (($mime = $info->getMime()) <> '')
+						$result['type'] = $mime;
+					$result['width'] = $info->getWidth();
+					$result['height'] = $info->getHeight();
 				}
 			}
 		}

@@ -17,7 +17,20 @@ Loc::loadMessages(__FILE__);
  * </ul>
  *
  * @package Bitrix\Im
- **/
+ *
+ * DO NOT WRITE ANYTHING BELOW THIS
+ *
+ * <<< ORMENTITYANNOTATION
+ * @method static EO_Recent_Query query()
+ * @method static EO_Recent_Result getByPrimary($primary, array $parameters = array())
+ * @method static EO_Recent_Result getById($id)
+ * @method static EO_Recent_Result getList(array $parameters = array())
+ * @method static EO_Recent_Entity getEntity()
+ * @method static \Bitrix\Im\Model\EO_Recent createObject($setDefaultValues = true)
+ * @method static \Bitrix\Im\Model\EO_Recent_Collection createCollection()
+ * @method static \Bitrix\Im\Model\EO_Recent wakeUpObject($row)
+ * @method static \Bitrix\Im\Model\EO_Recent_Collection wakeUpCollection($rows)
+ */
 
 class RecentTable extends Main\Entity\DataManager
 {
@@ -57,16 +70,16 @@ class RecentTable extends Main\Entity\DataManager
 			),
 			'ITEM_MID' => array(
 				'data_type' => 'integer',
-				'required' => true,
+				'default_value' => 0,
 				'title' => Loc::getMessage('RECENT_ENTITY_ITEM_MID_FIELD'),
 			),
 			'ITEM_CID' => array(
 				'data_type' => 'integer',
-				'required' => true,
+				'default_value' => 0,
 			),
 			'ITEM_RID' => array(
 				'data_type' => 'integer',
-				'required' => true,
+				'default_value' => 0,
 			),
 			'ITEM_OLID' => array(
 				'data_type' => 'integer',
@@ -76,6 +89,16 @@ class RecentTable extends Main\Entity\DataManager
 				'data_type' => 'boolean',
 				'values' => array('N', 'Y'),
 				'default_value' => 'N',
+			),
+			'UNREAD' => array(
+				'data_type' => 'boolean',
+				'values' => array('N', 'Y'),
+				'default_value' => 'N',
+			),
+			'DATE_MESSAGE' => array(
+				'data_type' => 'datetime',
+				'required' => true,
+				'default_value' => array(__CLASS__, 'getCurrentDate'),
 			),
 			'DATE_UPDATE' => array(
 				'data_type' => 'datetime',
@@ -122,5 +145,3 @@ class RecentTable extends Main\Entity\DataManager
 		return new \Bitrix\Main\Type\DateTime();
 	}
 }
-
-class_alias("Bitrix\\Im\\Model\\RecentTable", "Bitrix\\Im\\RecentTable", false);

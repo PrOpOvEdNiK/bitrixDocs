@@ -109,6 +109,11 @@ class CRestProvider
 							)
 						),
 					),
+					\CRestUtil::PLACEMENTS => array(
+						\CRestUtil::PLACEMENT_APP_URI => array(
+							'max_count' => 1
+						)
+					)
 				),
 			);
 
@@ -313,7 +318,7 @@ class CRestProvider
 
 		if($arQuery['FULL'] == true)
 		{
-			$arScope = \CRestUtil::getScopeList($server->getServiceDescription());
+			$arScope = \Bitrix\Rest\Engine\ScopeManager::getInstance()->listScope();
 		}
 		else
 		{
@@ -477,9 +482,9 @@ class CRestProvider
 
 		$appOptions = Option::get("rest", "options_".$server->getClientId(), "");
 
-		if(strlen($appOptions) > 0)
+		if($appOptions <> '')
 		{
-			$appOptions = unserialize($appOptions);
+			$appOptions = unserialize($appOptions, ['allowed_classes' => false]);
 		}
 		else
 		{
@@ -529,9 +534,9 @@ class CRestProvider
 		if(\CRestUtil::isAdmin())
 		{
 			$appOptions = Option::get("rest", "options_".$server->getClientId(), "");
-			if(strlen($appOptions) > 0)
+			if($appOptions <> '')
 			{
-				$appOptions = unserialize($appOptions);
+				$appOptions = unserialize($appOptions, ['allowed_classes' => false]);
 			}
 			else
 			{

@@ -33,6 +33,7 @@ class Notify
 
 	const EVENT_ON_CHECK_PRINT_SEND_EMAIL = "SALE_CHECK_PRINT";
 	const EVENT_ON_CHECK_PRINT_ERROR_SEND_EMAIL = "SALE_CHECK_PRINT_ERROR";
+	const EVENT_ON_CHECK_VALIDATION_ERROR_SEND_EMAIL = "SALE_CHECK_VALIDATION_ERROR";
 
 	const EVENT_ON_ORDER_PAID_SEND_EMAIL = "OnOrderPaySendEmail";
 
@@ -106,8 +107,6 @@ class Notify
 			return $result;
 		}
 
-		$by = $sort = '';
-
 		$separator = "<br/>";
 
 		$eventName = static::EVENT_ORDER_NEW_SEND_EMAIL_EVENT_NAME;
@@ -126,7 +125,7 @@ class Notify
 			$filter['SITE_ID'] = SITE_ID;
 		}
 
-		$res = \CEventMessage::GetList($by, $sort, $filter);
+		$res = \CEventMessage::GetList('', '', $filter);
 		if ($eventMessage = $res->Fetch())
 		{
 			if ($eventMessage['BODY_TYPE'] == 'text')
@@ -420,12 +419,10 @@ class Notify
 
 			if($isSend)
 			{
-				$b = '';
-				$o = '';
 				$eventMessage = new \CEventMessage;
 				$eventMessageRes = $eventMessage->GetList(
-					$b,
-					$o,
+					'',
+					'',
 					array(
 						"EVENT_NAME" => $eventName,
 						"SITE_ID" => $entity->getSiteId(),
@@ -513,7 +510,7 @@ class Notify
 		{
 			$siteData = $cacheSiteData[$order->getSiteId()];
 		}
-		
+
 		$statusData = Internals\StatusTable::getList(array(
 								 'select' => array(
 									 'ID',
@@ -589,12 +586,10 @@ class Notify
 
 			if($isSend)
 			{
-				$b = '';
-				$o = '';
 				$eventMessage = new \CEventMessage;
 				$eventMessageRes = $eventMessage->GetList(
-					$b,
-					$o,
+					'',
+					'',
 					array(
 						"EVENT_NAME" => $statusEventName,
 						"SITE_ID" => $order->getSiteId(),
@@ -739,12 +734,10 @@ class Notify
 
 			if($isSend)
 			{
-				$b = '';
-				$o = '';
 				$eventMessage = new \CEventMessage;
 				$eventMessageRes = $eventMessage->GetList(
-					$b,
-					$o,
+					'',
+					'',
 					array(
 						"EVENT_NAME" => $statusEventName,
 						"SITE_ID" => $entity->getSiteId(),
@@ -1179,6 +1172,48 @@ class Notify
 	}
 
 	/**
+	 * @param Internals\Entity $order
+	 * @return Result
+	 * @throws Main\ArgumentNullException
+	 * @throws Main\ArgumentOutOfRangeException
+	 */
+	public static function sendCheckValidationError(Internals\Entity $order)
+	{
+		$result = new Result();
+
+		if (static::isNotifyDisabled())
+		{
+			return $result;
+		}
+
+		$context = Main\Context::getCurrent();
+		$server = $context->getServer();
+
+		$fields = array(
+			"ORDER_ID" => $order->getId(),
+			"ORDER_ACCOUNT_NUMBER" => $order->getField("ACCOUNT_NUMBER"),
+			"ORDER_DATE" => $order->getDateInsert()->toString(),
+			"EMAIL" => Main\Config\Option::get("main", "email_from"),
+			"SALE_EMAIL" => Main\Config\Option::get("sale", "order_email", "order@".$server->getServerName()),
+		);
+
+		if (IsModuleInstalled('crm'))
+		{
+			$fields['LINK_URL'] = 'http://'.$server->getServerName().'/shop/orders/details/'.$order->getId().'/';
+		}
+		else
+		{
+			$fields['LINK_URL'] = 'http://'.$server->getServerName().'/bitrix/admin/sale_order_view.php?ID='.$order->getId();
+		}
+
+		$eventName = static::EVENT_ON_CHECK_VALIDATION_ERROR_SEND_EMAIL;
+		$event = new \CEvent;
+		$event->Send($eventName, $order->getField('LID'), $fields, "N");
+
+		return $result;
+	}
+
+	/**
 	 * @param Order $order
 	 *
 	 * @return null|string
@@ -1555,6 +1590,7 @@ class Notify
 		if (!static::hasSentEvent($code, $event))
 		{
 			static::$sentEventList[$code][] = $event;
+
 			return true;
 		}
 
@@ -1567,14 +1603,13 @@ class Notify
 	 */
 	public static function callNotify(Internals\Entity $entity, $eventName)
 	{
-		if (($eventNotifyMap = EventActions::getEventNotifyMap()) && !empty($eventNotifyMap) && is_array($eventNotifyMap))
+		$eventNotifyMap = EventActions::getEventNotifyMap();
+
+		if (isset($eventNotifyMap[$eventName]))
 		{
-			if (array_key_exists($eventName, $eventNotifyMap) && !empty($eventNotifyMap[$eventName]) && !empty($eventNotifyMap[$eventName]['METHOD']))
+			if ($entity instanceof $eventNotifyMap[$eventName]['ENTITY'])
 			{
-				if ($entity instanceof $eventNotifyMap[$eventName]['ENTITY'])
-				{
-					call_user_func_array($eventNotifyMap[$eventName]['METHOD'], array($entity));
-				}
+				call_user_func_array($eventNotifyMap[$eventName]['METHOD'], [$entity]);
 			}
 		}
 	}

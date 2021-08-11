@@ -5,7 +5,11 @@ use Bitrix\Main;
 use Bitrix\Main\Data\Cache;
 use Bitrix\Main\EventResult;
 use Bitrix\Main\Localization\Loc;
+use Bitrix\Rest\Engine\Access;
 use Bitrix\Rest\Marketplace\Client;
+use Bitrix\Main\ORM\Fields\BooleanField;
+use Bitrix\Main\ORM\Fields\Relations\OneToMany;
+use Bitrix\Rest\Preset\EventController;
 
 Loc::loadMessages(__FILE__);
 
@@ -35,7 +39,20 @@ Loc::loadMessages(__FILE__);
  * </ul>
  *
  * @package Bitrix\Rest
- **/
+ *
+ * DO NOT WRITE ANYTHING BELOW THIS
+ *
+ * <<< ORMENTITYANNOTATION
+ * @method static EO_App_Query query()
+ * @method static EO_App_Result getByPrimary($primary, array $parameters = array())
+ * @method static EO_App_Result getById($id)
+ * @method static EO_App_Result getList(array $parameters = array())
+ * @method static EO_App_Entity getEntity()
+ * @method static \Bitrix\Rest\EO_App createObject($setDefaultValues = true)
+ * @method static \Bitrix\Rest\EO_App_Collection createCollection()
+ * @method static \Bitrix\Rest\EO_App wakeUpObject($row)
+ * @method static \Bitrix\Rest\EO_App_Collection wakeUpCollection($rows)
+ */
 class AppTable extends Main\Entity\DataManager
 {
 	const ACTIVE = 'Y';
@@ -57,7 +74,7 @@ class AppTable extends Main\Entity\DataManager
 	const STATUS_TRIAL = 'T';
 	const STATUS_SUBSCRIPTION = 'S';
 
-	const PAID_NOTIFY_DAYS = 30;
+	const PAID_NOTIFY_DAYS = 14;
 	const PAID_GRACE_PERIOD = -14;
 
 	const CACHE_TTL = 86400;
@@ -202,6 +219,8 @@ class AppTable extends Main\Entity\DataManager
 					'=ref.LANGUAGE_ID' => new Main\DB\SqlExpression('?s', static::getLicenseLanguage()),
 				),
 			),
+			(new OneToMany('LANG_ALL', AppLangTable::class, 'APP'))
+				->configureJoinType('left')
 		);
 	}
 
@@ -233,10 +252,10 @@ class AppTable extends Main\Entity\DataManager
 
 	public static function onAfterAdd(Main\Entity\Event $event)
 	{
+		EventController::onAddApp($event);
+		$data = $event->getParameters();
 		if(!static::$skipRemoteUpdate)
 		{
-			$data = $event->getParameters();
-
 			if(
 				$data['fields']['STATUS'] === static::STATUS_LOCAL
 				&& OAuthService::getEngine()->isRegistered()
@@ -302,6 +321,11 @@ class AppTable extends Main\Entity\DataManager
 			}
 		}
 
+		if($data['fields']['STATUS'] !== static::STATUS_LOCAL)
+		{
+			\Bitrix\Rest\Engine\Access::getActiveEntity(true);
+		}
+
 		return true;
 	}
 
@@ -345,6 +369,11 @@ class AppTable extends Main\Entity\DataManager
 
 				throw new OAuthException($updateResult);
 			}
+		}
+
+		if($data['fields']['STATUS'] !== static::STATUS_LOCAL)
+		{
+			\Bitrix\Rest\Engine\Access::getActiveEntity(true);
 		}
 
 		return true;
@@ -546,7 +575,11 @@ class AppTable extends Main\Entity\DataManager
 
 		if(!is_array($app) && intval($app) > 0)
 		{
-			$app = static::getByClientId($app);
+			$appInfo = $app = static::getByClientId($app);
+		}
+		elseif ($app['CODE'])
+		{
+			$appInfo = static::getByClientId($app['CODE']);
 		}
 
 		if(is_array($app))
@@ -556,7 +589,49 @@ class AppTable extends Main\Entity\DataManager
 			$res['PAYMENT_EXPIRED'] = 'N';
 			$res['PAYMENT_ALLOW'] = 'Y';
 
-			if(strlen($app['DATE_FINISH']) > 0 && $app['STATUS'] != self::STATUS_FREE)
+			if ($app['STATUS'] === self::STATUS_SUBSCRIPTION)
+			{
+				if (!\Bitrix\Rest\Marketplace\Client::isSubscriptionAvailable())
+				{
+					$res['MESSAGE_REPLACE'] = array(
+						'#DETAIL_URL#' => $detailUrl,
+						'#DAYS#' => 0,
+						'#CODE#' => urlencode($app['CODE'])
+					);
+					$res['PAYMENT_NOTIFY'] = 'Y';
+					$res['PAYMENT_EXPIRED'] = 'Y';
+					$res['PAYMENT_ALLOW'] = 'N';
+				}
+				else
+				{
+					$dateFinish = \Bitrix\Rest\Marketplace\Client::getSubscriptionFinalDate();
+					if ($dateFinish !== false)
+					{
+						$res['DAYS_LEFT'] = floor(($dateFinish->getTimestamp() - \CTimeZone::getOffset() - time()) / 86400);
+						if($res['DAYS_LEFT'] < 0)
+						{
+							$res['MESSAGE_REPLACE'] = array(
+								'#DETAIL_URL#' => $detailUrl,
+								'#DAYS#' => $res['DAYS_LEFT'],
+								'#CODE#' => urlencode($app['CODE'])
+							);
+							$res['PAYMENT_NOTIFY'] = 'Y';
+							$res['PAYMENT_EXPIRED'] = 'Y';
+							$res['PAYMENT_ALLOW'] = 'N';
+						}
+						elseif ($res['DAYS_LEFT'] < static::PAID_NOTIFY_DAYS)
+						{
+							$res['MESSAGE_REPLACE'] = array(
+								'#DETAIL_URL#' => $detailUrl,
+								'#DAYS#' => $res['DAYS_LEFT'],
+								'#CODE#' => urlencode($app['CODE'])
+							);
+							$res['PAYMENT_NOTIFY'] = 'Y';
+						}
+					}
+				}
+			}
+			elseif($app['DATE_FINISH'] <> '' && $app['STATUS'] != self::STATUS_FREE)
 			{
 				$res['DAYS_LEFT'] = floor(
 					(MakeTimeStamp($app['DATE_FINISH']) - \CTimeZone::getOffset() - time()) / 86400
@@ -581,7 +656,7 @@ class AppTable extends Main\Entity\DataManager
 							&& $res['DAYS_LEFT'] < static::PAID_GRACE_PERIOD
 						)
 						{
-							if($app['IS_TRIALED'] == 'N' && strlen($app['URL_DEMO']) > 0)
+							if($app['IS_TRIALED'] == 'N' && $app['URL_DEMO'] <> '')
 							{
 								$res['STATUS'] = static::STATUS_DEMO;
 							}
@@ -619,7 +694,49 @@ class AppTable extends Main\Entity\DataManager
 
 		}
 
+		if (!empty($appInfo['CLIENT_ID']))
+		{
+			$isHold = \Bitrix\Rest\Engine\Access\HoldEntity::is(
+				\Bitrix\Rest\Engine\Access\HoldEntity::TYPE_APP,
+				$appInfo['CLIENT_ID']
+			);
+			if ($isHold)
+			{
+				$res['MESSAGE_SUFFIX'] = '_HOLD_OVERLOAD';
+				$res['PAYMENT_NOTIFY'] = 'Y';
+			}
+		}
+
 		return $res;
+	}
+
+	/**
+	 * @param $suffix
+	 * @param array|null $replace
+	 * @param bool $checkAdmin
+	 * @param string|null $language
+	 *
+	 * @return string
+	 */
+	public static function getStatusMessage($suffix, $replace = null, $checkAdmin = true, $language = null)
+	{
+		if ($checkAdmin && \CRestUtil::isAdmin())
+		{
+			$suffix .= '_A';
+		}
+
+		if (
+			array_key_exists('#DAYS#', $replace)
+			&& (
+				is_int($replace['#DAYS#'])
+				|| preg_match('/^(-|)\d+$/', $replace['#DAYS#'])
+			)
+		)
+		{
+			$replace['#DAYS#'] = FormatDate('ddiff', time(), time() + 24 * 60 * 60 * $replace['#DAYS#']);
+		}
+
+		return Loc::getMessage('PAYMENT_MESSAGE' . $suffix, $replace, $language);
 	}
 
 	public static function getAccess($appId)
@@ -627,7 +744,7 @@ class AppTable extends Main\Entity\DataManager
 		$appInfo = static::getByClientId($appId);
 		if($appInfo)
 		{
-			if(strlen($appInfo['ACCESS']) > 0)
+			if($appInfo['ACCESS'] <> '')
 			{
 				$rightsList = explode(",", $appInfo["ACCESS"]);
 
@@ -701,18 +818,56 @@ class AppTable extends Main\Entity\DataManager
 				);
 			}
 
-			$dbRes = static::getList(array(
-				'filter' => $filter,
-				'select' => array(
-					'*',
-					'MENU_NAME' => 'LANG.MENU_NAME',
-					'MENU_NAME_DEFAULT' => 'LANG_DEFAULT.MENU_NAME',
-					'MENU_NAME_LICENSE' => 'LANG_LICENSE.MENU_NAME',
-				)
-			));
+			$dbRes = static::getList(
+				[
+					'filter' => $filter,
+					'select' => [
+						'*',
+						'MENU_NAME' => 'LANG.MENU_NAME',
+						'MENU_NAME_DEFAULT' => 'LANG_DEFAULT.MENU_NAME',
+						'MENU_NAME_LICENSE' => 'LANG_LICENSE.MENU_NAME',
+					],
+					'limit' => 1,
+				]
+			);
 
-			$appInfo = $dbRes->fetch();
-			if(is_array($appInfo))
+			foreach ($dbRes->fetchCollection() as $app)
+			{
+				$appInfo = [
+					'ID' => $app->getId(),
+					'MENU_NAME' => !is_null($app->getLang()) ? $app->getLang()->getMenuName() : '',
+					'MENU_NAME_DEFAULT' => !is_null($app->getLangDefault()) ? $app->getLangDefault()->getMenuName() : '',
+					'MENU_NAME_LICENSE' => !is_null($app->getLangLicense()) ? $app->getLangLicense()->getMenuName() : '',
+				];
+				foreach ($app->sysGetEntity()->getScalarFields() as $field)
+				{
+					$fieldName = $field->getName();
+					if ($field instanceof BooleanField)
+					{
+						$appInfo[$fieldName] = $app->get($fieldName) ? 'Y' : 'N';
+					}
+					else
+					{
+						$appInfo[$fieldName] = $app->get($fieldName);
+					}
+				}
+				$app->fillLangAll();
+				if (!is_null($app->getLangAll()))
+				{
+					foreach ($app->getLangAll() as $lang)
+					{
+						$appInfo['LANG_ALL'][$lang->getLanguageId()] = [
+							'MENU_NAME' => $lang->getMenuName(),
+						];
+					}
+				}
+				if ($appInfo['MENU_NAME'] === '')
+				{
+					$appInfo = Lang::mergeFromLangAll($appInfo);
+				}
+			}
+
+			if (is_array($appInfo))
 			{
 				static::$applicationCache[$appInfo['ID']] = $appInfo;
 				static::$applicationCache[$appInfo['CLIENT_ID']] = $appInfo;
@@ -750,7 +905,7 @@ class AppTable extends Main\Entity\DataManager
 			}
 			else
 			{
-				$dbSites = \CSite::getList($by = 'sort', $order = 'asc', array('DEFAULT' => 'Y', 'ACTIVE' => 'Y'));
+				$dbSites = \CSite::getList('sort', 'asc', array('DEFAULT' => 'Y', 'ACTIVE' => 'Y'));
 				$site = $dbSites->fetch();
 
 				static::$licenseLang = is_array($site) && isset($site['LANGUAGE_ID']) ? $site['LANGUAGE_ID'] : LANGUAGE_ID;
@@ -941,9 +1096,19 @@ class AppTable extends Main\Entity\DataManager
 
 	public static function canUninstallByType($code, $version = false)
 	{
+		$result = true;
+
 		$type = static::getAppType($code, $version);
-		$usesConfigurationApp = \Bitrix\Rest\Configuration\Helper::getInstance()->getUsesConfigurationApp();
-		return ($type == static::TYPE_CONFIGURATION && $code == $usesConfigurationApp)?false:true;
+		if($type == static::TYPE_CONFIGURATION)
+		{
+			$appList = \Bitrix\Rest\Configuration\Helper::getInstance()->getBasicAppList();
+			if(in_array($code, $appList))
+			{
+				$result = false;
+			}
+		}
+
+		return $result;
 	}
 
 	public static function getAppType($code, $version = false)

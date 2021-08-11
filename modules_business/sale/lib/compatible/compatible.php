@@ -51,7 +51,7 @@ class AliasedQuery extends Query
 
 	public function addAlias($alias, $field = null)
 	{
-		if ($this->aliases[$alias])
+		if (($this->aliases[$alias] ?? false))
 		{
 			throw new SystemException("`$alias` already added", 0, __FILE__, __LINE__);
 		}
@@ -405,7 +405,7 @@ class OrderQuery extends AliasedQuery
 
 	public static function explodeFilterKey($key)
 	{
-		preg_match('/^([!+*]{0,1})([<=>@%~]{0,2})(.*)$/', $key, $matches);
+		preg_match('/^([!+*]{0,1})([<=>@%~?]{0,2})(.*)$/', $key, $matches);
 
 		return array(
 			'modifier' => $matches[1], // can be ""

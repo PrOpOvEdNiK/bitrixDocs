@@ -1,4 +1,7 @@
 <?
+
+use Bitrix\Im\Call\VideoStrategyType;
+
 class CIMSettings
 {
 	const SETTINGS = 'settings';
@@ -151,7 +154,7 @@ class CIMSettings
 	public static function GetNotifyAccess($userId, $moduleId, $eventId, $clientId)
 	{
 		$userId = intval($userId);
-		if ($userId <= 0 || strlen($moduleId) <= 0 || strlen($eventId) <= 0 || strlen($clientId) <= 0)
+		if ($userId <= 0 || $moduleId == '' || $eventId == '' || $clientId == '')
 			return false;
 
 		$notifyId = $clientId.'|'.$moduleId.'|'.$eventId;
@@ -200,8 +203,12 @@ class CIMSettings
 				'viewOffline' => COption::GetOptionString("im", "view_offline"),
 				'viewGroup' => COption::GetOptionString("im", "view_group"),
 				'viewLastMessage' => true,
+				'viewBirthday' => true,
+				'viewCommonUsers' => true,
 				'enableSound' => true,
 				'enableBigSmile' => true,
+				'enableDarkTheme' => 'auto',
+				'isCurrentThemeDark' => false,
 				'enableRichLink' => true,
 				'linesTabEnable' => true,
 				'linesNewGroupEnable' => false,
@@ -209,7 +216,7 @@ class CIMSettings
 				'correctText' => COption::GetOptionString("im", "correct_text"),
 				'panelPositionHorizontal' => COption::GetOptionString("im", "panel_position_horizontal"),
 				'panelPositionVertical' => COption::GetOptionString("im", "panel_position_vertical"),
-				'loadLastMessage' => COption::GetOptionString("im", "load_last_message"),
+				'loadLastMessage' => true,
 				'loadLastNotify' => COption::GetOptionString("im", "load_last_notify"),
 				'notifyAutoRead' => true,
 				'notifyScheme' => 'simple',
@@ -223,6 +230,8 @@ class CIMSettings
 				'privacyCall' => COption::GetOptionString("im", "privacy_call"),
 				'privacySearch' => COption::GetOptionString("im", "privacy_search"),
 				'privacyProfile' => COption::GetOptionString("im", "privacy_profile"),
+				'callAcceptIncomingVideo' => VideoStrategyType::ALLOW_ALL,
+				'next' => false,
 			);
 		}
 		elseif ($type == self::NOTIFY)
@@ -272,6 +281,10 @@ class CIMSettings
 				{
 					$arValues[$key] = in_array($value[$key], Array('simple', 'expert'))? $value[$key]: $default;
 				}
+				else if ($key == 'enableDarkTheme')
+				{
+					$arValues[$key] = in_array($value[$key], ['auto', 'light', 'dark']) ? $value[$key] : $default;
+				}
 				else if (in_array($key, Array('privacyMessage', 'privacyChat', 'privacyCall', 'privacySearch')))
 				{
 					$arValues[$key] = in_array($value[$key], Array(self::PRIVACY_RESULT_ALL, self::PRIVACY_RESULT_CONTACT))? $value[$key]: $default;
@@ -313,6 +326,10 @@ class CIMSettings
 					$arValues[$key] = implode(',', $value[$key]);
 
 				}
+				else if ($key === 'callAcceptIncomingVideo')
+				{
+					$arValues[$key] = in_array($value[$key], VideoStrategyType::getList())? $value[$key]: $default;
+				}
 				else if (array_key_exists($key, $value))
 				{
 					$arValues[$key] = is_bool($value[$key])? $value[$key]: $default;
@@ -344,7 +361,7 @@ class CIMSettings
 		foreach ($arNotify as $moduleId => $notifyTypes)
 		{
 			$arNames[$moduleId]['NAME'] = $notifyTypes['NAME'];
-			if (strlen($notifyTypes['NAME']) <= 0)
+			if ($notifyTypes['NAME'] == '')
 			{
 				$info = CModule::CreateModuleObject($moduleId);
 				$arNames[$moduleId]['NAME'] = $info->MODULE_NAME;

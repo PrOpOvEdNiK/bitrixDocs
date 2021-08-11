@@ -919,7 +919,7 @@ class CHotKeys
 
 		if(intval($charCode)<256)
 		{
-			if(!($codeSymb = $this->arServSymb[intval($charCode)]))
+			if(!($codeSymb = ($this->arServSymb[intval($charCode)] ?? 0)))
 				$codeSymb = chr($charCode);
 		}
 		else
@@ -1184,7 +1184,7 @@ class CHotKeys
 
 		$arInput = null;
 		if(CheckSerializedData($fileContent))
-			$arInput = unserialize($fileContent);
+			$arInput = unserialize($fileContent, ['allowed_classes' => false]);
 
 		if(!is_array($arInput) || empty($arInput))
 			return false;

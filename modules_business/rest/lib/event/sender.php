@@ -201,7 +201,7 @@ class Sender
 					);
 				}
 
-				if(strlen($handler['EVENT_HANDLER']) > 0)
+				if($handler['EVENT_HANDLER'] <> '')
 				{
 					UsageStatTable::logEvent($application['CLIENT_ID'], $handler['EVENT_NAME']);
 				}
@@ -219,7 +219,7 @@ class Sender
 
 			if($authData)
 			{
-				if(strlen($handler['EVENT_HANDLER']) > 0)
+				if($handler['EVENT_HANDLER'] <> '')
 				{
 					self::$queryData[] = Sqs::queryItem(
 						$application['CLIENT_ID'],
@@ -252,14 +252,8 @@ class Sender
 
 		if(count(static::$queryData) > 0 && !static::$forkSet)
 		{
-			if(\CMain::forkActions(array(__CLASS__, "send"), array()))
-			{
-				static::$forkSet = true;
-			}
-			else
-			{
-				static::send();
-			}
+			\Bitrix\Main\Application::getInstance()->addBackgroundJob(array(__CLASS__, "send"));
+			static::$forkSet = true;
 		}
 	}
 
@@ -346,7 +340,7 @@ class Sender
 	protected static function getHandlerName($moduleId, $eventName)
 	{
 		// \Bitrix\Rest\EventTable::on
-		if(strpos($eventName, '::') >= 0)
+		if(mb_strpos($eventName, '::') >= 0)
 		{
 			$handlerName = $moduleId.'__'.ToUpper(str_replace(array("\\", '::'), array('_0_', '_1_'), $eventName));
 		}

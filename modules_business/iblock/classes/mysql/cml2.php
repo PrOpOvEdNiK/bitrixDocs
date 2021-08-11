@@ -1,4 +1,6 @@
 <?
+use Bitrix\Main;
+
 /*
 This class is used to parse and load an xml file into database table.
 */
@@ -21,17 +23,7 @@ class CIBlockXMLFile
 	function __construct($table_name = "b_xml_tree")
 	{
 		$this->_table_name = strtolower($table_name);
-		if (defined("BX_UTF"))
-		{
-			if (function_exists("mb_orig_strpos") && function_exists("mb_orig_strlen") && function_exists("mb_orig_substr"))
-				$this->_get_xml_chunk_function = "_get_xml_chunk_mb_orig";
-			else
-				$this->_get_xml_chunk_function = "_get_xml_chunk_mb";
-		}
-		else
-		{
-			$this->_get_xml_chunk_function = "_get_xml_chunk";
-		}
+		$this->_get_xml_chunk_function = "_get_xml_chunk";
 	}
 
 	function StartSession($sess_id)
@@ -108,60 +100,46 @@ class CIBlockXMLFile
 	return : result of the CDatabase::Query method
 	We use drop due to mysql innodb slow truncate bug.
 	*/
-	function DropTemporaryTables()
+	public function DropTemporaryTables()
 	{
-		if(!isset($this) || !is_object($this) || $this->_table_name == '')
+		global $DB;
+
+		if ($DB->TableExists($this->_table_name))
 		{
-			$ob = new CIBlockXMLFile;
-			return $ob->DropTemporaryTables();
+			return $DB->DDL("drop table ".$this->_table_name);
 		}
-		else
-		{
-			global $DB;
-			if($DB->TableExists($this->_table_name))
-				return $DB->DDL("drop table ".$this->_table_name);
-			else
-				return true;
-		}
+		return true;
 	}
 
-	function CreateTemporaryTables($with_sess_id = false)
+	public function CreateTemporaryTables($with_sess_id = false)
 	{
-		if(!isset($this) || !is_object($this) || $this->_table_name == '')
-		{
-			$ob = new CIBlockXMLFile;
-			return $ob->CreateTemporaryTables();
-		}
-		else
-		{
-			global $DB;
+		global $DB;
 
-			if ($DB->TableExists($this->_table_name))
-				return false;
+		if ($DB->TableExists($this->_table_name))
+			return false;
 
-			if(defined("MYSQL_TABLE_TYPE") && MYSQL_TABLE_TYPE <> '')
-				$DB->Query("SET storage_engine = '".MYSQL_TABLE_TYPE."'", true);
+		if(defined("MYSQL_TABLE_TYPE") && MYSQL_TABLE_TYPE <> '')
+			$DB->Query("SET storage_engine = '".MYSQL_TABLE_TYPE."'", true);
 
-			$res = $DB->DDL("create table ".$this->_table_name."
-				(
-					ID int(11) not null auto_increment,
-					".($with_sess_id? "SESS_ID varchar(32),": "")."
-					PARENT_ID int(11),
-					LEFT_MARGIN int(11),
-					RIGHT_MARGIN int(11),
-					DEPTH_LEVEL int(11),
-					NAME varchar(255),
-					VALUE longtext,
-					ATTRIBUTES text,
-					PRIMARY KEY (ID)
-				)
-			");
+		$res = $DB->DDL("create table ".$this->_table_name."
+			(
+				ID int(11) not null auto_increment,
+				".($with_sess_id? "SESS_ID varchar(32),": "")."
+				PARENT_ID int(11),
+				LEFT_MARGIN int(11),
+				RIGHT_MARGIN int(11),
+				DEPTH_LEVEL int(11),
+				NAME varchar(255),
+				VALUE longtext,
+				ATTRIBUTES text,
+				PRIMARY KEY (ID)
+			)
+		");
 
-			if ($res && defined("BX_XML_CREATE_INDEXES_IMMEDIATELY"))
-				$res = $this->IndexTemporaryTables($with_sess_id);
+		if ($res && defined("BX_XML_CREATE_INDEXES_IMMEDIATELY"))
+			$res = $this->IndexTemporaryTables($with_sess_id);
 
-			return $res;
-		}
+		return $res;
 	}
 
 	function IsExistTemporaryTable()
@@ -207,35 +185,27 @@ class CIBlockXMLFile
 
 	return : result of the CDatabase::Query method
 	*/
-	function IndexTemporaryTables($with_sess_id = false)
+	public function IndexTemporaryTables($with_sess_id = false)
 	{
-		if(!isset($this) || !is_object($this) || $this->_table_name == '')
+		global $DB;
+		$res = true;
+
+		if($with_sess_id)
 		{
-			$ob = new CIBlockXMLFile;
-			return $ob->IndexTemporaryTables();
+			if(!$DB->IndexExists($this->_table_name, array("SESS_ID", "PARENT_ID")))
+				$res = $DB->DDL("CREATE INDEX ix_".$this->_table_name."_parent on ".$this->_table_name."(SESS_ID, PARENT_ID)");
+			if($res && !$DB->IndexExists($this->_table_name, array("SESS_ID", "LEFT_MARGIN")))
+				$res = $DB->DDL("CREATE INDEX ix_".$this->_table_name."_left on ".$this->_table_name."(SESS_ID, LEFT_MARGIN)");
 		}
 		else
 		{
-			global $DB;
-			$res = true;
-
-			if($with_sess_id)
-			{
-				if(!$DB->IndexExists($this->_table_name, array("SESS_ID", "PARENT_ID")))
-					$res = $DB->DDL("CREATE INDEX ix_".$this->_table_name."_parent on ".$this->_table_name."(SESS_ID, PARENT_ID)");
-				if($res && !$DB->IndexExists($this->_table_name, array("SESS_ID", "LEFT_MARGIN")))
-					$res = $DB->DDL("CREATE INDEX ix_".$this->_table_name."_left on ".$this->_table_name."(SESS_ID, LEFT_MARGIN)");
-			}
-			else
-			{
-				if(!$DB->IndexExists($this->_table_name, array("PARENT_ID")))
-					$res = $DB->DDL("CREATE INDEX ix_".$this->_table_name."_parent on ".$this->_table_name."(PARENT_ID)");
-				if($res && !$DB->IndexExists($this->_table_name, array("LEFT_MARGIN")))
-					$res = $DB->DDL("CREATE INDEX ix_".$this->_table_name."_left on ".$this->_table_name."(LEFT_MARGIN)");
-			}
-
-			return $res;
+			if(!$DB->IndexExists($this->_table_name, array("PARENT_ID")))
+				$res = $DB->DDL("CREATE INDEX ix_".$this->_table_name."_parent on ".$this->_table_name."(PARENT_ID)");
+			if($res && !$DB->IndexExists($this->_table_name, array("LEFT_MARGIN")))
+				$res = $DB->DDL("CREATE INDEX ix_".$this->_table_name."_left on ".$this->_table_name."(LEFT_MARGIN)");
 		}
+
+		return $res;
 	}
 
 	function Add($arFields)
@@ -290,8 +260,6 @@ class CIBlockXMLFile
 	*/
 	function ReadXMLToDatabase($fp, &$NS, $time_limit=0, $read_size = 1024)
 	{
-		global $APPLICATION;
-
 		//Initialize object
 		if(!array_key_exists("charset", $NS))
 			$NS["charset"] = false;
@@ -317,13 +285,12 @@ class CIBlockXMLFile
 			$end_time = time() + 365*24*3600; // One year
 
 		$cs = $this->charset;
-		$_get_xml_chunk = array($this, $this->_get_xml_chunk_function);
 		fseek($fp, $this->file_position);
-		while(($xmlChunk = call_user_func_array($_get_xml_chunk, array($fp))) !== false)
+		while(($xmlChunk = $this->_get_xml_chunk($fp)) !== false)
 		{
 			if($cs)
 			{
-				$xmlChunk = $APPLICATION->ConvertCharset($xmlChunk, $cs, LANG_CHARSET);
+				$xmlChunk = Main\Text\Encoding::convertEncoding($xmlChunk, $cs, LANG_CHARSET);
 			}
 
 			if($xmlChunk[0] == "/")
@@ -355,10 +322,13 @@ class CIBlockXMLFile
 		return feof($fp);
 	}
 
-	/*
-	Internal function.
-	Used to read an xml by chunks started with "<" and endex with "<"
-	*/
+	/**
+	 * Internal function.
+	 * Used to read an xml by chunks started with "<" and endex with "<"
+	 *
+	 * @param resource $fp
+	 * @return bool|string
+	 */
 	function _get_xml_chunk($fp)
 	{
 		if($this->buf_position >= $this->buf_len)
@@ -421,10 +391,14 @@ class CIBlockXMLFile
 		return $result;
 	}
 
-	/*
-	Internal function.
-	Used to read an xml by chunks started with "<" and endex with "<"
-	*/
+	/**
+	 * Internal function.
+	 * Used to read an xml by chunks started with "<" and endex with "<"
+	 *
+	 * @deprecated deprecated since iblock 20.100.0
+	 * @param resource $fp
+	 * @return bool|string
+	 */
 	function _get_xml_chunk_mb_orig($fp)
 	{
 		if($this->buf_position >= $this->buf_len)
@@ -487,10 +461,14 @@ class CIBlockXMLFile
 		return $result;
 	}
 
-	/*
-	Internal function.
-	Used to read an xml by chunks started with "<" and endex with "<"
-	*/
+	/**
+	 * Internal function.
+	 * Used to read an xml by chunks started with "<" and endex with "<"
+	 *
+	 * @deprecated deprecated since iblock 20.100.0
+	 * @param resource $fp
+	 * @return bool|string
+	 */
 	function _get_xml_chunk_mb($fp)
 	{
 		if($this->buf_position >= $this->buf_len)
@@ -815,8 +793,6 @@ class CIBlockXMLFile
 
 	public static function UnZip($file_name, $last_zip_entry = "", $start_time = 0, $interval = 0)
 	{
-		global $APPLICATION;
-
 		//Function and securioty checks
 		if(!function_exists("zip_open"))
 			return false;
@@ -846,7 +822,7 @@ class CIBlockXMLFile
 			{
 
 				$file_name = trim(str_replace("\\", "/", trim($entry_name)), "/");
-				$file_name = $APPLICATION->ConvertCharset($file_name, "cp866", LANG_CHARSET);
+				$file_name = Main\Text\Encoding::convertEncoding($file_name, "cp866", LANG_CHARSET);
 				$file_name = preg_replace("#^import_files/tmp/webdata/\\d+/\\d+/import_files/#", "import_files/", $file_name);
 
 				$bBadFile = HasScriptExtension($file_name)

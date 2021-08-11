@@ -63,7 +63,7 @@ class CSecuritySystemInformation
 	 */
 	public static function isRunOnWin()
 	{
-		return (strtoupper(substr(PHP_OS, 0, 3)) === "WIN");
+		return (mb_strtoupper(mb_substr(PHP_OS, 0, 3)) === "WIN");
 	}
 
 	/**
@@ -139,7 +139,7 @@ class CSecuritySystemInformation
 	{
 		$converter = CBXPunycode::GetConverter();
 		$result = array();
-		$dbSites = CSite::GetList($b = 'sort', $o = 'asc', array('ACTIVE' => 'Y'));
+		$dbSites = CSite::GetList('sort', 'asc', array('ACTIVE' => 'Y'));
 		while ($arSite = $dbSites->Fetch())
 		{
 			$result[] = array(

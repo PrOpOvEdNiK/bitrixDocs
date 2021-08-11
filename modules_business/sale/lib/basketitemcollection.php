@@ -85,6 +85,9 @@ abstract class BasketItemCollection extends Internals\EntityCollection
 			$basketItem = $itemClassName::load($this, $item);
 			$this->addItem($basketItem);
 		}
+
+		$controller = Internals\CustomFieldsController::getInstance();
+		$controller->initializeCollection($this);
 	}
 
 	/**
@@ -109,6 +112,27 @@ abstract class BasketItemCollection extends Internals\EntityCollection
 		foreach ($this->collection as $basketItem)
 		{
 			$basketItem = $basketItem->findItemByBasketCode($code);
+			if ($basketItem != null)
+			{
+				return $basketItem;
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * @param $xmlId
+	 * @return BasketItemBase|null
+	 * @throws \Bitrix\Main\ArgumentNullException
+	 * @throws \Bitrix\Main\ArgumentOutOfRangeException
+	 */
+	public function getItemByXmlId($xmlId)
+	{
+		/** @var BasketItemBase $basketItem */
+		foreach ($this->collection as $basketItem)
+		{
+			$basketItem = $basketItem->findItemByXmlId($xmlId);
 			if ($basketItem != null)
 			{
 				return $basketItem;

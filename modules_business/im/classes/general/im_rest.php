@@ -1,4 +1,7 @@
 <?
+
+use Bitrix\Im\Chat;
+
 if(!CModule::IncludeModule('rest'))
 	return;
 
@@ -20,8 +23,10 @@ class CIMRestService extends IRestService
 				'im.user.status.idle.continue' => array(__CLASS__, 'userStatusIdleEnd'),
 
 				'im.recent.get' => array(__CLASS__, 'recentGet'),
+				'im.recent.list' => array(__CLASS__, 'recentList'),
 				'im.recent.pin' => array(__CLASS__, 'recentPin'),
 				'im.recent.hide' => array(__CLASS__, 'recentHide'),
+				'im.recent.unread' => array(__CLASS__, 'recentUnread'),
 
 				'im.department.get' => array(__CLASS__, 'departmentGet'),
 				'im.department.colleagues.list' => array(__CLASS__, 'departmentColleaguesList'),
@@ -47,7 +52,9 @@ class CIMRestService extends IRestService
 				'im.dialog.get' => array(__CLASS__, 'dialogGet'),
 				'im.dialog.messages.get' => array(__CLASS__, 'dialogMessagesGet'),
 				'im.dialog.users.get' => array(__CLASS__, 'dialogUsersGet'),
+				'im.dialog.users.list' => array(__CLASS__, 'dialogUsersList'),
 				'im.dialog.read' => array(__CLASS__, 'dialogRead'),
+				'im.dialog.readAll' => array(__CLASS__, 'dialogReadAll'),
 				'im.dialog.unread' => array(__CLASS__, 'dialogUnread'),
 				'im.dialog.writing' => array(__CLASS__, 'dialogWriting'),
 
@@ -60,10 +67,16 @@ class CIMRestService extends IRestService
 				'im.message.user.get' =>  array('callback' => array(__CLASS__, 'messageUserGet'), 'options' => array('private' => true)),
 
 				'im.notify' => array(__CLASS__, 'notifyAdd'),
+				'im.notify.get' => array('callback' => array(__CLASS__, 'notifyGet'), 'options' => array('private' => true)),
 				'im.notify.personal.add' => array(__CLASS__, 'notifyAdd'),
 				'im.notify.system.add' => array(__CLASS__, 'notifyAdd'),
 				'im.notify.delete' => array(__CLASS__, 'notifyDelete'),
 				'im.notify.read' => array(__CLASS__, 'notifyRead'),
+				'im.notify.read.list' => array(__CLASS__, 'notifyReadList'),
+				'im.notify.confirm' => array(__CLASS__, 'notifyConfirm'),
+				'im.notify.answer' => array(__CLASS__, 'notifyAnswer'),
+				'im.notify.history.search' => array(__CLASS__, 'notifyHistorySearch'),
+				'im.notify.schema.get' => array(__CLASS__, 'notifySchemaGet'),
 
 				'im.disk.folder.get' => array(__CLASS__, 'diskFolderGet'),
 				'im.disk.file.commit' => array(__CLASS__, 'diskFileCommit'),
@@ -83,7 +96,18 @@ class CIMRestService extends IRestService
 				'im.search.last.add' => array(__CLASS__, 'searchLastAdd'),
 				'im.search.last.delete' => array(__CLASS__, 'searchLastDelete'),
 
+				'im.promotion.get' =>  array('callback' => array(__CLASS__, 'promotionGet'), 'options' => array('private' => true)),
+				'im.promotion.read' =>  array('callback' => array(__CLASS__, 'promotionRead'), 'options' => array('private' => true)),
+
 				'im.mobile.config.get' =>  array('callback' => array(__CLASS__, 'mobileConfigGet'), 'options' => array('private' => true)),
+
+				'im.call.user.register' => array('callback' => array(__CLASS__, 'callUserRegister'), 'options' => array()),
+				'im.call.user.update' => array('callback' => array(__CLASS__, 'callUserUpdate'), 'options' => array()),
+				'im.call.user.force.rename' => array('callback' => array(__CLASS__, 'callUserForceRename'), 'options' => array()),
+				'im.call.channel.public.list' => array('callback' => array(__CLASS__, 'callChannelPublicList'), 'options' => array()),
+
+				'im.videoconf.share.change' => array('callback' => array(__CLASS__, 'videoconfShareChange'), 'options' => array()),
+				'im.videoconf.password.check' => array('callback' => array(__CLASS__, 'videoconfPasswordCheck'), 'options' => array()),
 			),
 			'imbot' => Array(
 				'imbot.register' => array(__CLASS__, 'botRegister'),
@@ -246,15 +270,13 @@ class CIMRestService extends IRestService
 		{
 			if ($isExtranet && !isset($extranetUsers[$userId]))
 			{
-				$result[$userId] = null;
+				continue;
 			}
-			else
-			{
-				$result[$userId] = \Bitrix\Im\User::getInstance($userId)->getArray(Array('JSON' => 'Y', 'HR_PHOTO' => isset($arParams['AVATAR_HR']) && $arParams['AVATAR_HR'] == 'Y'));
-			}
+
+			$result[$userId] = \Bitrix\Im\User::getInstance($userId)->getArray(Array('JSON' => 'Y', 'HR_PHOTO' => isset($arParams['AVATAR_HR']) && $arParams['AVATAR_HR'] == 'Y'));
 		}
 
-		if (strtolower($arParams['RESULT_TYPE']) === 'array')
+		if (mb_strtolower($arParams['RESULT_TYPE']) === 'array')
 		{
 			$result = array_values($result);
 		}
@@ -309,7 +331,7 @@ class CIMRestService extends IRestService
 
 		if (!is_string($params['STATUS']))
 		{
-			$params['STATUS'] = strtolower($params['STATUS']);
+			$params['STATUS'] = mb_strtolower($params['STATUS']);
 		}
 
 		if (!in_array($params['STATUS'], \CIMStatus::$AVAILABLE_STATUSES))
@@ -380,6 +402,11 @@ class CIMRestService extends IRestService
 		}
 
 		$result = \Bitrix\Im\Chat::getById($chatId, ['LOAD_READED' => true, 'JSON' => true]);
+		if (!$result)
+		{
+			throw new Bitrix\Rest\RestException("You don't have access to this chat", "ACCESS_ERROR", CRestServer::STATUS_WRONG_REQUEST);
+		}
+
 		$result['dialog_id'] = $arParams['DIALOG_ID'];
 
 		return $result;
@@ -454,6 +481,64 @@ class CIMRestService extends IRestService
 		return \Bitrix\Im\Chat::getUsers($chatId, ['JSON' => 'Y']);
 	}
 
+	public static function dialogUsersList($params, $offset, CRestServer $server): Array
+	{
+		$params = array_change_key_case($params, CASE_UPPER);
+		if (!\Bitrix\Im\Common::isDialogId($params['DIALOG_ID']))
+		{
+			throw new Bitrix\Rest\RestException("Dialog ID can't be empty", "DIALOG_ID_EMPTY", CRestServer::STATUS_WRONG_REQUEST);
+		}
+
+		if (!\Bitrix\Im\Dialog::hasAccess($params['DIALOG_ID']))
+		{
+			throw new Bitrix\Rest\RestException("You do not have access to the specified dialog", "ACCESS_ERROR", CRestServer::STATUS_FORBIDDEN);
+		}
+
+		$chatId = \Bitrix\Im\Dialog::getChatId($params['DIALOG_ID']);
+		if (!$chatId)
+		{
+			throw new Bitrix\Rest\RestException("You don't have access to this chat", "ACCESS_ERROR", CRestServer::STATUS_WRONG_REQUEST);
+		}
+
+		$countFilter = [
+			'=CHAT_ID' => $chatId,
+			'=USER.ACTIVE' => 'Y',
+		];
+		if (
+			isset($params['SKIP_EXTERNAL']) && $params['SKIP_EXTERNAL'] === 'Y'
+			|| isset($params['SKIP_EXTERNAL_EXCEPT_TYPES']))
+		{
+			$options['SKIP_EXTERNAL'] = 'Y';
+			$options['SKIP_EXTERNAL_EXCEPT_TYPES'] = array_map('trim', mb_split(',', $params['SKIP_EXTERNAL_EXCEPT_TYPES']));
+
+			$exceptType = $options['SKIP_EXTERNAL_EXCEPT_TYPES'] ?? [];
+			$countFilter['!=USER.EXTERNAL_AUTH_ID'] = \Bitrix\Im\Common::getExternalAuthId($exceptType);
+		}
+
+		$counter = \Bitrix\Im\Model\RelationTable::getList([
+			'select' => ['CNT' => new \Bitrix\Main\Entity\ExpressionField('CNT', 'COUNT(1)')],
+			'filter' => $countFilter
+		])->fetch();
+
+		$options['OFFSET'] = self::getOffset($offset, $params);
+		$options['LIMIT'] = self::getLimit($params);
+		$options['JSON'] = true;
+
+		$result = Array();
+		if ($counter && $counter["CNT"] > 0)
+		{
+			$result = \Bitrix\Im\Chat::getUsers($chatId, $options);
+		}
+
+		return self::setNavData(
+			$result,
+			array(
+				"count" => $counter['CNT'],
+				"offset" => $options['OFFSET']
+			)
+		);
+	}
+
 	public static function dialogWriting($arParams, $n, CRestServer $server)
 	{
 		$arParams = array_change_key_case($arParams, CASE_UPPER);
@@ -497,10 +582,10 @@ class CIMRestService extends IRestService
 
 		if ($arParams['MESSAGE_ID'] <= 0)
 		{
-			throw new Bitrix\Rest\RestException("Message message id can't be empty", "MESSAGE_ID_ERROR", CRestServer::STATUS_WRONG_REQUEST);
+			$arParams['MESSAGE_ID'] = null;
 		}
 
-		if (!\Bitrix\Im\Common::isDialogId($arParams['DIALOG_ID']))
+		if ($arParams['DIALOG_ID'] !== 'notify' && !\Bitrix\Im\Common::isDialogId($arParams['DIALOG_ID']))
 		{
 			throw new Bitrix\Rest\RestException("Dialog ID can't be empty", "DIALOG_ID_EMPTY", CRestServer::STATUS_WRONG_REQUEST);
 		}
@@ -508,6 +593,11 @@ class CIMRestService extends IRestService
 		$result = \Bitrix\Im\Dialog::read($arParams['DIALOG_ID'], $arParams['MESSAGE_ID']);
 
 		return self::objectEncode($result);
+	}
+
+	public static function dialogReadAll($arParams, $n, CRestServer $server)
+	{
+		return \Bitrix\Im\Dialog::readAll();
 	}
 
 	public static function dialogUnread($arParams, $n, CRestServer $server)
@@ -569,17 +659,15 @@ class CIMRestService extends IRestService
 			$params['JSON'] = true;
 
 			$result = \Bitrix\Im\User::getList($params);
-
-			return self::setNavData(
-				$result,
-				array(
-					"count" => $counter['CNT'],
-					"offset" => $params['OFFSET']
-				)
-			);
 		}
 
-		return $result;
+		return self::setNavData(
+			$result,
+			array(
+				"count" => $counter['CNT'],
+				"offset" => $params['OFFSET']
+			)
+		);
 	}
 
 	public static function searchDepartment($arParams, $offset, CRestServer $server)
@@ -646,14 +734,15 @@ class CIMRestService extends IRestService
 
 			$result = \Bitrix\Im\Chat::getList($params);
 
-			return self::setNavData(
-				$result,
-				array(
-					"count" => $counter['CNT'],
-					"offset" => $params['OFFSET']
-				)
-			);
 		}
+
+		return self::setNavData(
+			$result,
+			array(
+				"count" => $counter['CNT'],
+				"offset" => $params['OFFSET']
+			)
+		);
 
 		return $result;
 	}
@@ -709,23 +798,40 @@ class CIMRestService extends IRestService
 		$arParams = array_change_key_case($arParams, CASE_UPPER);
 
 		$config = Array('JSON' => 'Y');
-		if ($arParams['SKIP_OPENLINES'] == 'Y')
+
+		if ($arParams['ONLY_OPENLINES'] === 'Y')
 		{
-			$config['SKIP_OPENLINES'] = 'Y';
+			$config['ONLY_OPENLINES'] = 'Y';
 		}
-		if ($arParams['SKIP_CHAT'] == 'Y')
+		else
 		{
-			$config['SKIP_CHAT'] = 'Y';
+			if ($arParams['SKIP_OPENLINES'] === 'Y')
+			{
+				$config['SKIP_OPENLINES'] = 'Y';
+			}
+			if ($arParams['SKIP_CHAT'] === 'Y')
+			{
+				$config['SKIP_CHAT'] = 'Y';
+			}
+			if ($arParams['SKIP_DIALOG'] === 'Y')
+			{
+				$config['SKIP_DIALOG'] = 'Y';
+			}
+			if ($arParams['SKIP_NOTIFICATION'] === 'N')
+			{
+				$config['SKIP_NOTIFICATION'] = 'N';
+			}
 		}
-		if ($arParams['SKIP_DIALOG'] == 'Y')
+
+		if (isset($arParams['LAST_UPDATE'])) // TODO remove this later
 		{
-			$config['SKIP_DIALOG'] = 'Y';
+			$arParams['LAST_SYNC_DATE'] = $arParams['LAST_UPDATE'];
 		}
-		if (isset($arParams['LAST_UPDATE']))
+		if (isset($arParams['LAST_SYNC_DATE']) && $arParams['LAST_SYNC_DATE'])
 		{
 			try
 			{
-				$config['LAST_UPDATE'] = new \Bitrix\Main\Type\DateTime($arParams['LAST_UPDATE'], \DateTime::ATOM);
+				$config['LAST_SYNC_DATE'] = new \Bitrix\Main\Type\DateTime($arParams['LAST_SYNC_DATE'], \DateTimeInterface::RFC3339);
 			}
 			catch (Exception $e){}
 		}
@@ -733,11 +839,58 @@ class CIMRestService extends IRestService
 		return \Bitrix\Im\Recent::get(null, $config);
 	}
 
+	public static function recentList($arParams, $offset, CRestServer $server)
+	{
+		$arParams = array_change_key_case($arParams, CASE_UPPER);
+
+		$config = Array('JSON' => 'Y');
+		if ($arParams['SKIP_OPENLINES'] === 'Y')
+		{
+			$config['SKIP_OPENLINES'] = 'Y';
+		}
+		if ($arParams['SKIP_CHAT'] === 'Y')
+		{
+			$config['SKIP_CHAT'] = 'Y';
+		}
+		if ($arParams['SKIP_DIALOG'] === 'Y')
+		{
+			$config['SKIP_DIALOG'] = 'Y';
+		}
+		if ($arParams['SKIP_NOTIFICATION'] === 'Y')
+		{
+			$config['SKIP_NOTIFICATION'] = 'Y';
+		}
+
+		if (isset($arParams['LAST_MESSAGE_DATE']) && $arParams['LAST_MESSAGE_DATE'])
+		{
+			try
+			{
+				$config['LAST_MESSAGE_DATE'] = new \Bitrix\Main\Type\DateTime($arParams['LAST_MESSAGE_DATE'], \DateTimeInterface::RFC3339);
+			}
+			catch (Exception $e){}
+		}
+
+		$config['OFFSET'] = self::getOffset($offset, $arParams);
+		$config['LIMIT'] = self::getLimit($arParams);
+
+		$result = \Bitrix\Im\Recent::getList(null, $config);
+
+		if ($result['hasMore'])
+		{
+			$result['next'] = $config['OFFSET']+(count($result['items']));
+		}
+
+		$result['total'] = -1;
+
+		return $result;
+
+	}
+
 	public static function recentPin($arParams, $n, CRestServer $server)
 	{
 		$arParams = array_change_key_case($arParams, CASE_UPPER);
 
-		if (!\Bitrix\Im\Common::isDialogId($arParams['DIALOG_ID']))
+		if ($arParams['DIALOG_ID'] !== 'notify' && !\Bitrix\Im\Common::isDialogId($arParams['DIALOG_ID']))
 		{
 			throw new Bitrix\Rest\RestException("Dialog ID can't be empty", "DIALOG_ID_EMPTY", CRestServer::STATUS_WRONG_REQUEST);
 		}
@@ -754,12 +907,51 @@ class CIMRestService extends IRestService
 	{
 		$arParams = array_change_key_case($arParams, CASE_UPPER);
 
-		if (!\Bitrix\Im\Common::isDialogId($arParams['DIALOG_ID']))
+		if ($arParams['DIALOG_ID'] !== 'notify' && !\Bitrix\Im\Common::isDialogId($arParams['DIALOG_ID']))
 		{
 			throw new Bitrix\Rest\RestException("Dialog ID can't be empty", "DIALOG_ID_EMPTY", CRestServer::STATUS_WRONG_REQUEST);
 		}
 
 		return \Bitrix\Im\Recent::hide($arParams['DIALOG_ID']);
+	}
+
+	public static function recentUnread($arParams, $n, CRestServer $server)
+	{
+		$arParams = array_change_key_case($arParams, CASE_UPPER);
+
+		if ($arParams['DIALOG_ID'] !== 'notify' && !\Bitrix\Im\Common::isDialogId($arParams['DIALOG_ID']))
+		{
+			throw new Bitrix\Rest\RestException("Dialog ID can't be empty", "DIALOG_ID_EMPTY", CRestServer::STATUS_WRONG_REQUEST);
+		}
+
+		if (isset($arParams['ACTION']))
+		{
+			$arParams['UNREAD'] = $arParams['ACTION'];
+		}
+
+		return \Bitrix\Im\Recent::unread($arParams['DIALOG_ID'], $arParams['UNREAD'] !== 'N');
+	}
+
+	/* Promotion api */
+
+	public static function promotionGet($arParams, $n, CRestServer $server)
+	{
+		$arParams = array_change_key_case($arParams, CASE_UPPER);
+
+		$promoType = \Bitrix\Im\Promotion::DEVICE_TYPE_ALL;
+		if (in_array($arParams['DEVICE_TYPE'], \Bitrix\Im\Promotion::getDeviceTypes(), true))
+		{
+			$promoType = $arParams['DEVICE_TYPE'];
+		}
+
+		return \Bitrix\Im\Promotion::getActive($promoType);
+	}
+
+	public static function promotionRead($arParams, $n, CRestServer $server)
+	{
+		$arParams = array_change_key_case($arParams, CASE_UPPER);
+
+		return \Bitrix\Im\Promotion::read($arParams['ID']);
 	}
 
 	/* Department api */
@@ -908,7 +1100,7 @@ class CIMRestService extends IRestService
 		if (isset($arParams['AVATAR']) && $arParams['AVATAR'])
 		{
 			$arParams['AVATAR'] = CRestUtil::saveFile($arParams['AVATAR']);
-			if (!$arParams['AVATAR'] || strpos($arParams['AVATAR']['type'], "image/") !== 0)
+			if (!$arParams['AVATAR'] || mb_strpos($arParams['AVATAR']['type'], "image/") !== 0)
 			{
 				$arParams['AVATAR'] = 0;
 			}
@@ -1005,7 +1197,20 @@ class CIMRestService extends IRestService
 			}
 
 			$result = \Bitrix\Im\Chat::getById($chatId, ['LOAD_READED' => true, 'JSON' => true]);
+			if (!$result)
+			{
+				throw new Bitrix\Rest\RestException("You don't have access to this chat", "ACCESS_ERROR", CRestServer::STATUS_WRONG_REQUEST);
+			}
+
 			$result['dialog_id'] = $arParams['DIALOG_ID'];
+
+			$chatLimits = \CIMChat::GetChatOptions();
+			$externalChatTypes = array_keys($chatLimits);
+			if ($result['entity_type'] && in_array($result['entity_type'], $externalChatTypes, true))
+			{
+				$result['restrictions'] = $chatLimits[$result['entity_type']];
+			}
+
 
 			return $result;
 		}
@@ -1015,12 +1220,12 @@ class CIMRestService extends IRestService
 		)
 		{
 			$chatData = \Bitrix\Im\Model\ChatTable::getList(Array(
-				'select' => ['ID'],
-				'filter' => [
-					'=ENTITY_TYPE' => $arParams['ENTITY_TYPE'],
-					'=ENTITY_ID' => $arParams['ENTITY_ID'],
-				]
-			))->fetch();
+																'select' => ['ID'],
+																'filter' => [
+																	'=ENTITY_TYPE' => $arParams['ENTITY_TYPE'],
+																	'=ENTITY_ID' => $arParams['ENTITY_ID'],
+																]
+															))->fetch();
 			if ($chatData)
 			{
 				return Array(
@@ -1064,7 +1269,7 @@ class CIMRestService extends IRestService
 		}
 
 		$userId = $USER->GetId();
-		if ($server->getMethod() == strtolower("imbot.chat.setOwner"))
+		if ($server->getMethod() == mb_strtolower("imbot.chat.setOwner"))
 		{
 			$userId = self::getBotId($arParams, $server);
 		}
@@ -1117,7 +1322,7 @@ class CIMRestService extends IRestService
 		}
 
 		$userId = $USER->GetId();
-		if ($server->getMethod() == strtolower("imbot.chat.setManager"))
+		if ($server->getMethod() == mb_strtolower("imbot.chat.setManager"))
 		{
 			$userId = self::getBotId($arParams, $server);
 		}
@@ -1169,7 +1374,7 @@ class CIMRestService extends IRestService
 		}
 
 		$userId = $USER->GetId();
-		if ($server->getMethod() == strtolower("imbot.chat.updateColor"))
+		if ($server->getMethod() == mb_strtolower("imbot.chat.updateColor"))
 		{
 			$userId = self::getBotId($arParams, $server);
 		}
@@ -1216,7 +1421,7 @@ class CIMRestService extends IRestService
 		}
 
 		$userId = $USER->GetId();
-		if ($server->getMethod() == strtolower("imbot.chat.updateTitle"))
+		if ($server->getMethod() == mb_strtolower("imbot.chat.updateTitle"))
 		{
 			$userId = self::getBotId($arParams, $server);
 		}
@@ -1263,7 +1468,7 @@ class CIMRestService extends IRestService
 		}
 
 		$userId = $USER->GetId();
-		if ($server->getMethod() == strtolower("imbot.chat.updateAvatar"))
+		if ($server->getMethod() == mb_strtolower("imbot.chat.updateAvatar"))
 		{
 			$userId = self::getBotId($arParams, $server);
 		}
@@ -1274,7 +1479,7 @@ class CIMRestService extends IRestService
 		}
 
 		$arParams['AVATAR'] = CRestUtil::saveFile($arParams['AVATAR']);
-		if (!$arParams['AVATAR'] || strpos($arParams['AVATAR']['type'], "image/") !== 0)
+		if (!$arParams['AVATAR'] || mb_strpos($arParams['AVATAR']['type'], "image/") !== 0)
 		{
 			throw new Bitrix\Rest\RestException("Avatar incorrect", "AVATAR_ERROR", CRestServer::STATUS_WRONG_REQUEST);
 		}
@@ -1438,10 +1643,10 @@ class CIMRestService extends IRestService
 		}
 
 		$arChat = CIMChat::GetChatData(array(
-			'ID' => $arParams['CHAT_ID'],
-			'USE_CACHE' => 'Y',
-			'USER_ID' => $userId
-		));
+										   'ID' => $arParams['CHAT_ID'],
+										   'USE_CACHE' => 'Y',
+										   'USER_ID' => $userId
+									   ));
 
 		return isset($arChat['userInChat'][$arParams['CHAT_ID']])? $arChat['userInChat'][$arParams['CHAT_ID']]: Array();
 	}
@@ -1548,7 +1753,7 @@ class CIMRestService extends IRestService
 		{
 			$arParams['MESSAGE'] = trim($arParams['MESSAGE']);
 
-			if (strlen($arParams['MESSAGE']) <= 0 && empty($arParams['ATTACH']))
+			if ($arParams['MESSAGE'] == '' && empty($arParams['ATTACH']))
 			{
 				throw new Bitrix\Rest\RestException("Message can't be empty", "MESSAGE_EMPTY", CRestServer::STATUS_WRONG_REQUEST);
 			}
@@ -1597,6 +1802,7 @@ class CIMRestService extends IRestService
 			{
 				throw new Bitrix\Rest\RestException("Chat ID can't be empty", "CHAT_ID_EMPTY", CRestServer::STATUS_WRONG_REQUEST);
 			}
+
 			if (CIMChat::GetGeneralChatId() == $arParams['CHAT_ID'] && !CIMChat::CanSendMessageToGeneralChat($arParams['FROM_USER_ID']))
 			{
 				throw new Bitrix\Rest\RestException("Action unavailable", "ACCESS_ERROR", CRestServer::STATUS_FORBIDDEN);
@@ -1628,21 +1834,6 @@ class CIMRestService extends IRestService
 						);
 
 					$arParams['MESSAGE'] = "[b]".$moduleName."[/b]\n".$arParams['MESSAGE'];
-				}
-			}
-			else
-			{
-				$arRelation = CIMChat::GetRelationById($arParams['CHAT_ID']);
-				if (!isset($arRelation[$arParams['FROM_USER_ID']]))
-				{
-					$chat = \Bitrix\Im\Chat::getById($arParams['CHAT_ID']);
-					if (
-						$chat['MESSAGE_TYPE'] !== IM_MESSAGE_OPEN
-						|| \Bitrix\Im\User::getInstance()->isExtranet()
-					)
-					{
-						throw new Bitrix\Rest\RestException("You don't have access or user isn't member in chat", "ACCESS_ERROR", CRestServer::STATUS_WRONG_REQUEST);
-					}
 				}
 			}
 
@@ -1743,14 +1934,14 @@ class CIMRestService extends IRestService
 		{
 			$arMessageFields['URL_PREVIEW'] = 'N';
 		}
-		if (isset($arParams['SKIP_CONNECTOR']) && strtoupper($arParams['SKIP_CONNECTOR']) == 'Y')
+		if (isset($arParams['SKIP_CONNECTOR']) && mb_strtoupper($arParams['SKIP_CONNECTOR']) == 'Y')
 		{
 			$arMessageFields['SKIP_CONNECTOR'] = 'Y';
 			$arMessageFields['SILENT_CONNECTOR'] = 'Y';
 		}
 		if (isset($arParams['TEMPLATE_ID']) && !empty($arParams['TEMPLATE_ID']))
 		{
-			$arMessageFields['TEMPLATE_ID'] = substr((string)$arParams['TEMPLATE_ID'], 0, 255);
+			$arMessageFields['TEMPLATE_ID'] = mb_substr((string)$arParams['TEMPLATE_ID'], 0, 255);
 		}
 
 		$id = CIMMessenger::Add($arMessageFields);
@@ -1969,7 +2160,7 @@ class CIMRestService extends IRestService
 			throw new Bitrix\Rest\RestException("Message ID can't be empty", "MESSAGE_ID_ERROR", CRestServer::STATUS_WRONG_REQUEST);
 		}
 
-		$arParams['ACTION'] = strtolower($arParams['ACTION']);
+		$arParams['ACTION'] = mb_strtolower($arParams['ACTION']);
 		if (!in_array($arParams['ACTION'], Array('auto', 'plus', 'minus')))
 		{
 			$arParams['ACTION'] = 'auto';
@@ -2005,7 +2196,7 @@ class CIMRestService extends IRestService
 			throw new Bitrix\Rest\RestException("Bot ID can't be empty", "BOT_ID_ERROR", CRestServer::STATUS_WRONG_REQUEST);
 		}
 
-		if (strlen($arParams['COMMAND']) <= 0)
+		if ($arParams['COMMAND'] == '')
 		{
 			throw new Bitrix\Rest\RestException("Command can't be empty", "COMMAND_ERROR", CRestServer::STATUS_WRONG_REQUEST);
 		}
@@ -2063,6 +2254,11 @@ class CIMRestService extends IRestService
 	public static function messageUserGet($arParams, $offset, CRestServer $server)
 	{
 		$arParams = array_change_key_case($arParams, CASE_UPPER);
+
+		if ($server->getAuthType() == \Bitrix\Rest\SessionAuth\Auth::AUTH_TYPE)
+		{
+			throw new \Bitrix\Rest\RestException("Access for this method not allowed by session authorization.", "WRONG_AUTH_TYPE", \CRestServer::STATUS_WRONG_REQUEST);
+		}
 
 		global $USER;
 		$userId = $USER->GetID();
@@ -2145,7 +2341,7 @@ class CIMRestService extends IRestService
 		}
 
 		$arParams['MESSAGE'] = trim($arParams['MESSAGE']);
-		if (strlen($arParams['MESSAGE']) <= 0)
+		if ($arParams['MESSAGE'] == '')
 		{
 			throw new Bitrix\Rest\RestException("Message can't be empty", "MESSAGE_EMPTY", CRestServer::STATUS_WRONG_REQUEST);
 		}
@@ -2201,12 +2397,12 @@ class CIMRestService extends IRestService
 		{
 			if (!empty($arParams['TAG']))
 			{
-				$appKey = substr(md5($server->getClientId()), 0, 5);
+				$appKey = mb_substr(md5($server->getClientId()), 0, 5);
 				$arMessageFields['NOTIFY_TAG'] = 'MP|'.$appKey.'|'.$arParams['TAG'];
 			}
 			if (!empty($arParams['SUB_TAG']))
 			{
-				$appKey = substr(md5($server->getClientId()), 0, 5);
+				$appKey = mb_substr(md5($server->getClientId()), 0, 5);
 				$arMessageFields['NOTIFY_SUB_TAG'] = 'MP|'.$appKey.'|'.$arParams['SUB_TAG'];
 			}
 		}
@@ -2231,49 +2427,94 @@ class CIMRestService extends IRestService
 		return CIMNotify::Add($arMessageFields);
 	}
 
-	public static function notifyDelete($arParams, $n, CRestServer $server)
+	public static function notifyGet($arParams, $n, CRestServer $server)
 	{
-		if ($server->getAuthType() == \Bitrix\Rest\SessionAuth\Auth::AUTH_TYPE)
-		{
-			throw new \Bitrix\Rest\RestException("Access for this method not allowed by session authorization.", "WRONG_AUTH_TYPE", \CRestServer::STATUS_FORBIDDEN);
-		}
-
 		$arParams = array_change_key_case($arParams, CASE_UPPER);
 
-		if (isset($arParams['ID']) && intval($arParams['ID']) > 0)
+		if (
+			(isset($arParams['LAST_ID']) && !isset($arParams['LAST_TYPE'])) ||
+			(!isset($arParams['LAST_ID']) && isset($arParams['LAST_TYPE']))
+		)
 		{
-			$CIMNotify = new CIMNotify();
-			$result = $CIMNotify->DeleteWithCheck($arParams['ID']);
+			throw new Bitrix\Rest\RestException(
+				"Parameters LAST_ID and LAST_TYPE should be used together.",
+				"LAST_ID_AND_LAST_TYPE",
+				CRestServer::STATUS_WRONG_REQUEST
+			);
+		}
+
+		if (isset($arParams['LAST_ID']) )
+		{
+			if (!preg_match('/^\d+$/', $arParams['LAST_ID']))
+			{
+				throw new Bitrix\Rest\RestException(
+					"Last notification ID can't be string",
+					"LAST_ID_STRING",
+					CRestServer::STATUS_WRONG_REQUEST
+				);
+			}
+
+			$options['LAST_ID'] = (int)$arParams['LAST_ID'];
+			$options['LAST_TYPE'] = (int)$arParams['LAST_TYPE'];
+		}
+
+		if (isset($arParams['LIMIT']))
+		{
+			$options['LIMIT'] = (int)$arParams['LIMIT'] > 50 ? 50 : (int)$arParams['LIMIT'];
 		}
 		else
 		{
-			$clientId = $server->getClientId();
-			if (!$clientId)
-			{
-				if (!empty($arParams['CLIENT_ID']))
-				{
-					$clientId = 'custom'.$arParams['CLIENT_ID'];
-				}
-				else
-				{
-					throw new \Bitrix\Rest\AccessException("Client ID not specified");
-				}
-			}
+			$options['LIMIT'] = 50;
+		}
 
-			if (!empty($arParams['TAG']))
+		$options['CONVERT_TEXT'] = isset($arParams['CONVERT_TEXT']) && $arParams['CONVERT_TEXT'] === 'Y';
+
+		$notify = new \Bitrix\Im\Notify($options);
+
+		return $notify->get();
+	}
+
+	public static function notifyDelete($arParams, $n, CRestServer $server)
+	{
+		$arParams = array_change_key_case($arParams, CASE_UPPER);
+
+		if (isset($arParams['ID']))
+		{
+			$CIMNotify = new CIMNotify();
+			return $CIMNotify->DeleteWithCheck($arParams['ID']);
+		}
+
+		if ($server->getAuthType() == \Bitrix\Rest\SessionAuth\Auth::AUTH_TYPE)
+		{
+			throw new Bitrix\Rest\RestException("Incorrect params", "PARAMS_ERROR", CRestServer::STATUS_WRONG_REQUEST);
+		}
+
+		$clientId = $server->getClientId();
+		if (!$clientId)
+		{
+			if (!empty($arParams['CLIENT_ID']))
 			{
-				$appKey = substr(md5($clientId), 0, 5);
-				$result = CIMNotify::DeleteByTag('MP|'.$appKey.'|'.$arParams['TAG']);
-			}
-			else if (!empty($arParams['SUB_TAG']))
-			{
-				$appKey = substr(md5($clientId), 0, 5);
-				$result = CIMNotify::DeleteBySubTag('MP|'.$appKey.'|'.$arParams['SUB_TAG']);
+				$clientId = 'custom'.$arParams['CLIENT_ID'];
 			}
 			else
 			{
-				throw new Bitrix\Rest\RestException("Incorrect params", "PARAMS_ERROR", CRestServer::STATUS_WRONG_REQUEST);
+				throw new \Bitrix\Rest\AccessException("Client ID not specified");
 			}
+		}
+
+		if (!empty($arParams['TAG']))
+		{
+			$appKey = mb_substr(md5($clientId), 0, 5);
+			$result = CIMNotify::DeleteByTag('MP|'.$appKey.'|'.$arParams['TAG']);
+		}
+		else if (!empty($arParams['SUB_TAG']))
+		{
+			$appKey = mb_substr(md5($clientId), 0, 5);
+			$result = CIMNotify::DeleteBySubTag('MP|'.$appKey.'|'.$arParams['SUB_TAG']);
+		}
+		else
+		{
+			throw new Bitrix\Rest\RestException("Incorrect params", "PARAMS_ERROR", CRestServer::STATUS_WRONG_REQUEST);
 		}
 
 		return $result;
@@ -2283,18 +2524,203 @@ class CIMRestService extends IRestService
 	{
 		$arParams = array_change_key_case($arParams, CASE_UPPER);
 
-		if (isset($arParams['ID']) && intval($arParams['ID']) > 0)
+		if (!isset($arParams['ACTION']))
+		{
+			$arParams['ACTION'] = 'Y';
+		}
+
+		if (isset($arParams['ID']) && (int)$arParams['ID'] >= 0)
 		{
 			$CIMNotify = new CIMNotify();
-			$CIMNotify->MarkNotifyRead($arParams['ID'], $arParams['ONLY_CURRENT'] != 'Y');
+
+			if ($arParams['ACTION'] === 'Y')
+			{
+				$CIMNotify->MarkNotifyRead($arParams['ID'], $arParams['ONLY_CURRENT'] != 'Y');
+			}
+			else
+			{
+				$CIMNotify->MarkNotifyUnRead($arParams['ID'], $arParams['ONLY_CURRENT'] != 'Y');
+			}
 		}
 
 		return true;
 	}
 
+	public static function notifyReadList($arParams, $n, CRestServer $server)
+	{
+		$arParams = array_change_key_case($arParams, CASE_UPPER);
 
+		if (!isset($arParams['ACTION']))
+		{
+			$arParams['ACTION'] = 'Y';
+		}
 
+		if (!isset($arParams['IDS']) || !is_array($arParams['IDS']))
+		{
+			throw new Bitrix\Rest\RestException("No IDS param or it is not an array", "PARAMS_ERROR", CRestServer::STATUS_WRONG_REQUEST);
+		}
 
+		$CIMNotify = new CIMNotify();
+		foreach ($arParams['IDS'] as $notificationId)
+		{
+			$notificationId = (int)$notificationId;
+			if ($notificationId <= 0)
+			{
+				break;
+			}
+
+			if ($arParams['ACTION'] === 'Y')
+			{
+				$CIMNotify->MarkNotifyRead($notificationId);
+			}
+			else
+			{
+				$CIMNotify->MarkNotifyUnRead($notificationId);
+			}
+		}
+
+		return true;
+	}
+
+	public static function notifyConfirm($arParams, $n, CRestServer $server): array
+	{
+		$arParams = array_change_key_case($arParams, CASE_UPPER);
+
+		if (isset($arParams['NOTIFY_ID']))
+		{
+			$arParams['NOTIFY_ID'] = (int)$arParams['NOTIFY_ID'];
+		}
+
+		if ($arParams['NOTIFY_ID'] <= 0)
+		{
+			throw new Bitrix\Rest\RestException("Notification ID can't be empty", "NOTIFY_ID_ERROR", CRestServer::STATUS_WRONG_REQUEST);
+		}
+
+		if (empty($arParams['NOTIFY_VALUE']))
+		{
+			throw new Bitrix\Rest\RestException("Notification Value  can't be empty", "NOTIFY_VALUE_ERROR", CRestServer::STATUS_WRONG_REQUEST);
+		}
+
+		$CIMNotify = new CIMNotify();
+		$result = $CIMNotify->Confirm($arParams['NOTIFY_ID'], $arParams['NOTIFY_VALUE']);
+
+		return [
+			'result_message' => $result
+		];
+	}
+
+	public static function notifyAnswer($arParams, $n, CRestServer $server): array
+	{
+		$arParams = array_change_key_case($arParams, CASE_UPPER);
+
+		if (isset($arParams['NOTIFY_ID']))
+		{
+			$arParams['NOTIFY_ID'] = (int)$arParams['NOTIFY_ID'];
+		}
+
+		if ($arParams['NOTIFY_ID'] <= 0)
+		{
+			throw new Bitrix\Rest\RestException("Notification ID can't be empty", "NOTIFY_ID_ERROR", CRestServer::STATUS_WRONG_REQUEST);
+		}
+
+		if (empty($arParams['ANSWER_TEXT']))
+		{
+			throw new Bitrix\Rest\RestException("ANSWER_TEXT can't be empty", "ANSWER_TEXT_ERROR", CRestServer::STATUS_WRONG_REQUEST);
+		}
+
+		$CIMNotify = new CIMNotify();
+		$result = $CIMNotify->Answer($arParams['NOTIFY_ID'], $arParams['ANSWER_TEXT']);
+
+		return [
+			'result_message' => $result
+		];
+	}
+
+	public static function notifyHistorySearch($arParams, $n, CRestServer $server): array
+	{
+		$arParams = array_change_key_case($arParams, CASE_UPPER);
+
+		if (!$arParams['SEARCH_TYPE'] && !$arParams['SEARCH_DATE'] && mb_strlen(trim($arParams['SEARCH_TEXT'])) < 3)
+		{
+			throw new Bitrix\Rest\RestException("SEARCH_TEXT can't be less then 3 symbols", "SEARCH_TEXT_ERROR", CRestServer::STATUS_WRONG_REQUEST);
+		}
+
+		if (isset($arParams['SEARCH_TEXT']))
+		{
+			$options['SEARCH_TEXT'] = $arParams['SEARCH_TEXT'];
+		}
+		if (isset($arParams['SEARCH_TYPE']))
+		{
+			$options['SEARCH_TYPE'] = $arParams['SEARCH_TYPE'];
+		}
+		if (isset($arParams['SEARCH_DATE']))
+		{
+			$options['SEARCH_DATE'] = $arParams['SEARCH_DATE'];
+		}
+		if (isset($arParams['LAST_ID']))
+		{
+			if (!preg_match('/^\d+$/', $arParams['LAST_ID']))
+			{
+				throw new Bitrix\Rest\RestException(
+					"Last notification ID can't be string",
+					"LAST_ID_STRING",
+					CRestServer::STATUS_WRONG_REQUEST
+				);
+			}
+
+			$options['LAST_ID'] = (int)$arParams['LAST_ID'];
+		}
+
+		if (isset($arParams['LIMIT']))
+		{
+			$options['LIMIT'] = (int)$arParams['LIMIT'] > 50 ? 50 : (int)$arParams['LIMIT'];
+		}
+		else
+		{
+			$options['LIMIT'] = 50;
+		}
+
+		$options['CONVERT_TEXT'] = isset($arParams['CONVERT_TEXT']) && $arParams['CONVERT_TEXT'] === 'Y';
+
+		$notify = new \Bitrix\Im\Notify($options);
+
+		return $notify->search();
+	}
+
+	public static function notifySchemaGet($arParams, $n, CRestServer $server): array
+	{
+		$schemaResult = [];
+		$schema = CIMNotifySchema::GetNotifySchema();
+		foreach ($schema as $moduleId => $notifyTypes)
+		{
+			$list = [];
+			foreach ($notifyTypes['NOTIFY'] as $notifyId => $notify)
+			{
+				$list[] = [
+					'ID' => $moduleId.'|'.$notifyId,
+					'NAME' => $notify['NAME']
+				];
+			}
+
+			if ($notifyTypes['NAME'] === '')
+			{
+				$module = CModule::CreateModuleObject($moduleId);
+				$moduleName = $module->MODULE_NAME;
+			}
+			else
+			{
+				$moduleName = $notifyTypes['NAME'];
+			}
+
+			$schemaResult[$moduleId] = [
+				'NAME' => $moduleName,
+				'MODULE_ID' => $moduleId,
+				'LIST' => $list,
+			];
+		}
+
+		return $schemaResult;
+	}
 
 	public static function diskFolderGet($arParams, $n, CRestServer $server)
 	{
@@ -2367,7 +2793,7 @@ class CIMRestService extends IRestService
 		}
 
 		$arParams['MESSAGE'] = trim($arParams['MESSAGE']);
-		if (strlen($arParams['MESSAGE']) <= 0)
+		if ($arParams['MESSAGE'] == '')
 		{
 			unset($arParams['MESSAGE']);
 		}
@@ -2402,6 +2828,11 @@ class CIMRestService extends IRestService
 			{
 				$files[$fileId] = 'disk'.$fileId;
 			}
+
+			if (isset($arParams['SYMLINK']))
+			{
+				$arParams['SYMLINK'] = $arParams['SYMLINK'] == 'Y';
+			}
 		}
 		else if (isset($arParams['UPLOAD_ID']))
 		{
@@ -2422,18 +2853,19 @@ class CIMRestService extends IRestService
 
 		if (isset($arParams['TEMPLATE_ID']) && !empty($arParams['TEMPLATE_ID']))
 		{
-			$arParams['TEMPLATE_ID'] = substr((string)$arParams['TEMPLATE_ID'], 0, 255);
+			$arParams['TEMPLATE_ID'] = mb_substr((string)$arParams['TEMPLATE_ID'], 0, 255);
 		}
 
 		if (isset($arParams['FILE_TEMPLATE_ID']) && !empty($arParams['FILE_TEMPLATE_ID']))
 		{
-			$arParams['FILE_TEMPLATE_ID'] = substr((string)$arParams['FILE_TEMPLATE_ID'], 0, 255);
+			$arParams['FILE_TEMPLATE_ID'] = mb_substr((string)$arParams['FILE_TEMPLATE_ID'], 0, 255);
 		}
 
 		return CIMDisk::UploadFileFromDisk($chatId, array_values($files), $arParams['MESSAGE'], [
 			'LINES_SILENT_MODE' => $arParams['SILENT_MODE'],
 			'TEMPLATE_ID' => $arParams['TEMPLATE_ID']?:'',
 			'FILE_TEMPLATE_ID' => $arParams['FILE_TEMPLATE_ID']?:'',
+			'SYMLINK' => $arParams['SYMLINK']?:false,
 		]);
 	}
 
@@ -2487,9 +2919,19 @@ class CIMRestService extends IRestService
 
 	public static function counterGet($arParams, $n, CRestServer $server)
 	{
-		global $USER;
+		$counters = \Bitrix\Im\Counter::get();
 
-		return \Bitrix\Im\Counter::get($USER->GetID());
+		if ($arParams['ONLY_COUNTER'])
+		{
+			$counters = $counters['TYPE'];
+		}
+
+		if ($arParams['JSON'] === 'Y')
+		{
+			$counters = \Bitrix\Im\Common::toJson($counters);
+		}
+
+		return $counters;
 	}
 
 	public static function notImplemented($arParams, $n, CRestServer $server)
@@ -2542,7 +2984,7 @@ class CIMRestService extends IRestService
 		{
 			if ($customClientId)
 			{
-				$arParams['EVENT_MESSAGE_ADD'] = $arParams['EVENT_MESSAGE_ADD'].(strpos($arParams['EVENT_MESSAGE_ADD'], '?') === false? '?': '&').'CLIENT_ID='.$arParams['CLIENT_ID'];
+				$arParams['EVENT_MESSAGE_ADD'] = $arParams['EVENT_MESSAGE_ADD'].(mb_strpos($arParams['EVENT_MESSAGE_ADD'], '?') === false? '?': '&').'CLIENT_ID='.$arParams['CLIENT_ID'];
 			}
 			try
 			{
@@ -2562,7 +3004,7 @@ class CIMRestService extends IRestService
 		{
 			if ($customClientId)
 			{
-				$arParams['EVENT_MESSAGE_UPDATE'] = $arParams['EVENT_MESSAGE_UPDATE'].(strpos($arParams['EVENT_MESSAGE_UPDATE'], '?') === false? '?': '&').'CLIENT_ID='.$arParams['CLIENT_ID'];
+				$arParams['EVENT_MESSAGE_UPDATE'] = $arParams['EVENT_MESSAGE_UPDATE'].(mb_strpos($arParams['EVENT_MESSAGE_UPDATE'], '?') === false? '?': '&').'CLIENT_ID='.$arParams['CLIENT_ID'];
 			}
 			try
 			{
@@ -2578,7 +3020,7 @@ class CIMRestService extends IRestService
 		{
 			if ($customClientId)
 			{
-				$arParams['EVENT_MESSAGE_DELETE'] = $arParams['EVENT_MESSAGE_DELETE'].(strpos($arParams['EVENT_MESSAGE_DELETE'], '?') === false? '?': '&').'CLIENT_ID='.$arParams['CLIENT_ID'];
+				$arParams['EVENT_MESSAGE_DELETE'] = $arParams['EVENT_MESSAGE_DELETE'].(mb_strpos($arParams['EVENT_MESSAGE_DELETE'], '?') === false? '?': '&').'CLIENT_ID='.$arParams['CLIENT_ID'];
 			}
 			try
 			{
@@ -2594,7 +3036,7 @@ class CIMRestService extends IRestService
 		{
 			if ($customClientId)
 			{
-				$arParams['EVENT_WELCOME_MESSAGE'] = $arParams['EVENT_WELCOME_MESSAGE'].(strpos($arParams['EVENT_WELCOME_MESSAGE'], '?') === false? '?': '&').'CLIENT_ID='.$arParams['CLIENT_ID'];
+				$arParams['EVENT_WELCOME_MESSAGE'] = $arParams['EVENT_WELCOME_MESSAGE'].(mb_strpos($arParams['EVENT_WELCOME_MESSAGE'], '?') === false? '?': '&').'CLIENT_ID='.$arParams['CLIENT_ID'];
 			}
 			try
 			{
@@ -2614,7 +3056,7 @@ class CIMRestService extends IRestService
 		{
 			if ($customClientId)
 			{
-				$arParams['EVENT_BOT_DELETE'] = $arParams['EVENT_BOT_DELETE'].(strpos($arParams['EVENT_BOT_DELETE'], '?') === false? '?': '&').'CLIENT_ID='.$arParams['CLIENT_ID'];
+				$arParams['EVENT_BOT_DELETE'] = $arParams['EVENT_BOT_DELETE'].(mb_strpos($arParams['EVENT_BOT_DELETE'], '?') === false? '?': '&').'CLIENT_ID='.$arParams['CLIENT_ID'];
 			}
 			try
 			{
@@ -2699,20 +3141,20 @@ class CIMRestService extends IRestService
 		if (isset($arParams['PROPERTIES']['PERSONAL_PHOTO']))
 		{
 			$avatar = CRestUtil::saveFile($arParams['PROPERTIES']['PERSONAL_PHOTO'], $arParams['CODE'].'.png');
-			if (isset($avatar) && strpos($avatar['type'], "image/") === 0)
+			if (isset($avatar) && mb_strpos($avatar['type'], "image/") === 0)
 			{
 				$properties['PERSONAL_PHOTO'] = $avatar;
 			}
 		}
 
 		$botId = \Bitrix\Im\Bot::register(Array(
-			'APP_ID' => $clientId,
-			'CODE' => $arParams['CODE'],
-			'TYPE' => $arParams['TYPE'],
-			'OPENLINE' => $arParams['OPENLINE'],
-			'MODULE_ID' => 'rest',
-			'PROPERTIES' => $properties
-		));
+											  'APP_ID' => $clientId,
+											  'CODE' => $arParams['CODE'],
+											  'TYPE' => $arParams['TYPE'],
+											  'OPENLINE' => $arParams['OPENLINE'],
+											  'MODULE_ID' => 'rest',
+											  'PROPERTIES' => $properties
+										  ));
 		if ($botId)
 		{
 			self::unbindEvent($arApp['ID'], $arApp['CLIENT_ID'], 'im', 'onImBotMessageAdd', 'OnImBotMessageAdd', true);
@@ -2851,7 +3293,7 @@ class CIMRestService extends IRestService
 			$updateEvents['EVENT_MESSAGE_ADD'] = $arParams['FIELDS']['EVENT_MESSAGE_ADD'];
 			if ($customClientId)
 			{
-				$updateEvents['EVENT_MESSAGE_ADD'] = $updateEvents['EVENT_MESSAGE_ADD'].(strpos($updateEvents['EVENT_MESSAGE_ADD'], '?') === false? '?': '&').'CLIENT_ID='.$arParams['CLIENT_ID'];
+				$updateEvents['EVENT_MESSAGE_ADD'] = $updateEvents['EVENT_MESSAGE_ADD'].(mb_strpos($updateEvents['EVENT_MESSAGE_ADD'], '?') === false? '?': '&').'CLIENT_ID='.$arParams['CLIENT_ID'];
 			}
 			try
 			{
@@ -2868,7 +3310,7 @@ class CIMRestService extends IRestService
 			$updateEvents['EVENT_MESSAGE_UPDATE'] = $arParams['FIELDS']['EVENT_MESSAGE_UPDATE'];
 			if ($customClientId)
 			{
-				$updateEvents['EVENT_MESSAGE_UPDATE'] = $updateEvents['EVENT_MESSAGE_UPDATE'].(strpos($updateEvents['EVENT_MESSAGE_UPDATE'], '?') === false? '?': '&').'CLIENT_ID='.$arParams['CLIENT_ID'];
+				$updateEvents['EVENT_MESSAGE_UPDATE'] = $updateEvents['EVENT_MESSAGE_UPDATE'].(mb_strpos($updateEvents['EVENT_MESSAGE_UPDATE'], '?') === false? '?': '&').'CLIENT_ID='.$arParams['CLIENT_ID'];
 			}
 			try
 			{
@@ -2885,7 +3327,7 @@ class CIMRestService extends IRestService
 			$updateEvents['EVENT_MESSAGE_DELETE'] = $arParams['FIELDS']['EVENT_MESSAGE_DELETE'];
 			if ($customClientId)
 			{
-				$updateEvents['EVENT_MESSAGE_DELETE'] = $updateEvents['EVENT_MESSAGE_DELETE'].(strpos($updateEvents['EVENT_MESSAGE_DELETE'], '?') === false? '?': '&').'CLIENT_ID='.$arParams['CLIENT_ID'];
+				$updateEvents['EVENT_MESSAGE_DELETE'] = $updateEvents['EVENT_MESSAGE_DELETE'].(mb_strpos($updateEvents['EVENT_MESSAGE_DELETE'], '?') === false? '?': '&').'CLIENT_ID='.$arParams['CLIENT_ID'];
 			}
 			try
 			{
@@ -2902,7 +3344,7 @@ class CIMRestService extends IRestService
 			$updateEvents['EVENT_WELCOME_MESSAGE'] = $arParams['FIELDS']['EVENT_WELCOME_MESSAGE'];
 			if ($customClientId)
 			{
-				$updateEvents['EVENT_WELCOME_MESSAGE'] = $updateEvents['EVENT_WELCOME_MESSAGE'].(strpos($updateEvents['EVENT_WELCOME_MESSAGE'], '?') === false? '?': '&').'CLIENT_ID='.$arParams['CLIENT_ID'];
+				$updateEvents['EVENT_WELCOME_MESSAGE'] = $updateEvents['EVENT_WELCOME_MESSAGE'].(mb_strpos($updateEvents['EVENT_WELCOME_MESSAGE'], '?') === false? '?': '&').'CLIENT_ID='.$arParams['CLIENT_ID'];
 			}
 			try
 			{
@@ -2919,7 +3361,7 @@ class CIMRestService extends IRestService
 			$updateEvents['EVENT_BOT_DELETE'] = $arParams['FIELDS']['EVENT_BOT_DELETE'];
 			if ($customClientId)
 			{
-				$updateEvents['EVENT_BOT_DELETE'] = $updateEvents['EVENT_BOT_DELETE'].(strpos($updateEvents['EVENT_BOT_DELETE'], '?') === false? '?': '&').'CLIENT_ID='.$arParams['CLIENT_ID'];
+				$updateEvents['EVENT_BOT_DELETE'] = $updateEvents['EVENT_BOT_DELETE'].(mb_strpos($updateEvents['EVENT_BOT_DELETE'], '?') === false? '?': '&').'CLIENT_ID='.$arParams['CLIENT_ID'];
 			}
 			try
 			{
@@ -2993,7 +3435,7 @@ class CIMRestService extends IRestService
 		if (isset($arParams['FIELDS']['PROPERTIES']['PERSONAL_PHOTO']))
 		{
 			$avatar = CRestUtil::saveFile($arParams['FIELDS']['PROPERTIES']['PERSONAL_PHOTO'], $bots[$arParams['BOT_ID']]['CODE'].'.png');
-			if ($avatar && strpos($avatar['type'], "image/") === 0)
+			if ($avatar && mb_strpos($avatar['type'], "image/") === 0)
 			{
 				$properties['PERSONAL_PHOTO'] = $avatar;
 			}
@@ -3114,7 +3556,7 @@ class CIMRestService extends IRestService
 		}
 
 		$arMessageFields['MESSAGE'] = trim($arParams['MESSAGE']);
-		if (strlen($arMessageFields['MESSAGE']) <= 0)
+		if ($arMessageFields['MESSAGE'] == '')
 		{
 			throw new Bitrix\Rest\RestException("Message can't be empty", "MESSAGE_EMPTY", CRestServer::STATUS_WRONG_REQUEST);
 		}
@@ -3205,7 +3647,7 @@ class CIMRestService extends IRestService
 			$arMessageFields['URL_PREVIEW'] = 'N';
 		}
 
-		if (isset($arParams['SKIP_CONNECTOR']) && strtoupper($arParams['SKIP_CONNECTOR']) == 'Y')
+		if (isset($arParams['SKIP_CONNECTOR']) && mb_strtoupper($arParams['SKIP_CONNECTOR']) == 'Y')
 		{
 			$arMessageFields['SKIP_CONNECTOR'] = 'Y';
 			$arMessageFields['SILENT_CONNECTOR'] = 'Y';
@@ -3414,7 +3856,7 @@ class CIMRestService extends IRestService
 		if (isset($arParams['MESSAGE']))
 		{
 			$urlPreview = isset($arParams['URL_PREVIEW']) && $arParams['URL_PREVIEW'] == "N"? false: true;
-			$skipConnector = isset($arParams['SKIP_CONNECTOR']) && strtoupper($arParams['SKIP_CONNECTOR']) == "Y"? true: false;
+			$skipConnector = isset($arParams['SKIP_CONNECTOR']) && mb_strtoupper($arParams['SKIP_CONNECTOR']) == "Y"? true: false;
 
 			$res = CIMMessenger::Update($arParams['MESSAGE_ID'], $arParams['MESSAGE'], $urlPreview, false, $arParams['BOT_ID'], $skipConnector);
 			if (!$res)
@@ -3543,7 +3985,7 @@ class CIMRestService extends IRestService
 			throw new Bitrix\Rest\RestException("Message ID can't be empty", "MESSAGE_ID_ERROR", CRestServer::STATUS_WRONG_REQUEST);
 		}
 
-		$arParams['ACTION'] = strtolower($arParams['ACTION']);
+		$arParams['ACTION'] = mb_strtolower($arParams['ACTION']);
 		if (!in_array($arParams['ACTION'], Array('auto', 'plus', 'minus')))
 		{
 			$arParams['ACTION'] = 'auto';
@@ -4073,7 +4515,7 @@ class CIMRestService extends IRestService
 		{
 			if ($customClientId)
 			{
-				$arParams['EVENT_COMMAND_ADD'] = $arParams['EVENT_COMMAND_ADD'].(strpos($arParams['EVENT_COMMAND_ADD'], '?') === false? '?': '&').'CLIENT_ID='.$arParams['CLIENT_ID'];
+				$arParams['EVENT_COMMAND_ADD'] = $arParams['EVENT_COMMAND_ADD'].(mb_strpos($arParams['EVENT_COMMAND_ADD'], '?') === false? '?': '&').'CLIENT_ID='.$arParams['CLIENT_ID'];
 			}
 			try
 			{
@@ -4121,16 +4563,16 @@ class CIMRestService extends IRestService
 		}
 
 		$commandId = \Bitrix\Im\Command::register(Array(
-			'APP_ID' => $clientId,
-			'BOT_ID' => $arParams['BOT_ID'],
-			'COMMAND' => $arParams['COMMAND'],
-			'COMMON' => $arParams['COMMON'],
-			'HIDDEN' => $arParams['HIDDEN'],
-			'SONET_SUPPORT' => $arParams['SONET_SUPPORT'],
-			'EXTRANET_SUPPORT' => $arParams['EXTRANET_SUPPORT'],
-			'MODULE_ID' => 'rest',
-			'LANG' => $arParams['LANG'],
-		));
+													  'APP_ID' => $clientId,
+													  'BOT_ID' => $arParams['BOT_ID'],
+													  'COMMAND' => $arParams['COMMAND'],
+													  'COMMON' => $arParams['COMMON'],
+													  'HIDDEN' => $arParams['HIDDEN'],
+													  'SONET_SUPPORT' => $arParams['SONET_SUPPORT'],
+													  'EXTRANET_SUPPORT' => $arParams['EXTRANET_SUPPORT'],
+													  'MODULE_ID' => 'rest',
+													  'LANG' => $arParams['LANG'],
+												  ));
 		if ($commandId)
 		{
 			self::unbindEvent($arApp['ID'], $arApp['CLIENT_ID'], 'im', 'onImCommandAdd', 'onImCommandAdd', true);
@@ -4233,7 +4675,7 @@ class CIMRestService extends IRestService
 			$updateEvents['EVENT_COMMAND_ADD'] = $arParams['FIELDS']['EVENT_COMMAND_ADD'];
 			if ($customClientId)
 			{
-				$updateEvents['EVENT_COMMAND_ADD'] = $updateEvents['EVENT_COMMAND_ADD'].(strpos($updateEvents['EVENT_COMMAND_ADD'], '?') === false? '?': '&').'CLIENT_ID='.$arParams['CLIENT_ID'];
+				$updateEvents['EVENT_COMMAND_ADD'] = $updateEvents['EVENT_COMMAND_ADD'].(mb_strpos($updateEvents['EVENT_COMMAND_ADD'], '?') === false? '?': '&').'CLIENT_ID='.$arParams['CLIENT_ID'];
 			}
 			try
 			{
@@ -4353,7 +4795,7 @@ class CIMRestService extends IRestService
 		}
 
 		$arMessageFields['MESSAGE'] = trim($arParams['MESSAGE']);
-		if (strlen($arMessageFields['MESSAGE']) <= 0)
+		if ($arMessageFields['MESSAGE'] == '')
 		{
 			throw new Bitrix\Rest\RestException("Message can't be empty", "MESSAGE_EMPTY", CRestServer::STATUS_WRONG_REQUEST);
 		}
@@ -4449,9 +4891,9 @@ class CIMRestService extends IRestService
 		}
 
 		$id = \Bitrix\Im\Command::addMessage(Array(
-			'MESSAGE_ID' => $arParams['MESSAGE_ID'],
-			'COMMAND_ID' => $arParams['COMMAND_ID']
-		), $arMessageFields);
+												 'MESSAGE_ID' => $arParams['MESSAGE_ID'],
+												 'COMMAND_ID' => $arParams['COMMAND_ID']
+											 ), $arMessageFields);
 		if (!$id)
 		{
 			throw new Bitrix\Rest\RestException("Message isn't added", "WRONG_REQUEST", CRestServer::STATUS_WRONG_REQUEST);
@@ -4557,7 +4999,7 @@ class CIMRestService extends IRestService
 			{
 				throw new Bitrix\Rest\RestException("Hash can't be empty", "HASH_ERROR", CRestServer::STATUS_WRONG_REQUEST);
 			}
-			$hash = substr($arParams['HASH'], 0, 32);
+			$hash = mb_substr($arParams['HASH'], 0, 32);
 		}
 
 		if (!$iframe && !$js)
@@ -4569,7 +5011,7 @@ class CIMRestService extends IRestService
 		if (isset($arParams['ICON_FILE']) && $arParams['ICON_FILE'])
 		{
 			$iconFile = CRestUtil::saveFile($arParams['ICON_FILE']);
-			if ($iconFile && strpos($iconFile['type'], "image/") === 0)
+			if ($iconFile && mb_strpos($iconFile['type'], "image/") === 0)
 			{
 				$iconId = \CFile::SaveFile($iconFile, 'imbot');
 			}
@@ -4605,44 +5047,44 @@ class CIMRestService extends IRestService
 		}
 
 		$id = \Bitrix\Im\App::register(Array(
-			'APP_ID' => $clientId,
-			'BOT_ID' => $arParams['BOT_ID'],
-			'CODE' => $arParams['CODE'],
-			'ICON_ID' => $iconId,
-			'HASH' => $hash,
-			'CONTEXT' => $context,
-			'HIDDEN' => $hidden,
-			'REGISTERED' => 'Y',
-			'JS' => $js,
-			'IFRAME' => $iframe,
-			'IFRAME_HEIGHT' => $iframeHeight,
-			'IFRAME_WIDTH' => $iframeWidth,
-			'IFRAME_POPUP' => $iframePopup,
-			'EXTRANET_SUPPORT' => $extranetSupport,
-			'LIVECHAT_SUPPORT' => $livechatSupport,
-			'MODULE_ID' => 'rest',
-			'LANG' => $arParams['LANG'],
-		));
+										   'APP_ID' => $clientId,
+										   'BOT_ID' => $arParams['BOT_ID'],
+										   'CODE' => $arParams['CODE'],
+										   'ICON_ID' => $iconId,
+										   'HASH' => $hash,
+										   'CONTEXT' => $context,
+										   'HIDDEN' => $hidden,
+										   'REGISTERED' => 'Y',
+										   'JS' => $js,
+										   'IFRAME' => $iframe,
+										   'IFRAME_HEIGHT' => $iframeHeight,
+										   'IFRAME_WIDTH' => $iframeWidth,
+										   'IFRAME_POPUP' => $iframePopup,
+										   'EXTRANET_SUPPORT' => $extranetSupport,
+										   'LIVECHAT_SUPPORT' => $livechatSupport,
+										   'MODULE_ID' => 'rest',
+										   'LANG' => $arParams['LANG'],
+									   ));
 		if (!$id)
 		{
 			throw new Bitrix\Rest\RestException("App can't be registered".\var_export(Array(
-			'APP_ID' => $clientId,
-			'BOT_ID' => $arParams['BOT_ID'],
-			'CODE' => $arParams['CODE'],
-			'ICON_ID' => $iconId,
-			'HASH' => $hash,
-			'CONTEXT' => $context,
-			'HIDDEN' => $hidden,
-			'JS' => $js,
-			'IFRAME' => $iframe,
-			'IFRAME_HEIGHT' => $iframeHeight,
-			'IFRAME_WIDTH' => $iframeWidth,
-			'IFRAME_POPUP' => $iframePopup,
-			'EXTRANET_SUPPORT' => $extranetSupport,
-			'LIVECHAT_SUPPORT' => $livechatSupport,
-			'MODULE_ID' => 'rest',
-			'LANG' => $arParams['LANG'],
-		),1), "WRONG_REQUEST", CRestServer::STATUS_WRONG_REQUEST);
+																						  'APP_ID' => $clientId,
+																						  'BOT_ID' => $arParams['BOT_ID'],
+																						  'CODE' => $arParams['CODE'],
+																						  'ICON_ID' => $iconId,
+																						  'HASH' => $hash,
+																						  'CONTEXT' => $context,
+																						  'HIDDEN' => $hidden,
+																						  'JS' => $js,
+																						  'IFRAME' => $iframe,
+																						  'IFRAME_HEIGHT' => $iframeHeight,
+																						  'IFRAME_WIDTH' => $iframeWidth,
+																						  'IFRAME_POPUP' => $iframePopup,
+																						  'EXTRANET_SUPPORT' => $extranetSupport,
+																						  'LIVECHAT_SUPPORT' => $livechatSupport,
+																						  'MODULE_ID' => 'rest',
+																						  'LANG' => $arParams['LANG'],
+																					  ),1), "WRONG_REQUEST", CRestServer::STATUS_WRONG_REQUEST);
 		}
 
 		return $id;
@@ -4819,7 +5261,7 @@ class CIMRestService extends IRestService
 		if (isset($arParams['FIELDS']['ICON_FILE']))
 		{
 			$iconFile = CRestUtil::saveFile($arParams['FIELDS']['ICON_FILE']);
-			if ($iconFile && strpos($iconFile['type'], "image/") === 0)
+			if ($iconFile && mb_strpos($iconFile['type'], "image/") === 0)
 			{
 				$updateFields['ICON_FILE_ID'] = \CFile::SaveFile($iconFile, 'imbot');
 			}
@@ -4857,25 +5299,25 @@ class CIMRestService extends IRestService
 	private static function bindEvent($appId, $appCode, $bitrixEventModule, $bitrixEventName, $restEventName, $restEventHandler)
 	{
 		$res = \Bitrix\Rest\EventTable::getList(array(
-			'filter' => array(
-				'=EVENT_NAME' => toUpper($restEventName),
-				"=APPLICATION_TOKEN" => $appCode,
-				'=APP_ID' => $appId,
-			),
-			'select' => array('ID')
-		));
+													'filter' => array(
+														'=EVENT_NAME' => toUpper($restEventName),
+														"=APPLICATION_TOKEN" => $appCode,
+														'=APP_ID' => $appId,
+													),
+													'select' => array('ID')
+												));
 		if ($handler = $res->fetch())
 		{
 			return true;
 		}
 
 		$result = \Bitrix\Rest\EventTable::add(array(
-			"APP_ID" => $appId,
-			"EVENT_NAME" => toUpper($restEventName),
-			"EVENT_HANDLER" => $restEventHandler,
-			"APPLICATION_TOKEN" => $appCode,
-			"USER_ID" => 0,
-		));
+												   "APP_ID" => $appId,
+												   "EVENT_NAME" => toUpper($restEventName),
+												   "EVENT_HANDLER" => $restEventHandler,
+												   "APPLICATION_TOKEN" => $appCode,
+												   "USER_ID" => 0,
+											   ));
 		if($result->isSuccess())
 		{
 			\Bitrix\Rest\Event\Sender::bind($bitrixEventModule, $bitrixEventName);
@@ -4889,11 +5331,11 @@ class CIMRestService extends IRestService
 		if (!$skipCheck)
 		{
 			$res = \Bitrix\Im\Model\BotTable::getList(array(
-				'filter' => array(
-					'=APP_ID' => $appCode,
-				),
-				'select' => array('BOT_ID')
-			));
+														  'filter' => array(
+															  '=APP_ID' => $appCode,
+														  ),
+														  'select' => array('BOT_ID')
+													  ));
 			if ($handler = $res->fetch())
 			{
 				return false;
@@ -4901,13 +5343,13 @@ class CIMRestService extends IRestService
 		}
 
 		$res = \Bitrix\Rest\EventTable::getList(array(
-			'filter' => array(
-				'=EVENT_NAME' => toUpper($restEventName),
-				'=APP_ID' => $appId,
-				'=APPLICATION_TOKEN' => $appCode,
-			),
-			'select' => array('ID', 'EVENT_HANDLER')
-		));
+													'filter' => array(
+														'=EVENT_NAME' => toUpper($restEventName),
+														'=APP_ID' => $appId,
+														'=APPLICATION_TOKEN' => $appCode,
+													),
+													'select' => array('ID', 'EVENT_HANDLER')
+												));
 		while($handler = $res->fetch())
 		{
 			\Bitrix\Rest\EventTable::delete($handler['ID']);
@@ -4932,11 +5374,11 @@ class CIMRestService extends IRestService
 		if (!isset($config['CONTACT_LIST']['users'][$userId]))
 		{
 			$arUsers = CIMContactList::GetUserData(array(
-				'ID' => $userId,
-				'DEPARTMENT' => 'N',
-				'USE_CACHE' => 'Y',
-				'SHOW_ONLINE' => 'N'
-			));
+													   'ID' => $userId,
+													   'DEPARTMENT' => 'N',
+													   'USE_CACHE' => 'Y',
+													   'SHOW_ONLINE' => 'N'
+												   ));
 			$config['CONTACT_LIST']['users'][$userId] = $arUsers['users'][$userId];
 		}
 
@@ -4947,6 +5389,397 @@ class CIMRestService extends IRestService
 		$config['WEBRTC_MOBILE_SUPPORT'] = \Bitrix\Main\Loader::includeModule('mobileapp')? \Bitrix\MobileApp\Mobile::getInstance()->isWebRtcSupported(): false;
 
 		return \CIMMessenger::GetMobileDialogTemplateJS([], $config);
+	}
+
+	public static function callUserRegister($params, $n, \CRestServer $server)
+	{
+		global $APPLICATION;
+
+		if ($server->getAuthType() !== 'call')
+		{
+			throw new \Bitrix\Rest\RestException("Access for this method allowed only by call authorization.", "WRONG_AUTH_TYPE", \CRestServer::STATUS_FORBIDDEN);
+		}
+
+		$params = array_change_key_case($params, CASE_UPPER);
+
+		//1. check session info $_SESSION['LIVECHAT']['REGISTER'] - already registered?
+		if ($_SESSION['CALL']['REGISTER'] &&
+			!(isset($params['USER_HASH']) &&
+			  trim($params['USER_HASH']) &&
+			  preg_match("/^[a-fA-F0-9]{32}$/i", $params['USER_HASH'])))
+		{
+			$params['USER_HASH'] = $_SESSION['CALL']['REGISTER']['hash'];
+		}
+
+		//2. register user
+		$userData = \Bitrix\Im\Call\User::register([
+			'NAME' => $params['NAME'],
+			'LAST_NAME' => $params['LAST_NAME'],
+			'AVATAR' => $params['AVATAR'],
+			'EMAIL' => $params['EMAIL'],
+			'PERSONAL_WWW' => $params['WWW'],
+			'PERSONAL_GENDER' => $params['GENDER'],
+			'WORK_POSITION' => $params['POSITION'],
+			'USER_HASH' => $params['USER_HASH'],
+		]);
+		if (!$userData)
+		{
+			throw new \Bitrix\Rest\RestException(
+				\Bitrix\Im\Call\User::getError()->msg,
+				\Bitrix\Im\Call\User::getError()->code,
+				\CRestServer::STATUS_WRONG_REQUEST
+			);
+		}
+
+		$aliasData = \Bitrix\Im\Alias::get($params['ALIAS']);
+		if (!$aliasData)
+		{
+			throw new \Bitrix\Rest\RestException("Wrong alias.", "WRONG_ALIAS", \CRestServer::STATUS_FORBIDDEN);
+		}
+
+		//3. authorize
+		\Bitrix\Im\Call\Auth::authorizeById($userData['ID'], true, true);
+
+		//4. add to dialog
+		$chat = new CIMChat(0);
+		$chat->AddUser($aliasData['ENTITY_ID'], $userData['ID']);
+		if ($exception = $APPLICATION->GetException())
+		{
+			if ($exception->GetID() !== 'NOTHING_TO_ADD')
+			{
+				throw new Bitrix\Rest\RestException(
+					"You don't have access",
+					"WRONG_REQUEST",
+					CRestServer::STATUS_WRONG_REQUEST
+				);
+			}
+		}
+
+		//5. return id and hash
+		$result = [
+			'id' => (int)$userData['ID'],
+			'hash' => $userData['HASH'],
+			'created' => $userData['CREATED']
+		];
+
+		$_SESSION['CALL']['REGISTER'] = $result;
+
+		//6. send notification to chat owner
+		$chatData = CIMChat::GetChatData(['ID' => $aliasData['ENTITY_ID']]);
+		$chatTitle = $chatData['chat'][$aliasData['ENTITY_ID']]['name'];
+		$chatOwnerId = $chatData['chat'][$aliasData['ENTITY_ID']]['owner'];
+		$notificationText = GetMessage("IM_VIDEOCONF_NEW_GUEST", ['#CHAT_TITLE#' => $chatTitle]);
+
+		$publicLink = $aliasData['LINK'];
+		$conferenceLinkText = GetMessage("IM_VIDEOCONF_JOIN_LINK");
+		$conferenceLink = "<a href='{$publicLink}'>{$conferenceLinkText}</a>";
+		CIMNotify::Add(
+			[
+				'TO_USER_ID' => $chatOwnerId,
+				'MESSAGE' => $notificationText . "[br]" . $conferenceLink
+			]
+		);
+
+		return $result;
+	}
+
+	public static function callUserUpdate($params, $n, \CRestServer $server)
+	{
+		if ($server->getAuthType() !== 'call')
+		{
+			throw new \Bitrix\Rest\RestException(
+				"Access for this method allowed only by call authorization.",
+				"WRONG_AUTH_TYPE",
+				\CRestServer::STATUS_FORBIDDEN
+			);
+		}
+
+		$params = array_change_key_case($params, CASE_UPPER);
+
+		global $USER;
+
+		$userManager = new \CUser;
+		$userManager->Update($USER->GetID(), [
+			'NAME' => $params['NAME']
+		]);
+
+		$relations = \Bitrix\Im\Chat::getRelation($params['CHAT_ID']);
+
+		if (\CModule::IncludeModule("pull"))
+		{
+			\Bitrix\Pull\Event::add(array_keys($relations), [
+				'module_id' => 'im',
+				'command' => 'callUserNameUpdate',
+				'params' => [
+					'userId' => $USER->GetID(),
+					'name' => $params['NAME']
+				],
+				'extra' => \Bitrix\Im\Common::getPullExtra()
+			]);
+		}
+	}
+
+	public static function callUserForceRename($params, $n, \CRestServer $server)
+	{
+		global $USER;
+
+		$params = array_change_key_case($params, CASE_UPPER);
+		$params['CHAT_ID'] = (int)$params['CHAT_ID'];
+		$params['USER_ID'] = (int)$params['USER_ID'];
+
+		if ($params['CHAT_ID'] <= 0)
+		{
+			throw new Bitrix\Rest\RestException("Chat ID can't be empty", "CHAT_ID_EMPTY", CRestServer::STATUS_WRONG_REQUEST);
+		}
+		if ($params['USER_ID'] <= 0)
+		{
+			throw new Bitrix\Rest\RestException("User ID can't be empty", "USER_ID_EMPTY", CRestServer::STATUS_WRONG_REQUEST);
+		}
+
+		//check if current user if owner of chat
+		$chat = \Bitrix\Im\Model\ChatTable::getRowById($params['CHAT_ID']);
+		if (!$chat)
+		{
+			throw new Bitrix\Rest\RestException("Chat was not found", "CHAT_NOT_FOUND", CRestServer::STATUS_WRONG_REQUEST);
+		}
+		$owner = (int)$chat['AUTHOR_ID'];
+		if ((int)$USER->GetID() !== $owner)
+		{
+			throw new Bitrix\Rest\RestException("You cannot perform this operation", "NO_ACCESS", CRestServer::STATUS_WRONG_REQUEST);
+		}
+
+		//check if renamed user is call auth
+		$userToRename = \Bitrix\Im\User::getInstance($params['USER_ID']);
+		if (!$userToRename)
+		{
+			throw new Bitrix\Rest\RestException("User was not found", "USER_NOT_FOUND", CRestServer::STATUS_WRONG_REQUEST);
+		}
+		$externalAuth = $userToRename->getExternalAuthId();
+		if ($externalAuth !== 'call')
+		{
+			throw new Bitrix\Rest\RestException("You cannot rename this user", "WRONG_USER_AUTH_TYPE", CRestServer::STATUS_WRONG_REQUEST);
+		}
+
+		$userManager = new \CUser;
+		$userManager->Update($params['USER_ID'], [
+			'NAME' => $params['NAME']
+		]);
+
+		$relations = \Bitrix\Im\Chat::getRelation($params['CHAT_ID']);
+
+		if (\CModule::IncludeModule("pull"))
+		{
+			\Bitrix\Pull\Event::add(array_keys($relations), [
+				'module_id' => 'im',
+				'command' => 'callUserNameUpdate',
+				'params' => [
+					'userId' => $params['USER_ID'],
+					'name' => $params['NAME']
+				],
+				'extra' => \Bitrix\Im\Common::getPullExtra()
+			]);
+		}
+	}
+
+	public static function callChannelPublicList($params, $n, \CRestServer $server)
+	{
+		$params = array_change_key_case($params, CASE_UPPER);
+
+		$type = \CPullChannel::TYPE_PRIVATE;
+		if ($params['APPLICATION'] == 'Y')
+		{
+			$clientId = $server->getClientId();
+			if (!$clientId)
+			{
+				throw new \Bitrix\Rest\RestException("Get application public channel available only for application authorization.", "WRONG_AUTH_TYPE", \CRestServer::STATUS_WRONG_REQUEST);
+			}
+			$type = $clientId;
+		}
+
+		$users = Array();
+		if (is_string($params['USERS']))
+		{
+			$params['USERS'] = \CUtil::JsObjectToPhp($params['USERS']);
+		}
+		if (is_array($params['USERS']))
+		{
+			foreach ($params['USERS'] as $userId)
+			{
+				$userId = intval($userId);
+				if ($userId > 0)
+				{
+					$users[$userId] = $userId;
+				}
+			}
+		}
+
+		if (empty($users))
+		{
+			throw new \Bitrix\Rest\RestException("A wrong format for the USERS field is passed", "INVALID_FORMAT", \CRestServer::STATUS_WRONG_REQUEST);
+		}
+
+		$chatId = (int)$params['CALL_CHAT_ID'];
+
+		if (!$chatId)
+		{
+			throw new \Bitrix\Rest\RestException("No chat id", "INVALID_FORMAT", \CRestServer::STATUS_WRONG_REQUEST);
+		}
+
+		$usersInChat = array_map(function($item){
+			return $item['id'];
+		}, \Bitrix\Im\Chat::getUsers($chatId));
+
+		foreach ($users as $key => $userToCheck)
+		{
+			if (!in_array($userToCheck, $usersInChat, true))
+			{
+				unset($users[$key]);
+			}
+		}
+
+		$configParams = Array();
+		$configParams['TYPE'] = $type;
+		$configParams['USERS'] = $users;
+		$configParams['JSON'] = true;
+
+		$config = \Bitrix\Pull\Channel::getPublicIds($configParams);
+		if (!$config)
+		{
+			throw new \Bitrix\Rest\RestException("Push & Pull server is not configured", "SERVER_ERROR", \CRestServer::STATUS_INTERNAL);
+		}
+
+		return $config;
+	}
+
+	public static function videoconfShareChange($params, $n, \CRestServer $server)
+	{
+		global $USER;
+		$userName = $USER->GetFullName();
+		$params = array_change_key_case($params, CASE_UPPER);
+
+		if (!\Bitrix\Im\Common::isDialogId($params['DIALOG_ID']))
+		{
+			throw new Bitrix\Rest\RestException("Dialog ID can't be empty", "DIALOG_ID_EMPTY", CRestServer::STATUS_WRONG_REQUEST);
+		}
+
+		//check owner
+		$chatId = \Bitrix\Im\Dialog::getChatId($params['DIALOG_ID']);
+		$chatData = \Bitrix\Im\Chat::getById($chatId);
+
+		if ($USER->GetID() != $chatData['OWNER'])
+		{
+			throw new Bitrix\Rest\RestException("You don't have access to this chat", "ACCESS_ERROR", CRestServer::STATUS_WRONG_REQUEST);
+		}
+
+		//get chat users and delete guests
+		$chatUsers = \Bitrix\Im\Chat::getUsers($chatId);
+		$externalTypes = \Bitrix\Main\UserTable::getExternalUserTypes();
+
+		$chat = new CIMChat($USER->GetId());
+		foreach($chatUsers as $user)
+		{
+			if (in_array($user['external_auth_id'], $externalTypes, true))
+			{
+				$chat->DeleteUser($chatId, $user['id']);
+			}
+		}
+
+		//get alias
+		$aliasData = \Bitrix\Im\Alias::getByEntity('VIDEOCONF', $chatId);
+
+		//generate new alias and update
+		$newCode = \Bitrix\Im\Alias::generateUnique();
+		$updateResult = \Bitrix\Im\Alias::update($aliasData['ID'], [
+			'ALIAS' => $newCode,
+			'ENTITY_TYPE' => 'VIDEOCONF',
+			'ENTITY_ID' => $chatId
+		]);
+
+		if (!$updateResult)
+		{
+			throw new Bitrix\Rest\RestException("Can't update alias", "ACCESS_ERROR", CRestServer::STATUS_WRONG_REQUEST);
+		}
+
+		$newLink = \Bitrix\Im\Alias::get($newCode)['LINK'];
+
+		//add message to chat
+		$attach = new CIMMessageParamAttach(null);
+		$attach->AddLink(
+			[
+				"NAME" => $newLink,
+				"DESC" => GetMessage("IM_VIDEOCONF_SHARE_UPDATED_LINK", ['#USER_NAME#' => htmlspecialcharsback($userName)]),
+				"LINK" => $newLink
+			]
+		);
+
+		CIMChat::AddMessage(
+			[
+				"TO_CHAT_ID" => $chatId,
+				"SYSTEM" => 'Y',
+				"FROM_USER_ID" => $USER->GetID(),
+				"MESSAGE" => GetMessage("IM_VIDEOCONF_LINK_TITLE"),
+				"ATTACH" => $attach
+			]
+		);
+
+		//send pull with changed alias
+
+		$relations = \Bitrix\Im\Chat::getRelation($chatId);
+		if (\CModule::IncludeModule("pull"))
+		{
+			\Bitrix\Pull\Event::add(array_keys($relations), [
+				'module_id' => 'im',
+				'command' => 'videoconfShareUpdate',
+				'params' => [
+					'newLink' => $newLink,
+					'dialogId' => $params['DIALOG_ID']
+				],
+				'extra' => \Bitrix\Im\Common::getPullExtra()
+			]);
+		}
+
+		return true;
+	}
+
+	public static function videoconfPasswordCheck($params, $n, \CRestServer $server)
+	{
+		$params = array_change_key_case($params, CASE_UPPER);
+
+		if (!$params['PASSWORD'])
+		{
+			throw new Bitrix\Rest\RestException("Password can't be empty", "PASSWORD_EMPTY", CRestServer::STATUS_WRONG_REQUEST);
+		}
+
+		if (!$params['ALIAS'])
+		{
+			throw new Bitrix\Rest\RestException("Alias can't be empty", "ALIAS_EMPTY", CRestServer::STATUS_WRONG_REQUEST);
+		}
+
+
+		$conference = \Bitrix\Im\Call\Conference::getByAlias($params['ALIAS']);
+		if ($conference && $conference->getPassword() === $params['PASSWORD'])
+		{
+			//create cache for current confId and sessId
+			$storage = \Bitrix\Main\Application::getInstance()->getLocalSession('conference_check_' . $conference->getId());
+			$storage->set('checked', true);
+
+			//add user to chat
+			$isUserInChat = Chat::isUserInChat($conference->getChatId());
+			if (!$isUserInChat)
+			{
+				$chat = new \CIMChat(0);
+				$currentUserId = \Bitrix\Main\Engine\CurrentUser::get()->getId();
+				$addingResult = $chat->AddUser($conference->getChatId(), $currentUserId);
+				if (!$addingResult)
+				{
+					throw new Bitrix\Rest\RestException("Error during adding user to chat", "ADDING_TO_CHAT_ERROR", CRestServer::STATUS_WRONG_REQUEST);
+				}
+			}
+
+			return true;
+		}
+
+		return false;
 	}
 
 	private static function getBotId($arParams, \CRestServer $server)
@@ -4999,6 +5832,45 @@ class CIMRestService extends IRestService
 		return $arParams['BOT_ID'];
 	}
 
+	private static function getLimit($options = [])
+	{
+		$max = 200;
+		$default = 50;
+
+		if (!isset($options['LIMIT']))
+		{
+			return $default;
+		}
+
+		$limit = (int)$options['LIMIT'];
+		if ($limit <= 0)
+		{
+			return $default;
+		}
+
+		if ($limit >= $max)
+		{
+			return $max;
+		}
+
+		return $limit;
+	}
+
+	private static function getOffset(int $offset, $options = [])
+	{
+		if ($offset > 0)
+		{
+			return $offset;
+		}
+
+		if (!isset($options['OFFSET']) || (int)$options['OFFSET'] <= 0)
+		{
+			return 0;
+		}
+
+		return (int)$options['OFFSET'];
+	}
+
 	/* Utils */
 	public static function objectEncode($data, $options = [])
 	{
@@ -5021,12 +5893,12 @@ class CIMRestService extends IRestService
 				{
 					$value = date('c', $value->getTimestamp());
 				}
-				else if (is_string($key) && in_array($key, $options['IMAGE_FIELD']) && is_string($value) && $value && strpos($value, 'http') !== 0)
+				else if (is_string($key) && in_array($key, $options['IMAGE_FIELD']) && is_string($value) && $value && mb_strpos($value, 'http') !== 0)
 				{
 					$value = self::getServerAddress().$value;
 				}
 
-				$key = str_replace('_', '', lcfirst(ucwords(strtolower($key), '_')));
+				$key = str_replace('_', '', lcfirst(ucwords(mb_strtolower($key), '_')));
 
 				$result[$key] = $value;
 			}

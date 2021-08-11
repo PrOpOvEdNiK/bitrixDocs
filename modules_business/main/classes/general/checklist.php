@@ -6,6 +6,8 @@
  * @copyright 2001-2013 Bitrix
  */
 
+use Bitrix\Main;
+
 IncludeModuleLangFile(__FILE__);
 
 class CCheckList
@@ -52,7 +54,7 @@ class CCheckList
 		$dbResult = CCheckListResult::GetList(array(), $arFilter);
 		if ($arCurrentResult = $dbResult->Fetch())
 		{
-			$this->current_result = unserialize($arCurrentResult["STATE"]);
+			$this->current_result = unserialize($arCurrentResult["STATE"], ['allowed_classes' => false]);
 			if (intval($ID)>0)
 			{
 				$this->report_id = intval($ID);
@@ -123,7 +125,7 @@ class CCheckList
 						$arResult["FAILED"]++;
 					if ($arPointFields["STATE"]["STATUS"] == "W")
 						$arResult["WAITING"]++;
-					if ($arPointFields["REQUIRE"] == "Y")
+					if (isset($arPointFields["REQUIRE"]) && $arPointFields["REQUIRE"] == "Y")
 					{
 						$arResult["REQUIRE"]++;
 						if ($arPointFields["STATE"]["STATUS"] == "A")
@@ -174,15 +176,16 @@ class CCheckList
 		$arCheckList = $this->GetCurrentState();
 		$arResult = array();
 		if (is_array($arCheckList) && !empty($arCheckList))
-		foreach ($arCheckList["POINTS"] as $key => $arFields)
 		{
-			$arFields = array_merge($this->GetDescription($key), $arFields);
+			foreach ($arCheckList["POINTS"] as $key => $arFields)
+			{
+				$arFields = array_merge($this->GetDescription($key), $arFields);
 
-			if ($arFields["PARENT"] == $arSectionCode || $arSectionCode  == false)
-			$arResult[$key] = $arFields;
-			if ($arResult[$key]["STATE"]['COMMENTS'] && is_array($arResult[$key]["STATE"]['COMMENTS']))
-				$arResult[$key]["STATE"]['COMMENTS_COUNT'] = count($arResult[$key]["STATE"]['COMMENTS']);
-
+				if ($arFields["PARENT"] == $arSectionCode || $arSectionCode  == false)
+					$arResult[$key] = $arFields;
+				if (isset($arResult[$key]["STATE"]['COMMENTS']) && is_array($arResult[$key]["STATE"]['COMMENTS']))
+					$arResult[$key]["STATE"]['COMMENTS_COUNT'] = count($arResult[$key]["STATE"]['COMMENTS']);
+			}
 		}
 
 		return $arResult;
@@ -307,7 +310,7 @@ class CCheckList
 			include($_SERVER["DOCUMENT_ROOT"].$arPoint["FILE_PATH"]);
 
 		if(is_callable(array($arClass, $arMethod)))
-			$result = call_user_func_array(array($arClass, $arMethod), array("PARAM" => $arParams));
+			$result = call_user_func_array(array($arClass, $arMethod), array($arParams));
 
 		$arResult = array();
 		if ($result && is_array($result))
@@ -634,8 +637,7 @@ class CAutoCheck
 		$arCount = 0;
 		$arResult = array();
 		$arResult["STATUS"] = false;
-		$bMcrypt = function_exists('mcrypt_encrypt') || function_exists('openssl_encrypt');
-		$bBitrixCloud = $bMcrypt && CModule::IncludeModule('bitrixcloud') && CModule::IncludeModule('clouds');
+		$bBitrixCloud = function_exists('openssl_encrypt') && CModule::IncludeModule('bitrixcloud') && CModule::IncludeModule('clouds');
 
 		$site = CSite::GetSiteByFullPath(DOCUMENT_ROOT);
 		$path = BX_ROOT."/backup";
@@ -831,7 +833,11 @@ class CAutoCheck
 
 				$data = $http->get("http://".$sHost."/bitrix/updates/checksum.php?check_sum=Y&module_id=".$moduleId."&ver=".$ver."&dbtype=".$dbtype."&mode=2");
 
-				$NS["FILE_LIST"] = $result = unserialize(gzinflate($data));
+				$result = unserialize(gzinflate($data), ['allowed_classes' => false]);
+				if (is_array($result))
+				{
+					$NS["FILE_LIST"] = $result;
+				}
 				$NS["MODULE_FILES_COUNT"] = count($NS["FILE_LIST"]);
 			}
 			else
@@ -1060,7 +1066,6 @@ class CAutoCheck
 
 	public static function CheckDBPassword()
 	{
-		global $DBPassword;
 		$err = 0;
 		$arMessage = "";
 		$sign = ",.#!*%$:-^@{}[]()'\"-+=<>?`&;";
@@ -1068,18 +1073,24 @@ class CAutoCheck
 		$have_sign = false;
 		$have_dit = false;
 		$arResult["STATUS"] = true;
-		if ($DBPassword == '')
+
+		$connection = Main\Application::getInstance()->getConnection();
+		$password = $connection->getPassword();
+
+		if ($password == '')
+		{
 			$arMessage.=GetMessage("CL_EMPTY_PASS")."\n";
+		}
 		else
 		{
-			if ($DBPassword == mb_strtolower($DBPassword))
+			if ($password == mb_strtolower($password))
 				$arMessage .= (++$err).". ".GetMessage("CL_SAME_REGISTER")."\n";
 
-			for($j=0, $c = mb_strlen($DBPassword); $j<$c; $j++)
+			for($j=0, $c = mb_strlen($password); $j<$c; $j++)
 			{
-				if (mb_strpos($sign, $DBPassword[$j]) !== false)
+				if (mb_strpos($sign, $password[$j]) !== false)
 					$have_sign = true;
-				if (mb_strpos($dit, $DBPassword[$j]) !== false)
+				if (mb_strpos($dit, $password[$j]) !== false)
 					$have_dit = true;
 				if ($have_dit == true && $have_sign == true)
 					break;
@@ -1089,7 +1100,7 @@ class CAutoCheck
 				$arMessage .= (++$err).". ".GetMessage("CL_HAVE_NO_DIT")."\n";
 			if (!$have_sign)
 				$arMessage .= (++$err).". ".GetMessage("CL_HAVE_NO_SIGN")."\n";
-			if (mb_strlen($DBPassword) < 8)
+			if (mb_strlen($password) < 8)
 				$arMessage .= (++$err).". ".GetMessage("CL_LEN_MIN")."\n";
 		}
 		if($arMessage)

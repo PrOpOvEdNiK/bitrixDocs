@@ -8,11 +8,8 @@
 
 use Bitrix\Main\Session\Legacy\HealerEarlySessionStart;
 
-require_once(mb_substr(__FILE__, 0, mb_strlen(__FILE__) - mb_strlen("/include.php"))."/bx_root.php");
-require_once($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/start.php");
-
-require_once($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/classes/general/virtual_io.php");
-require_once($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/classes/general/virtual_file.php");
+require_once(__DIR__."/bx_root.php");
+require_once(__DIR__."/start.php");
 
 $application = \Bitrix\Main\Application::getInstance();
 $application->initializeExtendedKernel(array(
@@ -58,12 +55,12 @@ if($arLang["CULTURE_ID"] == '')
 $lang = $arLang["LID"];
 if (!defined("SITE_ID"))
 	define("SITE_ID", $arLang["LID"]);
-define("SITE_DIR", $arLang["DIR"]);
-define("SITE_SERVER_NAME", $arLang["SERVER_NAME"]);
+define("SITE_DIR", ($arLang["DIR"] ?? ''));
+define("SITE_SERVER_NAME", ($arLang["SERVER_NAME"] ?? ''));
 define("SITE_CHARSET", $arLang["CHARSET"]);
 define("FORMAT_DATE", $arLang["FORMAT_DATE"]);
 define("FORMAT_DATETIME", $arLang["FORMAT_DATETIME"]);
-define("LANG_DIR", $arLang["DIR"]);
+define("LANG_DIR", ($arLang["DIR"] ?? ''));
 define("LANG_CHARSET", $arLang["CHARSET"]);
 define("LANG_ADMIN_LID", $arLang["LANGUAGE_ID"]);
 define("LANGUAGE_ID", $arLang["LANGUAGE_ID"]);
@@ -89,11 +86,9 @@ if (!defined("POST_FORM_ACTION_URI"))
 	define("POST_FORM_ACTION_URI", htmlspecialcharsbx(GetRequestUri()));
 }
 
-$GLOBALS["MESS"] = array();
-$GLOBALS["ALL_LANG_FILES"] = array();
-IncludeModuleLangFile($_SERVER["DOCUMENT_ROOT"].BX_ROOT."/modules/main/tools.php");
-IncludeModuleLangFile($_SERVER["DOCUMENT_ROOT"].BX_ROOT."/modules/main/classes/general/database.php");
-IncludeModuleLangFile($_SERVER["DOCUMENT_ROOT"].BX_ROOT."/modules/main/classes/general/main.php");
+$GLOBALS["MESS"] = [];
+$GLOBALS["ALL_LANG_FILES"] = [];
+IncludeModuleLangFile(__DIR__."/tools.php");
 IncludeModuleLangFile(__FILE__);
 
 error_reporting(COption::GetOptionInt("main", "error_reporting", E_COMPILE_ERROR|E_ERROR|E_CORE_ERROR|E_PARSE) & ~E_STRICT & ~E_DEPRECATED);
@@ -103,30 +98,21 @@ if(!defined("BX_COMP_MANAGED_CACHE") && COption::GetOptionString("main", "compon
 	define("BX_COMP_MANAGED_CACHE", true);
 }
 
-require_once($_SERVER["DOCUMENT_ROOT"].BX_ROOT."/modules/main/filter_tools.php");
-require_once($_SERVER["DOCUMENT_ROOT"].BX_ROOT."/modules/main/ajax_tools.php");
+// global functions
+require_once(__DIR__."/filter_tools.php");
 
-/*ZDUyZmZYzJlOGRjNmQ1OTg1ZGMyODgyOGUxMjY2NTcwYjJmNzg=*/$GLOBALS['_____705078574']= array(base64_decode('R2V0TW'.'9k'.'dWxlRX'.'ZlbnR'.'z'),base64_decode('RXhlY3V0ZU1vZ'.'HVsZ'.'UV2ZW50RX'.'g='));$GLOBALS['____459632178']= array(base64_decode('ZGVma'.'W'.'5l'),base64_decode(''.'c3RybGVu'),base64_decode('YmFzZ'.'TY0X2Rl'.'Y'.'29kZ'.'Q'.'=='),base64_decode('dW'.'5z'.'ZXJpYWxpe'.'mU='),base64_decode('aXN'.'fYXJyYXk='),base64_decode('Y291bn'.'Q='),base64_decode('aW'.'5fYXJyYXk='),base64_decode('c'.'2VyaW'.'FsaX'.'pl'),base64_decode('Y'.'mFz'.'ZTY'.'0X2'.'Vu'.'Y29'.'k'.'ZQ=='),base64_decode('c3RybGVu'),base64_decode('YXJyYXlf'.'a'.'2V'.'5X'.'2V4aXN0cw=='),base64_decode(''.'aW5fYX'.'JyYXk'.'='),base64_decode('c'.'3'.'Ry'.'bGVu'),base64_decode('YX'.'JyYXl'.'fa2V5X'.'2V4a'.'X'.'N'.'0cw=='),base64_decode('b'.'WV0aG9kX'.'2'.'V4'.'aXN'.'0'.'cw=='),base64_decode('Y2'.'F'.'sbF'.'9'.'1c2VyX2Z1bmNf'.'YXJyY'.'X'.'k='),base64_decode('aW5fYX'.'JyYX'.'k'.'='),base64_decode('ZG'.'Vm'.'aW5'.'l'));if(!function_exists(__NAMESPACE__.'\\___1786383315')){function ___1786383315($_268722715){static $_913720354= false; if($_913720354 == false) $_913720354=array(''.'QlVTS'.'U5'.'F'.'U1NfR'.'URJV'.'ElPT'.'g==','WQ'.'==','bWFpb'.'g==','f'.'mNwZ'.'l'.'9'.'tY'.'X'.'BfdmFsdWU=','','U2'.'1hbG'.'w=','U21hbGw=','bW'.'Fp'.'bg='.'=','f'.'mNwZl9t'.'YXBf'.'d'.'mF'.'sdW'.'U=','b'.'WFpbg'.'==','T2'.'4=','U2V0dGl'.'uZ3'.'ND'.'aGFuZ2'.'U'.'=','V'.'F'.'lQRQ==',''.'Rg==','W'.'A==',''.'REFURQ==','','RkVBVFVS'.'RVM'.'=','RVh'.'QSVJ'.'F'.'RA==','R'.'k'.'VB'.'VF'.'VSRVM=','Rg'.'==','RU5'.'DT'.'0RF','WQ==');return base64_decode($_913720354[$_268722715]);}};$GLOBALS['____459632178'][0](___1786383315(0), ___1786383315(1));class CBXFeatures{ private static $_531586768= array( "Small" => array(), "Big" => array( "CatMultiPrice", "CatMultiStore", "CatDiscountSave", "SaleAffiliate", "SaleAccounts", "SaleCCards", "SaleReports", "SaleRecurring", "CatCompleteSet", "CatMultiFactor",),); private static $_1297715512= false; private static $_153601302= false; private static function __1504214906(){ if(self::$_1297715512 == false){ self::$_1297715512= array(); foreach(self::$_531586768 as $_963599465 => $_1593428607){ foreach($_1593428607 as $_1022418771) self::$_1297715512[$_1022418771]= $_963599465;}} if(self::$_153601302 == false){ self::$_153601302= array(); $_1936553996= COption::GetOptionString(___1786383315(2), ___1786383315(3), ___1786383315(4)); if($GLOBALS['____459632178'][1]($_1936553996)>(1352/2-676)){ $_1936553996= $GLOBALS['____459632178'][2]($_1936553996); self::$_153601302= $GLOBALS['____459632178'][3]($_1936553996); if(!$GLOBALS['____459632178'][4](self::$_153601302)) self::$_153601302= array(___1786383315(5));} if($GLOBALS['____459632178'][5](self::$_153601302) <=(206*2-412)) self::$_153601302= array(___1786383315(6));}} public static function InitiateEditionsSettings($_1431144833){ self::__1504214906(); $_1263615273= array(); foreach(self::$_531586768 as $_963599465 => $_1593428607){ if($GLOBALS['____459632178'][6]($_963599465, $_1431144833)){ self::$_153601302[]= $_963599465;} else{ foreach($_1593428607 as $_1022418771) $_1263615273[]= $_1022418771;}} $_1270120378= $GLOBALS['____459632178'][7](self::$_153601302); $_1270120378= $GLOBALS['____459632178'][8]($_1270120378); COption::SetOptionString(___1786383315(7), ___1786383315(8), $_1270120378); foreach($_1263615273 as $_1441059643) self::__708748911($_1441059643, false);} public static function IsFeatureEnabled($_1022418771){ if($GLOBALS['____459632178'][9]($_1022418771) <= 0) return true; self::__1504214906(); if(!$GLOBALS['____459632178'][10]($_1022418771, self::$_1297715512)) return true; return $GLOBALS['____459632178'][11](self::$_1297715512[$_1022418771], self::$_153601302);} public static function IsFeatureInstalled($_1022418771){ return self::IsFeatureEnabled($_1022418771);} public static function IsFeatureEditable($_1022418771){ if($GLOBALS['____459632178'][12]($_1022418771) <= 0) return true; self::__1504214906(); if(!$GLOBALS['____459632178'][13]($_1022418771, self::$_1297715512)) return true; return false;} private static function __708748911($_1022418771, $_684768617){ if($GLOBALS['____459632178'][14]("CBXFeatures", "On".$_1022418771."SettingsChange")) $GLOBALS['____459632178'][15](array("CBXFeatures", "On".$_1022418771."SettingsChange"), array($_1022418771, $_684768617)); $_847249478= $GLOBALS['_____705078574'][0](___1786383315(9), ___1786383315(10).$_1022418771.___1786383315(11)); while($_580247921= $_847249478->Fetch()) $GLOBALS['_____705078574'][1]($_580247921, array($_1022418771, $_684768617));} public static function SetFeatureEnabled($_1022418771, $_684768617= true, $_239174757= true){} public static function SaveFeaturesSettings($_578431801, $_1242616569){} public static function GetFeaturesList(){ self::__1504214906(); $_1483682149= array(); foreach(self::$_531586768 as $_963599465 => $_1593428607){ $_1483682149[$_963599465]= array( ___1786383315(12) => $GLOBALS['____459632178'][16]($_963599465, self::$_153601302)? ___1786383315(13): ___1786383315(14), ___1786383315(15) => ___1786383315(16), ___1786383315(17) => array(), ___1786383315(18) => false,); foreach($_1593428607 as $_1022418771) $_1483682149[$_963599465][___1786383315(19)][$_1022418771]=($_1483682149[$_963599465] == ___1786383315(20));} return $_1483682149;}} $GLOBALS['____459632178'][17](___1786383315(21), ___1786383315(22));/**/			//Do not remove this
+define('BX_AJAX_PARAM_ID', 'bxajaxid');
+
+/*ZDUyZmZYWE5NzJlZDRjM2NkMWI4YjA5MWJhZmQ0NmE4NzllNTM=*/class CBXFeatures{ public static function IsFeatureEnabled($_1071934239){ return true;} public static function IsFeatureEditable($_1071934239){ return true;} public static function SetFeatureEnabled($_1071934239, $_1004426284= true){} public static function SaveFeaturesSettings($_1487534364, $_1130381968){} public static function GetFeaturesList(){ return array();} public static function InitiateEditionsSettings($_2132917799){} public static function ModifyFeaturesSettings($_2132917799, $_1462912198){} public static function IsFeatureInstalled($_1071934239){ return true;}}/**/			//Do not remove this
 
 //component 2.0 template engines
-$GLOBALS["arCustomTemplateEngines"] = array();
+$GLOBALS["arCustomTemplateEngines"] = [];
 
-require_once($_SERVER["DOCUMENT_ROOT"].BX_ROOT."/modules/main/classes/general/urlrewriter.php");
+require_once(__DIR__."/autoload.php");
+require_once(__DIR__."/classes/general/menu.php");
+require_once(__DIR__."/classes/mysql/usertype.php");
 
-/**
- * Defined in dbconn.php
- * @param string $DBType
- */
-
-require_once(__DIR__.'/autoload.php');
-require_once($_SERVER["DOCUMENT_ROOT"].BX_ROOT."/modules/main/classes/".$DBType."/agent.php");
-require_once($_SERVER["DOCUMENT_ROOT"].BX_ROOT."/modules/main/classes/general/user.php");
-require_once($_SERVER["DOCUMENT_ROOT"].BX_ROOT."/modules/main/classes/".$DBType."/event.php");
-require_once($_SERVER["DOCUMENT_ROOT"].BX_ROOT."/modules/main/classes/general/menu.php");
-AddEventHandler("main", "OnAfterEpilog", array("\\Bitrix\\Main\\Data\\ManagedCache", "finalize"));
-require_once($_SERVER["DOCUMENT_ROOT"].BX_ROOT."/modules/main/classes/".$DBType."/usertype.php");
-
-if(file_exists(($_fname = $_SERVER["DOCUMENT_ROOT"].BX_ROOT."/modules/main/classes/general/update_db_updater.php")))
+if(file_exists(($_fname = __DIR__."/classes/general/update_db_updater.php")))
 {
 	$US_HOST_PROCESS_MAIN = False;
 	include($_fname);
@@ -170,7 +156,7 @@ if(COption::GetOptionString("main", "check_agents", "Y") == "Y")
 //send email events
 if(COption::GetOptionString("main", "check_events", "Y") !== "N")
 {
-	$application->addBackgroundJob(["CEvent", "CheckEvents"], [], \Bitrix\Main\Application::JOB_PRIORITY_LOW-1);
+	$application->addBackgroundJob(['\Bitrix\Main\Mail\EventManager', 'checkEvents'], [], \Bitrix\Main\Application::JOB_PRIORITY_LOW-1);
 }
 
 $healerOfEarlySessionStart = new HealerEarlySessionStart();
@@ -358,8 +344,8 @@ if(!defined("NOT_CHECK_PERMISSIONS") || NOT_CHECK_PERMISSIONS!==true)
 					$GLOBALS["APPLICATION"]->StoreCookies();
 					$kernelSession['BX_ADMIN_LOAD_AUTH'] = true;
 
+					// die() follows
 					CMain::FinalActions('<script type="text/javascript">window.onload=function(){(window.BX || window.parent.BX).AUTHAGENT.setAuthResult(false);};</script>');
-					die();
 				}
 			}
 		}
@@ -431,6 +417,12 @@ if(!defined("ADMIN_SECTION") || ADMIN_SECTION !== true)
 	}
 	define("SITE_TEMPLATE_ID", $siteTemplate);
 	define("SITE_TEMPLATE_PATH", getLocalPath('templates/'.SITE_TEMPLATE_ID, BX_PERSONAL_ROOT));
+}
+else
+{
+	// prevents undefined constants
+	define('SITE_TEMPLATE_ID', '.default');
+	define('SITE_TEMPLATE_PATH', '/bitrix/templates/.default');
 }
 
 //magic parameters: show page creation time

@@ -789,7 +789,7 @@ class Entity
 			$class_path = array_slice($class_path, 0, -1);
 
 			// cut Bitrix namespace
-			if ($class_path[0] === 'BITRIX')
+			if (count($class_path) && $class_path[0] === 'BITRIX')
 			{
 				$class_path = array_slice($class_path, 1);
 			}
@@ -1328,8 +1328,6 @@ class Entity
 
 	/**
 	 * Cleans all cache entries for the entity.
-	 *
-	 * @throws Main\SystemException
 	 */
 	public function cleanCache()
 	{

@@ -3,7 +3,6 @@
 namespace Bitrix\Sale\TradingPlatform;
 
 use Bitrix\Main\ArgumentNullException;
-use Bitrix\Main\ArgumentOutOfRangeException;
 use Bitrix\Main\Entity\EventResult;
 use Bitrix\Main\Entity\Result;
 use Bitrix\Main\SystemException;
@@ -18,7 +17,8 @@ use Bitrix\Main\EventManager;
  */
 abstract class Platform
 {
-	const LINK_TYPE_PUBLIC_DETAIL_ORDER = 'PUBLIC_DETAIL_ORDER';
+	public const LINK_TYPE_PUBLIC_DETAIL_ORDER = 'PUBLIC_DETAIL_ORDER';
+	public const LINK_TYPE_PUBLIC_FEEDBACK = 'PUBLIC_FEEDBACK';
 
 	protected $logger;
 	protected $logLevel = Logger::LOG_LEVEL_ERROR;
@@ -45,19 +45,21 @@ abstract class Platform
 	{
 		$this->code = $code;
 		
-		$resPltf = TradingPlatformTable::getList(array(
-			'filter' => array(
+		$dbRes = TradingPlatformTable::getList([
+			'filter' => [
 				'=CODE' => $this->code,
-			),
-		));
+			],
+		]);
 		
-		if ($platform = $resPltf->fetch())
+		if ($platform = $dbRes->fetch())
 		{
-			$this->isActive = $platform["ACTIVE"] == "Y" ? true : false;
-			$this->isNeedCatalogSectionsTab = strlen($platform["CATALOG_SECTION_TAB_CLASS_NAME"]) > 0 ? true : false;
+			$this->isActive = $platform["ACTIVE"] == "Y";
+			$this->isNeedCatalogSectionsTab = $platform["CATALOG_SECTION_TAB_CLASS_NAME"] <> '';
 			
 			if (is_array($platform["SETTINGS"]))
+			{
 				$this->settings = $platform["SETTINGS"];
+			}
 			
 			$this->isInstalled = true;
 			$this->id = $platform["ID"];
@@ -67,9 +69,7 @@ abstract class Platform
 		$this->logger = new Logger($this->logLevel);
 	}
 	
-	protected function __clone()
-	{
-	}
+	protected function __clone() {}
 	
 	/**
 	 * @param $code
@@ -78,11 +78,15 @@ abstract class Platform
 	 */
 	public static function getInstanceByCode($code)
 	{
-		if (strlen($code) <= 0)
+		if ($code === '')
+		{
 			throw new ArgumentNullException("code");
-		
+		}
+
 		if (!isset(self::$instances[$code]))
+		{
 			self::$instances[$code] = new static($code);
+		}
 		
 		return self::$instances[$code];
 	}
@@ -123,7 +127,7 @@ abstract class Platform
 	}
 
 	/**
-	 * @return bool Is the platfor active?.
+	 * @return bool
 	 */
 	public function isActive()
 	{
@@ -137,7 +141,9 @@ abstract class Platform
 	public function setActive()
 	{
 		if ($this->isActive())
+		{
 			return true;
+		}
 		
 		$this->isActive = true;
 		
@@ -168,26 +174,23 @@ abstract class Platform
 		
 		//If we are last let's switch off unused event about track numbers changing
 		if (!$this->isActiveItemsExist())
+		{
 			$this->unSetShipmentTableOnAfterUpdateEvent();
+		}
 		
 		return $res->isSuccess();
 	}
 	
 	protected static function isActiveItemsExist()
 	{
-		$dbRes = TradingPlatformTable::getList(array(
-			'filter' => array(
+		$dbRes = TradingPlatformTable::getList([
+			'filter' => [
 				'ACTIVE' => 'Y',
-			),
-			'select' => array('ID'),
-		));
+			],
+			'select' => ['ID'],
+		]);
 		
-		if ($platform = $dbRes->fetch())
-			$result = true;
-		else
-			$result = false;
-		
-		return $result;
+		return (bool)$dbRes->fetch();
 	}
 	
 	public static function setShipmentTableOnAfterUpdateEvent()
@@ -232,7 +235,7 @@ abstract class Platform
 		
 		while ($arRes = $res->fetch())
 		{
-			if (strlen($arRes["CATALOG_SECTIONS_TAB_CLASS_NAME"]) > 0)
+			if ($arRes["CATALOG_SECTIONS_TAB_CLASS_NAME"] <> '')
 			{
 				$result = true;
 				break;
@@ -341,6 +344,14 @@ abstract class Platform
 	{
 		return $this->code;
 	}
+
+	/**
+	 * @return string Platform code.
+	 */
+	public function getAnalyticCode()
+	{
+		return static::TRADING_PLATFORM_CODE;
+	}
 	
 	public static function onAfterUpdateShipment(\Bitrix\Main\Event $event, array $additional)
 	{
@@ -353,6 +364,15 @@ abstract class Platform
 	public function getInfo()
 	{
 		return [];
+	}
+
+	/**
+	 * @param string $storeType
+	 * @return bool
+	 */
+	public function isOfType(string $type): bool
+	{
+		return false;
 	}
 
 	/**

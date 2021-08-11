@@ -371,7 +371,7 @@ class CGridOptions
 		);
 		while($row = $res->Fetch())
 		{
-			$options = unserialize($row["VALUE"]);
+			$options = unserialize($row["VALUE"], ['allowed_classes' => false]);
 			if(!is_array($options))
 			{
 				$options = array();
@@ -539,7 +539,14 @@ class CGridOptions
 				closedir($dir);
 			}
 		}
-		uasort($arThemes, create_function('$a, $b', 'return strcmp($a["name"], $b["name"]);'));
+
+		uasort(
+			$arThemes,
+			function ($a, $b) {
+				return strcmp($a["name"], $b["name"]);
+			}
+		);
+
 		return $arThemes;
 	}
 

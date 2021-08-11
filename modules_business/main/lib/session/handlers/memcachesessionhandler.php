@@ -28,6 +28,7 @@ class MemcacheSessionHandler extends AbstractSessionHandler
 			'className' => MemcacheConnection::class,
 			'host' => $options['host'] ?? '127.0.0.1',
 			'port' => (int)($options['port'] ?? 11211),
+			'connectionTimeout' => $options['connectionTimeout'] ?? 1,
 			'servers' => $options['servers'] ?? [],
 		]);
 
@@ -112,7 +113,11 @@ class MemcacheSessionHandler extends AbstractSessionHandler
 
 	protected function closeConnection(): void
 	{
-		$this->connection->close();
+		if ($this->isConnected())
+		{
+			$this->connection->close();
+		}
+
 		$this->connection = null;
 	}
 

@@ -30,7 +30,20 @@ Loc::loadMessages(__FILE__);
  * </ul>
  *
  * @package Bitrix\Im
- **/
+ *
+ * DO NOT WRITE ANYTHING BELOW THIS
+ *
+ * <<< ORMENTITYANNOTATION
+ * @method static EO_Chat_Query query()
+ * @method static EO_Chat_Result getByPrimary($primary, array $parameters = array())
+ * @method static EO_Chat_Result getById($id)
+ * @method static EO_Chat_Result getList(array $parameters = array())
+ * @method static EO_Chat_Entity getEntity()
+ * @method static \Bitrix\Im\Model\EO_Chat createObject($setDefaultValues = true)
+ * @method static \Bitrix\Im\Model\EO_Chat_Collection createCollection()
+ * @method static \Bitrix\Im\Model\EO_Chat wakeUpObject($row)
+ * @method static \Bitrix\Im\Model\EO_Chat_Collection wakeUpCollection($rows)
+ */
 
 class ChatTable extends Entity\DataManager
 {
@@ -148,6 +161,10 @@ class ChatTable extends Entity\DataManager
 				'data_type' => 'integer',
 				'default_value' => 0,
 			),
+			'USER_COUNT' => array(
+				'data_type' => 'integer',
+				'default_value' => 0,
+			),
 			'PREV_MESSAGE_ID' => array(
 				'data_type' => 'integer',
 				'default_value' => 0
@@ -170,6 +187,11 @@ class ChatTable extends Entity\DataManager
 				'data_type' => 'Bitrix\Im\Model\ChatIndex',
 				'reference' => array('=this.ID' => 'ref.CHAT_ID'),
 				'join_type' => 'INNER',
+			),
+			'ALIAS' => array(
+				'data_type' => 'Bitrix\Im\Model\AliasTable',
+				'reference' => array('=this.ID' => 'ref.ENTITY_ID', '=this.ENTITY_TYPE' => 'ref.ENTITY_TYPE'),
+				'join_type' => 'LEFT',
 			),
 		);
 	}
@@ -294,5 +316,3 @@ class ChatTable extends Entity\DataManager
 		);
 	}
 }
-
-class_alias("Bitrix\\Im\\Model\\ChatTable", "Bitrix\\Im\\ChatTable", false);

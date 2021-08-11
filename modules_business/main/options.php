@@ -23,7 +23,7 @@ $mid = $_REQUEST["mid"];
 
 $arGROUPS = array();
 $groups = array();
-$z = CGroup::GetList(($v1=""), ($v2=""), array("ACTIVE"=>"Y", "ADMIN"=>"N", "ANONYMOUS"=>"N"));
+$z = CGroup::GetList('', '', array("ACTIVE"=>"Y", "ADMIN"=>"N", "ANONYMOUS"=>"N"));
 while($zr = $z->Fetch())
 {
 	$ar = array();
@@ -256,7 +256,7 @@ $arAllOptions = array(
 	),
 );
 
-if (\Bitrix\Main\Analytics\SiteSpeed::isRussianSiteManager())
+if (\Bitrix\Main\Analytics\SiteSpeed::isOn())
 {
 	$arAllOptions["main"][] = GetMessage("MAIN_CATALOG_STAT_SETTINGS");
 	$arAllOptions["main"][] = array("gather_catalog_stat", GetMessage("MAIN_GATHER_CATALOG_STAT"), "Y", Array("checkbox", "Y"));
@@ -277,7 +277,7 @@ $imageEditorOptions["Y"] = GetMessage("MAIN_OPTION_IMAGE_EDITOR_PROXY_ENABLED_YE
 $imageEditorOptions["YWL"] = GetMessage("MAIN_OPTION_IMAGE_EDITOR_PROXY_ENABLED_YES_FROM_WHITE_LIST");
 $arAllOptions["main"][] = Array("imageeditor_proxy_enabled", GetMessage("MAIN_OPTION_IMAGE_EDITOR_PROXY_ENABLED"), "N", array("selectbox", $imageEditorOptions));
 
-$allowedHostsList = unserialize(COption::GetOptionString("main", "imageeditor_proxy_white_list"));
+$allowedHostsList = unserialize(COption::GetOptionString("main", "imageeditor_proxy_white_list"), ['allowed_classes' => false]);
 
 if (!is_array($allowedHostsList) || empty($allowedHostsList))
 {
@@ -297,24 +297,24 @@ $addAllowedHost = "
     <script>
         var whiteListValues = ".CUtil::phpToJsObject($allowedHostsList).";
         var firstWhiteListInputs = [].slice.call(document.querySelectorAll('input[name=\'imageeditor_proxy_white_list\']'));
-        
+
         if (firstWhiteListInputs.length)
         {
             firstWhiteListInputs.forEach(function(item, index) {
             	item.setAttribute('placeholder', '".htmlspecialcharsbx($allowedWhiteListPlaceholder)."');
             	item.name = 'imageeditor_proxy_white_list[]';
             	item.setAttribute('value', whiteListValues[index]);
-            	
+
             	var allowedHostRemoveButton = '<a href=\"javascript:void(0);\" onclick=\"removeAllowedHost(this)\" class=\"access-delete\"></a>';
                 item.parentElement.innerHTML += allowedHostRemoveButton;
             });
         }
-        
+
         function removeAllowedHost(button)
         {
         	var row = button.parentElement.parentElement;
         	var inputs = [].slice.call(document.querySelectorAll('input[name*=\'imageeditor_proxy_white_list\']'));
-        	
+
         	if (inputs.length > 1)
             {
             	if (row.firstElementChild.innerHTML)
@@ -325,22 +325,22 @@ $addAllowedHost = "
         	        button.parentElement.parentElement
         	    );
             }
-            else 
+            else
             {
                 var input = row.querySelector('input[type=\'text\']');
                 input.removeAttribute('value');
                 input.value = '';
             }
-        	
+
         }
-        
+
         function addProxyAllowedHost(button)
         {
         	var row = button
         	    .parentElement
         	    .parentElement
         	    .previousElementSibling;
-        	
+
         	if (row)
             {
                 var clonedRow = row.cloneNode(true);
@@ -349,7 +349,7 @@ $addAllowedHost = "
                 clonedInput.removeAttribute('value');
                 clonedInput.value = '';
                 row.parentElement.insertBefore(clonedRow, row.nextElementSibling);
-                
+
                 if (!clonedInput.parentElement.querySelector('.access-delete'))
                 {
                     var allowedHostRemoveButton = '<a href=\"javascript:void(0);\" onclick=\"removeAllowedHost(this)\" class=\"access-delete\"></a>';
@@ -357,37 +357,37 @@ $addAllowedHost = "
                 }
             }
         }
-        
+
         var proxyEnabled = document.querySelector('[name=\'imageeditor_proxy_enabled\']');
         if (proxyEnabled)
         {
             proxyEnabled.addEventListener('change', onProxyEnabledChange);
-            
+
             requestAnimationFrame(function() {
                onProxyEnabledChange({currentTarget: proxyEnabled});
             });
         }
-        
+
         function onProxyEnabledChange(event)
         {
             var inputs = [].slice.call(document.querySelectorAll('input[name*=\'imageeditor_proxy_white_list\']'));
-            
+
             inputs.forEach(function(item) {
                 item.disabled = event.currentTarget.value !== 'YWL';
             });
-            
+
             var button = document.querySelector('.adm-add-allowed-host');
-            
+
             if (event.currentTarget.value !== 'YWL')
             {
                 button.style.pointerEvents = 'none';
                 button.style.opacity = .4;
             }
-            else 
+            else
             {
             	button.removeAttribute('style');
             }
-        
+
         }
     </script>
 ";
@@ -399,12 +399,12 @@ $arAllOptions["main"][] = Array("", "", $addAllowedHost, Array("statichtml"));
 CJSCore::Init(array('access'));
 
 //show the public panel for users
-$arCodes = unserialize(COption::GetOptionString("main", "show_panel_for_users"));
+$arCodes = unserialize(COption::GetOptionString("main", "show_panel_for_users"), ['allowed_classes' => false]);
 if(!is_array($arCodes))
 	$arCodes = array();
 
 //hide the public panel for users
-$arHideCodes = unserialize(COption::GetOptionString("main", "hide_panel_for_users"));
+$arHideCodes = unserialize(COption::GetOptionString("main", "hide_panel_for_users"), ['allowed_classes' => false]);
 if(!is_array($arHideCodes))
 	$arHideCodes = array();
 
@@ -655,20 +655,19 @@ $tabControl->BeginNextTab();
 
 ShowParamsHTMLByArray($arAllOptions["auth"]);
 
-$tabControl->BeginNextTab();
-ShowParamsHTMLByArray($arAllOptions["event_log"]);
-?>
-
-<?if(COption::GetOptionString("main", "controller_member", "N")=="Y"):?>
+if(COption::GetOptionString("main", "controller_member", "N")=="Y")
+{
+	?>
 	<tr class="heading">
 		<td colspan="2"><b><?echo GetMessage("MAIN_OPTION_CTRL_REM")?></b></td>
 	</tr>
 	<?
 	ShowParamsHTMLByArray($arAllOptions["controller_auth"]);
-	?>
-<?endif?>
+}
 
-<?
+$tabControl->BeginNextTab();
+ShowParamsHTMLByArray($arAllOptions["event_log"]);
+
 $tabControl->BeginNextTab();
 ?>
 	<tr>
@@ -1188,7 +1187,7 @@ if(COption::GetOptionString("main", "controller_member", "N")!="Y"):
 	foreach (array("db", "files") as $name):
 		$res = array();
 		if (COption::GetOptionString("main_size", "~".$name."_params"))
-			$res = unserialize(COption::GetOptionString("main_size", "~".$name."_params"));
+			$res = unserialize(COption::GetOptionString("main_size", "~".$name."_params"), ['allowed_classes' => false]);
 		if ($res)
 		{
 			$res = array_merge(

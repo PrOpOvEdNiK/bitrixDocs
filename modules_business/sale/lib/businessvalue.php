@@ -40,7 +40,7 @@ final class BusinessValue
 	 * @param mixed $providerInstance
 	 * @return mixed
 	 */
-		public static function get($codeKey, $consumerKey = null, $personTypeId = null, $providerInstance = null)
+	public static function get($codeKey, $consumerKey = null, $personTypeId = null, $providerInstance = null)
 	{
 		$value = null;
 
@@ -71,23 +71,7 @@ final class BusinessValue
 
 		if ($mapping['PROVIDER_KEY'] && $mapping['PROVIDER_VALUE'])
 		{
-			switch ($mapping['PROVIDER_KEY'])
-			{
-				case 'VALUE':
-				case 'INPUT':
-					$value = $mapping['PROVIDER_VALUE'];
-					break;
-
-				default:
-					if (($providers = self::getProviders())
-						&& ($provider = $providers[$mapping['PROVIDER_KEY']])
-						&& is_array($provider)
-						&& is_callable($provider['GET_INSTANCE_VALUE'])
-						&& ($v = call_user_func($provider['GET_INSTANCE_VALUE'], $providerInstance, $mapping['PROVIDER_VALUE'], $personTypeId)))
-					{
-						$value = $v;
-					}
-			}
+			$value = self::getValueFromMapping($mapping, $providerInstance, $personTypeId);
 		}
 
 		return $value;
@@ -638,6 +622,120 @@ final class BusinessValue
 		return $all ? $allPersonTypes : $personTypes;
 	}
 
+	/**
+	 * @param $codeKey
+	 * @param array $oldMapping
+	 * @param array $newMapping
+	 * @param null $consumerKey
+	 * @param null $personTypeId
+	 * @return \Bitrix\Main\Entity\Result
+	 * @throws SystemException
+	 * @throws \Bitrix\Main\ArgumentException
+	 * @throws \Bitrix\Main\ObjectPropertyException
+	 */
+	public static function updateMapping($codeKey, array $oldMapping, array $newMapping, $consumerKey = null, $personTypeId = null): \Bitrix\Main\Entity\Result
+	{
+		if (!isset($oldMapping['PROVIDER_KEY'], $oldMapping['PROVIDER_VALUE']))
+		{
+			throw new \Bitrix\Main\ArgumentException("Parameters \$oldMapping['PROVIDER_KEY'] and \$oldMapping['PROVIDER_VALUE'] are required.", 'oldMapping');
+		}
+
+		$result = new \Bitrix\Main\Entity\Result();
+
+		$filter = [
+			'CODE_KEY' => $codeKey,
+			'PROVIDER_KEY' => $oldMapping['PROVIDER_KEY'],
+			'PROVIDER_VALUE' => $oldMapping['PROVIDER_VALUE'],
+		];
+
+		if ($consumerKey)
+		{
+			$filter['CONSUMER_KEY'] = $consumerKey;
+		}
+
+		if ($personTypeId)
+		{
+			$filter['PERSON_TYPE_ID'] = $personTypeId;
+		}
+
+		$businessValueResult = BusinessValueTable::getList(array(
+			'select' => ['CONSUMER_KEY', 'PERSON_TYPE_ID'],
+			'filter' => $filter,
+		));
+
+		while ($item = $businessValueResult->fetch())
+		{
+			$setMappingResult = self::setMapping($codeKey, $item['CONSUMER_KEY'], $item['PERSON_TYPE_ID'], $newMapping);
+			if (!$setMappingResult->isSuccess())
+			{
+				$result->addErrors($setMappingResult->getErrors());
+			}
+		}
+
+		return $result;
+	}
+
+	/**
+	 * @param string $consumerName
+	 * @param string $code
+	 * @return string[]
+	 */
+	public static function getValuesByCode(string $consumerName, string $code)
+	{
+		$result = [];
+
+		$consumerCodePersonMapping = self::getConsumerCodePersonMapping();
+		if (isset($consumerCodePersonMapping[''][$code]))
+		{
+			$consumerValues = $consumerCodePersonMapping[''][$code];
+			foreach ($consumerValues as $values)
+			{
+				if ($values['PROVIDER_KEY'] && $values['PROVIDER_VALUE'])
+				{
+					$result[] = self::getValueFromMapping($values);
+				}
+			}
+		}
+
+		$consumerValues = $consumerCodePersonMapping[$consumerName][$code] ?? [];
+		foreach ($consumerValues as $values)
+		{
+			if ($values['PROVIDER_KEY'] && $values['PROVIDER_VALUE'])
+			{
+				$result[] = self::getValueFromMapping($values);
+			}
+		}
+
+		return array_unique($result);
+	}
+
+	private static function getValueFromMapping(array $mapping, $providerInstance = null, $personTypeId = null)
+	{
+		$value = null;
+
+		switch ($mapping['PROVIDER_KEY'])
+		{
+			case 'VALUE':
+			case 'INPUT':
+				$value = $mapping['PROVIDER_VALUE'];
+				break;
+
+			default:
+				if (
+					($providers = self::getProviders())
+					&& ($provider = $providers[$mapping['PROVIDER_KEY']])
+					&& \is_array($provider)
+					&& \is_callable($provider['GET_INSTANCE_VALUE'])
+					&& ($v = \call_user_func($provider['GET_INSTANCE_VALUE'], $providerInstance, $mapping['PROVIDER_VALUE'], $personTypeId))
+				)
+				{
+					$value = $v;
+				}
+		}
+
+		return $value;
+	}
+
 	// DEPRECATED API //////////////////////////////////////////////////////////////////////////////////////////////////
 
 	/** @deprecated */
@@ -703,7 +801,7 @@ class BusinessValueHandlers
 					if ($providerInstance === null)
 						return $value;
 
-					if (substr($providerValue, 0, 3) == 'UF_')
+					if (mb_substr($providerValue, 0, 3) == 'UF_')
 					{
 						global $USER_FIELD_MANAGER;
 						$value = $USER_FIELD_MANAGER->GetUserFieldValue(Internals\CompanyTable::getUfId(), $providerValue, $providerInstance) ?: null;
@@ -995,7 +1093,7 @@ class BusinessValueHandlers
 							list ($propertyCode, $propertyId, $locationField) = call_user_func($parseId, $providerValue);
 
 							// for crm invoice compatibility
-							if (method_exists($provider, 'getRegistryType'))
+							if ($provider && method_exists($provider, 'getRegistryType'))
 							{
 								$registry = $provider::getRegistryType();
 							}
@@ -1451,7 +1549,7 @@ class BusinessValueConsumer1C
 			}
 		}
 
-		$mapping = $mapping['PROVIDER_KEY'] 
+		$mapping = $mapping['PROVIDER_KEY']
 				? array(
 						'PROVIDER_KEY'   => $mapping['PROVIDER_KEY'  ],
 						'PROVIDER_VALUE' => $mapping['PROVIDER_VALUE'],

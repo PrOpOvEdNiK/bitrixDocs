@@ -540,7 +540,7 @@ abstract class ProviderBase
 	 * @throws NotSupportedException
 	 * @throws SystemException
 	 */
-	private function reverseShipment(Shipment $shipment, array $shippedList)
+	private static function reverseShipment(Shipment $shipment, array $shippedList)
 	{
 		$needShip = $shipment->needShip();
 
@@ -699,7 +699,7 @@ abstract class ProviderBase
 	 * @return Result
 	 * @throws ObjectNotFoundException
 	 */
-	private function setShipmentItemReserved(Shipment $shipment)
+	private static function setShipmentItemReserved(Shipment $shipment)
 	{
 
 		$result = new Result();
@@ -2821,9 +2821,9 @@ abstract class ProviderBase
 						$productId = $basketItem->getProductId();
 
 						$resultAvailableQuantityList = $resultData['AVAILABLE_QUANTITY_LIST'];
-						if (substr($providerName, 0, 1) == "\\")
+						if (mb_substr($providerName, 0, 1) == "\\")
 						{
-							$providerName = substr($providerName, 1);
+							$providerName = mb_substr($providerName, 1);
 						}
 
 						if (isset($resultAvailableQuantityList[$providerName]) && isset($resultAvailableQuantityList[$providerName][$productId]))

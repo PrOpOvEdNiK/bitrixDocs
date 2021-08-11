@@ -67,7 +67,7 @@ final class OrderBuilderExist implements IOrderBuilderDelegate
 		$currentUserId = $this->builder->getOrder()->getUserId();
 
 		$formDataUserId = (int)$this->builder->getFormData()['USER_ID'];
-		$isChanged = ((int)$currentUserId !== $formDataUserId);
+		$isChanged = ($formDataUserId > 0) && ((int)$currentUserId !== $formDataUserId);
 		if ($currentUserId && $isChanged)
 		{
 			$paymentCollection = $this->builder->getOrder()->getPaymentCollection();
@@ -83,10 +83,13 @@ final class OrderBuilderExist implements IOrderBuilderDelegate
 			}
 		}
 
-		$this->builder->getOrder()->setFieldNoDemand(
-			"USER_ID",
-			$this->builder->getUserId()
-		);
+		if ($formDataUserId > 0)
+		{
+			$this->builder->getOrder()->setFieldNoDemand(
+				"USER_ID",
+				$this->builder->getUserId()
+			);
+		}
 
 		if ($isChanged)
 		{
@@ -131,9 +134,16 @@ final class OrderBuilderExist implements IOrderBuilderDelegate
 
 	public function setShipmentPriceFields(Shipment $shipment, array $fields)
 	{
-		$priceDelivery = $fields['PRICE_DELIVERY'];
+		if ($fields['CUSTOM_PRICE_DELIVERY'] !== 'Y' && $shipment->getId() <= 0)
+		{
+			$priceDelivery = $shipment->calculateDelivery()->getPrice();
+		}
+		else
+		{
+			$priceDelivery = $fields['PRICE_DELIVERY'];
+		}
 
-		if($fields['CUSTOM_PRICE_DELIVERY'] == 'Y' || !isset($fields['BASE_PRICE_DELIVERY']))
+		if ($fields['CUSTOM_PRICE_DELIVERY'] === 'Y' || !isset($fields['BASE_PRICE_DELIVERY']))
 		{
 			$basePriceDelivery = $priceDelivery;
 		}

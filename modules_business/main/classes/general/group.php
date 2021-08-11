@@ -6,7 +6,10 @@
  * @copyright 2001-2020 Bitrix
  */
 
-class CGroup
+/**
+ * @deprecated Use CGroup
+ */
+class CAllGroup
 {
 	var $LAST_ERROR;
 
@@ -94,7 +97,7 @@ class CGroup
 		foreach (GetModuleEvents("main", "OnAfterGroupAdd", true) as $arEvent)
 			ExecuteModuleEventEx($arEvent, array(&$arFields));
 
-		if (CACHED_b_group!==false)
+		if (defined("CACHED_b_group") && CACHED_b_group !== false)
 			$CACHE_MANAGER->CleanDir("b_group");
 
 		return $ID;
@@ -119,7 +122,7 @@ class CGroup
 		return $res;
 	}
 
-	public static function GetList(&$by, &$order, $arFilter=Array(), $SHOW_USERS_AMOUNT="N")
+	public static function GetList($by = 'c_sort', $order = 'asc', $arFilter = [], $SHOW_USERS_AMOUNT = "N")
 	{
 		global $DB;
 
@@ -197,37 +200,35 @@ class CGroup
 				$strSqlSearch_h .= " and (".$condition.") ";
 		}
 
+		$by = strtolower($by);
 
-		if(strtolower($by) == "id")				$strSqlOrder = " ORDER BY G.ID ";
-		elseif(strtolower($by) == "active")		$strSqlOrder = " ORDER BY G.ACTIVE ";
-		elseif(strtolower($by) == "timestamp_x")	$strSqlOrder = " ORDER BY G.TIMESTAMP_X ";
-		elseif(strtolower($by) == "c_sort")		$strSqlOrder = " ORDER BY G.C_SORT ";
-		elseif(strtolower($by) == "sort")			$strSqlOrder = " ORDER BY G.C_SORT, G.NAME, G.ID ";
-		elseif(strtolower($by) == "name")			$strSqlOrder = " ORDER BY G.NAME ";
-		elseif(strtolower($by) == "string_id")		$strSqlOrder = " ORDER BY G.STRING_ID ";
-		elseif(strtolower($by) == "description")		$strSqlOrder = " ORDER BY G.DESCRIPTION ";
-		elseif(strtolower($by) == "anonymous")		$strSqlOrder = " ORDER BY G.ANONYMOUS ";
-		elseif(strtolower($by) == "dropdown")		$strSqlOrder = " ORDER BY C_SORT, NAME ";
-		elseif(strtolower($by) == "users")
+		if($by == "id")				$strSqlOrder = " ORDER BY G.ID ";
+		elseif($by == "active")		$strSqlOrder = " ORDER BY G.ACTIVE ";
+		elseif($by == "timestamp_x")	$strSqlOrder = " ORDER BY G.TIMESTAMP_X ";
+		elseif($by == "c_sort")		$strSqlOrder = " ORDER BY G.C_SORT ";
+		elseif($by == "sort")			$strSqlOrder = " ORDER BY G.C_SORT, G.NAME, G.ID ";
+		elseif($by == "name")			$strSqlOrder = " ORDER BY G.NAME ";
+		elseif($by == "string_id")		$strSqlOrder = " ORDER BY G.STRING_ID ";
+		elseif($by == "description")		$strSqlOrder = " ORDER BY G.DESCRIPTION ";
+		elseif($by == "anonymous")		$strSqlOrder = " ORDER BY G.ANONYMOUS ";
+		elseif($by == "dropdown")		$strSqlOrder = " ORDER BY C_SORT, NAME ";
+		elseif($by == "users")
 		{
 			$strSqlOrder = " ORDER BY USERS ";
-			$SHOW_USERS_AMOUNT="Y";
+			$SHOW_USERS_AMOUNT = "Y";
 		}
 		else
 		{
 			$strSqlOrder = " ORDER BY G.C_SORT ";
-			$by = "c_sort";
 		}
 
 		if(strtolower($order) == "desc")
 		{
 			$strSqlOrder .= " desc ";
-			$order = "desc";
 		}
 		else
 		{
 			$strSqlOrder .= " asc ";
-			$order = "asc";
 		}
 
 		$str_USERS = $str_TABLE = "";
@@ -822,11 +823,11 @@ class CGroup
 				$aPrevPolicy = array();
 				$res = $DB->Query("SELECT SECURITY_POLICY FROM b_group WHERE ID=".$ID);
 				if(($res_arr = $res->Fetch()) && $res_arr["SECURITY_POLICY"] <> '')
-					$aPrevPolicy = unserialize($res_arr["SECURITY_POLICY"]);
+					$aPrevPolicy = unserialize($res_arr["SECURITY_POLICY"], ['allowed_classes' => false]);
 				//compare with new one
 				$aNewPolicy = array();
 				if($arFields["SECURITY_POLICY"] <> '')
-					$aNewPolicy = unserialize($arFields["SECURITY_POLICY"]);
+					$aNewPolicy = unserialize($arFields["SECURITY_POLICY"], ['allowed_classes' => false]);
 				$aDiff = array_diff_assoc($aNewPolicy, $aPrevPolicy);
 				if(empty($aDiff))
 					$aDiff = array_diff_assoc($aPrevPolicy, $aNewPolicy);
@@ -923,7 +924,7 @@ class CGroup
 		foreach (GetModuleEvents("main", "OnAfterGroupUpdate", true) as $arEvent)
 			ExecuteModuleEventEx($arEvent, array($ID, &$arFields));
 
-		if (CACHED_b_group!==false)
+		if (defined("CACHED_b_group") && CACHED_b_group !== false)
 			$CACHE_MANAGER->CleanDir("b_group");
 
 		return true;
@@ -944,7 +945,7 @@ class CGroup
 		{
 			if(ExecuteModuleEventEx($arEvent, array($ID))===false)
 			{
-				$err = GetMessage("MAIN_BEFORE_DEL_ERR").' '.$arEvent['TO_NAME'];
+				$err = GetMessage("MAIN_BEFORE_DEL_ERR1").' '.$arEvent['TO_NAME'];
 				if($ex = $APPLICATION->GetException())
 					$err .= ': '.$ex->GetString();
 				$APPLICATION->throwException($err);
@@ -963,7 +964,7 @@ class CGroup
 
 		$res = $DB->Query("DELETE FROM b_group WHERE ID=".$ID." AND ID>2", true);
 
-		if (CACHED_b_group!==false)
+		if (defined("CACHED_b_group") && CACHED_b_group !== false)
 			$CACHE_MANAGER->CleanDir("b_group");
 
 		return $res;
@@ -1371,4 +1372,8 @@ class CGroup
 
 		return false;
 	}
+}
+
+class CGroup extends CAllGroup
+{
 }

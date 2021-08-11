@@ -60,12 +60,14 @@ final class CrmEntityCreator
 		}
 
 		$saveOrderResult = $this->order->save();
-		if (!$saveOrderResult->isSuccess())
+		if ($saveOrderResult->isSuccess())
+		{
+			$this->addTimeLines();
+		}
+		else
 		{
 			$result->addErrors($saveOrderResult->getErrors());
 		}
-
-		$this->addTimeLines();
 
 		return $result;
 	}
@@ -184,14 +186,9 @@ final class CrmEntityCreator
 		foreach ($historyChanges as $historyChange)
 		{
 			// status
-			if ($historyChange["TYPE"] == "ORDER_STATUS_CHANGED")
+			if ($historyChange["TYPE"] === "ORDER_STATUS_CHANGED")
 			{
 				$this->addTimelineEntryOnStatusModify($historyChange["DATA"]["OLD"], $historyChange["DATA"]["CURRENT"]);
-			}
-			elseif ($historyChange["TYPE"] == "ORDER_PRICE_CHANGED")
-			{
-				// update (price)
-				$this->updateTimelineCreationEntity($historyChange["DATA"]["CURRENT"]);
 			}
 		}
 
@@ -208,14 +205,20 @@ final class CrmEntityCreator
 		Timeline\OrderController::getInstance()->onCreate(
 			(int)$this->order->getId(),
 			[
-				"FIELDS" => [
+				"ORDER_FIELDS" => [
 					"ID" => (int)$this->order->getId(),
 					"CREATED_BY" => $this->order->getField("CREATED_BY"),
 					"RESPONSIBLE_ID" => $this->order->getField("RESPONSIBLE_ID"),
 					"DATE_INSERT" => $this->order->getField("DATE_INSERT"),
 					"PRICE" => $this->order->getField("PRICE"),
 					"CURRENCY" => $this->order->getField("CURRENCY")
-				]
+				],
+				"BINDINGS" => [
+					[
+						"ENTITY_TYPE_ID" => \CCrmOwnerType::Order,
+						"ENTITY_ID" => $this->order->getId()
+					]
+				],
 			]
 		);
 	}
@@ -227,7 +230,9 @@ final class CrmEntityCreator
 	private function addTimelineEntryOnCancel()
 	{
 		if ($this->order->getField("CANCELED") !== "Y")
+		{
 			return;
+		}
 
 		$fields = [
 			"ID" => $this->order->getId(),
@@ -237,7 +242,18 @@ final class CrmEntityCreator
 		$fields["REASON_CANCELED"] = $this->order->getField("REASON_CANCELED");
 		$fields["EMP_CANCELED_ID"] = $this->order->getField("EMP_CANCELED_ID");
 
-		Timeline\OrderController::getInstance()->onCancel($this->order->getId(), ["FIELDS" => $fields]);
+		Timeline\OrderController::getInstance()->onCancel(
+			$this->order->getId(),
+			[
+				"FIELDS" => $fields,
+				"BINDINGS" => [
+					[
+						"ENTITY_TYPE_ID" => \CCrmOwnerType::Order,
+						"ENTITY_ID" => $this->order->getId()
+					]
+				],
+			]
+		);
 	}
 
 	/**
@@ -252,32 +268,17 @@ final class CrmEntityCreator
 			"PREVIOUS_FIELDS" => ["STATUS_ID" => $prevStatus],
 			"CURRENT_FIELDS" => [
 				"STATUS_ID" => $currentStatus,
-				"EMP_STATUS_ID" => $this->order->getField("EMP_STATUS_ID") // ?
+				"EMP_STATUS_ID" => $this->order->getField("EMP_STATUS_ID")
+			],
+			"BINDINGS" => [
+				[
+					"ENTITY_TYPE_ID" => \CCrmOwnerType::Order,
+					"ENTITY_ID" => $this->order->getId()
+				]
 			],
 		];
 
 		Timeline\OrderController::getInstance()->onModify($this->order->getId(), $modifyParams);
-	}
-
-	/**
-	 * @param $currentPrice
-	 * @return void;
-	 * @throws Main\ArgumentException
-	 */
-	private function updateTimelineCreationEntity($currentPrice)
-	{
-		$fields = $this->order->getFields();
-		$selectedFields =[
-			"DATE_INSERT_TIMESTAMP" => $fields["DATE_INSERT"]->getTimestamp(),
-			"PRICE" => $currentPrice,
-			"CURRENCY" => $fields["CURRENCY"]
-		];
-
-		Timeline\OrderController::getInstance()->updateSettingFields(
-			$this->order->getId(),
-			Timeline\TimelineType::CREATION,
-			$selectedFields
-		);
 	}
 
 	/**
@@ -289,62 +290,25 @@ final class CrmEntityCreator
 	private function getHistoryChanges()
 	{
 		$arHistoryData = [];
-		$bUseOldHistory = false;
-
-		// collect records from old history to show in the new order changes list
-		$dbHistory = (new \CSaleOrder)->GetHistoryList(
-			["H_DATE_INSERT" => "ASC"],
-			["H_ORDER_ID" => $this->order->getId()],
-			false,
-			false,
-			["*"]
-		);
-
-		if ($dbHistory->SelectedRowsCount())
-		{
-			require_once($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/sale/general/admin_tool.php");
-		}
-
-		while ($arHistory = $dbHistory->Fetch())
-		{
-			$res = \convertHistoryToNewFormat($arHistory);
-			if ($res)
-			{
-				$arHistoryData[] = $res;
-				$bUseOldHistory = true;
-			}
-		}
 
 		$arFilterHistory = ["ORDER_ID" => $this->order->getId()];
-		$arFilterHistory["@TYPE"] = ["ORDER_STATUS_CHANGED", "ORDER_PRICE_CHANGED"];
+		$arFilterHistory["@TYPE"] = ["ORDER_STATUS_CHANGED"];
 
-		// new order history data
 		$dbOrderChange = Sale\Internals\OrderChangeTable::getList([
 			"select" => ["*"],
 			"filter" => $arFilterHistory,
 			"order" => [
-				"DATE_CREATE" => "ASC",
+				"DATE_CREATE" => "DESC",
 				"ID" => "ASC"
-			]
+			],
+			'limit' => 10,
 		]);
 		while ($arChangeRecord = $dbOrderChange->fetch())
 		{
 			$arHistoryData[] = $arChangeRecord;
 		}
 
-		// advancing sorting is necessary if old history results are mixed with new order changes
-		if ($bUseOldHistory)
-		{
-			$arData = [];
-			foreach ($arHistoryData as $index => $arHistoryRecord)
-				$arData[$index]  = $arHistoryRecord["DATE_CREATE"];
-
-			$arIds = [];
-			foreach ($arHistoryData as $index => $arHistoryRecord)
-				$arIds[$index]  = $arHistoryRecord["ID"];
-
-			array_multisort($arData, constant("SORT_ASC"), $arIds, constant("SORT_ASC"), $arHistoryData);
-		}
+		Main\Type\Collection::sortByColumn($arHistoryData, ['ID' => SORT_ASC]);
 
 		$dbRes = new \CDBResult;
 		$dbRes->InitFromArray($arHistoryData);
@@ -352,28 +316,20 @@ final class CrmEntityCreator
 		$result = [];
 		while ($arRes = $dbRes->Fetch())
 		{
-			$changes = [];
-			$data = unserialize($arRes["DATA"]);
-
-			if ($arRes["TYPE"] == "ORDER_STATUS_CHANGED")
+			if (\CheckSerializedData($arRes["DATA"]))
 			{
-				$changes = [
-					"CURRENT" => $data["STATUS_ID"],
-					"OLD" => $data["OLD_STATUS_ID"]
-				];
+				$data = unserialize($arRes["DATA"], ['allowed_classes' => false]);
+				if ($arRes["TYPE"] === "ORDER_STATUS_CHANGED")
+				{
+					$result[] = [
+						"TYPE" => $arRes["TYPE"],
+						"DATA" => [
+							"CURRENT" => $data["STATUS_ID"],
+							"OLD" => $data["OLD_STATUS_ID"],
+						],
+					];
+				}
 			}
-			elseif ($arRes["TYPE"] == "ORDER_PRICE_CHANGED")
-			{
-				$changes = [
-					"CURRENT" => $data["PRICE"],
-					"OLD" => $data["OLD_PRICE"]
-				];
-			}
-
-			$result[] = [
-				"TYPE" => $arRes["TYPE"],
-				"DATA" => $changes
-			];
 		}
 
 		return $result;
@@ -529,9 +485,12 @@ final class CrmEntityCreatorStepper extends Stepper
 	private function initParams()
 	{
 		$params = Option::get(self::$moduleId, self::STEPPER_PARAMS, "");
-		$params = ($params !== "" ? @unserialize($params) : []);
-		$this->params = (is_array($params) ? $params : []);
+		if ($params !== "" && \CheckSerializedData($params))
+		{
+			$params = unserialize($params, ['allowed_classes' => false]);
+		}
 
+		$this->params = (\is_array($params) ? $params : []);
 		if (empty($this->params))
 		{
 			$this->params = [
@@ -741,10 +700,20 @@ final class CrmEntityCreatorStepper extends Stepper
 
 	/**
 	 * Show progress bar in crm and shop section
+	 *
+	 * @throws Main\ArgumentNullException
+	 * @throws Main\ArgumentOutOfRangeException
 	 */
-	public static function showProgressBar()
+	public static function showProgressBar(): void
 	{
-		if (defined("SITE_TEMPLATE_ID") && SITE_TEMPLATE_ID !== "bitrix24")
+		if (defined("ADMIN_SECTION")
+			|| (defined("SITE_TEMPLATE_ID") && SITE_TEMPLATE_ID !== "bitrix24")
+		)
+		{
+			return;
+		}
+
+		if (self::getCrmSiteId() !== SITE_ID)
 		{
 			return;
 		}
@@ -753,7 +722,7 @@ final class CrmEntityCreatorStepper extends Stepper
 		global $APPLICATION;
 
 		$currentPage = $APPLICATION->getCurPage();
-		if ((strpos($currentPage, "/crm/") !== false) || (strpos($currentPage, "/shop/") !== false))
+		if ((mb_strpos($currentPage, "/crm/") !== false) || (mb_strpos($currentPage, "/shop/") !== false))
 		{
 			$ids = ["sale" => __CLASS__];
 			$content = self::getHtml($ids, Loc::getMessage("CRM_ENTITY_CREATOR_STEPPER_TITLE"));
@@ -782,18 +751,17 @@ final class CrmEntityCreatorStepper extends Stepper
 	 * @throws Main\ObjectPropertyException
 	 * @throws Main\SystemException
 	 */
-	public static function bindAgent()
+	public static function bindAgent(): void
 	{
-		if (!defined("SITE_TEMPLATE_ID"))
-		{
-			return;
-		}
-		elseif (defined("SITE_TEMPLATE_ID") && SITE_TEMPLATE_ID !== "bitrix24")
+		if (defined("ADMIN_SECTION")
+			|| (defined("SITE_TEMPLATE_ID") && SITE_TEMPLATE_ID !== "bitrix24")
+			|| (!Main\Loader::includeModule("crm"))
+		)
 		{
 			return;
 		}
 
-		if (!Main\Loader::includeModule("crm"))
+		if (self::getCrmSiteId() !== SITE_ID)
 		{
 			return;
 		}
@@ -848,7 +816,7 @@ final class CrmEntityCreatorStepper extends Stepper
 	 */
 	public static function bindAgentOrderUpdate()
 	{
-		if (!CrmEntityCreatorStepper::isAgent())
+		if (!self::isAgent())
 		{
 			Option::delete(self::$moduleId, ["name" => self::STEPPER_PARAMS]);
 			Option::delete(self::$moduleId, ["name" => self::ORDER_CONVERT_IS_FINISH]);
@@ -893,9 +861,11 @@ final class CrmEntityCreatorStepper extends Stepper
 	 * @throws Main\SystemException
 	 * @throws \Exception
 	 */
-	private function setError($orderId, $errorMessage)
+	private function setError($orderId, $errorMessage): void
 	{
-		$orderRow = Sale\Internals\OrderConverterCrmErrorTable::getList(["ORDER_ID" => $orderId])->fetch();
+		$orderRow = Sale\Internals\OrderConverterCrmErrorTable::getList([
+			'filter' => ["ORDER_ID" => $orderId],
+		])->fetch();
 		if (!$orderRow)
 		{
 			$this->addError($orderId, $errorMessage);
@@ -995,7 +965,7 @@ final class CrmEntityCreatorStepper extends Stepper
 	 * @throws Main\ArgumentNullException
 	 * @throws Main\ArgumentOutOfRangeException
 	 */
-	private function getCrmSiteId()
+	private static function getCrmSiteId()
 	{
 		return Option::get(self::$moduleId, self::WIZARD_SITE_ID);
 	}
@@ -1010,7 +980,7 @@ final class CrmEntityCreatorStepper extends Stepper
 	{
 		$site = Main\SiteTable::getList([
 			"select" => ["SERVER_NAME"],
-			"filter" => ["=LID" => $this->getCrmSiteId()]
+			"filter" => ["=LID" => self::getCrmSiteId()]
 		])->fetch();
 
 		$siteUrl = (Main\Context::getCurrent()->getRequest()->isHttps() ? "https://" : "http://").$site["SERVER_NAME"];

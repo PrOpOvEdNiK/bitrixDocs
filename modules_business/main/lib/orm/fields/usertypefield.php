@@ -80,4 +80,17 @@ class UserTypeField extends ExpressionField
 	{
 		return $this->isMultiple;
 	}
+
+	/**
+	 * @param mixed $value
+	 *
+	 * @return string
+	 * @throws \Bitrix\Main\SystemException
+	 */
+	public function convertValueToDb($value)
+	{
+		return $this->isMultiple
+			? $this->getConnection()->getSqlHelper()->convertToDbString($value) // serialized values
+			: parent::convertValueToDb($value);
+	}
 }

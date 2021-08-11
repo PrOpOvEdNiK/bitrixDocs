@@ -82,7 +82,7 @@ class CPullOptions
 	public static function GetExcludeSites()
 	{
 		$result = COption::GetOptionString("pull", "exclude_sites", "a:0:{}", self::GetDefaultOption("exclude_sites"));
-		return unserialize($result);
+		return unserialize($result, ["allowed_classes" => false]);
 	}
 
 	public static function SetExcludeSites($sites)
@@ -138,12 +138,10 @@ class CPullOptions
 		if ($flag=='Y')
 		{
 			CAgent::AddAgent("CPullChannel::CheckOnlineChannel();", "pull", "N", 240, "", "Y", ConvertTimeStamp(time()+CTimeZone::GetOffset()+240, "FULL"));
-			CAgent::RemoveAgent("CPullStack::CheckExpireAgent();", "pull");
 		}
 		else
 		{
 			CAgent::RemoveAgent("CPullChannel::CheckOnlineChannel();", "pull");
-			CAgent::AddAgent("CPullStack::CheckExpireAgent();", "pull", "N");
 		}
 
 		return true;
@@ -245,7 +243,7 @@ class CPullOptions
 
 	public static function SetPublishUrl($path = "")
 	{
-		if (strlen($path)<=0)
+		if ($path == '')
 		{
 			$path = self::GetDefaultOption('path_to_publish');
 		}
@@ -255,7 +253,7 @@ class CPullOptions
 
 	public static function GetListenUrl($channelId = "")
 	{
-		if (!is_array($channelId) && strlen($channelId) > 0)
+		if (!is_array($channelId) && $channelId <> '')
 			$channelId = Array($channelId);
 		else if (!is_array($channelId))
 			$channelId = Array();
@@ -269,7 +267,7 @@ class CPullOptions
 
 	public static function SetListenUrl($path = "")
 	{
-		if (strlen($path)<=0)
+		if ($path == '')
 		{
 			$path = self::GetDefaultOption('path_to_modern_listener');
 		}
@@ -284,7 +282,7 @@ class CPullOptions
 
 	public static function GetPublishWebUrl($channelId = "")
 	{
-		if (!is_array($channelId) && strlen($channelId) > 0)
+		if (!is_array($channelId) && $channelId <> '')
 			$channelId = Array($channelId);
 		else if (!is_array($channelId))
 			$channelId = Array();
@@ -297,7 +295,7 @@ class CPullOptions
 
 	public static function SetPublishWebUrl($path = "")
 	{
-		if (strlen($path)<=0)
+		if ($path == '')
 		{
 			$path = self::GetDefaultOption('path_to_publish_web');
 		}
@@ -308,7 +306,7 @@ class CPullOptions
 
 	public static function GetPublishWebSecureUrl($channelId = "")
 	{
-		if (!is_array($channelId) && strlen($channelId) > 0)
+		if (!is_array($channelId) && $channelId <> '')
 			$channelId = Array($channelId);
 		else if (!is_array($channelId))
 			$channelId = Array();
@@ -321,7 +319,7 @@ class CPullOptions
 
 	public static function SetPublishWebSecureUrl($path = "")
 	{
-		if (strlen($path)<=0)
+		if ($path == '')
 		{
 			$path = self::GetDefaultOption('path_to_publish_web_secure');
 		}
@@ -332,7 +330,7 @@ class CPullOptions
 
 	public static function GetListenSecureUrl($channelId = "")
 	{
-		if (!is_array($channelId) && strlen($channelId) > 0)
+		if (!is_array($channelId) && $channelId <> '')
 			$channelId = Array($channelId);
 		else if (!is_array($channelId))
 			$channelId = Array();
@@ -346,7 +344,7 @@ class CPullOptions
 
 	public static function SetListenSecureUrl($path = "")
 	{
-		if (strlen($path)<=0)
+		if ($path == '')
 		{
 			$path = self::GetDefaultOption('path_to_modern_listener_secure');
 		}
@@ -363,7 +361,7 @@ class CPullOptions
 	 */
 	public static function GetQueueServerVersion()
 	{
-		return intval(COption::GetOptionInt("pull", "nginx_version", self::GetDefaultOption("nginx_version")));
+		return static::IsServerShared() ? \Bitrix\Pull\SharedServer\Config::getServerVersion() : intval(COption::GetOptionInt("pull", "nginx_version", self::GetDefaultOption("nginx_version")));
 	}
 
 	public static function SetQueueServerVersion($version)
@@ -413,7 +411,7 @@ class CPullOptions
 
 	public static function GetWebSocketUrl($channelId = "")
 	{
-		if (!is_array($channelId) && strlen($channelId) > 0)
+		if (!is_array($channelId) && $channelId <> '')
 			$channelId = Array($channelId);
 		else if (!is_array($channelId))
 			$channelId = Array();
@@ -424,7 +422,7 @@ class CPullOptions
 
 	public static function SetWebSocketUrl($path = "")
 	{
-		if (strlen($path)<=0)
+		if ($path == '')
 		{
 			$path = self::GetDefaultOption('path_to_websocket');
 		}
@@ -435,7 +433,7 @@ class CPullOptions
 
 	public static function GetWebSocketSecureUrl($channelId = "")
 	{
-		if (!is_array($channelId) && strlen($channelId) > 0)
+		if (!is_array($channelId) && $channelId <> '')
 			$channelId = Array($channelId);
 		else if (!is_array($channelId))
 			$channelId = Array();
@@ -446,7 +444,7 @@ class CPullOptions
 
 	public static function SetWebSocketSecureUrl($path = "")
 	{
-		if (strlen($path)<=0)
+		if ($path == '')
 		{
 			$path = self::GetDefaultOption('path_to_websocket_secure');
 		}
@@ -563,17 +561,20 @@ class CPullOptions
 		{
 			CAgent::AddAgent("CPullChannel::CheckOnlineChannel();", "pull", "N", 240, "", "Y", ConvertTimeStamp(time()+CTimeZone::GetOffset()+100, "FULL"));
 			CAgent::AddAgent("CPullChannel::CheckExpireAgent();", "pull", "N", 43200, "", "Y", ConvertTimeStamp(time()+CTimeZone::GetOffset() + 43200, "FULL"));
-			CAgent::AddAgent("CPullStack::CheckExpireAgent();", "pull", "N", 86400, "", "Y", ConvertTimeStamp(time()+CTimeZone::GetOffset() + 86400, "FULL"));
 			CAgent::AddAgent("CPullWatch::CheckExpireAgent();", "pull", "N", 600, "", "Y", ConvertTimeStamp(time()+CTimeZone::GetOffset() + 600, "FULL"));
 		}
 		else
 		{
 			CAgent::RemoveAgent("CPullChannel::CheckOnlineChannel();", "pull");
 			CAgent::RemoveAgent("CPullChannel::CheckExpireAgent();", "pull");
-			CAgent::RemoveAgent("CPullStack::CheckExpireAgent();", "pull");
 			CAgent::RemoveAgent("CPullWatch::CheckExpireAgent();", "pull");
 			CAgent::RemoveAgent("CPushManager::SendAgent();", "pull");
 		}
+	}
+
+	public static function OnProlog()
+	{
+		\Bitrix\Main\UI\Extension::load('pull');
 	}
 
 	public static function OnEpilog()
@@ -598,8 +599,6 @@ class CPullOptions
 
 			if (CPullOptions::CheckNeedRun())
 			{
-				CJSCore::Init(array('pull'));
-
 				Asset::getInstance()->addString('<script type="text/javascript">BX.bind(window, "load", function(){BX.PULL.start();});</script>');
 			}
 		}

@@ -1,5 +1,6 @@
 <?php
 
+use Bitrix\Main;
 use Bitrix\Main\Type\Collection;
 
 /**
@@ -49,7 +50,10 @@ class CAdminList
 
 	private $filter;
 
+	/** @var string */
 	protected $mode = null;
+	/** @var  Main\HttpRequest */
+	protected $request;
 
 	/**
 	 * @param string $table_id
@@ -57,22 +61,14 @@ class CAdminList
 	 */
 	public function __construct($table_id, $sort = false)
 	{
+		$this->request = Main\Context::getCurrent()->getRequest();
+
 		$this->table_id = $table_id;
 		$this->sort = $sort;
 
 		$this->isPublicMode = (defined("PUBLIC_MODE") && PUBLIC_MODE == 1);
 
 		$this->initMode();
-	}
-
-	/**
-	 * @deprecated
-	 * @param string $table_id
-	 * @param CAdminSorting|bool $sort
-	 */
-	public function CAdminList($table_id, $sort = false)
-	{
-		self::__construct($table_id, $sort);
 	}
 
 	public function getFilter()
@@ -119,9 +115,7 @@ class CAdminList
 		}
 		unset($userColumns);
 
-		$aAllCols = null;
-		if (isset($_REQUEST["mode"]) && $_REQUEST["mode"] == "settings")
-			$aAllCols = $this->aHeaders;
+		$aAllCols = ($this->isConfigMode() ? $this->aHeaders : null);
 
 		if (!$bEmptyCols)
 		{
@@ -139,12 +133,16 @@ class CAdminList
 		}
 		unset($userVisibleColumns);
 
-		if (isset($_REQUEST["mode"]) && $_REQUEST["mode"] == "settings")
+		if ($this->isConfigMode())
+		{
 			$this->ShowSettings($aAllCols, $aCols, $aOptions);
+		}
 	}
 
-	function ShowSettings($aAllCols, $aCols, $aOptions)
+	/** @noinspection PhpUnusedParameterInspection  */
+	public function ShowSettings($aAllCols, $aCols, $aOptions)
 	{
+		/** @noinspection PhpUnusedLocalVariableInspection */
 		global $USER;
 
 		require($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/include/prolog_admin_js.php");
@@ -435,15 +433,16 @@ class CAdminList
 	protected function initMode(): void
 	{
 		$this->mode = self::MODE_PAGE;
-		if (isset($_REQUEST['mode']) && is_string($_REQUEST['mode']))
-		{
-			if (in_array(
-				$_REQUEST['mode'],
+		$mode = $this->request->get('mode');
+		if (
+			is_string($mode)
+			&& (in_array(
+				$mode,
 				[self::MODE_LIST, self::MODE_ACTION, self::MODE_EXPORT, self::MODE_CONFIG]
 			))
-			{
-				$this->mode = $_REQUEST['mode'];
-			}
+		)
+		{
+			$this->mode = $mode;
 		}
 	}
 
@@ -565,7 +564,7 @@ class CAdminList
 
 			if($row = $dbRes->Fetch())
 			{
-				$fields = unserialize($row['FIELDS']);
+				$fields = unserialize($row['FIELDS'], ['allowed_classes' => false]);
 
 				if(is_array($fields) && !empty($fields))
 				{
@@ -1220,6 +1219,7 @@ topWindow.BX.ajax.UpdatePageData({});
 
 			header("Content-Type: application/vnd.ms-excel");
 			header("Content-Disposition: filename=".$fname.".xls");
+			$APPLICATION->EndBufferContentMan();
 			$this->DisplayExcel();
 			require($_SERVER["DOCUMENT_ROOT"].BX_ROOT."/modules/main/include/epilog_admin_after.php");
 			die();
@@ -1267,15 +1267,6 @@ class CAdminListRow
 		$this->table_id = $table_id;
 
 		$this->isPublicMode = (defined("PUBLIC_MODE") && PUBLIC_MODE == 1);
-	}
-
-	/** @deprecated
-	* @param array &$aHeaders
-	* @param string $table_id
-	*/
-	public function CAdminListRow(&$aHeaders, $table_id)
-	{
-		self::__construct($aHeaders, $table_id);
 	}
 
 	function SetFeatures($aFeatures)
