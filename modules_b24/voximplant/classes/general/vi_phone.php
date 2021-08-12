@@ -51,33 +51,33 @@ class CVoxImplantPhone
 
 	public static function Normalize($number, $minLength = 10)
 	{
-		if (substr($number, 0, 2) == '+8')
+		if (mb_substr($number, 0, 2) == '+8')
 		{
-			$number = '008'.substr($number, 2);
+			$number = '008'.mb_substr($number, 2);
 		}
 		$number = self::stripLetters($number);
 		$number = str_replace("+", "", $number);
-		if (substr($number, 0, 2) == '80' || substr($number, 0, 2) == '81' || substr($number, 0, 2) == '82')
+		if (mb_substr($number, 0, 2) == '80' || mb_substr($number, 0, 2) == '81' || mb_substr($number, 0, 2) == '82')
 		{
 		}
-		else if (substr($number, 0, 2) == '00')
+		else if (mb_substr($number, 0, 2) == '00')
 		{
-			$number = substr($number, 2);
+			$number = mb_substr($number, 2);
 		}
-		else if (substr($number, 0, 3) == '011')
+		else if (mb_substr($number, 0, 3) == '011')
 		{
-			$number = substr($number, 3);
+			$number = mb_substr($number, 3);
 		}
-		else if (substr($number, 0, 1) == '8' && strlen($number) === 11)
+		else if (mb_substr($number, 0, 1) == '8' && mb_strlen($number) === 11)
 		{
-			$number = '7'.substr($number, 1);
+			$number = '7'.mb_substr($number, 1);
 		}
-		else if (substr($number, 0, 1) == '0')
+		else if (mb_substr($number, 0, 1) == '0')
 		{
-			$number = substr($number, 1);
+			$number = mb_substr($number, 1);
 		}
 
-		if($minLength > 0 && strlen($number) < $minLength)
+		if($minLength > 0 && mb_strlen($number) < $minLength)
 		{
 			return false;
 		}
@@ -179,7 +179,7 @@ class CVoxImplantPhone
 	public static function ActivateCallerID($number, $code)
 	{
 		$number = CVoxImplantPhone::Normalize($number);
-		if ($number && strlen($code) > 0)
+		if ($number && $code <> '')
 		{
 			$ViHttp = new CVoxImplantHttp();
 			$ViHttp->ClearConfigCache();
@@ -217,7 +217,7 @@ class CVoxImplantPhone
 				$categories = Array();
 
 				$countryName = GetMessage('VI_PHONE_CODE_'.$value->country_code);
-				if (strlen($countryName) <= 0)
+				if ($countryName == '')
 					$countryName = $value->country_code.' (+'.$value->phone_prefix.')';
 
 				foreach ($value->phone_categories as $category)
@@ -465,13 +465,14 @@ class CVoxImplantPhone
 		{
 			foreach ($result->result as $value)
 			{
+				$parsedNumber = \Bitrix\Main\PhoneNumber\Parser::getInstance()->parse($value->phone_number, $country);
 				$arResult[$value->phone_number] = Array(
 					'FULL_PRICE' => floatval($value->phone_price)+floatval($value->can_list_phone_numbers),
 					'INSTALLATION_PRICE' => $value->phone_installation_price,
 					'MONTH_PRICE' => $value->phone_price,
 					'PHONE_NUMBER' => $value->phone_number,
-					'PHONE_NUMBER_INTERNATIONAL' => \Bitrix\Main\PhoneNumber\Parser::getInstance()->parse($value->phone_number)->format(\Bitrix\Main\PhoneNumber\Format::INTERNATIONAL),
-					'PHONE_NUMBER_LOCAL' => \Bitrix\Main\PhoneNumber\Parser::getInstance()->parse($value->phone_number)->format(\Bitrix\Main\PhoneNumber\Format::NATIONAL),
+					'PHONE_NUMBER_INTERNATIONAL' => $parsedNumber->format(\Bitrix\Main\PhoneNumber\Format::INTERNATIONAL),
+					'PHONE_NUMBER_LOCAL' => $parsedNumber->format(\Bitrix\Main\PhoneNumber\Format::NATIONAL),
 					'COUNTRY_CODE' => $country,
 					'REGION_ID' => $regionId,
 					'CURRENCY' => $currency
@@ -715,7 +716,7 @@ class CVoxImplantPhone
 
 		if($configName == '')
 		{
-			$configName = static::generateConfigName($arPhones);
+			$configName = static::generateConfigName($arPhones, VI\ConfigTable::MAX_LENGTH_NAME);
 		}
 
 		// assuming, that all numbers are from the same country
@@ -744,7 +745,7 @@ class CVoxImplantPhone
 			$insertResult = VI\Model\NumberTable::add([
 				'NUMBER' => $phone,
 				'NAME' => $phone,
-				'VERIFIED' => $phoneObj['VERIFICATION_STATUS'] == 'VERIFIED'? 'Y': 'N',
+				'VERIFIED' => $phoneObj['VERIFICATION_STATUS'] === 'VERIFIED'? 'Y': 'N',
 				'COUNTRY_CODE' => $phoneObj['COUNTRY_CODE'],
 				'CONFIG_ID' => $configId,
 				'SUBSCRIPTION_ID' => $phoneObj['SUBSCRIPTION_ID'],
@@ -752,7 +753,7 @@ class CVoxImplantPhone
 		}
 	}
 
-	public static function generateConfigName($rentedPhones)
+	public static function generateConfigName($rentedPhones, $maxLength = 0)
 	{
 		if(count($rentedPhones) === 1)
 		{
@@ -777,7 +778,12 @@ class CVoxImplantPhone
 			}
 			else
 			{
-				return Loc::getMessage("VI_PHONE_GROUP") . ": " . join(", ", array_keys($rentedPhones));
+				$result = Loc::getMessage("VI_PHONE_GROUP") . ": " . join(", ", array_keys($rentedPhones));
+				if ($maxLength > 0 && mb_strlen($result) > $maxLength)
+				{
+					$result = mb_substr($result, 0, $maxLength - 3) . "...";
+				}
+				return $result;
 			}
 		}
 	}

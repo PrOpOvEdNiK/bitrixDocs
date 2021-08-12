@@ -1,7 +1,0 @@
-<?
-$MESS["MOBILE_MFU_CONFIRM_MESSAGE"] = "Usunąć załadowany obraz?";
-$MESS["MOBILE_MFU_CONFIRM_NO"] = "Nie";
-$MESS["MOBILE_MFU_CONFIRM_TITLE"] = "Ostrzeżenie";
-$MESS["MOBILE_MFU_CONFIRM_YES"] = "Tak";
-$MESS["MOBILE_MFU_DELETE"] = "Usuń";
-?>

@@ -10,6 +10,7 @@
 
 namespace Bitrix\Tasks\Integration\Mail;
 
+use Bitrix\Main\Loader;
 use Bitrix\Tasks\Util\Error\Collection;
 
 final class User extends \Bitrix\Tasks\Integration\Mail
@@ -65,13 +66,15 @@ final class User extends \Bitrix\Tasks\Integration\Mail
 		}
 
 		$item = \CUser::GetList(
-			$o = "ID",
-			$b = "ASC",
-			array(
-				"=EMAIL" => $email,
-				"!EXTERNAL_AUTH_ID" => [ "bot", "controller", "replica", "shop", "imconnector", "sale", "saleanonymous" ]
-			),
-			array("FIELDS" => array("ID", "EXTERNAL_AUTH_ID", "ACTIVE"))
+			'ID',
+			'ASC',
+			[
+				'=EMAIL' => $email,
+				'!EXTERNAL_AUTH_ID' => array_diff(\Bitrix\Main\UserTable::getExternalUserTypes(), [ 'email' ]),
+			],
+			[
+				'FIELDS' => [ 'ID', 'EXTERNAL_AUTH_ID', 'ACTIVE' ]
+			]
 		)->fetch();
 
 		if(
@@ -107,6 +110,11 @@ final class User extends \Bitrix\Tasks\Integration\Mail
 		else
 		{
 			$users[$email] = $id;
+		}
+
+		if (Loader::includeModule('intranet') && class_exists('\Bitrix\Intranet\Integration\Mail\EmailUser'))
+		{
+			\Bitrix\Intranet\Integration\Mail\EmailUser::invite($id);
 		}
 
 		return $id;

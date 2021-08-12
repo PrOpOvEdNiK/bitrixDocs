@@ -19,6 +19,10 @@ class LiveChatManager
 	const TYPE_WIDGET = 'widget';
 	const TYPE_BUTTON = 'button';
 
+	const WIDGET_PATH_SCRIPT = '/bitrix/modules/imopenlines/install/js/imopenlines/widget/script.js';
+	const WIDGET_PATH_EXTENTION_LIST = '/bitrix/modules/imopenlines/install/js/imopenlines/widget/extension.map';
+	const WIDGET_PATH_STYLE = '/bitrix/modules/imopenlines/install/js/imopenlines/widget/styles.css';
+
 	static $availableCount = null;
 
 	public function __construct($configId)
@@ -57,7 +61,7 @@ class LiveChatManager
 			$add['URL_CODE_PUBLIC'] = self::prepareAlias($fields['URL_CODE_PUBLIC']);
 			$add['URL_CODE_PUBLIC_ID'] = \Bitrix\Im\Alias::add(Array(
 				'ALIAS' => $add['URL_CODE_PUBLIC'],
-				'ENTITY_TYPE' => \Bitrix\Im\Alias::ENTITY_TYPE_OPEN_LINE,
+				'ENTITY_TYPE' => \Bitrix\Im\Alias::ENTITY_TYPE_LIVECHAT,
 				'ENTITY_ID' => $this->id
 			));
 
@@ -71,7 +75,7 @@ class LiveChatManager
 				else
 				{
 					$result = \Bitrix\Im\Alias::addUnique(Array(
-						'ENTITY_TYPE' => \Bitrix\Im\Alias::ENTITY_TYPE_OPEN_LINE,
+						'ENTITY_TYPE' => \Bitrix\Im\Alias::ENTITY_TYPE_LIVECHAT,
 						'ENTITY_ID' => $this->id
 					));
 					$add['URL_CODE_PUBLIC'] = $result['ALIAS'];
@@ -81,7 +85,7 @@ class LiveChatManager
 		}
 
 		$result = \Bitrix\Im\Alias::addUnique(Array(
-			'ENTITY_TYPE' => \Bitrix\Im\Alias::ENTITY_TYPE_OPEN_LINE,
+			'ENTITY_TYPE' => \Bitrix\Im\Alias::ENTITY_TYPE_LIVECHAT,
 			'ENTITY_ID' => $this->id
 		));
 		$add['URL_CODE'] = $result['ALIAS'];
@@ -101,7 +105,7 @@ class LiveChatManager
 		}
 		if (isset($fields['CSS_PATH']))
 		{
-			$add['CSS_PATH'] = substr($fields['CSS_PATH'], 0, 255);
+			$add['CSS_PATH'] = mb_substr($fields['CSS_PATH'], 0, 255);
 		}
 		if (isset($fields['CSS_TEXT']))
 		{
@@ -138,7 +142,7 @@ class LiveChatManager
 		return $result->isSuccess();
 	}
 
-	public function update($fields)
+	public function update($fields, $options = [])
 	{
 		$prevConfig = $this->get();
 
@@ -173,7 +177,7 @@ class LiveChatManager
 				{
 					$fields['URL_CODE_PUBLIC_ID'] = \Bitrix\Im\Alias::add(Array(
 						'ALIAS' => $fields['URL_CODE_PUBLIC'],
-						'ENTITY_TYPE' => \Bitrix\Im\Alias::ENTITY_TYPE_OPEN_LINE,
+						'ENTITY_TYPE' => \Bitrix\Im\Alias::ENTITY_TYPE_LIVECHAT,
 						'ENTITY_ID' => $this->id
 					));
 					if ($fields['URL_CODE_PUBLIC_ID'])
@@ -199,7 +203,7 @@ class LiveChatManager
 		}
 		if (isset($fields['CSS_PATH']))
 		{
-			$update['CSS_PATH'] = substr($fields['CSS_PATH'], 0, 255);
+			$update['CSS_PATH'] = mb_substr($fields['CSS_PATH'], 0, 255);
 		}
 		if (isset($fields['CSS_TEXT']))
 		{
@@ -208,6 +212,10 @@ class LiveChatManager
 		if (isset($fields['COPYRIGHT_REMOVED']) && Limit::canRemoveCopyright())
 		{
 			$update['COPYRIGHT_REMOVED'] = $fields['COPYRIGHT_REMOVED'] == 'Y'? 'Y': 'N';
+		}
+		if (isset($fields['SHOW_SESSION_ID']))
+		{
+			$update['SHOW_SESSION_ID'] = $fields['SHOW_SESSION_ID'] === 'Y'? 'Y': 'N';
 		}
 		if (isset($fields['CACHE_WIDGET_ID']))
 		{
@@ -227,11 +235,21 @@ class LiveChatManager
 		}
 
 		$result = Model\LivechatTable::update($this->id, $update);
-		if ($result->isSuccess() && $this->config)
+		if ($result->isSuccess())
 		{
-			foreach ($update as $key => $value)
+			if ($this->config)
 			{
-				$this->config[$key] = $value;
+				foreach ($update as $key => $value)
+				{
+					$this->config[$key] = $value;
+				}
+			}
+			if ($options['CLEAN_CACHE_CONNECTOR'] && \Bitrix\Main\Loader::includeModule('imconnector'))
+			{
+				\Bitrix\ImConnector\Connector::cleanCacheConnector(
+					$this->id,
+					\Bitrix\ImConnector\Connector::getCacheIdConnector($this->id, 'livechat')
+				);
 			}
 		}
 
@@ -290,7 +308,7 @@ class LiveChatManager
 		$orm = \Bitrix\Im\Model\AliasTable::getList(Array(
 			'filter' => Array(
 				'=ALIAS' => $alias,
-				'=ENTITY_TYPE' => \Bitrix\Im\Alias::ENTITY_TYPE_OPEN_LINE,
+				'=ENTITY_TYPE' => \Bitrix\Im\Alias::ENTITY_TYPE_LIVECHAT,
 				'!=ENTITY_ID' => $this->id
 			)
 		));
@@ -335,48 +353,73 @@ class LiveChatManager
 		return $this->config;
 	}
 
+	/**
+	 * @return array|bool
+	 */
 	public function getPublicLink()
 	{
-		$orm = Model\LivechatTable::getList(array(
-			'select' => Array('BACKGROUND_IMAGE', 'CONFIG_NAME' => 'CONFIG.LINE_NAME', 'URL_CODE_PUBLIC'),
-			'filter' => Array('=CONFIG_ID' => $this->id)
-		));
+		$result = false;
+
+		$orm = Model\LivechatTable::getList([
+			'select' => ['BACKGROUND_IMAGE', 'CONFIG_NAME' => 'CONFIG.LINE_NAME', 'URL_CODE_PUBLIC', 'TEXT_PHRASES'],
+			'filter' => ['=CONFIG_ID' => $this->id]
+		]);
 		$config = $orm->fetch();
-		if (!$config)
-			return false;
-
-		$picture = '';
-		if ($config['BACKGROUND_IMAGE'] > 0)
+		if ($config)
 		{
-			$image = \CFile::ResizeImageGet(
-				$config['BACKGROUND_IMAGE'],
-				array('width' => 300, 'height' => 200), BX_RESIZE_IMAGE_PROPORTIONAL, false
-			);
-			if($image['src'])
+			$picture = '';
+			if ($config['BACKGROUND_IMAGE'] > 0)
 			{
-				$picture = $image['src'];
+				$image = \CFile::ResizeImageGet(
+					$config['BACKGROUND_IMAGE'],
+					array('width' => 300, 'height' => 200), BX_RESIZE_IMAGE_PROPORTIONAL, false
+				);
+				if($image['src'])
+				{
+					$picture = $image['src'];
+				}
 			}
-		}
 
-		$result = Array(
-			'ID' => $this->id,
-			'NAME' => Loc::getMessage('IMOL_LCM_PUBLIC_NAME'),
-			'LINE_NAME' => $config['CONFIG_NAME'],
-			'PICTURE' => $picture,
-			'URL' => self::getFormatedUrl($config['URL_CODE_PUBLIC']),
-			'URL_IM' => self::getFormatedUrl($config['URL_CODE_PUBLIC'])
-		);
+			$result = [
+				'ID' => $this->id,
+				'NAME' => Loc::getMessage('IMOL_LCM_PUBLIC_NAME'),
+				'LINE_NAME' =>
+					isset($config['TEXT_PHRASES']['BX_LIVECHAT_TITLE']) && $config['TEXT_PHRASES']['BX_LIVECHAT_TITLE'] !== '' ?
+						$config['TEXT_PHRASES']['BX_LIVECHAT_TITLE'] :
+						$config['CONFIG_NAME'],
+				'PICTURE' => $picture,
+				'URL' => self::getFormatedUrl($config['URL_CODE_PUBLIC']),
+				'URL_IM' => self::getFormatedUrl($config['URL_CODE_PUBLIC'])
+			];
+		}
 
 		return $result;
 	}
 
 	public function getWidget($type = self::TYPE_BUTTON, $lang = null, $config = array(), $force = false)
 	{
+		if (!\Bitrix\Main\Loader::includeModule('rest'))
+		{
+			return false;
+		}
+
+		if (!\Bitrix\Main\Loader::includeModule('pull'))
+		{
+			return false;
+		}
+
+		if (!\CPullOptions::GetQueueServerStatus())
+		{
+			return false;
+		}
+
 		$charset = SITE_CHARSET;
 
 		$jsData = $this->getWidgetSource(Array('LANG' => $lang, 'CONFIG' => $config, 'FORCE' => $force ? 'Y' : 'N'));
 		if (!$jsData)
+		{
 			return false;
+		}
 
 		$codeWidget = '<script type="text/javascript">'.$jsData."</script>";
 
@@ -460,13 +503,21 @@ class LiveChatManager
 
 	public static function compileWidgetAssets()
 	{
-		$folderPath = Application::getDocumentRoot().'/bitrix/js/';
-		if (!is_writable($folderPath))
+		if (!defined('IMOL_WIDGET_GENERATE') || !IMOL_WIDGET_GENERATE)
 		{
 			return "";
 		}
 
-		$resources = \Bitrix\Main\UI\Extension::getResourceList('imopenlines.component.widget');
+		// Note: temporarily remove this constant if you need check on developer version Vue
+		define('VUEJS_DEBUG_DISABLE', true);
+
+		$resources = \Bitrix\Main\UI\Extension::getResourceList([
+			'main.core.minimal',
+			'imopenlines.component.widget',
+		], [
+			'skip_extensions' => ['core', 'main.core', 'main.polyfill.core', 'ui.fonts.opensans', 'main.popup'],
+			'get_resolved_extension_list' => true,
+		]);
 
 		$scriptContent = "// widget bundle";
 		foreach ($resources['js'] as $path)
@@ -479,23 +530,37 @@ class LiveChatManager
 				continue;
 			}
 
-			$minPath = substr($path, 0, -3).'.min.js';
-			if (Main\IO\File::isFileExists($minPath))
-			{
-				$file = new \Bitrix\Main\IO\File($path);
-				$minFile = new \Bitrix\Main\IO\File($minPath);
-				if ($file->getModificationTime() <= $minFile->getModificationTime())
-				{
-					$path = $minPath;
-				}
-			}
-
 			$scriptContent .= "\n\n// file: ".$purePath."\n".Main\IO\File::getFileContents($path)."\n\n";
 		}
 
 		$scriptContent = preg_replace('/\/\/#(\s?)sourceMappingURL(\s?)=(\s?)([\w\.\-])+/mi', ' ', $scriptContent);
 
-		Main\IO\File::putFileContents(Application::getDocumentRoot().'/bitrix/js/imopenlines_widget/script.js', $scriptContent);
+		// change BX.Vue => BX.WidgetVue to use the new features of the library,
+		// we need to replace default export to another variable
+		$scriptContent = str_replace(
+			[
+				'BX.BitrixVue',
+				'ui_vue.BitrixVue',
+				'exports.BitrixVue',
+				'ui_vue_vuex.Vue',
+				'ui_vue.Vue',
+				'exports.Vue',
+				'BX.Vue',
+			],
+			[
+				'BX.WidgetBitrixVue',
+				'ui_vue.WidgetBitrixVue',
+				'exports.WidgetBitrixVue',
+				'ui_vue_vuex.WidgetVue',
+				'ui_vue.WidgetVue',
+				'exports.WidgetVue',
+				'BX.WidgetVue',
+			],
+			$scriptContent
+		);
+
+		Main\IO\File::putFileContents(Application::getDocumentRoot().self::WIDGET_PATH_SCRIPT, $scriptContent);
+		Main\IO\File::putFileContents(Application::getDocumentRoot().self::WIDGET_PATH_EXTENTION_LIST, implode("\n", $resources['resolved_extension']));
 
 		$stylesContent = "/* widget bundle*/";
 		foreach ($resources['css'] as $path)
@@ -507,23 +572,12 @@ class LiveChatManager
 				continue;
 			}
 
-			$minPath = substr($path, 0, -4).'.min.css';
-			if (Main\IO\File::isFileExists($minPath))
-			{
-				$file = new \Bitrix\Main\IO\File($path);
-				$minFile = new \Bitrix\Main\IO\File($minPath);
-				if ($file->getModificationTime() <= $minFile->getModificationTime())
-				{
-					$path = $minPath;
-				}
-			}
-
 			$stylesContent .= "\n\n/* file: ".$purePath." */\n".Main\IO\File::getFileContents($path)."\n\n";
 		}
 
 		$stylesContent = preg_replace('/\/\*#(\s?)sourceMappingURL(\s?)=(\s?)([\w\.\-])+(\s?\*\/)/mi', ' ', $stylesContent);
 
-		Main\IO\File::putFileContents(Application::getDocumentRoot().'/bitrix/js/imopenlines_widget/styles.css', $stylesContent);
+		Main\IO\File::putFileContents(Application::getDocumentRoot().self::WIDGET_PATH_STYLE, $stylesContent);
 
 		return "";
 	}
@@ -572,6 +626,32 @@ $initWidget = <<<JS
 	BXLiveChat.start();
 JS;
 
+		$scriptName = 'script.js';
+		$scriptPath = Application::getDocumentRoot().self::WIDGET_PATH_SCRIPT;
+		$scriptPathMin = mb_substr(Application::getDocumentRoot().self::WIDGET_PATH_SCRIPT, 0, -3).'.min.js';
+		if (Main\IO\File::isFileExists($scriptPathMin))
+		{
+			$file = new \Bitrix\Main\IO\File($scriptPath);
+			$minFile = new \Bitrix\Main\IO\File($scriptPathMin);
+			if ($file->getModificationTime() <= $minFile->getModificationTime())
+			{
+				$scriptName = 'script.min.js';
+			}
+		}
+
+		$stylesName = 'styles.css';
+		$stylesPath = Application::getDocumentRoot().self::WIDGET_PATH_STYLE;
+		$stylesPathMin = mb_substr(Application::getDocumentRoot().self::WIDGET_PATH_STYLE, 0, -4).'.min.css';
+		if (Main\IO\File::isFileExists($stylesPathMin))
+		{
+			$file = new \Bitrix\Main\IO\File($stylesPath);
+			$minFile = new \Bitrix\Main\IO\File($stylesPathMin);
+			if ($file->getModificationTime() <= $minFile->getModificationTime())
+			{
+				$stylesName = 'styles.min.css';
+			}
+		}
+
 		$codeWidget =
 			'window.addEventListener(\'onBitrixLiveChatSourceLoaded\',function() {'
 				.str_replace(["\n","\t"], " ", $initWidget).
@@ -580,14 +660,15 @@ JS;
 				'var f = function () {'.
 					'var week = function () {var d = new Date();d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay()||7));var yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1)); return Math.ceil(( ( (d - yearStart) / 86400000) + 1)/7);};'.
 					'var head = (document.getElementsByTagName("head")[0] || document.documentElement);'.
-					'var style = document.createElement("link"); style.type = "text/css"; style.rel = "stylesheet";  style.href = "'.$host.'/bitrix/js/imopenlines_widget/styles.css?r='.time().'-"+week();'.
-					'var script = document.createElement("script"); script.type = "text/javascript"; script.async = "true"; script.charset = "'.$charset.'"; script.src = "'.$host.'/bitrix/js/imopenlines_widget/script.js?r='.time().'-"+week();'.
+					'var style = document.createElement("link"); style.type = "text/css"; style.rel = "stylesheet";  style.href = "'.$host.'/bitrix/js/imopenlines/widget/'.$stylesName.'?r='.time().'-"+week();'.
+					'var script = document.createElement("script"); script.type = "text/javascript"; script.async = "true"; script.charset = "'.$charset.'"; script.src = "'.$host.'/bitrix/js/imopenlines/widget/'.$scriptName.'?r='.time().'-"+week();'.
 					'head.appendChild(style); head.appendChild(script);'.
 				'};'.
 				'if (typeof(BX)!="undefined" && typeof(BX.ready)!="undefined") {BX.ready(f)}'.
 				'else if (typeof(jQuery)!="undefined") {jQuery(f)}'.
 				'else {f();}'.
-			'})();';
+			'})();'
+		;
 
 		return $codeWidget;
 	}

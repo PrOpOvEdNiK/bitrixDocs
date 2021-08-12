@@ -2,6 +2,7 @@
 
 namespace Bitrix\Disk;
 
+use Bitrix\Disk\Document\OnlyOffice\Models\GuestUser;
 use Bitrix\Main\Engine\CurrentUser;
 use Bitrix\Main\Entity\Result;
 use Bitrix\Main\Loader;
@@ -70,6 +71,10 @@ class User extends Internals\Model
 		{
 			self::$loadedUsers[$id] = SystemUser::create();
 		}
+		elseif(GuestUser::isGuestUserId($id))
+		{
+			self::$loadedUsers[$id] = GuestUser::create();
+		}
 		else
 		{
 			self::$loadedUsers[$id] = parent::loadById($id, $with);
@@ -96,6 +101,10 @@ class User extends Internals\Model
 		if(SystemUser::isSystemUserId($id))
 		{
 			self::$loadedUsers[$id] = SystemUser::create();
+		}
+		elseif(GuestUser::isGuestUserId($id))
+		{
+			self::$loadedUsers[$id] = GuestUser::create();
 		}
 		else
 		{
@@ -182,6 +191,11 @@ class User extends Internals\Model
 	public function getPersonalGender()
 	{
 		return $this->personalGender == 'F'? 'F' : 'M';
+	}
+
+	public function getPersonalGenderExact()
+	{
+		return $this->personalGender;
 	}
 
 	/**
@@ -285,11 +299,9 @@ class User extends Internals\Model
 		{
 			return false;
 		}
-		$o = 'ID';
-		$b = '';
 		$queryUser = \CUser::getList(
-			$o,
-			$b,
+			'ID',
+			'ASC',
 			array(
 				'ID_EQUAL_EXACT' => $this->id,
 			),
@@ -358,7 +370,7 @@ class User extends Internals\Model
 	{
 		if ($this->isExtranetUser())
 		{
-			/** @noinspection PhpDynamicAsStaticMethodCallInspection */
+
 			$userPage = \COption::getOptionString("socialnetwork", "user_page", false, \CExtranet::getExtranetSiteID());
 			if(!$userPage)
 			{

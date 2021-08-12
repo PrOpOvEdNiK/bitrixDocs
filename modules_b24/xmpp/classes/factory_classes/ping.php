@@ -1,4 +1,4 @@
-<?
+<?php
 $className = "CXMPPReceiveIQPing";
 $classVersion = 2;
 
@@ -15,7 +15,7 @@ if (!class_exists("CXMPPReceiveIQPing"))
 
 		public function ReceiveMessage($senderJId, array $arMessage, CXMPPClient $senderClient)
 		{
-			if (strlen($senderJId) <= 0)
+			if ($senderJId == '')
 				return false;
 
 			if (!array_key_exists("iq", $arMessage) || !array_key_exists("ping", $arMessage["iq"])
@@ -44,4 +44,3 @@ if (!class_exists("CXMPPReceiveIQPing"))
 		}
 	}
 }
-?>

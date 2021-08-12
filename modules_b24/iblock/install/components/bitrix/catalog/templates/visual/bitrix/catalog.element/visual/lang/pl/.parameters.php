@@ -1,3 +1,0 @@
-<?
-$MESS["CP_BCE_TPL_MESS_BTN_DETAIL_DEFAULT"] = "Szczegóły";
-?>

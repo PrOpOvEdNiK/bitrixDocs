@@ -5,7 +5,9 @@ class CVoxImplantHttp
 	const TYPE_CP = 'CP';
 	const VERSION = 20;
 
-	private $controllerUrl = 'https://telephony.bitrix.info/telephony/portal.php';
+	const CONTROLLER_RU = 'https://telephony-ru.bitrix.info/telephony/portal.php';
+	const CONTROLLER_OTHER = 'https://telephony.bitrix.info/telephony/portal.php';
+
 	private $licenceCode = '';
 	private $domain = '';
 	private $type = '';
@@ -14,10 +16,7 @@ class CVoxImplantHttp
 	function __construct()
 	{
 		$this->error = new CVoxImplantError(null, '', '');
-		if (defined('VOXIMPLANT_CONTROLLER_URL'))
-		{
-			$this->controllerUrl = VOXIMPLANT_CONTROLLER_URL;
-		}
+
 		if(defined('BX24_HOST_NAME'))
 		{
 			$this->licenceCode = BX24_HOST_NAME;
@@ -35,6 +34,22 @@ class CVoxImplantHttp
 		$this->domain = self::GetServerAddress();
 
 		return true;
+	}
+
+	public static function GetControllerUrl()
+	{
+		if (defined('VOXIMPLANT_CONTROLLER_URL'))
+		{
+			return VOXIMPLANT_CONTROLLER_URL;
+		}
+
+		$account = new CVoxImplantAccount();
+		$accountLang = $account->GetAccountLang(false);
+		if ($accountLang === "kz" || $accountLang === "ru")
+		{
+			return static::CONTROLLER_RU;
+		}
+		return static::CONTROLLER_OTHER;
 	}
 
 	public static function GetPortalType()
@@ -160,6 +175,11 @@ class CVoxImplantHttp
 
 	public function StartOutgoingCall($userId, $phoneNumber, array $additionalParams = array())
 	{
+		if(\Bitrix\Voximplant\Limits::isRestOnly())
+		{
+			return false;
+		}
+
 		$params = array(
 			'TYPE' => 'phone',
 			'USER_ID' => intval($userId),
@@ -179,6 +199,11 @@ class CVoxImplantHttp
 
 	public function StartCallBack($callbackFromLine, $callbackNumber, $textToPronounce, $voice)
 	{
+		if(\Bitrix\Voximplant\Limits::isRestOnly())
+		{
+			return false;
+		}
+
 		$query = $this->Query(
 			'StartCallBack',
 			Array(
@@ -199,6 +224,11 @@ class CVoxImplantHttp
 
 	public function StartInfoCall($number, $text, array $options, $lineConfig)
 	{
+		if(\Bitrix\Voximplant\Limits::isRestOnly())
+		{
+			return false;
+		}
+
 		$query = $this->Query(
 			'StartInfoCall',
 			Array(
@@ -514,12 +544,12 @@ class CVoxImplantHttp
 
 	public function CreateSipRegistration($server, $login, $password = '', $authUser = '', $outboundProxy = '')
 	{
-		if (strlen($server) <= 3)
+		if (mb_strlen($server) <= 3)
 		{
 			$this->error = new CVoxImplantError(__METHOD__, 'SERVER_INCORRECT', 'Server is not correct');
 			return false;
 		}
-		if (strlen($login) <= 0)
+		if ($login == '')
 		{
 			$this->error = new CVoxImplantError(__METHOD__, 'LOGIN_INCORRECT', 'Login is not correct');
 			return false;
@@ -545,12 +575,12 @@ class CVoxImplantHttp
 			$this->error = new CVoxImplantError(__METHOD__, 'REG_ID_INCORRECT', 'Registration ID is not correct');
 			return false;
 		}
-		if (strlen($server) <= 3)
+		if (mb_strlen($server) <= 3)
 		{
 			$this->error = new CVoxImplantError(__METHOD__, 'SERVER_INCORRECT', 'Server is not correct');
 			return false;
 		}
-		if (strlen($login) <= 0)
+		if ($login == '')
 		{
 			$this->error = new CVoxImplantError(__METHOD__, 'LOGIN_INCORRECT', 'Login is not correct');
 			return false;
@@ -613,7 +643,7 @@ class CVoxImplantHttp
 
 	public function AddCallerID($number)
 	{
-		if (strlen($number) < 10)
+		if (mb_strlen($number) < 10)
 		{
 			$this->error = new CVoxImplantError(__METHOD__, 'CALLERID_INCORRECT', 'CallerID is not correct');
 			return false;
@@ -634,7 +664,7 @@ class CVoxImplantHttp
 
 	public function DelCallerID($number)
 	{
-		if (strlen($number) < 10)
+		if (mb_strlen($number) < 10)
 		{
 			$this->error = new CVoxImplantError(__METHOD__, 'CALLERID_INCORRECT', 'CallerID is not correct');
 			return false;
@@ -655,7 +685,7 @@ class CVoxImplantHttp
 
 	public function GetCallerIDs($number = '')
 	{
-		if ($number > 0 && strlen($number) < 10)
+		if ($number > 0 && mb_strlen($number) < 10)
 		{
 			$this->error = new CVoxImplantError(__METHOD__, 'CALLERID_INCORRECT', 'CallerID is not correct');
 			return false;
@@ -676,7 +706,7 @@ class CVoxImplantHttp
 
 	public function VerifyCallerID($number)
 	{
-		if (strlen($number) < 10)
+		if (mb_strlen($number) < 10)
 		{
 			$this->error = new CVoxImplantError(__METHOD__, 'CALLERID_INCORRECT', 'CallerID is not correct');
 			return false;
@@ -697,12 +727,12 @@ class CVoxImplantHttp
 
 	public function ActivateCallerID($number, $code)
 	{
-		if (strlen($number) < 10)
+		if (mb_strlen($number) < 10)
 		{
 			$this->error = new CVoxImplantError(__METHOD__, 'CALLERID_INCORRECT', 'CallerID is not correct');
 			return false;
 		}
-		if (strlen($code) <= 0)
+		if ($code == '')
 		{
 			$this->error = new CVoxImplantError(__METHOD__, 'CODE_INCORRECT', 'Code for activation is not correct');
 			return false;
@@ -769,7 +799,8 @@ class CVoxImplantHttp
 
 		$query = $this->Query(
 			'GetVerifications',
-			$parameters
+			$parameters,
+			['returnArray' => true]
 		);
 		if (isset($query->error))
 		{
@@ -881,9 +912,37 @@ class CVoxImplantHttp
 		return $this->Query("generateInvoice", ["INVOICE_NUMBER" => $invoiceNumber], ['returnRaw' => true]);
 	}
 
-	public function getBillingUrl()
+	public function getBillingUrl($userId = 0)
 	{
-		return $this->Query("getBillingUrl", [], ['returnArray' => true]);
+		global $USER;
+		$userId = (int)$userId;
+		if (!$userId && $USER)
+		{
+			$userId = (int)$USER->getId();
+		}
+
+		return $this->Query("getBillingUrl", ['USER_ID' => $userId], ['returnArray' => true]);
+	}
+
+	public function saveTOSConsent($ipAddress, $userAgent, $userId = 0)
+	{
+		global $USER;
+		$userId = (int)$userId;
+		if (!$userId && $USER)
+		{
+			$userId = (int)$USER->getId();
+		}
+
+		return $this->Query(
+			"saveConsent",
+			[
+				"USER_ID" => $userId,
+				"IP_ADDRESS" => $ipAddress,
+				"USER_AGENT" => $userAgent,
+				"CONSENT_TYPE" => "TOS_RU"
+			],
+			['returnArray' => true]
+		);
 	}
 
 	public function GetError()
@@ -893,12 +952,7 @@ class CVoxImplantHttp
 
 	private function Query($command, $params = array(), $options = array())
 	{
-		if(\Bitrix\Voximplant\Limits::isRestOnly())
-		{
-			return false;
-		}
-
-		if (strlen($command) <= 0 || !is_array($params))
+		if ($command == '' || !is_array($params))
 		{
 			return false;
 		}
@@ -927,7 +981,7 @@ class CVoxImplantHttp
 		));
 		$httpClient->setHeader('User-Agent', 'Bitrix Telephony');
 		$httpClient->setCharset(\Bitrix\Main\Context::getCurrent()->getCulture()->getCharset());
-		$result = $httpClient->query('POST', $this->controllerUrl, $params);
+		$result = $httpClient->query('POST', static::GetControllerUrl(), $params);
 
 		if (!$result)
 		{
@@ -973,7 +1027,7 @@ class CVoxImplantHttp
 			catch (\Bitrix\Main\ArgumentException $e)
 			{
 				CVoxImplantHistory::WriteToLog($response, 'ERROR QUERY EXECUTE');
-				return (object)array('error' => array('code' => 'CONNECT_ERROR', 'msg' => $e->getMessage()));
+				return array('error' => array('code' => 'CONNECT_ERROR', 'msg' => $e->getMessage()));
 			}
 		}
 		else

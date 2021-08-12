@@ -30,6 +30,18 @@ class CCrmBizProcHelper
 		{
 			$docName = \Bitrix\Crm\Integration\BizProc\Document\Invoice::class;
 		}
+		elseif($ownerTypeID === CCrmOwnerType::OrderShipment)
+		{
+			$docName = \Bitrix\Crm\Integration\BizProc\Document\Shipment::class;
+		}
+		elseif ($ownerTypeID === CCrmOwnerType::Quote)
+		{
+			$docName = \Bitrix\Crm\Integration\BizProc\Document\Quote::class;
+		}
+		elseif(CCrmOwnerType::isPossibleDynamicTypeId($ownerTypeID))
+		{
+			$docName = \Bitrix\Crm\Integration\BizProc\Document\Dynamic::class;
+		}
 
 		return $docName;
 	}
@@ -272,56 +284,25 @@ class CCrmBizProcHelper
 
 	public static function getDocumentResponsibleId(array $documentId)
 	{
-		$result = 0;
-
 		if (count($documentId) !== 3 || $documentId[0] !== 'crm')
 		{
-			return $result;
+			return 0;
 		}
 
-		list($entityTypeName, $entityId) = explode('_', $documentId[2]);
+		[$entityTypeId, $entityId] = static::resolveEntityId($documentId);
 
-		switch($entityTypeName)
-		{
-			case CCrmOwnerType::LeadName:
-				{
-					$dbRes = CCrmLead::GetListEx([], array('=ID' => $entityId, 'CHECK_PERMISSIONS' => 'N'), false, false, array('ASSIGNED_BY_ID'));
-					$arRes = $dbRes ? $dbRes->Fetch() : null;
-					$result = $arRes ? intval($arRes['ASSIGNED_BY_ID']) : 0;
-					break;
-				}
-			case CCrmOwnerType::ContactName:
-				{
-					$dbRes = CCrmContact::GetListEx([], array('=ID' => $entityId, 'CHECK_PERMISSIONS' => 'N'), false, false, array('ASSIGNED_BY_ID'));
-					$arRes = $dbRes ? $dbRes->Fetch() : null;
-					$result = $arRes ? intval($arRes['ASSIGNED_BY_ID']) : 0;
-					break;
-				}
-			case CCrmOwnerType::CompanyName:
-				{
-					$dbRes = CCrmCompany::GetListEx([], array('=ID' => $entityId, 'CHECK_PERMISSIONS' => 'N'), false, false, array('ASSIGNED_BY_ID'));
-					$arRes = $dbRes ? $dbRes->Fetch() : null;
-					$result = $arRes ? intval($arRes['ASSIGNED_BY_ID']) : 0;
-					break;
-				}
-			case CCrmOwnerType::DealName:
-				{
-					$dbRes = CCrmDeal::GetListEx([], array('=ID' => $entityId, 'CHECK_PERMISSIONS' => 'N'), false, false, array('ASSIGNED_BY_ID'));
-					$arRes = $dbRes ? $dbRes->Fetch() : null;
-					$result = $arRes ? intval($arRes['ASSIGNED_BY_ID']) : 0;
-					break;
-				}
+		return \CCrmOwnerType::loadResponsibleId(
+			$entityTypeId,
+			$entityId,
+			false
+		);
+	}
 
-			case CCrmOwnerType::OrderName:
-				{
-					$dbRes = Bitrix\Crm\Order\Order::getList(array('filter' => array('=ID' => $entityId), 'select' => array('RESPONSIBLE_ID')));
-					$arRes = $dbRes ? $dbRes->fetch() : null;
-					$result = $arRes ? intval($arRes['RESPONSIBLE_ID']) : 0;
-					break;
-				}
-		}
+	public static function resolveEntityId(array $documentId): array
+	{
+		[$entityTypeName, $entityId] = mb_split('_(?=[^_]*$)', $documentId[2]);
 
-		return $result;
+		return [\CCrmOwnerType::ResolveID($entityTypeName), (int)$entityId];
 	}
 }
 

@@ -20,9 +20,6 @@ class ShipmentCollection
 	/** @var Order */
 	protected $order;
 
-	/** @var array */
-	private $errors = array();
-
 	/**
 	 * Getting the parent entity
 	 * @return Order - order entity
@@ -196,6 +193,13 @@ class ShipmentCollection
 	 * @param null $oldValue
 	 * @param null $value
 	 * @return Result
+	 * @throws Main\ArgumentException
+	 * @throws Main\ArgumentNullException
+	 * @throws Main\ArgumentOutOfRangeException
+	 * @throws Main\NotImplementedException
+	 * @throws Main\NotSupportedException
+	 * @throws Main\ObjectException
+	 * @throws Main\ObjectNotFoundException
 	 */
 	public function onItemModify(Internals\CollectableEntity $item, $name = null, $oldValue = null, $value = null)
 	{
@@ -1003,7 +1007,7 @@ class ShipmentCollection
 				}
 			}
 		}
-		elseif ($name === 'WEIGHT')
+		elseif (in_array($name, ['WEIGHT', 'PRICE']))
 		{
 			/** @var Shipment $shipment */
 			foreach ($this->getNotSystemItems() as $shipment)
@@ -1041,7 +1045,7 @@ class ShipmentCollection
 	 * @throws Main\ArgumentNullException
 	 * @throws Main\ObjectNotFoundException
 	 */
-	private function isAllowAutoEdit(BasketItem $basketItem)
+	protected function isAllowAutoEdit(BasketItem $basketItem)
 	{
 		if ($this->count() === 1
 			||
@@ -1498,7 +1502,7 @@ class ShipmentCollection
 	 *
 	 * @return Result
 	 */
-	public function updateReservedFlag(ShipmentCollection $collection)
+	public static function updateReservedFlag(ShipmentCollection $collection)
 	{
 		$result = new Result();
 		/** @var Shipment $shipment */
@@ -1555,6 +1559,7 @@ class ShipmentCollection
 	{
 		Internals\ShipmentExtraServiceTable::deleteByShipmentId($shipmentId);
 	}
+
 
 	/**
 	 * @return Internals\CollectionFilterIterator

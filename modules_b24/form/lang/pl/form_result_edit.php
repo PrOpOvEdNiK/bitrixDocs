@@ -1,3 +1,0 @@
-<?
-$MESS["FORM_RESULT_EDIT_TAB_TITLE"] = "Edytuj";
-?>

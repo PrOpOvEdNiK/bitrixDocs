@@ -1,4 +1,0 @@
-<?
-$MESS["IMOPENLINES_REPORT_PAGE_LIMITATION_POPUP_TEXT_1"] = "Accédez aux fonctionnalités avancées de Bitrix24";
-$MESS["IMOPENLINES_REPORT_PAGE_LIMITATION_POPUP_TEXT_2_NEW"] = "Les rapports sur canal ouvert sont conçus pour vous aider à améliorer le service client et l'expérience des utilisateurs. Nos tableaux de bord regroupent toutes les informations importantes : quels agents sont les plus efficaces, quels canaux de communication sont les plus demandés, le niveau de satisfaction des clients, le temps de réponse moyen, l'heure la plus chargée de la journée, etc. Vous pouvez également sélectionner différents types de rapports : nombres absolus, tableaux, graphiques, histogrammes, et bien d'autres encore.";
-?>

@@ -8,12 +8,17 @@ use Bitrix\Disk\Internals\StorageTable;
 use Bitrix\Disk\Internals\VersionTable;
 use Bitrix\Disk\Security\SecurityContext;
 use Bitrix\Main\Application;
+use Bitrix\Main\DB\SqlExpression;
+use Bitrix\Main\Engine\CurrentUser;
+use Bitrix\Main\Entity\BooleanField;
 use Bitrix\Main\Entity\ExpressionField;
-use Bitrix\Main\Entity\Query;
 use Bitrix\Main\Entity\Result;
 use Bitrix\Main\Event;
+use Bitrix\Main\Filter\Filter;
 use Bitrix\Main\Loader;
 use Bitrix\Main\Localization\Loc;
+use Bitrix\Main\ORM\Query\Filter\ConditionTree;
+use Bitrix\Main\ORM\Query\Query;
 use Bitrix\Main\SystemException;
 
 Loc::loadMessages(__FILE__);
@@ -162,7 +167,7 @@ final class Storage extends Internals\Model
 	{
 		if(!empty($this->entityMiscData) && is_string($this->entityMiscData))
 		{
-			return unserialize($this->entityMiscData);
+			return unserialize($this->entityMiscData, ['allowed_classes' => false]);
 		}
 
 		return array();
@@ -464,23 +469,28 @@ final class Storage extends Internals\Model
 	{
 		//todo Mistake? We decided, SecurityContext should parse USER self. But we would not create typical SecurityContext (cache. cache)
 		$userId = null;
-		if($user instanceof \CUser)
+		if ($user instanceof CurrentUser)
 		{
-			if($user->isAuthorized())
+			return $this->getSecurityContext($user->getId());
+		}
+
+		if ($user instanceof \CUser)
+		{
+			if ($user->isAuthorized())
 			{
 				$userId = $user->getId();
 			}
 		}
-		elseif((int)$user > 0)
+		elseif ((int)$user > 0)
 		{
 			$userId = (int)$user;
 		}
 
-		if($userId === null)
+		if ($userId === null)
 		{
 			return $this->getProxyType()->getSecurityContextByUser($user);
 		}
-		if(!isset($this->cacheSecurityContext[$userId]))
+		if (!isset($this->cacheSecurityContext[$userId]))
 		{
 			$this->cacheSecurityContext[$userId] = $this->getProxyType()->getSecurityContextByUser($user);
 		}
@@ -995,21 +1005,39 @@ final class Storage extends Internals\Model
 	 */
 	public static function getReadableList(SecurityContext $securityContext, array $parameters = array())
 	{
-		$filter = array(
-			'=PARENT_ID' => null,
-			'=STORAGE.MODULE_ID' => Driver::INTERNAL_MODULE_ID,
-			'=RIGHTS_CHECK' => true,
-		);
-		if(empty($parameters['with']))
+		if (empty($parameters['with']))
 		{
 			$parameters['with'] = array();
 		}
-		if(empty($parameters['filter']))
+
+		$conditionTree = Query::filter();
+		$conditionTree
+			->whereColumn('ID', 'STORAGE.ROOT_OBJECT_ID')
+			->where('STORAGE.MODULE_ID', Driver::INTERNAL_MODULE_ID)
+			->where('RIGHTS_CHECK', true)
+		;
+
+		$filter = [
+			'=PARENT_ID' => null,
+			'=STORAGE.MODULE_ID' => Driver::INTERNAL_MODULE_ID,
+			'=RIGHTS_CHECK' => true,
+		];
+
+		if (empty($parameters['filter']))
 		{
-			$parameters['filter'] = array();
+			$parameters['filter'] = Query::filter();
 		}
+
+		if ($parameters['filter'] instanceof ConditionTree)
+		{
+			$parameters['filter'] = $conditionTree->addCondition($parameters['filter']);
+		}
+		elseif (is_array($parameters['filter']))
+		{
+			$parameters['filter'] = array_merge($parameters['filter'], $filter);
+		}
+
 		$parameters['with'] = array_merge($parameters['with'], array('STORAGE'));
-		$parameters['filter'] = array_merge($parameters['filter'], $filter);
 
 		$parameters = Driver::getInstance()->getRightsManager()->addRightsCheck($securityContext, $parameters, array(
 			'ID',
@@ -1019,12 +1047,11 @@ final class Storage extends Internals\Model
 		/** @var Folder[] $items */
 		$items = Folder::getModelList($parameters);
 		$storages = array();
-		foreach($items as $item)
+		foreach ($items as $item)
 		{
 			$item->getStorage()->setAttributes(array('ROOT_OBJECT' => $item));
 			$storages[] = $item->getStorage();
 		}
-		unset($item);
 
 		return $storages;
 	}

@@ -61,7 +61,7 @@ class Recyclebin
 					foreach ($recyclebinFiles as $storage)
 					{
 						unset($storage['ID'], $storage['RECYCLEBIN_ID']);
-						
+
 						$files[$storage['FILE_ID']] = $storage;
 					}
 				}
@@ -182,7 +182,11 @@ class Recyclebin
 		{
 			return false;
 		}
-		if (!User::isSuper() && !User::isAdmin())
+		if (
+			!User::isSuper()
+			&& !User::isAdmin()
+			&& empty($params['skipAdminRightsCheck'])
+		)
 		{
 			throw new AccessDeniedException('Access Denied');
 		}

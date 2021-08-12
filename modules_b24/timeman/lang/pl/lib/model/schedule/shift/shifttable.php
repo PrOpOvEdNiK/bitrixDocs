@@ -1,5 +1,0 @@
-<?
-$MESS["TM_WORKSHIFT_FORM_WORKDAYS_OPTION_CUSTOM"] = "Inne";
-$MESS["TM_WORKSHIFT_FORM_WORKDAYS_OPTION_MON_FRI"] = "Od poniedziałku do piątku";
-$MESS["TM_WORKSHIFT_FORM_WORKDAYS_OPTION_MON_SAT"] = "Od poniedziałku do soboty";
-?>

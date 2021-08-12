@@ -1,4 +1,4 @@
-<?
+<?php
 include_once($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/xmpp/classes/interface.php");
 
 class CXMPPFactory
@@ -9,7 +9,7 @@ class CXMPPFactory
 	private $arClearCacheClasses = array();
 	private $isInitialized = false;
 
-	public function GetFactory()
+	public static function GetFactory()
 	{
 		if (!array_key_exists("xmppFactoryObject", $GLOBALS) || !is_object($GLOBALS["xmppFactoryObject"]))
 		{
@@ -45,7 +45,7 @@ class CXMPPFactory
 				$classVersion = 1;
 				include($_SERVER["DOCUMENT_ROOT"].$this->classesDir."/".$file);
 
-				if (strlen($className) <= 0)
+				if ($className == '')
 					continue;
 
 				$c = new $className();
@@ -202,7 +202,7 @@ class CXMPPFactory
 			return false;
 		if (!in_array($type, array("P", "S")))
 			return false;
-		if (strlen($message) <= 0)
+		if ($message == '')
 			return false;
 
 		if (!CXMPPUtility::CheckXmppStatusOnline())
@@ -291,7 +291,7 @@ class CXMPPFactory
 		return $result;
 	}
 
-	public function OnSocNetMessagesAdd($ID, $arFields)
+	public static function OnSocNetMessagesAdd($ID, $arFields)
 	{
 		/*if (array_key_exists("IS_LOG", $arFields) && $arFields["IS_LOG"] == "Y")
 			$bSystem = true;
@@ -313,12 +313,14 @@ class CXMPPFactory
 			if ($arFields["MESSAGE_OUT"] == IM_MAIL_SKIP)
 				$arFields["MESSAGE_OUT"] = '';
 
+			$parser = new CTextParser();
+
 			return $factory->__SendMessage(
 				((array_key_exists("IS_LOG", $arFields) && $arFields["IS_LOG"] == "Y") ? -5 : $arFields["FROM_USER_ID"]),
 				$arFields["TO_USER_ID"],
 				$ID,
 				$arFields["MESSAGE_TYPE"],
-				htmlspecialcharsbx(CTextParser::convert4mail(str_replace("#BR#", "\n", (strlen($arFields["MESSAGE_OUT"])>0? $arFields["MESSAGE_OUT"]: $arFields["MESSAGE"])))),
+				htmlspecialcharsbx($parser->convert4mail(str_replace("#BR#", "\n", ($arFields["MESSAGE_OUT"] <> ''? $arFields["MESSAGE_OUT"]: $arFields["MESSAGE"])))),
 				$domain
 			);
 		}
@@ -336,7 +338,7 @@ class CXMPPFactory
 		}
 	}
 
-	public function OnImMessagesUpdate($ID, $arFields)
+	public static function OnImMessagesUpdate($ID, $arFields)
 	{
 		if (!CModule::IncludeModule("im"))
 			return false;
@@ -349,12 +351,14 @@ class CXMPPFactory
 
 			$factory = CXMPPFactory::GetFactory();
 
+			$parser = new CTextParser();
+
 			return $factory->__SendMessage(
 				$arFields["FROM_USER_ID"],
 				$arFields["TO_USER_ID"],
 				$ID,
 				$arFields["MESSAGE_TYPE"],
-				htmlspecialcharsbx(CTextParser::convert4mail(str_replace("#BR#", "\n", ($arFields["MESSAGE"])))),
+				htmlspecialcharsbx($parser->convert4mail(str_replace("#BR#", "\n", ($arFields["MESSAGE"])))),
 				$domain
 			);
 		}
@@ -362,7 +366,7 @@ class CXMPPFactory
 		return true;
 	}
 
-	public function OnImFileUpload($arFields)
+	public static function OnImFileUpload($arFields)
 	{
 		if (!CModule::IncludeModule("im"))
 			return false;
@@ -387,12 +391,14 @@ class CXMPPFactory
 
 			$factory = CXMPPFactory::GetFactory();
 
+			$parser = new CTextParser();
+
 			return $factory->__SendMessage(
 				$arFields["FROM_USER_ID"],
 				$arFields["TO_USER_ID"],
 				$arFields["MESSAGE_ID"] > 1? $arFields["MESSAGE_ID"]: 1,
 				IM_MESSAGE_PRIVATE,
-				htmlspecialcharsbx(CTextParser::convert4mail(str_replace("#BR#", "\n", ($arFields["MESSAGE_OUT"])))),
+				htmlspecialcharsbx($parser->convert4mail(str_replace("#BR#", "\n", ($arFields["MESSAGE_OUT"])))),
 				$domain
 			);
 		}
@@ -400,10 +406,10 @@ class CXMPPFactory
 		return true;
 	}
 
-	public function SendUnreadMessages($receiverJId, $domain = "")
+	public static function SendUnreadMessages($receiverJId, $domain = "")
 	{
 		$receiverJId = trim($receiverJId);
-		if (strlen($receiverJId) <= 0)
+		if ($receiverJId == '')
 			return false;
 
 		$receiver = CXMPPUtility::GetUserByJId($receiverJId, $domain);
@@ -425,6 +431,8 @@ class CXMPPFactory
 			));
 			if ($arMessage['result'])
 			{
+				$parser = new CTextParser();
+
 				foreach ($arMessage['message'] as $id => $arMessage)
 				{
 					$factory->__SendMessage(
@@ -432,7 +440,7 @@ class CXMPPFactory
 						$arMessage["recipientId"],
 						$arMessage["id"],
 						IM_MESSAGE_PRIVATE,
-						htmlspecialcharsbx(CTextParser::convert4mail(str_replace(array("#BR#", "<br />", "<br>", "<br/>"), "\n", $arMessage["text"]))),
+						htmlspecialcharsbx($parser->convert4mail(str_replace(array("#BR#", "<br />", "<br>", "<br/>"), "\n", $arMessage["text"]))),
 						$domain
 					);
 				}
@@ -446,6 +454,8 @@ class CXMPPFactory
 			));
 			if ($arNotify['result'])
 			{
+				$parser = new CTextParser();
+
 				foreach ($arNotify['original_notify'] as $id => $arNotify)
 				{
 					if (isset($arNotify["NOTIFY_MODULE"]) && isset($arNotify["NOTIFY_EVENT"])
@@ -460,7 +470,7 @@ class CXMPPFactory
 						$arNotify["TO_USER_ID"],
 						$arNotify["ID"],
 						IM_MESSAGE_SYSTEM,
-						htmlspecialcharsbx(CTextParser::convert4mail(str_replace(array("#BR#", "<br />", "<br>", "<br/>"), "\n", ((strlen($arNotify["MESSAGE_OUT"])>0? $arNotify["MESSAGE_OUT"]: $arNotify["MESSAGE"]))))),
+						htmlspecialcharsbx($parser->convert4mail(str_replace(array("#BR#", "<br />", "<br>", "<br/>"), "\n", (($arNotify["MESSAGE_OUT"] <> ''? $arNotify["MESSAGE_OUT"]: $arNotify["MESSAGE"]))))),
 						$domain
 					);
 				}
@@ -493,4 +503,3 @@ class CXMPPFactory
 		return true;
 	}
 }
-?>

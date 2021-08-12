@@ -260,6 +260,7 @@ class ContactController extends BaseController
 		$this->suspendRequisites($entityID, $recyclingEntityID);
 		$this->suspendUtm($entityID, $recyclingEntityID);
 		$this->suspendTracing($entityID, $recyclingEntityID);
+		$this->suspendCustomRelations((int)$entityID, (int)$recyclingEntityID);
 
 		//region Relations
 		foreach($relations as $relation)
@@ -380,6 +381,7 @@ class ContactController extends BaseController
 		$this->recoverRequisites($recyclingEntityID, $newEntityID);
 		$this->recoverUtm($recyclingEntityID, $newEntityID);
 		$this->recoverTracing($recyclingEntityID, $newEntityID);
+		$this->recoverCustomRelations((int)$recyclingEntityID, (int)$newEntityID);
 
 		$requisiteLinks = isset($slots['REQUISITE_LINKS']) ? $slots['REQUISITE_LINKS'] : null;
 		if(is_array($requisiteLinks) && !empty($requisiteLinks))
@@ -448,7 +450,7 @@ class ContactController extends BaseController
 
 		$this->eraseActivities($recyclingEntityID, $params, $relationMap);
 		$this->eraseSuspendedMultiFields($recyclingEntityID);
-		$this->eraseSuspendedAddresses($recyclingEntityID, array(Crm\EntityAddress::Primary));
+		$this->eraseSuspendedAddresses($recyclingEntityID, array(Crm\EntityAddressType::Primary));
 		$this->eraseSuspendedTimeline($recyclingEntityID);
 		$this->eraseSuspendedDocuments($recyclingEntityID);
 		$this->eraseSuspendedLiveFeed($recyclingEntityID);
@@ -456,6 +458,7 @@ class ContactController extends BaseController
 		$this->eraseSuspendedUtm($recyclingEntityID);
 		$this->eraseSuspendedTracing($recyclingEntityID);
 		$this->eraseSuspendedUserFields($recyclingEntityID);
+		$this->eraseSuspendedCustomRelations($recyclingEntityID);
 
 		//region Files
 		if(isset($params['FILES']) && is_array($params['FILES']) && !empty($params['FILES']))

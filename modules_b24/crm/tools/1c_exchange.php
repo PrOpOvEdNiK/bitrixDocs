@@ -8,6 +8,19 @@ define('BX_SECURITY_SHOW_MESSAGE', true);
 define('NO_KEEP_STATISTIC', 'Y');
 define('NO_AGENT_STATISTIC','Y');
 define('DisableEventsCheck', true);
+define("BX_FORCE_DISABLE_SEPARATED_SESSION_MODE", true);
+
+if(isset($_SERVER["REQUEST_METHOD"]) && $_SERVER["REQUEST_METHOD"] == "GET")
+{
+	//from main 20.0.1300 only POST allowed
+	if(isset($_GET["USER_LOGIN"]) && isset($_GET["USER_PASSWORD"]) && isset($_GET["AUTH_FORM"]) && isset($_GET["TYPE"]))
+	{
+		$_POST["USER_LOGIN"] = $_GET["USER_LOGIN"];
+		$_POST["USER_PASSWORD"] = $_GET["USER_PASSWORD"];
+		$_POST["AUTH_FORM"] = $_GET["AUTH_FORM"];
+		$_POST["TYPE"] = $_GET["TYPE"];
+	}
+}
 
 require_once($_SERVER['DOCUMENT_ROOT'].'/bitrix/modules/main/include/prolog_before.php');
 
@@ -23,7 +36,7 @@ if ($exch1cEnabled)
 	if ($license_name = COption::GetOptionString("main", "~controller_group_name"))
 	{
 		preg_match("/(project|tf)$/is", $license_name, $matches);
-		if (strlen($matches[0]) > 0)
+		if ($matches[0] <> '')
 			$exch1cEnabled = false;
 	}
 }

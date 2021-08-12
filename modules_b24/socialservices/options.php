@@ -2,6 +2,7 @@
 if(!$USER->CanDoOperation('edit_other_settings'))
 	$APPLICATION->AuthForm(GetMessage("ACCESS_DENIED"));
 
+use Bitrix\Main\Loader;
 use Bitrix\Main\Text\Converter;
 
 IncludeModuleLangFile($_SERVER["DOCUMENT_ROOT"].BX_ROOT."/modules/main/options.php");
@@ -14,7 +15,7 @@ $GLOBALS["APPLICATION"]->SetAdditionalCSS("/bitrix/js/socialservices/css/ss.css"
 
 $arSites = array();
 $arSiteList = array('');
-$dbSites = CSite::GetList($b = "sort", $o = "asc", array("ACTIVE" => "Y"));
+$dbSites = CSite::GetList("sort", "asc", array("ACTIVE" => "Y"));
 while ($arSite = $dbSites->Fetch())
 {
 	$arSites[] = $arSite;
@@ -100,7 +101,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST" && $_POST["Update"].$_POST["Apply"].$_PO
 		COption::SetOptionString("socialservices", "allow_registration", $_REQUEST["allow_registration"] == "N" ? "N" : "Y");
 	}
 
-	if(strlen($_REQUEST["back_url_settings"]) > 0)
+	if($_REQUEST["back_url_settings"] <> '')
 	{
 		if($_POST["Apply"] <> '' || $_POST["RestoreDefaults"] <> '')
 			LocalRedirect($APPLICATION->GetCurPage()."?mid=".urlencode($module_id)."&lang=".urlencode(LANGUAGE_ID)."&back_url_settings=".urlencode($_REQUEST["back_url_settings"])."&".$tabControl->ActiveTabParam().($_REQUEST["siteTabControl_active_tab"] <> ''? "&siteTabControl_active_tab=".urlencode($_REQUEST["siteTabControl_active_tab"]):''));
@@ -313,8 +314,42 @@ foreach($arSiteList as $site):
 		<td width="50%">
 			<table cellpadding="0" style="width:45%;" cellspacing="3" border="0" width="" class="padding-0">
 <?
+    $dontShowForUkraine = [
+            \CSocServMyMailRu::ID,
+            'MailRuOpenID',
+            'Livejournal',
+            'Liveinternet',
+            \CSocServMailRu2::ID,
+            \CSocServVKontakte::ID,
+            \CSocServYandexAuth::ID,
+            \CSocServOdnoklassniki::ID,
+    ];
+    $portalPrefix = '';
+    if (Loader::includeModule('bitrix24'))
+    {
+        $portalPrefix = \CBitrix24::getLicensePrefix();
+    }
+    elseif (Loader::includeModule('intranet'))
+    {
+        $portalPrefix = \CIntranetUtils::getPortalZone();
+    }
+
+    $isUkraine = ($portalPrefix === 'ua');
+
 	$arServices = $oAuthManager->GetAuthServices($suffix);
-	foreach($arServices as $id=>$service):
+	$allowedServices = [];
+	foreach($arServices as $id=>$service)
+	{
+		if ($isUkraine && in_array($id, $dontShowForUkraine, true))
+		{
+			continue;
+		}
+
+		$allowedServices[$id] = $service;
+	}
+
+
+	foreach($allowedServices as $id=>$service):
 ?>
 				<tr>
 					<td style="padding-top: 3px;">
@@ -322,8 +357,8 @@ foreach($arSiteList as $site):
 						<input type="checkbox" name="AUTH_SERVICES<?=$suffix?>[<?=htmlspecialcharsbx($id)?>]"
 							id="AUTH_SERVICES<?=$suffix?><?=htmlspecialcharsbx($id)?>"
 							value="Y"
-							<?if($service["__active"] == true) echo " checked"?>
-							<?if($service["DISABLED"] == true) echo " disabled"?>>
+							<?if(isset($service["__active"]) && $service["__active"] == true) echo " checked"?>
+							<?if(isset($service["DISABLED"]) && $service["DISABLED"] == true) echo " disabled"?>>
 					</td>
 					<td><div class="bx-ss-icon <?=htmlspecialcharsbx($service["ICON"])?>"></div></td>
 					<td><label for="AUTH_SERVICES<?=$suffix?><?=htmlspecialcharsbx($id)?>"><?=htmlspecialcharsbx($service["NAME"])?></label></td>
@@ -338,23 +373,33 @@ foreach($arSiteList as $site):
 		</td>
 	</tr>
 <?
-	foreach($arOptions as $option)
+	foreach($allowedServices as $id => $service)
 	{
-		if(!is_array($option))
+		$options = $oAuthManager->GetSettingByServiceId($service['ID']);
+		if (!$options)
 		{
-			$option = GetMessage("soc_serv_opt_settings_of", array("#SERVICE#" => $option));
-		}
-		else
-		{
-			$option[0] .= $suffix;
+			continue;
 		}
 
-		if (!empty($option['note']))
+		array_unshift($options, htmlspecialcharsbx($service['NAME']));
+		foreach ($options as $option)
 		{
-			$option['note'] = '<div style="text-align: left; ">' . $option['note'] . '</div>';
-		}
+			if(!is_array($option))
+			{
+				$option = GetMessage("soc_serv_opt_settings_of", array("#SERVICE#" => $option));
+			}
+			else
+			{
+				$option[0] .= $suffix;
+			}
 
-		__AdmSettingsDrawRow($module_id, $option);
+			if (!empty($option['note']))
+			{
+				$option['note'] = '<div style="text-align: left; ">' . $option['note'] . '</div>';
+			}
+
+			__AdmSettingsDrawRow($module_id, $option);
+		}
 	}
 ?>
 </table>
@@ -367,7 +412,7 @@ endforeach; //foreach($arSiteList as $site)
 $tabControl->BeginNextTab();
 
 $groups = array();
-$z = CGroup::GetList(($v1=""), ($v2=""), array("ACTIVE"=>"Y"/*, "ADMIN"=>"N", "ANONYMOUS"=>"N"*/));
+$z = CGroup::GetList('', '', array("ACTIVE"=>"Y"/*, "ADMIN"=>"N", "ANONYMOUS"=>"N"*/));
 while($zr = $z->Fetch())
 {
 	$ar = array();

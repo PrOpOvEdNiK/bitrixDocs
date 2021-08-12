@@ -2,6 +2,9 @@
 
 namespace Bitrix\Tasks\Helper;
 
+use Bitrix\Main\Loader;
+use Bitrix\Socialnetwork\Item\Workgroup;
+
 abstract class Common
 {
 	protected static $instance = null;
@@ -25,9 +28,11 @@ abstract class Common
 	 */
 	public static function getInstance($userId, $groupId = 0, $id = null)
 	{
+		$groupId = (int)$groupId;
+
 		if (!$id)
 		{
-			$id = self::getDefaultId($groupId > 0);
+			$id = self::getDefaultId($groupId);
 		}
 
 		if (is_null(static::$instance) || !array_key_exists($id, static::$instance))
@@ -38,13 +43,17 @@ abstract class Common
 		return static::$instance[$id];
 	}
 
-	private static function getDefaultId($isGroup = false)
-	{ // TODO
+	/**
+	 * @param int $groupId
+	 * @return string
+	 */
+	private static function getDefaultId(int $groupId): string
+	{
 		$roleId = 4096;
 		$typeFilter = 'ADVANCED';
 		$presetSelected = 'N';
 
-		return 'TASKS_GRID_ROLE_ID_'.$roleId.'_'.(int)$isGroup.'_'.$typeFilter.'_'.$presetSelected;
+		return 'TASKS_GRID_ROLE_ID_'.$roleId.'_'.$groupId.'_'.$typeFilter.'_'.$presetSelected;
 	}
 
 	/**
@@ -84,6 +93,18 @@ abstract class Common
 	public function getUserId()
 	{
 		return $this->userId;
+	}
+
+	public function isScrumProject(): bool
+	{
+		if (Loader::includeModule('socialnetwork'))
+		{
+			$group = Workgroup::getById($this->getGroupId());
+
+			return ($group && $group->isScrumProject());
+		}
+
+		return false;
 	}
 
 	/**

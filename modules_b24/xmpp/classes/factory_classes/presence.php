@@ -1,4 +1,4 @@
-<?
+<?php
 $className = "CXMPPReceivePresence";
 $classVersion = 2;
 
@@ -17,7 +17,7 @@ if (!class_exists("CXMPPReceivePresence"))
 		{
 			if (!$senderClient->IsAuthenticated())
 				return false;
-			if (strlen($senderJId) <= 0)
+			if ($senderJId == '')
 				return false;
 
 			if (!array_key_exists("presence", $arMessage) || !array_key_exists(".", $arMessage["presence"]))
@@ -45,7 +45,7 @@ if (!class_exists("CXMPPReceivePresence"))
 				$to = $arMessage["presence"]["."]["to"];
 
 			$server = CXMPPServer::GetServer();
-			if (strlen($to) <= 0)
+			if ($to == '')
 				$server->SendAll($arMessage, $senderClient->GetClientDomain());
 			else
 				$server->Send($to, $arMessage, $senderClient->GetClientDomain());
@@ -104,7 +104,7 @@ if (!class_exists("CXMPPReceivePresence"))
 				$recipientJId = $arMessage["presence"]["."]["to"];
 
 			$server = CXMPPServer::GetServer();
-			if (strlen($recipientJId) <= 0)
+			if ($recipientJId == '')
 				$server->SendAll($arMessage, $clientDomain);
 			else
 				$server->Send($recipientJId, $arMessage, $clientDomain);
@@ -113,4 +113,3 @@ if (!class_exists("CXMPPReceivePresence"))
 		}
 	}
 }
-?>

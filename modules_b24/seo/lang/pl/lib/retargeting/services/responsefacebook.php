@@ -1,3 +1,0 @@
-<?
-$MESS["SEO_RETARGETING_SERVICE_RESPONSE_FACEBOOK_ERROR_URL_REQUIRED"] = "Pole adresu jest wymagane.";
-?>

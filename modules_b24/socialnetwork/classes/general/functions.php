@@ -1,4 +1,5 @@
-<?
+<?php
+
 use Bitrix\Main\ModuleManager;
 use Bitrix\Main\Loader;
 
@@ -41,14 +42,14 @@ class CSocNetTextParser
 
 	function sonet_sortlen($a, $b)
 	{
-		if (strlen($a["TYPING"]) == strlen($b["TYPING"]))
+		if (mb_strlen($a["TYPING"]) == mb_strlen($b["TYPING"]))
 		{
 			return 0;
 		}
-		return (strlen($a["TYPING"]) > strlen($b["TYPING"])) ? -1 : 1;
+		return (mb_strlen($a["TYPING"]) > mb_strlen($b["TYPING"])) ? -1 : 1;
 	}
 
-	function CSocNetTextParser($strLang = False, $pathToSmile = false)
+	public function __construct($strLang = False, $pathToSmile = false)
 	{
 		global $DB, $CACHE_MANAGER;
 		static $arSmiles = array();
@@ -196,7 +197,7 @@ class CSocNetTextParser
 						"[*]"),
 					$text);
 			}
-			if (strLen($text)>0)
+			if ($text <> '')
 			{
 				$text = str_replace(
 					array("<", ">", "\""),
@@ -391,7 +392,7 @@ class CSocNetTextParser
 				$arQuoted = array();
 				foreach ($this->smiles as $a_id => $row)
 				{
-					if(strlen($row["TYPING"]) <= 0 || strlen($row["IMAGE"]) <= 0)
+					if($row["TYPING"] == '' || $row["IMAGE"] == '')
 						continue;
 					$typing = htmlspecialcharsbx($row["TYPING"]);
 					$arSmiles[$typing] = '<img src="'.$path_to_smile.$row["IMAGE"].'" border="0" alt="smile'.$typing.'" title="'.htmlspecialcharsbx($row["DESCRIPTION"]).'" />';
@@ -424,7 +425,7 @@ class CSocNetTextParser
 		return trim($text);
 	}
 
-	function killAllTags($text)
+	public static function killAllTags($text)
 	{
 		if (method_exists("CTextParser", "clearAllTags"))
 			return CTextParser::clearAllTags($text);
@@ -441,7 +442,7 @@ class CSocNetTextParser
 	function convert4mail($text)
 	{
 		$text = Trim($text);
-		if (strlen($text)<=0) return "";
+		if ($text == '') return "";
 		$arPattern = array();
 		$arReplace = array();
 
@@ -493,7 +494,7 @@ class CSocNetTextParser
 	{
 		global $APPLICATION;
 
-		if (strLen($path) <= 0)
+		if ($path == '')
 			return "";
 
 		preg_match("/width\=([0-9]+)/is", $params, $width);
@@ -549,7 +550,7 @@ class CSocNetTextParser
 
 	function convert_emoticon($code = "", $image = "", $description = "", $servername = "")
 	{
-		if (strlen($code)<=0 || strlen($image)<=0) return;
+		if ($code == '' || $image == '') return;
 		$code = stripslashes($code);
 		$description = stripslashes($description);
 		$image = stripslashes($image);
@@ -565,7 +566,7 @@ class CSocNetTextParser
 
 	function pre_convert_code_tag ($text = "")
 	{
-		if (strLen($text) <= 0)
+		if ($text == '')
 		{
 			return;
 		}
@@ -584,7 +585,7 @@ class CSocNetTextParser
 
 	function convert_code_tag($text = "", $type = "html")
 	{
-		if (strLen($text)<=0) return;
+		if ($text == '') return;
 		$type = ($type == "rss" ? "rss" : "html");
 		$text = str_replace(array("<", ">", "\\r", "\\n", "\\"), array("&lt;", "&gt;", "&#92;r", "&#92;n", "&#92;"), $text);
 		$text = stripslashes($text);
@@ -622,7 +623,7 @@ class CSocNetTextParser
 
 	function convert_quote_tag($text = "", $type = "html")
 	{
-		if (strlen($text)<=0) return;
+		if ($text == '') return;
 		$txt = $text;
 		$type = ($type == "rss" ? "rss" : "html");
 
@@ -657,7 +658,7 @@ class CSocNetTextParser
 
 	function convert_open_tag($marker = "quote", $type = "html")
 	{
-		$marker = (strToLower($marker) == "code" ? "code" : "quote");
+		$marker = (mb_strtolower($marker) == "code" ? "code" : "quote");
 		$type = ($type == "rss" ? "rss" : "html");
 
 		$this->{$marker."_open"}++;
@@ -673,7 +674,7 @@ class CSocNetTextParser
 
 	function convert_close_tag($marker = "quote")
 	{
-		$marker = (strToLower($marker) == "code" ? "code" : "quote");
+		$marker = (mb_strtolower($marker) == "code" ? "code" : "quote");
 		$type = ($type == "rss" ? "rss" : "html");
 
 		if ($this->{$marker."_open"} == 0)
@@ -695,11 +696,11 @@ class CSocNetTextParser
 	function convert_image_tag($url = "", $type = "html")
 	{
 		static $bShowedScript = false;
-		if (strlen($url)<=0) return;
+		if ($url == '') return;
 		$url = trim($url);
-		$type = (strToLower($type) == "rss" ? "rss" : "html");
+		$type = (mb_strtolower($type) == "rss" ? "rss" : "html");
 		$extension = preg_replace("/^.*\.(\S+)$/".BX_UTF_PCRE_MODIFIER, "\\1", $url);
-		$extension = strtolower($extension);
+		$extension = mb_strtolower($extension);
 		$extension = preg_quote($extension, "/");
 
 		$bErrorIMG = False;
@@ -722,15 +723,15 @@ class CSocNetTextParser
 
 	function convert_font_attr($attr, $value = "", $text = "")
 	{
-		if (strlen($text)<=0) return "";
-		if (strlen($value)<=0) return $text;
+		if ($text == '') return "";
+		if ($value == '') return $text;
 
 		if ($attr == "size")
 		{
 			$count = count($this->arFontSize);
 			if ($count <= 0)
 				return $text;
-			$value = intVal($value >= $count ? ($count - 1) : $value);
+			$value = intval($value >= $count ? ($count - 1) : $value);
 			return "<span style='font-size:".$this->arFontSize[$value]."%;'>".$text."</span>";
 		}
 		else if ($attr == 'color')
@@ -773,7 +774,7 @@ class CSocNetTextParser
 	function part_long_words($str)
 	{
 		$word_separator = $this->word_separator;
-		if (($this->MaxStringLen > 0) && (strLen(trim($str)) > 0))
+		if (($this->MaxStringLen > 0) && (trim($str) <> ''))
 		{
 			$str = str_replace(
 				array(chr(1), chr(2), chr(3), chr(4), chr(5), chr(6), "&amp;", "&lt;", "&gt;", "&quot;", "&nbsp;", "&copy;", "&reg;", "&trade;"),
@@ -804,7 +805,7 @@ class CSocNetTextParser
 	{
 		if (
 			($this->MaxStringLen > 0) 
-			&& (strLen($str) > 0)
+			&& ($str <> '')
 		)
 		{
 			$str = preg_replace(
@@ -837,7 +838,7 @@ class CSocNetTextParser
 		$url = preg_replace(
 			array("/&amp;/".BX_UTF_PCRE_MODIFIER, "/javascript:/i".BX_UTF_PCRE_MODIFIER),
 			array("&", "java script&#58; ") , $url);
-		if (substr($url, 0, 1) != "/" && !preg_match("/^(http|news|https|ftp|aim|mailto)\:\/\//i".BX_UTF_PCRE_MODIFIER, $url))
+		if (mb_substr($url, 0, 1) != "/" && !preg_match("/^(http|news|https|ftp|aim|mailto)\:\/\//i".BX_UTF_PCRE_MODIFIER, $url))
 			$url = 'http://'.$url;
 		if (!preg_match("/^((http|https|news|ftp|aim):\/\/[-_:.a-z0-9@]+)*([^\"\'])+$/i".BX_UTF_PCRE_MODIFIER, $url))
 			return $pref.$text." (".$url.")".$end;
@@ -847,7 +848,7 @@ class CSocNetTextParser
 		$text = preg_replace(
 			array("/&amp;/i".BX_UTF_PCRE_MODIFIER, "/javascript:/i".BX_UTF_PCRE_MODIFIER),
 			array("&", "javascript&#58; "), $text);
-		if ($bCutUrl && strlen($text) < 55)
+		if ($bCutUrl && mb_strlen($text) < 55)
 			$bCutUrl = False;
 		if ($bCutUrl && !preg_match("/^(http|ftp|https|news):\/\//i".BX_UTF_PCRE_MODIFIER, $text))
 			$bCutUrl = False;
@@ -856,7 +857,7 @@ class CSocNetTextParser
 		{
 			$stripped = preg_replace("/^(http|ftp|https|news):\/\/(\S+)$/i".BX_UTF_PCRE_MODIFIER, "\\2", $text);
 			$uri_type = preg_replace("/^(http|ftp|https|news):\/\/(\S+)$/i".BX_UTF_PCRE_MODIFIER, "\\1", $text);
-			$text = $uri_type.'://'.substr($stripped, 0, 30).'...'.substr($stripped, -10);
+			$text = $uri_type.'://'.mb_substr($stripped, 0, 30).'...'.mb_substr($stripped, -10);
 		}
 
 		return $pref."<a href='".$url."' target='_blank'>".$text."</a>".$end;
@@ -906,14 +907,14 @@ class CSocNetTextParser
 				$text = str_replace("\n", "<br />", $text);
 		}
 
-		if (strLen($arParams["SERVER_NAME"]) <= 0)
+		if ($arParams["SERVER_NAME"] == '')
 		{
 			$dbSite = CSite::GetByID(SITE_ID);
 			$arSite = $dbSite->Fetch();
 			$arParams["SERVER_NAME"] = htmlspecialcharsEx($arSite["SERVER_NAME"]);
-			if (strLen($arParams["SERVER_NAME"]) <=0)
+			if ($arParams["SERVER_NAME"] == '')
 			{
-				if (defined("SITE_SERVER_NAME") && strlen(SITE_SERVER_NAME)>0)
+				if (defined("SITE_SERVER_NAME") && SITE_SERVER_NAME <> '')
 					$arParams["SERVER_NAME"] = SITE_SERVER_NAME;
 				else
 					$arParams["SERVER_NAME"] = COption::GetOptionString("main", "server_name", "www.bitrixsoft.com");
@@ -952,13 +953,13 @@ class CSocNetTextParser
 		$result = "";
 		$counter_plus  = true;
 		$counter = 0;
-		$string_len = strlen($string);
+		$string_len = mb_strlen($string);
 		for($i=0; $i<$string_len; ++$i)
 		{
-			$char = substr($string, $i, 1);
+			$char = mb_substr($string, $i, 1);
 			if($char == '<')
 				$counter_plus = false;
-			if($char == '>' && substr($string, $i+1, 1) != '<')
+			if($char == '>' && mb_substr($string, $i + 1, 1) != '<')
 			{
 				$counter_plus = true;
 				$counter--;
@@ -968,23 +969,23 @@ class CSocNetTextParser
 				$counter++;
 			if($counter >= $count)
 			{
-				$pos_space = strpos($string, " ", $i);
-				$pos_tag = strpos($string, "<", $i);
+				$pos_space = mb_strpos($string, " ", $i);
+				$pos_tag = mb_strpos($string, "<", $i);
 				if ($pos_space == false)
 				{
-					$pos = strrpos($result, " ");
-					$result = substr($result, 0, strlen($result)-($i-$pos+1));
+					$pos = mb_strrpos($result, " ");
+					$result = mb_substr($result, 0, mb_strlen($result) - ($i - $pos + 1));
 				}
 				else
 				{
 					$pos = min($pos_space, $pos_tag);
 					if ($pos != $i)
 					{
-						$dop_str = substr($string, $i+1, $pos-$i-1);
+						$dop_str = mb_substr($string, $i + 1, $pos - $i - 1);
 						$result .= $dop_str;
 					}
 					else
-						$result = substr($result, 0, strlen($result)-1);
+						$result = mb_substr($result, 0, mb_strlen($result) - 1);
 				}
 				break;
 			}
@@ -1025,9 +1026,9 @@ class CSocNetTextParser
 	function html_cut($html, $size)
 	{
 		$symbols = strip_tags($html);
-		$symbols_len = strlen($symbols);
+		$symbols_len = mb_strlen($symbols);
 
-		if($symbols_len < strlen($html))
+		if($symbols_len < mb_strlen($html))
 		{
 			$strip_text = $this->strip_words($html, $size);
 
@@ -1037,7 +1038,7 @@ class CSocNetTextParser
 			$final_text = $this->closetags($strip_text);
 		}
 		else
-			$final_text = substr($html, 0, $size);
+			$final_text = mb_substr($html, 0, $size);
 
 		return $final_text;
 	}
@@ -1046,7 +1047,7 @@ class CSocNetTextParser
 
 class CSocNetTools
 {
-	function InitImage($imageID, $imageSize, $defaultImage, $defaultImageSize, $imageUrl, $showImageUrl, $urlParams=false)
+	public static function InitImage($imageID, $imageSize, $defaultImage, $defaultImageSize, $imageUrl, $showImageUrl, $urlParams=false)
 	{
 		$imageFile = false;
 		$imageImg = "";
@@ -1085,7 +1086,7 @@ class CSocNetTools
 		return array("FILE" => $imageFile, "IMG" => $imageImg);
 	}
 
-	function htmlspecialcharsExArray($array)
+	public static function htmlspecialcharsExArray($array)
 	{
 		$res = Array();
 		if(!empty($array) && is_array($array))
@@ -1110,7 +1111,7 @@ class CSocNetTools
 		return $res;
 	}
 
-	function ResizeImage($aFile, $sizeX, $sizeY)
+	public static function ResizeImage($aFile, $sizeX, $sizeY)
 	{
 		$result = CFile::ResizeImageGet($aFile, array("width" => $sizeX, "height" => $sizeY));
 		if(is_array($result))
@@ -1119,7 +1120,7 @@ class CSocNetTools
 			return false;
 	}
 
-	function GetDateTimeFormat()
+	public static function GetDateTimeFormat()
 	{
 		$timestamp = mktime(7,30,45,2,22,2007);
 		return array(
@@ -1138,19 +1139,19 @@ class CSocNetTools
 			);
 	}
 
-	function Birthday($datetime, $gender, $showYear = "N")
+	public static function Birthday($datetime, $gender, $showYear = "N")
 	{
-		if (StrLen($datetime) <= 0)
+		if ($datetime == '')
 			return false;
 
 		$arDateTmp = ParseDateTime($datetime, CSite::GetDateFormat('SHORT'));
 
-		$day = IntVal($arDateTmp["DD"]);
+		$day = intval($arDateTmp["DD"]);
 		if (isset($arDateTmp["M"]))
 		{
 			if (is_numeric($arDateTmp["M"]))
 			{
-				$month = IntVal($arDateTmp["M"]);
+				$month = intval($arDateTmp["M"]);
 			}
 			else
 			{
@@ -1174,11 +1175,11 @@ class CSocNetTools
 		}
 		else
 		{
-			$month = IntVal($arDateTmp["MM"]);
+			$month = intval($arDateTmp["MM"]);
 		}
 		$arDateTmp["MM"] = $month;
 		
-		$year = IntVal($arDateTmp["YYYY"]);
+		$year = intval($arDateTmp["YYYY"]);
 
 		if (($showYear == 'Y') || ($showYear == 'M' && $gender == 'M'))
 			$date_template = GetMessage("SONET_BIRTHDAY_DAY_TEMPLATE");
@@ -1193,12 +1194,12 @@ class CSocNetTools
 
 		return array(
 			"DATE" => $val,
-			"MONTH" => Str_Pad(IntVal($arDateTmp["MM"]), 2, "0", STR_PAD_LEFT),
-			"DAY" => Str_Pad(IntVal($arDateTmp["DD"]), 2, "0", STR_PAD_LEFT)
+			"MONTH" => Str_Pad(intval($arDateTmp["MM"]), 2, "0", STR_PAD_LEFT),
+			"DAY" => Str_Pad(intval($arDateTmp["DD"]), 2, "0", STR_PAD_LEFT)
 		);
 	}
 
-	function GetDefaultNameTemplates()
+	public static function GetDefaultNameTemplates()
 	{
 		return array(
 			'#NOBR##LAST_NAME# #NAME##/NOBR#' => GetMessage('SONET_NAME_TEMPLATE_SMITH_JOHN'),
@@ -1216,7 +1217,7 @@ class CSocNetTools
 		);
 	}
 
-	function GetMyGroups()
+	public static function GetMyGroups()
 	{
 		global $USER;
 
@@ -1240,7 +1241,7 @@ class CSocNetTools
 		return $arGroupsMy;
 	}
 
-	function GetGroupUsers($group_id)
+	public static function GetGroupUsers($group_id)
 	{
 		if (intval($group_id) <= 0)
 			return false;
@@ -1263,7 +1264,7 @@ class CSocNetTools
 		return $arGroupUsers;
 	}
 
-	function IsMyGroup($entity_id)
+	public static function IsMyGroup($entity_id)
 	{
 		global $USER;
 
@@ -1282,7 +1283,7 @@ class CSocNetTools
 		return $is_my;
 	}
 
-	function GetMyUsers($user_id = false)
+	public static function GetMyUsers($user_id = false)
 	{
 		global $USER;
 
@@ -1306,7 +1307,7 @@ class CSocNetTools
 		return $arUsersMy;
 	}
 
-	function IsMyUser($entity_id)
+	public static function IsMyUser($entity_id)
 	{
 		global $USER;
 
@@ -1320,7 +1321,7 @@ class CSocNetTools
 		return $is_my;
 	}
 
-	function HasLogEventCreatedBy($event_id)
+	public static function HasLogEventCreatedBy($event_id)
 	{
 		return CSocNetLogTools:: HasLogEventCreatedBy($event_id);
 	}
@@ -1431,7 +1432,7 @@ class CSocNetAllowed
 
 		$entityType = trim($entityType);
 		if (
-			strlen($entityType) <= 0
+			$entityType == ''
 			|| in_array($entityType, self::$arAllowedEntityTypes)
 			|| !preg_match('/^[a-zA-Z0-9]+$/', $entityType)
 		)
@@ -1464,7 +1465,7 @@ class CSocNetAllowed
 		$entityTypeDescCode = trim($entityTypeDescCode);
 
 		if (
-			strlen($entityTypeDescCode) <= 0
+			$entityTypeDescCode == ''
 			|| array_key_exists($entityTypeDescCode, self::$arAllowedEntityTypesDesc)
 			|| !is_array($arEntityTypeDesc)
 		)
@@ -1720,6 +1721,7 @@ class CSocNetAllowed
 				"subscribe_events" => array(
 					"tasks" =>  array(
 						"ENTITIES" => array(),
+						'FORUM_COMMENT_ENTITY' => 'TK',
 						"OPERATION" => "view",
 						"CLASS_FORMAT" => "CSocNetLogTools",
 						"METHOD_FORMAT" => "FormatEvent_Task2",
@@ -2085,7 +2087,7 @@ class CSocNetAllowed
 		$strFeatureCode = trim($strFeatureCode);
 
 		if (
-			strlen($strFeatureCode) <= 0
+			$strFeatureCode == ''
 			|| !is_array($arFeature)
 		)
 		{
@@ -2170,7 +2172,7 @@ class CSocNetAllowed
 		$strFeatureCode = trim($strFeatureCode);
 
 		if (
-			strlen($strFeatureCode) <= 0
+			$strFeatureCode == ''
 			|| !array_key_exists($strFeatureCode, self::$arAllowedFeatures)
 			|| !is_array($arFeature)
 		)
@@ -2236,7 +2238,7 @@ class CSocNetAllowed
 		$strEventCode = trim($strEventCode);
 
 		if (
-			strlen($strEventCode) <= 0
+			$strEventCode == ''
 			|| array_key_exists($strEventCode, self::$arAllowedLogEvents)
 			|| !is_array($arLogEvent)
 		)
@@ -2315,5 +2317,3 @@ class CSocNetAllowed
 		}
 	}
 }
-
-?>

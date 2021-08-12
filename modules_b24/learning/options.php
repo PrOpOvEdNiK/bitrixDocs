@@ -27,13 +27,13 @@ $arAllOptions =
 	);
 
 //Restore defaults
-if ($LEARNING_RIGHT == "W" && $_SERVER["REQUEST_METHOD"]=="GET" && strlen($RestoreDefaults)>0 && check_bitrix_sessid())
+if ($LEARNING_RIGHT == "W" && $_SERVER["REQUEST_METHOD"]=="GET" && $RestoreDefaults <> '' && check_bitrix_sessid())
 {
 	COption::RemoveOption("learning");
 }
 
 //Save options
-if($_SERVER["REQUEST_METHOD"]=="POST" && strlen($Update)>0 && $LEARNING_RIGHT == "W" && check_bitrix_sessid())
+if($_SERVER["REQUEST_METHOD"]=="POST" && $Update <> '' && $LEARNING_RIGHT == "W" && check_bitrix_sessid())
 {
 	// Work with permissions
 	if (CLearnAccess::IsLoggedUserCanAccessModuleSettings() && isset($_POST['BASE_RIGHTS']))
@@ -82,7 +82,7 @@ if($_SERVER["REQUEST_METHOD"]=="POST" && strlen($Update)>0 && $LEARNING_RIGHT ==
 	"L" - Lesson,
 	*/
 	$affectedRows = 0;
-	$dbSites = CSite::GetList(($b = ""), ($o = ""), array("ACTIVE" => "Y"));
+	$dbSites = CSite::GetList('', '', array("ACTIVE" => "Y"));
 	while ($arSite = $dbSites->Fetch())
 	{
 		//BXClearCache(True, "/".$arSite["LID"]."/blog/");
@@ -90,9 +90,9 @@ if($_SERVER["REQUEST_METHOD"]=="POST" && strlen($Update)>0 && $LEARNING_RIGHT ==
 		foreach($arType as $type)
 		{
 
-			if (IntVal($arPaths[$arSite["LID"]][$type])>0)
+			if (intval($arPaths[$arSite["LID"]][$type])>0)
 			{
-				if (strlen(${"SITE_PATH_".$arSite["LID"]."_".$type}) > 0)
+				if (${"SITE_PATH_".$arSite["LID"]."_".$type} <> '')
 				{
 					if ($arPaths[$arSite["LID"]][$type]["PATH"] != ${"SITE_PATH_".$arSite["LID"]."_".$type})
 						$affectedRows++;
@@ -171,7 +171,7 @@ $tabControl->BeginNextTab();
 	while ($arPath = $dbPaths->Fetch())
 		$arPaths[$arPath["SITE_ID"]][$arPath["TYPE"]] = $arPath["PATH"];
 
-	$dbSites = CSite::GetList(($b = ""), ($o = ""), Array("ACTIVE" => "Y"));
+	$dbSites = CSite::GetList('', '', Array("ACTIVE" => "Y"));
 	while ($arSite = $dbSites->Fetch())
 	{
 		?>

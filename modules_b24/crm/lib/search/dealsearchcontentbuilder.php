@@ -60,14 +60,18 @@ class DealSearchContentBuilder extends SearchContentBuilder
 			return $map;
 		}
 
-		$map->add($entityID);
+		$isShortIndex = ($options['isShortIndex'] ?? false);
+
+		if (!$isShortIndex)
+		{
+			$map->add($entityID);
+		}
 
 		$title = isset($fields['TITLE']) ? $fields['TITLE'] : '';
 		if($title !== '')
 		{
 			$map->addText($title);
 			$map->addText(SearchEnvironment::prepareSearchContent($title));
-
 			$customerNumber = $this->parseCustomerNumber($title, \CCrmDeal::GetDefaultTitleTemplate());
 			if($customerNumber != $entityID)
 			{
@@ -76,15 +80,19 @@ class DealSearchContentBuilder extends SearchContentBuilder
 		}
 
 		$map->addField($fields, 'OPPORTUNITY');
-		$map->add(
-			\CCrmCurrency::GetCurrencyName(
-				isset($fields['CURRENCY_ID']) ? $fields['CURRENCY_ID'] : ''
-			)
-		);
 
-		if(isset($fields['ASSIGNED_BY_ID']))
+		if (!$isShortIndex)
 		{
-			$map->addUserByID($fields['ASSIGNED_BY_ID']);
+			$map->add(
+				\CCrmCurrency::GetCurrencyName(
+					isset($fields['CURRENCY_ID']) ? $fields['CURRENCY_ID'] : ''
+				)
+			);
+
+			if(isset($fields['ASSIGNED_BY_ID']))
+			{
+				$map->addUserByID($fields['ASSIGNED_BY_ID']);
+			}
 		}
 
 		//region Company
@@ -119,54 +127,57 @@ class DealSearchContentBuilder extends SearchContentBuilder
 		}
 		//endregion
 
-		if(isset($fields['TYPE_ID']))
+		if (!$isShortIndex)
 		{
-			$map->addStatus('DEAL_TYPE', $fields['TYPE_ID']);
-		}
+			if(isset($fields['TYPE_ID']))
+			{
+				$map->addStatus('DEAL_TYPE', $fields['TYPE_ID']);
+			}
 
-		if(isset($fields['STAGE_ID']))
-		{
-			$map->add(
-				Crm\Category\DealCategory::getStageName(
-					$fields['STAGE_ID'],
-					isset($fields['CATEGORY_ID']) ? $fields['CATEGORY_ID'] : -1
-				)
-			);
-		}
+			if(isset($fields['STAGE_ID']))
+			{
+				$map->add(
+					Crm\Category\DealCategory::getStageName(
+						$fields['STAGE_ID'],
+						isset($fields['CATEGORY_ID']) ? $fields['CATEGORY_ID'] : -1
+					)
+				);
+			}
 
-		if(isset($fields['BEGINDATE']))
-		{
-			$map->add($fields['BEGINDATE']);
-		}
+			if(isset($fields['BEGINDATE']))
+			{
+				$map->add($fields['BEGINDATE']);
+			}
 
-		if(isset($fields['CLOSEDATE']))
-		{
-			$map->add($fields['CLOSEDATE']);
-		}
+			if(isset($fields['CLOSEDATE']))
+			{
+				$map->add($fields['CLOSEDATE']);
+			}
 
-		if(isset($fields['COMMENTS']))
-		{
-			$map->addHtml($fields['COMMENTS'], 1024);
-		}
+			if(isset($fields['COMMENTS']))
+			{
+				$map->addHtml($fields['COMMENTS'], 1024);
+			}
 
-		//region Source
-		if(isset($fields['SOURCE_ID']))
-		{
-			$map->addStatus('SOURCE', $fields['SOURCE_ID']);
-		}
+			//region Source
+			if(isset($fields['SOURCE_ID']))
+			{
+				$map->addStatus('SOURCE', $fields['SOURCE_ID']);
+			}
 
-		if(isset($fields['SOURCE_DESCRIPTION']))
-		{
-			$map->addText($fields['SOURCE_DESCRIPTION'], 1024);
-		}
-		//endregion
+			if(isset($fields['SOURCE_DESCRIPTION']))
+			{
+				$map->addText($fields['SOURCE_DESCRIPTION'], 1024);
+			}
+			//endregion
 
-		//region UserFields
-		foreach($this->getUserFields($entityID) as $userField)
-		{
-			$map->addUserField($userField);
+			//region UserFields
+			foreach($this->getUserFields($entityID) as $userField)
+			{
+				$map->addUserField($userField);
+			}
+			//endregion
 		}
-		//endregion
 
 		return $map;
 	}
@@ -198,5 +209,42 @@ class DealSearchContentBuilder extends SearchContentBuilder
 	protected function save($entityID, SearchMap $map)
 	{
 		DealTable::update($entityID, array('SEARCH_CONTENT' => $map->getString()));
+	}
+
+	protected function saveShortIndex(int $entityId, SearchMap $map, bool $checkExist = false): \Bitrix\Main\DB\Result
+	{
+		$connection = \Bitrix\Main\Application::getConnection();
+		$helper = $connection->getSqlHelper();
+
+		$searchContent = $helper->forSql($map->getString());
+
+		if ($checkExist)
+		{
+			$sql = "
+				INSERT INTO b_crm_deal_index(DEAL_ID, SEARCH_CONTENT)
+				VALUES({$entityId}, '{$searchContent}')
+				ON DUPLICATE KEY UPDATE SEARCH_CONTENT= '{$searchContent}'
+			";
+			try
+			{
+				return $connection->query($sql);
+			}
+			catch (\Exception $exception)
+			{
+				return $connection->query($sql);
+			}
+		}
+
+		$sql = "
+			UPDATE b_crm_deal_index SET SEARCH_CONTENT= '{$searchContent}' WHERE DEAL_ID = {$entityId}
+		";
+		return $connection->query($sql);
+	}
+
+	public function removeShortIndex(int $entityId): \Bitrix\Main\ORM\Data\Result
+	{
+		return \Bitrix\Crm\Entity\Index\DealTable::delete([
+			'DEAL_ID' => $entityId,
+		]);
 	}
 }

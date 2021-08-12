@@ -68,6 +68,7 @@ final class Impact extends \Bitrix\Tasks\Processor\Task\Result\Impact
 			$t->update($this->getUpdatedData(), array(
 				'THROTTLE_MESSAGES' => true,
 				'AUTO_CLOSE' => false,
+				'SKIP_ACCESS_CONTROL' => true
 			));
 
 			if($prevUserId)
@@ -75,7 +76,7 @@ final class Impact extends \Bitrix\Tasks\Processor\Task\Result\Impact
 				User::setOccurAsId($prevUserId);
 			}
 		}
-		catch(\TasksException $e)
+		catch(\TasksException | \CTaskAssertException $e)
 		{
 			$result->addException($e, Loc::getMessage('TASKS_WORKER_TASK_IMPACT_SAVE_ERROR'));
 		}

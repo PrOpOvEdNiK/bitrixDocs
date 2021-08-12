@@ -104,88 +104,92 @@ final class FromTemplate extends Util\Replicator\Task
 		// now for each destination create sub-tasks according to the sub-templates, if any
 		$data = $this->getSubItemData($source->getId());
 
-		if(!empty($data)) // has sub-templates
+		if (empty($data))
 		{
-			$order = $this->getCreationOrder($data, $source->getId(), $destination->getId());
+			Template::leaveBatchState();
+			return $result;
+		}
 
-			if(!$order)
-			{
-				$result->getErrors()->add('ILLEGAL_STRUCTURE.LOOP', Loc::getMessage('TASKS_REPLICATOR_SUBTREE_LOOP'));
-			}
-			else
-			{
-				// disable copying disk files for each sub-task
-				// todo: impove this later
-				$this->getConverter()->setConfig('UF.FILTER', array('!=USER_TYPE_ID' => 'disk_file'));
+		$order = $this->getCreationOrder($data, $source->getId());
 
-				foreach($destinations as $destination)
+		if(!$order)
+		{
+			$result->getErrors()->add('ILLEGAL_STRUCTURE.LOOP', Loc::getMessage('TASKS_REPLICATOR_SUBTREE_LOOP'));
+		}
+		else
+		{
+			// disable copying disk files for each sub-task
+			// todo: impove this later
+			$this->getConverter()->setConfig('UF.FILTER', array('!=USER_TYPE_ID' => 'disk_file'));
+
+			foreach($destinations as $destination)
+			{
+				//////////////////////////////
+
+				$src2dstId = array($source->getId() => $destination->getId());
+
+				$cTree = $order;
+
+				$walkQueue = array($source->getId());
+				while(!empty($walkQueue)) // walk sub-item tree
 				{
-					//////////////////////////////
+					$topTemplate = array_shift($walkQueue);
 
-					$src2dstId = array($source->getId() => $destination->getId());
-
-					$cTree = $order;
-
-					$walkQueue = array($source->getId());
-					while(!empty($walkQueue)) // walk sub-item tree
+					if(is_array($cTree[$topTemplate]))
 					{
-						$topTemplate = array_shift($walkQueue);
-
-						if(is_array($cTree[$topTemplate]))
+						// create all sub template on that tree level
+						foreach($cTree[$topTemplate] as $template)
 						{
-							// create all sub template on that tree level
-							foreach($cTree[$topTemplate] as $template)
+							$dataMixin = array_merge(array(
+								'PARENT_ID' => $src2dstId[$topTemplate],
+							), $parameters);
+
+							$creationResult = $this->saveItemFromSource($data[$template], $dataMixin, $userId);
+							if($creationResult->isSuccess())
 							{
-								$dataMixin = array_merge(array(
-									'PARENT_ID' => $src2dstId[$topTemplate],
-								), $parameters);
+								$walkQueue[] = $template; // walk further on that template
+								$src2dstId[$template] = $creationResult->getInstance()->getId();
+							}
+							else
+							{
+								$wereErrors = true;
 
-								$creationResult = $this->saveItemFromSource($data[$template], $dataMixin, $userId);
-								if($creationResult->isSuccess())
+								$errors = $creationResult->getErrors();
+								$neededError = $errors->find(array('CODE' => 'ACCESS_DENIED.RESPONSIBLE_AND_ORIGINATOR_NOT_ALLOWED'));
+
+								if ($errors->count() == 1 && !$neededError->isEmpty())
 								{
-									$walkQueue[] = $template; // walk further on that template
-									$src2dstId[$template] = $creationResult->getInstance()->getId();
-								}
-								else
-								{
-									$wereErrors = true;
+									$data[$template]['CREATED_BY'] = $userId;
 
-									$errors = $creationResult->getErrors();
-									$neededError = $errors->find(array('CODE' => 'ACCESS_DENIED.RESPONSIBLE_AND_ORIGINATOR_NOT_ALLOWED'));
-
-									if ($errors->count() == 1 && !$neededError->isEmpty())
+									$creationResult->getErrors()->clear();
+									$creationResult = $this->saveItemFromSource($data[$template], $dataMixin, $userId);
+									if ($creationResult->isSuccess())
 									{
-										$data[$template]['CREATED_BY'] = $userId;
+										$walkQueue[] = $template;
+										$src2dstId[$template] = $creationResult->getInstance()->getId();
 
-										$creationResult->getErrors()->clear();
-										$creationResult = $this->saveItemFromSource($data[$template], $dataMixin, $userId);
-										if ($creationResult->isSuccess())
-										{
-											$walkQueue[] = $template;
-											$src2dstId[$template] = $creationResult->getInstance()->getId();
-
-											$wereErrors = false;
-										}
+										$wereErrors = false;
 									}
 								}
-
-								$created->push($creationResult); // add sub-item creation result
 							}
+
+							$created->push($creationResult); // add sub-item creation result
 						}
-						unset($cTree[$topTemplate]);
 					}
-
-					//////////////////////////////
+					unset($cTree[$topTemplate]);
 				}
 
-				if($wereErrors)
-				{
-					$result->addError('SUB_ITEMS_CREATION_FAILURE', 'Some of the sub-tasks was not properly created');
-				}
-
-				$result->setData($created);
+				//////////////////////////////
 			}
+
+			if($wereErrors)
+			{
+				$result->addError('SUB_ITEMS_CREATION_FAILURE', 'Some of the sub-tasks was not properly created');
+			}
+
+			$result->setData($created);
 		}
+
 
 		Template::leaveBatchState();
 
@@ -289,7 +293,7 @@ final class FromTemplate extends Util\Replicator\Task
 	 * @return mixed|string
 	 * @throws \Bitrix\Main\ArgumentException
 	 */
-	public static function repeatTask($templateId, array $parameters = array())
+	public static function repeatTask($templateId, array $parameters = [])
 	{
 		$templateId = (int)$templateId;
 		if (!$templateId)
@@ -300,13 +304,18 @@ final class FromTemplate extends Util\Replicator\Task
 		static::liftLogAgent();
 
 		// todo: replace this with item\orm call
-		$templateDbRes = \CTaskTemplates::getList(array(),  array('ID' => $templateId), false, false, array('*', 'UF_*'));
+		$templateDbRes = \CTaskTemplates::getList(
+			[],
+			['ID' => $templateId],
+			false,
+			['USER_IS_ADMIN' => true],
+			['*', 'UF_*']
+		);
 		$template = $templateDbRes->Fetch();
-
-		if ($template && $template['REPLICATE'] == 'Y')
+		if ($template && $template['REPLICATE'] === 'Y')
 		{
 			$agentName = str_replace('#ID#', $templateId, $parameters['AGENT_NAME_TEMPLATE']); // todo: when AGENT_NAME_TEMPLATE is not set?
-			$replicateParams = $template['REPLICATE_PARAMS'] = unserialize($template['REPLICATE_PARAMS']);
+			$replicateParams = $template['REPLICATE_PARAMS'] = unserialize($template['REPLICATE_PARAMS'], ['allowed_classes' => false]);
 
 			$executionTime = static::getExecutionTime($agentName, $replicateParams);
 			if ($executionTime && (static::taskByTemplateAlreadyExist($templateId, $executionTime) || time() < MakeTimeStamp($executionTime)))
@@ -877,7 +886,7 @@ final class FromTemplate extends Util\Replicator\Task
 		$name = 'CTasks::RepeatTaskByTemplateId('.$templateId.');';
 
 		// First, remove all agents for this template
-		/** @noinspection PhpDynamicAsStaticMethodCallInspection */
+
 		self::unInstallAgent($templateId);
 
 		// Set up new agent
@@ -891,7 +900,7 @@ final class FromTemplate extends Util\Replicator\Task
 
 				if($nextTime)
 				{
-					/** @noinspection PhpDynamicAsStaticMethodCallInspection */
+
 					\CAgent::addAgent(
 						$name,
 						'tasks',
@@ -938,7 +947,7 @@ final class FromTemplate extends Util\Replicator\Task
 			$templateData = array(
 				'CREATED_BY' => $fallenTemplate['CREATED_BY'],
 				'REPLICATE' => $fallenTemplate['REPLICATE'],
-				'REPLICATE_PARAMS' => unserialize($fallenTemplate['REPLICATE_PARAMS']),
+				'REPLICATE_PARAMS' => unserialize($fallenTemplate['REPLICATE_PARAMS'], ['allowed_classes' => false]),
 				'TPARAM_REPLICATION_COUNT' => $fallenTemplate['TPARAM_REPLICATION_COUNT']
 			);
 
@@ -954,13 +963,13 @@ final class FromTemplate extends Util\Replicator\Task
 
 	public static function unInstallAgent($id)
 	{
-		/** @noinspection PhpDynamicAsStaticMethodCallInspection */
+
 		\CAgent::removeAgent('CTasks::RepeatTaskByTemplateId('.$id.');', 'tasks');
 
-		/** @noinspection PhpDynamicAsStaticMethodCallInspection */
+
 		\CAgent::removeAgent('CTasks::RepeatTaskByTemplateId('.$id.', 0);', 'tasks');
 
-		/** @noinspection PhpDynamicAsStaticMethodCallInspection */
+
 		\CAgent::removeAgent('CTasks::RepeatTaskByTemplateId('.$id.', 1);', 'tasks');
 	}
 
@@ -1009,12 +1018,12 @@ final class FromTemplate extends Util\Replicator\Task
 			}
 
 			// unpack values
-			$item['RESPONSIBLES'] = unserialize($item['RESPONSIBLES']);
-			$item['ACCOMPLICES'] = unserialize($item['ACCOMPLICES']);
-			$item['AUDITORS'] = unserialize($item['AUDITORS']);
-			$item['TAGS'] = unserialize($item['TAGS']);
-			$item['REPLICATE_PARAMS'] = unserialize($item['REPLICATE_PARAMS']);
-			$item['DEPENDS_ON'] = unserialize($item['DEPENDS_ON']);
+			$item['RESPONSIBLES'] = unserialize($item['RESPONSIBLES'], ['allowed_classes' => false]);
+			$item['ACCOMPLICES'] = unserialize($item['ACCOMPLICES'], ['allowed_classes' => false]);
+			$item['AUDITORS'] = unserialize($item['AUDITORS'], ['allowed_classes' => false]);
+			$item['TAGS'] = unserialize($item['TAGS'], ['allowed_classes' => false]);
+			$item['REPLICATE_PARAMS'] = unserialize($item['REPLICATE_PARAMS'], ['allowed_classes' => false]);
+			$item['DEPENDS_ON'] = unserialize($item['DEPENDS_ON'], ['allowed_classes' => false]);
 
 			$result[$item['ID']] = $item;
 		}

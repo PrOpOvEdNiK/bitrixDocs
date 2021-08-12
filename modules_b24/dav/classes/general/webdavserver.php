@@ -42,7 +42,7 @@ class CDavWebDavServer
 	{
 		global $APPLICATION, $USER;
 
-		if (strlen($phpAuthUser) > 0 && strlen($phpAuthPw) > 0)
+		if ($phpAuthUser <> '' && $phpAuthPw <> '')
 		{
 			$arAuthResult = $USER->Login($phpAuthUser, $phpAuthPw, "N");
 			$APPLICATION->arAuthResult = $arAuthResult;
@@ -527,16 +527,16 @@ class CDavWebDavServer
 		{
 			$uuid = md5(microtime().getmypid());
 
-			$uuid{12} = '4';
-			$n = 8 + (ord($uuid{16}) & 3);
+			$uuid[12] = '4';
+			$n = 8 + (ord($uuid[16]) & 3);
 			$hex = '0123456789abcdef';
-			$uuid{16} = substr($hex, $n, 1);
+			$uuid[16] = mb_substr($hex, $n, 1);
 
-			$uuid = substr($uuid, 0, 8) . '-' .
-				substr($uuid, 8, 4) . '-' .
-				substr($uuid, 12, 4) . '-' .
-				substr($uuid, 16, 4) . '-' .
-				substr($uuid, 20);
+			$uuid = mb_substr($uuid, 0, 8).'-'.
+				mb_substr($uuid, 8, 4).'-'.
+				mb_substr($uuid, 12, 4).'-'.
+				mb_substr($uuid, 16, 4).'-'.
+				mb_substr($uuid, 20);
 		}
 
 		return 'opaquelocktoken:' . $uuid;
@@ -573,9 +573,11 @@ class CDavWebDavServer
 		{
 			return '404 Not Found'; //"409 Conflict"?
 		}
-		/** @var File $file */
 
-		$file = File::load(array('NAME' => $filename, 'PARENT_ID' => $folder->getRealObjectId()));
+		$file = File::load([
+			'=NAME' => $filename,
+			'PARENT_ID' => $folder->getRealObjectId(),
+		]);
 
 		$securityContext = $folder->getStorage()->getCurrentUserSecurityContext();
 		if (!$file)
@@ -1010,7 +1012,7 @@ class CDavWebDavServer
 	protected function getResourceByObject($path, BaseObject $object)
 	{
 		$isFolder = $object instanceof Folder;
-		$resource = new CDavResource($path . ($isFolder && substr($path, -1, 1) != "/" ? "/" : ""));
+		$resource = new CDavResource($path . ($isFolder && mb_substr($path, -1, 1) != "/" ? "/" : ""));
 
 		$resource->AddProperty('name', $object->getName());
 

@@ -21,7 +21,7 @@ class Command
 	public static function register(array $fields)
 	{
 		$moduleId = $fields['MODULE_ID'];
-		$command = substr($fields['COMMAND'], 0, 1) == '/'? substr($fields['COMMAND'], 1): $fields['COMMAND'];
+		$command = mb_substr($fields['COMMAND'], 0, 1) == '/'? mb_substr($fields['COMMAND'], 1) : $fields['COMMAND'];
 
 		$botId = isset($fields['BOT_ID'])? intval($fields['BOT_ID']): 0;
 		if ($botId > 0 && (!\Bitrix\Im\User::getInstance($botId)->isExists() || !\Bitrix\Im\User::getInstance($botId)->isBot()))
@@ -48,7 +48,7 @@ class Command
 		$appId = isset($fields['APP_ID'])? $fields['APP_ID']: '';
 		$langSet = isset($fields['LANG'])? $fields['LANG']: Array();
 
-		if (strlen($moduleId) <= 0)
+		if ($moduleId == '')
 		{
 			return false;
 		}
@@ -130,7 +130,7 @@ class Command
 				{
 					\Bitrix\Im\Model\CommandLangTable::add(array(
 						'COMMAND_ID' => $commandId,
-						'LANGUAGE_ID' => strtolower($lang['LANGUAGE_ID']),
+						'LANGUAGE_ID' => mb_strtolower($lang['LANGUAGE_ID']),
 						'TITLE' => $lang['TITLE'],
 						'PARAMS' => isset($lang['PARAMS'])? $lang['PARAMS']: ''
 					));
@@ -159,10 +159,10 @@ class Command
 			if (!isset($commands[$commandId]))
 				return false;
 
-			if (strlen($moduleId) > 0 && $commands[$commandId]['MODULE_ID'] != $moduleId)
+			if ($moduleId <> '' && $commands[$commandId]['MODULE_ID'] != $moduleId)
 				return false;
 
-			if (strlen($appId) > 0 && $commands[$commandId]['APP_ID'] != $appId)
+			if ($appId <> '' && $commands[$commandId]['APP_ID'] != $appId)
 				return false;
 		}
 
@@ -207,10 +207,10 @@ class Command
 		if (!isset($commands[$commandId]))
 			return false;
 
-		if (strlen($moduleId) > 0 && $commands[$commandId]['MODULE_ID'] != $moduleId)
+		if ($moduleId <> '' && $commands[$commandId]['MODULE_ID'] != $moduleId)
 			return false;
 
-		if (strlen($appId) > 0 && $commands[$commandId]['APP_ID'] != $appId)
+		if ($appId <> '' && $commands[$commandId]['APP_ID'] != $appId)
 			return false;
 
 		if (isset($updateFields['LANG']) && $commands[$commandId]['MODULE_ID'] == 'rest')
@@ -234,7 +234,7 @@ class Command
 				{
 					\Bitrix\Im\Model\CommandLangTable::add(array(
 						'COMMAND_ID' => $commandId,
-						'LANGUAGE_ID' => strtolower($lang['LANGUAGE_ID']),
+						'LANGUAGE_ID' => mb_strtolower($lang['LANGUAGE_ID']),
 						'TITLE' => $lang['TITLE'],
 						'PARAMS' => isset($lang['PARAMS'])? $lang['PARAMS']: ''
 					));
@@ -395,10 +395,10 @@ class Command
 		if (!isset($commands[$commandId]))
 			return false;
 
-		if (strlen($moduleId) > 0 && $commands[$commandId]['MODULE_ID'] != $moduleId)
+		if ($moduleId <> '' && $commands[$commandId]['MODULE_ID'] != $moduleId)
 			return false;
 
-		if (strlen($appId) > 0 && $commands[$commandId]['APP_ID'] != $appId)
+		if ($appId <> '' && $commands[$commandId]['APP_ID'] != $appId)
 			return false;
 
 		$botId = intval($commands[$commandId]['BOT_ID']);
@@ -469,7 +469,7 @@ class Command
 
 		if (Common::isChatId($messageFields['DIALOG_ID']))
 		{
-			$chatId = intval(substr($messageFields['DIALOG_ID'], 4));
+			$chatId = intval(mb_substr($messageFields['DIALOG_ID'], 4));
 			if ($chatId <= 0)
 				return false;
 
@@ -503,7 +503,7 @@ class Command
 				}
 				if ($botId > 0)
 				{
-					$ar['MESSAGE'] = Loc::getMessage("COMMAND_BOT_ANSWER", Array("#BOT_NAME#" => "[USER=".$botId."]".\Bitrix\Im\User::getInstance($botId)->getFullName()."[/USER]\n ")).$ar['MESSAGE'];
+					$ar['MESSAGE'] = Loc::getMessage("COMMAND_BOT_ANSWER", Array("#BOT_NAME#" => "[USER=".$botId."][/USER]\n ")).$ar['MESSAGE'];
 				}
 				else
 				{
@@ -561,7 +561,7 @@ class Command
 				}
 				if ($botId > 0)
 				{
-					$ar['MESSAGE'] = Loc::getMessage("COMMAND_BOT_ANSWER", Array("#BOT_NAME#" => "[USER=".$botId."]".\Bitrix\Im\User::getInstance($botId)->getFullName()."[/USER]\n ")).$ar['MESSAGE'];
+					$ar['MESSAGE'] = Loc::getMessage("COMMAND_BOT_ANSWER", Array("#BOT_NAME#" => "[USER=".$botId."][/USER]\n ")).$ar['MESSAGE'];
 				}
 				else
 				{
@@ -597,7 +597,7 @@ class Command
 
 	private static function findCommands($fields)
 	{
-		$command = substr($fields['COMMAND'], 0, 1) == '/'? substr($fields['COMMAND'], 1): $fields['COMMAND'];
+		$command = mb_substr($fields['COMMAND'], 0, 1) == '/'? mb_substr($fields['COMMAND'], 1) : $fields['COMMAND'];
 		$execParams = isset($fields['EXEC_PARAMS'])? $fields['EXEC_PARAMS']: '';
 		$messageFields = isset($fields['MESSAGE_FIELDS'])? $fields['MESSAGE_FIELDS']: Array();
 
@@ -607,7 +607,7 @@ class Command
 		}
 
 		$result = Array();
-		if (strlen($command) <= 0)
+		if ($command == '')
 			return $result;
 
 		$isExtranet = \Bitrix\Im\User::getInstance($messageFields['FROM_USER_ID'])->isExtranet();
@@ -660,6 +660,7 @@ class Command
 			Array('COMMAND' => 'loud', 'TITLE' => Loc::getMessage("COMMAND_DEF_LOUD_TITLE"), 'PARAMS' => Loc::getMessage("COMMAND_DEF_LOUD_PARAMS"), 'HIDDEN' => 'N', 'EXTRANET_SUPPORT' => 'Y'),
 			Array('COMMAND' => '>>', 'TITLE' => Loc::getMessage("COMMAND_DEF_QUOTE_TITLE"), 'PARAMS' => Loc::getMessage("COMMAND_DEF_QUOTE_PARAMS"), 'HIDDEN' => 'N', 'EXTRANET_SUPPORT' => 'Y'),
 			Array('COMMAND' => 'rename', 'TITLE' => Loc::getMessage("COMMAND_DEF_RENAME_TITLE"), 'PARAMS' => Loc::getMessage("COMMAND_DEF_RENAME_PARAMS"), 'HIDDEN' => 'N', 'EXTRANET_SUPPORT' => 'Y', 'CATEGORY' => Loc::getMessage("COMMAND_DEF_CATEGORY_CHAT"), 'CONTEXT' => 'chat'),
+			Array('COMMAND' => 'getDialogId', 'TITLE' => Loc::getMessage("COMMAND_DEF_DIALOGID_TITLE"), 'HIDDEN' => 'N', 'EXTRANET_SUPPORT' => 'N', 'CATEGORY' => Loc::getMessage("COMMAND_DEF_CATEGORY_CHAT")),
 			Array('COMMAND' => 'webrtcDebug', 'TITLE' => Loc::getMessage("COMMAND_DEF_WD_TITLE"), 'HIDDEN' => 'N', 'EXTRANET_SUPPORT' => 'Y', 'CATEGORY' => Loc::getMessage("COMMAND_DEF_CATEGORY_DEBUG"), 'CONTEXT' => 'call'),
 		);
 
@@ -706,7 +707,7 @@ class Command
 	public static function getListCache($lang = LANGUAGE_ID)
 	{
 		$cache = \Bitrix\Main\Data\Cache::createInstance();
-		if($cache->initCache(self::CACHE_TTL, 'list_v4_'.$lang, self::CACHE_PATH))
+		if($cache->initCache(self::CACHE_TTL, 'list_v5_'.$lang, self::CACHE_PATH))
 		{
 			$result = $cache->getVars();
 		}

@@ -14,4 +14,7 @@ class Type
 	const TYPE_WAIT_CTRL = 0x0800000;    // CTasks::STATE_SUPPOSEDLY_COMPLETED
 	const TYPE_WO_DEADLINE = 0x0A00000;    // tasks without DEADLINE, created NOT by the current user
 	const TYPE_ALL = 0x0B00000;
+	const TYPE_NEW_COMMENTS = 0x0C00000;
+	const TYPE_PROJECT_EXPIRED = 0x0D00000;
+	const TYPE_PROJECT_NEW_COMMENTS = 0x0E00000;
 }

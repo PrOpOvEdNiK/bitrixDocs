@@ -1,4 +1,0 @@
-<?
-$MESS["SEO_PAGE_CURRENT_TITLE_EDIT"] = "Edytuj";
-$MESS["SEO_PAGE_TITLE_EDIT"] = "Edytuj";
-?>

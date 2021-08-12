@@ -9,7 +9,7 @@ class CCrmSearch
 	static $callback_method = '';
 	static $arMess = array();
 
-	static public function UpdateSearch($arFilter, $ENTITY_TYPE, $bOverWrite = false)
+	public static function UpdateSearch($arFilter, $ENTITY_TYPE, $bOverWrite = false)
 	{
 		if (!CModule::IncludeModule('search'))
 			return false;
@@ -48,7 +48,7 @@ class CCrmSearch
 		if (!isset(self::$arMess[$ENTITY_TYPE]))
 		{
 			self::$arMess[$ENTITY_TYPE] = \Bitrix\Main\Localization\Loc::loadLanguageFile(
-				$_SERVER['DOCUMENT_ROOT'].BX_ROOT.'/components/bitrix/crm.'.strtolower($ENTITY_TYPE).'.show/component.php'
+				$_SERVER['DOCUMENT_ROOT'].BX_ROOT.'/components/bitrix/crm.'.mb_strtolower($ENTITY_TYPE).'.show/component.php'
 			);
 		}
 
@@ -135,7 +135,7 @@ class CCrmSearch
 		return $arAllResult;
 	}
 
-	static protected function _buildEntityCard($arEntity, $sTitle, $ENTITY_TYPE, $arOptions = null)
+	protected static function _buildEntityCard($arEntity, $sTitle, $ENTITY_TYPE, $arOptions = null)
 	{
 		static $arEntityGroup = array();
 		static $arStatuses = array();
@@ -156,7 +156,7 @@ class CCrmSearch
 		);
 		foreach ($arEntity as $_k => $_v)
 		{
-			if ($_k == $sTitle || strpos($_k, '_BY_') !== false || strpos($_k, 'DATE_') === 0 || strpos($_k, 'UF_') === 0)
+			if ($_k == $sTitle || mb_strpos($_k, '_BY_') !== false || mb_strpos($_k, 'DATE_') === 0 || mb_strpos($_k, 'UF_') === 0)
 				continue ;
 
 			if($ENTITY_TYPE === 'CONTACT' && ($_k === 'NAME' || $_k === 'SECOND_NAME' || $_k === 'LAST_NAME'))
@@ -204,9 +204,9 @@ class CCrmSearch
 			}
 		}
 
-		$sDetailURL = CComponentEngine::MakePathFromTemplate(COption::GetOptionString('crm', 'path_to_'.strtolower($ENTITY_TYPE).'_show'),
+		$sDetailURL = CComponentEngine::MakePathFromTemplate(COption::GetOptionString('crm', 'path_to_'.mb_strtolower($ENTITY_TYPE).'_show'),
 			array(
-				strtolower($ENTITY_TYPE).'_id' => $arEntity['ID']
+				mb_strtolower($ENTITY_TYPE).'_id' => $arEntity['ID']
 			)
 		);
 
@@ -217,9 +217,7 @@ class CCrmSearch
 
 		if (empty($arSite))
 		{
-			$by="sort";
-			$order="asc";
-			$rsSite = CSite::GetList($by, $order);
+			$rsSite = CSite::GetList();
 			while ($_arSite = $rsSite->Fetch())
 				$arSite[] = $_arSite['ID'];
 		}
@@ -295,7 +293,7 @@ class CCrmSearch
 			'SITE_ID' => $arSitePath,
 			'PERMISSIONS' => $arAttr,
 			'BODY' => $sBody,
-			'TAGS' => 'crm,'.strtolower($ENTITY_TYPE).','.GetMessage('CRM_'.$ENTITY_TYPE)
+			'TAGS' => 'crm,'.mb_strtolower($ENTITY_TYPE).','.GetMessage('CRM_'.$ENTITY_TYPE)
 		);
 
 		if (self::$bReIndex)
@@ -304,11 +302,11 @@ class CCrmSearch
 		return $arResult;
 	}
 
-	static public function OnSearchReindex($NS = array(), $oCallback = null, $callback_method = '')
+	public static function OnSearchReindex($NS = array(), $oCallback = null, $callback_method = '')
 	{
 		$arFilter = array();
 		$ENTITY_TYPE = 'LEAD';
-		if (isset($NS['ID']) && strlen($NS['ID']) > 0 && preg_match('/^[A-Z]+\.\d+$/'.BX_UTF_PCRE_MODIFIER, $NS['ID']))
+		if (isset($NS['ID']) && $NS['ID'] <> '' && preg_match('/^[A-Z]+\.\d+$/'.BX_UTF_PCRE_MODIFIER, $NS['ID']))
 		{
 			$arTemp = explode('.', $NS['ID']);
 			$ENTITY_TYPE = $arTemp[0];
@@ -468,7 +466,7 @@ class CCrmSearch
 		return $arAllResult;
 	}
 
-	function OnSearchCheckPermissions($FIELD)
+	public static function OnSearchCheckPermissions($FIELD)
 	{
 		$arAttr = array();
 		if(CCrmPerms::IsAdmin())
@@ -564,7 +562,7 @@ class CCrmSearch
 		return $arRel;
 	}
 
-	static public function DeleteSearch($ENTITY_TYPE, $ENTITY_ID)
+	public static function DeleteSearch($ENTITY_TYPE, $ENTITY_ID)
 	{
 		if (CModule::IncludeModule('search'))
 		{
@@ -572,5 +570,3 @@ class CCrmSearch
 		}
 	}
 }
-
-?>

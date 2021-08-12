@@ -79,12 +79,17 @@ class Tracker
 			$result->addError(new Error(Loc::getMessage('IMOL_CRM_ERROR_NO_SESSION'), Crm::ERROR_IMOL_NO_SESSION, __METHOD__));
 		}
 
-		if ($result->isSuccess() && Loader::includeModule('crm') && $session->getConfig('CRM') == 'Y')
+		if (
+			$result->isSuccess() &&
+			Loader::includeModule('crm') &&
+			$session->getConfig('CRM') === 'Y' &&
+			$session->getConfig('CRM_CHAT_TRACKER') === 'Y'
+		)
 		{
 			$messageOriginId = intval($params['ID']);
 			$messageText = self::prepareMessage($params['TEXT']);
 
-			if (isset($params['ID']) && empty($messageOriginId) || strlen($messageText) <= 0)
+			if (isset($params['ID']) && empty($messageOriginId) || $messageText == '')
 			{
 				$result->addError(new Error(Loc::getMessage('IMOL_TRACKER_ERROR_NO_REQUIRED_PARAMETERS'), self::ERROR_IMOL_TRACKER_NO_REQUIRED_PARAMETERS, __METHOD__));
 			}
@@ -111,10 +116,7 @@ class Tracker
 							$crmFieldsManager->setEmails($emails);
 						}
 
-						if($session->getConfig('CRM_CREATE') != Config::CRM_CREATE_LEAD)
-						{
-							$crmManager->setSkipCreate();
-						}
+						$crmManager->setModeCreate($session->getConfig('CRM_CREATE'));
 
 						$crmManager->search();
 						$crmFieldsManager->setTitle($session->getChat()->getData('TITLE'));

@@ -1,5 +1,0 @@
-<?
-$MESS["CRM_AUTOMATION_TRIGGER_PASSWORD_COMMENT"] = "Créé par déclencheur";
-$MESS["CRM_AUTOMATION_TRIGGER_PASSWORD_TITLE"] = "Accès externe pour l'automatisation du CRM";
-$MESS["CRM_AUTOMATION_TRIGGER_WEBHOOK_NAME"] = "Webhook";
-?>

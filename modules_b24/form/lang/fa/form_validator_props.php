@@ -1,4 +1,0 @@
-<?
-$MESS["FORM_VAL_PROPS_CLOSE_DIALOG"] = "ببند";
-$MESS["FORM_VAL_PROPS_SAVE"] = "ذخیره";
-?>

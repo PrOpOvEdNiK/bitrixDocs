@@ -1,5 +1,0 @@
-<?
-$MESS["SALE_COMPANY_RULES_BY_LOCATION"] = "Localisation";
-$MESS["SALE_COMPANY_RULES_BY_LOCATION_DESC"] = "par localisation";
-$MESS["SALE_COMPANY_RULES_BY_LOCATION_TITLE"] = "par localisation";
-?>

@@ -107,6 +107,7 @@ abstract class BaseUfComponent extends CBitrixComponent
 	{
 		$this->setUserField($this->arParams['~userField']);
 		$this->setAdditionalParameters($this->arParams['additionalParameters']);
+		$this->setParentComponent($this->getAdditionalParameter('parentComponent'));
 
 		$this->arResult['additionalParameters'] = $this->getAdditionalParameters();
 		$this->arResult['userField'] = $this->getUserField();
@@ -131,6 +132,15 @@ abstract class BaseUfComponent extends CBitrixComponent
 	}
 
 	/**
+	 * @param string $key
+	 * @return mixed|null
+	 */
+	public function getAdditionalParameter(string $key)
+	{
+		return ($this->additionalParameters[$key] ?? null);
+	}
+
+	/**
 	 * @return array
 	 */
 	public function getAdditionalParameters(): array
@@ -144,6 +154,22 @@ abstract class BaseUfComponent extends CBitrixComponent
 	public function setAdditionalParameters(?array $additionalParameters): void
 	{
 		$this->additionalParameters = $additionalParameters;
+	}
+
+	/**
+	 * @return CBitrixComponent|null
+	 */
+	public function getParentComponent(): ?CBitrixComponent
+	{
+		return $this->__parent;
+	}
+
+	/**
+	 * @param CBitrixComponent|null $_parent
+	 */
+	public function setParentComponent(?CBitrixComponent $_parent): void
+	{
+		$this->__parent = $_parent;
 	}
 
 	/**
@@ -300,7 +326,7 @@ abstract class BaseUfComponent extends CBitrixComponent
 		$result = [];
 		foreach($constants as $name => $value)
 		{
-			if(strpos($name, 'MEDIA_TYPE_') === 0)
+			if(mb_strpos($name, 'MEDIA_TYPE_') === 0)
 			{
 				$result[$name] = $value;
 			}
@@ -395,13 +421,18 @@ abstract class BaseUfComponent extends CBitrixComponent
 	 */
 	protected function getFieldName(): string
 	{
-		if(!$this->userField || empty($this->userField['FIELD_NAME']))
+		if(
+			(!$this->userField || empty($this->userField['FIELD_NAME']))
+			&&
+			(!$this->additionalParameters || !isset($this->additionalParameters['NAME']))
+		)
 		{
 			return '';
 		}
 
-		$fieldName = $this->userField['FIELD_NAME'];
-		if($this->userField['MULTIPLE'] === 'Y')
+		$fieldName = $this->additionalParameters['NAME'] ?? $this->userField['FIELD_NAME'];
+
+		if($this->userField['MULTIPLE'] === 'Y' && !mb_substr_count($fieldName, '[]'))
 		{
 			$fieldName .= '[]';
 		}
@@ -414,7 +445,11 @@ abstract class BaseUfComponent extends CBitrixComponent
 	 */
 	protected function getFieldValue(): array
 	{
-		if(!$this->additionalParameters['bVarsFromForm'])
+		if(
+			!$this->additionalParameters['bVarsFromForm']
+			&&
+			!isset($this->additionalParameters['VALUE'])
+		)
 		{
 			$value = (
 			isset($this->userField['ENTITY_VALUE_ID'])
@@ -489,6 +524,14 @@ abstract class BaseUfComponent extends CBitrixComponent
 	final public function isMobileMode(): bool
 	{
 		return ($this->getMediaType() === static::MEDIA_TYPE_MOBILE);
+	}
+
+	/**
+	 * @return bool
+	 */
+	final public function isAjaxRequest(): bool
+	{
+		return Context::getCurrent()->getRequest()->isAjaxRequest();
 	}
 
 	/**

@@ -1,4 +1,0 @@
-<?
-$MESS["CRM_STATUS_BUTTONS_SAVE"] = "Zapisz";
-$MESS["CRM_STATUS_BUTTONS_CANCEL"] = "Anuluj";
-?>

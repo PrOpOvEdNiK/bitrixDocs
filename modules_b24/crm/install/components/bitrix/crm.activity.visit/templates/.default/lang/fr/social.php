@@ -1,5 +1,0 @@
-<?
-$MESS["CRM_ACTIVITY_VISIT_SOCIAL_FOUND_MORE"] = "Plus de profils trouvés";
-$MESS["CRM_ACTIVITY_VISIT_SOCIAL_FOUND_TOTAL"] = "#COUNT# profils";
-$MESS["CRM_ACTIVITY_VISIT_SOCIAL_SELECT"] = "Sélectionner";
-?>

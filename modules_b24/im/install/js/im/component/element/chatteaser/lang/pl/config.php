@@ -1,7 +1,0 @@
-<?
-$MESS["IM_MESSENGER_COMMENT_OPEN"] = "Otwórz";
-$MESS["IM_MESSENGER_COMMENT_PLURAL_0"] = "komentarz";
-$MESS["IM_MESSENGER_COMMENT_PLURAL_1"] = "komentarze";
-$MESS["IM_MESSENGER_COMMENT_PLURAL_2"] = "komentarze";
-$MESS["IM_MESSENGER_COMMENT_ZERO"] = "Brak komentarzy";
-?>

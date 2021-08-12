@@ -1,4 +1,0 @@
-<?
-$MESS["LANDING_BLOCK_9_SEPARATOR_LINE"] = "Séparateur";
-$MESS["LANDING_BLOCK_9_SEPARATOR_NAME"] = "Séparateur";
-?>

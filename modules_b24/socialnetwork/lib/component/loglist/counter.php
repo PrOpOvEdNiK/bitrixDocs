@@ -1,10 +1,6 @@
 <?php
 namespace Bitrix\Socialnetwork\Component\LogList;
 
-use Bitrix\Socialnetwork\LogPageTable;
-use Bitrix\Socialnetwork\LogViewTable;
-use Bitrix\Socialnetwork\UserToGroupTable;
-
 class Counter
 {
 	protected $component;
@@ -67,7 +63,7 @@ class Counter
 			$result['COUNTER_TYPE'] = 'SG'.$params['GROUP_ID'];
 		}
 		elseif(
-			$params['IS_CRM'] == 'Y'
+			$params['IS_CRM'] === 'Y'
 			&& (
 				$params['SET_LOG_COUNTER'] != 'N'
 				|| $params['SET_LOG_PAGE_CACHE'] != 'N'
@@ -88,49 +84,22 @@ class Counter
 		}
 	}
 
-	public function setLogCounter(&$result)
-	{
-		$params = $this->getComponent()->arParams;
-
-		$result['LOG_COUNTER'] = 0;
-		$result['LOG_COUNTER_IMPORTANT'] = 0;
-
-		if (
-			Util::checkUserAuthorized()
-			&& $params['SET_LOG_COUNTER'] == 'Y'
-		)
-		{
-			$counters = \CUserCounter::getValues($result['currentUserId'], SITE_ID);
-
-			if (isset($counters['BLOG_POST_IMPORTANT']))
-			{
-				$result['LOG_COUNTER_IMPORTANT'] = intval($counters['BLOG_POST_IMPORTANT']);
-			}
-
-			if (isset($counters[$result['COUNTER_TYPE']]))
-			{
-				$result['LOG_COUNTER'] = intval($counters[$result['COUNTER_TYPE']]);
-			}
-			else
-			{
-				$this->setEmptyCounter(true);
-				$result['LOG_COUNTER'] = 0;
-			}
-		}
-	}
-
 	public function clearLogCounter(&$result)
 	{
 		$params = $this->getComponent()->arParams;
 
 		if (
-			Util::checkUserAuthorized()
-			&& $params['SET_LOG_COUNTER'] == 'Y'
-			&& !(isset($result['EXPERT_MODE_SET']) && $result['EXPERT_MODE_SET'])
-			&& (
-				intval($result['LOG_COUNTER']) > 0
-				|| $this->getEmptyCounter()
-			)
+			!Util::checkUserAuthorized()
+			|| $params['SET_LOG_COUNTER'] !== 'Y'
+			|| (isset($result['EXPERT_MODE_SET']) && $result['EXPERT_MODE_SET'])
+		)
+		{
+			return;
+		}
+
+		if (
+			(int)$result['LOG_COUNTER'] > 0
+			|| $this->getEmptyCounter()
 		)
 		{
 			\CUserCounter::clearByUser(
@@ -140,7 +109,7 @@ class Counter
 				true
 			);
 
-			if (intval($result['LOG_COUNTER_IMPORTANT']) > 0)
+			if ((int)$result['LOG_COUNTER_IMPORTANT'] > 0)
 			{
 				\CUserCounter::clearByUser(
 					$result['currentUserId'],
@@ -152,10 +121,56 @@ class Counter
 			$res = getModuleEvents('socialnetwork', 'OnSonetLogCounterClear');
 			while ($eventFields = $res->fetch())
 			{
-				executeModuleEventEx($eventFields, [ $result['COUNTER_TYPE'], intval($result['LAST_LOG_TS']) ]);
+				executeModuleEventEx($eventFields, [ $result['COUNTER_TYPE'], (int)$result['LAST_LOG_TS'] ]);
 			}
+		}
+		else // set last date only
+		{
+			$pool = \Bitrix\Main\Application::getInstance()->getConnectionPool();
+			$pool->useMasterOnly(true);
+
+			\CUserCounter::clearByUser(
+				$result['currentUserId'],
+				[ SITE_ID, '**' ],
+				$result['COUNTER_TYPE'],
+				false, // multiple
+				false // sendPull
+			);
+
+			$pool->useMasterOnly(false);
 		}
 	}
 
+	public function setLogCounter(&$result)
+	{
+		$params = $this->getComponent()->arParams;
+
+		$result['LOG_COUNTER'] = 0;
+		$result['LOG_COUNTER_IMPORTANT'] = 0;
+
+		if (
+			!Util::checkUserAuthorized()
+			|| $params['SET_LOG_COUNTER'] !== 'Y'
+		)
+		{
+			return;
+		}
+
+		$counters = \CUserCounter::getValues($result['currentUserId'], SITE_ID);
+		if (isset($counters['BLOG_POST_IMPORTANT']))
+		{
+			$result['LOG_COUNTER_IMPORTANT'] = (int)$counters['BLOG_POST_IMPORTANT'];
+		}
+
+		if (isset($counters[$result['COUNTER_TYPE']]))
+		{
+			$result['LOG_COUNTER'] = (int)$counters[$result['COUNTER_TYPE']];
+		}
+		else
+		{
+			$this->setEmptyCounter(true);
+			$result['LOG_COUNTER'] = 0;
+		}
+	}
 }
 ?>

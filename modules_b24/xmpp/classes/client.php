@@ -1,4 +1,4 @@
-<?
+<?php
 class CXMPPClient
 {
 	private $xmppId;
@@ -164,7 +164,7 @@ class CXMPPClient
 
 	public function __Send($message)
 	{
-		if (strlen($message) <= 0)
+		if ($message == '')
 			return false;
 
 		CXMPPUtility::Show(">>> ".$this->jid." (".$this->xmppId.")\n".$message, 0);
@@ -188,7 +188,10 @@ class CXMPPClient
 			return false;
 		}
 
-		return (0 !== Stream_Select($r = array($this->sock), $w = null, $e = null, 0));
+		$w = null;
+		$e = null;
+
+		return (0 !== Stream_Select($r = array($this->sock), $w, $e, 0));
 	}
 	*/
 
@@ -212,12 +215,12 @@ class CXMPPClient
 	protected function __ParseBuffer()
 	{
 		$buffer = trim($this->readBuffer);
-		if (strlen($buffer) <= 0)
+		if ($buffer == '')
 			return false;
 
-		if (strtolower(substr($buffer, 0, 5)) == '<?xml')
-			$buffer = trim(substr($buffer, strpos($buffer, ">") + 1));
-		if (strtolower(substr($buffer, 0, 14)) == '<stream:stream')
+		if (mb_strtolower(mb_substr($buffer, 0, 5)) == '<?xml')
+			$buffer = trim(mb_substr($buffer, mb_strpos($buffer, ">") + 1));
+		if (mb_strtolower(mb_substr($buffer, 0, 14)) == '<stream:stream')
 		{
 			$buffer .= "</stream:stream>";
 			stream_set_timeout($this->sock, 5);
@@ -297,7 +300,7 @@ class CXMPPClient
 
 		foreach ($arMessageKeys as $key)
 		{
-			if (strlen($arMessage[$key]["."]["from"]) <= 0)
+			if ($arMessage[$key]["."]["from"] == '')
 				$arMessage[$key]["."]["from"] = $thisJId;
 		}
 
@@ -336,13 +339,13 @@ class CXMPPClient
 
 		$this->authenticated = false;
 
-		if ($id <= 0 || strlen($login) <= 0 || strlen($jid) <= 0)
+		if ($id <= 0 || $login == '' || $jid == '')
 			return false;
 
 		$this->id = $id;
 		$this->login = $login;
 		$this->provider = $provider;
-		$this->jid = strtolower($jid);
+		$this->jid = mb_strtolower($jid);
 		$this->resource = $resource;
 
 		$server = CXMPPServer::GetServer();
@@ -385,7 +388,7 @@ class CXMPPClient
 			return;
 		}
 
-		if (strlen($this->presenceDate) <= 0 || $this->presenceDate == date($DB->DateFormatToPHP(FORMAT_DATETIME)))
+		if ($this->presenceDate == '' || $this->presenceDate == date($DB->DateFormatToPHP(FORMAT_DATETIME)))
 			return;
 		if (intval($this->id) <= 0)
 			return;
@@ -393,7 +396,7 @@ class CXMPPClient
 		$arFields = array(
 			"DATE_ACTIVE_FROM" => $this->presenceDate,
 			"DATE_ACTIVE_TO" => date($DB->DateFormatToPHP(FORMAT_DATETIME)),
-			"NAME" => (strlen($this->presenceType) <= 0) ? "Online" : $this->presenceType,
+			"NAME" => ($this->presenceType == '') ? "Online" : $this->presenceType,
 			"ACTIVE" => "Y",
 			"IBLOCK_ID" => $iblockId,
 			"IBLOCK_SECTION_ID" => 0,
@@ -452,17 +455,17 @@ class CXMPPClient
 		{
 			if (CModule::IncludeModule('pull') && CPullOptions::GetNginxStatus())
 			{
-				CPullStack::AddByUser($userId, Array(
+				\Bitrix\Pull\Event::add($userId, Array(
 					'module_id' => 'xmpp',
 					'command'   => 'lastActivityDate',
 					'params'    => Array(
 						'timestamp' => intval($lastActivityDate)
 					),
 				));
+				\Bitrix\Pull\Event::send();
 			}
 		}
 
 		return true;
 	}
 }
-?>

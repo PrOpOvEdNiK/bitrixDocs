@@ -1,1 +1,0 @@
-{"version":3,"sources":["extension.js"],"names":["BX","listeners"],"mappings":"AAAAA,GAAGC","file":"extension.map.js"}

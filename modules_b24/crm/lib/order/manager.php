@@ -46,7 +46,7 @@ final class Manager
 		if($id <= 0)
 			return $result;
 
-		if(strlen($statusId) <= 0)
+		if($statusId == '')
 			return $result;
 
 		$order = Order::load($id);
@@ -71,7 +71,7 @@ final class Manager
 
 		if (OrderStatus::getSemanticID($statusId) == Crm\PhaseSemantics::FAILURE)
 		{
-			if(strlen($reasonCanceled) > 0)
+			if($reasonCanceled <> '')
 			{
 				$res = $order->setField('REASON_CANCELED', $reasonCanceled);
 				if(!$res->isSuccess())
@@ -404,7 +404,7 @@ final class Manager
 				$propValue = $prop->getValue();
 				if ($propValue)
 				{
-					$files[] = \CAllFile::MakeFileArray($propValue['ID']);
+					$files[] = \CFile::MakeFileArray($propValue['ID']);
 					$properties['PROPERTIES'][$prop->getPropertyId()] = $propValue['ID'];
 				}
 			}

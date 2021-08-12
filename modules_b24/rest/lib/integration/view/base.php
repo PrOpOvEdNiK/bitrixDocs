@@ -10,6 +10,7 @@ use Bitrix\Main\NotImplementedException;
 use Bitrix\Main\Result;
 use Bitrix\Main\Type\Date;
 use Bitrix\Main\Type\DateTime;
+use Bitrix\Rest\Integration\Externalizer;
 
 abstract class Base
 {
@@ -344,7 +345,7 @@ abstract class Base
 	{
 		$result = [];
 
-		$remove = isset($value['REMOVE']) && is_string($value['REMOVE']) && strtoupper($value['REMOVE']) === 'Y';
+		$remove = isset($value['REMOVE']) && is_string($value['REMOVE']) && mb_strtoupper($value['REMOVE']) === 'Y';
 		$data = isset($value['FILE_DATA']) ? $value['FILE_DATA'] : [];
 
 		$data = $this->parserFileValue($data);
@@ -429,7 +430,7 @@ abstract class Base
 					continue;
 				}
 
-				$operation = substr($rawName, 0, strlen($rawName) - strlen($field['FIELD']));
+				$operation = mb_substr($rawName, 0, mb_strlen($rawName) - mb_strlen($field['FIELD']));
 				if(isset($info['FORBIDDEN_FILTERS'])
 					&& is_array($info['FORBIDDEN_FILTERS'])
 					&& in_array($operation, $info['FORBIDDEN_FILTERS'], true))
@@ -712,14 +713,6 @@ abstract class Base
 	}
 	// endregion
 
-	//region convert keys to camel case
-	final public function convertKeysToCamelCase($fields)
-	{
-		return Converter::toJson()
-			->process($fields);
-	}
-	// endregion
-
 	//region check fields
 	final public function checkFieldsAdd($fields)
 	{
@@ -785,7 +778,7 @@ abstract class Base
 			elseif($info['IS_REQUIRED'] == 'Y' || in_array($name, $addRequiredFields))
 			{
 				if(!isset($fields[$name]))
-					$r->addError(new Error($this->convertKeysToCamelCase($name)));
+					$r->addError(new Error(Externalizer::convertKeysToCamelCase($name)));
 			}
 		}
 

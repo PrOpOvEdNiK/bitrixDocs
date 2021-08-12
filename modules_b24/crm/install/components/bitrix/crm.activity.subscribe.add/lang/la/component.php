@@ -1,6 +1,0 @@
-<?
-$MESS["CRM_SUBSCRIBE_EMPTY_EMAIL"] = "No existe el e-mail.";
-$MESS["CRM_SUBSCRIBE_FROM"] = "De";
-$MESS["CRM_SUBSCRIBE_SUBJECT"] = "Título";
-$MESS["CRM_SUBSCRIBE_TO"] = "Para";
-?>

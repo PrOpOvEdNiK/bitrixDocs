@@ -1,4 +1,0 @@
-<?
-$MESS["DISK_BASE_COMPONENT_ERROR_ACCESS_DENIED"] = "Acceso denegado";
-$MESS["DISK_BASE_COMPONENT_ERROR_REQUIRED_PARAMETER"] = "Parámetro #PARAM# faltante requerido.";
-?>

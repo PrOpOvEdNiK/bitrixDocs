@@ -1,8 +1,0 @@
-<?
-$MESS["DISK_FILE_HISTORY_VERSION_DELETE_VERSION_BUTTON"] = "Eliminar";
-$MESS["DISK_FILE_HISTORY_VERSION_DELETE_VERSION_CONFIRM"] = "¿Usted está seguro que quiere eliminar esta versión?";
-$MESS["DISK_FILE_HISTORY_VERSION_DELETE_VERSION_TITLE"] = "Eliminar versión";
-$MESS["DISK_FILE_HISTORY_VERSION_RESTORE_BUTTON"] = "Restaurar";
-$MESS["DISK_FILE_HISTORY_VERSION_RESTORE_CONFIRM"] = "¿Desea restaurar esta versión del documento?";
-$MESS["DISK_FILE_HISTORY_VERSION_RESTORE_TITLE"] = "Versión de restauración";
-?>

@@ -1,3 +1,0 @@
-<?
-$MESS["SBPCM_TEMPLATE_ADD_COMMENT_LINK"] = "Comentar";
-?>

@@ -1,9 +1,0 @@
-<script type="text/ejs" id="tplProjectsFilter">
-    <a href="javascript:void(0)" class="popupOpener"><%= filterTypeTitle %></a>
-    <div class="popup projectsFilterPopup">
-        <a href='#' class="projects-filter-all" data-type="all" ><?= $this->t('PROJECTS_FILTER_ALL') ?></a>
-        <a href='#' class="projects-filter-my" data-type="my"><?= $this->t('PROJECTS_FILTER_MY') ?></a>
-        <a href='#' class="projects-filter-member" data-type="member"><?= $this->t('PROJECTS_FILTER_MEMBER') ?></a>
-        <% if (isExtendedRightsManagement) { %><a href='#' class="projects-filter-scrumban" data-type="scrumban"><?= $this->t('PROJECTS_FILTER_SCRUMBAN') ?></a><% } %>
-    </div>
-</script>

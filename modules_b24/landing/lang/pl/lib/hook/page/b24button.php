@@ -1,7 +1,0 @@
-<?
-$MESS["LANDING_HOOK_B24BUTTONCODE"] = "Widget na stronę";
-$MESS["LANDING_HOOK_B24BUTTONCODE_NO"] = "Brak";
-$MESS["LANDING_HOOK_B24BUTTONCOLOR"] = "Kod widgetu";
-$MESS["LANDING_HOOK_B24BUTTONCOLOR_BUTTON"] = "użyj koloru widżetu";
-$MESS["LANDING_HOOK_B24BUTTONCOLOR_SITE"] = "użyj koloru strony";
-?>

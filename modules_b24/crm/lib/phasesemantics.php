@@ -3,10 +3,10 @@ namespace Bitrix\Crm;
 use Bitrix\Main;
 class PhaseSemantics
 {
-	const UNDEFINED = '';
-	const PROCESS = 'P';
-	const SUCCESS = 'S';
-	const FAILURE = 'F';
+	public const UNDEFINED = '';
+	public const PROCESS = 'P';
+	public const SUCCESS = 'S';
+	public const FAILURE = 'F';
 	//const APOLOGY = 'A';
 	private static $messagesLoaded = false;
 	private static $descriptions = null;
@@ -20,7 +20,7 @@ class PhaseSemantics
 			return false;
 		}
 
-		$semanticID = strtoupper($semanticID);
+		$semanticID = mb_strtoupper($semanticID);
 		return $semanticID === self::PROCESS
 			|| $semanticID === self::SUCCESS
 			|| $semanticID === self::FAILURE;
@@ -49,7 +49,7 @@ class PhaseSemantics
 			return false;
 		}
 
-		$semanticID = strtoupper($semanticID);
+		$semanticID = mb_strtoupper($semanticID);
 		return $semanticID === self::SUCCESS || $semanticID === self::FAILURE;
 	}
 	/**
@@ -62,7 +62,7 @@ class PhaseSemantics
 			return false;
 		}
 
-		$semanticID = strtoupper($semanticID);
+		$semanticID = mb_strtoupper($semanticID);
 		return $semanticID === self::FAILURE;
 	}
 	/**

@@ -22,6 +22,19 @@ Loc::loadMessages(__FILE__);
 /**
  * Class ScheduleTable
  * @package Bitrix\Timeman\Model\Schedule
+ *
+ * DO NOT WRITE ANYTHING BELOW THIS
+ *
+ * <<< ORMENTITYANNOTATION
+ * @method static EO_Schedule_Query query()
+ * @method static EO_Schedule_Result getByPrimary($primary, array $parameters = array())
+ * @method static EO_Schedule_Result getById($id)
+ * @method static EO_Schedule_Result getList(array $parameters = array())
+ * @method static EO_Schedule_Entity getEntity()
+ * @method static \Bitrix\Timeman\Model\Schedule\Schedule createObject($setDefaultValues = true)
+ * @method static \Bitrix\Timeman\Model\Schedule\ScheduleCollection createCollection()
+ * @method static \Bitrix\Timeman\Model\Schedule\Schedule wakeUpObject($row)
+ * @method static \Bitrix\Timeman\Model\Schedule\ScheduleCollection wakeUpCollection($rows)
  */
 class ScheduleTable extends Main\ORM\Data\DataManager
 {
@@ -64,7 +77,7 @@ class ScheduleTable extends Main\ORM\Data\DataManager
 		$reflection = new \ReflectionClass(__CLASS__);
 		$constants = array_diff($reflection->getConstants(), $reflection->getParentClass()->getConstants());
 		return array_filter($constants, function ($element) {
-			return strncmp('WORKTIME_RESTRICTION_', $element, strlen('WORKTIME_RESTRICTION_')) === 0;
+			return strncmp('WORKTIME_RESTRICTION_', $element, mb_strlen('WORKTIME_RESTRICTION_')) === 0;
 		}, ARRAY_FILTER_USE_KEY);
 	}
 
@@ -224,6 +237,10 @@ class ScheduleTable extends Main\ORM\Data\DataManager
 			(new Fields\IntegerField('CONTROLLED_ACTIONS'))
 			,
 			(new Fields\IntegerField('UPDATED_BY'))
+			,
+			(new Fields\IntegerField('DELETED_BY'))
+			,
+			(new Fields\StringField('DELETED_AT'))
 			,
 			(new Fields\IntegerField('CREATED_BY'))
 				->configureDefaultValue(function () {

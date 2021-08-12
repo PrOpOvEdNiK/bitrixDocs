@@ -37,7 +37,7 @@ class LeadActivityStatistics extends LeadDataSource
 
 		$semanticID = $filter->getExtraParam('semanticID', PhaseSemantics::UNDEFINED);
 
-		$group = isset($params['group']) ? strtoupper($params['group']) : '';
+		$group = isset($params['group'])? mb_strtoupper($params['group']) : '';
 		if($group !== '' && $group !== self::GROUP_BY_USER && $group !== self::GROUP_BY_DATE)
 		{
 			$group = '';
@@ -56,7 +56,7 @@ class LeadActivityStatistics extends LeadDataSource
 			}
 			if(isset($selectItem['aggregate']))
 			{
-				$aggregate = strtoupper($selectItem['aggregate']);
+				$aggregate = mb_strtoupper($selectItem['aggregate']);
 			}
 		}
 
@@ -191,7 +191,6 @@ class LeadActivityStatistics extends LeadDataSource
 		}
 		elseif($group === self::GROUP_BY_USER)
 		{
-			$userIDs = array();
 			while($ary = $dbResult->fetch())
 			{
 				if($useAlias && isset($ary[$nameAlias]))
@@ -199,24 +198,9 @@ class LeadActivityStatistics extends LeadDataSource
 					$ary[$name] = $ary[$nameAlias];
 					unset($ary[$nameAlias]);
 				}
-
-				$userID = $ary['RESPONSIBLE_ID'] = (int)$ary['RESPONSIBLE_ID'];
-				if($userID > 0 && !isset($userIDs[$userID]))
-				{
-					$userIDs[$userID] = true;
-				}
-
 				$result[] = $ary;
 			}
-			$userNames = self::prepareUserNames(array_keys($userIDs));
-			foreach($result as &$item)
-			{
-				$userID = $item['RESPONSIBLE_ID'];
-				$item['USER_ID'] = $userID;
-				$item['USER'] = isset($userNames[$userID]) ? $userNames[$userID] : "[{$userID}]";
-				unset($item['RESPONSIBLE_ID']);
-			}
-			unset($item);
+			self::parseUserInfo($result, ['RESPONSIBLE_ID' => 'USER']);
 		}
 		else
 		{

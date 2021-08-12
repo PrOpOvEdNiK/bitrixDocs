@@ -1,3 +1,0 @@
-<?
-$MESS["SALE_ORDEREDIT_NAME_NULL"] = "Brak";
-?>

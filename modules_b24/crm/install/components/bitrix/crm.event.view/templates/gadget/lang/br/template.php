@@ -1,8 +1,0 @@
-<?
-$MESS["CRM_EVENT_EMPTY"] = "Nenhum registro";
-$MESS["CRM_EVENT_ENTITY_COMPANY"] = "Empresa";
-$MESS["CRM_EVENT_ENTITY_CONTACT"] = "Contato";
-$MESS["CRM_EVENT_ENTITY_DEAL"] = "Negócio";
-$MESS["CRM_EVENT_ENTITY_LEAD"] = "Lead";
-$MESS["CRM_EVENT_ENTITY_QUOTE"] = "Orçamento";
-?>

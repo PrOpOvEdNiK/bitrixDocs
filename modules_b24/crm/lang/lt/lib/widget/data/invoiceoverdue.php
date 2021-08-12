@@ -1,7 +1,0 @@
-<?
-$MESS["CRM_INVOICE_OVERDUE_PRESET_OVERALL_COUNT"] = "Pradelstų sąskaitų skaičius";
-$MESS["CRM_INVOICE_OVERDUE_PRESET_OVERALL_SUM"] = "Pradelstų sąskaitų suma";
-$MESS["CRM_INVOICE_OVERDUE_PRESET_OVERALL_COUNT_SHORT"] = "Sąskaitų skaičius";
-$MESS["CRM_INVOICE_OVERDUE_PRESET_OVERALL_SUM_SHORT"] = "Sąskaitų suma";
-$MESS["CRM_INVOICE_OVERDUE_CATEGORY"] = "Pradelstos sąskaitos";
-?>

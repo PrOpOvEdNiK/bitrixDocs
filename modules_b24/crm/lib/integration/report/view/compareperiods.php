@@ -72,8 +72,13 @@ class ComparePeriods extends Serial
 			],
 		];
 
-		$currentPeriod = $dataFromReport[0];
-		$previousPeriod = $dataFromReport[1];
+		if (empty($dataFromReport))
+		{
+			return $result;
+		}
+
+		$currentPeriod = is_array($dataFromReport[0]) ? $dataFromReport[0] : [];
+		$previousPeriod = is_array($dataFromReport[1]) ? $dataFromReport[1] : [];
 
 		$maxPoints = max(count($currentPeriod['items']), count($previousPeriod['items']));
 

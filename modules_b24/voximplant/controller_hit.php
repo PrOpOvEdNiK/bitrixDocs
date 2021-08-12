@@ -1,6 +1,7 @@
 <?php
 
 use Bitrix\Main\Application;
+use Bitrix\Main\Event;
 use Bitrix\Main\Localization\Loc;
 use Bitrix\Main\Web\Json;
 use Bitrix\Voximplant\StatisticTable;
@@ -10,8 +11,6 @@ if(!CModule::IncludeModule("voximplant"))
 
 if (is_object($APPLICATION))
 	$APPLICATION->RestartBuffer();
-
-while(ob_end_clean());
 
 CVoxImplantHistory::WriteToLog($_POST, 'PORTAL HIT');
 
@@ -234,6 +233,7 @@ if(is_array($params))
 			if($call)
 			{
 				$call->getSignaling()->sendInvite($users);
+				\Bitrix\Pull\Event::send();
 			}
 		}
 		else if($params["COMMAND"] == "Ping")
@@ -422,6 +422,15 @@ if(is_array($params))
 				}
 
 				CVoxImplantOutgoing::restartCallback($callbackParameters);
+			}
+			else if($params["COMMAND"] == "ConferenceFinished")
+			{
+				$event = new Event("voximplant", "onConferenceFinished", [
+					'CONFERENCE_CALL_ID' => $params['PORTAL_CALL_ID'],
+					'SESSION_ID' => $params['SESSION_ID'],
+					'LOG_URL' => $params['LOG_URL'],
+				]);
+				$event->send();
 			}
 		}
 		else

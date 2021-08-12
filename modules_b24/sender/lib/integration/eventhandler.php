@@ -9,21 +9,20 @@
 namespace Bitrix\Sender\Integration;
 
 use Bitrix\Main;
-use Bitrix\Main\Localization\Loc;
-use Bitrix\Main\Loader;
-use Bitrix\Main\ModuleManager;
 use Bitrix\Main\Entity as MainEntity;
-
+use Bitrix\Main\Loader;
+use Bitrix\Main\Localization\Loc;
+use Bitrix\Main\ModuleManager;
 use Bitrix\Sender\ContactTable;
+use Bitrix\Sender\Dispatch;
+use Bitrix\Sender\Entity;
+use Bitrix\Sender\Internals\Model;
 use Bitrix\Sender\Internals\Model\LetterTable;
 use Bitrix\Sender\Message;
-use Bitrix\Sender\Entity;
-use Bitrix\Sender\Dispatch;
+use Bitrix\Sender\PostingRecipientTable;
 use Bitrix\Sender\Security\Agreement;
 use Bitrix\Sender\Security\User;
 use Bitrix\Sender\Templates;
-use Bitrix\Sender\Internals\Model;
-use Bitrix\Sender\PostingRecipientTable;
 
 Loc::loadMessages(__FILE__);
 
@@ -88,6 +87,21 @@ class EventHandler
 	}
 
 	/**
+	 * Handler of event sender/OnAfterPostingSendRecipientMultiple.
+	 *
+	 * @param array $eventDataArray Event[].
+	 * @param Entity\Letter $letter Letter.
+	 * @return void
+	 */
+	public static function onAfterPostingSendRecipientMultiple(array $eventDataArray, Entity\Letter $letter)
+	{
+		if (ModuleManager::isModuleInstalled('crm'))
+		{
+			Crm\EventHandler::onAfterPostingSendRecipientMultiple($eventDataArray, $letter);
+		}
+	}
+
+	/**
 	 * Handler of event sender/onAfterPostingRecipientUnsubscribe.
 	 *
 	 * @param array $eventData Event.
@@ -143,7 +157,7 @@ class EventHandler
 					$list[Message\iBase::CODE_MAIL][] = array(
 						'ID' => $letter['TEMPLATE_ID'],
 						'TYPE' => $letter['TEMPLATE_TYPE'],
-						'CATEGORY' => strtoupper($item['CODE']),
+						'CATEGORY' => mb_strtoupper($item['CODE']),
 						'MESSAGE_CODE' => Message\iBase::CODE_MAIL,
 						'VERSION' => 2,
 						'IS_TRIGGER' => true,
@@ -252,6 +266,8 @@ class EventHandler
 				'Bitrix\Sender\Integration\Seo\Ads\MessageGa',
 				'Bitrix\Sender\Integration\Seo\Ads\MessageVk',
 				'Bitrix\Sender\Integration\Seo\Ads\MessageFb',
+				'Bitrix\Sender\Integration\Seo\Ads\MessageMarketingFb',
+				'Bitrix\Sender\Integration\Seo\Ads\MessageMarketingInstagram',
 				'Bitrix\Sender\Integration\Seo\Ads\MessageLookalikeVk',
 				'Bitrix\Sender\Integration\Seo\Ads\MessageLookalikeFb',
 			);
@@ -271,6 +287,11 @@ class EventHandler
 		{
 			$list[] = 'Bitrix\Sender\Integration\Crm\ReturnCustomer\MessageLead';
 			$list[] = 'Bitrix\Sender\Integration\Crm\ReturnCustomer\MessageDeal';
+		}
+
+		if(Bitrix24\Service::isTolokaVisibleInRegion())
+		{
+			$list[] = 'Bitrix\Sender\Integration\Yandex\Toloka\MessageToloka';
 		}
 
 		return $list;
@@ -336,6 +357,8 @@ class EventHandler
 			$list[] = 'Bitrix\Sender\Integration\Seo\Ads\TransportGa';
 			$list[] = 'Bitrix\Sender\Integration\Seo\Ads\TransportVk';
 			$list[] = 'Bitrix\Sender\Integration\Seo\Ads\TransportFb';
+			$list[] = 'Bitrix\Sender\Integration\Seo\Ads\TransportMarketingFb';
+			$list[] = 'Bitrix\Sender\Integration\Seo\Ads\TransportMarketingInstagram';
 			$list[] = 'Bitrix\Sender\Integration\Seo\Ads\TransportLookalikeVk';
 			$list[] = 'Bitrix\Sender\Integration\Seo\Ads\TransportLookalikeFb';
 		}
@@ -346,6 +369,8 @@ class EventHandler
 			$list[] = 'Bitrix\Sender\Integration\Crm\ReturnCustomer\TransportLead';
 			$list[] = 'Bitrix\Sender\Integration\Crm\ReturnCustomer\TransportDeal';
 		}
+
+		$list[] = 'Bitrix\Sender\Integration\Yandex\Toloka\TransportToloka';
 
 		return $list;
 	}
@@ -378,6 +403,17 @@ class EventHandler
 				}
 
 				$letter = Entity\Letter::createInstanceById($data['primary']['ID']);
+
+				if (is_null($letter))
+				{
+					$result->addError(
+						new MainEntity\EntityError(
+							Loc::getMessage("SENDER_LETTER_ONBEFOREUPDATE_ERROR_LETTER_NOT_AVAILABLE"), 'FEATURE_NOT_AVAILABLE'
+						)
+					);
+					return;
+				}
+
 				if (!$letter->getMessage()->isAvailable())
 				{
 					$result->addError(

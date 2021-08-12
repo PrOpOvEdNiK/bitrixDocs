@@ -7,6 +7,12 @@ namespace Bitrix\Tasks\Replica;
 //	PARENT_ID int(11) DEFAULT NULL,
 //	FORKED_BY_TEMPLATE_ID int(11) DEFAULT NULL,
 
+use Bitrix\Main;
+use Bitrix\Tasks\Internals\Counter\CounterService;
+use Bitrix\Tasks\Internals\Counter\Event\EventDictionary;
+use Bitrix\Tasks\Internals\SearchIndex;
+use Bitrix\Tasks\Internals\Task\SearchIndexTable;
+
 class TaskHandler extends \Bitrix\Replica\Client\BaseHandler
 {
 	protected $tableName = "b_tasks";
@@ -266,8 +272,11 @@ class TaskHandler extends \Bitrix\Replica\Client\BaseHandler
 				$newRecord['AUDITORS'][] = $item['USER_ID'];
 		}
 
-//		\CTaskCountersProcessor::onAfterTaskAdd($newRecord);
-		\Bitrix\Tasks\Internals\Counter::onAfterTaskAdd($newRecord);
+		CounterService::addEvent(
+			EventDictionary::EVENT_AFTER_TASK_ADD,
+			$newRecord
+		);
+
 		\CTaskNotifications::sendAddMessage(
 			array_merge($newRecord, array('CHANGED_BY' => $newRecord['CREATED_BY'])),
 			array('SPAWNED_BY_AGENT' => true)
@@ -276,6 +285,7 @@ class TaskHandler extends \Bitrix\Replica\Client\BaseHandler
 		//\CTaskSync::AddItem($arFields); // MS Exchange
 
 		\CTasks::Index($newRecord, $newRecord["TAGS"]);
+		SearchIndex::setTaskSearchIndex($newRecord['ID'], $newRecord);
 
 		$arParticipants = array_unique(array_merge(
 			array($newRecord["CREATED_BY"], $newRecord["RESPONSIBLE_ID"]),
@@ -349,6 +359,8 @@ class TaskHandler extends \Bitrix\Replica\Client\BaseHandler
 	{
 		global $CACHE_MANAGER;
 
+		CounterService::getInstance()->collectData((int) $newRecord['ID']);
+
 		$newRecord['ACCOMPLICES'] = array();
 		$newRecord['AUDITORS'] = array();
 		$list = \Bitrix\Tasks\Internals\Task\MemberTable::getList(array(
@@ -364,8 +376,13 @@ class TaskHandler extends \Bitrix\Replica\Client\BaseHandler
 				$newRecord['AUDITORS'][] = $item['USER_ID'];
 		}
 
-//		\CTaskCountersProcessor::onAfterTaskUpdate($oldRecord, $newRecord);
-		\Bitrix\Tasks\Internals\Counter::onAfterTaskUpdate($oldRecord, $newRecord);
+		CounterService::addEvent(
+			EventDictionary::EVENT_AFTER_TASK_UPDATE,
+			[
+				'NEW_RECORD' => $newRecord,
+				'OLD_RECORD' => $oldRecord
+			]
+		);
 
 		$arParticipants = array_unique(array_merge(
 			array($newRecord["CREATED_BY"], $newRecord["RESPONSIBLE_ID"]),
@@ -423,10 +440,11 @@ class TaskHandler extends \Bitrix\Replica\Client\BaseHandler
 			\CTaskNotifications::sendStatusMessage($oldRecord, $status, $newRecord);
 		}
 		\CTaskNotifications::sendUpdateMessage($newRecord, $oldRecord, true, array());
-		
+
 		//\CTaskComments::onAfterTaskUpdate($newRecord['ID'], $oldRecord, $newRecord);
 
 		\CTasks::Index($newRecord, $newRecord["TAGS"]); // search index
+		SearchIndex::setTaskSearchIndex($newRecord['ID'], $newRecord);
 
 		// clear cache
 		$CACHE_MANAGER->ClearByTag("tasks_".$newRecord["ID"]);
@@ -448,6 +466,8 @@ class TaskHandler extends \Bitrix\Replica\Client\BaseHandler
 	public function deleteAction(array $oldRecord)
 	{
 		global $CACHE_MANAGER;
+
+		CounterService::getInstance()->collectData((int) $oldRecord['ID']);
 
 		$oldRecord['ACCOMPLICES'] = array();
 		$oldRecord['AUDITORS'] = array();
@@ -512,16 +532,41 @@ class TaskHandler extends \Bitrix\Replica\Client\BaseHandler
 		{
 			\CSearch::DeleteIndex("tasks", $oldRecord["ID"]);
 		}
+		$this->clearSearchIndex((int)$oldRecord['ID']);
 
-		\Bitrix\Tasks\Internals\Counter::onAfterTaskDelete($oldRecord);
+		CounterService::addEvent(
+			EventDictionary::EVENT_AFTER_TASK_DELETE,
+			$oldRecord
+		);
 
 		// clear cache
 		$CACHE_MANAGER->ClearByTag("tasks_".$oldRecord["ID"]);
 
-
 		foreach($arParticipants as $userId)
 		{
 			$CACHE_MANAGER->ClearByTag("tasks_user_".$userId);
+		}
+	}
+
+	/**
+	 * @param int $taskId
+	 *
+	 * @throws Main\ArgumentException
+	 * @throws Main\ObjectPropertyException
+	 * @throws Main\SystemException
+	 * @throws \Exception
+	 */
+	private function clearSearchIndex(int $taskId): void
+	{
+		$tableResult = SearchIndexTable::getList([
+			'select' => ['ID'],
+			'filter' => [
+				'=TASK_ID' => $taskId,
+			],
+		]);
+		while ($item = $tableResult->fetch())
+		{
+			SearchIndexTable::delete($item);
 		}
 	}
 }

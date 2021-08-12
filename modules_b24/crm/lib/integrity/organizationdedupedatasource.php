@@ -29,6 +29,7 @@ class OrganizationDedupeDataSource extends MatchHashDedupeDataSource
 		$entityTypeID = $this->getEntityTypeID();
 		foreach($map as $matchHash => &$entry)
 		{
+			$isValidEntry = false;
 			$primaryQty = isset($entry['PRIMARY']) ? count($entry['PRIMARY']) : 0;
 			if($primaryQty > 1)
 			{
@@ -42,7 +43,12 @@ class OrganizationDedupeDataSource extends MatchHashDedupeDataSource
 						$dup->addEntity(new DuplicateEntity($entityTypeID, $entityID));
 					}
 					$result->addItem($matchHash, $dup);
+					$isValidEntry = true;
 				}
+			}
+			if (!$isValidEntry)
+			{
+				$result->addInvalidItem((string)$matchHash);
 			}
 		}
 		unset($entry);
@@ -92,6 +98,10 @@ class OrganizationDedupeDataSource extends MatchHashDedupeDataSource
 				'!@ENTITY_ID',
 				DuplicateIndexMismatch::prepareQueryField($criterion, $entityTypeID, $rootEntityID, $userID)
 			);
+		}
+		if ($this->getParams()->limitByAssignedUser())
+		{
+			$query->registerRuntimeField('', DedupeDataSource::getAssignedByReferenceField($entityTypeID, $userID));
 		}
 
 		$limit = 0;

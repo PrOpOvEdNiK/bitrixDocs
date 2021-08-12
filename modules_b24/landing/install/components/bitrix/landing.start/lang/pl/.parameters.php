@@ -1,4 +1,0 @@
-<?
-$MESS["LANDING_CMP_PAR_LANDING_TYPE"] = "Site type";
-$MESS["LANDING_CMP_PAR_SM_SITES"] = "Strony";
-?>

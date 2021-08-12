@@ -8,6 +8,22 @@ use Bitrix\Main\ORM;
 
 Localization\Loc::loadMessages(__FILE__);
 
+/**
+ * Class MailServicesTable
+ *
+ * DO NOT WRITE ANYTHING BELOW THIS
+ *
+ * <<< ORMENTITYANNOTATION
+ * @method static EO_MailServices_Query query()
+ * @method static EO_MailServices_Result getByPrimary($primary, array $parameters = array())
+ * @method static EO_MailServices_Result getById($id)
+ * @method static EO_MailServices_Result getList(array $parameters = array())
+ * @method static EO_MailServices_Entity getEntity()
+ * @method static \Bitrix\Mail\EO_MailServices createObject($setDefaultValues = true)
+ * @method static \Bitrix\Mail\EO_MailServices_Collection createCollection()
+ * @method static \Bitrix\Mail\EO_MailServices wakeUpObject($row)
+ * @method static \Bitrix\Mail\EO_MailServices_Collection wakeUpCollection($rows)
+ */
 class MailServicesTable extends Entity\DataManager
 {
 
@@ -302,7 +318,7 @@ class MailServicesTable extends Entity\DataManager
 					return array(
 						function ($value)
 						{
-							return strtolower($value);
+							return mb_strtolower($value);
 						}
 					);
 				},
@@ -311,7 +327,7 @@ class MailServicesTable extends Entity\DataManager
 					return array(
 						function ($value)
 						{
-							return strtolower($value);
+							return mb_strtolower($value);
 						}
 					);
 				},
@@ -348,15 +364,21 @@ class MailServicesTable extends Entity\DataManager
 			new Entity\StringField('SMTP_SERVER'),
 			new Entity\IntegerField('SMTP_PORT'),
 			new Entity\BooleanField('SMTP_LOGIN_AS_IMAP', [
-				'values' => array('Y', 'N'),
+				'values' => array('N', 'Y'),
 				'default_value' => 'N',
 			]),
 			new Entity\BooleanField('SMTP_PASSWORD_AS_IMAP', [
-				'values' => array('Y', 'N'),
+				'values' => array('N', 'Y'),
 				'default_value' => 'N',
 			]),
 			new ORM\Fields\BooleanField(
 				'SMTP_ENCRYPTION',
+				array(
+					'values' => array('N', 'Y'),
+				)
+			),
+			new ORM\Fields\BooleanField(
+				'UPLOAD_OUTGOING',
 				array(
 					'values' => array('N', 'Y'),
 				)

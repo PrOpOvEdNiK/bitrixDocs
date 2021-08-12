@@ -1,4 +1,0 @@
-<?
-$MESS["PRODUCT_FIELD_STATUS_YES"] = "да";
-$MESS["PRODUCT_FIELD_STATUS_NO"] = "нет";
-?>

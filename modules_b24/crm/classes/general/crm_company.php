@@ -1,11 +1,13 @@
 <?php
 IncludeModuleLangFile(__FILE__);
 
+use Bitrix\Crm\Entity\Traits\UserFieldPreparer;
 use Bitrix\Main;
 use Bitrix\Crm;
 use Bitrix\Crm\UtmTable;
 use Bitrix\Crm\Tracking;
 use Bitrix\Crm\EntityAddress;
+use Bitrix\Crm\EntityAddressType;
 use Bitrix\Crm\CompanyAddress;
 use Bitrix\Crm\Binding\ContactCompanyTable;
 use Bitrix\Crm\Integrity\DuplicateBankDetailCriterion;
@@ -19,12 +21,16 @@ use Bitrix\Crm\Counter\EntityCounterManager;
 
 class CAllCrmCompany
 {
+	use UserFieldPreparer;
+
 	static public $sUFEntityID = 'CRM_COMPANY';
 	const USER_FIELD_ENTITY_ID = 'CRM_COMPANY';
 	const SUSPENDED_USER_FIELD_ENTITY_ID = 'CRM_COMPANY_SPD';
 	const TOTAL_COUNT_CACHE_ID =  'crm_company_total_count';
 
 	public $LAST_ERROR = '';
+	protected $checkExceptions = array();
+
 	public $cPerms = null;
 	protected $bCheckPermission = true;
 	const TABLE_ALIAS = 'L';
@@ -47,6 +53,13 @@ class CAllCrmCompany
 		}
 
 		$result = GetMessage("CRM_COMPANY_FIELD_{$fieldName}");
+
+		if (!(is_string($result) && $result !== '')
+			&& Crm\Tracking\UI\Details::isTrackingField($fieldName))
+		{
+			$result = Crm\Tracking\UI\Details::getFieldCaption($fieldName);
+		}
+
 		return is_string($result) ? $result : '';
 	}
 	// Get Fields Metadata
@@ -65,7 +78,8 @@ class CAllCrmCompany
 				),
 				'COMPANY_TYPE' => array(
 					'TYPE' => 'crm_status',
-					'CRM_STATUS_TYPE' => 'COMPANY_TYPE'
+					'CRM_STATUS_TYPE' => 'COMPANY_TYPE',
+					'ATTRIBUTES' => [CCrmFieldInfoAttr::HasDefaultValue]
 				),
 				'LOGO' => array(
 					'TYPE' => 'file'
@@ -94,6 +108,9 @@ class CAllCrmCompany
 				'ADDRESS_COUNTRY_CODE' => array(
 					'TYPE' => 'string'
 				),
+				'ADDRESS_LOC_ADDR_ID' => array(
+					'TYPE' => 'integer'
+				),
 				'ADDRESS_LEGAL' => array(
 					'TYPE' => 'string'
 				),
@@ -121,16 +138,21 @@ class CAllCrmCompany
 				'REG_ADDRESS_COUNTRY_CODE' => array(
 					'TYPE' => 'string'
 				),
+				'REG_ADDRESS_LOC_ADDR_ID' => array(
+					'TYPE' => 'integer'
+				),
 				'BANKING_DETAILS' => array(
 					'TYPE' => 'string'
 				),
 				'INDUSTRY' => array(
 					'TYPE' => 'crm_status',
-					'CRM_STATUS_TYPE' => 'INDUSTRY'
+					'CRM_STATUS_TYPE' => 'INDUSTRY',
+					'ATTRIBUTES' => [CCrmFieldInfoAttr::HasDefaultValue]
 				),
 				'EMPLOYEES' => array(
 					'TYPE' => 'crm_status',
-					'CRM_STATUS_TYPE' => 'EMPLOYEES'
+					'CRM_STATUS_TYPE' => 'EMPLOYEES',
+					'ATTRIBUTES' => [CCrmFieldInfoAttr::HasDefaultValue]
 				),
 				'CURRENCY_ID' => array(
 					'TYPE' => 'crm_currency'
@@ -261,10 +283,22 @@ class CAllCrmCompany
 
 		if(!(is_array($arOptions) && isset($arOptions['DISABLE_ADDRESS']) && $arOptions['DISABLE_ADDRESS']))
 		{
-			$addrJoin = 'LEFT JOIN b_crm_addr ADDR ON L.ID = ADDR.ENTITY_ID AND ADDR.TYPE_ID = '
-				.EntityAddress::Primary.' AND ADDR.ENTITY_TYPE_ID = '.CCrmOwnerType::Company;
-			$regAddrJoin = 'LEFT JOIN b_crm_addr R_ADDR ON L.ID = R_ADDR.ENTITY_ID AND R_ADDR.TYPE_ID = '
-				.EntityAddress::Registered.' AND R_ADDR.ENTITY_TYPE_ID = '.CCrmOwnerType::Company;
+			if (COption::GetOptionString('crm', '~CRM_CONVERT_COMPANY_ADDRESSES', 'N') === 'Y')
+			{
+				$addrJoin = 'LEFT JOIN b_crm_addr ADDR ON L.ID = ADDR.ENTITY_ID AND ADDR.TYPE_ID = '
+					.EntityAddressType::Primary.' AND ADDR.ENTITY_TYPE_ID = '.CCrmOwnerType::Company;
+				$regAddrJoin = 'LEFT JOIN b_crm_addr R_ADDR ON L.ID = R_ADDR.ENTITY_ID AND R_ADDR.TYPE_ID = '
+					.EntityAddressType::Registered.' AND R_ADDR.ENTITY_TYPE_ID = '.CCrmOwnerType::Company;
+			}
+			else
+			{
+				$addrJoin = 'LEFT JOIN b_crm_addr ADDR ON L.ID = ADDR.ANCHOR_ID AND ADDR.TYPE_ID = '
+					.EntityAddressType::Primary.' AND ADDR.ANCHOR_TYPE_ID = '.CCrmOwnerType::Company.
+					' AND ADDR.IS_DEF = 1';
+				$regAddrJoin = 'LEFT JOIN b_crm_addr R_ADDR ON L.ID = R_ADDR.ANCHOR_ID AND R_ADDR.TYPE_ID = '
+					.EntityAddressType::Registered.' AND R_ADDR.ANCHOR_TYPE_ID = '.CCrmOwnerType::Company.
+					' AND R_ADDR.IS_DEF = 1';
+			}
 
 			$result['ADDRESS'] = array('FIELD' => 'ADDR.ADDRESS_1', 'TYPE' => 'string', 'FROM' => $addrJoin);
 			$result['ADDRESS_2'] = array('FIELD' => 'ADDR.ADDRESS_2', 'TYPE' => 'string', 'FROM' => $addrJoin);
@@ -274,6 +308,7 @@ class CAllCrmCompany
 			$result['ADDRESS_PROVINCE'] = array('FIELD' => 'ADDR.PROVINCE', 'TYPE' => 'string', 'FROM' => $addrJoin);
 			$result['ADDRESS_COUNTRY'] = array('FIELD' => 'ADDR.COUNTRY', 'TYPE' => 'string', 'FROM' => $addrJoin);
 			$result['ADDRESS_COUNTRY_CODE'] = array('FIELD' => 'ADDR.COUNTRY_CODE', 'TYPE' => 'string', 'FROM' => $addrJoin);
+			$result['ADDRESS_LOC_ADDR_ID'] = array('FIELD' => 'ADDR.LOC_ADDR_ID', 'TYPE' => 'integer', 'FROM' => $addrJoin);
 
 			$result['ADDRESS_LEGAL'] = array('FIELD' => 'R_ADDR.ADDRESS_1', 'TYPE' => 'string', 'FROM' => $regAddrJoin);
 			$result['REG_ADDRESS'] = array('FIELD' => 'R_ADDR.ADDRESS_1', 'TYPE' => 'string', 'FROM' => $regAddrJoin);
@@ -284,6 +319,7 @@ class CAllCrmCompany
 			$result['REG_ADDRESS_PROVINCE'] = array('FIELD' => 'R_ADDR.PROVINCE', 'TYPE' => 'string', 'FROM' => $regAddrJoin);
 			$result['REG_ADDRESS_COUNTRY'] = array('FIELD' => 'R_ADDR.COUNTRY', 'TYPE' => 'string', 'FROM' => $regAddrJoin);
 			$result['REG_ADDRESS_COUNTRY_CODE'] = array('FIELD' => 'R_ADDR.COUNTRY_CODE', 'TYPE' => 'string', 'FROM' => $regAddrJoin);
+			$result['REG_ADDRESS_LOC_ADDR_ID'] = array('FIELD' => 'R_ADDR.LOC_ADDR_ID', 'TYPE' => 'integer', 'FROM' => $regAddrJoin);
 		}
 
 		// Creation of field aliases
@@ -401,48 +437,19 @@ class CAllCrmCompany
 
 	public static function GetTopIDs($top, $sortType = 'ASC', $userPermissions = null)
 	{
-		$top = (int) $top;
+		$top = (int)$top;
 		if ($top <= 0)
 		{
 			return [];
 		}
 
-		$sortType = strtoupper($sortType) !== 'DESC' ? 'ASC' : 'DESC';
+		$sortType = mb_strtoupper($sortType) !== 'DESC' ? 'ASC' : 'DESC';
 
-		$permissionSql = '';
-		if (!CCrmPerms::IsAdmin())
-		{
-			if (!$userPermissions)
-			{
-				$userPermissions = CCrmPerms::GetCurrentUserPermissions();
-			}
-
-			$permissionSql = self::BuildPermSql('L', 'READ', ['PERMS' => $userPermissions]);
-		}
-
-		if ($permissionSql === false)
-		{
-			return [];
-		}
-
-		$query = new Main\Entity\Query(Crm\CompanyTable::getEntity());
-		$query->addSelect('ID');
-		$query->addOrder('ID', $sortType);
-		$query->setLimit($top);
-
-		if ($permissionSql !== '')
-		{
-			$permissionSql = substr($permissionSql,7);
-			$query->where('ID', 'in', new Main\DB\SqlExpression($permissionSql));
-		}
-
-		$rs = $query->exec();
-		$results = [];
-		while ($field = $rs->fetch())
-		{
-			$results[] = (int) $field['ID'];
-		}
-		return $results;
+		return \Bitrix\Crm\Entity\Company::getInstance()->getTopIDs([
+			'order' => ['ID' => $sortType],
+			'limit' => $top,
+			'userPermissions' => $userPermissions
+		]);
 	}
 
 	public static function GetTotalCount()
@@ -598,7 +605,7 @@ class CAllCrmCompany
 
 		foreach($arSelect as $field)
 		{
-			$field = strtoupper($field);
+			$field = mb_strtoupper($field);
 			if(array_key_exists($field, $arFields))
 				$arSqlSelect[$field] = $arFields[$field].($field != '*' ? ' AS '.$field : '');
 		}
@@ -654,7 +661,7 @@ class CAllCrmCompany
 				return $CDBResult;
 			}
 
-			if(strlen($sSqlPerm) > 0)
+			if($sSqlPerm <> '')
 			{
 				$sSqlPerm = ' AND '.$sSqlPerm;
 			}
@@ -791,12 +798,12 @@ class CAllCrmCompany
 
 		$sSqlSearch = '';
 		foreach($arSqlSearch as $r)
-			if(strlen($r) > 0)
+			if($r <> '')
 				$sSqlSearch .= "\n\t\t\t\tAND  ($r) ";
 		$CCrmUserType = new CCrmUserType($GLOBALS['USER_FIELD_MANAGER'], self::$sUFEntityID);
 		$CCrmUserType->ListPrepareFilter($arFilter);
 		$r = $obUserFieldsSql->GetFilter();
-		if (strlen($r) > 0)
+		if ($r <> '')
 			$sSqlSearch .= "\n\t\t\t\tAND ($r) ";
 
 		if (!empty($sQueryWhereFields))
@@ -815,8 +822,8 @@ class CAllCrmCompany
 			$arOrder = Array('DATE_CREATE' => 'DESC');
 		foreach($arOrder as $by => $order)
 		{
-			$by = strtoupper($by);
-			$order = strtolower($order);
+			$by = mb_strtoupper($by);
+			$order = mb_strtolower($order);
 			if ($order != 'asc')
 				$order = 'desc';
 
@@ -969,6 +976,7 @@ class CAllCrmCompany
 		}
 
 		$this->LAST_ERROR = '';
+		$this->checkExceptions = [];
 
 		$isRestoration = isset($options['IS_RESTORATION']) && $options['IS_RESTORATION'];
 
@@ -1018,6 +1026,14 @@ class CAllCrmCompany
 
 		$arFields['IS_MY_COMPANY'] = (isset($arFields['IS_MY_COMPANY']) && $arFields['IS_MY_COMPANY'] === 'Y') ?
 			'Y' : 'N';
+
+		if(!isset($arFields['TITLE']) || trim($arFields['TITLE']) === '')
+		{
+			$arFields['TITLE'] = self::GetAutoTitle();
+		}
+
+		$fields = self::GetUserFields();
+		$this->fillEmptyFieldValues($arFields, $fields);
 
 		if (!$this->CheckFields($arFields, false, $options))
 		{
@@ -1083,7 +1099,7 @@ class CAllCrmCompany
 
 			if(isset($arFields['LOGO'])
 				&& is_array($arFields['LOGO'])
-				&& strlen(CFile::CheckImageFile($arFields['LOGO'])) === 0)
+				&& CFile::CheckImageFile($arFields['LOGO']) == '')
 			{
 				$arFields['LOGO']['MODULE_ID'] = 'crm';
 				CFile::SaveForDB($arFields, 'LOGO', 'crm');
@@ -1128,14 +1144,30 @@ class CAllCrmCompany
 				}
 			}
 
+			unset($arFields['ID']);
 			$ID = intval($DB->Add('b_crm_company', $arFields, array(), 'FILE: '.__FILE__.'<br /> LINE: '.__LINE__));
+			//Append ID to TITLE if required
+			if($ID > 0 && $arFields['TITLE'] === self::GetAutoTitle())
+			{
+				$arFields['TITLE'] = self::GetAutoTitle($ID);
+				$sUpdate = $DB->PrepareUpdate('b_crm_company', array('TITLE' => $arFields['TITLE']));
+				if($sUpdate <> '')
+				{
+					$DB->Query(
+						"UPDATE b_crm_company SET {$sUpdate} WHERE ID = {$ID}",
+						false,
+						'FILE: '.__FILE__.'<br /> LINE: '.__LINE__
+					);
+				};
+			}
+
+			$result = $arFields['ID'] = $ID;
 
 			if(defined('BX_COMP_MANAGED_CACHE'))
 			{
 				$GLOBALS['CACHE_MANAGER']->CleanDir('b_crm_company');
 			}
 
-			$result = $arFields['ID'] = $ID;
 			CCrmPerms::UpdateEntityAttr('COMPANY', $ID, $arEntityAttr);
 
 			//Statistics & History -->
@@ -1156,7 +1188,7 @@ class CAllCrmCompany
 			EntityAddress::register(
 				CCrmOwnerType::Company,
 				$ID,
-				EntityAddress::Primary,
+				EntityAddressType::Primary,
 				array(
 					'ADDRESS_1' => isset($arFields['ADDRESS']) ? $arFields['ADDRESS'] : null,
 					'ADDRESS_2' => isset($arFields['ADDRESS_2']) ? $arFields['ADDRESS_2'] : null,
@@ -1165,14 +1197,16 @@ class CAllCrmCompany
 					'REGION' => isset($arFields['ADDRESS_REGION']) ? $arFields['ADDRESS_REGION'] : null,
 					'PROVINCE' => isset($arFields['ADDRESS_PROVINCE']) ? $arFields['ADDRESS_PROVINCE'] : null,
 					'COUNTRY' => isset($arFields['ADDRESS_COUNTRY']) ? $arFields['ADDRESS_COUNTRY'] : null,
-					'COUNTRY_CODE' => isset($arFields['ADDRESS_COUNTRY_CODE']) ? $arFields['ADDRESS_COUNTRY_CODE'] : null
+					'COUNTRY_CODE' => isset($arFields['ADDRESS_COUNTRY_CODE']) ? $arFields['ADDRESS_COUNTRY_CODE'] : null,
+					'LOC_ADDR_ID' => isset($arFields['ADDRESS_LOC_ADDR_ID']) ? (int)$arFields['ADDRESS_LOC_ADDR_ID'] : 0,
+					'LOC_ADDR' => isset($arFields['ADDRESS_LOC_ADDR']) ? $arFields['ADDRESS_LOC_ADDR'] : null
 				)
 			);
 
 			EntityAddress::register(
 				CCrmOwnerType::Company,
 				$ID,
-				EntityAddress::Registered,
+				EntityAddressType::Registered,
 				array(
 					'ADDRESS_1' => isset($arFields['REG_ADDRESS']) ? $arFields['REG_ADDRESS'] : null,
 					'ADDRESS_2' => isset($arFields['REG_ADDRESS_2']) ? $arFields['REG_ADDRESS_2'] : null,
@@ -1181,7 +1215,9 @@ class CAllCrmCompany
 					'REGION' => isset($arFields['REG_ADDRESS_REGION']) ? $arFields['REG_ADDRESS_REGION'] : null,
 					'PROVINCE' => isset($arFields['REG_ADDRESS_PROVINCE']) ? $arFields['REG_ADDRESS_PROVINCE'] : null,
 					'COUNTRY' => isset($arFields['REG_ADDRESS_COUNTRY']) ? $arFields['REG_ADDRESS_COUNTRY'] : null,
-					'COUNTRY_CODE' => isset($arFields['REG_ADDRESS_COUNTRY_CODE']) ? $arFields['REG_ADDRESS_COUNTRY_CODE'] : null
+					'COUNTRY_CODE' => isset($arFields['REG_ADDRESS_COUNTRY_CODE']) ? $arFields['REG_ADDRESS_COUNTRY_CODE'] : null,
+					'LOC_ADDR_ID' => isset($arFields['REG_ADDRESS_LOC_ADDR_ID']) ? (int)$arFields['REG_ADDRESS_LOC_ADDR_ID'] : 0,
+					'LOC_ADDR' => isset($arFields['REG_ADDRESS_LOC_ADDR']) ? $arFields['REG_ADDRESS_LOC_ADDR'] : null
 				)
 			);
 
@@ -1222,7 +1258,9 @@ class CAllCrmCompany
 			}
 
 			//region Search content index
-			Bitrix\Crm\Search\SearchContentBuilderFactory::create(CCrmOwnerType::Company)->build($ID);
+			Bitrix\Crm\Search\SearchContentBuilderFactory::create(
+				CCrmOwnerType::Company
+			)->build($ID, ['checkExist' => true]);
 			//endregion
 
 			if(isset($options['REGISTER_SONET_EVENT']) && $options['REGISTER_SONET_EVENT'] === true)
@@ -1273,7 +1311,7 @@ class CAllCrmCompany
 				)
 				{
 					$url = CCrmOwnerType::GetEntityShowPath(CCrmOwnerType::Company, $ID);
-					$serverName = (CMain::IsHTTPS() ? "https" : "http")."://".((defined("SITE_SERVER_NAME") && strlen(SITE_SERVER_NAME) > 0) ? SITE_SERVER_NAME : COption::GetOptionString("main", "server_name", ""));
+					$serverName = (CMain::IsHTTPS() ? "https" : "http")."://".((defined("SITE_SERVER_NAME") && SITE_SERVER_NAME <> '') ? SITE_SERVER_NAME : COption::GetOptionString("main", "server_name", ""));
 
 					$arMessageFields = array(
 						"MESSAGE_TYPE" => IM_MESSAGE_SYSTEM,
@@ -1340,6 +1378,8 @@ class CAllCrmCompany
 		global $DB;
 
 		$this->LAST_ERROR = '';
+		$this->checkExceptions = [];
+
 		$ID = (int) $ID;
 		if(!is_array($arOptions))
 		{
@@ -1378,6 +1418,11 @@ class CAllCrmCompany
 			unset($arFields['DATE_MODIFY']);
 		}
 
+		if(isset($arFields['TITLE']) && trim($arFields['TITLE']) === '')
+		{
+			unset($arFields['TITLE']);
+		}
+
 		if(!$isSystemAction)
 		{
 			$arFields['~DATE_MODIFY'] = $DB->CurrentTimeFunction();
@@ -1405,6 +1450,8 @@ class CAllCrmCompany
 		$assignedByID = (int)(isset($arFields['ASSIGNED_BY_ID']) ? $arFields['ASSIGNED_BY_ID'] : $arRow['ASSIGNED_BY_ID']);
 
 		$bResult = false;
+
+		$options['CURRENT_FIELDS'] = $arRow;
 		if (!$this->CheckFields($arFields, $ID, $arOptions))
 		{
 			$arFields['RESULT_MESSAGE'] = &$this->LAST_ERROR;
@@ -1471,7 +1518,7 @@ class CAllCrmCompany
 						}
 					}
 				}
-				elseif(is_array($arFields['LOGO']) && strlen(CFile::CheckImageFile($arFields['LOGO'])) === 0)
+				elseif(is_array($arFields['LOGO']) && CFile::CheckImageFile($arFields['LOGO']) == '')
 				{
 					//Old file editor (file id is not saved yet)
 					$arFields['LOGO']['MODULE_ID'] = 'crm';
@@ -1583,7 +1630,7 @@ class CAllCrmCompany
 
 			unset($arFields["ID"]);
 			$sUpdate = $DB->PrepareUpdate('b_crm_company', $arFields, 'FILE: '.__FILE__.'<br /> LINE: '.__LINE__);
-			if (strlen($sUpdate) > 0)
+			if ($sUpdate <> '')
 			{
 				$DB->Query("UPDATE b_crm_company SET {$sUpdate} WHERE ID = {$ID}", false, 'FILE: '.__FILE__.'<br /> LINE: '.__LINE__);
 				$bResult = true;
@@ -1621,12 +1668,13 @@ class CAllCrmCompany
 				|| isset($arFields['ADDRESS_POSTAL_CODE'])
 				|| isset($arFields['ADDRESS_REGION'])
 				|| isset($arFields['ADDRESS_PROVINCE'])
-				|| isset($arFields['ADDRESS_COUNTRY']))
+				|| isset($arFields['ADDRESS_COUNTRY'])
+				|| isset($arFields['ADDRESS_LOC_ADDR_ID']))
 			{
 				EntityAddress::register(
 					CCrmOwnerType::Company,
 					$ID,
-					EntityAddress::Primary,
+					EntityAddressType::Primary,
 					array(
 						'ADDRESS_1' => isset($arFields['ADDRESS'])
 							? $arFields['ADDRESS'] : (isset($arRow['ADDRESS']) ? $arRow['ADDRESS'] : null),
@@ -1643,8 +1691,17 @@ class CAllCrmCompany
 						'COUNTRY' => isset($arFields['ADDRESS_COUNTRY'])
 							? $arFields['ADDRESS_COUNTRY'] : (isset($arRow['ADDRESS_COUNTRY']) ? $arRow['ADDRESS_COUNTRY'] : null),
 						'COUNTRY_CODE' => isset($arFields['ADDRESS_COUNTRY_CODE'])
-							? $arFields['ADDRESS_COUNTRY_CODE'] : (isset($arRow['ADDRESS_COUNTRY_CODE']) ? $arRow['ADDRESS_COUNTRY_CODE'] : null)
-					)
+							? $arFields['ADDRESS_COUNTRY_CODE'] : (isset($arRow['ADDRESS_COUNTRY_CODE']) ? $arRow['ADDRESS_COUNTRY_CODE'] : null),
+						'LOC_ADDR_ID' => isset($arFields['ADDRESS_LOC_ADDR_ID'])
+							? (int)$arFields['ADDRESS_LOC_ADDR_ID'] : (isset($arRow['ADDRESS_LOC_ADDR_ID']) ? (int)$arRow['ADDRESS_LOC_ADDR_ID'] : 0),
+						'LOC_ADDR' => isset($arFields['ADDRESS_LOC_ADDR']) ? $arFields['ADDRESS_LOC_ADDR'] : null
+					),
+					[
+						'updateLocationAddress' => !(
+							(isset($arFields['ADDRESS_LOC_ADDR_ID']) && $arFields['ADDRESS_LOC_ADDR_ID'] > 0) ||
+							(isset($arFields['ADDRESS_LOC_ADDR']) && is_object($arFields['ADDRESS_LOC_ADDR']))
+						)
+					]
 				);
 			}
 
@@ -1654,12 +1711,13 @@ class CAllCrmCompany
 				|| isset($arFields['REG_ADDRESS_POSTAL_CODE'])
 				|| isset($arFields['REG_ADDRESS_REGION'])
 				|| isset($arFields['REG_ADDRESS_PROVINCE'])
-				|| isset($arFields['REG_ADDRESS_COUNTRY']))
+				|| isset($arFields['REG_ADDRESS_COUNTRY'])
+				|| isset($arFields['REG_ADDRESS_LOC_ADDR_ID']))
 			{
 				EntityAddress::register(
 					CCrmOwnerType::Company,
 					$ID,
-					EntityAddress::Registered,
+					EntityAddressType::Registered,
 					array(
 						'ADDRESS_1' => isset($arFields['REG_ADDRESS'])
 							? $arFields['REG_ADDRESS'] : (isset($arRow['REG_ADDRESS']) ? $arRow['REG_ADDRESS'] : null),
@@ -1676,8 +1734,17 @@ class CAllCrmCompany
 						'COUNTRY' => isset($arFields['REG_ADDRESS_COUNTRY'])
 							? $arFields['REG_ADDRESS_COUNTRY'] : (isset($arRow['REG_ADDRESS_COUNTRY']) ? $arRow['REG_ADDRESS_COUNTRY'] : null),
 						'COUNTRY_CODE' => isset($arFields['REG_ADDRESS_COUNTRY_CODE'])
-							? $arFields['REG_ADDRESS_COUNTRY_CODE'] : (isset($arRow['REG_ADDRESS_COUNTRY_CODE']) ? $arRow['REG_ADDRESS_COUNTRY_CODE'] : null)
-					)
+							? $arFields['REG_ADDRESS_COUNTRY_CODE'] : (isset($arRow['REG_ADDRESS_COUNTRY_CODE']) ? $arRow['REG_ADDRESS_COUNTRY_CODE'] : null),
+						'LOC_ADDR_ID' => isset($arFields['REG_ADDRESS_LOC_ADDR_ID'])
+							? (int)$arFields['REG_ADDRESS_LOC_ADDR_ID'] : (isset($arRow['REG_ADDRESS_LOC_ADDR_ID']) ? (int)$arRow['REG_ADDRESS_LOC_ADDR_ID'] : 0),
+						'LOC_ADDR' => isset($arFields['REG_ADDRESS_LOC_ADDR']) ? $arFields['REG_ADDRESS_LOC_ADDR'] : null
+					),
+					[
+						'updateLocationAddress' => !(
+							(isset($arFields['REG_ADDRESS_LOC_ADDR_ID']) && $arFields['REG_ADDRESS_LOC_ADDR_ID'] > 0) ||
+							(isset($arFields['REG_ADDRESS_LOC_ADDR']) && is_object($arFields['REG_ADDRESS_LOC_ADDR']))
+						)
+					]
 				);
 			}
 
@@ -1699,6 +1766,14 @@ class CAllCrmCompany
 					Bitrix\Crm\Statistics\LeadConversionStatisticsEntry::processBindingsChange($curLeadID);
 				}
 			}
+
+			$enableDupIndexInvalidation = isset($arOptions['ENABLE_DUP_INDEX_INVALIDATION'])
+				? (bool)$arOptions['ENABLE_DUP_INDEX_INVALIDATION'] : true;
+			if(!$isSystemAction && $enableDupIndexInvalidation)
+			{
+				\Bitrix\Crm\Integrity\DuplicateManager::markDuplicateIndexAsDirty(CCrmOwnerType::Company, $ID);
+			}
+
 			Bitrix\Crm\Statistics\CompanyGrowthStatisticEntry::synchronize($ID, array(
 				'ASSIGNED_BY_ID' => $assignedByID
 			));
@@ -1733,6 +1808,10 @@ class CAllCrmCompany
 						),
 						$assignedByIDs
 					);
+				}
+				if ($assignedByID !== $previousAssignedByID && $enableDupIndexInvalidation)
+				{
+					\Bitrix\Crm\Integrity\DuplicateManager::onChangeEntityAssignedBy(CCrmOwnerType::Company, $ID);
 				}
 			}
 
@@ -1809,7 +1888,8 @@ class CAllCrmCompany
 			}
 
 			//region Search content index
-			Bitrix\Crm\Search\SearchContentBuilderFactory::create(CCrmOwnerType::Company)->build($ID);
+			Bitrix\Crm\Search\SearchContentBuilderFactory::create(CCrmOwnerType::Company)
+				->build($ID, ['checkExist' => true]);
 			//endregion
 
 			Bitrix\Crm\Timeline\CompanyController::getInstance()->onModify(
@@ -1855,7 +1935,7 @@ class CAllCrmCompany
 					{
 						$title = CCrmOwnerType::GetCaption(CCrmOwnerType::Company, $ID, false);
 						$url = CCrmOwnerType::GetEntityShowPath(CCrmOwnerType::Company, $ID);
-						$serverName = (CMain::IsHTTPS() ? "https" : "http")."://".((defined("SITE_SERVER_NAME") && strlen(SITE_SERVER_NAME) > 0) ? SITE_SERVER_NAME : COption::GetOptionString("main", "server_name", ""));
+						$serverName = (CMain::IsHTTPS() ? "https" : "http")."://".((defined("SITE_SERVER_NAME") && SITE_SERVER_NAME <> '') ? SITE_SERVER_NAME : COption::GetOptionString("main", "server_name", ""));
 
 						if ($sonetEventFields['PARAMS']['FINAL_RESPONSIBLE_ID'] != $modifiedByID)
 						{
@@ -2043,6 +2123,10 @@ class CAllCrmCompany
 
 			CCrmSearch::DeleteSearch('COMPANY', $ID);
 
+			Bitrix\Crm\Search\SearchContentBuilderFactory::create(
+				CCrmOwnerType::Company
+			)->removeShortIndex($ID);
+
 			$DB->Query("DELETE FROM b_crm_entity_perms WHERE ENTITY='COMPANY' AND ENTITY_ID = $ID", false, 'FILE: '.__FILE__.'<br /> LINE: '.__LINE__);
 			$GLOBALS['USER_FIELD_MANAGER']->Delete(self::$sUFEntityID, $ID);
 
@@ -2062,17 +2146,17 @@ class CAllCrmCompany
 				}
 			}
 
-			DuplicateEntityRanking::unregisterEntityStatistics(CCrmOwnerType::Company, $ID);
-			DuplicateOrganizationCriterion::unregister(CCrmOwnerType::Company, $ID);
-			DuplicateCommunicationCriterion::unregister(CCrmOwnerType::Company, $ID);
-			DuplicateIndexMismatch::unregisterEntity(CCrmOwnerType::Company, $ID);
-
 			$enableDupIndexInvalidation = isset($arOptions['ENABLE_DUP_INDEX_INVALIDATION'])
 				? (bool)$arOptions['ENABLE_DUP_INDEX_INVALIDATION'] : true;
 			if($enableDupIndexInvalidation)
 			{
-				\Bitrix\Crm\Integrity\DuplicateIndexBuilder::markAsJunk(CCrmOwnerType::Company, $ID);
+				\Bitrix\Crm\Integrity\DuplicateManager::markDuplicateIndexAsJunk(CCrmOwnerType::Company, $ID);
 			}
+
+			DuplicateEntityRanking::unregisterEntityStatistics(CCrmOwnerType::Company, $ID);
+			DuplicateOrganizationCriterion::unregister(CCrmOwnerType::Company, $ID);
+			DuplicateCommunicationCriterion::unregister(CCrmOwnerType::Company, $ID);
+			DuplicateIndexMismatch::unregisterEntity(CCrmOwnerType::Company, $ID);
 
 			//Statistics & History -->
 			$leadID = isset($arFields['LEAD_ID']) ? (int)$arFields['LEAD_ID'] : 0;
@@ -2105,8 +2189,8 @@ class CAllCrmCompany
 				$CCrmFieldMulti = new CCrmFieldMulti();
 				$CCrmFieldMulti->DeleteByElement('COMPANY', $ID);
 
-				EntityAddress::unregister(CCrmOwnerType::Company, $ID, EntityAddress::Primary);
-				EntityAddress::unregister(CCrmOwnerType::Company, $ID, EntityAddress::Registered);
+				EntityAddress::unregister(CCrmOwnerType::Company, $ID, EntityAddressType::Primary);
+				EntityAddress::unregister(CCrmOwnerType::Company, $ID, EntityAddressType::Registered);
 				\Bitrix\Crm\Timeline\TimelineEntry::deleteByOwner(CCrmOwnerType::Company, $ID);
 
 				$requisite = new \Bitrix\Crm\EntityRequisite();
@@ -2166,6 +2250,7 @@ class CAllCrmCompany
 	{
 		global $APPLICATION, $USER_FIELD_MANAGER;
 		$this->LAST_ERROR = '';
+		$this->checkExceptions = [];
 
 		if (($ID == false || isset($arFields['TITLE'])) && empty($arFields['TITLE']))
 			$this->LAST_ERROR .= GetMessage('CRM_ERROR_FIELD_IS_MISSING', array('%FIELD_NAME%' => GetMessage('CRM_COMPANY_FIELD_TITLE')))."<br />";
@@ -2181,7 +2266,7 @@ class CAllCrmCompany
 
 		if (isset($arFields['LOGO']) && is_array($arFields['LOGO']))
 		{
-			if (($strError = CFile::CheckFile($arFields['LOGO'], 0, 0, CFile::GetImageExtensions())) != '')
+			if (($strError = CFile::CheckFile($arFields['LOGO'], 0, false, CFile::GetImageExtensions())) != '')
 				$this->LAST_ERROR .= $strError."<br />";
 		}
 
@@ -2204,22 +2289,118 @@ class CAllCrmCompany
 		if ($enableUserFieldCheck)
 		{
 			// We have to prepare field data before check (issue #22966)
-			CCrmEntityHelper::NormalizeUserFields($arFields, self::$sUFEntityID, $USER_FIELD_MANAGER, array('IS_NEW' => ($ID == false)));
+			CCrmEntityHelper::NormalizeUserFields(
+				$arFields,
+				self::$sUFEntityID,
+				$USER_FIELD_MANAGER,
+				array('IS_NEW' => ($ID == false))
+			);
 
 			$enableRequiredUserFieldCheck = !(isset($options['DISABLE_REQUIRED_USER_FIELD_CHECK'])
 				&& $options['DISABLE_REQUIRED_USER_FIELD_CHECK'] === true);
 
-			if(!$USER_FIELD_MANAGER->CheckFields(self::$sUFEntityID, $ID, $arFields, false, $enableRequiredUserFieldCheck))
+			$fieldsToCheck = $arFields;
+			$requiredFields = null;
+			if($enableRequiredUserFieldCheck)
+			{
+				/* Comment before status support
+				$currentFields = null;
+				if($ID > 0)
+				{
+					if(isset($options['CURRENT_FIELDS']) && is_array($options['CURRENT_FIELDS']))
+					{
+						$currentFields = $options['CURRENT_FIELDS'];
+					}
+					else
+					{
+						$dbResult = self::GetListEx(
+							array(),
+							array('ID' => $ID, 'CHECK_PERMISSIONS' => 'N'),
+							false,
+							false,
+							array('*', 'UF_*')
+						);
+						$currentFields = $dbResult->Fetch();
+					}
+				}
+
+				if(is_array($currentFields))
+				{
+					CCrmEntityHelper::NormalizeUserFields(
+						$currentFields,
+						self::$sUFEntityID,
+						$USER_FIELD_MANAGER,
+						array('IS_NEW' => ($ID == false))
+					);
+
+					//If Status ID is changed we must perform check of all fields.
+					if(isset($arFields['STATUS_ID']) && $arFields['STATUS_ID'] !== $currentFields['STATUS_ID'])
+					{
+						$fieldsToCheck = array_merge($currentFields, $arFields);
+						if(self::GetSemanticID($arFields['STATUS_ID'], $currentFields['CATEGORY_ID']) ===
+							Bitrix\Crm\PhaseSemantics::FAILURE)
+						{
+							//Disable required fields check for failure status due to backward compatibility.
+							$enableRequiredUserFieldCheck = false;
+						}
+					}
+					elseif(!isset($arFields['STATUS_ID']) && isset($currentFields['STATUS_ID']))
+					{
+						$fieldsToCheck = array_merge($arFields, array('STATUS_ID' => $currentFields['STATUS_ID']));
+					}
+				}*/
+
+				$requiredFields = Crm\Attribute\FieldAttributeManager::getRequiredFields(
+					CCrmOwnerType::Company,
+					$ID,
+					$fieldsToCheck,
+					Crm\Attribute\FieldOrigin::UNDEFINED,
+					is_array($options['FIELD_CHECK_OPTIONS']) ? $options['FIELD_CHECK_OPTIONS'] : array()
+				);
+
+				$requiredSystemFields = isset($requiredFields[Crm\Attribute\FieldOrigin::SYSTEM])
+					? $requiredFields[Crm\Attribute\FieldOrigin::SYSTEM] : array();
+				if(!empty($requiredSystemFields))
+				{
+					$validator = new Crm\Entity\CompanyValidator($ID, $fieldsToCheck);
+					$validationErrors = array();
+					foreach($requiredSystemFields as $fieldName)
+					{
+						$validator->checkFieldPresence($fieldName, $validationErrors);
+					}
+
+					if(!empty($validationErrors))
+					{
+						$e = new CAdminException($validationErrors);
+						$this->checkExceptions[] = $e;
+						$this->LAST_ERROR .= $e->GetString();
+					}
+				}
+			}
+
+			$requiredUserFields = is_array($requiredFields) && isset($requiredFields[Crm\Attribute\FieldOrigin::CUSTOM])
+				? $requiredFields[Crm\Attribute\FieldOrigin::CUSTOM] : array();
+
+			if (!$USER_FIELD_MANAGER->CheckFields(
+				self::$sUFEntityID,
+				$ID,
+				$fieldsToCheck,
+				false,
+				$enableRequiredUserFieldCheck,
+				$requiredUserFields))
 			{
 				$e = $APPLICATION->GetException();
+				$this->checkExceptions[] = $e;
 				$this->LAST_ERROR .= $e->GetString();
 			}
 		}
 
-		if(strlen($this->LAST_ERROR) > 0)
-			return false;
+		return $this->LAST_ERROR === '';
+	}
 
-		return true;
+	public function GetCheckExceptions()
+	{
+		return $this->checkExceptions;
 	}
 
 	public static function CompareFields(array $arFieldsOrig, array $arFieldsModif, array $arOptions = null)
@@ -2254,7 +2435,7 @@ class CAllCrmCompany
 			CompanyAddress::prepareChangeEvents(
 				$arFieldsOrig,
 				$arFieldsModif,
-				EntityAddress::Primary,
+				EntityAddressType::Primary,
 				$addressOptions
 			)
 		);
@@ -2264,7 +2445,7 @@ class CAllCrmCompany
 			CompanyAddress::prepareChangeEvents(
 				$arFieldsOrig,
 				$arFieldsModif,
-				EntityAddress::Registered,
+				EntityAddressType::Registered,
 				$addressOptions
 			)
 		);
@@ -2345,7 +2526,7 @@ class CAllCrmCompany
 		{
 			$arUser = Array();
 			$dbUsers = CUser::GetList(
-				($sort_by = 'last_name'), ($sort_dir = 'asc'),
+				'last_name', 'asc',
 				array('ID' => implode('|', array(intval($arFieldsOrig['ASSIGNED_BY_ID']), intval($arFieldsModif['ASSIGNED_BY_ID'])))),
 				array('FIELDS' => array('ID', 'NAME', 'SECOND_NAME', 'LAST_NAME', 'LOGIN', 'TITLE', 'EMAIL'))
 			);
@@ -2432,7 +2613,7 @@ class CAllCrmCompany
 		// converts data from filter
 		if (isset($arFilter['FIND_list']) && !empty($arFilter['FIND']))
 		{
-			$arFilter[strtoupper($arFilter['FIND_list'])] = $arFilter['FIND'];
+			$arFilter[mb_strtoupper($arFilter['FIND_list'])] = $arFilter['FIND'];
 			unset($arFilter['FIND_list'], $arFilter['FIND']);
 		}
 
@@ -2495,7 +2676,7 @@ class CAllCrmCompany
 			}
 			elseif (preg_match('/(.*)_from$/i'.BX_UTF_PCRE_MODIFIER, $k, $arMatch))
 			{
-				if(strlen($v) > 0)
+				if($v <> '')
 				{
 					$arFilter['>='.$arMatch[1]] = $v;
 				}
@@ -2503,7 +2684,7 @@ class CAllCrmCompany
 			}
 			elseif (preg_match('/(.*)_to$/i'.BX_UTF_PCRE_MODIFIER, $k, $arMatch))
 			{
-				if(strlen($v) > 0)
+				if($v <> '')
 				{
 					if (($arMatch[1] == 'DATE_CREATE' || $arMatch[1] == 'DATE_MODIFY') && !preg_match('/\d{1,2}:\d{1,2}(:\d{1,2})?$/'.BX_UTF_PCRE_MODIFIER, $v))
 					{
@@ -2523,7 +2704,7 @@ class CAllCrmCompany
 				}
 				unset($arFilter[$k]);
 			}
-			elseif ($k != 'ID' && $k != 'LOGIC' && $k != '__INNER_FILTER' && strpos($k, 'UF_') !== 0 && preg_match('/^[^\=\%\?\>\<]{1}/', $k) === 1)
+			elseif ($k != 'ID' && $k != 'LOGIC' && $k != '__INNER_FILTER' && mb_strpos($k, 'UF_') !== 0 && preg_match('/^[^\=\%\?\>\<]{1}/', $k) === 1)
 			{
 				$arFilter['%'.$k] = $v;
 				unset($arFilter[$k]);
@@ -2656,18 +2837,18 @@ class CAllCrmCompany
 			}
 			elseif($fieldName === Crm\EntityRequisite::ADDRESS)
 			{
-				$requisiteFields[Crm\EntityRequisite::ADDRESS] = array(
-					EntityAddress::Primary =>
+				$requisiteFields[Crm\EntityRequisite::ADDRESS] = [
+					EntityAddressType::Primary =>
 						CompanyAddress::mapEntityFields(
 							$entityFields,
-							array('TYPE_ID' => EntityAddress::Primary, 'SKIP_EMPTY' => true)
+							['TYPE_ID' => EntityAddressType::Primary, 'SKIP_EMPTY' => true]
 						),
-					EntityAddress::Registered =>
+					EntityAddressType::Registered =>
 						CompanyAddress::mapEntityFields(
 							$entityFields,
-							array('TYPE_ID' => EntityAddress::Registered, 'SKIP_EMPTY' => true)
+							['TYPE_ID' => EntityAddressType::Registered, 'SKIP_EMPTY' => true]
 						)
-				);
+				];
 			}
 		}
 
@@ -2742,6 +2923,16 @@ class CAllCrmCompany
 	public static function GetDefaultTitle()
 	{
 		return GetMessage('CRM_COMPANY_UNTITLED');
+	}
+
+	public static function GetAutoTitleTemplate()
+	{
+		return GetMessage('CRM_COMPANY_DEFAULT_TITLE_TEMPLATE');
+	}
+
+	public static function GetAutoTitle($number = '')
+	{
+		return GetMessage('CRM_COMPANY_DEFAULT_TITLE_TEMPLATE', array('%NUMBER%' => $number));
 	}
 
 	/**
@@ -2831,5 +3022,16 @@ class CAllCrmCompany
 		return $fields;
 	}
 
+	public static function isMyCompany(int $id)
+	{
+		$result = \CCrmCompany::GetListEx(
+			[],
+			['=ID' => $id, 'CHECK_PERMISSIONS' => 'N'],
+			false,
+			false,
+			['IS_MY_COMPANY']
+		)->Fetch();
+
+		return ($result && $result['IS_MY_COMPANY'] === 'Y');
+	}
 }
-?>

@@ -4,7 +4,7 @@ namespace Bitrix\Intranet\Controller;
 use Bitrix\Main\Error;
 use Bitrix\Main\Localization\Loc;
 
-require_once($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/intranet/install/templates/bitrix24/components/bitrix/search.title/.default/class.php");
+require_once __DIR__."/../../install/templates/bitrix24/components/bitrix/search.title/.default/class.php";
 
 class SearchEntity extends \Bitrix\Main\Engine\Controller
 {
@@ -23,7 +23,7 @@ class SearchEntity extends \Bitrix\Main\Engine\Controller
 	{
 		$entity = trim($entity);
 
-		if (strlen($entity) <= 0)
+		if ($entity == '')
 		{
 			$this->addError(new Error(Loc::getMessage('INTRANET_CONTROLLER_SEARCHENTITY_GETALL_ENTITY_EMPTY'), 'INTRANET_CONTROLLER_SEARCHENTITY_GETALL_ENTITY_EMPTY'));
 			return null;

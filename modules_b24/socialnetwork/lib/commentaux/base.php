@@ -36,6 +36,11 @@ abstract class Base
 		return '';
 	}
 
+	public function canDelete()
+	{
+		return true;
+	}
+
 	public function getLiveParams()
 	{
 		$result = array();
@@ -59,6 +64,11 @@ abstract class Base
 	public function setOptions(array $options)
 	{
 		$this->options = $options;
+	}
+
+	public function getOptions()
+	{
+		return $this->options;
 	}
 
 	public function checkRecalcNeeded($fields, $params)
@@ -175,7 +185,7 @@ abstract class Base
 		{
 			$options = $this->options;
 
-			$commentAuthorId = (!empty($params['commentAuthorId']) && intval($params['commentAuthorId']) > 0 ? intval($params['commentAuthorId']) : 0);
+			$commentAuthorId = (!empty($params['commentAuthorId']) && (int)$params['commentAuthorId'] > 0 ? (int)$params['commentAuthorId'] : 0);
 
 			$siteList = $intranetSiteId = $extranetSiteId = false;
 
@@ -184,12 +194,12 @@ abstract class Base
 				$siteList = array();
 				$intranetSiteId = \CExtranet::getExtranetSiteID();
 				$extranetSiteId = \CSite::getDefSite();
-				$res = \CSite::getList($by="sort", $order="desc", array("ACTIVE" => "Y"));
+				$res = \CSite::getList("sort", "desc", array("ACTIVE" => "Y"));
 				while($site = $res->fetch())
 				{
 					$siteList[$site["ID"]] = array(
-						"DIR" => (strlen(trim($site["DIR"])) > 0 ? $site["DIR"] : "/"),
-						"SERVER_NAME" => (strlen(trim($site["SERVER_NAME"])) > 0 ? $site["SERVER_NAME"] : Option::get("main", "server_name", $_SERVER["HTTP_HOST"]))
+						"DIR" => (trim($site["DIR"]) <> '' ? $site["DIR"] : "/"),
+						"SERVER_NAME" => (trim($site["SERVER_NAME"]) <> '' ? $site["SERVER_NAME"] : Option::get("main", "server_name", $_SERVER["HTTP_HOST"]))
 					);
 				}
 			}

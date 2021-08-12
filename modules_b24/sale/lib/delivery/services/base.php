@@ -16,7 +16,7 @@ use Bitrix\Sale\Delivery\Requests;
 Loc::loadMessages(__FILE__);
 
 /* Inputs for deliveries */
-require_once($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/sale/lib/delivery/inputs.php");
+require_once __DIR__.'/../inputs.php';
 
 /**
  * Class Base (abstract)
@@ -40,6 +40,7 @@ abstract class Base
 	protected $trackingClass = "";
 	/** @var Requests\HandlerBase  */
 	protected $deliveryRequestHandler = null;
+
 	protected $extraServices = array();
 	protected $trackingParams = array();
 	protected $allowEditShipment = array();
@@ -239,6 +240,14 @@ abstract class Base
 	}
 
 	/**
+	 * @return float|null
+	 */
+	public static function getDefaultVatRate(): ?float
+	{
+		return null;
+	}
+
+	/**
 	 * @param \Bitrix\Sale\Shipment $shipment.
 	 * @return Delivery\CalculationResult
 	 */
@@ -286,7 +295,7 @@ abstract class Base
 		if($strError != "")
 			throw new SystemException($strError);
 
-		if(strpos($fields['CLASS_NAME'], '\\') !== 0)
+		if(mb_strpos($fields['CLASS_NAME'], '\\') !== 0)
 		{
 			$fields['CLASS_NAME'] = '\\'.$fields['CLASS_NAME'];
 		}
@@ -537,6 +546,15 @@ abstract class Base
 	}
 
 	/**
+	 * @param array $fields
+	 * @return \Bitrix\Main\Result
+	 */
+	public static function onBeforeAdd(array &$fields = array()): \Bitrix\Main\Result
+	{
+		return new \Bitrix\Main\Result();
+	}
+
+	/**
 	 * @param int $serviceId
 	 * @param array $fields
 	 * @return bool
@@ -572,6 +590,18 @@ abstract class Base
 	public function isCompatible(Shipment $shipment)
 	{
 		return true;
+	}
+
+	/**
+	 * Returns array of extra service ids available for the specified shipment
+	 * OR null in case all extra services are available
+	 *
+	 * @param Shipment $shipment
+	 * @return array|null
+	 */
+	public function getCompatibleExtraServiceIds(Shipment $shipment): ?array
+	{
+		return null;
 	}
 
 	/**
@@ -830,26 +860,17 @@ abstract class Base
 	}
 
 	/**
+	 * Checks if handler is compatible
+	 *
 	 * @return bool
-	 * @throws \Bitrix\Main\LoaderException
 	 */
 	public static function isHandlerCompatible()
 	{
-		$result = true;
-
-		//Only configurable are fully compatible with all languages
-		if (ModuleManager::isModuleInstalled('bitrix24')
-			&& Loader::includeModule('bitrix24')
-			&& method_exists('CBitrix24', 'getLicensePrefix'))
-		{
-			$languageId = \CBitrix24::getLicensePrefix();
-
-			if(!in_array($languageId, ['ru', 'kz', 'by', 'ua']))
-			{
-				$result = false;
-			}
-		}
-
-		return $result;
+		// Actually only configurable are fully compatible with all languages
+		return in_array(
+			\Bitrix\Sale\Delivery\Helper::getPortalZone(),
+			['', 'ru', 'kz', 'by', 'ua'],
+			true
+		);
 	}
 }

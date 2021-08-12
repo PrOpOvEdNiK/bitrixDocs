@@ -1,8 +1,0 @@
-<?
-$MESS["CRM_COLUMN_ACT_CUST_TYPE_CREATED_DATE"] = "Date de création";
-$MESS["CRM_COLUMN_ACT_CUST_TYPE_ID"] = "ID";
-$MESS["CRM_COLUMN_ACT_CUST_TYPE_NAME"] = "Nom";
-$MESS["CRM_COLUMN_ACT_CUST_TYPE_SORT"] = "Trier";
-$MESS["CRM_MODULE_NOT_INSTALLED"] = "Le module CRM n'est pas installé.";
-$MESS["CRM_PERMISSION_DENIED"] = "Accès refusé";
-?>

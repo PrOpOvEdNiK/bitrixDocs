@@ -134,7 +134,7 @@ final class VoteUserType
 	 */
 	public static function prepareSettings($userField)
 	{
-		$userField["SETTINGS"] = (is_array($userField["SETTINGS"]) ? $userField["SETTINGS"] : @unserialize($userField["SETTINGS"]));
+		$userField["SETTINGS"] = (is_array($userField["SETTINGS"]) ? $userField["SETTINGS"] : @unserialize($userField["SETTINGS"], ["allowed_classes" => false]));
 		$userField["SETTINGS"] = (is_array($userField["SETTINGS"]) ? $userField["SETTINGS"] : array());
 		$tmp = array("CHANNEL_ID" => intval($userField["SETTINGS"]["CHANNEL_ID"]));
 
@@ -169,16 +169,15 @@ final class VoteUserType
 	 */
 	public static function checkSettings(&$params)
 	{
-		$settings = (is_array($params["SETTINGS"]) ? $params["SETTINGS"] : @unserialize($params["SETTINGS"]));
+		$settings = (is_array($params["SETTINGS"]) ? $params["SETTINGS"] : @unserialize($params["SETTINGS"], ["allowed_classes" => false]));
 		$settings = is_array($settings) ? $settings : array($settings);
 		if (array_key_exists("CHANNEL_ID", $settings))
 		{
 			$settings["CHANNEL_ID"] = intval($settings["CHANNEL_ID"]);
 			if ($settings["CHANNEL_ID"] <= 0 && \Bitrix\Main\Loader::includeModule("vote"))
 			{
-				$isFiltered = "";
-				$dbRes = \CVoteChannel::GetList($by = "ID", $order = "ASC",
-					array("SYMBOLIC_NAME" => $settings["CHANNEL_SYMBOLIC_NAME"], "SYMBOLIC_NAME_EXACT_MATCH" => "Y"), $isFiltered);
+				$dbRes = \CVoteChannel::GetList('', '',
+					array("SYMBOLIC_NAME" => $settings["CHANNEL_SYMBOLIC_NAME"], "SYMBOLIC_NAME_EXACT_MATCH" => "Y"));
 				if (!($dbRes && ($channel = $dbRes->fetch()) && !!$channel))
 				{
 					$res = array(
@@ -192,11 +191,10 @@ final class VoteUserType
 						"SITE" => array(),
 						"GROUP_ID" => array()
 					);
-					$by = "sort"; $order = "asc";
-					$dbRes = \CSite::GetList($by, $order);
+					$dbRes = \CSite::GetList();
 					while ($site = $dbRes->getNext())
 						$res["SITE"][] = $site["ID"];
-					$dbRes = \CGroup::GetList($by = "sort", $order = "asc", Array("ADMIN" => "N"));
+					$dbRes = \CGroup::GetList("sort", "asc", Array("ADMIN" => "N"));
 					while ($group = $dbRes->getNext())
 						$res["GROUP_ID"][$group["ID"]] = ($group["ID"] == 2 ? 1 : 4);
 					$res["GROUP_ID"] = (is_array($settings["GROUP_ID"]) ? array_intersect_key($settings["GROUP_ID"], $res["GROUP_ID"]) : $res["GROUP_ID"]);
@@ -254,7 +252,7 @@ final class VoteUserType
 			$entity["NOTIFY"] = $userField["SETTINGS"]["NOTIFY"];
 		}
 		$value = (!empty($value) ? intval($value) : "add");
-		$dbRes = \CVoteChannel::GetList($by = "", $order = "", array("ACTIVE" => "Y"), $isFiltered);
+		$dbRes = \CVoteChannel::GetList("", "", array("ACTIVE" => "Y"));
 		$voteChannels = array("reference" => array(Loc::getMessage("V_NEW_CHANNEL")), "reference_id" => array("add"));
 		if ($dbRes && $res = $dbRes->fetch())
 		{
@@ -297,7 +295,7 @@ final class VoteUserType
 				?>id="CHANNEL_USE_CAPTCHA" <?if ($entity["CHANNEL_USE_CAPTCHA"] == "Y"): ?> checked <? endif;
 				?>value="Y" /> <label for="CHANNEL_USE_CAPTCHA"><?=Loc::getMessage("V_CHANNEL_ID_USE_CAPTCHA")?></label></td>
 		</tr><?
-		$dbRes = \CGroup::GetList($by = "sort", $order = "asc", Array("ADMIN" => "N"));
+		$dbRes = \CGroup::GetList("sort", "asc", Array("ADMIN" => "N"));
 		while ($group = $dbRes->getNext())
 		{
 			if($varsFromForm)
@@ -324,11 +322,19 @@ final class VoteUserType
 		}
 		else
 		{
-			$uniqType = ($userField["SETTINGS"]["UNIQUE"] ? $userField["SETTINGS"]["UNIQUE"] : (\Bitrix\Vote\Vote\EventLimits::BY_USER_AUTH|\Bitrix\Vote\Vote\EventLimits::BY_USER_ID));
-			if (is_array($userField["SETTINGS"]["UNIQUE"]))
+			$uniqType = \Bitrix\Vote\Vote\EventLimits::BY_USER_AUTH|\Bitrix\Vote\Vote\EventLimits::BY_USER_ID;
+			if (is_array($userField) && array_key_exists("SETTINGS", $userField) && array_key_exists("UNIQUE", $userField["SETTINGS"]))
 			{
-				foreach ( $userField["SETTINGS"]["UNIQUE"] as $res)
-					$uniqType |= $res;
+				$uniqType = 0;
+				if (is_array($userField["SETTINGS"]["UNIQUE"]))
+				{
+					foreach ( $userField["SETTINGS"]["UNIQUE"] as $res)
+						$uniqType |= $res;
+				}
+				else
+				{
+					$uniqType = intval($userField["SETTINGS"]["UNIQUE"]);
+				}
 			}
 		}
 		if ($uniqType&\Bitrix\Vote\Vote\EventLimits::BY_USER_AUTH)
@@ -434,13 +440,13 @@ final class VoteUserType
 	 * @param array $value Value.
 	 * @return string
 	 */
-	public static function getEditFormHTML($userField, $value)
+	public static function getEditFormHTML($userField, $value, $bVarsFromForm = false)
 	{
 		ob_start();
 		$params = array(
-			"arUserField" => $userField
+			"arUserField" => $userField,
+			"bVarsFromForm" => $bVarsFromForm
 		);
-		$result = $value;
 		\Bitrix\Vote\UF\Manager::getInstance($userField)->showEdit($params, $value);
 		return ob_get_clean();
 	}
@@ -535,9 +541,9 @@ final class VoteUserType
 	 */
 	public static function checkFields($userField, $value, $userId = false)
 	{
-		$res = "";
 		if ($userField && is_array($userField["USER_TYPE"]) && $userField["USER_TYPE"]["CLASS_NAME"] == __CLASS__)
 		{
+			$userId = self::getOrCheckUserId($userId);
 			try
 			{
 				global ${$userField["FIELD_NAME"] . "_" . $value . "_DATA"};
@@ -547,15 +553,35 @@ final class VoteUserType
 
 				$userFieldManager = Manager::getInstance($userField);
 
-				list($type, $realValue) = self::detectType($value);
+				[$type, $realValue] = self::detectType($value);
 
-				$attach = ($type == self::TYPE_SAVED_ATTACH ? $userFieldManager->loadFromAttachId($realValue) :
-					($data["ID"] > 0 ? $userFieldManager->loadFromVoteId($data["ID"]) : $userFieldManager->loadEmptyObject()));
+				try
+				{
+					$attach = ($type == self::TYPE_SAVED_ATTACH ? $userFieldManager->loadFromAttachId($realValue) :
+						($data["ID"] > 0 ? $userFieldManager->loadFromVoteId($data["ID"]) : $userFieldManager->loadEmptyObject()));
+				}
+				catch (\Bitrix\Main\ObjectNotFoundException $exception)
+				{
+					$attach = $userFieldManager->loadEmptyObject();
+					unset($data["ID"]);
+				}
 
-				if (isset($attach["ID"]) && $attach["VOTE_ID"] != $data["ID"])
-					throw new \Bitrix\Main\ArgumentException(Loc::getMessage("VOTE_IS_NOT_EXPECTED"));
-				if (!$userFieldManager->belongsToEntity($attach, $userField['ENTITY_ID'], $userField['ENTITY_VALUE_ID']))
+				if (isset($attach["ID"]))
+				{
+					if ($data["ID"] > 0 && $attach["VOTE_ID"] != $data["ID"])
+					{
+						throw new \Bitrix\Main\ArgumentException(Loc::getMessage("VOTE_IS_NOT_EXPECTED"));
+					}
+					if (intval($data["ID"]) <= 0 && $attach->getStorage()->getId() !== $userField["SETTINGS"]["CHANNEL_ID"])
+					{
+						$attach = $userFieldManager->loadEmptyObject();
+					}
+				}
+
+				if (!$userFieldManager->belongsToEntity($attach, $userField["ENTITY_ID"], $userField["ENTITY_VALUE_ID"]))
+				{
 					throw new \Bitrix\Main\ObjectNotFoundException(Loc::getMessage("VOTE_IS_NOT_FOUND"));
+				}
 
 				$data["OPTIONS"] = (is_array($data["OPTIONS"]) ? array_sum($data["OPTIONS"]) : 0);
 				$data["UNIQUE_TYPE"] = ($userField["SETTINGS"]["UNIQUE"] & \Bitrix\Vote\Vote\EventLimits::BY_USER_AUTH ? $userField["SETTINGS"]["UNIQUE"] | \Bitrix\Vote\Vote\EventLimits::BY_USER_ID : $userField["SETTINGS"]["UNIQUE"]);
@@ -565,6 +591,21 @@ final class VoteUserType
 				$data["NOTIFY"] = $userField["SETTINGS"]["NOTIFY"];
 
 				$attach->checkData($data);
+
+				if (!isset($attach["ID"]) &&
+					$attach->getStorage()->getId() != $userField["SETTINGS"]["CHANNEL_ID"] &&
+					!$attach->getStorage()->canEditVote($userId))
+				{
+					throw new \Bitrix\Main\AccessDeniedException(Loc::getMessage("VOTE_EDIT_ACCESS_IS_DENIED"));
+				}
+				if (!$attach->canRead($userId))
+				{
+					throw new \Bitrix\Main\AccessDeniedException(Loc::getMessage("VOTE_READ_ACCESS_IS_DENIED"));
+				}
+				if (!empty($data) && !$attach->canEdit($userId))
+				{
+					throw new \Bitrix\Main\AccessDeniedException(Loc::getMessage("VOTE_EDIT_ACCESS_IS_DENIED"));
+				}
 			}
 			catch (\Exception $e)
 			{
@@ -603,13 +644,13 @@ final class VoteUserType
 		}*/
 		try
 		{
-			global $USER;
-			$userId = ($userId ?: (is_object($USER) ? $USER->getId() : $userId));
+			$userId = self::getOrCheckUserId($userId);
+
 			global ${$userField["FIELD_NAME"] . "_" . $value . "_DATA"};
 			$data = ${$userField["FIELD_NAME"] . "_" . $value . "_DATA"} ?: false;
 
 			$userFieldManager = Manager::getInstance($userField);
-			list($type, $realValue) = self::detectType($value);
+			[$type, $realValue] = self::detectType($value);
 			if ($type == self::TYPE_SAVED_ATTACH && (!is_array($data) || empty($data)))
 			{
 				return $value;
@@ -619,20 +660,34 @@ final class VoteUserType
 				return "";
 
 			/*@var \Bitrix\Vote\Attach $attach*/
-			$attach = ($type == self::TYPE_SAVED_ATTACH ? $userFieldManager->loadFromAttachId($realValue) :
-				($data["ID"] > 0 ? $userFieldManager->loadFromVoteId($data["ID"]) : $userFieldManager->loadEmptyObject()));
+			try
+			{
+				if ($type == self::TYPE_SAVED_ATTACH)
+				{
+					$attach = $userFieldManager->loadFromAttachId($realValue);
 
-			if (!isset($attach["ID"]) &&
-				$attach->getStorage()->getId() != $userField["SETTINGS"]["CHANNEL_ID"] &&
-				!$attach->getStorage()->canEditVote($userId))
-				throw new \Bitrix\Main\AccessDeniedException(Loc::getMessage("VOTE_EDIT_ACCESS_IS_DENIED"));
-			if (!$attach->canRead($userId))
-				throw new \Bitrix\Main\AccessDeniedException(Loc::getMessage("VOTE_READ_ACCESS_IS_DENIED"));
-			if (!empty($data) && !$attach->canEdit($userId))
-				throw new \Bitrix\Main\AccessDeniedException(Loc::getMessage("VOTE_EDIT_ACCESS_IS_DENIED"));
+					if ($attach->getStorage()->getId() != $userField["SETTINGS"]["CHANNEL_ID"] &&
+						$userFieldManager->belongsToEntity($attach, $userField["ENTITY_ID"], $userField["ENTITY_VALUE_ID"])
+					)
+					{
+						$attach->delete();
+						$attach = $userFieldManager->loadEmptyObject();
+						unset($data["ID"]);
+					}
+				}
+				else
+				{
+					$attach = ($data["ID"] > 0 ? $userFieldManager->loadFromVoteId($data["ID"]) : $userFieldManager->loadEmptyObject());
+				}
+			}
+			catch (\Bitrix\Main\ObjectNotFoundException $exception)
+			{
+				$attach = $userFieldManager->loadEmptyObject();
+				unset($data["ID"]);
+			}
 
 			$data["OPTIONS"] = (is_array($data["OPTIONS"]) ? array_sum($data["OPTIONS"]) : 0);
-			$data["UNIQUE_TYPE"] = ($userField["SETTINGS"]["UNIQUE"] & \Bitrix\Vote\Vote\EventLimits::BY_USER_AUTH ? $userField["SETTINGS"]["UNIQUE"] | \Bitrix\Vote\Vote\EventLimits::BY_USER_ID : $userField["SETTINGS"]["UNIQUE"]);
+			$data["UNIQUE_TYPE"] = intval($userField["SETTINGS"]["UNIQUE"] & \Bitrix\Vote\Vote\EventLimits::BY_USER_AUTH ? $userField["SETTINGS"]["UNIQUE"] | \Bitrix\Vote\Vote\EventLimits::BY_USER_ID : $userField["SETTINGS"]["UNIQUE"]);
 			$interval = intval($userField["SETTINGS"]["UNIQUE_IP_DELAY"]["DELAY"]);
 			$interval = in_array($userField["SETTINGS"]["UNIQUE_IP_DELAY"]["DELAY_TYPE"], array("S", "M", "H")) ? "PT".$interval.$userField["SETTINGS"]["UNIQUE_IP_DELAY"]["DELAY_TYPE"] : "P".$interval."D";
 			$data["KEEP_IP_SEC"] = (new \DateTime("@0"))->add(new \DateInterval($interval))->getTimestamp();
@@ -664,9 +719,7 @@ final class VoteUserType
 			return "";
 		}
 
-		global $USER;
-		$userId = ($userId ?: (is_object($USER) ? $USER->getId() : $userId));
-
+		$userId = self::getOrCheckUserId($userId);
 		$userFieldManager = Manager::getInstance($userField);
 
 		$attachedObject = $userFieldManager->loadFromAttachId($attachedId);
@@ -704,12 +757,12 @@ final class VoteUserType
 			return;
 		$userFieldManager = Manager::getInstance($userField);
 
-		list($type, $realValue) = self::detectType($value);
+		[$type, $realValue] = self::detectType($value);
 		$attach = ($type == self::TYPE_SAVED_ATTACH ? $userFieldManager->loadFromAttachId($realValue) :
 			($realValue > 0 ? $userFieldManager->loadFromVoteId($realValue) : $userFieldManager->loadEmptyObject()));
 
 		global $USER;
-		if ($userFieldManager->belongsToEntity($attach, $userField['ENTITY_ID'], $userField['ENTITY_VALUE_ID']) && !$attach->canEdit($USER->getId()))
+		if ($userFieldManager->belongsToEntity($attach, $userField['ENTITY_ID'], $userField['ENTITY_VALUE_ID']) && $attach->canEdit($USER->getId()))
 			$attach->delete();
 	}
 
@@ -721,10 +774,10 @@ final class VoteUserType
 	public static function detectType($value)
 	{
 		$prefix = "";
-		if (strpos($value, self::NEW_VOTE_PREFIX) === 0)
+		if (mb_strpos($value, self::NEW_VOTE_PREFIX) === 0)
 		{
 			$prefix = self::NEW_VOTE_PREFIX;
-			$value = intval(substr($value, 1));
+			$value = intval(mb_substr($value, 1));
 		}
 		else
 			$value = intval($value);
@@ -732,5 +785,18 @@ final class VoteUserType
 		$return = ($prefix == self::NEW_VOTE_PREFIX ? array(self::TYPE_NEW_ATTACH, $value) : array(self::TYPE_SAVED_ATTACH, $value));
 
 		return $return;
+	}
+
+	private static function getOrCheckUserId($userId = false)
+	{
+		if ($userId === false)
+		{
+			global $USER;
+			if ($USER instanceof \CUser)
+			{
+				return $USER->GetID();
+			}
+		}
+		return intval($userId);
 	}
 }

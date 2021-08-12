@@ -1,4 +1,5 @@
 <?php
+
 require_once($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/statistic/classes/general/stateventtype.php");
 
 class CStatEventType extends CAllStatEventType
@@ -23,7 +24,7 @@ class CStatEventType extends CAllStatEventType
 		return $res;
 	}
 
-	public static function GetList(&$by, &$order, $arFilter=Array(), &$is_filtered, $LIMIT=false)
+	public static function GetList($by = 's_today_counter', $order = 'desc', $arFilter = [], &$is_filtered = false, $LIMIT = false)
 	{
 		$err_mess = "File: ".__FILE__."<br>Line: ";
 		$DB = CDatabase::GetModuleConnection('statistic');
@@ -47,10 +48,10 @@ class CStatEventType extends CAllStatEventType
 			$date2 = $arFilter["DATE2_PERIOD"];
 			$date_from = MkDateTime(ConvertDateTime($date1,"D.M.Y"),"d.m.Y");
 			$date_to = MkDateTime(ConvertDateTime($date2,"D.M.Y")." 23:59","d.m.Y H:i");
-			if (strlen($date1)>0)
+			if ($date1 <> '')
 			{
 				$filter_period = true;
-				if (strlen($date2)>0)
+				if ($date2 <> '')
 				{
 					$strSqlPeriod = "if(D.DATE_STAT<FROM_UNIXTIME('$date_from'),0, if(D.DATE_STAT>FROM_UNIXTIME('$date_to'),0,";
 					$strT="))";
@@ -61,7 +62,7 @@ class CStatEventType extends CAllStatEventType
 					$strT=")";
 				}
 			}
-			elseif (strlen($date2)>0)
+			elseif ($date2 <> '')
 			{
 				$filter_period = true;
 				$strSqlPeriod = "if(D.DATE_STAT>FROM_UNIXTIME('$date_to'),0,";
@@ -77,7 +78,7 @@ class CStatEventType extends CAllStatEventType
 				}
 				else
 				{
-					if( (strlen($val) <= 0) || ($val === "NOT_REF") )
+					if( ((string)$val == '') || ($val === "NOT_REF") )
 						continue;
 				}
 				$match_value_set = array_key_exists($key."_EXACT_MATCH", $arFilter);
@@ -152,11 +153,11 @@ class CStatEventType extends CAllStatEventType
 		$rate = 1;
 		$base_currency = GetStatisticBaseCurrency();
 		$view_currency = $base_currency;
-		if (strlen($base_currency)>0)
+		if ($base_currency <> '')
 		{
 			if (CModule::IncludeModule("currency"))
 			{
-				if ($CURRENCY!=$base_currency && strlen($CURRENCY)>0)
+				if ($CURRENCY!=$base_currency && $CURRENCY <> '')
 				{
 					$rate = CCurrencyRates::GetConvertFactor($base_currency, $CURRENCY);
 					$view_currency = $CURRENCY;
@@ -182,13 +183,12 @@ class CStatEventType extends CAllStatEventType
 		elseif ($by == "s_stat")				$strSqlOrder = "ORDER BY TODAY_COUNTER desc, YESTERDAY_COUNTER desc, B_YESTERDAY_COUNTER desc, TOTAL_COUNTER desc, PERIOD_COUNTER";
 		else
 		{
-			$by = "s_today_counter";
 			$strSqlOrder = "ORDER BY TODAY_COUNTER desc, YESTERDAY_COUNTER desc, B_YESTERDAY_COUNTER desc, TOTAL_COUNTER desc, PERIOD_COUNTER";
 		}
-		if ($order!="asc")
+
+		if ($order != "asc")
 		{
 			$strSqlOrder .= " desc ";
-			$order="desc";
 		}
 
 		$strSqlSearch = GetFilterSqlSearch($arSqlSearch);
@@ -373,11 +373,11 @@ class CStatEventType extends CAllStatEventType
 			$res = new CDBResult;
 			$res->InitFromArray($arResult);
 		}
-		$is_filtered = (IsFiltered($strSqlSearch) || $filter_period || strlen($strSqlSearch_h)>0 || $find_group!="");
+		$is_filtered = (IsFiltered($strSqlSearch) || $filter_period || $strSqlSearch_h <> '' || $find_group!="");
 		return $res;
 	}
 
-	public static function GetSimpleList(&$by, &$order, $arFilter=Array(), &$is_filtered)
+	public static function GetSimpleList($by = 's_event1', $order = 'asc', $arFilter = [])
 	{
 		$err_mess = "File: ".__FILE__."<br>Line: ";
 		$DB = CDatabase::GetModuleConnection('statistic');
@@ -394,7 +394,7 @@ class CStatEventType extends CAllStatEventType
 				}
 				else
 				{
-					if( (strlen($val) <= 0) || ($val === "NOT_REF") )
+					if( ((string)$val == '') || ($val === "NOT_REF") )
 						continue;
 				}
 				$match_value_set = array_key_exists($key."_EXACT_MATCH", $arFilter);
@@ -421,7 +421,8 @@ class CStatEventType extends CAllStatEventType
 		}
 
 		$strSqlSearch = GetFilterSqlSearch($arSqlSearch);
-		$order= ($order!="desc") ? "asc" : "desc";
+
+		$order = ($order != "desc" ? "asc" : "desc");
 
 		if ($by == "s_id")
 			$strSqlOrder = "ORDER BY E.ID ".$order;
@@ -435,7 +436,6 @@ class CStatEventType extends CAllStatEventType
 			$strSqlOrder = "ORDER BY E.DESCRIPTION ".$order;
 		else
 		{
-			$by = "s_event1";
 			$strSqlOrder = "ORDER BY E.EVENT1 ".$order.", E.EVENT2";
 		}
 
@@ -453,7 +453,7 @@ class CStatEventType extends CAllStatEventType
 		";
 
 		$res = $DB->Query($strSql, false, $err_mess.__LINE__);
-		$is_filtered = (IsFiltered($strSqlSearch));
+
 		return $res;
 	}
 
@@ -473,7 +473,7 @@ class CStatEventType extends CAllStatEventType
 		return $res;
 	}
 
-	public static function GetDynamicList($EVENT_ID, &$by, &$order, &$arMaxMin, $arFilter=Array())
+	public static function GetDynamicList($EVENT_ID, $by = 's_date', $order = 'desc', &$arMaxMin = [], $arFilter = [])
 	{
 		$err_mess = "File: ".__FILE__."<br>Line: ";
 		$DB = CDatabase::GetModuleConnection('statistic');
@@ -491,7 +491,7 @@ class CStatEventType extends CAllStatEventType
 				}
 				else
 				{
-					if( (strlen($val) <= 0) || ($val === "NOT_REF") )
+					if( ((string)$val == '') || ($val === "NOT_REF") )
 						continue;
 				}
 
@@ -517,14 +517,12 @@ class CStatEventType extends CAllStatEventType
 			$strSqlOrder = "ORDER BY D.DATE_STAT";
 		else
 		{
-			$by = "s_date";
 			$strSqlOrder = "ORDER BY D.DATE_STAT";
 		}
 
 		if ($order!="asc")
 		{
 			$strSqlOrder .= " desc ";
-			$order = "desc";
 		}
 
 		$strSql = "

@@ -1,4 +1,5 @@
-<?
+<?php
+
 IncludeModuleLangFile(__FILE__);
 
 class CList
@@ -85,12 +86,12 @@ class CList
 			if (is_array($arEnum))
 			{
 				$value = trim($arEnum["VALUE"], " \t\n\r");
-				if (strlen($value))
+				if ((string) $value <> '')
 				{
 					$dbEnum = CIBlockPropertyEnum::GetByID($id);
 					if(is_array($dbEnum))
 					{
-						$def = isset($arEnum["DEF"])? $arEnum["DEF"]: $dbEnum["DEF"];
+						$def = isset($arEnum["DEF"])? $arEnum["DEF"] : $dbEnum["DEF"];
 						$sort = intval($arEnum["SORT"]);
 						if(
 							$dbEnum["VALUE"] != $value
@@ -143,7 +144,7 @@ class CList
 		$urlCache[$this->iblock_id] = array("URL" => $url);
 	}
 
-	function OnGetDocumentAdminPage($arElement)
+	public static function OnGetDocumentAdminPage($arElement)
 	{
 		$url = self::getUrlByIblockId($arElement["IBLOCK_ID"]);
 		if ($url != "")
@@ -157,20 +158,20 @@ class CList
 		return "";
 	}
 
-	function OnSearchGetURL($arFields)
+	public static function OnSearchGetURL($arFields)
 	{
 
 		if (
 			$arFields["MODULE_ID"] === "iblock"
 			&& $arFields["ITEM_ID"] > 0
-			&& substr($arFields["URL"], 0, 1) === "="
+			&& mb_substr($arFields["URL"], 0, 1) === "="
 		)
 		{
 			$url = self::getUrlByIblockId($arFields["PARAM2"]);
 			if ($url != "")
 			{
 				$arElement = array();
-				parse_str(substr($arFields["URL"], 1), $arElement);
+				parse_str(mb_substr($arFields["URL"], 1), $arElement);
 
 				return str_replace(
 					array("#section_id#", "#element_id#"),
@@ -183,7 +184,7 @@ class CList
 		return $arFields["URL"];
 	}
 
-	function getUrlByIblockId($IBLOCK_ID)
+	public static function getUrlByIblockId($IBLOCK_ID)
 	{
 		global $DB;
 		static $cache = array();
@@ -201,4 +202,3 @@ class CList
 			return "";
 	}
 }
-?>

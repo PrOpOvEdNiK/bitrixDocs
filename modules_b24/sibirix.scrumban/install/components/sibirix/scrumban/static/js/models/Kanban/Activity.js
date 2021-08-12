@@ -1,2 +1,0 @@
-eval(function(p,a,c,k,e,d){e=function(c){return c.toString(36)};if(!''.replace(/^/,String)){while(c--){d[c.toString(a)]=k[c]||c.toString(a)}k=[function(e){return d[e]}];e=function(){return'\\w+'};c=1};while(c--){if(k[c]){p=p.replace(new RegExp('\\b'+e(c)+'\\b','g'),k[c])}}return p}('1.2("1.2.3.g",{5:{\'6\':\'7\',\'8\':\'1.2.3.9.b\',\'c\':\'0\',\'d\':\'0\',\'e\':\'4\',\'f\':\'4\',\'a\':\'0\'}},{});',17,17,'string|Sibirix|Model|Kanban|integer|attributes|activity|array|author|User|commentText|model|postDate|authorId|actType|minutes|Activity'.split('|'),0,{}))
-;

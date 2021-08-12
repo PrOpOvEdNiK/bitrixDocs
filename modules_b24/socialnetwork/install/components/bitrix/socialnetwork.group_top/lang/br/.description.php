@@ -1,5 +1,0 @@
-<?
-$MESS["SONET_GRUTOP_TEMPLATE_DESCRIPTION"] = "Mostrar Top Grupos";
-$MESS["SONET_GRUTOP_TEMPLATE_NAME"] = "Top Grupos";
-$MESS["SONET_NAME"] = "Rede Social";
-?>

@@ -1,8 +1,0 @@
-<script type="text/ejs" id="tplTaskInfoLabels">
-    <% for (var iLabel=0; label2TaskList.length > iLabel; iLabel++) {
-        if (!label2TaskList[iLabel].label) {
-            continue;
-        } %>
-        <div title="<%= label2TaskList[iLabel].label.title %>" data-label2taskId="<%= label2TaskList[iLabel].id %>" class="<%= label2TaskList[iLabel].label.cssClass %>"><%= label2TaskList[iLabel].label.title %></div>
-    <% } %>
-</script>

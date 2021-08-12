@@ -52,6 +52,7 @@ class CVoxImplantHistory
 			"INCOMING" =>			$params["INCOMING"],
 			"CALL_START_DATE" =>	$call->getDateCreate(),
 			"CALL_DURATION" =>		isset($params["CALL_DURATION"])? $params["CALL_DURATION"]: $params["DURATION"],
+			"CALL_RECORD_URL" => 	$params["URL"],
 			"CALL_STATUS" =>		$params["CALL_STATUS"],
 			"CALL_FAILED_CODE" =>	$params["CALL_FAILED_CODE"],
 			"CALL_FAILED_REASON" =>	$params["CALL_FAILED_REASON"],
@@ -61,24 +62,24 @@ class CVoxImplantHistory
 			"CALL_ID" =>			$params["CALL_ID"],
 			"CALL_CATEGORY" =>		$params["CALL_CATEGORY"],
 			"SESSION_ID" =>			$call->getSessionId(),
-			"TRANSCRIPT_PENDING" => $params['TRANSCRIPT_PENDING'] == 'Y' ? 'Y' : 'N',
+			"TRANSCRIPT_PENDING" => $params['TRANSCRIPT_PENDING'] === 'Y' ? 'Y' : 'N',
 		);
 
-		if (strlen($params["PHONE_NUMBER"]) > 0)
+		if ($params["PHONE_NUMBER"] <> '')
 			$arFields["PHONE_NUMBER"] = $params["PHONE_NUMBER"];
 
-		if (strlen($params["CALL_DIRECTION"]) > 0)
+		if ($params["CALL_DIRECTION"] <> '')
 			$arFields["CALL_DIRECTION"] = $params["CALL_DIRECTION"];
 
 		if ($call->getExternalLineId() && $externalLine = VI\Model\ExternalLineTable::getRowById($call->getExternalLineId()))
 		{
 			$arFields["PORTAL_NUMBER"] = $externalLine["NORMALIZED_NUMBER"];
 		}
-		else if (strlen($params["PORTAL_NUMBER"]) > 0)
+		else if ($params["PORTAL_NUMBER"] <> '')
 		{
 			$arFields["PORTAL_NUMBER"] = $params["PORTAL_NUMBER"];
 		}
-		else if (strlen($params["ACCOUNT_SEARCH_ID"]) > 0)
+		else if ($params["ACCOUNT_SEARCH_ID"] <> '')
 		{
 			$arFields["PORTAL_NUMBER"] = $params["ACCOUNT_SEARCH_ID"];
 		}
@@ -86,7 +87,7 @@ class CVoxImplantHistory
 		if($arFields['CALL_VOTE'] < 1 || $arFields['CALL_VOTE'] > 5)
 			$arFields['CALL_VOTE'] = null;
 
-		if (strlen($params["CALL_LOG"]) > 0)
+		if ($params["CALL_LOG"] <> '')
 			$arFields["CALL_LOG"] = $params["CALL_LOG"];
 
 		if ($arFields["INCOMING"] == CVoxImplantMain::CALL_INFO)
@@ -168,6 +169,55 @@ class CVoxImplantHistory
 
 		$arFields['ID'] = $insertResult->getId();
 
+		//recording a missed call
+		if (
+			$arFields["CALL_FAILED_CODE"] == 304
+			&& (
+				$call->getIncoming() == \CVoxImplantMain::CALL_INCOMING
+				|| $call->getIncoming() == \CVoxImplantMain::CALL_INCOMING_REDIRECT
+			)
+		)
+		{
+			$missedCall = [
+				'ID' => $arFields['ID'],
+				'CALL_START_DATE' => $arFields['CALL_START_DATE'],
+				'PHONE_NUMBER' => $arFields['PHONE_NUMBER'],
+				'PORTAL_USER_ID' => $arFields['PORTAL_USER_ID']
+			];
+
+			$insertMissedCallResult = VI\Model\StatisticMissedTable::add($missedCall);
+			if (!$insertMissedCallResult)
+			{
+				static::releaseLock($callId);
+				return false;
+			}
+		} //if our call answering any missed calls
+		elseif (
+			$arFields["CALL_FAILED_CODE"] == 200
+			&& $call->getIncoming() == \CVoxImplantMain::CALL_OUTGOING
+		)
+		{
+			$missedCalls = VI\Model\StatisticMissedTable::getList([
+				'select' => ['ID'],
+				'filter' => [
+					'=PHONE_NUMBER' => $arFields['PHONE_NUMBER'],
+					'=CALLBACK_ID' => null
+				],
+			])->fetchAll();
+
+			if ($missedCalls)
+			{
+				foreach ($missedCalls as $missedCall)
+				{
+					VI\Model\StatisticMissedTable::update($missedCall['ID'], [
+							'CALLBACK_ID' => $arFields['ID'],
+							'CALLBACK_CALL_START_DATE' => $arFields['CALL_START_DATE']
+						]
+					);
+				}
+			}
+		}
+
 		if (!$call->isInternalCall() && $call->isCrmEnabled())
 		{
 			if($call->getCrmActivityId() > 0 && CVoxImplantCrmHelper::shouldAttachCallToActivity($arFields, $call->getCrmActivityId()))
@@ -233,7 +283,7 @@ class CVoxImplantHistory
 			self::DownloadAgent($insertResult->getId(), $params['URL'], $attachToCrm);
 		}
 
-		if (strlen($params["ACCOUNT_PAYED"]) > 0 && in_array($params["ACCOUNT_PAYED"], Array('Y', 'N')))
+		if ($params["ACCOUNT_PAYED"] <> '' && in_array($params["ACCOUNT_PAYED"], Array('Y', 'N')))
 		{
 			CVoxImplantAccount::SetPayedFlag($params["ACCOUNT_PAYED"]);
 		}
@@ -293,7 +343,7 @@ class CVoxImplantHistory
 		self::WriteToLog('Downloading record ' . $recordUrl);
 		$historyID = intval($historyID);
 		$attachToCrm = ($attachToCrm == true);
-		if (strlen($recordUrl) <= 0 || $historyID <= 0)
+		if ($recordUrl == '' || $historyID <= 0)
 		{
 			return false;
 		}
@@ -344,7 +394,7 @@ class CVoxImplantHistory
 			{
 				$tempPath = \CFile::GetTempName('', bx_basename($fileName));
 			}
-			else if ($urlComponents && strlen($urlComponents["path"]) > 0)
+			else if ($urlComponents && $urlComponents["path"] <> '')
 			{
 				$tempPath = \CFile::GetTempName('', bx_basename($urlComponents["path"]));
 			}
@@ -378,7 +428,7 @@ class CVoxImplantHistory
 
 			if (is_array($recordFile) && $recordFile['size'] && $recordFile['size'] > 0)
 			{
-				if(strpos($recordFile['name'], '.') === false)
+				if(mb_strpos($recordFile['name'], '.') === false)
 				{
 					$recordFile['name'] = $recordFile['name'] . '.mp3';
 				}
@@ -417,11 +467,7 @@ class CVoxImplantHistory
 		}
 
 		VI\StatisticTable::update($historyID, ['CALL_RECORD_ID' => $fileId]);
-		$elementId = CVoxImplantDiskHelper::SaveFile(
-			$arHistory,
-			CFile::GetFileArray($fileId),
-			CSite::GetDefSite()
-		);
+		$elementId = CVoxImplantDiskHelper::SaveFile($arHistory, CFile::GetFileArray($fileId));
 		$elementId = (int)$elementId;
 		VI\StatisticTable::update($historyID, ['CALL_WEBDAV_ID' => $elementId]);
 
@@ -570,7 +616,7 @@ class CVoxImplantHistory
 	{
 		$userName = '';
 		$arSelect = Array("ID", "LAST_NAME", "NAME", "LOGIN", "SECOND_NAME", "PERSONAL_GENDER");
-		$dbUsers = CUser::GetList(($sort_by = false), ($dummy=''), array('ID' => $transferUserId), array('FIELDS' => $arSelect));
+		$dbUsers = CUser::GetList('', '', array('ID' => $transferUserId), array('FIELDS' => $arSelect));
 		if ($arUser = $dbUsers->Fetch())
 			$userName = CUser::FormatName(CSite::GetNameFormat(false), $arUser, true, false);
 
@@ -614,7 +660,7 @@ class CVoxImplantHistory
 	public static function GetMessageForChat($callFields, $hasRecord = false, $prependPlus = true)
 	{
 		$result = '';
-		if (strlen($callFields["PHONE_NUMBER"]) > 0 && $callFields["PORTAL_USER_ID"] > 0 && $callFields["CALL_FAILED_CODE"] != 423)
+		if ($callFields["PHONE_NUMBER"] <> '' && $callFields["PORTAL_USER_ID"] > 0 && $callFields["CALL_FAILED_CODE"] != 423)
 		{
 			$formattedNumber = \Bitrix\Main\PhoneNumber\Parser::getInstance()->parse($callFields["PHONE_NUMBER"])->format();
 			$formattedNumber = "[CALL={$formattedNumber}]" . $formattedNumber . "[/CALL]";
@@ -776,7 +822,7 @@ class CVoxImplantHistory
 
 	public static function getStatusText($statusCode)
 	{
-		return in_array($statusCode, array("200","304","603-S","603","403","404","486","484","503","480","402","423")) ? GetMessage("VI_STATUS_".$statusCode) : GetMessage("VI_STATUS_OTHER");
+		return in_array($statusCode, array("200","304","603-S","603","403","404","486","484","503","480","402","423", "402-B24")) ? GetMessage("VI_STATUS_".$statusCode) : GetMessage("VI_STATUS_OTHER");
 	}
 
 	/**
@@ -838,7 +884,7 @@ class CVoxImplantHistory
 			}
 		}
 		$f=fopen($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/voximplant.log", "a+t");
-		$w=fwrite($f, "\n------------------------\n".date("Y.m.d G:i:s")."\n".(strlen($title)>0? $title: 'DEBUG')."\n".print_r($data, 1)."\n------------------------\n");
+		$w=fwrite($f, "\n------------------------\n".date("Y.m.d G:i:s")."\n".($title <> ''? $title: 'DEBUG')."\n".print_r($data, 1)."\n------------------------\n");
 		fclose($f);
 
 		return true;
@@ -874,7 +920,7 @@ class CVoxImplantHistory
 			$queue = VI\Queue::createWithId($call->getQueueId());
 			if($queue instanceof VI\Queue)
 			{
-				$queueUser = $queue->getFirstUserId($config['TIMEMAN'] == 'Y');
+				$queueUser = $queue->getFirstUserId();
 				if ($queueUser > 0)
 				{
 					$queue->touchUser($queueUser);
@@ -882,7 +928,6 @@ class CVoxImplantHistory
 				}
 			}
 		}
-
 
 		if(is_array($config) && $config['CRM'] == 'Y' && $config['CRM_FORWARD'] == 'Y')
 		{
@@ -896,8 +941,8 @@ class CVoxImplantHistory
 			}
 			else
 			{
-				$responsibleInfo = CVoxImplantIncoming::getCrmResponsible($call, $config['TIMEMAN'] == 'Y');
-				if($responsibleInfo && $responsibleInfo['AVAILABLE'] == 'Y')
+				$responsibleInfo = CVoxImplantIncoming::getCrmResponsible($call, false);
+				if($responsibleInfo)
 				{
 					return $responsibleInfo['USER_ID'];
 				}
@@ -909,7 +954,7 @@ class CVoxImplantHistory
 			$queue = VI\Queue::createWithId($config['QUEUE_ID']);
 			if($queue instanceof VI\Queue)
 			{
-				$queueUser = $queue->getFirstUserId($config['TIMEMAN'] == 'Y');
+				$queueUser = $queue->getFirstUserId();
 				if ($queueUser > 0)
 				{
 					$queue->touchUser($queueUser);

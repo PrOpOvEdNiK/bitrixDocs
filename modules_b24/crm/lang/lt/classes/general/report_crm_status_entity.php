@@ -1,5 +1,0 @@
-<?
-$MESS["CRM_STATUS_ENTITY_ENTITY_ID"] = "Objekto ID";
-$MESS["CRM_STATUS_ENTITY_STATUS_ID"] = "Statuso ID";
-$MESS["CRM_STATUS_ENTITY_NAME"] = "Pavadinimas";
-?>

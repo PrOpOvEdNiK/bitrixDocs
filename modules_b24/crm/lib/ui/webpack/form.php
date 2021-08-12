@@ -2,8 +2,8 @@
 
 namespace Bitrix\Crm\UI\Webpack;
 
+use Bitrix\Main\ModuleManager;
 use Bitrix\Main\Loader;
-use Bitrix\Main\Web\WebPacker;
 use Bitrix\Crm\UI\Webpack;
 use Bitrix\Crm\WebForm;
 
@@ -46,7 +46,39 @@ class Form extends Webpack\Base
 	 */
 	public static function rebuildResources()
 	{
-		return Form\Polyfill::instance()->build() && Form\App::instance()->build();
+		$isSuccess = (
+			Form\Polyfill::instance()->build() &&
+			Form\ResourceBooking::instance()->build() &&
+			Form\App::instance()->build()
+		);
+
+		if ($isSuccess && ModuleManager::isModuleInstalled('bitrix24'))
+		{
+			static::addCheckResourcesAgent();
+		}
+
+		return $isSuccess;
+	}
+
+	/**
+	 * Add check resources agent.
+	 *
+	 * @return void
+	 */
+	public static function addCheckResourcesAgent()
+	{
+		if (!ModuleManager::isModuleInstalled('bitrix24'))
+		{
+			return;
+		}
+
+		$agentName = static::class . "::checkResourcesFileExistsAgent();";
+		\CAgent::RemoveAgent($agentName, 'crm');
+		\CAgent::AddAgent(
+			$agentName,
+			'crm', "N", 60, "", "Y",
+			\ConvertTimeStamp(time()+\CTimeZone::GetOffset()+300, "FULL")
+		);
 	}
 
 	/**
@@ -62,7 +94,28 @@ class Form extends Webpack\Base
 		}
 		else
 		{
-			return '\\Bitrix\\Crm\\UI\\Webpack\\Form::rebuildResources();';
+			return static::class . '::rebuildResourcesAgent();';
+		}
+	}
+
+	/**
+	 * Check resources file exists.
+	 *
+	 * @return string
+	 */
+	public static function checkResourcesFileExistsAgent()
+	{
+		$polyfill = Form\Polyfill::instance();
+		$resourceBooking = Form\ResourceBooking::instance();
+		$app = Form\App::instance();
+
+		if ($polyfill->checkFileExists() && $resourceBooking->checkFileExists() && $app->checkFileExists())
+		{
+			return '';
+		}
+		else
+		{
+			return static::class . '::rebuildResourcesAgent();';
 		}
 	}
 

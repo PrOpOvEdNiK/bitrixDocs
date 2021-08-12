@@ -1,3 +1,0 @@
-<?
-$MESS["TITLE"] = "Pasirinktiniai laukai";
-?>

@@ -13,6 +13,8 @@ abstract class CCloudStorageService
 	protected $result = '';
 
 	public $tokenHasExpired = false;
+	protected $streamTimeout = 0;
+
 	/**
 	 * @return CCloudStorageService
 	 * @deprecated
@@ -181,6 +183,14 @@ abstract class CCloudStorageService
 	*/
 	abstract public function CompleteMultipartUpload($arBucket, &$NS);
 	/**
+	 * @param array[string]string $arBucket
+	 * @param mixed & $NS
+	 * @return bool
+	*/
+	public function CancelMultipartUpload($arBucket, &$NS)
+	{
+	}
+	/**
 	 * @param string $name
 	 * @param string $value
 	 * @return void
@@ -222,10 +232,10 @@ abstract class CCloudStorageService
 	*/
 	function GetLastRequestHeader($headerName)
 	{
-		$loweredName = strtolower($headerName);
+		$loweredName = mb_strtolower($headerName);
 		foreach ($this->headers as $name => $value)
 		{
-			if (strtolower($name) === $loweredName)
+			if (mb_strtolower($name) === $loweredName)
 				return $value;
 		}
 		return null;

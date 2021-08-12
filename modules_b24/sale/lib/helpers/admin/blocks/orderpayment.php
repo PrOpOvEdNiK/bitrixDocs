@@ -109,7 +109,12 @@ class OrderPayment
 		$fields['PAY_SYSTEM_LIST'] = self::getPaySystemList($item);
 
 		$fields['CHECK'] = CheckManager::getCheckInfo($item);
+
 		$fields['CAN_PRINT_CHECK'] = $fields['PAY_SYSTEM_LIST'][$fields['PAY_SYSTEM_ID']]['CAN_PRINT_CHECK'];
+		if (Sale\Cashbox\Manager::isEnabledPaySystemPrint())
+		{
+			$fields['CAN_PRINT_CHECK'] = 'N';
+		}
 
 		$dbRes = CashboxTable::getList(array('filter' => array('=ACTIVE' => 'Y', '=ENABLED' => 'Y')));
 		$fields['HAS_ENABLED_CASHBOX'] = ($dbRes->fetch()) ? 'Y' : 'N';
@@ -490,6 +495,7 @@ class OrderPayment
 				<input type="hidden" name="PAYMENT['.$index.'][INDEX]" value="'.$index.'" class="index">
 				<input type="hidden" name="PAYMENT['.$index.'][PAID]" id="PAYMENT_PAID_'.$index.'" value="'.(empty($paid) ? 'N' : $paid).'">
 				<input type="hidden" name="PAYMENT['.$index.'][IS_RETURN]" id="PAYMENT_IS_RETURN_'.$index.'" value="'.($post['IS_RETURN'] ? htmlspecialcharsbx($post['IS_RETURN']) : 'N').'">
+				<input type="hidden" name="PAYMENT['.$index.'][IS_RETURN_CHANGED]" id="PAYMENT_IS_RETURN_CHANGED_'.$index.'" value="N">
 				'.$hiddenPaySystemInnerId.'
 				<div class="adm-bus-component-content-container">
 					<div class="adm-bus-pay-section">
@@ -735,7 +741,7 @@ class OrderPayment
 		$company = $res->fetch();
 
 		$paymentStatusBlockVoucherNum = '';
-		if (strlen($data['PAY_VOUCHER_NUM']) > 0)
+		if ($data['PAY_VOUCHER_NUM'] <> '')
 		{
 			$paymentStatusBlockVoucherNum = '<tr>
 										<td class="adm-detail-content-cell-l" width="40%"><br>'.Loc::getMessage('SALE_ORDER_PAYMENT_PAY_VOUCHER_NUM').':</td>
@@ -747,7 +753,7 @@ class OrderPayment
 		}
 
 		$paymentStatusBlockVoucherDate = '';
-		if (strlen($data['PAY_VOUCHER_DATE']) > 0)
+		if ($data['PAY_VOUCHER_DATE'] <> '')
 		{
 			$paymentStatusBlockVoucherDate = '<tr>
 												<td class="adm-detail-content-cell-l" width="40%">'.Loc::getMessage('SALE_ORDER_PAYMENT_PAY_VOUCHER_DATE').':</td>
@@ -758,7 +764,7 @@ class OrderPayment
 		}
 
 		$paymentStatusBlockReturnNum = '';
-		if (strlen($data['PAY_RETURN_NUM']) > 0)
+		if ($data['PAY_RETURN_NUM'] <> '')
 		{
 			$paymentStatusBlockReturnNum = '<tr>
 			<td class="adm-detail-content-cell-l" width="40%"><br>'.Loc::getMessage('SALE_ORDER_PAYMENT_PAY_RETURN_NUM').':</td>
@@ -768,7 +774,7 @@ class OrderPayment
 		}
 
 		$paymentStatusBlockReturnDate = '';
-		if (strlen($data['PAY_RETURN_DATE']) > 0)
+		if ($data['PAY_RETURN_DATE'] <> '')
 		{
 			$paymentStatusBlockReturnDate = '<tr>
 				<td class="adm-detail-content-cell-l" width="40%">'.Loc::getMessage('SALE_ORDER_PAYMENT_PAY_RETURN_DATE').':</td>
@@ -1105,7 +1111,7 @@ class OrderPayment
 		{
 			$result .= '<div>';
 
-			if (strlen($check['LINK']) > 0)
+			if ($check['LINK'] <> '')
 			{
 				$result .= '<a href="'.$check['LINK'].'" target="_blank">'.Loc::getMessage('SALE_ORDER_PAYMENT_CHECK_LINK', array('#CHECK_ID#' => $check['ID'])).'</a>';
 			}
@@ -1335,7 +1341,9 @@ class OrderPayment
 						$result->addErrors($setResult->getErrors());
 				}
 
-				if (!$canSetPaid)
+				$isReturnChanged = $payment['IS_RETURN_CHANGED'] === 'Y';
+
+				if (!$canSetPaid && !$isReturnChanged)
 				{
 					$setResult = $paymentItem->setPaid($payment['PAID']);
 					if (!$setResult->isSuccess())
@@ -1344,6 +1352,12 @@ class OrderPayment
 
 				if ($payment['ORDER_STATUS_ID'])
 					$order->setField('STATUS_ID', $payment['ORDER_STATUS_ID']);
+			}
+
+			$verify = $paymentItem->verify();
+			if (!$verify->isSuccess())
+			{
+				$result->addErrors($verify->getErrors());
 			}
 
 			$data['PAYMENT'][] = $paymentItem;

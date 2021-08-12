@@ -1,8 +1,0 @@
-<?
-$MESS["LANDING_HOOK_METAOG_DESCRIPTION"] = "Opis";
-$MESS["LANDING_HOOK_METAOG_DESCRIPTION_PLACEHOLDER"] = "Wpisz opis strony";
-$MESS["LANDING_HOOK_METAOG_NAME"] = "Formatowanie Rich Text w mediach społecznościowych";
-$MESS["LANDING_HOOK_METAOG_PICTURE"] = "Obraz";
-$MESS["LANDING_HOOK_METAOG_TITLE"] = "Tytuł";
-$MESS["LANDING_HOOK_METAOG_TITLE_PLACEHOLDER"] = "Wpisz tytuł strony";
-?>

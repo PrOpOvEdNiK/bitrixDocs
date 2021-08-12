@@ -15,7 +15,7 @@ $arFileTypes[] = array(
 
 foreach ($arFileTypes as $iIndex => $arValue)
 {
-	$arFileTypes[$iIndex]['ID'] = substr(md5($arFileTypes[$iIndex]['EXTENSIONS']),0,8);
+	$arFileTypes[$iIndex]['ID'] = mb_substr(md5($arFileTypes[$iIndex]['EXTENSIONS']), 0, 8);
 }
 
 $webdav_default_option = array(

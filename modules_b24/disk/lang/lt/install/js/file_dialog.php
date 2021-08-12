@@ -1,5 +1,0 @@
-<?
-$MESS["DISK_JS_FILE_DIALOG_OAUTH_NOTICE"] = "Norėdami atsisiųsti failą iš išorinio disko, <br/> prašome prisijungti prie savo paskyros<a id=\"bx-js-disk-run-oauth-modal\" href=\"#\">#SERVICE#</a>.";
-$MESS["DISK_JS_FILE_DIALOG_OAUTH_NOTICE_DETAIL"] = "<p>Atsisiųstas failas bus išsaugotas aplanke Bitriks24.Disk ir visi tolesni pakeitimai išoriniame diske nebus fiksuojami.</ p><p> Prijungus išorinę paskyrą prie Bitriks24, leidžiate dirbą ją visiems įrankiams, kur ji naudojama ,</p>";
-$MESS["DISK_JS_FILE_DIALOG_OAUTH_NOTICE_DETAIL_B24"] = "<p>Atsisiųstas failas bus išsaugotas aplanke Bitriks24.Disk ir visi tolesni pakeitimai išoriniame diske nebus fiksuojami.</ p><p> Prijungus išorinę paskyrą prie Bitriks24, leidžiate dirbą ją visiems įrankiams, kur ji naudojama ,</p> <p>Išjungti išorinę tarnybą galite savo Bitriks.Pasas redagavimo puslapyje. </p>";
-?>

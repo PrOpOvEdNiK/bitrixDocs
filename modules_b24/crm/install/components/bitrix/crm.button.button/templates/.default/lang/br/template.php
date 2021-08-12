@@ -1,5 +1,0 @@
-<?
-$MESS["CRM_BUTTON_BUTTON_CALLBACK_NAME"] = "Retorno de chamada";
-$MESS["CRM_BUTTON_BUTTON_OPENLINE_NAME"] = "Bate-papo";
-$MESS["CRM_BUTTON_BUTTON_WEBFORM_NAME"] = "Formulário";
-?>

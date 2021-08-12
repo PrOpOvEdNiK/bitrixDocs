@@ -1,3 +1,0 @@
-<?
-$MESS["EXTRA_ENTITY_NAME_FIELD"] = "Nazwa";
-?>

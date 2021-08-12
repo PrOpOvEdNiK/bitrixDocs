@@ -14,6 +14,7 @@ use Bitrix\Crm\Integration\DocumentGenerator\Value\Money;
 use Bitrix\Crm\Integration\DocumentGeneratorManager;
 use Bitrix\Crm\Timeline\DocumentController;
 use Bitrix\Crm\Timeline\DocumentEntry;
+use Bitrix\Crm\Timeline\TimelineType;
 use Bitrix\DocumentGenerator\CreationMethod;
 use Bitrix\DocumentGenerator\DataProvider;
 use Bitrix\DocumentGenerator\DataProvider\EntityDataProvider;
@@ -21,6 +22,7 @@ use Bitrix\DocumentGenerator\DataProvider\User;
 use Bitrix\DocumentGenerator\DataProviderManager;
 use Bitrix\DocumentGenerator\Document;
 use Bitrix\DocumentGenerator\Integration\Numerator\DocumentNumerable;
+use Bitrix\DocumentGenerator\Nameable;
 use Bitrix\DocumentGenerator\Template;
 use Bitrix\Iblock\ElementTable;
 use Bitrix\Main\IO\Path;
@@ -30,7 +32,7 @@ use Bitrix\Main\Numerator\Hashable;
 use Bitrix\Crm\Requisite\EntityLink;
 use Bitrix\Main\Type\DateTime;
 
-abstract class CrmEntityDataProvider extends EntityDataProvider implements Hashable, DocumentNumerable
+abstract class CrmEntityDataProvider extends EntityDataProvider implements Hashable, DocumentNumerable, Nameable
 {
 	protected $multiFields;
 	protected $linkData;
@@ -57,6 +59,7 @@ abstract class CrmEntityDataProvider extends EntityDataProvider implements Hasha
 			'TEXT' => $text,
 			'AUTHOR_ID' => $userId,
 			'BINDINGS' => [['ENTITY_TYPE_ID' => $this->getCrmOwnerType(), 'ENTITY_ID' => $this->source]],
+			'TYPE_CATEGORY_ID' => TimelineType::CREATION,
 		], $document->ID);
 		if($entryID > 0)
 		{
@@ -71,7 +74,7 @@ abstract class CrmEntityDataProvider extends EntityDataProvider implements Hasha
 		}
 
 		//call automation trigger
-		if (CreationMethod::isDocumentCreatedByPublic($document))
+		if (CreationMethod::isDocumentCreatedByPublic($document) || CreationMethod::isDocumentCreatedByRest($document))
 		{
 			$template = $document->getTemplate();
 			DocumentCreateTrigger::execute(
@@ -94,8 +97,11 @@ abstract class CrmEntityDataProvider extends EntityDataProvider implements Hasha
 		$entries = DocumentEntry::getListByDocumentId($document->ID);
 		foreach($entries as $entry)
 		{
-			DocumentController::getInstance()->onDelete($entry['ID'], $entry);
-			DocumentEntry::delete($entry['ID']);
+			DocumentController::getInstance()->onDelete($entry['ID'], [
+				'TYPE_CATEGORY_ID' => (int)$entry['TYPE_CATEGORY_ID'],
+				'ENTITY_TYPE_ID' => $this->getCrmOwnerType(),
+				'ENTITY_ID' => $this->source,
+			]);
 		}
 	}
 
@@ -108,10 +114,17 @@ abstract class CrmEntityDataProvider extends EntityDataProvider implements Hasha
 	public function onDocumentUpdate(Document $document)
 	{
 		Loc::loadLanguageFile(__FILE__);
-		$text = Loc::getMessage('CRM_DOCGEN_CRMENTITYDATAPROVIDER_COMMENT', ['#TITLE#' => htmlspecialcharsbx($document->getTitle())]);
 		$entries = DocumentEntry::getListByDocumentId($document->ID);
 		foreach($entries as $entry)
 		{
+			if($entry['TYPE_CATEGORY_ID'] === TimelineType::MODIFICATION)
+			{
+				$text = Loc::getMessage('CRM_DOCGEN_CRMENTITYDATAPROVIDER_PULIC_LINK_VIEWED', ['#TITLE#' => htmlspecialcharsbx($document->getTitle())]);
+			}
+			else
+			{
+				$text = Loc::getMessage('CRM_DOCGEN_CRMENTITYDATAPROVIDER_COMMENT', ['#TITLE#' => htmlspecialcharsbx($document->getTitle())]);
+			}
 			if($entry['COMMENT'] != $text)
 			{
 				$entry['COMMENT'] = $text;
@@ -130,8 +143,9 @@ abstract class CrmEntityDataProvider extends EntityDataProvider implements Hasha
 
 	/**
 	 * @param Document $document
+	 * @param bool $isFirstTime
 	 */
-	public function onPublicView(Document $document)
+	public function onPublicView(Document $document, bool $isFirstTime = false)
 	{
 		//call automation trigger
 		$template = $document->getTemplate();
@@ -142,6 +156,27 @@ abstract class CrmEntityDataProvider extends EntityDataProvider implements Hasha
 			],
 			['TEMPLATE_ID' => $template->ID]
 		);
+
+		if($isFirstTime)
+		{
+			$text = Loc::getMessage('CRM_DOCGEN_CRMENTITYDATAPROVIDER_PULIC_LINK_VIEWED', ['#TITLE#' => htmlspecialcharsbx($document->getTitle())]);
+			$entryId = DocumentEntry::create([
+				'TEXT' => $text,
+				'BINDINGS' => [['ENTITY_TYPE_ID' => $this->getCrmOwnerType(), 'ENTITY_ID' => $this->source]],
+				'TYPE_CATEGORY_ID' => TimelineType::MODIFICATION,
+			], $document->ID);
+
+			if($entryId > 0)
+			{
+				$saveData = array(
+					'COMMENT' => $text,
+					'ENTITY_TYPE_ID' => $this->getCrmOwnerType(),
+					'ENTITY_ID' => $this->source,
+					'DOCUMENT_ID' => $document->ID,
+				);
+				DocumentController::getInstance()->addToStack($entryId, 'timeline_document_add', $saveData);
+			}
+		}
 	}
 
 	/**
@@ -267,9 +302,9 @@ abstract class CrmEntityDataProvider extends EntityDataProvider implements Hasha
 			$this->fields = array_merge($this->fields, $fields);
 			foreach($this->fields as $placeholder => $field)
 			{
-				if(substr($placeholder, 0, 3) == 'UF_')
+				if(mb_substr($placeholder, 0, 3) == 'UF_')
 				{
-					if(substr($placeholder, -7) == '_SINGLE')
+					if(mb_substr($placeholder, -7) == '_SINGLE')
 					{
 						unset($this->fields[$placeholder]);
 					}
@@ -298,7 +333,7 @@ abstract class CrmEntityDataProvider extends EntityDataProvider implements Hasha
 			return $result;
 		}
 
-		$crmOwnerTypeProvidersMap = DocumentGeneratorManager::getInstance()->getCrmOwnerTypeProvidersMap();
+		$crmOwnerTypeProvidersMap = DocumentGeneratorManager::getInstance()->getCrmOwnerTypeProvidersMap(false);
 		$enumerationFields = [];
 		$fields = $manager->GetEntityFields($this->getSource());
 		foreach($fields as $code => $field)
@@ -316,15 +351,15 @@ abstract class CrmEntityDataProvider extends EntityDataProvider implements Hasha
 				'VALUE' => [$this, 'getUserFieldValue'],
 				'DESCRIPTION' => $field,
 			];
-			if($field['USER_TYPE_ID'] == 'file')
+			if($field['USER_TYPE_ID'] === 'file')
 			{
 				$result[$code]['TYPE'] = DataProvider::FIELD_TYPE_IMAGE;
 			}
-			elseif($field['USER_TYPE_ID'] == 'enumeration')
+			elseif($field['USER_TYPE_ID'] === 'enumeration')
 			{
 				$enumerationFields[] = $field;
 			}
-			elseif($field['USER_TYPE_ID'] == 'employee')
+			elseif($field['USER_TYPE_ID'] === 'employee')
 			{
 				if($field['MULTIPLE'] === 'Y')
 				{
@@ -343,37 +378,41 @@ abstract class CrmEntityDataProvider extends EntityDataProvider implements Hasha
 					$result[$code]['PROVIDER'] = User::class;
 				}
 			}
-			elseif($field['USER_TYPE_ID'] == 'date')
+			elseif($field['USER_TYPE_ID'] === 'date')
 			{
 				$result[$code]['TYPE'] = static::FIELD_TYPE_DATE;
 			}
-			elseif($field['USER_TYPE_ID'] == 'datetime')
+			elseif($field['USER_TYPE_ID'] === 'datetime')
 			{
 				$result[$code]['TYPE'] = static::FIELD_TYPE_DATE;
 				$result[$code]['FORMAT'] = ['format' => DateTime::getFormat(DataProviderManager::getInstance()->getCulture())];
 			}
-			elseif($field['USER_TYPE_ID'] == 'crm' && !$this->isLightMode())
+			elseif($field['USER_TYPE_ID'] === 'crm' && !$this->isLightMode())
 			{
 				$provider = null;
 				$entityTypes = [];
-				if($field['SETTINGS']['LEAD'] == 'Y')
+				$field['SETTINGS'] = (array)$field['SETTINGS'];
+				foreach ($field['SETTINGS'] as $entityName => $isEnabled)
 				{
-					$entityTypes[] = \CCrmOwnerType::Lead;
-				}
-				if($field['SETTINGS']['CONTACT'] == 'Y')
-				{
-					$entityTypes[] = \CCrmOwnerType::Contact;
-				}
-				if($field['SETTINGS']['COMPANY'] == 'Y')
-				{
-					$entityTypes[] = \CCrmOwnerType::Company;
-				}
-				if($field['SETTINGS']['DEAL'] == 'Y')
-				{
-					$entityTypes[] = \CCrmOwnerType::Deal;
+					if ($isEnabled !== 'Y')
+					{
+						continue;
+					}
+					$entityTypeId = \CCrmOwnerType::ResolveID($entityName);
+					if ($entityTypeId > 0)
+					{
+						$entityTypes[] = $entityTypeId;
+					}
 				}
 				$isCrmPrefix = (count($entityTypes) > 1);
-				if($isCrmPrefix || (!is_numeric($field['VALUE'])) && $field['VALUE'] !== false && !is_array($field['VALUE']))
+				if (
+					(
+						$isCrmPrefix
+						|| (!is_numeric($field['VALUE']))
+					)
+					&& $field['VALUE'] !== false
+					&& !is_array($field['VALUE'])
+				)
 				{
 					$parts = explode('_', $field['VALUE']);
 					$field['VALUE'] = $parts[1];
@@ -413,7 +452,7 @@ abstract class CrmEntityDataProvider extends EntityDataProvider implements Hasha
 					}
 				}
 			}
-			elseif($field['USER_TYPE_ID'] == 'money')
+			elseif($field['USER_TYPE_ID'] === 'money')
 			{
 				$result[$code]['TYPE'] = Money::class;
 			}
@@ -496,7 +535,9 @@ abstract class CrmEntityDataProvider extends EntityDataProvider implements Hasha
 			$maps = EntityConversionMapTable::getList(['select' => ['DATA']]);
 			while($map = $maps->fetch())
 			{
-				$data = unserialize($map['DATA']);
+				$data = unserialize($map['DATA'], [
+					'allowed_classes' => false,
+				]);
 				if(!is_array($data) || !isset($data['items']) || !is_array($data['items']) || empty($data['items']))
 				{
 					continue;
@@ -617,7 +658,7 @@ abstract class CrmEntityDataProvider extends EntityDataProvider implements Hasha
 			{
 				foreach($value as $val)
 				{
-					if(strpos($val, '|') !== false)
+					if(mb_strpos($val, '|') !== false)
 					{
 						$array = explode('|', $val);
 						$val = $array[0];
@@ -627,7 +668,7 @@ abstract class CrmEntityDataProvider extends EntityDataProvider implements Hasha
 			}
 			else
 			{
-				if(strpos($value, '|') !== false)
+				if(mb_strpos($value, '|') !== false)
 				{
 					$array = explode('|', $value);
 					$value = $array[0];
@@ -773,7 +814,25 @@ abstract class CrmEntityDataProvider extends EntityDataProvider implements Hasha
 	 */
 	public function getSelfCompanyId()
 	{
-		$myCompanyId = DataProviderManager::getInstance()->getValueFromList($this->getMyCompanyId(), true);
+		$options = $this->getOptions();
+		$myCompanyId = null;
+		if (isset($options['VALUES']['MY_COMPANY']))
+		{
+			$myCompanyId = (int) $options['VALUES']['MY_COMPANY'];
+		}
+		if (!$myCompanyId)
+		{
+			$dataProviderManager = DataProviderManager::getInstance();
+			$myCompany = $dataProviderManager->getValueFromList($dataProviderManager->getDataProviderValue($this, 'MY_COMPANY'));
+			if ($myCompany instanceof DataProvider)
+			{
+				$myCompanyId = (int) $myCompany->getSource();
+			}
+			else
+			{
+				$myCompanyId = (int) $myCompany;
+			}
+		}
 		if($myCompanyId > 0)
 		{
 			return $myCompanyId;
@@ -968,7 +1027,21 @@ abstract class CrmEntityDataProvider extends EntityDataProvider implements Hasha
 
 				if($entityId > 0)
 				{
-					$requisites = EntityRequisite::getSingleInstance()->getList([
+					/** @var EntityRequisite $entityRequisite */
+					$entityRequisite = EntityRequisite::getSingleInstance();
+					if (!$requisiteId)
+					{
+						$settings = $entityRequisite->loadSettings($entityTypeId, $entityId);
+						if (isset($settings['REQUISITE_ID_SELECTED']) && $settings['REQUISITE_ID_SELECTED'] > 0)
+						{
+							$defRequisiteId = (int)$settings['REQUISITE_ID_SELECTED'];
+							if ($entityRequisite->exists($defRequisiteId))
+							{
+								$requisiteId = $defRequisiteId;
+							}
+						}
+					}
+					$requisites = $entityRequisite->getList([
 						'order' => ['SORT' => 'ASC', 'ID' => 'ASC'],
 						'filter' => [
 							'=ENTITY_TYPE_ID' => $entityTypeId,
@@ -1382,6 +1455,23 @@ abstract class CrmEntityDataProvider extends EntityDataProvider implements Hasha
 	}
 
 	/**
+	 * Get Primary Address (it used to be like this).
+	 * If Primary Address is empty - get Delivery Address instead (as this is new by default address type).
+	 *
+	 * @return string
+	 */
+	public function getAddress()
+	{
+		$address = $this->getAddressFromRequisite($this->fields['REQUISITE'], 'PRIMARY_ADDRESS');
+		if(empty($address))
+		{
+			$address = $this->getAddressFromRequisite($this->fields['REQUISITE'], 'DELIVERY_ADDRESS');
+		}
+
+		return $address;
+	}
+
+	/**
 	 * @return string
 	 */
 	public function getPrimaryAddress()
@@ -1401,7 +1491,7 @@ abstract class CrmEntityDataProvider extends EntityDataProvider implements Hasha
 	 * @internal
 	 * @param array $requisiteFieldDescription
 	 * @param string $placeholder
-	 * @return string
+	 * @return array
 	 */
 	protected function getAddressFromRequisite(array $requisiteFieldDescription, $placeholder)
 	{
@@ -1415,9 +1505,12 @@ abstract class CrmEntityDataProvider extends EntityDataProvider implements Hasha
 		if($requisites instanceof Requisite)
 		{
 			$data = DataProviderManager::getInstance()->getArray($requisites);
-			if(isset($data[$placeholder]) && is_array($data[$placeholder]) && isset($data[$placeholder]['TEXT']) && !empty($data[$placeholder]['TEXT']))
+			if(
+				isset($data[$placeholder])
+				&& is_array($data[$placeholder])
+			)
 			{
-				$address = $data[$placeholder]['TEXT'];
+				$address = $data[$placeholder];
 			}
 		}
 

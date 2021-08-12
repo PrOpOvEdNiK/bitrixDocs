@@ -10,7 +10,7 @@ class CWebDavBlankDocument
 
 	public function __construct($type)
 	{
-		$type = strtolower($type);
+		$type = mb_strtolower($type);
 		$type = trim($type, '.');
 
 		if(!$this->issetType($type))

@@ -1,4 +1,0 @@
-<?
-$MESS["BLOG_MAIN_SEARCH_SEARCH"] = "Szukaj";
-$MESS["BLOG_SEARCH_BUTTON"] = "Znajdź";
-?>

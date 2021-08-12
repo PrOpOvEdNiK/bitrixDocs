@@ -1,4 +1,0 @@
-<?
-$MESS["CRM_AUTOMATION_NOT_SELECTED"] = "nepasirinkta";
-$MESS["CRM_AUTOMATION_ADD_MULTIPLE"] = "pridėti";
-?>

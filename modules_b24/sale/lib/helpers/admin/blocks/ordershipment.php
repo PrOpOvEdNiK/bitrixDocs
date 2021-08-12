@@ -257,7 +257,7 @@ class OrderShipment
 				$checkLink .= OrderShipment::buildCheckHtml($data['CHECK']);
 			}
 			$checkLink .= '</td></tr>';
-			if ($data['HAS_ENABLED_CASHBOX'] === 'Y')
+			if ($data['HAS_ENABLED_CASHBOX'] === 'Y' && $data['CAN_PRINT_CHECK'] === 'Y')
 			{
 				$checkLink .= '<tr><td class="adm-detail-content-cell-r tac"><a href="javascript:void(0);" onclick="BX.Sale.Admin.OrderShipment.prototype.showCreateCheckWindow('.$data['ID'].');">'.Loc::getMessage('SALE_ORDER_SHIPMENT_CHECK_ADD').'</a></td></tr>';
 			}
@@ -404,7 +404,7 @@ class OrderShipment
 					<td class="adm-detail-content-cell-l" width="40%">'.Loc::getMessage('SALE_ORDER_SHIPMENT_TRACKING_NUMBER').':</td>
 					<td class="adm-detail-content-cell-r tal"><input type="text" class="adm-bus-input" name="SHIPMENT['.$index.'][TRACKING_NUMBER]" value="'.$trackingNumber.'"><br></td>
 				</tr>'.(
-				$data['HAS_TRACKING'] && strlen($trackingNumber) > 0 && intval($data['ID'] > 0)
+				$data['HAS_TRACKING'] && $trackingNumber <> '' && intval($data['ID'] > 0)
 				?
 				'<tr>
 					<td class="adm-detail-content-cell-l" width="40%">'.Loc::getMessage('SALE_ORDER_SHIPMENT_TRACKING_STATUS').':</td>
@@ -414,11 +414,11 @@ class OrderShipment
 				</tr>
 				<tr>
 					<td class="adm-detail-content-cell-l" width="40%">'.Loc::getMessage('SALE_ORDER_SHIPMENT_TRACKING_DESCRIPTION').':</td>
-					<td class="adm-detail-content-cell-r tal" id="sale-order-shipment-tracking-description-'.$index.'">'.(strlen($data['TRACKING_DESCRIPTION']) > 0 ? $data['TRACKING_DESCRIPTION'] : '-').'<br></td>
+					<td class="adm-detail-content-cell-r tal" id="sale-order-shipment-tracking-description-'.$index.'">'.($data['TRACKING_DESCRIPTION'] <> '' ? $data['TRACKING_DESCRIPTION'] : '-').'<br></td>
 				</tr>
 				<tr>
 					<td class="adm-detail-content-cell-l" width="40%">'.Loc::getMessage('SALE_ORDER_SHIPMENT_TRACKING_LAST_CHANGE').':</td>
-					<td class="adm-detail-content-cell-r tal" id="sale-order-shipment-tracking-last-change-'.$index.'">'.(strlen($data['TRACKING_LAST_CHANGE']) > 0 ? $data['TRACKING_LAST_CHANGE'] : '-').'<br></td>
+					<td class="adm-detail-content-cell-r tal" id="sale-order-shipment-tracking-last-change-'.$index.'">'.($data['TRACKING_LAST_CHANGE'] <> '' ? $data['TRACKING_LAST_CHANGE'] : '-').'<br></td>
 				</tr>'.(!empty($data['TRACKING_URL']) ?
 						'<tr>
 							<td class="adm-detail-content-cell-l" width="40%">'.Loc::getMessage('SALE_ORDER_SHIPMENT_TRACKING_URL').':</td>
@@ -529,6 +529,7 @@ class OrderShipment
 		$result .= self::initJsShipment($params);
 		return $result;
 	}
+
 	public static function getWeightUnit($siteId)
 	{
 		return htmlspecialcharsbx(Option::get('sale', 'weight_unit', "", $siteId));
@@ -546,7 +547,7 @@ class OrderShipment
 		return $weightKoef;
 	}
 
-	public function getImgDeliveryServiceList($items)
+	public static function getImgDeliveryServiceList($items)
 	{
 		$srcList = array();
 		foreach ($items as $item)
@@ -717,6 +718,7 @@ class OrderShipment
 
 		return $result;
 	}
+
 	/**
 	 * @param $shipment
 	 * @param int $index
@@ -1178,7 +1180,7 @@ class OrderShipment
 		$shipmentStatus = '<span><span id="BUTTON_SHIPMENT_' . $index . '" '.$class.'>' . htmlspecialcharsbx($shipmentStatusList[$data['STATUS_ID']]) . '</span>'.$triangle.'</span>';
 
 		$shippingBlockId = '';
-		if(($isAllowCompany !== false || $isUserResponsible !== false) && ($isActive || strlen($data['TRACKING_NUMBER']) > 0))
+		if(($isAllowCompany !== false || $isUserResponsible !== false) && ($isActive || $data['TRACKING_NUMBER'] <> ''))
 		{
 			$shippingBlockId = '<tr>
 									<td class="adm-detail-content-cell-l" width="40%">'.Loc::getMessage('SALE_ORDER_SHIPMENT_TRACKING_NUMBER').':</td>
@@ -1188,7 +1190,7 @@ class OrderShipment
 			if ($isActive)
 				$shippingBlockId .= '<div class="bx-adm-edit-pencil" id="TRACKING_NUMBER_PENCIL_'.$index.'"></div>';
 
-			if($data['HAS_TRACKING'] && strlen($data['TRACKING_NUMBER']) > 0)
+			if($data['HAS_TRACKING'] && $data['TRACKING_NUMBER'] <> '')
 			{
 				$shippingBlockId .= '</td></tr>
 				<tr>
@@ -1199,11 +1201,11 @@ class OrderShipment
 											</tr>
 											<tr>
 												<td class="adm-detail-content-cell-l" width="40%">'.Loc::getMessage('SALE_ORDER_SHIPMENT_TRACKING_DESCRIPTION').':</td>
-												<td class="adm-detail-content-cell-r tal" id="sale-order-shipment-tracking-description-'.$index.'">'.(strlen($data['TRACKING_DESCRIPTION']) > 0 ? $data['TRACKING_DESCRIPTION'] : '-').'<br></td>
+												<td class="adm-detail-content-cell-r tal" id="sale-order-shipment-tracking-description-'.$index.'">'.($data['TRACKING_DESCRIPTION'] <> '' ? $data['TRACKING_DESCRIPTION'] : '-').'<br></td>
 											<tr>
 											<tr>
 												<td class="adm-detail-content-cell-l" width="40%">'.Loc::getMessage('SALE_ORDER_SHIPMENT_TRACKING_LAST_CHANGE').':</td>
-												<td class="adm-detail-content-cell-r tal" id="sale-order-shipment-tracking-last-change-'.$index.'">'.(strlen($data['TRACKING_LAST_CHANGE']) > 0 ? $data['TRACKING_LAST_CHANGE'] : '-').'<br></td>
+												<td class="adm-detail-content-cell-r tal" id="sale-order-shipment-tracking-last-change-'.$index.'">'.($data['TRACKING_LAST_CHANGE'] <> '' ? $data['TRACKING_LAST_CHANGE'] : '-').'<br></td>
 											<tr>';
 
 				if(!empty($data['TRACKING_URL']))
@@ -1217,7 +1219,7 @@ class OrderShipment
 		}
 
 		$shippingBlockDocNum = '';
-		if (($isAllowCompany !== false || $isUserResponsible !== false) && strlen($data['DELIVERY_DOC_NUM']) > 0)
+		if (($isAllowCompany !== false || $isUserResponsible !== false) && $data['DELIVERY_DOC_NUM'] <> '')
 		{
 			$shippingBlockDocNum = '<tr>
 								<td class="adm-detail-content-cell-l" width="40%">'.Loc::getMessage('SALE_ORDER_SHIPMENT_DELIVERY_DOC_NUM').':</td>
@@ -1228,7 +1230,7 @@ class OrderShipment
 		}
 
 		$shippingBlockDocDate = '';
-		if (($isAllowCompany !== false || $isUserResponsible !== false) && strlen($data['DELIVERY_DOC_DATE']) > 0)
+		if (($isAllowCompany !== false || $isUserResponsible !== false) && $data['DELIVERY_DOC_DATE'] <> '')
 		{
 			$shippingBlockDocDate = '<tr>
 								<td class="adm-detail-content-cell-l" width="40%">'.Loc::getMessage('SALE_ORDER_SHIPMENT_DELIVERY_DOC_DATE').':</td>
@@ -1249,7 +1251,7 @@ class OrderShipment
 				$checkLink .= OrderShipment::buildCheckHtml($data['CHECK']);
 			}
 			$checkLink .= "</td></tr>";
-			if($formType != 'archive' && $data['HAS_ENABLED_CASHBOX'] === 'Y')
+			if($formType != 'archive' && $data['HAS_ENABLED_CASHBOX'] === 'Y' && $data['CAN_PRINT_CHECK'] === 'Y')
 			{
 				$checkLink .= '<tr><td class="adm-detail-content-cell-r tac"><a href="javascript:void(0);" onclick="BX.Sale.Admin.OrderShipment.prototype.showCreateCheckWindow('.$data['ID'].');">'.Loc::getMessage('SALE_ORDER_SHIPMENT_CHECK_ADD').'</a></td></tr>';
 			}
@@ -1268,7 +1270,7 @@ class OrderShipment
 				static::renderShipmentEditLink($data+['backurl'=>$backUrl]).
 				Loc::getMessage('SALE_ORDER_SHIPMENT_BLOCK_SHIPMENT_EDIT').'</a></div>';
 		}
-			
+
 		$weightView = roundEx(
 			floatval(
 				$data['WEIGHT']/self::getWeightKoef($data['SITE_ID'])
@@ -1580,7 +1582,7 @@ class OrderShipment
 		$checkLink = '';
 		if ($data['FFD_105_ENABLED'] === 'Y' &&
 			(
-				($formType != 'archive' && $data['HAS_ENABLED_CASHBOX'] === 'Y') ||
+				($formType != 'archive' && $data['HAS_ENABLED_CASHBOX'] === 'Y' && $data['CAN_PRINT_CHECK'] === 'Y') ||
 				!empty($data['CHECK'])
 			)
 		)
@@ -1592,7 +1594,7 @@ class OrderShipment
 				$checkLink .= OrderShipment::buildCheckHtml($data['CHECK']);
 			}
 			$checkLink .= "</div>";
-			if ($formType != 'archive' && $data['HAS_ENABLED_CASHBOX'] === 'Y')
+			if ($formType != 'archive' && $data['HAS_ENABLED_CASHBOX'] === 'Y' && $data['CAN_PRINT_CHECK'] === 'Y')
 			{
 				$checkLink .= '<div><a href="javascript:void(0);" onclick="BX.Sale.Admin.OrderShipment.prototype.showCreateCheckWindow('.$data['ID'].');">'.Loc::getMessage('SALE_ORDER_SHIPMENT_CHECK_ADD').'</a></div>';
 			}
@@ -1763,7 +1765,7 @@ class OrderShipment
 
 		if(!is_null($delivery))
 		{
-			$fields['HAS_TRACKING'] = strlen($delivery->getTrackingClass()) > 0 ? true : false;
+			$fields['HAS_TRACKING'] = $delivery->getTrackingClass() <> '' ? true : false;
 
 			if($fields['HAS_TRACKING'] && intval($fields['DELIVERY_ID']) > 0)
 			{
@@ -1799,7 +1801,7 @@ class OrderShipment
 			$sanitizer = new \CBXSanitizer;
 			$sanitizer->SetLevel(\CBXSanitizer::SECURE_LEVEL_MIDDLE);
 
-			if(strlen($request['ERROR_DESCRIPTION']) > 0)
+			if($request['ERROR_DESCRIPTION'] <> '')
 				$fields['DELIVERY_REQUEST_ERROR_DESCRIPTION'] = $sanitizer->SanitizeHtml($request['ERROR_DESCRIPTION']);
 		}
 
@@ -1812,6 +1814,11 @@ class OrderShipment
 		$dbRes = CashboxTable::getList(array('filter' => array('=ACTIVE' => 'Y', '=ENABLED' => 'Y')));
 		$fields['HAS_ENABLED_CASHBOX'] = ($dbRes->fetch()) ? 'Y' : 'N';
 
+		$fields['CAN_PRINT_CHECK'] = 'Y';
+		if (Sale\Cashbox\Manager::isEnabledPaySystemPrint())
+		{
+			$fields['CAN_PRINT_CHECK'] = 'N';
+		}
 
 		$registry = Sale\Registry::getInstance(Sale\Registry::REGISTRY_TYPE_ORDER);
 		/** @var Sale\Order $orderClass */
@@ -1823,7 +1830,6 @@ class OrderShipment
 
 		return $fields;
 	}
-
 
 	private static function getDisallowFields()
 	{
@@ -1842,6 +1848,7 @@ class OrderShipment
 			'DELIVERY_ID',
 		);
 	}
+
 	/**
 	 * @param Order $order
 	 * @param array $shipments
@@ -1853,7 +1860,7 @@ class OrderShipment
 		global $USER, $APPLICATION;
 
 		$saleModulePermissions = $APPLICATION->GetGroupRight("sale");
-		
+
 		$result = new Result();
 		$data = array();
 		$basketResult = null;
@@ -2180,7 +2187,7 @@ class OrderShipment
 		{
 			$result .= '<div>';
 
-			if (strlen($check['LINK']) > 0)
+			if ($check['LINK'] <> '')
 			{
 				$result .= '<a href="'.$check['LINK'].'" target="_blank">'.Loc::getMessage('SALE_ORDER_SHIPMENT_CHECK_LINK', array('#CHECK_ID#' => $check['ID'])).'</a>';
 			}

@@ -1,3 +1,0 @@
-<?php
-$MESS["CRM_REPORT_SALES_COMPARE_CURRENT_PERIOD"] = "Текущий период";
-$MESS["CRM_REPORT_SALES_COMPARE_PREV_PERIOD"] = "Предыдущий период";

@@ -23,7 +23,7 @@ class Param
 		}
 		else
 		{
-			$this->request = Util::getRequest();;
+			$this->request = Util::getRequest();
 		}
 	}
 
@@ -43,10 +43,10 @@ class Param
 
 		if ($request->get('flt_date_datesel') === null)
 		{
-			$componentParams['LOG_DATE_FROM'] = (strlen($request->get('flt_date_from')) > 0 ? trim($request->get('flt_date_from')) : '');
-			$componentParams['LOG_DATE_TO'] = (strlen($request->get('flt_date_to')) > 0 ? trim($request->get('flt_date_to')) : '');
+			$componentParams['LOG_DATE_FROM'] = ($request->get('flt_date_from') <> '' ? trim($request->get('flt_date_from')) : '');
+			$componentParams['LOG_DATE_TO'] = ($request->get('flt_date_to') <> '' ? trim($request->get('flt_date_to')) : '');
 		}
-		elseif (strlen($request->get('flt_date_datesel')) > 0)
+		elseif ($request->get('flt_date_datesel') <> '')
 		{
 			$day = date('w');
 			if($day == 0)
@@ -78,7 +78,7 @@ class Param
 					$componentParams['LOG_DATE_TO'] = convertTimeStamp(mktime(0, 0, 0, date('n'), 0));
 					break;
 				case 'days':
-					$componentParams['LOG_DATE_FROM'] = convertTimeStamp(time() - intval($request->get('flt_date_days'))*86400);
+					$componentParams['LOG_DATE_FROM'] = convertTimeStamp(time() - (int)$request->get('flt_date_days')*86400);
 					$componentParams['LOG_DATE_TO'] = '';
 					break;
 				case 'exact':
@@ -109,10 +109,10 @@ class Param
 		\CRatingsComponentsMain::getShowRating($componentParams);
 		if (
 			!isset($componentParams['RATING_TYPE'])
-			|| strlen($componentParams['RATING_TYPE']) <= 0
+			|| $componentParams['RATING_TYPE'] == ''
 		)
 		{
-			$componentParams['RATING_TYPE'] = Option::get('main', 'rating_vote_template', (Option::get('main', 'rating_vote_type', 'standart') == 'like'? 'like': 'standart'));
+			$componentParams['RATING_TYPE'] = Option::get('main', 'rating_vote_template', (Option::get('main', 'rating_vote_type', 'standart') === 'like'? 'like': 'standart'));
 		}
 		switch ($componentParams['RATING_TYPE'])
 		{
@@ -154,7 +154,7 @@ class Param
 			}
 			elseif (!empty($request->get('flt_group_id')))
 			{
-				$componentParams['GROUP_ID'] = intVal($request->get('flt_group_id'));
+				$componentParams['GROUP_ID'] = intval($request->get('flt_group_id'));
 			}
 		}
 
@@ -198,18 +198,18 @@ class Param
 				preg_match('/^U(\d+)$/', $request->get('TO_CODE')['U'][0], $matches);
 				if (!empty($matches))
 				{
-					$componentParams['TO_USER_ID'] = intVal($matches[1]);
+					$componentParams['TO_USER_ID'] = intval($matches[1]);
 				}
 			}
 			else
 			{
-				$componentParams['TO_USER_ID'] = intVal($request->get('flt_to_user_id'));
+				$componentParams['TO_USER_ID'] = intval($request->get('flt_to_user_id'));
 			}
 		}
 
 		if (
-			strLen($componentParams['ENTITY_TYPE']) <= 0
-			&& strlen($request->get('flt_entity_type')) > 0
+			$componentParams['ENTITY_TYPE'] == ''
+			&& $request->get('flt_entity_type') <> ''
 		)
 		{
 			$componentParams['ENTITY_TYPE'] = trim($request->get('flt_entity_type'));
@@ -221,7 +221,7 @@ class Param
 			&& !empty($request->get('flt_user_id'))
 		)
 		{
-			$componentParams['USER_ID'] = intVal($request->get('flt_user_id'));
+			$componentParams['USER_ID'] = intval($request->get('flt_user_id'));
 		}
 
 		$componentParams['CREATED_BY_ID'] = 0;
@@ -236,7 +236,7 @@ class Param
 			preg_match('/^U(\d+)$/', $request->get('CREATED_BY_CODE')['U'][0], $matches);
 			if (!empty($matches))
 			{
-				$componentParams['CREATED_BY_ID'] = intVal($matches[1]);
+				$componentParams['CREATED_BY_ID'] = intval($matches[1]);
 			}
 		}
 		elseif (!empty($request->get('flt_created_by_id')))
@@ -269,25 +269,6 @@ class Param
 
 		$componentParams['TAG'] = ($request->get('TAG') ? trim($request->get('TAG')) : '');
 		$componentParams['FIND'] = ($request->get('FIND') ? trim($request->get('FIND')) : '');
-	}
-
-	public function prepareNameTemplateParams(&$componentParams)
-	{
-		Util::checkEmptyParamString($componentParams, 'NAME_TEMPLATE', \CSite::getNameFormat());
-
-		$componentParams['NAME_TEMPLATE_WO_NOBR'] = str_replace(
-			[ '#NOBR#', '#/NOBR#' ],
-			'',
-			$componentParams['NAME_TEMPLATE']
-		);
-		$componentParams['NAME_TEMPLATE'] = $componentParams['NAME_TEMPLATE_WO_NOBR'];
-	}
-
-	public function prepareAvatarParams(&$componentParams)
-	{
-		Util::checkEmptyParamInteger($componentParams, 'AVATAR_SIZE_COMMON', 100);
-		Util::checkEmptyParamInteger($componentParams, 'AVATAR_SIZE', 100);
-		Util::checkEmptyParamInteger($componentParams, 'AVATAR_SIZE_COMMENT', 100);
 	}
 
 	public function prepareCommentsParams(&$componentParams)
@@ -336,6 +317,10 @@ class Param
 			&& (
 				empty($request->get('action'))
 				|| $request->get('action') != 'SBPE_get_full_form'
+			)
+			&& (
+				empty($request->get('startVideoRecorder'))
+				|| $request->get('startVideoRecorder') != 'Y'
 			)
 				? 'Y'
 				: 'N'
@@ -418,7 +403,7 @@ class Param
 
 		if (
 			$USER->isAuthorized()
-			|| $componentParams['AUTH'] == 'Y'
+			|| $componentParams['AUTH'] === 'Y'
 		)
 		{
 			$presetFilterId = $this->getComponent()->getPresetFilterIdValue();
@@ -445,10 +430,7 @@ class Param
 				}
 			}
 
-			if (
-				!empty($componentParams['DESTINATION'])
-				|| !is_array($componentParams['DESTINATION'])
-			)
+			if (empty($componentParams['DESTINATION']))
 			{
 				if ($componentParams['GROUP_ID'] > 0)
 				{
@@ -463,8 +445,8 @@ class Param
 					$componentParams['USE_FOLLOW'] = 'N';
 				}
 				elseif (
-					strlen($componentParams['TAG']) > 0
-					|| strlen($componentParams['FIND']) > 0
+					$componentParams['TAG'] <> ''
+					|| $componentParams['FIND'] <> ''
 				)
 				{
 					$componentParams['SET_LOG_COUNTER'] = 'N';
@@ -477,11 +459,11 @@ class Param
 			if (
 				(
 					isset($componentParams['!EXACT_EVENT_ID'])
-					&& strlen($componentParams['!EXACT_EVENT_ID']) > 0
+					&& $componentParams['!EXACT_EVENT_ID'] <> ''
 				)
 				|| (
 					isset($componentParams['EXACT_EVENT_ID'])
-					&& strlen($componentParams['EXACT_EVENT_ID']) > 0
+					&& $componentParams['EXACT_EVENT_ID'] <> ''
 				)
 				|| (
 					is_array($componentParams['EVENT_ID'])
@@ -489,18 +471,18 @@ class Param
 				)
 				|| (
 					!is_array($componentParams['EVENT_ID'])
-					&& strlen($componentParams['EVENT_ID']) > 0
+					&& $componentParams['EVENT_ID'] <> ''
 				)
-				|| $presetFilterId == 'extranet'
+				|| $presetFilterId === 'extranet'
 				|| $componentParams['CREATED_BY_ID'] > 0
 				|| (
 					isset($componentParams['LOG_DATE_FROM'])
-					&& strlen($componentParams['LOG_DATE_FROM']) > 0
+					&& $componentParams['LOG_DATE_FROM'] <> ''
 					&& makeTimeStamp($componentParams['LOG_DATE_FROM'], \CSite::getDateFormat('SHORT')) < time() + \CTimeZone::getOffset()
 				)
 				|| (
 					isset($componentParams['LOG_DATE_TO'])
-					&& strlen($componentParams['LOG_DATE_TO']) > 0
+					&& $componentParams['LOG_DATE_TO'] <> ''
 					&& makeTimeStamp($componentParams['LOG_DATE_TO'], \CSite::getDateFormat('SHORT')) < time() + \CTimeZone::getOffset()
 				)
 			)
@@ -511,12 +493,12 @@ class Param
 				$componentParams['USE_FOLLOW'] = 'N';
 			}
 
-			if ($componentParams['IS_CRM'] == 'Y')
+			if ($componentParams['IS_CRM'] === 'Y')
 			{
 				Util::checkEmptyParamString($componentParams, 'CRM_ENTITY_TYPE', '');
 				Util::checkEmptyParamInteger($componentParams, 'CRM_ENTITY_ID', 0);
 
-				if (strlen($componentParams['CRM_ENTITY_TYPE']) > 0)
+				if ($componentParams['CRM_ENTITY_TYPE'] <> '')
 				{
 					$componentParams['SET_LOG_COUNTER'] = 'N';
 					$componentParams['SET_LOG_PAGE_CACHE'] = 'N';
@@ -527,7 +509,7 @@ class Param
 					$componentParams['SET_LOG_COUNTER'] = 'N';
 					$componentParams['SHOW_UNREAD'] = 'N';
 				}
-				$componentParams['CRM_EXTENDED_MODE'] = (isset($componentParams['CRM_EXTENDED_MODE']) && $componentParams['CRM_EXTENDED_MODE'] == 'Y' ? 'Y' : 'N');
+				$componentParams['CRM_EXTENDED_MODE'] = (isset($componentParams['CRM_EXTENDED_MODE']) && $componentParams['CRM_EXTENDED_MODE'] === 'Y' ? 'Y' : 'N');
 			}
 
 			if ($componentParams['LOG_CNT'] > 0)
@@ -539,10 +521,10 @@ class Param
 			if (
 				(
 					!isset($componentParams['USE_FAVORITES'])
-					|| $componentParams['USE_FAVORITES'] != 'N'
+					|| $componentParams['USE_FAVORITES'] !== 'N'
 				)
 				&& isset($componentParams['FAVORITES'])
-				&& $componentParams['FAVORITES'] == 'Y'
+				&& $componentParams['FAVORITES'] === 'Y'
 			)
 			{
 				$componentParams['SET_LOG_COUNTER'] = 'N';
@@ -550,7 +532,7 @@ class Param
 				$componentParams['SHOW_UNREAD'] = 'N';
 			}
 
-			if (intval($request->get('pagesize')) > 0)
+			if ((int)$request->get('pagesize') > 0)
 			{
 				$componentParams['SET_LOG_PAGE_CACHE'] = 'N';
 			}
@@ -562,47 +544,63 @@ class Param
 		global $USER;
 
 		$request = $this->getRequest();
-		$currentUserId = intval($USER->getId());
 
 		$presetFilterTopId = $this->getComponent()->getPresetFilterTopIdValue();
 		$presetFilterId = $this->getComponent()->getPresetFilterIdValue();
 		$commentsNeeded = $this->getComponent()->getCommentsNeededValue();
 
 		if(
-			strlen($request->get('preset_filter_top_id')) > 0
-			&& $request->get('preset_filter_top_id') != 'clearall'
+			$request->get('preset_filter_top_id') <> ''
+			&& $request->get('preset_filter_top_id') !== 'clearall'
 		)
 		{
 			$presetFilterTopId = $request->get('preset_filter_top_id');
 		}
+		elseif (
+			isset($componentParams['preset_filter_top_id'])
+			&& $componentParams['preset_filter_top_id'] <> ''
+			&& $componentParams['preset_filter_top_id'] !== 'clearall'
+		) // from nextPage ajax request
+		{
+			$presetFilterTopId = $componentParams['preset_filter_top_id'];
+		}
+
 		if(
-			strlen($request->get('preset_filter_id')) > 0
-			&& $request->get('preset_filter_id') != 'clearall'
+			$request->get('preset_filter_id') <> ''
+			&& $request->get('preset_filter_id') !== 'clearall'
 		)
 		{
 			$presetFilterId = $request->get('preset_filter_id');
+		}
+		elseif (
+			isset($componentParams['preset_filter_id'])
+			&& $componentParams['preset_filter_id'] <> ''
+			&& $componentParams['preset_filter_id'] !== 'clearall'
+		) // from nextPage ajax request
+		{
+			$presetFilterId = $componentParams['preset_filter_id'];
 		}
 
 		$presetFiltersOptions = $presetFiltersList = false;
 		if (
 			$USER->isAuthorized()
-			&& $componentParams['SHOW_EVENT_ID_FILTER'] != 'N'
+			&& $componentParams['SHOW_EVENT_ID_FILTER'] !== 'N'
 		)
 		{
-			$presetFiltersOptions = \CUserOptions::getOption('socialnetwork', '~log_filter_'.SITE_ID, $currentUserId);
+			$presetFiltersOptions = \CUserOptions::getOption('socialnetwork', '~log_filter_'.SITE_ID);
 			if (!is_array($presetFiltersOptions))
 			{
-				$presetFiltersOptions = \CUserOptions::getOption('socialnetwork', '~log_filter', $currentUserId);
+				$presetFiltersOptions = \CUserOptions::getOption('socialnetwork', '~log_filter');
 			}
 		}
 
 		if (
 			is_array($presetFiltersOptions)
-			&& $componentParams['SHOW_EVENT_ID_FILTER'] != 'N'
-			&& $componentParams['IS_CRM'] != 'Y'
+			&& $componentParams['SHOW_EVENT_ID_FILTER'] !== 'N'
+			&& $componentParams['IS_CRM'] !== 'Y'
 		)
 		{
-			if(strlen($request->get('preset_filter_id')) > 0)
+			if($request->get('preset_filter_id') <> '')
 			{
 				\CUserOptions::deleteOption('socialnetwork', '~log_'.$componentParams['ENTITY_TYPE'].'_'.($componentParams['ENTITY_TYPE'] == SONET_ENTITY_GROUP ? $componentParams['GROUP_ID'] : $componentParams['USER_ID']));
 			}
@@ -614,6 +612,16 @@ class Param
 				'filterItems' => $presetFiltersList
 			]);
 			AddEventHandler('socialnetwork', 'OnBeforeSonetLogFilterFill', [ $livefeedFilterHandler, 'OnBeforeSonetLogFilterFill' ]);
+		}
+
+		if (
+			$componentParams['IS_CRM'] === 'Y'
+			&& Loader::includeModule('crm')
+			&& isset($componentParams['CRM_ENTITY_TYPE'])
+		)
+		{
+			$liveFeedFilter = new \CCrmLiveFeedFilter([ 'EntityTypeID' => \CCrmLiveFeedEntity::resolveEntityTypeID($componentParams['CRM_ENTITY_TYPE']) ]);
+			AddEventHandler('socialnetwork', 'OnSonetLogFilterProcess', [ $liveFeedFilter, 'OnSonetLogFilterProcess' ]);
 		}
 
 		$presetTopFiltersList = [];
@@ -642,7 +650,7 @@ class Param
 			}
 		}
 
-		if ($componentParams['SHOW_EVENT_ID_FILTER'] != 'N')
+		if ($componentParams['SHOW_EVENT_ID_FILTER'] !== 'N')
 		{
 			$eventResult = \CSocNetLogComponent::onSonetLogFilterProcess($presetFilterTopId, $presetFilterId, $presetTopFiltersList, $presetFiltersList);
 			if (is_array($eventResult))
@@ -686,7 +694,7 @@ class Param
 		}
 		elseif (
 			!isset($componentParams['USE_FOLLOW'])
-			|| strLen($componentParams['USE_FOLLOW']) < 0
+			|| $componentParams['USE_FOLLOW'] == ''
 		)
 		{
 			$componentParams['USE_FOLLOW'] = 'Y';
@@ -697,7 +705,7 @@ class Param
 	{
 		if (
 			!empty($componentParams['PUBLIC_MODE'])
-			&& $componentParams['PUBLIC_MODE'] == 'Y'
+			&& $componentParams['PUBLIC_MODE'] === 'Y'
 		)
 		{
 			$componentParams['MODE'] = 'PUB';
@@ -705,7 +713,7 @@ class Param
 
 		if (!empty($componentParams['MODE']))
 		{
-			if ($componentParams['MODE'] == 'LANDING')
+			if ($componentParams['MODE'] === 'LANDING')
 			{
 				$componentParams['HIDE_EDIT_FORM'] = 'Y';
 				$componentParams['SHOW_RATING'] = 'N';
@@ -716,7 +724,7 @@ class Param
 				$componentParams['SET_LOG_PAGE_CACHE'] = 'N';
 				$componentParams['EVENT_ID'] = 'blog_post';
 			}
-			elseif ($componentParams['MODE'] == 'PUB')
+			elseif ($componentParams['MODE'] === 'PUB')
 			{
 				$componentParams['PUBLIC_MODE'] = 'Y';
 			}
@@ -728,5 +736,23 @@ class Param
 		}
 	}
 
+	public function prepareAvatarParams(&$componentParams)
+	{
+		Util::checkEmptyParamInteger($componentParams, 'AVATAR_SIZE_COMMON', 100);
+		Util::checkEmptyParamInteger($componentParams, 'AVATAR_SIZE', 100);
+		Util::checkEmptyParamInteger($componentParams, 'AVATAR_SIZE_COMMENT', 100);
+	}
+
+	public function prepareNameTemplateParams(&$componentParams)
+	{
+		Util::checkEmptyParamString($componentParams, 'NAME_TEMPLATE', \CSite::getNameFormat());
+
+		$componentParams['NAME_TEMPLATE_WO_NOBR'] = str_replace(
+			[ '#NOBR#', '#/NOBR#' ],
+			'',
+			$componentParams['NAME_TEMPLATE']
+		);
+		$componentParams['NAME_TEMPLATE'] = $componentParams['NAME_TEMPLATE_WO_NOBR'];
+	}
 }
 ?>

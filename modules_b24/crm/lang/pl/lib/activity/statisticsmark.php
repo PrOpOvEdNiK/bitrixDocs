@@ -1,5 +1,0 @@
-<?
-$MESS["CRM_ACTIVITY_STAT_MARK_NEGATIVE"] = "Negatywny";
-$MESS["CRM_ACTIVITY_STAT_MARK_NONE"] = "Nie oceniono";
-$MESS["CRM_ACTIVITY_STAT_MARK_POSITIVE"] = "Pozytywna";
-?>

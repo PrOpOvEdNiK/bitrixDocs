@@ -21,13 +21,6 @@ class CIMEvent
 		while ($row = $result->fetch())
 		{
 			IM\Model\ChatTable::update($row['ID'], Array('AVATAR' => ''));
-
-			$obCache = new CPHPCache();
-			$arRel = CIMChat::GetRelationById($row['ID']);
-			foreach ($arRel as $rel)
-			{
-				$obCache->CleanDir('/bx/imc/recent'.CIMMessenger::GetCachePath($rel['USER_ID']));
-			}
 		}
 	}
 
@@ -39,7 +32,7 @@ class CIMEvent
 
 		if (isset($params['LOGIN']) && !empty($params['LOGIN']))
 		{
-			if (substr($params['LOGIN'], 0, strlen(IM\Bot::LOGIN_START)) == IM\Bot::LOGIN_START)
+			if (mb_substr($params['LOGIN'], 0, mb_strlen(IM\Bot::LOGIN_START)) == IM\Bot::LOGIN_START)
 			{
 				$orm = \Bitrix\Main\UserTable::getList(Array(
 					'filter' => Array(
@@ -85,7 +78,7 @@ class CIMEvent
 		{
 			$ratingNotifyTag .= "|".$arParams['REACTION'];
 		}
-		$ratingMentionNotifyTag = "RATING_MENTION|".($arParams['VALUE'] >= 0?"":"DL|").$arParams['ENTITY_TYPE_ID']."|".$arParams['ENTITY_ID'];
+		$ratingMentionNotifyTag = 'RATING_MENTION|' . ($arParams['VALUE'] >= 0 ? '' : 'DL|') . $arParams['ENTITY_TYPE_ID'] . '|' . $arParams['ENTITY_ID'];
 
 		$contentId = Livefeed\Provider::getContentId(array(
 			"RATING_TYPE_ID" => $arParams['ENTITY_TYPE_ID'],
@@ -110,7 +103,7 @@ class CIMEvent
 				$auxData = $liveFeedEntity->getSourceAuxData();
 
 				if (
-					strlen($originalText) > 0
+					$originalText <> ''
 					&& !empty($auxData)
 				)
 				{
@@ -118,8 +111,15 @@ class CIMEvent
 					/** @var bool|object $handler */
 					if($handler = $handlerManager->getHandlerByPostText($originalText))
 					{
+						$suffix = '';
+						if ($provider = Livefeed\Provider::getProvider($contentId['ENTITY_TYPE']))
+						{
+							$suffix = $provider->getSuffix();
+						}
+
 						$handler->setOptions(array(
-							'im' => true
+							'im' => true,
+							'suffix' => $suffix
 						));
 						$handler->sendRatingNotification($auxData, $arParams);
 						return true;
@@ -142,8 +142,8 @@ class CIMEvent
 			}
 			$arMentionedUserID = array_unique($arMentionedUserID);
 
-			$title = CTextParser::clearAllTags($title);
-			$description = CTextParser::clearAllTags($description);
+			$title = CTextParser::clearAllTags(\Bitrix\Im\Text::removeBbCodes($title));
+			$description = CTextParser::clearAllTags(\Bitrix\Im\Text::removeBbCodes($description));
 
 			if (
 				$arParams['OWNER_ID'] != $arParams['USER_ID']
@@ -171,10 +171,10 @@ class CIMEvent
 
 				if (
 					(
-						strlen($arParams["ENTITY_TITLE"]) > 0
-						|| strlen($arParams["ENTITY_MESSAGE"]) > 0
+						$arParams["ENTITY_TITLE"] <> ''
+						|| $arParams["ENTITY_MESSAGE"] <> ''
 					)
-					&& strlen($arParams["ENTITY_LINK"]) > 0
+					&& $arParams["ENTITY_LINK"] <> ''
 				)
 				{
 					$originalLink = $arParams["ENTITY_LINK"];
@@ -185,12 +185,12 @@ class CIMEvent
 						$arSites = array();
 						$extranet_site_id = CExtranet::GetExtranetSiteID();
 						$intranet_site_id = CSite::GetDefSite();
-						$dbSite = CSite::GetList($by="sort", $order="desc", array("ACTIVE" => "Y"));
+						$dbSite = CSite::GetList("sort", "desc", array("ACTIVE" => "Y"));
 						while($arSite = $dbSite->Fetch())
 						{
 							$arSites[$arSite["ID"]] = array(
-								"DIR" => (strlen(trim($arSite["DIR"])) > 0 ? $arSite["DIR"] : "/"),
-								"SERVER_NAME" => (strlen(trim($arSite["SERVER_NAME"])) > 0 ? $arSite["SERVER_NAME"] : COption::GetOptionString("main", "server_name", $_SERVER["HTTP_HOST"]))
+								"DIR" => (trim($arSite["DIR"]) <> '' ? $arSite["DIR"] : "/"),
+								"SERVER_NAME" => (trim($arSite["SERVER_NAME"]) <> '' ? $arSite["SERVER_NAME"] : COption::GetOptionString("main", "server_name", $_SERVER["HTTP_HOST"]))
 							);
 						}
 					}
@@ -389,12 +389,12 @@ class CIMEvent
 		)
 		{
 			$stripped = $CCTP->strip_words($arParams["ENTITY_MESSAGE"], 199);
-			$arParams["ENTITY_MESSAGE"] = $stripped.(strlen($stripped) != strlen($arParams["ENTITY_MESSAGE"]) ? '...' : '');
+			$arParams["ENTITY_MESSAGE"] = $stripped.(mb_strlen($stripped) != mb_strlen($arParams["ENTITY_MESSAGE"]) ? '...' : '');
 		}
 		else
 		{
 			$stripped = $CCTP->strip_words($arParams["ENTITY_TITLE"], 199);
-			$arParams["ENTITY_TITLE"] = $stripped.(strlen($stripped) != strlen($arParams["ENTITY_TITLE"]) ? '...' : '');
+			$arParams["ENTITY_TITLE"] = $stripped.(mb_strlen($stripped) != mb_strlen($arParams["ENTITY_TITLE"]) ? '...' : '');
 		}
 
 		if ($bForMail)
@@ -490,7 +490,7 @@ class CIMEvent
 				$message = str_replace('#LINK#', $arParams["ENTITY_TITLE"], GetMessage('IM_EVENT_RATING_ELSE'.$like));
 			}
 
-			if (strlen($arParams['ENTITY_LINK']) > 0)
+			if ($arParams['ENTITY_LINK'] <> '')
 			{
 				$message .= ' ('.$arParams['ENTITY_LINK'].')';
 			}
@@ -585,7 +585,7 @@ class CIMEvent
 			}
 			else
 			{
-				$message = str_replace('#LINK#', strlen($arParams['ENTITY_LINK'])>0?'<a href="'.$arParams['ENTITY_LINK'].'" class="bx-notifier-item-action">'.$arParams["ENTITY_TITLE"].'</a>': '<i>'.$arParams["ENTITY_TITLE"].'</i>', GetMessage('IM_EVENT_RATING_ELSE'.$like));
+				$message = str_replace('#LINK#', $arParams['ENTITY_LINK'] <> ''?'<a href="'.$arParams['ENTITY_LINK'].'" class="bx-notifier-item-action">'.$arParams["ENTITY_TITLE"].'</a>': '<i>'.$arParams["ENTITY_TITLE"].'</i>', GetMessage('IM_EVENT_RATING_ELSE'.$like));
 			}
 
 			if ($intranetInstalled)
@@ -629,8 +629,8 @@ class CIMEvent
 
 			$url = $arTmp["URLS"]["URL"];
 			$url = (
-				strpos($url, "http://") === 0
-				|| strpos($url, "https://") === 0
+				mb_strpos($url, "http://") === 0
+				|| mb_strpos($url, "https://") === 0
 					? ""
 					: (
 						isset($arTmp["SERVER_NAME"])
@@ -645,8 +645,8 @@ class CIMEvent
 			if (
 				is_array($arSites)
 				&& intval($user_id) > 0
-				&& strlen($extranet_site_id) > 0
-				&& strlen($intranet_site_id) > 0
+				&& $extranet_site_id <> ''
+				&& $intranet_site_id <> ''
 			)
 			{
 				$bExtranetUser = false;
@@ -666,9 +666,9 @@ class CIMEvent
 				if ($bExtranetUser)
 				{
 					$link = $url;
-					if (substr($link, 0, strlen($arSites[$extranet_site_id]['DIR'])) == $arSites[$extranet_site_id]['DIR'])
+					if (mb_substr($link, 0, mb_strlen($arSites[$extranet_site_id]['DIR'])) == $arSites[$extranet_site_id]['DIR'])
 					{
-						$link = substr($link, strlen($arSites[$extranet_site_id]['DIR']));
+						$link = mb_substr($link, mb_strlen($arSites[$extranet_site_id]['DIR']));
 					}
 
 					$SiteServerName = $arSites[$extranet_site_id]['SERVER_NAME'].$arSites[$extranet_site_id]['DIR'].ltrim($link, "/");
@@ -676,9 +676,9 @@ class CIMEvent
 				else
 				{
 					$link = $url;
-					if (substr($link, 0, strlen($arSites[$intranet_site_id]['DIR'])) == $arSites[$intranet_site_id]['DIR'])
+					if (mb_substr($link, 0, mb_strlen($arSites[$intranet_site_id]['DIR'])) == $arSites[$intranet_site_id]['DIR'])
 					{
-						$link = substr($link, strlen($arSites[$intranet_site_id]['DIR']));
+						$link = mb_substr($link, mb_strlen($arSites[$intranet_site_id]['DIR']));
 					}
 
 					$SiteServerName = $arSites[$intranet_site_id]['SERVER_NAME'].$arSites[$intranet_site_id]['DIR'].ltrim($link, "/");
@@ -688,8 +688,8 @@ class CIMEvent
 			}
 			else
 			{
-				$SiteServerName = (defined('SITE_SERVER_NAME') && strlen(SITE_SERVER_NAME) > 0 ? SITE_SERVER_NAME : COption::GetOptionString("main", "server_name", $_SERVER['SERVER_NAME']));
-				if (strlen($SiteServerName) > 0)
+				$SiteServerName = (defined('SITE_SERVER_NAME') && SITE_SERVER_NAME <> '' ? SITE_SERVER_NAME : COption::GetOptionString("main", "server_name", $_SERVER['SERVER_NAME']));
+				if ($SiteServerName <> '')
 				{
 					$url = (CMain::IsHTTPS() ? "https" : "http")."://".$SiteServerName.$url;
 				}
@@ -705,7 +705,7 @@ class CIMEvent
 
 		if (
 			!is_array($arComment)
-			|| !isset($arComment["ENTITY_TYPE"]) || strlen($arComment["ENTITY_TYPE"]) <= 0
+			|| !isset($arComment["ENTITY_TYPE"]) || $arComment["ENTITY_TYPE"] == ''
 			|| !isset($arComment["ID"]) || intval($arComment["ID"]) <= 0
 			|| !isset($arComment["LOG_ID"]) || intval($arComment["LOG_ID"]) <= 0
 		)
@@ -716,8 +716,8 @@ class CIMEvent
 		if (
 			is_array($arSites)
 			&& intval($user_id) > 0
-			&& strlen($extranet_site_id) > 0
-			&& strlen($intranet_site_id) > 0
+			&& $extranet_site_id <> ''
+			&& $intranet_site_id <> ''
 		)
 		{
 			$bExtranetUser = false;
@@ -738,17 +738,17 @@ class CIMEvent
 
 			$url = (in_array($arComment["ENTITY_TYPE"], array("CRMLEAD", "CRMCONTACT", "CRMCOMPANY", "CRMDEAL", "CRMACTIVITY")) ? $arSites[$user_site_id]["DIR"]."crm/stream?log_id=#log_id#" : COption::GetOptionString("socialnetwork", "log_entry_page", $arSites[$user_site_id]["DIR"]."company/personal/log/#log_id#/", $user_site_id));
 			$url = str_replace("#log_id#", $arComment["LOG_ID"], $url);
-			$url .= (strpos($url, "?") !== false ? "&" : "?")."commentId=".$arComment["ID"]."#com".$arComment["ID"];
+			$url .= (mb_strpos($url, "?") !== false ? "&" : "?")."commentId=".$arComment["ID"]."#com".$arComment["ID"];
 			$url = (CMain::IsHTTPS() ? "https" : "http")."://".$arSites[$user_site_id]['SERVER_NAME'].$url;
 		}
 		else
 		{
 			$url = (in_array($arComment["ENTITY_TYPE"], array("CRMLEAD", "CRMCONTACT", "CRMCOMPANY", "CRMDEAL", "CRMACTIVITY")) ? SITE_DIR."crm/stream?log_id=#log_id#" : COption::GetOptionString("socialnetwork", "log_entry_page", SITE_DIR."company/personal/log/#log_id#/", SITE_ID));
 			$url = str_replace("#log_id#", $arComment["LOG_ID"], $url);
-			$url .= (strpos($url, "?") !== false ? "&" : "?")."commentId=".$arComment["ID"]."#com".$arComment["ID"];
+			$url .= (mb_strpos($url, "?") !== false ? "&" : "?")."commentId=".$arComment["ID"]."#com".$arComment["ID"];
 
-			$SiteServerName = (defined('SITE_SERVER_NAME') && strlen(SITE_SERVER_NAME) > 0 ? SITE_SERVER_NAME : COption::GetOptionString("main", "server_name", $_SERVER['SERVER_NAME']));
-			if (strlen($SiteServerName) > 0)
+			$SiteServerName = (defined('SITE_SERVER_NAME') && SITE_SERVER_NAME <> '' ? SITE_SERVER_NAME : COption::GetOptionString("main", "server_name", $_SERVER['SERVER_NAME']));
+			if ($SiteServerName <> '')
 			{
 				$url = (CMain::IsHTTPS() ? "https" : "http")."://".$SiteServerName.$url;
 			}
@@ -767,15 +767,6 @@ class CIMEvent
 
 		if (IsModuleInstalled('intranet') && !CIMContactList::IsExtranet($arParams))
 		{
-			if (
-				!\Bitrix\Im\User::getInstance($arParams["ID"])->isBot()
-				&& !\Bitrix\Im\User::getInstance($arParams["ID"])->isConnector()
-				&& !\Bitrix\Im\User::getInstance($arParams["ID"])->isNetwork()
-			)
-			{
-				\CIMContactList::SetRecentForNewUser($arParams["ID"]);
-			}
-
 			$commonChatId = CIMChat::GetGeneralChatId();
 			if ($commonChatId <= 0)
 				return true;
@@ -787,7 +778,7 @@ class CIMEvent
 				return true;
 
 			$CIMChat = new CIMChat(0);
-			$CIMChat->AddUser($commonChatId, Array($arParams["ID"]));
+			$CIMChat->AddUser($commonChatId, Array($arParams["ID"]), null, true);
 		}
 
 		return true;
@@ -830,11 +821,34 @@ class CIMEvent
 					else if (!$userInChat && $userCanJoin)
 					{
 						$CIMChat = new CIMChat(0);
-						$CIMChat->AddUser($commonChatId, Array($arParams["ID"]));
+						$CIMChat->AddUser($commonChatId, Array($arParams["ID"]), null, true, true);
 					}
 				}
 			}
 		}
+
+		if (isset($arParams['ACTIVE']))
+		{
+			self::updateChatUserCounter($arParams["ID"]);
+		}
+	}
+
+	private static function updateChatUserCounter($userId): void
+	{
+		global $DB;
+		$sql = "
+			UPDATE b_im_chat C
+			INNER JOIN b_im_relation R ON C.ID = R.CHAT_ID
+			SET C.USER_COUNT = (
+				SELECT COUNT(1)
+				FROM b_im_relation R1
+				INNER JOIN b_user U ON R1.USER_ID = U.ID
+				WHERE R1.CHAT_ID = C.ID AND U.ACTIVE = 'Y'
+			)
+			WHERE R.MESSAGE_TYPE NOT IN ('".IM_MESSAGE_SYSTEM."','".IM_MESSAGE_PRIVATE."')
+			AND R.USER_ID = ".$userId."
+		";
+		$DB->Query($sql, true, "File: ".__FILE__."<br>Line: ".__LINE__);
 	}
 
 	public static function OnUserDelete($ID)
@@ -844,6 +858,13 @@ class CIMEvent
 			return false;
 
 		global $DB;
+
+		$isRecentExists = \Bitrix\Im\Model\RecentTable::getList(Array(
+			'filter' => Array(
+				'=ITEM_TYPE' => IM_MESSAGE_PRIVATE,
+				'=ITEM_ID' => $ID,
+			)
+		))->fetch();
 
 		$arChat = Array();
 		$strSQL = "
@@ -880,30 +901,28 @@ class CIMEvent
 		$strSQL = "DELETE FROM b_im_recent WHERE USER_ID = ".$ID;
 		$DB->Query($strSQL, true, "File: ".__FILE__."<br>Line: ".__LINE__);
 
+		$strSQL = "DELETE FROM b_im_recent WHERE ITEM_TYPE = '".IM_MESSAGE_PRIVATE."' AND ITEM_ID = ".$ID;
+		$DB->Query($strSQL, true, "File: ".__FILE__."<br>Line: ".__LINE__);
+
 		$strSQL = "DELETE FROM b_im_status WHERE USER_ID = ".$ID;
 		$DB->Query($strSQL, true, "File: ".__FILE__."<br>Line: ".__LINE__);
 
 		$strSQL = "DELETE FROM b_im_recent WHERE ITEM_TYPE = '".IM_MESSAGE_PRIVATE."' and ITEM_ID = ".$ID;
 		$DB->Query($strSQL, true, "File: ".__FILE__."<br>Line: ".__LINE__);
 
-		$obCache = new CPHPCache();
-		if (IsModuleInstalled('bitrix24'))
+		if ($isRecentExists && CModule::IncludeModule('pull'))
 		{
-			$relationList = IM\Model\RecentTable::getList(array(
-				"select" => array("USER_ID"),
-				"filter" => array(
-					"=ITEM_TYPE" => IM_MESSAGE_PRIVATE,
-					"=ITEM_ID" => $ID,
+			$users = \Bitrix\Im\Helper::getOnlineIntranetUsers();
+
+			\Bitrix\Pull\Event::add($users, Array(
+				'module_id' => 'im',
+				'command' => 'chatHide',
+				'expiry' => 3600,
+				'params' => Array(
+					'dialogId' => $ID
 				),
+				'extra' => \Bitrix\Im\Common::getPullExtra()
 			));
-			while ($relation = $relationList->fetch())
-			{
-				$obCache->CleanDir('/bx/imc/recent'.CIMMessenger::GetCachePath($relation['USER_ID']));
-			}
-		}
-		else
-		{
-			$obCache->CleanDir('/bx/imc/recent');
 		}
 
 		return true;

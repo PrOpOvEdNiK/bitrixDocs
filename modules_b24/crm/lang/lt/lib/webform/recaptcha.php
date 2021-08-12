@@ -1,8 +1,0 @@
-<?
-$MESS["CRM_WEBFORM_RECAPTCHA_ERROR_MISSING_INPUT_SECRET"] = "reCAPTCHA: slaptas raktas nenurodytas.";
-$MESS["CRM_WEBFORM_RECAPTCHA_ERROR_INVALID_INPUT_SECRET"] = "reCAPTCHA: slaptas raktas yra neteisingas.";
-$MESS["CRM_WEBFORM_RECAPTCHA_ERROR_MISSING_INPUT_RESPONSE"] = "reCAPTCHA: atsakymas nėra numatytas.";
-$MESS["CRM_WEBFORM_RECAPTCHA_ERROR_INVALID_INPUT_RESPONSE"] = "Šlamšto patikrinimas nepavyko.";
-$MESS["CRM_WEBFORM_RECAPTCHA_ERROR_UNKNOWN"] = "Nežinoma klaida..
-";
-?>

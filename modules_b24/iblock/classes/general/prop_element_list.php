@@ -24,6 +24,7 @@ class CIBlockPropertyElementList
 			"PrepareSettings" =>array(__CLASS__, "PrepareSettings"),
 			"GetSettingsHTML" =>array(__CLASS__, "GetSettingsHTML"),
 			"GetExtendedValue" => array(__CLASS__,  "GetExtendedValue"),
+			'GetUIEntityEditorProperty' => array(__CLASS__, 'GetUIEntityEditorProperty'),
 		);
 	}
 
@@ -163,7 +164,7 @@ class CIBlockPropertyElementList
 		}
 		else
 		{
-			if(end($values) != "" || substr(key($values), 0, 1) != "n")
+			if(end($values) != "" || mb_substr(key($values), 0, 1) != "n")
 				$values["n".($max_n+1)] = "";
 
 			$name = $strHTMLControlName["VALUE"]."VALUE";
@@ -436,7 +437,7 @@ class CIBlockPropertyElementList
 	public static function GetExtendedValue($arProperty, $value)
 	{
 		$html = self::GetPublicViewHTML($arProperty, $value, array('MODE' => 'SIMPLE_TEXT'));
-		if (strlen($html))
+		if($html <> '')
 		{
 			$text = htmlspecialcharsback($html);
 			return array(
@@ -509,5 +510,26 @@ class CIBlockPropertyElementList
 			}
 		}
 		return $cache[$IBLOCK_ID];
+	}
+
+	public static function GetUIEntityEditorProperty($settings, $value)
+	{
+		$items = [];
+		foreach (CIBlockPropertyElementList::GetElements($settings['IBLOCK_ID']) as $element)
+		{
+			$items[] = [
+				'NAME' => $element['NAME'],
+				'VALUE' => $element['ID'],
+				'ID' => $element['ID'],
+			];
+		}
+		return [
+			'type' => ($settings['MULTIPLE'] === 'Y') ? 'multilist' : 'list',
+			'data' => [
+				'isProductProperty' => true,
+				'enableEmptyItem' => true,
+				'items' => $items
+			]
+		];
 	}
 }

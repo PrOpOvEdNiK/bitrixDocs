@@ -30,7 +30,11 @@ class Property
 	public static function render($filterId, $propertyType, array $listProperty)
 	{
 		$result = '';
-
+		/**
+		 * @see Property::renderByECrm()
+		 * @see Property::renderByE()
+		 * @see Property::renderByEmployee()
+		 */
 		if(method_exists(__CLASS__, 'renderBy'.$propertyType))
 		{
 			$renderMethod = 'renderBy'.$propertyType;
@@ -228,7 +232,7 @@ class Property
 					array(
 						'MULTIPLE' => 'N',
 						'NAME' => $filterId.'_'.$property['FIELD_ID'],
-						'INPUT_NAME' => strtolower($filterId.'_'.$property['FIELD_ID']),
+						'INPUT_NAME' => mb_strtolower($filterId.'_'.$property['FIELD_ID']),
 						'POPUP' => 'Y',
 						'SITE_ID' => SITE_ID,
 						'SHOW_EXTRANET_USERS' => 'NONE',

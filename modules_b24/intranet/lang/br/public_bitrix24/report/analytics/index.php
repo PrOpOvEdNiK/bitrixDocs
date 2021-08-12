@@ -1,3 +1,0 @@
-<?
-$MESS["REPORT_CRM_ANALYTICS_PAGE_TITLE"] = "Análise CRM";
-?>

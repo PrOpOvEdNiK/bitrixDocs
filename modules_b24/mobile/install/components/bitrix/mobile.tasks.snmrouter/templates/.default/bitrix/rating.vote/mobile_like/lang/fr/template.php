@@ -1,4 +1,0 @@
-<?
-$MESS["RATING_COMMENT_LIKE"] = "J'aime";
-$MESS["RATING_COMMENT_LIST_BACK"] = "Retour";
-?>

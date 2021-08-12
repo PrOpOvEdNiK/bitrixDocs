@@ -108,12 +108,40 @@ abstract class ExportAction
 	/**
 	 * Creates temporary file for writing data.
 	 *
+	 * @param string $exportFileName
 	 * @return Translate\IO\CsvFile
 	 */
-	protected function createExportTempFile()
+	protected function createExportTempFile(string $exportFileName)
 	{
 		/** @var Translate\IO\CsvFile $csvFile */
-		$csvFile = Translate\IO\CsvFile::generateTemporalFile('translate', '.csv', 3);
+		$exportFolder = Translate\Config::getExportFolder();
+		if (!empty($exportFolder))
+		{
+			$tempDir = new Translate\IO\Directory($exportFolder);
+			if ($tempDir->isExists())
+			{
+				$tempDir->wipe(function(Main\IO\FileSystemEntry $entry){
+					// clear .csv files older than 3 hours
+					return (
+						$entry->isFile() &&
+						preg_match("#.+_([0-9]+)\.csv$#", $entry->getName(), $matches) &&
+						(time() - (int)$matches[1] > 3 * 3600)
+					);
+				});
+			}
+			else
+			{
+				$tempDir->create();
+			}
+
+			$fileName = preg_replace("#(.+)\.csv$#", "$1_".time().'.csv',  $exportFileName);
+
+			$csvFile = new Translate\IO\CsvFile($tempDir->getPhysicalPath() .'/'. $fileName);
+		}
+		else
+		{
+			$csvFile = Translate\IO\CsvFile::generateTemporalFile('translate', '.csv', 3);
+		}
 
 		$this->configureExportCsvFile($csvFile);
 
@@ -231,11 +259,13 @@ abstract class ExportAction
 				$file->setOperatingEncoding(Main\Localization\Translation::getSourceEncoding($langId));
 			}
 
-			if (!$file->load())
+			if (!$file->loadTokens())
 			{
-				continue;
+				if (!$file->load())
+				{
+					continue;
+				}
 			}
-
 
 			foreach ($file as $code => $phrase)
 			{
@@ -260,10 +290,10 @@ abstract class ExportAction
 			$hasObligatorySetting = false;
 			if ($settingsFile = Translate\Settings::instantiateByPath(self::$documentRoot. '/'. $langFilePath))
 			{
-				if ($settingsFile->isExists() && $settingsFile->load())
+				if ($settingsFile->load())
 				{
 					$langSettings = $settingsFile->getOptions($langFilePath);
-					$hasObligatorySetting = !empty($langSettings['languages']);
+					$hasObligatorySetting = !empty($langSettings[Translate\Settings::OPTION_LANGUAGES]);
 				}
 			}
 
@@ -278,9 +308,9 @@ abstract class ExportAction
 					$isObligatory = true;
 					if ($hasObligatorySetting)
 					{
-						$isObligatory = in_array($langId, $langSettings['languages']);
+						$isObligatory = in_array($langId, $langSettings[Translate\Settings::OPTION_LANGUAGES]);
 					}
-					if (empty($phr) && $isObligatory)
+					if (empty($phr) && ($phr !== '0') && $isObligatory)
 					{
 						continue 2;
 					}
@@ -326,7 +356,7 @@ abstract class ExportAction
 						continue;
 					}
 
-					if ((substr($name, -4) === '.php') && is_file($fullPath))
+					if ((mb_substr($name, -4) === '.php') && is_file($fullPath))
 					{
 						$files[$langPath.'/'.$name][$langId] = $fullPath;
 					}

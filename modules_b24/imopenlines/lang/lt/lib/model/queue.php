@@ -1,6 +1,0 @@
-<?
-$MESS["QUEUE_ENTITY_ID_FIELD"] = "ID";
-$MESS["QUEUE_ENTITY_CONFIG_ID_FIELD"] = "Konfigūracijos ID";
-$MESS["QUEUE_ENTITY_USER_ID_FIELD"] = "Naudotojo ID";
-$MESS["QUEUE_ENTITY_LAST_ACTIVITY_DATE_FIELD"] = "Paskutinio aktyvumo laikas";
-?>

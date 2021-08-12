@@ -3,10 +3,14 @@
 namespace Bitrix\Crm\Integration\Report\Handler;
 
 use Bitrix\Crm\History\Entity\LeadStatusHistoryWithSupposedTable;
+use Bitrix\Crm\Integration\Report\Dashboard\Sales\SalesFunnelBoard;
+use Bitrix\Crm\Integration\Report\Dashboard\Sales\SalesFunnelByStageHistory;
 use Bitrix\Crm\Integration\Report\View\ColumnFunnel;
 use Bitrix\Crm\Integration\Report\View\FunnelGrid;
 use Bitrix\Crm\LeadTable;
+use Bitrix\Crm\PhaseSemantics;
 use Bitrix\Crm\Security\EntityAuthorization;
+use Bitrix\Crm\Settings\LeadSettings;
 use Bitrix\Crm\StatusTable;
 use Bitrix\Crm\UtmTable;
 use Bitrix\Main\Application;
@@ -110,7 +114,7 @@ class Lead extends Base implements IReportSingleData, IReportMultipleData, IRepo
 
 		foreach ($filterParameters as $key => $value)
 		{
-			if (in_array($key, ['TIME_PERIOD', 'FIND']) || (strpos($key, 'UF_') === 0))
+			if (in_array($key, ['TIME_PERIOD', 'FIND']) || (mb_strpos($key, 'UF_') === 0))
 			{
 				continue;
 			}
@@ -156,6 +160,12 @@ class Lead extends Base implements IReportSingleData, IReportMultipleData, IRepo
 	 */
 	public function prepare()
 	{
+		$userPermission = \CCrmPerms::GetCurrentUserPermissions();
+		if (!\CCrmAuthorizationHelper::CheckReadPermission(\CCrmOwnerType::Lead, 0, $userPermission))
+		{
+			return false;
+		}
+
 		/** @var DropDown $grouping */
 		$groupingField = $this->getFormElement('groupingBy');
 		$groupingValue = $groupingField ? $groupingField->getValue() : null;
@@ -180,7 +190,7 @@ class Lead extends Base implements IReportSingleData, IReportMultipleData, IRepo
 				$query->addGroup('FULL_HISTORY.STATUS_ID');
 
 				$statusNameListByStatusId = [];
-				foreach ($this->getStatusNameList() as $status)
+				foreach ($this->getStatusList() as $status)
 				{
 					$statusNameListByStatusId[$status['STATUS_ID']] = $status['NAME'];
 				}
@@ -208,18 +218,13 @@ class Lead extends Base implements IReportSingleData, IReportMultipleData, IRepo
 			case self::WHAT_WILL_CALCULATE_SUCCESS_LEAD_DATA_FOR_FUNNEL:
 				$query->addSelect(Query::expr()->max('OPPORTUNITY_ACCOUNT'), 'MAX_OPPORTUNITY_ACCOUNT');
 				$query->addSelect('FULL_HISTORY.OWNER_ID', 'FULL_HISTORY_OWNER_ID');
-				$query->addSelect('FULL_HISTORY.IS_SUPPOSED', 'FULL_HISTORY_IS_SUPPOSED');
+				$query->addSelect(Query::expr()->min('FULL_HISTORY.IS_SUPPOSED'), 'FULL_HISTORY_IS_SUPPOSED');
 				$query->addSelect(Query::expr()->max('FULL_HISTORY.SPENT_TIME'), 'FULL_HISTORY_SPENT_TIME');
 				$query->addSelect(Query::expr()->max('ACCOUNT_CURRENCY_ID'), 'MAX_ACCOUNT_CURRENCY_ID');
 				break;
 			default:
 				$query->addSelect(new \Bitrix\Main\Entity\ExpressionField('VALUE', 'COUNT(DISTINCT %s)', 'FULL_HISTORY.OWNER_ID'));
 		}
-
-
-
-
-
 
 		switch ($calculateValue)
 		{
@@ -243,16 +248,19 @@ class Lead extends Base implements IReportSingleData, IReportMultipleData, IRepo
 				break;
 		}
 
-
 		$this->addToQueryFilterCase($query);
 		$this->addPermissionsCheck($query);
-
 
 		switch ($calculateValue)
 		{
 			case self::WHAT_WILL_CALCULATE_SUCCESS_LEAD_DATA_FOR_FUNNEL:
 			case self::WHAT_WILL_CALCULATE_LEAD_DATA_FOR_FUNNEL:
-				$querySql = "SELECT res.STATUS_KEY, (SUM(res.FULL_HISTORY_SPENT_TIME) / SUM(CASE WHEN res.FULL_HISTORY_IS_SUPPOSED = 'N' AND res.FULL_HISTORY_SPENT_TIME IS NOT NULL THEN 1 ELSE 0 END)) as SPENT_TIME,  COUNT(DISTINCT res.FULL_HISTORY_OWNER_ID) as VALUE, SUM(res.MAX_OPPORTUNITY_ACCOUNT) as SUM, MAX_ACCOUNT_CURRENCY_ID as ACCOUNT_CURRENCY_ID FROM(";
+				$querySql = "SELECT 
+								res.STATUS_KEY,
+								(SUM(res.FULL_HISTORY_SPENT_TIME) / SUM(CASE WHEN res.FULL_HISTORY_IS_SUPPOSED = 'N' AND res.FULL_HISTORY_SPENT_TIME IS NOT NULL THEN 1 ELSE 0 END)) as SPENT_TIME,  
+								COUNT(DISTINCT res.FULL_HISTORY_OWNER_ID) as VALUE, 
+								SUM(res.MAX_OPPORTUNITY_ACCOUNT) as SUM, 
+								MAX_ACCOUNT_CURRENCY_ID as ACCOUNT_CURRENCY_ID FROM(";
 				$querySql .= $query->getQuery();
 				$querySql .= ") as res GROUP BY res.STATUS_KEY";
 				$results = Application::getConnection()->query($querySql);
@@ -260,8 +268,6 @@ class Lead extends Base implements IReportSingleData, IReportMultipleData, IRepo
 			default:
 				$results = $query->exec()->fetchAll();
 		}
-
-
 
 		$amountLeadCount = 0;
 		$amountLeadSum = 0;
@@ -310,7 +316,7 @@ class Lead extends Base implements IReportSingleData, IReportMultipleData, IRepo
 					{
 						$results[] = [
 							$groupingFieldName => $groupingKey,
-							'VALUE' => ($successLeadCount[$groupingKey] / $count) * 100
+							'VALUE' => $count > 0 ? ($successLeadCount[$groupingKey] / $count) * 100 : 0
 						];
 					}
 					else
@@ -320,7 +326,6 @@ class Lead extends Base implements IReportSingleData, IReportMultipleData, IRepo
 							'VALUE' => 0
 						];
 					}
-
 				}
 
 				$amountLeadCount = $allAmountLeadCount ? (($successAmountLeadCount / $allAmountLeadCount) * 100) : 0;
@@ -369,7 +374,7 @@ class Lead extends Base implements IReportSingleData, IReportMultipleData, IRepo
 					{
 						$results[] = [
 							$groupingFieldName => $groupingKey,
-							'VALUE' => ($loseLeadCount[$groupingKey] / $count) * 100
+							'VALUE' => $count > 0 ? ($loseLeadCount[$groupingKey] / $count) * 100 : 0
 						];
 					}
 					else
@@ -379,14 +384,11 @@ class Lead extends Base implements IReportSingleData, IReportMultipleData, IRepo
 							'VALUE' => 0
 						];
 					}
-
 				}
 
 				$amountLeadCount = $allAmountLeadCount ? (($losesAmountLeadCount / $allAmountLeadCount) * 100) : 0;
 				break;
 		}
-
-
 
 		$leadCalculatedValue = [];
 		$percentageMetricsList = [
@@ -421,8 +423,6 @@ class Lead extends Base implements IReportSingleData, IReportMultipleData, IRepo
 					}
 
 					$leadCalculatedValue[$result['STATUS_KEY']]['value'] = $result['VALUE'];
-
-
 					$leadCalculatedValue[$result['STATUS_KEY']]['additionalValues']['sum']['VALUE'] = 0;
 					$leadCalculatedValue[$result['STATUS_KEY']]['additionalValues']['sum']['currencyId'] = 'RUB';
 
@@ -434,12 +434,10 @@ class Lead extends Base implements IReportSingleData, IReportMultipleData, IRepo
 						];
 					}
 
-					$leadCalculatedValue[$result['STATUS_KEY']]['additionalValues']['avgSpentTime']['VALUE'] = 0;
-					if ($result['SPENT_TIME'])
+					$statusSemanticId = \CCrmLead::GetSemanticID($result['STATUS_KEY']);
+					if (!PhaseSemantics::isFinal($statusSemanticId))
 					{
-						$leadCalculatedValue[$result['STATUS_KEY']]['additionalValues']['avgSpentTime'] = [
-							'VALUE' => $result['SPENT_TIME'],
-						];
+						$leadCalculatedValue[$result['STATUS_KEY']]['additionalValues']['avgSpentTime']['VALUE'] = (int)$result['SPENT_TIME'];
 					}
 					$leadCalculatedValue[$result['STATUS_KEY']]['title'] = !empty($statusNameListByStatusId[$result['STATUS_KEY']]) ? $statusNameListByStatusId[$result['STATUS_KEY']] : '';
 					$leadCalculatedValue[$result['STATUS_KEY']]['color'] = $this->getStatusColor($result['STATUS_KEY']);
@@ -463,9 +461,7 @@ class Lead extends Base implements IReportSingleData, IReportMultipleData, IRepo
 				default:
 					$leadCalculatedValue['withoutGrouping'] = $result['VALUE'];
 					break;
-
 			}
-
 		}
 
 		if ($groupingValue === self::GROUPING_BY_STATE && isset($statusNameListByStatusId) && $calculateValue !==self::WHAT_WILL_CALCULATE_SUCCESS_LEAD_DATA_FOR_FUNNEL)
@@ -489,7 +485,6 @@ class Lead extends Base implements IReportSingleData, IReportMultipleData, IRepo
 			$leadCalculatedValue = $sortedLeadCountListByStatus;
 		}
 
-
 		$leadCalculatedValue['amount']['count'] = $amountLeadCount;
 		$leadCalculatedValue['amount']['sum'] = $amountLeadSum;
 
@@ -498,13 +493,10 @@ class Lead extends Base implements IReportSingleData, IReportMultipleData, IRepo
 			$leadCalculatedValue['amount']['successPassTime'] = $this->getLeadPassingTime();
 		}
 
-
 		if ($disableSuccessStatesValue)
 		{
 			unset($leadCalculatedValue['CONVERTED']);
 		}
-
-
 
 		//replace converted value to the end in column funnel
 		if ($calculateValue === self::WHAT_WILL_CALCULATE_LEAD_DATA_FOR_FUNNEL)
@@ -591,8 +583,6 @@ class Lead extends Base implements IReportSingleData, IReportMultipleData, IRepo
 		$this->addToQueryFilterCase($query);
 		$this->addPermissionsCheck($query);
 
-
-
 		$connection = Application::getConnection();
 
 		$querySql = 'SELECT SUM(res.OPPORTUNITY_ACCOUNT) as SUM, COUNT(res.DISTINCT_OWNER_ID) COUNT, res.CURRENCY as CURRENCY FROM(';
@@ -603,10 +593,12 @@ class Lead extends Base implements IReportSingleData, IReportMultipleData, IRepo
 		return !empty($result[0]) ? $result[0] : ['COUNT' => 0, 'SUM' => 0, 'CURRENCY' => 'RUB'];
 	}
 
-	private function addToQueryFilterCase(Query $query)
+	private function addToQueryFilterCase(Query $query, $filterParameters = null)
 	{
-		$filterParameters = $this->getFilterParameters();
-
+		if ($filterParameters === null)
+		{
+			$filterParameters = $this->getFilterParameters();
+		}
 
 		if (!$this->isConversionCalculateMode())
 		{
@@ -668,7 +660,6 @@ class Lead extends Base implements IReportSingleData, IReportMultipleData, IRepo
 				case 'dest_selector':
 					$query->addFilter($key, $value['value']);
 					break;
-
 			}
 
 			if ($key === 'STAGE_SEMANTIC_ID')
@@ -770,7 +761,6 @@ class Lead extends Base implements IReportSingleData, IReportMultipleData, IRepo
 		return $map;
 	}
 
-
 	private function addPermissionsCheck(Query $query, $userId = 0)
 	{
 		if($userId <= 0)
@@ -811,37 +801,8 @@ class Lead extends Base implements IReportSingleData, IReportMultipleData, IRepo
 	 */
 	private function getStatusColor($statusId)
 	{
-		$colorsList = $this->getStatusColorList();
-		if (!isset($colorsList[$statusId]))
-		{
-			return self::STATUS_DEFAULT_COLORS['DEFAULT_COLOR'];
-		}
-
-		return $colorsList[$statusId];
-	}
-
-	/**
-	 * @return array
-	 */
-	private function getStatusColorList()
-	{
-		static $result = [];
-		if (!empty($result))
-		{
-			return $result;
-		}
-
-		$leadStatusColors = (array)unserialize(\COption::GetOptionString('crm', 'CONFIG_STATUS_STATUS'));
-
-		if ($leadStatusColors)
-		{
-			foreach ($leadStatusColors as $statusKey => $value)
-			{
-				$result[$statusKey] = $value['COLOR'];
-			}
-		}
-
-		return $result;
+		$statusList = $this->getStatusList();
+		return $statusList[$statusId]['COLOR'];
 	}
 
 	/**
@@ -850,14 +811,16 @@ class Lead extends Base implements IReportSingleData, IReportMultipleData, IRepo
 	 * @throws \Bitrix\Main\ObjectPropertyException
 	 * @throws \Bitrix\Main\SystemException
 	 */
-	private function getStatusNameList()
+	private function getStatusList()
 	{
-		$statusListQuery = new Query(StatusTable::getEntity());
-		$statusListQuery->where('ENTITY_ID', 'STATUS');
-		$statusListQuery->addSelect('STATUS_ID');
-		$statusListQuery->addSelect('NAME');
-		$statusListQuery->addOrder('SORT');
-		return $statusListQuery->exec()->fetchAll();
+		static $result = null;
+		if ($result !== null)
+		{
+			return $result;
+		}
+		$result = \CCrmStatus::GetStatus('STATUS');
+		$result = \Bitrix\Crm\Color\PhaseColorScheme::fillDefaultColors($result);
+		return $result;
 	}
 
 
@@ -983,7 +946,10 @@ class Lead extends Base implements IReportSingleData, IReportMultipleData, IRepo
 							'color' => $data['color'],
 						];
 
-						if ($calculateValue === self::WHAT_WILL_CALCULATE_LEAD_DATA_FOR_FUNNEL)
+						if (
+							$calculateValue === self::WHAT_WILL_CALCULATE_LEAD_DATA_FOR_FUNNEL
+							|| $calculateValue === self::WHAT_WILL_CALCULATE_SUCCESS_LEAD_DATA_FOR_FUNNEL
+						)
 						{
 							if ($this->isConversionCalculateMode())
 							{
@@ -1015,7 +981,6 @@ class Lead extends Base implements IReportSingleData, IReportMultipleData, IRepo
 							];
 						}
 
-
 						if (isset($data['additionalValues']['avgSpentTime']))
 						{
 							$config['additionalValues']['thirdAdditionalValue']['titleShort'] = Loc::getMessage('CRM_REPORT_LEAD_HANDLER_LEAD_SPENT_TIME_SHORT_TITLE');
@@ -1024,9 +989,12 @@ class Lead extends Base implements IReportSingleData, IReportMultipleData, IRepo
 							];
 						}
 
-
-						$config['additionalValues']['forthAdditionalValue']['titleShort'] = Loc::getMessage('CRM_REPORT_LEAD_HANDLER_LEAD_CONVERSION_SHORT_TITLE');;
+						$statusSemanticId = \CCrmLead::GetSemanticID($key);
+						$config['additionalValues']['forthAdditionalValue']['titleShort'] = Loc::getMessage('CRM_REPORT_LEAD_HANDLER_LEAD_CONVERSION_SHORT_TITLE');
 						$item['additionalValues']['forthAdditionalValue'] = [
+							'title' => PhaseSemantics::isLost($statusSemanticId) ?
+											Loc::getMessage('CRM_REPORT_LEAD_HANDLER_LEAD_LOSSES_SHORT_TITLE')
+											: Loc::getMessage('CRM_REPORT_LEAD_HANDLER_LEAD_CONVERSION_SHORT_TITLE'),
 							'value' => $calculatedData['amount']['count'] ? round(($data['value'] / $calculatedData['amount']['count']) * 100, 2) : 0,
 							'unitOfMeasurement' => '%',
 							'helpLink' => 'someLink',
@@ -1216,8 +1184,6 @@ class Lead extends Base implements IReportSingleData, IReportMultipleData, IRepo
 						'value' => $item['value'],
 						'slider' => true,
 						'targetUrl' => $this->getTargetUrl('/crm/lead/analytics/list/', [
-							'ASSIGNED_BY_ID_label' => $item['title'],
-							'ASSIGNED_BY_ID_value' => $groupingKey,
 							'ASSIGNED_BY_ID' => $groupingKey,
 						]),
 					);
@@ -1260,7 +1226,6 @@ class Lead extends Base implements IReportSingleData, IReportMultipleData, IRepo
 		$calculateField = $this->getFormElement('calculate');
 		$calculateValue = $calculateField ? $calculateField->getValue() : null;
 
-
 		switch ($calculateValue)
 		{
 			case self::WHAT_WILL_CALCULATE_LOST_LEAD_COUNT:
@@ -1277,27 +1242,47 @@ class Lead extends Base implements IReportSingleData, IReportMultipleData, IRepo
 				$params['STATUS_SEMANTIC_ID_FROM_HISTORY'] = 'P';
 				break;
 		}
-		$result = parent::getTargetUrl($baseUri, $params);
+		return parent::getTargetUrl($baseUri, $params);
+	}
 
-		//HACK to clear stage semantic filter from url if it is succeed or failed data
-		switch ($calculateValue)
+	public function prepareEntityListFilter($requestParameters)
+	{
+		$filterParameters = $this->getFilterParameters();
+		$query = LeadTable::query();
+		$query->addSelect('ID');
+		$this->addToQueryFilterCase($query, $filterParameters);
+
+		foreach ($requestParameters as $parameter => $value)
 		{
-			case self::WHAT_WILL_CALCULATE_LOST_LEAD_COUNT:
-				$uri = new Uri($result);
-				$uri->deleteParams(['STATUS_SEMANTIC_ID']);
-				$uri->addParams(['STATUS_SEMANTIC_ID_FROM_HISTORY' => 'F']);
-				$result = $uri->getUri();
-				break;
-			case self::WHAT_WILL_CALCULATE_SUCCESS_LEAD_DATA_FOR_FUNNEL:
-			case self::WHAT_WILL_CALCULATE_CONVERTED_LEAD_COUNT:
-				$uri = new Uri($result);
-				$uri->deleteParams(['STATUS_SEMANTIC_ID']);
-				$uri->addParams(['STATUS_SEMANTIC_ID_FROM_HISTORY' => 'S']);
-				$result = $uri->getUri();
-				break;
+			switch ($parameter)
+			{
+				case 'STAGE_SEMANTIC_ID':
+				case 'ASSIGNED_BY_ID':
+					$query->where($parameter, $value);
+					break;
+				case 'STATUS_ID_FROM_SUPPOSED_HISTORY':
+					$query->where('FULL_HISTORY.STATUS_ID', $value);
+					break;
+				case 'STATUS_ID_FROM_HISTORY':
+					$query->where('FULL_HISTORY.STATUS_ID', $value);
+					$query->where('FULL_HISTORY.IS_SUPPOSED', 'N');
+					break;
+				case 'STATUS_SEMANTIC_ID_FROM_HISTORY':
+					$query->where('FULL_HISTORY.STATUS_SEMANTIC_ID', $value);
+					$query->where('FULL_HISTORY.IS_SUPPOSED', 'N');
+					break;
+			}
 		}
+		$query->setDistinct(true);
 
-		return $result;
+		return [
+			'__JOINS' => [
+				[
+					'TYPE' => 'INNER',
+					'SQL' => 'INNER JOIN('.$query->getQuery().') REP ON REP.ID = L.ID'
+				]
+			]
+		];
 	}
 
 	/**
@@ -1314,6 +1299,16 @@ class Lead extends Base implements IReportSingleData, IReportMultipleData, IRepo
 	 */
 	public function isEnabled()
 	{
-		return \Bitrix\Crm\Settings\LeadSettings::isEnabled();
+		if (!\Bitrix\Crm\Settings\LeadSettings::isEnabled())
+		{
+			return false;
+		}
+		$boardKey = $this->getWidgetHandler()->getWidget()->getBoardId();
+		if ($boardKey === SalesFunnelBoard::BOARD_KEY || $boardKey === SalesFunnelByStageHistory::BOARD_KEY)
+		{
+			return \CUserOptions::GetOption('crm',SalesFunnelBoard::SHOW_LEADS_OPTION, 'Y') === 'Y';
+		}
+
+		return true;
 	}
 }

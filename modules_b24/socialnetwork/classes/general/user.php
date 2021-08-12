@@ -1,4 +1,5 @@
-<?
+<?php
+
 IncludeModuleLangFile(__FILE__);
 
 class CAllSocNetUser
@@ -12,7 +13,7 @@ class CAllSocNetUser
 			return false;
 		}
 
-		$ID = IntVal($ID);
+		$ID = intval($ID);
 		$bSuccess = True;
 
 		if (!CSocNetGroup::DeleteNoDemand($ID))
@@ -151,7 +152,7 @@ class CAllSocNetUser
 
 	public static function IsOnLine($userID)
 	{
-		$userID = IntVal($userID);
+		$userID = intval($userID);
 		if ($userID <= 0)
 			return false;
 		
@@ -172,30 +173,66 @@ class CAllSocNetUser
 	{
 		global $APPLICATION, $USER;
 
+		static $cache = [];
+
 		if (!is_object($USER) || !$USER->IsAuthorized())
 			return false;
 
-		if ($bUseSession && !isset($_SESSION["SONET_ADMIN"]))
-			return false;
+		$result = $USER->isAdmin();
 
-		if ($USER->isAdmin())
-			return true;
-
-		if (is_array($site_id))
+		if (!$result)
 		{
-			foreach ($site_id as $site_id_tmp)
+			$cacheKey = 'false';
+			if (is_array($site_id))
 			{
-				$modulePerms = $APPLICATION->GetGroupRight("socialnetwork", false, "Y", "Y", array($site_id_tmp, false));
-				if ($modulePerms >= "W")
-					return true;
+				$cacheKey = serialize($cacheKey);
 			}
-			return false;
+			elseif ($site_id)
+			{
+				$cacheKey = $site_id;
+			}
+			else
+			{
+				$cacheKey = 'false';
+			}
+
+			if (isset($cache[$cacheKey]))
+			{
+				$result = $cache[$cacheKey];
+			}
+			else
+			{
+				if (is_array($site_id))
+				{
+					foreach ($site_id as $site_id_tmp)
+					{
+						$modulePerms = $APPLICATION->GetGroupRight("socialnetwork", false, "Y", "Y", array($site_id_tmp, false));
+						if ($modulePerms >= "W")
+						{
+							$result = true;
+							break;
+						}
+					}
+				}
+				else
+				{
+					$modulePerms = $APPLICATION->GetGroupRight("socialnetwork", false, "Y", "Y", ($site_id ? array($site_id, false) : false));
+					$result = ($modulePerms >= "W");
+				}
+
+				$cache[$cacheKey] = $result;
+			}
 		}
-		else
-		{
-			$modulePerms = $APPLICATION->GetGroupRight("socialnetwork", false, "Y", "Y", ($site_id ? array($site_id, false) : false));
-			return ($modulePerms >= "W");
-		}
+
+		$result = (
+			$result
+			&& (
+				!$bUseSession
+				|| isset($_SESSION["SONET_ADMIN"])
+			)
+		);
+
+		return $result;
 	}
 
 	public static function IsUserModuleAdmin($userID, $site_id = SITE_ID)
@@ -231,10 +268,10 @@ class CAllSocNetUser
 		$login = Trim($login);
 
 		$formatName = $name;
-		if (StrLen($formatName) > 0 && StrLen($lastName) > 0)
+		if ($formatName <> '' && $lastName <> '')
 			$formatName .= " ";
 		$formatName .= $lastName;
-		if (StrLen($formatName) <= 0)
+		if ($formatName == '')
 			$formatName = $login;
 
 		return $formatName;
@@ -247,19 +284,19 @@ class CAllSocNetUser
 		$secondName = Trim($secondName);
 		$login = Trim($login);
 		$email = Trim($email);
-		$id = IntVal($id);
+		$id = intval($id);
 
 		$formatName = $name;
-		if (StrLen($formatName) > 0 && StrLen($secondName) > 0)
+		if ($formatName <> '' && $secondName <> '')
 			$formatName .= " ";
 		$formatName .= $secondName;
-		if (StrLen($formatName) > 0 && StrLen($lastName) > 0)
+		if ($formatName <> '' && $lastName <> '')
 			$formatName .= " ";
 		$formatName .= $lastName;
-		if (StrLen($formatName) <= 0)
+		if ($formatName == '')
 			$formatName = $login;
 
-		if (StrLen($email) > 0)
+		if ($email <> '')
 			$formatName .= " &lt;".$email."&gt;";
 		$formatName .= " [".$id."]";
 
@@ -269,18 +306,18 @@ class CAllSocNetUser
 	public static function SearchUser($user, $bIntranet = false)
 	{
 		$user = Trim($user);
-		if (StrLen($user) <= 0)
+		if ($user == '')
 			return false;
 
 		$userID = 0;
-		if ($user."|" == IntVal($user)."|")
-			$userID = IntVal($user);
+		if ($user."|" == intval($user)."|")
+			$userID = intval($user);
 
 		if ($userID <= 0)
 		{
 			$arMatches = array();
 			if (preg_match("#\[(\d+)\]#i", $user, $arMatches))
-				$userID = IntVal($arMatches[1]);
+				$userID = intval($arMatches[1]);
 		}
 
 
@@ -290,8 +327,8 @@ class CAllSocNetUser
 			$arFilter = array("ID_EQUAL_EXACT" => $userID);
 
 			$dbUsers = CUser::GetList(
-				($by = "LAST_NAME"),
-				($order = "asc"),
+				"LAST_NAME",
+				"asc",
 				$arFilter,
 				array(
 					"NAV_PARAMS" => false,
@@ -317,20 +354,20 @@ class CAllSocNetUser
 			foreach ($arUserTmp as $s)
 			{
 				$s = Trim($s);
-				if (StrLen($s) > 0)
+				if ($s <> '')
 					$arUser[] = $s;
 			}
 
 			if (
 				count($arUser) <= 0
-				&& strlen($email) > 0
+				&& $email <> ''
 			)
 			{
 				$arFilter = array(
 					"ACTIVE" => "Y",
 					"EMAIL" => $email,
 				);
-				$dbUsers = CUser::GetList(($by="id"), ($order="asc"), $arFilter);
+				$dbUsers = CUser::GetList("id", "asc", $arFilter);
 			}
 			else
 			{
@@ -361,7 +398,7 @@ class CAllSocNetUser
 
 	public static function GetByID($ID)
 	{
-		$ID = IntVal($ID);
+		$ID = intval($ID);
 
 		$dbUser = CUser::GetByID($ID);
 		if ($arUser = $dbUser->GetNext())
@@ -466,25 +503,25 @@ class CAllSocNetUser
 
 		if (
 			!is_array($arUser)
-			&& intval($arUser) > 0
+			&& (int)$arUser > 0
 		)
 		{
-			$dbUser = CUser::GetByID(intval($arUser));
-			$arUser = $dbUser->Fetch();
+			$dbUser = \CUser::getById((int)$arUser);
+			$arUser = $dbUser->fetch();
 		}
 
 		if (
 			!is_array($arUser)
 			|| !isset($arUser["ID"])
-			|| intval($arUser["ID"]) <= 0
+			|| (int)$arUser["ID"] <= 0
 		)
 		{
 			return false;
 		}
 
 		if (
-			$currentUserId == $USER->GetId()
-			&& self::IsCurrentUserModuleAdmin()
+			(int)$currentUserId === (int)$USER->GetId()
+			&& self::isCurrentUserModuleAdmin()
 		)
 		{
 			return true;
@@ -501,7 +538,7 @@ class CAllSocNetUser
 			if (IsModuleInstalled($arEvent["TO_MODULE_ID"]))
 			{
 				$bFound = true;
-				if (ExecuteModuleEventEx($arEvent, Array($currentUserId, $arUser, $siteId, $arContext, false)) === true)
+				if (ExecuteModuleEventEx($arEvent, [ $currentUserId, $arUser, $siteId, $arContext, false ]) === true)
 				{
 					return true;
 				}
@@ -519,15 +556,15 @@ class CAllSocNetUser
 		}
 
 		if (
-			intval($currentUserId) <= 0
+			(int)$currentUserId <= 0
 			|| !isset($arContext)
 			|| !isset($arContext["ENTITY_TYPE"])
 			|| !in_array($arContext["ENTITY_TYPE"], array("LOG_ENTRY"))
 			|| !isset($arContext["ENTITY_ID"])
-			|| intval($arContext["ENTITY_ID"]) <= 0
+			|| (int)$arContext["ENTITY_ID"] <= 0
 			|| !is_array($arUser)
 			|| !isset($arUser["ID"])
-			|| intval($arUser["ID"]) <= 0
+			|| (int)$arUser["ID"] <= 0
 		)
 		{
 			return false;
@@ -694,4 +731,3 @@ class CAllSocNetUser
 		return false;
 	}
 }
-?>

@@ -1,7 +1,0 @@
-<?
-$MESS["BIZPROC_AUTOMATION_SFA_CLONE"] = "ajouter";
-$MESS["BIZPROC_AUTOMATION_SFA_DELETE"] = "Supprimer";
-$MESS["BIZPROC_AUTOMATION_SFA_FIELDS_LIST"] = "Sélectionnez un champ";
-$MESS["BIZPROC_AUTOMATION_SFA_MODIFIED_BY"] = "Modifier de la part de";
-$MESS["BIZPROC_AUTOMATION_SFA_NOT_SELECTED"] = "non sélectionné";
-?>

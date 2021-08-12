@@ -106,7 +106,7 @@ class Helper
 				array(
 					'MULTIPLE' => 'N',
 					'NAME' => $componentName,
-					'INPUT_NAME' => strtolower($componentName),
+					'INPUT_NAME' => mb_strtolower($componentName),
 					'SHOW_EXTRANET_USERS' => 'NONE',
 					'POPUP' => 'Y',
 					'SITE_ID' => SITE_DIR,
@@ -146,34 +146,5 @@ class Helper
 		);
 
 		return Stepper::getHtml($res, Loc::getMessage('VI_UI_HELPER_STAT_INDEX'));
-	}
-
-	public static function initLicensePopups()
-	{
-		Extension::load("voximplant.common");
-
-		if(!Loader::includeModule('bitrix24'))
-			return '';
-
-		\CBitrix24::initLicenseInfoPopupJS();
-		$initString = "";
-		foreach (array('main', 'security', 'groups', 'ivr', 'numbers', 'call-intercept', 'line-selection') as $popupId)
-		{
-			$popupData = \CVoxImplantMain::GetTrialText($popupId);
-			$initString .= "BX.Voximplant.setLicensePopup('".\CUtil::JSEscape($popupId)."', '".\CUtil::JSEscape($popupData['TITLE'])."', '".\CUtil::JSEscape($popupData['TEXT'])."');";
-		}
-
-		Asset::getInstance()->addString("
-			<script>
-				BX.ready(function()
-				{
-					if(BX.Voximplant && BX.getClass('BX.Voximplant.setLicensePopup'))
-					{
-						" . $initString . "
-					}
-				});
-				
-			</script>
-		");
 	}
 }

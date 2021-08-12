@@ -37,13 +37,13 @@ class CClusterQueue
 
 	public static function UnQuoteParam($str)
 	{
-		if(strlen($str) > 0)
+		if($str <> '')
 		{
-			$prefix = substr($str, 0, 2);
+			$prefix = mb_substr($str, 0, 2);
 			if($prefix === "s:")
-				return substr($str, 2);
+				return mb_substr($str, 2);
 			if($prefix === "b:")
-				return substr($str, 2) === "t";
+				return mb_substr($str, 2) === "t";
 		}
 		return null;
 	}
@@ -70,9 +70,9 @@ class CClusterQueue
 				$ids[] = intval($ar["ID"]);
 			}
 
-			$uid = CMain::GetServerUniqID()."_cluster_queue_".BX_CLUSTER_GROUP;
+			$uid = $DB->DBName."_cluster_queue_".BX_CLUSTER_GROUP;
 
-			if (!empty($ids))
+			if ($ids)
 			{
 				$lock = $DB->Query("SELECT GET_LOCK('".$uid."', 0) as L")->Fetch();
 				if ($lock["L"] == "0")

@@ -1,3 +1,0 @@
-<?
-$MESS["CRM_EVENT_VIEW_ROW_COUNT"] = "Suma: #ROW_COUNT#";
-?>

@@ -23,6 +23,13 @@ class Base
 	const Vk = 'vk';
 	const Ya = 'yandex';
 	const Ig = 'instagram';
+	const Organic = 'organic';
+	const Other = 'other';
+	const Sender = 'sender-mail';
+	const OneC = '1c';
+
+	/** @var string $code Code. */
+	protected $code;
 
 	/**
 	 * Get name.
@@ -32,8 +39,8 @@ class Base
 	 */
 	public static function getNameByCode($code)
 	{
-		$code = $code === 'organic' ? 'another' : $code;
-		return Loc::getMessage('CRM_TRACKING_SOURCE_BASE_NAME_' . strtoupper($code)) ?: $code;
+		$code = $code === self::Organic ? self::Other : $code;
+		return Loc::getMessage('CRM_TRACKING_SOURCE_BASE_NAME_'.mb_strtoupper($code)) ?: $code;
 	}
 
 	/**
@@ -44,8 +51,8 @@ class Base
 	 */
 	public static function getShortNameByCode($code)
 	{
-		$code = $code === 'organic' ? 'another' : $code;
-		return Loc::getMessage('CRM_TRACKING_SOURCE_BASE_SHORT_NAME_' . strtoupper($code)) ?: self::getNameByCode($code);
+		$code = $code === self::Organic ? self::Other : $code;
+		return Loc::getMessage('CRM_TRACKING_SOURCE_BASE_SHORT_NAME_'.mb_strtoupper($code)) ?: self::getNameByCode($code);
 	}
 
 	/**
@@ -57,17 +64,36 @@ class Base
 	 */
 	public static function getDescriptionByCode($code = null, $name = null)
 	{
-		if ($code === 'organic')
+		if ($code === self::Organic)
 		{
-			return Loc::getMessage('CRM_TRACKING_SOURCE_BASE_DESC_ANOTHER');
+			return Loc::getMessage('CRM_TRACKING_SOURCE_BASE_DESC_OTHER');
+		}
+		if ($code === self::Sender)
+		{
+			return Loc::getMessage('CRM_TRACKING_SOURCE_BASE_DESC_SENDER-MAIL');
 		}
 
 		$name = $name ?: static::getNameByCode($code);
+		if ($code === self::OneC)
+		{
+			return $name;
+		}
 		if ($code)
 		{
 			return Loc::getMessage('CRM_TRACKING_SOURCE_BASE_ADS_DESC', ['%name%' => $name]);
 		}
 
 		return Loc::getMessage('CRM_TRACKING_SOURCE_BASE_TRAFFIC_DESC', ['%name%' => $name]);
+	}
+
+
+	/**
+	 * Get code.
+	 *
+	 * @return string|null
+	 */
+	public function getCode()
+	{
+		return $this->code;
 	}
 }

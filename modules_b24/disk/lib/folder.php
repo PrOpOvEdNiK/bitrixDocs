@@ -165,7 +165,7 @@ class Folder extends BaseObject
 
 		$data['NAME'] = $this->resolveFileName($fileArray, $data);
 
-		$this->checkRequiredInputParams($data, array(
+		static::checkRequiredInputParams($data, array(
 			'NAME', 'CREATED_BY'
 		));
 
@@ -181,7 +181,7 @@ class Folder extends BaseObject
 
 		$fileArray['type'] = TypeFile::normalizeMimeType($fileArray['type'], $data['NAME']);
 
-		/** @noinspection PhpDynamicAsStaticMethodCallInspection */
+
 		$fileId = CFile::saveFile($fileArray, Driver::INTERNAL_MODULE_ID, true, true);
 		if(!$fileId)
 		{
@@ -189,7 +189,7 @@ class Folder extends BaseObject
 			return null;
 		}
 		/** @var array $fileArray */
-		/** @noinspection PhpDynamicAsStaticMethodCallInspection */
+
 		$fileArray = CFile::getFileArray($fileId);
 
 		$data['NAME'] = Ui\Text::correctFilename($data['NAME']);
@@ -239,7 +239,7 @@ class Folder extends BaseObject
 	{
 		$this->errorCollection->clear();
 
-		$this->checkRequiredInputParams($data, array(
+		static::checkRequiredInputParams($data, array(
 			'NAME', 'CREATED_BY', 'MIME_TYPE'
 		));
 
@@ -266,7 +266,7 @@ class Folder extends BaseObject
 	{
 		$this->errorCollection->clear();
 
-		$this->checkRequiredInputParams($data, array(
+		static::checkRequiredInputParams($data, array(
 			'NAME'
 		));
 
@@ -297,7 +297,7 @@ class Folder extends BaseObject
 
 	private function isDuplicateKeyError(SqlQueryException $exception)
 	{
-		return strpos($exception->getDatabaseMessage(), '(1062)') !== false;
+		return mb_strpos($exception->getDatabaseMessage(), '(1062)') !== false;
 	}
 
 	private function processAdd(array $data, ErrorCollection $errorCollection, $generateUniqueName = false, $countStepsToGenerateName = 0)
@@ -450,7 +450,7 @@ class Folder extends BaseObject
 			$url = $folderUrlList[$storageId];
 		}
 
-		/** @noinspection PhpDynamicAsStaticMethodCallInspection */
+
 		\CSocNetSubscription::notifyGroup(array(
 			'LOG_ID' => false,
 			'GROUP_ID' => array($groupId),
@@ -476,7 +476,7 @@ class Folder extends BaseObject
 	{
 		$this->errorCollection->clear();
 
-		$this->checkRequiredInputParams($data, array(
+		static::checkRequiredInputParams($data, array(
 			'NAME'
 		));
 
@@ -543,7 +543,7 @@ class Folder extends BaseObject
 			$data['NAME'] = $object->getName();
 		}
 
-		$this->checkRequiredInputParams($data, array(
+		static::checkRequiredInputParams($data, array(
 			'NAME'
 		));
 
@@ -892,6 +892,7 @@ class Folder extends BaseObject
 		}
 
 		$driver->getDeletedLogManager()->finalize();
+		$driver->getDeletionNotifyManager()->send();
 
 		return $success;
 	}
@@ -1067,11 +1068,10 @@ class Folder extends BaseObject
 		if(!$this->isLink())
 		{
 			//todo potential - very hard operation.
-			foreach(Folder::getModelList(array('filter' => array('REAL_OBJECT_ID' => $this->id, '!=REAL_OBJECT_ID' => $this->id))) as $link)
+			foreach(Folder::getModelList(array('filter' => array('REAL_OBJECT_ID' => $this->id))) as $link)
 			{
 				$link->deleteTree($deletedBy);
 			}
-			unset($link);
 		}
 
 		$event = new Event(Driver::INTERNAL_MODULE_ID, "onAfterDeleteFolder", array($this->getId(), $deletedBy));
@@ -1243,7 +1243,7 @@ final class SpecificFolder
 		$refClass = new \ReflectionClass(__CLASS__);
 		foreach($refClass->getConstants() as $name => $value)
 		{
-			if(substr($name, 0, 4) === 'CODE')
+			if(mb_substr($name, 0, 4) === 'CODE')
 			{
 				$codes[$value] = $value;
 			}

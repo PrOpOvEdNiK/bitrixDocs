@@ -64,7 +64,8 @@ class DuplicatePersonCriterion extends DuplicateCriterion
 			return '';
 		}
 
-		return strtolower(trim($name));
+		return preg_replace('/[ ]+/' .BX_UTF_PCRE_MODIFIER, ' ',
+				mb_strtolower(rtrim(trim($name), '.')));
 	}
 	public static function register($entityTypeID, $entityID, $lastName, $name, $secondName, $isRaw = true)
 	{
@@ -436,7 +437,7 @@ class DuplicatePersonCriterion extends DuplicateCriterion
 				'ENTITY_TYPE_ID' => $this->sortDescendingByEntityTypeId ? 'DESC' : 'ASC',
 				'ENTITY_ID' => 'ASC'
 			),
-			'filter' => array('LAST_NAME' => $lastName)
+			'filter' => array('=LAST_NAME' => $lastName)
 		);
 
 		if(\CCrmOwnerType::IsDefined($entityTypeID))
@@ -446,12 +447,12 @@ class DuplicatePersonCriterion extends DuplicateCriterion
 
 		if($name !== '')
 		{
-			$listParams['filter']['NAME'] = $name;
+			$listParams['filter']['=NAME'] = $name;
 		}
 
 		if($secondName !== '')
 		{
-			$listParams['filter']['SECOND_NAME'] = $secondName;
+			$listParams['filter']['=SECOND_NAME'] = $secondName;
 		}
 
 		if($limit > 0)

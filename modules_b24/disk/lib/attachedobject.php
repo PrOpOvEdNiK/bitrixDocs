@@ -3,9 +3,10 @@
 
 namespace Bitrix\Disk;
 
-
+use Bitrix\Disk\Integration\TransformerManager;
 use Bitrix\Disk\Internals\AttachedObjectTable;
 use Bitrix\Disk\Internals\Error\ErrorCollection;
+use Bitrix\Disk\Internals\TrackedObjectTable;
 use Bitrix\Disk\Uf\Connector;
 use Bitrix\Disk\Uf\StubConnector;
 use Bitrix\Main\Loader;
@@ -150,6 +151,16 @@ final class AttachedObject extends Internals\Model
 		return $connector->canUpdate($userId);
 	}
 
+	public function canLock($userId)
+	{
+		return $this->canUpdate($userId);
+	}
+
+	public function canUnlock($userId)
+	{
+		return $this->canUpdate($userId);
+	}
+
 	/**
 	 * Sets operable entity.
 	 * Need to optimize work in components disk.uf.file, disk.uf.version.
@@ -195,7 +206,26 @@ final class AttachedObject extends Internals\Model
 		if($model && $model->getCreatedBy())
 		{
 			$driver = Driver::getInstance();
-			$driver->getRecentlyUsedManager()->push($model->getCreatedBy(), $model->getObjectId());
+			$driver->getRecentlyUsedManager()->push(
+				$model->getCreatedBy(),
+				$model
+			);
+
+			/** @var AttachedObject $model */
+			/** @var File $file */
+			$file = $model->getObject();
+			if($file && TypeFile::isVideo($file))
+			{
+				if(Loader::includeModule('transformer'))
+				{
+					TransformerManager::transformToView($file);
+				}
+//				$transformerManager = new TransformerManager();
+//				if($transformerManager->isAvailable())
+//				{
+//					$transformerManager->transform($file->getFileId());
+//				}
+			}
 		}
 
 		return $model;
@@ -454,6 +484,10 @@ final class AttachedObject extends Internals\Model
 		{
 			return false;
 		}
+
+		TrackedObjectTable::deleteBatch([
+			'ATTACHED_OBJECT_ID' => $this->id,
+		]);
 
 		if($this->isSpecificVersion())
 		{

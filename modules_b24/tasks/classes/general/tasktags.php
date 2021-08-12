@@ -42,7 +42,7 @@ class CTaskTags
 		}
 		else
 		{
-			/** @noinspection PhpDynamicAsStaticMethodCallInspection */
+
 			$r = CUser::GetByID($arFields["USER_ID"]);
 			if (!$r->Fetch())
 			{
@@ -50,7 +50,7 @@ class CTaskTags
 			}
 		}
 
-		if (!is_set($arFields, "NAME") || strlen(trim($arFields["NAME"])) <= 0)
+		if (!is_set($arFields, "NAME") || trim($arFields["NAME"]) == '')
 		{
 			$arMsg[] = array("text" => GetMessage("TASKS_BAD_NAME"), "id" => "ERROR_BAD_TASKS_NAME");
 		}
@@ -82,7 +82,7 @@ class CTaskTags
 		return false;
 	}
 
-	function GetFilter($arFilter)
+	public static function GetFilter($arFilter)
 	{
 		if (!is_array($arFilter))
 			$arFilter = Array();
@@ -95,7 +95,7 @@ class CTaskTags
 			$key = $res["FIELD"];
 			$cOperationType = $res["OPERATION"];
 
-			$key = strtoupper($key);
+			$key = mb_strtoupper($key);
 
 			switch ($key)
 			{
@@ -148,8 +148,8 @@ class CTaskTags
 		$arSqlOrder = [];
 		foreach ($arOrder as $by => $order)
 		{
-			$by = strtolower($by);
-			$order = strtolower($order);
+			$by = mb_strtolower($by);
+			$order = mb_strtolower($order);
 			if ($order != "asc")
 				$order = "desc";
 
@@ -200,7 +200,7 @@ class CTaskTags
 		return self::Delete(array("=USER_ID" => (int) $USER_ID));
 	}
 
-	function Rename($OLD_NAME, $NEW_NAME, $USER_ID)
+	public static function Rename($OLD_NAME, $NEW_NAME, $USER_ID)
 	{
 		$tasks = array();
 		$list = \Bitrix\Tasks\TagTable::getList(array(
@@ -224,7 +224,7 @@ class CTaskTags
 		return true;
 	}
 
-	function Delete($arFilter)
+	public static function Delete($arFilter)
 	{
 		$result = false;
 		if ($arFilter)

@@ -1,5 +1,6 @@
-<?if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true)die();
+<?php
 
+if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true)die();
 
 class CSaleExportCML2 extends CSaleExport
 {
@@ -59,7 +60,7 @@ ob_end_clean();
 if(toUpper(LANG_CHARSET) != "WINDOWS-1251")
 	$contents = $APPLICATION->ConvertCharset($contents, LANG_CHARSET, "windows-1251");
 
-$str = (function_exists("mb_strlen")? mb_strlen($contents, 'latin1'): strlen($contents));
+$str = (function_exists("mb_strlen")? mb_strlen($contents, 'latin1') : mb_strlen($contents));
 
 header('Pragma: public');
 header('Cache-control: private');
@@ -70,4 +71,3 @@ header("Content-Disposition: attachment; filename=orders.xml");
 
 echo $contents;
 die();
-?>

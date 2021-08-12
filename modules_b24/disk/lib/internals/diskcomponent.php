@@ -73,12 +73,12 @@ abstract class DiskComponent extends BaseComponent
 			$default = '/company/personal/user/#user_id#/';
 			if($currentUser && $currentUser->isExtranetUser())
 			{
-				/** @noinspection PhpDynamicAsStaticMethodCallInspection */
+
 				$siteId = \CExtranet::getExtranetSiteID();
 				$default = '/extranet/contacts/personal/user/#user_id#/';
 			}
 
-			$this->arParams['PATH_TO_USER'] = strtolower(COption::getOptionString('intranet', 'path_user', $default, $siteId));
+			$this->arParams['PATH_TO_USER'] = mb_strtolower(COption::getOptionString('intranet', 'path_user', $default, $siteId));
 		}
 
 		return $this;

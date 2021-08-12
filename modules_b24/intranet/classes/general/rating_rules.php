@@ -1,10 +1,11 @@
-<?
+<?php
+
 IncludeModuleLangFile($_SERVER["DOCUMENT_ROOT"].BX_ROOT."/modules/intranet/classes/general/rating_rules.php");
 
 class CRatingRulesIntranet
 {
 	// return configs
-	public function OnGetRatingRuleConfigs()
+	public static function OnGetRatingRuleConfigs()
 	{
 		$arConfigs["USER"]["CONDITION_CONFIG"][] = array(
 		   "ID"	=> 'SUBORDINATE',
@@ -41,7 +42,7 @@ class CRatingRulesIntranet
 		return $arConfigs;
 	}
 
-	public function subordinateCheck($arConfigs)
+	public static function subordinateCheck($arConfigs)
 	{
 		global $DB, $USER_FIELD_MANAGER;
 			$err_mess = "File: ".__FILE__."<br>Function: subordinateCheck<br>Line: ";
@@ -52,20 +53,6 @@ class CRatingRulesIntranet
 
 		$maxVotes = $arConfigs['CONDITION_CONFIG']['SUBORDINATE']['MAX_VOTES'];
 		$type = $arConfigs['CONDITION_CONFIG']['SUBORDINATE']['TYPE'];
-
-		$iblockId = COption::GetOptionInt('intranet', 'iblock_structure', 0);
-
-		global $DB;
-
-		$table = 'b_utm_user';
-		$columns = array('FIELD_ID', 'VALUE_INT', 'VALUE_ID');
-		if(!$DB->IndexExists($table, $columns))
-		  $DB->Query("create index ".substr("ix_".mt_rand(0,1000000)."_".$table."_".implode("_", $columns), 0, 30)." on ".$table."(".implode(", ", $columns).")", true);
-
-		$table = 'b_uts_iblock_'.$iblockId.'_section';
-		$columns = array('UF_HEAD');
-		if(!$DB->IndexExists($table, $columns))
-		  $DB->Query("create index ".substr("ix_".mt_rand(0,1000000)."_".$table."_".implode("_", $columns), 0, 30)." on ".$table."(".implode(", ", $columns).")", true);
 
 		$iblockId = COption::GetOptionInt('intranet', 'iblock_structure', 0);
 		$fieldId = 0;
@@ -96,6 +83,7 @@ class CRatingRulesIntranet
 						U.ACTIVE = 'Y'
 						AND (U.EXTERNAL_AUTH_ID NOT IN ('".implode("','", \Bitrix\Main\UserTable::getExternalUserTypes())."') OR U.EXTERNAL_AUTH_ID IS NULL)
 						AND (U2.ACTIVE = 'Y' OR U2.ID IS NULL) 
+						AND UD.ID > 0
 				) U2U
 				LEFT JOIN b_rating_user RU on RU.RATING_ID = ".intval($ratingId)." and RU.ENTITY_ID = U2U.SUBORDINATE_ID
 				LEFT JOIN b_rating_user RUS on RUS.RATING_ID = ".intval($ratingId)." and RUS.ENTITY_ID = U2U.USER_ID
@@ -106,7 +94,7 @@ class CRatingRulesIntranet
 		return true;
 	}
 
-	public function RecalcSubordinateRuleAgent()
+	public static function RecalcSubordinateRuleAgent()
 	{
 		$ratingId = (int)CRatings::GetAuthorityRating();
 		if ($ratingId)
@@ -134,7 +122,7 @@ class CRatingRulesIntranet
 	}
 
 	// check input values, if value does not validate, set the default value
-	public function __CheckFields($entityId, $arConfigs)
+	public static function __CheckFields($entityId, $arConfigs)
 	{
 		$arDefaultConfig = CRatingRulesIntranet::__AssembleConfigDefault($entityId);
 
@@ -145,7 +133,7 @@ class CRatingRulesIntranet
 	}
 
 	// assemble config default value
-	public function __AssembleConfigDefault($objectType = null)
+	public static function __AssembleConfigDefault($objectType = null)
 	{
 		$arConfigs = array();
 		$arRatingRuleConfigs = CRatingRulesIntranet::OnGetRatingRuleConfigs();
@@ -176,7 +164,7 @@ class CRatingRulesIntranet
 	}
 
 	// return support object
-	public function OnGetRatingRuleObjects()
+	public static function OnGetRatingRuleObjects()
 	{
 		$arRatingRulesConfigs = CRatingRulesIntranet::OnGetRatingRuleConfigs();
 		foreach ($arRatingRulesConfigs as $SupportType => $value)
@@ -186,7 +174,7 @@ class CRatingRulesIntranet
 	}
 
 	// check the value which relate to the module
-	public function OnAfterAddRatingRule($ID, $arFields)
+	public static function OnAfterAddRatingRule($ID, $arFields)
 	{
 		$arFields = CRatingRulesIntranet::__CheckFields($arFields['ENTITY_TYPE_ID'], $arFields);
 
@@ -194,12 +182,10 @@ class CRatingRulesIntranet
 	}
 
 	// check the value which relate to the module
-	public function OnAfterUpdateRatingRule($ID, $arFields)
+	public static function OnAfterUpdateRatingRule($ID, $arFields)
 	{
 		$arFields = CRatingRulesIntranet::__CheckFields($arFields['ENTITY_TYPE_ID'], $arFields);
 
 		return $arFields;
 	}
 }
-
-?>

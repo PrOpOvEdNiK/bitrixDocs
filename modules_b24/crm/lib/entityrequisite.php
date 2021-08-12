@@ -3,6 +3,8 @@
 namespace Bitrix\Crm;
 
 use Bitrix\Crm;
+use Bitrix\Crm\Format\AddressFormatter;
+use Bitrix\Crm\Format\RequisiteAddressFormatter;
 use Bitrix\Crm\Integrity\DuplicateBankDetailCriterion;
 use Bitrix\Crm\Integrity\DuplicateRequisiteCriterion;
 use Bitrix\Crm\Requisite\EntityLink;
@@ -11,6 +13,7 @@ use Bitrix\Main\Entity;
 use Bitrix\Main\Localization\Loc;
 use Bitrix\Main\Localization\Translation;
 use Bitrix\Main\Text\Encoding;
+use Bitrix\Location\Entity\Address;
 
 Loc::loadMessages(__FILE__);
 
@@ -68,6 +71,10 @@ class EntityRequisite
 
 	private static $duplicateCriterionFieldsMap = null;
 
+	protected static $presetsWithAddressMap = null;
+
+	protected static $countryAddressZoneMap = null;
+
 	static public $sUFEntityID = 'CRM_REQUISITE';
 
 	public static function getSingleInstance()
@@ -98,7 +105,8 @@ class EntityRequisite
 					$fieldName.'_REGION' => $fieldName.'.REGION',
 					$fieldName.'_PROVINCE' => $fieldName.'.PROVINCE',
 					$fieldName.'_COUNTRY' => $fieldName.'.COUNTRY',
-					$fieldName.'_COUNTRY_CODE' => $fieldName.'.COUNTRY_CODE'
+					$fieldName.'_COUNTRY_CODE' => $fieldName.'.COUNTRY_CODE',
+					$fieldName.'_LOC_ADDR_ID' => $fieldName.'.LOC_ADDR_ID'
 				)
 			);
 		}
@@ -393,7 +401,7 @@ class EntityRequisite
 							{
 								$title = ($countryId > 0 && isset($titleMap[$fieldName][$countryId])) ?
 									$titleMap[$fieldName][$countryId] : $fieldName;
-								$length = strlen($strValue);
+								$length = mb_strlen($strValue);
 								if (isset($params['min']) && $params['min'] > 0)
 								{
 									if ($length < $params['min'])
@@ -571,6 +579,17 @@ class EntityRequisite
 			}
 		}
 
+		$addressOnly = false;
+		if (isset($fields['ADDRESS_ONLY']) &&
+			($fields['ADDRESS_ONLY'] === true || $fields['ADDRESS_ONLY'] === 'Y'))
+		{
+			$addressOnly = true;
+		}
+		if ($addressOnly)
+		{
+			$fields = $this->removeNonAddressFields($fields);
+		}
+
 		$result = $this->checkRqFieldsBeforeSave(0, $fields);
 		if (!$result->isSuccess())
 		{
@@ -613,7 +632,9 @@ class EntityRequisite
 							'REGION' => isset($address['REGION']) ? $address['REGION'] : null,
 							'PROVINCE' => isset($address['PROVINCE']) ? $address['PROVINCE'] : null,
 							'COUNTRY' => isset($address['COUNTRY']) ? $address['COUNTRY'] : null,
-							'COUNTRY_CODE' => isset($address['COUNTRY_CODE']) ? $address['COUNTRY_CODE'] : null
+							'COUNTRY_CODE' => isset($address['COUNTRY_CODE']) ? $address['COUNTRY_CODE'] : null,
+							'LOC_ADDR_ID' => isset($address['LOC_ADDR_ID']) ? (int)$address['LOC_ADDR_ID'] : 0,
+							'LOC_ADDR' => isset($address['LOC_ADDR']) ? $address['LOC_ADDR'] : null
 						)
 					);
 				}
@@ -897,6 +918,15 @@ class EntityRequisite
 
 	public function update($id, $fields, $options = array())
 	{
+		$id = intval($id);
+		$requisite = $this->getById($id);
+		if(!is_array($requisite))
+		{
+			$result = new Main\Result();
+			$result->addError(new Main\Error("The Requisite with ID '{$id}' is not found"));
+			return $result;
+		}
+
 		unset($fields['ID'], $fields['DATE_CREATE'], $fields['CREATED_BY_ID']);
 		$fields['DATE_MODIFY'] = new \Bitrix\Main\Type\DateTime();
 		$fields['MODIFY_BY_ID'] = \CCrmSecurityHelper::GetCurrentUserID();
@@ -906,6 +936,16 @@ class EntityRequisite
 		{
 			$addresses = $fields[self::ADDRESS];
 			unset($fields[self::ADDRESS]);
+		}
+
+		$addressOnly = false;
+		if (isset($fields['ADDRESS_ONLY']))
+		{
+			$addressOnly = ($fields['ADDRESS_ONLY'] === true || $fields['ADDRESS_ONLY'] === 'Y');
+		}
+		elseif ($requisite['ADDRESS_ONLY'] === 'Y')
+		{
+			$addressOnly = true;
 		}
 
 		$entityBeforeUpdate = null;
@@ -956,6 +996,11 @@ class EntityRequisite
 			}
 		}
 
+		if ($addressOnly)
+		{
+			$fields = $this->clearNonAddressFields($fields);
+		}
+
 		$result = $this->checkRqFieldsBeforeSave($id, $fields);
 		if (!$result->isSuccess())
 		{
@@ -965,6 +1010,10 @@ class EntityRequisite
 		$result = RequisiteTable::update($id, $fields);
 		if ($result->isSuccess())
 		{
+			if ($addressOnly)
+			{
+				$GLOBALS['USER_FIELD_MANAGER']->Delete($this->getUfId(), $id);
+			}
 			if (is_array($addresses))
 			{
 				foreach($addresses as $addressTypeId => $address)
@@ -1012,6 +1061,14 @@ class EntityRequisite
 					if(isset($address['COUNTRY_CODE']))
 					{
 						$actualAddressFields['COUNTRY_CODE'] = $address['COUNTRY_CODE'];
+					}
+					if(isset($address['LOC_ADDR_ID']))
+					{
+						$actualAddressFields['LOC_ADDR_ID'] = (int)$address['LOC_ADDR_ID'];
+					}
+					if(isset($address['LOC_ADDR']))
+					{
+						$actualAddressFields['LOC_ADDR'] = $address['LOC_ADDR'];
 					}
 
 					if(!empty($actualAddressFields))
@@ -1292,6 +1349,7 @@ class EntityRequisite
 				'XML_ID' => array('TYPE' => 'string'),
 				'ORIGINATOR_ID' => array('TYPE' => 'string'),
 				'ACTIVE' => array('TYPE' => 'char'),
+				'ADDRESS_ONLY' => array('TYPE' => 'char'),
 				'SORT' => array('TYPE' => 'integer'),
 				'RQ_NAME' => array('TYPE' => 'string'),
 				'RQ_FIRST_NAME' => array('TYPE' => 'string'),
@@ -1389,6 +1447,10 @@ class EntityRequisite
 			),
 			'ACTIVE' => array(
 				'title' => GetMessage('CRM_REQUISITE_EXPORT_FIELD_ACTIVE'),
+				'type' => 'boolean'
+			),
+			'ADDRESS_ONLY' => array(
+				'title' => GetMessage('CRM_REQUISITE_EXPORT_FIELD_ADDRESS_ONLY'),
 				'type' => 'boolean'
 			),
 			'SORT' => array(
@@ -1492,7 +1554,7 @@ class EntityRequisite
 				'RQ_VAT_CERT_NUM'
 			);
 		}
-		
+
 		return self::$rqFiltrableFields;
 	}
 
@@ -1592,7 +1654,7 @@ class EntityRequisite
 			return false;
 		}
 
-		if (!is_string($title) || strlen($title) <= 0)
+		if (!is_string($title) || $title == '')
 		{
 			return false;
 		}
@@ -1613,7 +1675,9 @@ class EntityRequisite
 			'LIST_FILTER_LABEL' => array()
 		);
 
-		$langDbResult = \CLanguage::GetList($by = '', $order = '');
+		$by = '';
+		$order = '';
+		$langDbResult = \CLanguage::GetList($by, $order);
 		while($lang = $langDbResult->Fetch())
 		{
 			$lid = $lang['LID'];
@@ -1785,7 +1849,7 @@ class EntityRequisite
 			foreach (array_keys($countryIds) as $countryId)
 			{
 				$countryCode = EntityPreset::getCountryCodeById($countryId);
-				$countryCodeLower = strtolower($countryCode);
+				$countryCodeLower = mb_strtolower($countryCode);
 				$phrasesConfig = [];
 				$filePath= Main\IO\Path::normalize(
 					Main\Application::getDocumentRoot().
@@ -1802,7 +1866,7 @@ class EntityRequisite
 					&& !empty($phrasesConfig['phrases']))
 				{
 					$phrases = $phrasesConfig['phrases'];
-					$sourceEncoding = strtolower($phrasesConfig['encoding']);
+					$sourceEncoding = mb_strtolower($phrasesConfig['encoding']);
 					$needConvertEncoding = ($sourceEncoding !== $targetEncoding);
 					foreach ($titleMap as $fieldName => &$titlesByCountry)
 					{
@@ -1825,14 +1889,6 @@ class EntityRequisite
 								{
 									$titlesByCountry[$countryId] = $phrases[$phraseId];
 								}
-								$titlesByCountry[$countryId] = (
-									$needConvertEncoding ?
-										Encoding::convertEncoding(
-											$phrases[$phraseId],
-											$sourceEncoding,
-											$targetEncoding
-										) : $phrases[$phraseId]
-								);
 							}
 						}
 					}
@@ -1872,6 +1928,8 @@ class EntityRequisite
 				'type' => $fieldInfo['data_type'],
 				'required' => (isset($fieldInfo['required']) && $fieldInfo['required']),
 				'formType' => isset($formTypes[$fieldName]) ? $formTypes[$fieldName] : 'text',
+				'multiple' => false,
+				'settings' => null,
 				'isRQ' => isset($rqFields[$fieldName]),
 				'isUF' => false
 			);
@@ -1899,6 +1957,8 @@ class EntityRequisite
 				'title' => is_string($fieldTitle) ? $fieldTitle : '',
 				'type' => $fieldInfo['USER_TYPE_ID'],
 				'required' => (isset($fieldInfo['MANDATORY']) && $fieldInfo['MANDATORY'] === 'Y'),
+				'multiple' => (isset($fieldInfo['MULTIPLE']) && $fieldInfo['MULTIPLE'] === 'Y'),
+				'settings' => isset($fieldInfo['SETTINGS']) ? $fieldInfo['SETTINGS'] : null,
 				'formType' => '',
 				'isRQ' => true,
 				'isUF' => true
@@ -1906,6 +1966,40 @@ class EntityRequisite
 		}
 
 		return $result;
+	}
+
+	protected function removeNonAddressFields($fields)
+	{
+		$rqFields = $this->getRqFields();
+		$userFields = $this->getUserFields();
+		foreach ($fields as $fieldName => $fieldValue)
+		{
+			if(
+				$fieldName !== \Bitrix\Crm\EntityRequisite::ADDRESS &&
+				(in_array($fieldName, $rqFields) || in_array($fieldName, $userFields)))
+			{
+				unset($fields[$fieldName]);
+			}
+		}
+		return $fields;
+	}
+
+	protected function clearNonAddressFields($fields)
+	{
+		$rqFields = $this->getRqFields();
+		$userFields = $this->getUserFields();
+		foreach ($fields as $fieldName => $fieldValue)
+		{
+			if($fieldName !== \Bitrix\Crm\EntityRequisite::ADDRESS && in_array($fieldName, $rqFields))
+			{
+				$fields[$fieldName] = false;
+			}
+			if(in_array($fieldName, $userFields))
+			{
+				unset($fields[$fieldName]);
+			}
+		}
+		return $fields;
 	}
 
 	public static function checkEntityType($entityTypeId)
@@ -1943,6 +2037,11 @@ class EntityRequisite
 			$entityTypeID = (int)$entityTypeID;
 		}
 
+		if ($entityTypeID === \CCrmOwnerType::Company && $entityID > 0 && \CCrmCompany::isMyCompany((int)$entityID))
+		{
+			return \CCrmAuthorizationHelper::CheckConfigurationUpdatePermission();
+		}
+
 		if ($entityTypeID === \CCrmOwnerType::Company ||
 				$entityTypeID === \CCrmOwnerType::Contact
 		)
@@ -1959,6 +2058,11 @@ class EntityRequisite
 		if(!is_int($entityTypeID))
 		{
 			$entityTypeID = (int)$entityTypeID;
+		}
+
+		if ($entityTypeID === \CCrmOwnerType::Company && $entityID > 0 && \CCrmCompany::isMyCompany((int)$entityID))
+		{
+			return \CCrmAuthorizationHelper::CheckConfigurationUpdatePermission();
 		}
 
 		if ($entityTypeID === \CCrmOwnerType::Company ||
@@ -1983,6 +2087,11 @@ class EntityRequisite
 		{
 			return (\CCrmAuthorizationHelper::CheckReadPermission(\CCrmOwnerType::Company, 0) &&
 					\CCrmAuthorizationHelper::CheckReadPermission(\CCrmOwnerType::Contact, 0));
+		}
+
+		if ($entityTypeID === \CCrmOwnerType::Company && $entityID > 0 && \CCrmCompany::isMyCompany((int)$entityID))
+		{
+			return true;
 		}
 
 		if ($entityTypeID === \CCrmOwnerType::Company ||
@@ -2204,37 +2313,25 @@ class EntityRequisite
 							}
 							else
 							{
-								$addressTypeInfos = RequisiteAddress::getClientTypeInfos();
-								$addressTypeInfosDesc = RequisiteAddress::getTypeInfos();
-								foreach ($addressTypeInfos as $k => $typeInfo)
-								{
-									$addressTypeInfos[$k]['desc'] = isset($addressTypeInfosDesc[$typeInfo['id']]) ?
-										$addressTypeInfosDesc[$typeInfo['id']]['DESCRIPTION'] : '';
-								}
-								unset($addressTypeInfosDesc, $k, $typeInfo);
+								$addressTypes = EntityAddressType::getAllDescriptions();
 								$addresses = $fieldValue;
 								if (is_array($addresses) && !empty($addresses))
 								{
-									foreach ($addressTypeInfos as $addressTypeInfo)
+									foreach ($addresses as $addressTypeId => $address)
 									{
-										if (is_array($addresses[$addressTypeInfo['id']]))
+										if (isset($addressTypes[$addressTypeId]) && is_array($address))
 										{
-											$textValue = Format\RequisiteAddressFormatter::formatByCountry(
-												$addresses[$addressTypeInfo['id']],
-												$presetCountryId,
-												array(
-													'SEPARATOR' => Format\AddressSeparator::NewLine,
-													'NL2BR' => false,
-													'TYPE_ID' => RequisiteAddress::Primary
-												)
+											$textValue = AddressFormatter::getSingleInstance()->formatTextMultiline(
+												$address,
+												RequisiteAddressFormatter::getFormatByCountryId($presetCountryId)
 											);
 											if (!empty($textValue))
 											{
 												$resultItem = array(
 													'name' => $fieldName,
-													'title' => $addressTypeInfo['name'],
-													'type' => $addressTypeInfo['desc'],
-													'subType' => $addressTypeInfo['id'],
+													'title' => $addressTypes[$addressTypeId],
+													'type' => 'address',
+													'subType' => EntityAddressType::resolveName($addressTypeId),
 													'formType' => $fieldInfo['formType']
 												);
 												if ($optionValueText)
@@ -2258,7 +2355,7 @@ class EntityRequisite
 						{
 							$textValue = strval($fieldValue);
 
-							if (strlen($textValue) <= 0)
+							if ($textValue == '')
 							{
 								$skip = true;
 							}
@@ -2296,6 +2393,62 @@ class EntityRequisite
 		return $result;
 	}
 
+	public function prepareViewDataFormatted($fields, $fieldsInViewMap, $options = array())
+	{
+		$viewData = $this->prepareViewData($fields, $fieldsInViewMap, $options);
+		$titleParts = static::getFormattedTitleParts();
+		$fieldValues = [];
+		foreach ($viewData['fields'] as $field)
+		{
+			$fieldValues[$field['name']] = [
+				'title' => $field['title'],
+				'value' => isset($field['textValue']) ? $field['textValue'] : $field['htmlValue']
+			];
+		}
+		$title = $viewData['title'];
+		$usedFields = [];
+		foreach ($titleParts as $titlePartFields)
+		{
+			$titleCandidate = [];
+			foreach ($titlePartFields as $fieldName)
+			{
+				if ($fieldValues[$fieldName]['value'] != '')
+				{
+					$titleCandidate[] = $fieldValues[$fieldName]['value'];
+				}
+			}
+			if (!empty($titleCandidate))
+			{
+				$title = implode(' ', $titleCandidate);
+				$usedFields = $titlePartFields;
+				break;
+			}
+		}
+		$subtitleParts = [];
+		foreach ($fieldValues as $fieldName => $field)
+		{
+			if (!in_array($fieldName, $usedFields) && $field['value'] != '')
+			{
+				$subtitleParts[] = $field['title']. ': '.$field['value'];
+			}
+		}
+
+		$viewData['title'] = $title;
+		$viewData['subtitle'] = implode(', ', $subtitleParts);
+
+		return $viewData;
+	}
+
+	public static function getFormattedTitleParts()
+	{
+		return [
+			['RQ_COMPANY_NAME'],
+			['RQ_COMPANY_FULL_NAME'],
+			['RQ_NAME'],
+			['RQ_LAST_NAME', 'RQ_FIRST_NAME', 'RQ_SECOND_NAME']
+		];
+	}
+
 	public function loadSettings($entityTypeID, $entityId)
 	{
 		$result = array();
@@ -2314,7 +2467,7 @@ class EntityRequisite
 		$settingsValue = is_array($fields) && isset($fields['SETTINGS']) ? $fields['SETTINGS'] : '';
 		$settings = null;
 		if (!empty($settingsValue))
-			$settings = unserialize($settingsValue);
+			$settings = unserialize($settingsValue, ['allowed_classes' => false]);
 		if (is_array($settings))
 			$result = $settings;
 
@@ -2331,7 +2484,7 @@ class EntityRequisite
 		$entityTypeId = $DB->ForSql($entityTypeId);
 		$settingsValue = $DB->ForSql(serialize($settings));
 
-		switch (strtoupper(strval($DBType)))
+		switch(mb_strtoupper(strval($DBType)))
 		{
 			case 'MYSQL':
 				$sql =
@@ -2370,6 +2523,31 @@ class EntityRequisite
 				$DB->Query($sql, false, 'File: '.__FILE__.'<br/>Line: '.__LINE__);
 				break;
 		}
+	}
+
+	public function getEntityRequisiteBindings(int $entityTypeId, int $entityId, ?int $companyId, ?int $contactId): array
+	{
+		$entityList = [];
+		$entityList[] = [
+			'ENTITY_TYPE_ID' => $entityTypeId,
+			'ENTITY_ID' => $entityId,
+		];
+		if($companyId > 0)
+		{
+			$entityList[] = [
+				'ENTITY_TYPE_ID' => \CCrmOwnerType::Company,
+				'ENTITY_ID' => $companyId,
+			];
+		}
+		if($contactId > 0)
+		{
+			$entityList[] = [
+				'ENTITY_TYPE_ID' => \CCrmOwnerType::Contact,
+				'ENTITY_ID' => $contactId,
+			];
+		}
+
+		return (array) $this->getDefaultRequisiteInfoLinked($entityList);
 	}
 
 	public function getDefaultRequisiteInfoLinked($entityList)
@@ -2616,7 +2794,8 @@ class EntityRequisite
 				'REGION' => $fieldName.'_REGION',
 				'PROVINCE' => $fieldName.'_PROVINCE',
 				'COUNTRY' => $fieldName.'_COUNTRY',
-				'COUNTRY_CODE' => $fieldName.'_COUNTRY_CODE'
+				'COUNTRY_CODE' => $fieldName.'_COUNTRY_CODE',
+				'LOC_ADDR_ID' => $fieldName.'_LOC_ADDR_ID'
 			);
 		}
 		else
@@ -2629,7 +2808,8 @@ class EntityRequisite
 				'REGION' => 'RQ_ADDR_REGION',
 				'PROVINCE' => 'RQ_ADDR_PROVINCE',
 				'COUNTRY' => 'RQ_ADDR_COUNTRY',
-				'COUNTRY_CODE' => 'RQ_ADDR_COUNTRY_CODE'
+				'COUNTRY_CODE' => 'RQ_ADDR_COUNTRY_CODE',
+				'LOC_ADDR_ID' => 'RQ_ADDR_LOC_ADDR_ID'
 			);
 		}
 
@@ -2646,7 +2826,8 @@ class EntityRequisite
 			'_REGION',
 			'_PROVINCE',
 			'_COUNTRY',
-			'_COUNTRY_CODE'
+			'_COUNTRY_CODE',
+			'_LOC_ADDR_ID'
 		);
 	}
 
@@ -2654,25 +2835,77 @@ class EntityRequisite
 	{
 		$result = '';
 		$typeId = (int)$typeId;
-		$fieldName = $this->resolveFieldNameByAddressType($typeId);
+		$prefix = $this->resolveFieldNameByAddressType($typeId);
 
-		if (!empty($fieldName))
+		if (!empty($prefix))
 		{
-			return Format\EntityAddressFormatter::format(
-				array(
-					'ADDRESS_1' => isset($fields[$fieldName.'_ADDRESS']) ? $fields[$fieldName.'_ADDRESS'] : '',
-					'ADDRESS_2' => isset($fields[$fieldName.'_ADDRESS_2']) ? $fields[$fieldName.'_ADDRESS_2'] : '',
-					'CITY' => isset($fields[$fieldName.'_CITY']) ? $fields[$fieldName.'_CITY'] : '',
-					'POSTAL_CODE' => isset($fields[$fieldName.'_POSTAL_CODE']) ? $fields[$fieldName.'_POSTAL_CODE'] : '',
-					'REGION' => isset($fields[$fieldName.'_REGION']) ? $fields[$fieldName.'_REGION'] : '',
-					'PROVINCE' => isset($fields[$fieldName.'_PROVINCE']) ? $fields[$fieldName.'_PROVINCE'] : '',
-					'COUNTRY' => isset($fields[$fieldName.'_COUNTRY']) ? $fields[$fieldName.'_COUNTRY'] : '',
-					'COUNTRY_CODE' => isset($fields[$fieldName.'_COUNTRY_CODE']) ? $fields[$fieldName.'_COUNTRY_CODE'] : ''
-				)
+			return AddressFormatter::getSingleInstance()->formatTextComma(
+				[
+					'ADDRESS_1' => isset($fields[$prefix.'_ADDRESS']) ? $fields[$prefix.'_ADDRESS'] : '',
+					'ADDRESS_2' => isset($fields[$prefix.'_ADDRESS_2']) ? $fields[$prefix.'_ADDRESS_2'] : '',
+					'CITY' => isset($fields[$prefix.'_CITY']) ? $fields[$prefix.'_CITY'] : '',
+					'POSTAL_CODE' => isset($fields[$prefix.'_POSTAL_CODE']) ? $fields[$prefix.'_POSTAL_CODE'] : '',
+					'REGION' => isset($fields[$prefix.'_REGION']) ? $fields[$prefix.'_REGION'] : '',
+					'PROVINCE' => isset($fields[$prefix.'_PROVINCE']) ? $fields[$prefix.'_PROVINCE'] : '',
+					'COUNTRY' => isset($fields[$prefix.'_COUNTRY']) ? $fields[$prefix.'_COUNTRY'] : '',
+					'COUNTRY_CODE' => isset($fields[$prefix.'_COUNTRY_CODE']) ? $fields[$prefix.'_COUNTRY_CODE'] : '',
+					'LOC_ADDR_ID' => isset($fields[$prefix.'_LOC_ADDR_ID']) ? (int)$fields[$prefix.'_LOC_ADDR_ID'] : 0
+				]
 			);
 		}
 
 		return $result;
+	}
+
+	public static function internalizeAddresses(&$fields)
+	{
+		$addressFieldName = EntityRequisite::ADDRESS;
+		if (is_array($fields) && isset($fields[$addressFieldName]))
+		{
+			if (is_array($fields[$addressFieldName]))
+			{
+				$allowedRqAddrTypeMap = array_fill_keys(EntityAddressType::getAllIDs(), true);
+				foreach ($fields[$addressFieldName] as
+				         $addressTypeId => $addressJson)
+				{
+					$addressTypeId = (int)$addressTypeId;
+					$addressSuccess = false;
+					$locationAddress = null;
+					if (isset($allowedRqAddrTypeMap[$addressTypeId]))
+					{
+						if (is_array($addressJson)
+							&& isset($addressJson['DELETED'])
+							&& $addressJson['DELETED'] === 'Y')
+						{
+							$fields[$addressFieldName][$addressTypeId] = ['DELETED' => 'Y'];
+							$addressSuccess = true;
+						}
+						else if (is_string($addressJson) && $addressJson !== ''
+							&& RequisiteAddress::isLocationModuleIncluded())
+						{
+							$locationAddress = Address::fromJson(
+								EntityAddress::prepareJsonValue($addressJson)
+							);
+							if ($locationAddress)
+							{
+								$fields[$addressFieldName][$addressTypeId] = [
+									'LOC_ADDR' => $locationAddress
+								];
+								$addressSuccess = true;
+							}
+						}
+					}
+					if (!$addressSuccess)
+					{
+						unset($fields[$addressFieldName][$addressTypeId]);
+					}
+				}
+			}
+			else
+			{
+				unset($fields[$addressFieldName]);
+			}
+		}
 	}
 
 	public static function intertalizeFormData(array $formData, $entityTypeID, array &$requisites, array &$bankDetails)
@@ -2680,7 +2913,7 @@ class EntityRequisite
 		$signer = new Main\Security\Sign\Signer();
 		foreach($formData as $requisiteID => $requisiteData)
 		{
-			if($requisiteID > 0 && isset($requisiteData['DELETED']) && strtoupper($requisiteData['DELETED']) === 'Y')
+			if($requisiteID > 0 && isset($requisiteData['DELETED']) && mb_strtoupper($requisiteData['DELETED']) === 'Y')
 			{
 				$requisites[$requisiteID] = array('isDeleted' => true);
 				continue;
@@ -2701,6 +2934,7 @@ class EntityRequisite
 			$decodedData = Main\Web\Json::decode($requisiteJsonData);
 			if(isset($decodedData['fields']) && is_array($decodedData['fields']))
 			{
+				EntityRequisite::internalizeAddresses($decodedData['fields']);
 				$requisites[$requisiteID] = array('fields' => $decodedData['fields']);
 			}
 
@@ -2720,6 +2954,88 @@ class EntityRequisite
 					}
 				}
 				$bankDetails[$requisiteID] = $bankDetailList;
+			}
+		}
+	}
+
+	public static function saveFormData($entityTypeId, $entityId, $entityRequisites, $entityBankDetails)
+	{
+		$addedRequisites = array();
+		if(!empty($entityRequisites))
+		{
+			$requisite = new self();
+			foreach($entityRequisites as $requisiteID => $requisiteData)
+			{
+				if(isset($requisiteData['isDeleted']) && $requisiteData['isDeleted'] === true)
+				{
+					$requisite->delete($requisiteID);
+					continue;
+				}
+
+				$requisiteFields = $requisiteData['fields'];
+				$requisiteFields['ENTITY_TYPE_ID'] = $entityTypeId;
+				$requisiteFields['ENTITY_ID'] = $entityId;
+
+				if((int)$requisiteID > 0)
+				{
+					$requisite->update($requisiteID, $requisiteFields);
+				}
+				else
+				{
+					$result = $requisite->add($requisiteFields);
+					if($result->isSuccess())
+					{
+						$addedRequisites[$requisiteID] = $result->getId();
+					}
+				}
+			}
+		}
+		if(!empty($entityBankDetails))
+		{
+			$bankDetail = new \Bitrix\Crm\EntityBankDetail();
+			foreach($entityBankDetails as $requisiteID => $bankDetails)
+			{
+				$isAddressOnly = isset($entityRequisites[$requisiteID])
+					&& isset($entityRequisites[$requisiteID]['fields']['ADDRESS_ONLY'])
+					&& $entityRequisites[$requisiteID]['fields']['ADDRESS_ONLY'] === 'Y';
+
+				if ($isAddressOnly)
+				{
+					$bankDetail->deleteByEntity(\CCrmOwnerType::Requisite, $requisiteID);
+				}
+				else
+				{
+					foreach ($bankDetails as $pseudoID => $bankDetailFields)
+					{
+						if (isset($bankDetailFields['isDeleted']) && $bankDetailFields['isDeleted'] === true)
+						{
+							if ((int)$pseudoID > 0)
+							{
+								$bankDetail->delete($pseudoID);
+							}
+							continue;
+						}
+
+						if ((int)$pseudoID > 0)
+						{
+							$bankDetail->update($pseudoID, $bankDetailFields);
+						}
+						else
+						{
+							if ((int)$requisiteID <= 0 && isset($addedRequisites[$requisiteID]))
+							{
+								$requisiteID = $addedRequisites[$requisiteID];
+							}
+
+							if ((int)$requisiteID > 0)
+							{
+								$bankDetailFields['ENTITY_ID'] = $requisiteID;
+								$bankDetailFields['ENTITY_TYPE_ID'] = \CCrmOwnerType::Requisite;
+								$bankDetail->add($bankDetailFields);
+							}
+						}
+					}
+				}
 			}
 		}
 	}
@@ -2755,6 +3071,11 @@ class EntityRequisite
 		if(isset($formData['ACTIVE']))
 		{
 			$fields['ACTIVE'] = $formData['ACTIVE'] === 'Y';
+		}
+
+		if(isset($formData['ADDRESS_ONLY']))
+		{
+			$fields['ADDRESS_ONLY'] = $formData['ADDRESS_ONLY'] === 'Y';
 		}
 
 		if(isset($formData['SORT']))
@@ -2834,7 +3155,8 @@ class EntityRequisite
 				'REGION' => isset($ary['REGION']) ? $ary['REGION'] : '',
 				'PROVINCE' => isset($ary['PROVINCE']) ? $ary['PROVINCE'] : '',
 				'COUNTRY' => isset($ary['COUNTRY']) ? $ary['COUNTRY'] : '',
-				'COUNTRY_CODE' => isset($ary['COUNTRY_CODE']) ? $ary['COUNTRY_CODE'] : ''
+				'COUNTRY_CODE' => isset($ary['COUNTRY_CODE']) ? $ary['COUNTRY_CODE'] : '',
+				'LOC_ADDR_ID' => isset($ary['LOC_ADDR_ID']) ? (int)$ary['LOC_ADDR_ID'] : 0
 			);
 		}
 		return $results;
@@ -3926,7 +4248,7 @@ class EntityRequisite
 			if (defined('B24_LANGUAGE_ID'))
 				$languageId = B24_LANGUAGE_ID;
 			else
-				$languageId = substr((string)Main\Config\Option::get('main', '~controller_group_name'), 0, 2);
+				$languageId = mb_substr((string)Main\Config\Option::get('main', '~controller_group_name'), 0, 2);
 		}
 		if ($languageId == '')
 		{
@@ -4046,9 +4368,6 @@ class EntityRequisite
 		foreach ($this->getRqFiltrableFields() as $fieldName)
 			$filtrableFields[$fieldName] = true;
 		$countryList = EntityPreset::getCountryList();
-		$addressTypeList = array();
-		foreach(RequisiteAddress::getClientTypeInfos() as $typeInfo)
-			$addressTypeList[$typeInfo['id']] = $typeInfo['name'];
 		foreach ($countrySort as $countryId)
 		{
 			if (isset($countryList[$countryId]))
@@ -4062,27 +4381,26 @@ class EntityRequisite
 					{
 						if ($fieldName === EntityRequisite::ADDRESS)
 						{
-							if (!empty($addressTypeList))
+							$addressTypeId = RequisiteAddress::Undefined;
+							$addressTypeName = $fieldTitleMap[$fieldName][$countryId];
+							$addressLabels = RequisiteAddress::getShortLabels(RequisiteAddress::Primary);
+							foreach (array_keys(EntityRequisite::getAddressFieldMap(RequisiteAddress::Primary))
+							    as $addrFieldKey)
 							{
-								/*foreach ($addressTypeList as $addressTypeId => $addressTypeName)
-								{*/
-									$addressTypeId = RequisiteAddress::Undefined;
-									$addressTypeName = $fieldTitleMap[$fieldName][$countryId];
-									$addressLabels = RequisiteAddress::getShortLabels(RequisiteAddress::Primary);
-									foreach (array_keys(EntityRequisite::getAddressFieldMap(RequisiteAddress::Primary)) as $addrFieldKey)
-									{
-										if ($addrFieldKey === 'ADDRESS_2' || $addrFieldKey === 'COUNTRY_CODE')
-											continue;
+								if ($addrFieldKey === 'ADDRESS_2'
+									|| $addrFieldKey === 'COUNTRY_CODE'
+									|| $addrFieldKey === 'LOC_ADDR_ID')
+								{
+									continue;
+								}
 
-										$filterFields[] = array(
-											'id' => "$fieldName|$countryId|$addressTypeId|$addrFieldKey",
-											'name' => GetMessage('CRM_REQUISITE_FILTER_PREFIX').
-												($hideCountry ? '' : ' ('.$countryList[$countryId].')').': '.
-												$addressTypeName.' - '.ToLower($addressLabels[$addrFieldKey]),
-											'type' => 'text'
-										);
-									}
-								/*}*/
+								$filterFields[] = array(
+									'id' => "$fieldName|$countryId|$addressTypeId|$addrFieldKey",
+									'name' => GetMessage('CRM_REQUISITE_FILTER_PREFIX').
+										($hideCountry ? '' : ' ('.$countryList[$countryId].')').': '.
+										$addressTypeName.' - '.ToLower($addressLabels[$addrFieldKey]),
+									'type' => 'text'
+								);
 							}
 						}
 						else
@@ -4127,10 +4445,11 @@ class EntityRequisite
 				$countryId = (int)$matches[2];
 				$addressTypeId = (int)$matches[3];
 				$addressFieldName = $matches[4];
-				
+
 				$fieldParsed = (is_array($rqFieldCountryMap[$fieldName])
 					&& in_array($countryId, $rqFieldCountryMap[$fieldName], true)
-					&& (RequisiteAddress::isDefined($addressTypeId) || $addressTypeId === RequisiteAddress::Undefined)
+					&& (EntityAddressType::isDefined($addressTypeId)
+						|| $addressTypeId === EntityAddressType::Undefined)
 					&& in_array($addressFieldName, EntityRequisite::getAddressFiltrableFields(), true));
 			}
 			else if (preg_match('/^(RQ_\w+)\|(\d+)$/'.BX_UTF_PCRE_MODIFIER, $filterFieldId, $matches))
@@ -4189,7 +4508,7 @@ class EntityRequisite
 			$filter['RQ'] = array_merge($filter['RQ'], $rqFilter);
 		}
 	}
-	
+
 	public function prepareEntityListExternalFilter(&$filter, $params = array())
 	{
 		$entityTypeId = isset($params['ENTITY_TYPE_ID']) ? (int)$params['ENTITY_TYPE_ID'] : \CCrmOwnerType::Undefined;
@@ -4214,10 +4533,11 @@ class EntityRequisite
 		foreach (EntityRequisite::getAllowedRqFieldCountries() as $countryId)
 			$allowedCountries[$countryId] = true;
 
-		$allowedAddressTypes = null;
+		$allowedAddressTypeMap = null;
 		$filtrableAddressFields = null;
 		$fieldsInfo = array();
 		$joins = array();
+		$whereConditions = [];
 		$c = 0;
 		foreach($filter['RQ'] as $filterInfo)
 		{
@@ -4290,16 +4610,21 @@ class EntityRequisite
 											&& isset($filterInfo['PARAMS']['ADDRESS_FIELD'])
 											&& is_string($filterInfo['PARAMS']['ADDRESS_FIELD']))
 										{
-											if ($allowedAddressTypes === null)
-												$allowedAddressTypes = array_keys(RequisiteAddress::getTypeInfos());
+											if ($allowedAddressTypeMap === null)
+											{
+												$allowedAddressTypeMap = array_fill_keys(
+													EntityAddressType::getAllIDs(),
+													true
+												);
+											}
 
 											$addressType = (int)$filterInfo['PARAMS']['ADDRESS_TYPE'];
 											if ($addressType === RequisiteAddress::Undefined)
 											{
-												$addressType = $allowedAddressTypes;
+												$addressType = EntityAddressType::getAllIDs();
 											}
 											if (is_array($addressType)
-												|| in_array($addressType, $allowedAddressTypes, true))
+												|| isset($allowedAddressTypeMap[$addressType]))
 											{
 												$addressTypeCompare = is_array($addressType)
 													? 'IN ('.implode(',', $addressType).')'
@@ -4317,9 +4642,42 @@ class EntityRequisite
 													$where = \CSqlUtil::PrepareWhere(
 														$fieldsInfo[$countryId], $filterPart, $joins)
 													;
+													$joinType = 'INNER';
+
+													if (
+														$filterInfo['VALUE'] === false
+														&& $filterInfo['OPERATION'] === '='
+													)
+													{
+														$joinType = 'LEFT';
+														$whereFilterPart = $filterPart;
+
+														unset($whereFilterPart[$operation.$fieldName]);
+														$whereFilterPart['!'.$fieldName] = false;
+
+														$prepareWhere = \CSqlUtil::PrepareWhere(
+															$fieldsInfo[$countryId],
+															$whereFilterPart,
+															$joins
+														);
+
+														$whereConditions[] = [
+															'TYPE' => 'WHERE',
+															'SQL' =>
+																"{$masterAlias}.{$masterIdentity} NOT IN (".
+																" SELECT DISTINCT RQ.ENTITY_ID FROM b_crm_requisite RQ".
+																" INNER JOIN b_crm_preset PR ON RQ.PRESET_ID = PR.ID".
+																" INNER JOIN b_crm_addr AR".
+																" ON AR.TYPE_ID {$addressTypeCompare}".
+																" AND AR.ENTITY_TYPE_ID = ".\CCrmOwnerType::Requisite.
+																" AND AR.ENTITY_ID = RQ.ID".
+																" WHERE {$prepareWhere})"
+														];
+													}
+
 													$joins[] = array(
-														'TYPE' => 'INNER',
-														'SQL' => "INNER JOIN (".
+														'TYPE' => $joinType,
+														'SQL' => $joinType." JOIN (".
 															"SELECT DISTINCT RQ.ENTITY_ID FROM b_crm_requisite RQ".
 															" INNER JOIN b_crm_preset PR ON RQ.PRESET_ID = PR.ID".
 															" INNER JOIN b_crm_addr AR".
@@ -4344,9 +4702,39 @@ class EntityRequisite
 										$c++;
 										$alias = "RQ{$c}";
 										$where = \CSqlUtil::PrepareWhere($fieldsInfo[$countryId], $filterPart, $joins);
+
+										$joinType = 'INNER';
+
+										// if search all entities which have null or empty value for $fieldName (use ^%^ in filter)
+										if (
+											$filterInfo['VALUE'] === false
+											&& $filterInfo['OPERATION'] === '='
+										)
+										{
+											$joinType = 'LEFT';
+											$whereFilterPart = $filterPart;
+
+											unset($whereFilterPart[$operation.$fieldName]);
+											$whereFilterPart['!'.$fieldName] = false;
+
+											$prepareWhere = \CSqlUtil::PrepareWhere(
+												$fieldsInfo[$countryId],
+												$whereFilterPart,
+												$joins
+											);
+											$whereConditions[] = [
+												'TYPE' => 'WHERE',
+												'SQL' =>
+													"{$masterAlias}.{$masterIdentity} NOT IN (".
+													" SELECT DISTINCT RQ.ENTITY_ID FROM b_crm_requisite RQ".
+													" INNER JOIN b_crm_preset PR ON RQ.PRESET_ID = PR.ID".
+													" WHERE {$prepareWhere})"
+											];
+										}
+
 										$joins[] = array(
-											'TYPE' => 'INNER',
-											'SQL' => "INNER JOIN (".
+											'TYPE' => $joinType,
+											'SQL' => $joinType." JOIN (".
 												"SELECT DISTINCT RQ.ENTITY_ID FROM b_crm_requisite RQ".
 												" INNER JOIN b_crm_preset PR ON RQ.PRESET_ID = PR.ID".
 												" WHERE {$where}".
@@ -4370,6 +4758,18 @@ class EntityRequisite
 			else
 			{
 				$filter['__JOINS'] = array_merge($filter['__JOINS'], $joins);
+			}
+		}
+
+		if (!empty($whereConditions))
+		{
+			if(!isset($filter['__CONDITIONS']))
+			{
+				$filter['__CONDITIONS'] = $whereConditions;
+			}
+			else
+			{
+				$filter['__CONDITIONS'] = array_merge($filter['__CONDITIONS'], $whereConditions);
 			}
 		}
 	}
@@ -4461,18 +4861,18 @@ class EntityRequisite
 		if (!empty($prefix) && is_array($entityFields) && !empty($entityFields) && is_array($headers))
 		{
 			$headerRqFields = array();
-			$prefixLength = strlen($prefix);
+			$prefixLength = mb_strlen($prefix);
 			foreach ($headers as $headerInfo)
 			{
-				if (isset($headerInfo['id']) && strlen($headerInfo['id']) > $prefixLength
-					&& substr($headerInfo['id'], 0, $prefixLength) === $prefix)
+				if (isset($headerInfo['id']) && mb_strlen($headerInfo['id']) > $prefixLength
+					&& mb_substr($headerInfo['id'], 0, $prefixLength) === $prefix)
 				{
 					$headerRqFields[$headerInfo['id']] = true;
 				}
 			}
 			foreach ($entityFields as $k => $fieldName)
 			{
-				if (strlen($fieldName) > $prefixLength && substr($fieldName, 0, $prefixLength) === $prefix
+				if (mb_strlen($fieldName) > $prefixLength && mb_substr($fieldName, 0, $prefixLength) === $prefix
 					&& !isset($headerRqFields[$fieldName]))
 				{
 					$result = true;
@@ -4493,10 +4893,10 @@ class EntityRequisite
 
 		if (!empty($prefix) && is_array($entityFields) && !empty($entityFields))
 		{
-			$prefixLength = strlen($prefix);
+			$prefixLength = mb_strlen($prefix);
 			foreach ($entityFields as $k => $fieldName)
 			{
-				if (strlen($fieldName) > $prefixLength && substr($fieldName, 0, $prefixLength) === $prefix)
+				if (mb_strlen($fieldName) > $prefixLength && mb_substr($fieldName, 0, $prefixLength) === $prefix)
 				{
 					$result[] = $fieldName;
 					unset($entityFields[$k]);
@@ -4524,24 +4924,23 @@ class EntityRequisite
 			$userFields = array_fill_keys($this->getUserFields(), true);
 
 			// parse fields
-			$prefixLength = strlen($prefix);
+			$prefixLength = mb_strlen($prefix);
 			$countryFieldMap = array();
 			$countries = array();
 			$fields = array();
 			$selectInfo = array();
 			foreach ($select as $fieldString)
 			{
-				if (strlen($fieldString) <= $prefixLength)
+				if (mb_strlen($fieldString) <= $prefixLength)
 					continue;
 
-				$fieldPrefix = '';
 				$fieldName = '';
 				$countryId = 0;
 				$fieldParsed = false;
 				if (
 					preg_match(
 						'/^((UF_|RQ_)\w+)\|(\d+)$/'.BX_UTF_PCRE_MODIFIER,
-						substr($fieldString, $prefixLength),
+						mb_substr($fieldString, $prefixLength),
 						$matches
 					)
 				)
@@ -4572,8 +4971,6 @@ class EntityRequisite
 
 			if (!empty($countries))
 			{
-				$selectAddress = false;
-				$fieldList = array_keys($fields);
 				if (isset($fields['ID']))
 					unset($fields['ID']);
 				if (isset($fields['ENTITY_ID']))
@@ -4582,7 +4979,6 @@ class EntityRequisite
 					unset($fields['PRESET.COUNTRY_ID']);
 				if (isset($fields[EntityRequisite::ADDRESS]))
 				{
-					$selectAddress = true;
 					unset($fields[EntityRequisite::ADDRESS]);
 				}
 
@@ -4688,7 +5084,6 @@ class EntityRequisite
 
 						$fieldName = $selectInfo[$fieldString]['FIELD_NAME'];
 						$fieldCountryId = $selectInfo[$fieldString]['COUNTRY_ID'];
-						$currentCountryId = EntityPreset::getCurrentCountryId();
 
 						$valueData = is_array($resultData[$entityId][$fieldString]) ?
 							$resultData[$entityId][$fieldString] : array();
@@ -4710,16 +5105,25 @@ class EntityRequisite
 										{
 											if (!empty($exportMode))
 											{
-												$addressValue = Format\RequisiteAddressFormatter::formatByCountry(
-													$addressData,
-													$fieldCountryId,
-													array(
-														'SEPARATOR' => Format\AddressSeparator::NewLine,
-														'NL2BR' => false,
-														'TYPE_ID' => RequisiteAddress::Primary,
-														'HTML_ENCODE' => ($exportMode === 'excel')
-													)
+												$formatter = AddressFormatter::getSingleInstance();
+												$formatId = RequisiteAddressFormatter::getFormatByCountryId(
+													$fieldCountryId
 												);
+												if ($exportMode === 'excel')
+												{
+													$addressValue = $formatter->formatTextMultilineSpecialchar(
+														$addressData,
+														$formatId
+													);
+												}
+												else
+												{
+													$addressValue = $formatter->formatTextMultiline(
+														$addressData,
+														$formatId
+													);
+												}
+												unset($formatter);
 
 												if ($valueIsSet)
 												{
@@ -4738,18 +5142,25 @@ class EntityRequisite
 											}
 											else
 											{
+												$formatter = AddressFormatter::getSingleInstance();
 												$addressValue = nl2br(
-													Format\RequisiteAddressFormatter::formatByCountry(
+													$formatter->formatHtmlMultilineSpecialchar(
 														$addressData,
-														$fieldCountryId,
-														array(
-															'SEPARATOR' => Format\AddressSeparator::HtmlLineBreak,
-															'NL2BR' => false,
-															'TYPE_ID' => RequisiteAddress::Primary,
-															'HTML_ENCODE' => true
-														)
+														RequisiteAddressFormatter::getFormatByCountryId($fieldCountryId)
 													)
 												);
+												unset($formatter);
+												if ($addressValue !== '')
+												{
+													$typeId = $addressData['TYPE_ID'] ?? 0;
+													$descriptions = EntityAddressType::getDescriptions(
+														EntityAddressType::getAvailableIds()
+													);
+													if (isset($descriptions[$typeId]))
+													{
+														$addressValue = $descriptions[$typeId].':<br>'.$addressValue;
+													}
+												}
 
 												if ($valueIsSet)
 												{
@@ -4902,6 +5313,7 @@ class EntityRequisite
 					'PRESET_ID',
 					'NAME',
 					'ACTIVE',
+					'ADDRESS_ONLY',
 					'SORT'
 				),
 				true
@@ -4948,7 +5360,7 @@ class EntityRequisite
 							$fieldId = isset($fieldInfo['ID']) ? (int)$fieldInfo['ID'] : 0;
 							$fieldSort = isset($fieldInfo['SORT']) ? (int)$fieldInfo['SORT'] : 0;
 							$fieldName = isset($fieldInfo['FIELD_NAME']) ? $fieldInfo['FIELD_NAME'] : '';
-							if (is_string($fieldName) && strlen($fieldName) > 0 &&
+							if (is_string($fieldName) && $fieldName <> '' &&
 								(isset($allowedRqFieldsMap[$fieldName][$countryId])
 									|| isset($allowedUserFieldsMap[$fieldName])))
 							{
@@ -5009,7 +5421,7 @@ class EntityRequisite
 				foreach ($requisiteBasicExportFields as $fieldName => $fieldInfo)
 				{
 					$fieldTitle = (is_array($fieldInfo) && isset($fieldInfo['title'])) ? $fieldInfo['title'] : '';
-					if (!is_string($fieldTitle) || strlen($fieldTitle) <= 0)
+					if (!is_string($fieldTitle) || $fieldTitle == '')
 						$fieldTitle = $fieldName;
 					if (!isset($rqHeadersByCountry[0]))
 						$rqHeadersByCountry[0] = array();
@@ -5050,7 +5462,7 @@ class EntityRequisite
 								$fieldTitleMap[$fieldName][$countryId] : '';
 						}
 
-						if (!is_string($fieldTitle) || strlen($fieldTitle) <= 0)
+						if (!is_string($fieldTitle) || $fieldTitle == '')
 							$fieldTitle = $fieldName;
 
 						if (!isset($rqHeadersByCountry[$countryId]))
@@ -5069,7 +5481,7 @@ class EntityRequisite
 						if ($fieldName === self::ADDRESS)
 						{
 							$addressTypeLabel = GetMessage('CRM_REQUISITE_EXPORT_ADDRESS_TYPE_LABEL');
-							if (!is_string($addressTypeLabel) || strlen($addressTypeLabel) <= 0)
+							if (!is_string($addressTypeLabel) || $addressTypeLabel == '')
 								$addressTypeLabel = $fieldName.'_TYPE';
 							if ($addressLabels === null)
 							{
@@ -5160,6 +5572,7 @@ class EntityRequisite
 									$requisiteList[$entityId][$requisiteId][$fieldName] = $countryList[$countryId];
 									break;
 								case 'ACTIVE':
+								case 'ADDRESS_ONLY':
 									$requisiteList[$entityId][$requisiteId][$fieldName] =
 										(isset($row[$fieldName]) && $row[$fieldName] === 'Y') ?
 											GetMessage('MAIN_YES') : GetMessage('MAIN_NO');
@@ -5257,6 +5670,7 @@ class EntityRequisite
 										$bankDetailExportFields[$fieldName] = $countryList[$countryId];
 										break;
 									case 'ACTIVE':
+									case 'ADDRESS_ONLY':
 										$bankDetailExportFields[$fieldName] =
 											(isset($bankDetailFields[$fieldName])
 												&& $bankDetailFields[$fieldName] === 'Y') ?
@@ -5289,7 +5703,7 @@ class EntityRequisite
 				foreach ($bankDetailBasicExportFields as $fieldName => $fieldInfo)
 				{
 					$fieldTitle = (is_array($fieldInfo) && isset($fieldInfo['title'])) ? $fieldInfo['title'] : '';
-					if (!is_string($fieldTitle) || strlen($fieldTitle) <= 0)
+					if (!is_string($fieldTitle) || $fieldTitle == '')
 						$fieldTitle = $fieldName;
 					if (!isset($bdHeadersByCountry[0]))
 						$bdHeadersByCountry[0] = array();
@@ -5313,7 +5727,7 @@ class EntityRequisite
 					{
 						$fieldTitle = isset($bankDetailRqFieldTitleMap[$fieldName][$countryId]) ?
 							$bankDetailRqFieldTitleMap[$fieldName][$countryId] : '';
-						if (!is_string($fieldTitle) || strlen($fieldTitle) <= 0)
+						if (!is_string($fieldTitle) || $fieldTitle == '')
 							$fieldTitle = $fieldName;
 						if (!isset($bdHeadersByCountry[$countryId]))
 							$bdHeadersByCountry[$countryId] = array();
@@ -5384,7 +5798,7 @@ class EntityRequisite
 			&& ($options['EXPORT_TYPE'] === 'csv' || $options['EXPORT_TYPE'] === 'excel')) ?
 			$options['EXPORT_TYPE'] : 'csv';
 
-		$addressTypeList = null;
+		$addressTypes = null;
 
 		foreach ($requisiteExportData as $entityId => $requisiteList)
 		{
@@ -5412,28 +5826,27 @@ class EntityRequisite
 				$elements = array();
 				if (is_array($requisiteFields[EntityRequisite::ADDRESS]))
 				{
-					if ($addressTypeList === null)
+					if ($addressTypes === null)
 					{
-						$addressTypeList = array();
-						foreach(RequisiteAddress::getClientTypeInfos() as $typeInfo)
-							$addressTypeList[$typeInfo['id']] = $typeInfo['name'];
+						$addressTypes = EntityAddressType::getAllDescriptions();
 					}
 					foreach ($requisiteFields[EntityRequisite::ADDRESS] as $addressTypeId => $address)
 					{
 						// format full address
-						$fullAddressValue = Format\RequisiteAddressFormatter::formatByCountry(
-							$address,
-							$countryId,
-							array(
-								'SEPARATOR' => Format\AddressSeparator::NewLine,
-								'NL2BR' => false,
-								'TYPE_ID' => RequisiteAddress::Primary,
-								'HTML_ENCODE' => ($exportType === 'excel')
-							)
-						);
+                        $formatter = AddressFormatter::getSingleInstance();
+                        $formatId = RequisiteAddressFormatter::getFormatByCountryId($countryId);
+                        if ($exportType === 'excel')
+                        {
+                            $fullAddressValue = $formatter->formatTextMultilineSpecialchar($address, $formatId);
+                        }
+                        else
+                        {
+                            $fullAddressValue = $formatter->formatTextMultiline($address, $formatId);
+                        }
+                        unset($formatter, $formatId);
 						$element = array(
-							EntityRequisite::ADDRESS.'_TYPE' => isset($addressTypeList[$addressTypeId]) ?
-								$addressTypeList[$addressTypeId] : $addressTypeId,
+							EntityRequisite::ADDRESS.'_TYPE' => isset($addressTypes[$addressTypeId]) ?
+								$addressTypes[$addressTypeId] : $addressTypeId,
 							EntityRequisite::ADDRESS => $fullAddressValue
 						);
 						foreach ($address as $addrFieldName => $addrFieldValue)
@@ -5482,7 +5895,7 @@ class EntityRequisite
 					{
 						if ($group['count'] > $i)
 						{
-							
+
 							foreach ($group['elements'][$group['index'][$i]] as $fieldName => $value)
 							{
 								if (!in_array($fieldName, $group['skipFields'], true))
@@ -5522,7 +5935,7 @@ class EntityRequisite
 	 * @return Main\Result
 	 * @deprecated Moved to Requisite\ImportHelper::importOldRequisiteAddresses.
 	 */
-	public function importEntityRequisite($entityTypeId, $entityId, $dupControlType, $presetId = 0, $fields)
+	public function importEntityRequisite($entityTypeId, $entityId, $dupControlType, $presetId = 0, $fields = [])
 	{
 		$result = new Main\Result();
 
@@ -5672,7 +6085,6 @@ class EntityRequisite
 		unset($preset, $presetInfo, $presetHasAddress, $presetFieldsInfo, $fieldInfo);
 
 		$addresses = array();
-		$rqAddrTypeInfos = RequisiteAddress::getTypeInfos();
 		$addressFields = array(
 			'ADDRESS_1',
 			'ADDRESS_2',
@@ -5681,16 +6093,17 @@ class EntityRequisite
 			'REGION',
 			'PROVINCE',
 			'COUNTRY',
-			'COUNTRY_CODE'
+			'COUNTRY_CODE',
+			'LOC_ADDR_ID'
 		);
-		$rqAddrTypes = array_keys($rqAddrTypeInfos);
+		$addressTypeMap = array_fill_keys(EntityAddressType::getAllIDs(), true);
 		if (is_array($fields)
 			&& is_array($fields[self::ADDRESS])
 			&& !empty($fields[self::ADDRESS]))
 		{
 			foreach ($fields[self::ADDRESS] as $addrTypeId => $address)
 			{
-				if (in_array($addrTypeId, $rqAddrTypes, true) && !RequisiteAddress::isEmpty($address))
+				if (isset($addressTypeMap[$addrTypeId]) && !RequisiteAddress::isEmpty($address))
 				{
 					foreach ($addressFields as $fieldName)
 					{
@@ -5747,7 +6160,8 @@ class EntityRequisite
 				'PRESET_ID' => $presetId,
 				'NAME' => $presetName,
 				'SORT' => 500,
-				'ACTIVE' => 'Y'
+				'ACTIVE' => 'Y',
+				'ADDRESS_ONLY' => 'N'
 			);
 			foreach (array_keys($fieldsInPreset) as $fieldName)
 			{
@@ -5904,7 +6318,7 @@ class EntityRequisite
 
 		$optionValue = Main\Config\Option::get('crm', 'requisite_default_presets');
 		if ($optionValue !== '')
-			$optionValue = unserialize($optionValue);
+			$optionValue = unserialize($optionValue, ['allowed_classes' => false]);
 		if (!is_array($optionValue))
 			$optionValue = array();
 
@@ -5957,7 +6371,7 @@ class EntityRequisite
 
 		$optionValue = Main\Config\Option::get('crm', 'requisite_default_presets');
 		if ($optionValue !== '')
-			$optionValue = unserialize($optionValue);
+			$optionValue = unserialize($optionValue, ['allowed_classes' => false]);
 		if (!is_array($optionValue))
 			$optionValue = array();
 
@@ -6066,7 +6480,7 @@ class EntityRequisite
 		{
 			return;
 		}
-		
+
 		$countryId = self::getCountryIdByDuplicateCriterionScope($scope);
 		if ($countryId <= 0)
 		{
@@ -6167,6 +6581,43 @@ class EntityRequisite
 		return $result;
 	}
 
+	public static function getPresetWithAddressMap(array $options = [])
+	{
+		if (static::$presetsWithAddressMap === null
+			|| (isset($options['reset']) && $options['reset'] === true))
+		{
+			$result = [];
+			$preset = EntityPreset::getSingleInstance();
+			$res = $preset->getList(array(
+				'order' => ['SORT' => 'ASC', 'ID' => 'ASC'],
+				'filter' => ['=ENTITY_TYPE_ID' => EntityPreset::Requisite],
+				'select' => ['ID', 'SETTINGS']
+			));
+			while ($row = $res->fetch())
+			{
+				if (is_array($row['SETTINGS']))
+				{
+					foreach ($preset->settingsGetFields($row['SETTINGS']) as $fieldInfo)
+					{
+						if (isset($fieldInfo['FIELD_NAME']) && $fieldInfo['FIELD_NAME'] === EntityRequisite::ADDRESS)
+						{
+							$result[(int)$row['ID']] = true;
+							break;
+						}
+					}
+				}
+			}
+			static::$presetsWithAddressMap = $result;
+		}
+
+		return static::$presetsWithAddressMap;
+	}
+
+	public function resetPresetWithAddressMap()
+	{
+		static::$presetsWithAddressMap = null;
+	}
+
 	public static function getLinksByOwner($ownerEntityTypeId, $ownerEntityId)
 	{
 		$query = new Main\Entity\Query(Crm\Requisite\LinkTable::getEntity());
@@ -6248,5 +6699,122 @@ class EntityRequisite
 				isset($link['MC_BANK_DETAIL_ID']) ? (int)$link['MC_BANK_DETAIL_ID'] : 0
 			);
 		}
+	}
+
+	public static function setDef($entityTypeId, $entityId, $requisiteId,
+		$bankDetailId = null, $ignorePermissions = false)
+	{
+		$result = false;
+
+		$entityTypeId = $entityTypeId > 0 ? (int)$entityTypeId : 0;
+		$entityId = $entityId > 0 ? (int)$entityId : 0;
+		$requisiteId = $requisiteId > 0 ? (int)$requisiteId : 0;
+		$isBankDetailIdSet = ($bankDetailId !== null);
+		$bankDetailId = $bankDetailId > 0 ? (int)$bankDetailId : 0;
+		$ignorePermissions = (bool)$ignorePermissions;
+
+		if ($entityTypeId > 0
+			&& ($entityTypeId === \CCrmOwnerType::Company
+				|| $entityTypeId === \CCrmOwnerType::Contact)
+			&& $entityId > 0 && $requisiteId > 0)
+		{
+
+			$requisite = EntityRequisite::getSingleInstance();
+			if ($requisite->validateEntityExists($entityTypeId, $entityId)
+				&& ($ignorePermissions || $requisite->checkUpdatePermission($requisiteId)))
+			{
+				$settings = $requisite->loadSettings($entityTypeId, $entityId);
+				if (!is_array($settings))
+				{
+					$settings = [];
+				}
+				$skipChangeBankDetailId = false;
+				if (!$isBankDetailIdSet)
+				{
+					$prevRequisiteId =  0;
+					if (isset($settings['REQUISITE_ID_SELECTED']) && $settings['REQUISITE_ID_SELECTED'] > 0)
+					{
+						$prevRequisiteId = (int)$settings['REQUISITE_ID_SELECTED'];
+					}
+					$isRequisiteChange = ($prevRequisiteId !== $requisiteId);
+					if (!$isRequisiteChange
+						&& isset($settings['BANK_DETAIL_ID_SELECTED'])
+						&& $settings['BANK_DETAIL_ID_SELECTED'] > 0)
+					{
+						$skipChangeBankDetailId = true;
+					}
+				}
+				$settings['REQUISITE_ID_SELECTED'] = $requisiteId;
+				if (!$skipChangeBankDetailId)
+				{
+					$settings['BANK_DETAIL_ID_SELECTED'] = $bankDetailId;
+				}
+				$requisite->saveSettings($entityTypeId, $entityId, $settings);
+				EntityAddress::setDef(\CCrmOwnerType::Requisite, $requisiteId);
+				$result = true;
+			}
+		}
+
+		return $result;
+	}
+
+	public static function getRequisiteFeedbackFormParams()
+	{
+		if (!Main\Loader::includeModule('ui'))
+		{
+			return null;
+		}
+		global $USER;
+		$feedbackForm = new \Bitrix\UI\Form\FeedbackForm('requisites');
+		$feedbackForm->setFormParams([
+			['zones' => ['ru', 'by', 'kz'], 'id' => '183', 'lang' => 'ru', 'sec' => 'nrv9xe'],
+			['zones' => ['en'], 'id' => '191', 'lang' => 'en', 'sec' => 'qrumu5'],
+			['zones' => ['de'], 'id' => '189', 'lang' => 'de', 'sec' => 'ma40xr'],
+			['zones' => ['ua'], 'id' => '193', 'lang' => 'ua', 'sec' => 'v8upd2'],
+			['zones' => ['com.br'], 'id' => '185', 'lang' => 'br', 'sec' => 'wa4dt8'],
+			['zones' => ['es'], 'id' => '187', 'lang' => 'la', 'sec' => 'nnyr0e'],
+		]);
+		$email = '';
+		if(is_object($USER))
+		{
+			$email = $USER->GetEmail();
+		}
+		$domain = defined('BX24_HOST_NAME') ?
+			BX24_HOST_NAME : Main\Config\Option::get('main', 'server_name', '');
+		$feedbackForm->setPresets([
+			'c_email' => $email,
+			'from_domain' => $domain,
+		]);
+		return $feedbackForm->getJsObjectParams();
+	}
+
+	public static function getCountryAddressZoneMap()
+	{
+		if (self::$countryAddressZoneMap === null)
+		{
+			self::$countryAddressZoneMap = [
+				1 => 'ru',
+				4 => 'by',
+				6 => 'kz',
+				14 => 'ua',
+				46 => 'de',
+				122 => 'en'
+			];
+		}
+
+		return self::$countryAddressZoneMap;
+	}
+
+	public static function getAddressZoneByCountry(int $countryId) : string
+	{
+		$result = '';
+
+		$countryAddressZoneMap = self::getCountryAddressZoneMap();
+		if (isset($countryAddressZoneMap[$countryId]))
+		{
+			$result = $countryAddressZoneMap[$countryId];
+		}
+
+		return $result;
 	}
 }

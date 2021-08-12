@@ -1,3 +1,0 @@
-<?
-$MESS["BX_CATALOG_PRODUCT_SETTINGS_UPDATE_BTN"] = "Salvar";
-?>

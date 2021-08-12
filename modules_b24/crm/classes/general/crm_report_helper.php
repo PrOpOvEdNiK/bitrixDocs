@@ -64,27 +64,27 @@ class CCrmReportManager
 		self::$OWNER_INFOS[] = self::createOwnerInfo(
 			CCrmReportHelper::getOwnerId(),
 			'CCrmReportHelper',
-			GetMessage('CRM_REPORT_OWNER_TITLE_'.strtoupper(CCrmReportHelper::getOwnerId()))
+			GetMessage('CRM_REPORT_OWNER_TITLE_'.mb_strtoupper(CCrmReportHelper::getOwnerId()))
 		);
 		self::$OWNER_INFOS[] = self::createOwnerInfo(
 			CCrmProductReportHelper::getOwnerId(),
 			'CCrmProductReportHelper',
-			GetMessage('CRM_REPORT_OWNER_TITLE_'.strtoupper(CCrmProductReportHelper::getOwnerId()))
+			GetMessage('CRM_REPORT_OWNER_TITLE_'.mb_strtoupper(CCrmProductReportHelper::getOwnerId()))
 		);
 		self::$OWNER_INFOS[] = self::createOwnerInfo(
 			CCrmLeadReportHelper::getOwnerId(),
 			'CCrmLeadReportHelper',
-			GetMessage('CRM_REPORT_OWNER_TITLE_'.strtoupper(CCrmLeadReportHelper::getOwnerId()))
+			GetMessage('CRM_REPORT_OWNER_TITLE_'.mb_strtoupper(CCrmLeadReportHelper::getOwnerId()))
 		);
 		self::$OWNER_INFOS[] = self::createOwnerInfo(
 			CCrmInvoiceReportHelper::getOwnerId(),
 			'CCrmInvoiceReportHelper',
-			GetMessage('CRM_REPORT_OWNER_TITLE_'.strtoupper(CCrmInvoiceReportHelper::getOwnerId()))
+			GetMessage('CRM_REPORT_OWNER_TITLE_'.mb_strtoupper(CCrmInvoiceReportHelper::getOwnerId()))
 		);
 		self::$OWNER_INFOS[] = self::createOwnerInfo(
 			CCrmActivityReportHelper::getOwnerId(),
 			'CCrmActivityReportHelper',
-			GetMessage('CRM_REPORT_OWNER_TITLE_'.strtoupper(CCrmActivityReportHelper::getOwnerId()))
+			GetMessage('CRM_REPORT_OWNER_TITLE_'.mb_strtoupper(CCrmActivityReportHelper::getOwnerId()))
 		);
 		return self::$OWNER_INFOS;
 	}
@@ -130,6 +130,8 @@ abstract class CCrmReportHelperBase extends CReportHelper
 	protected static $PERSON_TYPES = null;
 	protected static $userFieldMoneyList = null;
 
+	protected static $urlBuilder;
+
 	protected static function prepareUFInfo()
 	{
 		if (!is_array(self::$arUFId) || count(self::$arUFId) <= 0 || is_array(self::$ufInfo))
@@ -162,7 +164,7 @@ abstract class CCrmReportHelperBase extends CReportHelper
 			{
 				foreach ($arUserFields as $field)
 				{
-					if (isset($field['FIELD_NAME']) && substr($field['FIELD_NAME'], 0, 3) === 'UF_'
+					if (isset($field['FIELD_NAME']) && mb_substr($field['FIELD_NAME'], 0, 3) === 'UF_'
 						/*&& (!isset($field['MULTIPLE']) || $field['MULTIPLE'] !== 'Y')*/
 						&& isset($field['USER_TYPE_ID']) && in_array($field['USER_TYPE_ID'], $allowedUserTypes, true))
 					{
@@ -209,7 +211,7 @@ abstract class CCrmReportHelperBase extends CReportHelper
 				foreach ($fieldList as $field)
 				{
 					if (is_array($field) && isset($field['USER_TYPE_ID']) && $field['USER_TYPE_ID'] === 'enumeration'
-						&& isset($field['ENTITY_ID']) && strlen(strval($field['ENTITY_ID'])) > 0
+						&& isset($field['ENTITY_ID']) && strval($field['ENTITY_ID']) <> ''
 						&& !isset(self::$ufEnumerations[$field['ENTITY_ID']][$field['FIELD_NAME']])
 						&& ($usedUFMap === null || isset($usedUFMap[$field['ENTITY_ID']][$field['FIELD_NAME']]))
 						&& is_array($field['USER_TYPE']) && isset($field['USER_TYPE']['CLASS_NAME'])
@@ -243,7 +245,7 @@ abstract class CCrmReportHelperBase extends CReportHelper
 		}
 
 		if ($isUF && $isMultiple
-			&& substr($fieldDefinition, -strlen(self::UF_TEXT_TRIM_POSTFIX)) === self::UF_TEXT_TRIM_POSTFIX)
+			&& mb_substr($fieldDefinition, -mb_strlen(self::UF_TEXT_TRIM_POSTFIX)) === self::UF_TEXT_TRIM_POSTFIX)
 		{
 			return '';
 		}
@@ -408,9 +410,9 @@ abstract class CCrmReportHelperBase extends CReportHelper
 	{
 		/** @global string $DBType */
 		global $DBType;
-		
+
 		$dbType = ToUpper(strval($DBType));
-		
+
 		// Advanced fields for text user fields
 		$textFields = array();
 		foreach($entity->getFields() as $field)
@@ -490,7 +492,7 @@ abstract class CCrmReportHelperBase extends CReportHelper
 
 		$connection = Main\Application::getConnection();
 		$sqlHelper = $connection->getSqlHelper();
-		$entityTypeId = CCrmOwnerType::ResolveID(strtoupper($entity->getName()));
+		$entityTypeId = CCrmOwnerType::ResolveID(mb_strtoupper($entity->getName()));
 		$utmRefMap = static::getUTMFieldMap();
 		$isNeedAppendFields = ($entityTypeId === CCrmOwnerType::Lead || $entityTypeId === CCrmOwnerType::Deal)
 			&& is_array($utmRefMap) && !empty($utmRefMap);
@@ -585,7 +587,7 @@ abstract class CCrmReportHelperBase extends CReportHelper
 
 	public static function fdmMultipleTrimmed($value, $query, $dataRow, $columnAlias)
 	{
-		$result = @unserialize($value);
+		$result = @unserialize($value, ['allowed_classes' => false]);
 
 		return $result;
 	}
@@ -1051,7 +1053,7 @@ abstract class CCrmReportHelperBase extends CReportHelper
 
 			if (isset($paySystems[$code]))
 			{
-				$name = (strlen($paySystems[$code]) > 0) ? $paySystems[$code] : $code;
+				$name = ($paySystems[$code] <> '') ? $paySystems[$code] : $code;
 				break;
 			}
 		}
@@ -1083,7 +1085,7 @@ abstract class CCrmReportHelperBase extends CReportHelper
 	{
 		self::ensurePersonTypesLoaded();
 		$arPersonType = self::$PERSON_TYPES;
-		$name = (isset($arPersonType[$code]) && strlen($arPersonType[$code]) > 0) ? $arPersonType[$code] : $code;
+		$name = (isset($arPersonType[$code]) && $arPersonType[$code] <> '') ? $arPersonType[$code] : $code;
 		if ($name === 'CONTACT' || $name === 'COMPANY')
 			$name = GetMessage('CRM_PERSON_TYPE_'.$name);
 		return $htmlEncode ? htmlspecialcharsbx($name) : $name;
@@ -1159,12 +1161,17 @@ abstract class CCrmReportHelperBase extends CReportHelper
 		$url = \CCrmOwnerType::GetEntityShowPath(\CCrmOwnerType::Contact, $contactID, false);
 		return '<a target="_blank" href="'.htmlspecialcharsbx($url).'">'.htmlspecialcharsbx($title).'</a>';
 	}
+
 	protected static function prepareProductNameHtml($productID, $name)
 	{
-		$url = CComponentEngine::MakePathFromTemplate(
-			COption::GetOptionString('crm', 'path_to_product_show'),
-			array('product_id' => $productID)
-		);
+		if (!self::$urlBuilder)
+		{
+			self::$urlBuilder = new Crm\Product\Url\ProductBuilder();
+			self::$urlBuilder->setIblockId(\CCrmCatalog::GetDefaultID());
+			self::$urlBuilder->setUrlParams([]);
+		}
+		$url = self::$urlBuilder->getElementDetailUrl($productID);
+
 		return '<a target="_blank" href="'.htmlspecialcharsbx($url).'">'.htmlspecialcharsbx($name).'</a>';
 	}
 }
@@ -1390,8 +1397,8 @@ class CCrmReportHelper extends CCrmReportHelperBase
 				{
 					if (($uf['USER_TYPE_ID'] !== 'datetime' && $uf['USER_TYPE_ID'] !== 'boolean')
 						|| $uf['MULTIPLE'] === 'Y'
-						|| substr($ufKey, -strlen(self::UF_DATETIME_SHORT_POSTFIX)) === self::UF_DATETIME_SHORT_POSTFIX
-						|| substr($ufKey, -strlen($blPostfix)) === $blPostfix)
+						|| mb_substr($ufKey, -mb_strlen(self::UF_DATETIME_SHORT_POSTFIX)) === self::UF_DATETIME_SHORT_POSTFIX
+						|| mb_substr($ufKey, -mb_strlen($blPostfix)) === $blPostfix)
 					{
 						$columnList[] = $ufKey;
 					}
@@ -1404,8 +1411,8 @@ class CCrmReportHelper extends CCrmReportHelperBase
 				{
 					if (($uf['USER_TYPE_ID'] !== 'datetime' && $uf['USER_TYPE_ID'] !== 'boolean')
 						|| $uf['MULTIPLE'] === 'Y'
-						|| substr($ufKey, -strlen(self::UF_DATETIME_SHORT_POSTFIX)) === self::UF_DATETIME_SHORT_POSTFIX
-						|| substr($ufKey, -strlen($blPostfix)) === $blPostfix)
+						|| mb_substr($ufKey, -mb_strlen(self::UF_DATETIME_SHORT_POSTFIX)) === self::UF_DATETIME_SHORT_POSTFIX
+						|| mb_substr($ufKey, -mb_strlen($blPostfix)) === $blPostfix)
 					{
 						$columnList['LEAD_BY'][] = $ufKey;
 					}
@@ -1418,8 +1425,8 @@ class CCrmReportHelper extends CCrmReportHelperBase
 				{
 					if (($uf['USER_TYPE_ID'] !== 'datetime' && $uf['USER_TYPE_ID'] !== 'boolean')
 						|| $uf['MULTIPLE'] === 'Y'
-						|| substr($ufKey, -strlen(self::UF_DATETIME_SHORT_POSTFIX)) === self::UF_DATETIME_SHORT_POSTFIX
-						|| substr($ufKey, -strlen($blPostfix)) === $blPostfix)
+						|| mb_substr($ufKey, -mb_strlen(self::UF_DATETIME_SHORT_POSTFIX)) === self::UF_DATETIME_SHORT_POSTFIX
+						|| mb_substr($ufKey, -mb_strlen($blPostfix)) === $blPostfix)
 					{
 						$columnList['CONTACT_BY'][] = $ufKey;
 					}
@@ -1432,8 +1439,8 @@ class CCrmReportHelper extends CCrmReportHelperBase
 				{
 					if (($uf['USER_TYPE_ID'] !== 'datetime' && $uf['USER_TYPE_ID'] !== 'boolean')
 						|| $uf['MULTIPLE'] === 'Y'
-						|| substr($ufKey, -strlen(self::UF_DATETIME_SHORT_POSTFIX)) === self::UF_DATETIME_SHORT_POSTFIX
-						|| substr($ufKey, -strlen($blPostfix)) === $blPostfix)
+						|| mb_substr($ufKey, -mb_strlen(self::UF_DATETIME_SHORT_POSTFIX)) === self::UF_DATETIME_SHORT_POSTFIX
+						|| mb_substr($ufKey, -mb_strlen($blPostfix)) === $blPostfix)
 					{
 						$columnList['COMPANY_BY'][] = $ufKey;
 					}
@@ -1639,7 +1646,7 @@ class CCrmReportHelper extends CCrmReportHelperBase
 		{
 			foreach($select as $k => $v)
 			{
-				if(strpos($k, 'CRM_DEAL_COMPANY_BY_') === 0)
+				if(mb_strpos($k, 'CRM_DEAL_COMPANY_BY_') === 0)
 				{
 					$select['CRM_DEAL_COMPANY_BY_ID'] = 'COMPANY_BY.ID';
 					break;
@@ -1660,7 +1667,7 @@ class CCrmReportHelper extends CCrmReportHelperBase
 		{
 			foreach($select as $k => $v)
 			{
-				if(strpos($k, 'CRM_DEAL_CONTACT_BY_') === 0)
+				if(mb_strpos($k, 'CRM_DEAL_CONTACT_BY_') === 0)
 				{
 					$select['CRM_DEAL_CONTACT_BY_ID'] = 'CONTACT_BY.ID';
 					break;
@@ -1672,7 +1679,7 @@ class CCrmReportHelper extends CCrmReportHelperBase
 		{
 			foreach($select as $k => $v)
 			{
-				if(strpos($k, 'CRM_DEAL_CRM_PRODUCT_ROW_DEAL_OWNER_IBLOCK_ELEMENT_') === 0)
+				if(mb_strpos($k, 'CRM_DEAL_CRM_PRODUCT_ROW_DEAL_OWNER_IBLOCK_ELEMENT_') === 0)
 				{
 					$select['CRM_DEAL_CRM_PRODUCT_ROW_DEAL_OWNER_IBLOCK_ELEMENT_ID'] = 'ProductRow:DEAL_OWNER.IBLOCK_ELEMENT.ID';
 					$select['CRM_DEAL_CRM_PRODUCT_ROW_DEAL_OWNER_IBLOCK_ELEMENT_IBLOCK_ID'] = 'ProductRow:DEAL_OWNER.IBLOCK_ELEMENT.IBLOCK_ID';
@@ -1771,7 +1778,7 @@ class CCrmReportHelper extends CCrmReportHelperBase
 		}
 		elseif(!$aggr && $fieldName === 'TITLE')
 		{
-			if($isHtml && strlen($v) > 0 && self::$CURRENT_RESULT_ROW && isset(self::$CURRENT_RESULT_ROW['ID']))
+			if($isHtml && $v <> '' && self::$CURRENT_RESULT_ROW && isset(self::$CURRENT_RESULT_ROW['ID']))
 			{
 				$v = self::prepareDealTitleHtml(self::$CURRENT_RESULT_ROW['ID'], $v);
 			}
@@ -1838,13 +1845,13 @@ class CCrmReportHelper extends CCrmReportHelperBase
 				$v = self::getStatusName($v, 'SOURCE', $isHtml);
 			}
 		}
-		elseif(strpos($fieldName, 'COMPANY_BY.') === 0)
+		elseif(mb_strpos($fieldName, 'COMPANY_BY.') === 0)
 		{
 			if(!$aggr && ($v === '' || trim($v) === '.'))
 			{
-				if(strpos($fieldName, 'COMPANY_BY.COMPANY_TYPE_BY') !== 0
-					&& strpos($fieldName, 'COMPANY_BY.INDUSTRY_BY') !== 0
-					&& strpos($fieldName, 'COMPANY_BY.EMPLOYEES_BY') !== 0)
+				if(mb_strpos($fieldName, 'COMPANY_BY.COMPANY_TYPE_BY') !== 0
+					&& mb_strpos($fieldName, 'COMPANY_BY.INDUSTRY_BY') !== 0
+					&& mb_strpos($fieldName, 'COMPANY_BY.EMPLOYEES_BY') !== 0)
 				{
 					$v = GetMessage('CRM_DEAL_COMPANY_NOT_ASSIGNED');
 				}
@@ -1882,11 +1889,11 @@ class CCrmReportHelper extends CCrmReportHelperBase
 				parent::formatResultValue($k, $v, $row, $cInfo, $total, $customChartValue);
 			}
 		}
-		elseif(strpos($fieldName, 'CONTACT_BY.') === 0)
+		elseif(mb_strpos($fieldName, 'CONTACT_BY.') === 0)
 		{
 			if(!$aggr && ($v === '' || trim($v) === '.'))
 			{
-				if(strpos($fieldName, 'CONTACT_BY.TYPE_BY') !== 0)
+				if(mb_strpos($fieldName, 'CONTACT_BY.TYPE_BY') !== 0)
 				{
 					$v = GetMessage('CRM_DEAL_CONTACT_NOT_ASSIGNED');
 				}
@@ -1913,12 +1920,12 @@ class CCrmReportHelper extends CCrmReportHelperBase
 				parent::formatResultValue($k, $v, $row, $cInfo, $total, $customChartValue);
 			}
 		}
-		elseif(!$aggr && strpos($fieldName, 'ASSIGNED_BY.') === 0)
+		elseif(!$aggr && mb_strpos($fieldName, 'ASSIGNED_BY.') === 0)
 		{
 			// unset HREF for empty value
 			if (empty($v) || trim($v) === '.' || $v === '&nbsp;')
 				unset($row['__HREF_'.$k]);
-			if(strlen($v) === 0 || trim($v) === '.')
+			if($v == '' || trim($v) === '.')
 			{
 				$v = GetMessage('CRM_DEAL_RESPONSIBLE_NOT_ASSIGNED');
 			}
@@ -1927,7 +1934,7 @@ class CCrmReportHelper extends CCrmReportHelperBase
 				$v = htmlspecialcharsbx($v);
 			}
 		}
-		elseif(!$aggr && strpos($fieldName, 'ProductRow:DEAL_OWNER.IBLOCK_ELEMENT.') === 0)
+		elseif(!$aggr && mb_strpos($fieldName, 'ProductRow:DEAL_OWNER.IBLOCK_ELEMENT.') === 0)
 		{
 			static $defaultCatalogID;
 			if(!isset($defaultCatalogID))
@@ -2041,50 +2048,50 @@ class CCrmReportHelper extends CCrmReportHelperBase
 					'title' => GetMessage('CRM_REPORT_DEFAULT_WON_DEALS'),
 					'description' => GetMessage('CRM_REPORT_DEFAULT_WON_DEALS_DESCR'),
 					'mark_default' => 1,
-					'settings' => unserialize('a:7:{s:6:"entity";s:7:"CrmDeal";s:6:"period";a:2:{s:4:"type";s:5:"month";s:5:"value";N;}s:6:"select";a:8:{i:0;a:2:{s:4:"name";s:5:"TITLE";s:5:"alias";s:0:"";}i:20;a:2:{s:4:"name";s:7:"TYPE_ID";s:5:"alias";s:0:"";}i:2;a:2:{s:4:"name";s:22:"ASSIGNED_BY.SHORT_NAME";s:5:"alias";s:0:"";}i:7;a:2:{s:4:"name";s:16:"COMPANY_BY.TITLE";s:5:"alias";s:0:"";}i:23;a:2:{s:4:"name";s:36:"COMPANY_BY.COMPANY_TYPE_BY.STATUS_ID";s:5:"alias";s:0:"";}i:6;a:2:{s:4:"name";s:20:"CONTACT_BY.LAST_NAME";s:5:"alias";s:0:"";}i:27;a:2:{s:4:"name";s:15:"RECEIVED_AMOUNT";s:5:"alias";s:0:"";}i:4;a:2:{s:4:"name";s:15:"CLOSEDATE_SHORT";s:5:"alias";s:0:"";}}s:6:"filter";a:1:{i:0;a:7:{i:0;a:5:{s:4:"type";s:5:"field";s:4:"name";s:7:"TYPE_ID";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:1;a:5:{s:4:"type";s:5:"field";s:4:"name";s:19:"OPPORTUNITY_ACCOUNT";s:7:"compare";s:16:"GREATER_OR_EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:2;a:5:{s:4:"type";s:5:"field";s:4:"name";s:10:"CONTACT_BY";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:3;a:5:{s:4:"type";s:5:"field";s:4:"name";s:10:"COMPANY_BY";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:4;a:5:{s:4:"type";s:5:"field";s:4:"name";s:8:"STAGE_ID";s:7:"compare";s:5:"EQUAL";s:5:"value";s:3:"WON";s:10:"changeable";s:1:"0";}i:5;a:5:{s:4:"type";s:5:"field";s:4:"name";s:11:"ASSIGNED_BY";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}s:5:"LOGIC";s:3:"AND";}}s:4:"sort";i:4;s:9:"sort_type";s:4:"DESC";s:5:"limit";N;}')
+					'settings' => unserialize('a:7:{s:6:"entity";s:7:"CrmDeal";s:6:"period";a:2:{s:4:"type";s:5:"month";s:5:"value";N;}s:6:"select";a:8:{i:0;a:2:{s:4:"name";s:5:"TITLE";s:5:"alias";s:0:"";}i:20;a:2:{s:4:"name";s:7:"TYPE_ID";s:5:"alias";s:0:"";}i:2;a:2:{s:4:"name";s:22:"ASSIGNED_BY.SHORT_NAME";s:5:"alias";s:0:"";}i:7;a:2:{s:4:"name";s:16:"COMPANY_BY.TITLE";s:5:"alias";s:0:"";}i:23;a:2:{s:4:"name";s:36:"COMPANY_BY.COMPANY_TYPE_BY.STATUS_ID";s:5:"alias";s:0:"";}i:6;a:2:{s:4:"name";s:20:"CONTACT_BY.LAST_NAME";s:5:"alias";s:0:"";}i:27;a:2:{s:4:"name";s:15:"RECEIVED_AMOUNT";s:5:"alias";s:0:"";}i:4;a:2:{s:4:"name";s:15:"CLOSEDATE_SHORT";s:5:"alias";s:0:"";}}s:6:"filter";a:1:{i:0;a:7:{i:0;a:5:{s:4:"type";s:5:"field";s:4:"name";s:7:"TYPE_ID";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:1;a:5:{s:4:"type";s:5:"field";s:4:"name";s:19:"OPPORTUNITY_ACCOUNT";s:7:"compare";s:16:"GREATER_OR_EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:2;a:5:{s:4:"type";s:5:"field";s:4:"name";s:10:"CONTACT_BY";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:3;a:5:{s:4:"type";s:5:"field";s:4:"name";s:10:"COMPANY_BY";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:4;a:5:{s:4:"type";s:5:"field";s:4:"name";s:8:"STAGE_ID";s:7:"compare";s:5:"EQUAL";s:5:"value";s:3:"WON";s:10:"changeable";s:1:"0";}i:5;a:5:{s:4:"type";s:5:"field";s:4:"name";s:11:"ASSIGNED_BY";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}s:5:"LOGIC";s:3:"AND";}}s:4:"sort";i:4;s:9:"sort_type";s:4:"DESC";s:5:"limit";N;}', ['allowed_classes' => false])
 				),
 				array(
 					'title' => GetMessage('CRM_REPORT_DEFAULT_PRODUCTS_PROFIT'),
 					'description' => GetMessage('CRM_REPORT_DEFAULT_PRODUCTS_PROFIT_DESCR'),
 					'mark_default' => 2,
-					'settings' => unserialize('a:7:{s:6:"entity";s:7:"CrmDeal";s:6:"period";a:2:{s:4:"type";s:5:"month";s:5:"value";N;}s:6:"select";a:4:{i:4;a:2:{s:4:"name";s:37:"ProductRow:DEAL_OWNER.CP_PRODUCT_NAME";s:5:"alias";s:0:"";}i:5;a:3:{s:4:"name";s:2:"ID";s:5:"alias";s:0:"";s:4:"aggr";s:14:"COUNT_DISTINCT";}i:6;a:3:{s:4:"name";s:30:"ProductRow:DEAL_OWNER.QUANTITY";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";}i:7;a:3:{s:4:"name";s:33:"ProductRow:DEAL_OWNER.SUM_ACCOUNT";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";}}s:6:"filter";a:1:{i:0;a:9:{i:0;a:5:{s:4:"type";s:5:"field";s:4:"name";s:37:"ProductRow:DEAL_OWNER.CP_PRODUCT_NAME";s:7:"compare";s:8:"CONTAINS";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:1;a:5:{s:4:"type";s:5:"field";s:4:"name";s:8:"STAGE_ID";s:7:"compare";s:5:"EQUAL";s:5:"value";s:3:"WON";s:10:"changeable";s:1:"0";}i:2;a:5:{s:4:"type";s:5:"field";s:4:"name";s:7:"TYPE_ID";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:3;a:5:{s:4:"type";s:5:"field";s:4:"name";s:36:"COMPANY_BY.COMPANY_TYPE_BY.STATUS_ID";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:4;a:5:{s:4:"type";s:5:"field";s:4:"name";s:10:"COMPANY_BY";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:5;a:5:{s:4:"type";s:5:"field";s:4:"name";s:28:"CONTACT_BY.TYPE_BY.STATUS_ID";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:6;a:5:{s:4:"type";s:5:"field";s:4:"name";s:10:"CONTACT_BY";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:7;a:5:{s:4:"type";s:5:"field";s:4:"name";s:11:"ASSIGNED_BY";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}s:5:"LOGIC";s:3:"AND";}}s:4:"sort";i:7;s:9:"sort_type";s:4:"DESC";s:5:"limit";N;}')
+					'settings' => unserialize('a:7:{s:6:"entity";s:7:"CrmDeal";s:6:"period";a:2:{s:4:"type";s:5:"month";s:5:"value";N;}s:6:"select";a:4:{i:4;a:2:{s:4:"name";s:37:"ProductRow:DEAL_OWNER.CP_PRODUCT_NAME";s:5:"alias";s:0:"";}i:5;a:3:{s:4:"name";s:2:"ID";s:5:"alias";s:0:"";s:4:"aggr";s:14:"COUNT_DISTINCT";}i:6;a:3:{s:4:"name";s:30:"ProductRow:DEAL_OWNER.QUANTITY";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";}i:7;a:3:{s:4:"name";s:33:"ProductRow:DEAL_OWNER.SUM_ACCOUNT";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";}}s:6:"filter";a:1:{i:0;a:9:{i:0;a:5:{s:4:"type";s:5:"field";s:4:"name";s:37:"ProductRow:DEAL_OWNER.CP_PRODUCT_NAME";s:7:"compare";s:8:"CONTAINS";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:1;a:5:{s:4:"type";s:5:"field";s:4:"name";s:8:"STAGE_ID";s:7:"compare";s:5:"EQUAL";s:5:"value";s:3:"WON";s:10:"changeable";s:1:"0";}i:2;a:5:{s:4:"type";s:5:"field";s:4:"name";s:7:"TYPE_ID";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:3;a:5:{s:4:"type";s:5:"field";s:4:"name";s:36:"COMPANY_BY.COMPANY_TYPE_BY.STATUS_ID";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:4;a:5:{s:4:"type";s:5:"field";s:4:"name";s:10:"COMPANY_BY";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:5;a:5:{s:4:"type";s:5:"field";s:4:"name";s:28:"CONTACT_BY.TYPE_BY.STATUS_ID";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:6;a:5:{s:4:"type";s:5:"field";s:4:"name";s:10:"CONTACT_BY";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:7;a:5:{s:4:"type";s:5:"field";s:4:"name";s:11:"ASSIGNED_BY";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}s:5:"LOGIC";s:3:"AND";}}s:4:"sort";i:7;s:9:"sort_type";s:4:"DESC";s:5:"limit";N;}', ['allowed_classes' => false])
 				),
 				array(
 					'title' => GetMessage('CRM_REPORT_DEFAULT_VOLUME_BY_CONTACTS'),
 					'description' => GetMessage('CRM_REPORT_DEFAULT_VOLUME_BY_CONTACTS_DESCR'),
 					'mark_default' => 3,
-					'settings' => unserialize('a:10:{s:6:"entity";s:15:"Bitrix\Crm\Deal";s:6:"period";a:2:{s:4:"type";s:5:"month";s:5:"value";N;}s:6:"select";a:8:{i:4;a:2:{s:4:"name";s:20:"CONTACT_BY.LAST_NAME";s:5:"alias";s:0:"";}i:5;a:3:{s:4:"name";s:2:"ID";s:5:"alias";s:0:"";s:4:"aggr";s:14:"COUNT_DISTINCT";}i:6;a:3:{s:4:"name";s:7:"IS_WORK";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";}i:8;a:4:{s:4:"name";s:7:"IS_LOSE";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";s:5:"prcnt";s:1:"5";}i:7;a:4:{s:4:"name";s:6:"IS_WON";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";s:5:"prcnt";s:1:"5";}i:9;a:3:{s:4:"name";s:19:"OPPORTUNITY_ACCOUNT";s:5:"alias";s:0:"";s:4:"aggr";s:3:"AVG";}i:10;a:3:{s:4:"name";s:19:"OPPORTUNITY_ACCOUNT";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";}i:12;a:3:{s:4:"name";s:15:"RECEIVED_AMOUNT";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";}}s:6:"filter";a:1:{i:0;a:6:{i:0;a:5:{s:4:"type";s:5:"field";s:4:"name";s:7:"TYPE_ID";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:1;a:5:{s:4:"type";s:5:"field";s:4:"name";s:28:"CONTACT_BY.TYPE_BY.STATUS_ID";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:2;a:5:{s:4:"type";s:5:"field";s:4:"name";s:10:"CONTACT_BY";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:3;a:5:{s:4:"type";s:5:"field";s:4:"name";s:11:"ASSIGNED_BY";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:4;a:5:{s:4:"type";s:5:"field";s:4:"name";s:13:"CONTACT_BY.ID";s:7:"compare";s:7:"GREATER";s:5:"value";s:1:"0";s:10:"changeable";s:1:"0";}s:5:"LOGIC";s:3:"AND";}}s:4:"sort";i:12;s:9:"sort_type";s:4:"DESC";s:5:"limit";N;s:12:"red_neg_vals";b:0;s:13:"grouping_mode";b:0;s:5:"chart";a:4:{s:7:"display";b:1;s:4:"type";s:3:"pie";s:8:"x_column";i:4;s:9:"y_columns";a:1:{i:0;i:12;}}}')
+					'settings' => unserialize('a:10:{s:6:"entity";s:15:"Bitrix\Crm\Deal";s:6:"period";a:2:{s:4:"type";s:5:"month";s:5:"value";N;}s:6:"select";a:8:{i:4;a:2:{s:4:"name";s:20:"CONTACT_BY.LAST_NAME";s:5:"alias";s:0:"";}i:5;a:3:{s:4:"name";s:2:"ID";s:5:"alias";s:0:"";s:4:"aggr";s:14:"COUNT_DISTINCT";}i:6;a:3:{s:4:"name";s:7:"IS_WORK";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";}i:8;a:4:{s:4:"name";s:7:"IS_LOSE";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";s:5:"prcnt";s:1:"5";}i:7;a:4:{s:4:"name";s:6:"IS_WON";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";s:5:"prcnt";s:1:"5";}i:9;a:3:{s:4:"name";s:19:"OPPORTUNITY_ACCOUNT";s:5:"alias";s:0:"";s:4:"aggr";s:3:"AVG";}i:10;a:3:{s:4:"name";s:19:"OPPORTUNITY_ACCOUNT";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";}i:12;a:3:{s:4:"name";s:15:"RECEIVED_AMOUNT";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";}}s:6:"filter";a:1:{i:0;a:6:{i:0;a:5:{s:4:"type";s:5:"field";s:4:"name";s:7:"TYPE_ID";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:1;a:5:{s:4:"type";s:5:"field";s:4:"name";s:28:"CONTACT_BY.TYPE_BY.STATUS_ID";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:2;a:5:{s:4:"type";s:5:"field";s:4:"name";s:10:"CONTACT_BY";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:3;a:5:{s:4:"type";s:5:"field";s:4:"name";s:11:"ASSIGNED_BY";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:4;a:5:{s:4:"type";s:5:"field";s:4:"name";s:13:"CONTACT_BY.ID";s:7:"compare";s:7:"GREATER";s:5:"value";s:1:"0";s:10:"changeable";s:1:"0";}s:5:"LOGIC";s:3:"AND";}}s:4:"sort";i:12;s:9:"sort_type";s:4:"DESC";s:5:"limit";N;s:12:"red_neg_vals";b:0;s:13:"grouping_mode";b:0;s:5:"chart";a:4:{s:7:"display";b:1;s:4:"type";s:3:"pie";s:8:"x_column";i:4;s:9:"y_columns";a:1:{i:0;i:12;}}}', ['allowed_classes' => false])
 				),
 				array(
 					'title' => GetMessage('CRM_REPORT_DEFAULT_VOLUME_BY_COMPANIES'),
 					'description' => GetMessage('CRM_REPORT_DEFAULT_VOLUME_BY_COMPANIES_DESCR'),
 					'mark_default' => 4,
-					'settings' => unserialize('a:10:{s:6:"entity";s:15:"Bitrix\Crm\Deal";s:6:"period";a:2:{s:4:"type";s:5:"month";s:5:"value";N;}s:6:"select";a:8:{i:4;a:2:{s:4:"name";s:16:"COMPANY_BY.TITLE";s:5:"alias";s:0:"";}i:5;a:3:{s:4:"name";s:2:"ID";s:5:"alias";s:0:"";s:4:"aggr";s:14:"COUNT_DISTINCT";}i:6;a:3:{s:4:"name";s:7:"IS_WORK";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";}i:8;a:4:{s:4:"name";s:7:"IS_LOSE";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";s:5:"prcnt";s:1:"5";}i:7;a:4:{s:4:"name";s:6:"IS_WON";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";s:5:"prcnt";s:1:"5";}i:9;a:3:{s:4:"name";s:19:"OPPORTUNITY_ACCOUNT";s:5:"alias";s:0:"";s:4:"aggr";s:3:"AVG";}i:10;a:3:{s:4:"name";s:19:"OPPORTUNITY_ACCOUNT";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";}i:12;a:3:{s:4:"name";s:15:"RECEIVED_AMOUNT";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";}}s:6:"filter";a:1:{i:0;a:6:{i:0;a:5:{s:4:"type";s:5:"field";s:4:"name";s:7:"TYPE_ID";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:1;a:5:{s:4:"type";s:5:"field";s:4:"name";s:36:"COMPANY_BY.COMPANY_TYPE_BY.STATUS_ID";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:2;a:5:{s:4:"type";s:5:"field";s:4:"name";s:10:"COMPANY_BY";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:3;a:5:{s:4:"type";s:5:"field";s:4:"name";s:11:"ASSIGNED_BY";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:4;a:5:{s:4:"type";s:5:"field";s:4:"name";s:13:"COMPANY_BY.ID";s:7:"compare";s:7:"GREATER";s:5:"value";s:1:"0";s:10:"changeable";s:1:"0";}s:5:"LOGIC";s:3:"AND";}}s:4:"sort";i:12;s:9:"sort_type";s:4:"DESC";s:5:"limit";N;s:12:"red_neg_vals";b:0;s:13:"grouping_mode";b:0;s:5:"chart";a:4:{s:7:"display";b:1;s:4:"type";s:3:"pie";s:8:"x_column";i:4;s:9:"y_columns";a:1:{i:0;i:12;}}}')
+					'settings' => unserialize('a:10:{s:6:"entity";s:15:"Bitrix\Crm\Deal";s:6:"period";a:2:{s:4:"type";s:5:"month";s:5:"value";N;}s:6:"select";a:8:{i:4;a:2:{s:4:"name";s:16:"COMPANY_BY.TITLE";s:5:"alias";s:0:"";}i:5;a:3:{s:4:"name";s:2:"ID";s:5:"alias";s:0:"";s:4:"aggr";s:14:"COUNT_DISTINCT";}i:6;a:3:{s:4:"name";s:7:"IS_WORK";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";}i:8;a:4:{s:4:"name";s:7:"IS_LOSE";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";s:5:"prcnt";s:1:"5";}i:7;a:4:{s:4:"name";s:6:"IS_WON";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";s:5:"prcnt";s:1:"5";}i:9;a:3:{s:4:"name";s:19:"OPPORTUNITY_ACCOUNT";s:5:"alias";s:0:"";s:4:"aggr";s:3:"AVG";}i:10;a:3:{s:4:"name";s:19:"OPPORTUNITY_ACCOUNT";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";}i:12;a:3:{s:4:"name";s:15:"RECEIVED_AMOUNT";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";}}s:6:"filter";a:1:{i:0;a:6:{i:0;a:5:{s:4:"type";s:5:"field";s:4:"name";s:7:"TYPE_ID";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:1;a:5:{s:4:"type";s:5:"field";s:4:"name";s:36:"COMPANY_BY.COMPANY_TYPE_BY.STATUS_ID";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:2;a:5:{s:4:"type";s:5:"field";s:4:"name";s:10:"COMPANY_BY";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:3;a:5:{s:4:"type";s:5:"field";s:4:"name";s:11:"ASSIGNED_BY";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:4;a:5:{s:4:"type";s:5:"field";s:4:"name";s:13:"COMPANY_BY.ID";s:7:"compare";s:7:"GREATER";s:5:"value";s:1:"0";s:10:"changeable";s:1:"0";}s:5:"LOGIC";s:3:"AND";}}s:4:"sort";i:12;s:9:"sort_type";s:4:"DESC";s:5:"limit";N;s:12:"red_neg_vals";b:0;s:13:"grouping_mode";b:0;s:5:"chart";a:4:{s:7:"display";b:1;s:4:"type";s:3:"pie";s:8:"x_column";i:4;s:9:"y_columns";a:1:{i:0;i:12;}}}', ['allowed_classes' => false])
 				),
 				array(
 					'title' => GetMessage('CRM_REPORT_DEFAULT_VOLUME_BY_MANAGERS'),
 					'description' => GetMessage('CRM_REPORT_DEFAULT_VOLUME_BY_MANAGERS_DESCR'),
 					'mark_default' => 5,
-					'settings' => unserialize('a:7:{s:6:"entity";s:7:"CrmDeal";s:6:"period";a:2:{s:4:"type";s:5:"month";s:5:"value";N;}s:6:"select";a:8:{i:2;a:2:{s:4:"name";s:22:"ASSIGNED_BY.SHORT_NAME";s:5:"alias";s:0:"";}i:4;a:3:{s:4:"name";s:2:"ID";s:5:"alias";s:0:"";s:4:"aggr";s:14:"COUNT_DISTINCT";}i:5;a:3:{s:4:"name";s:7:"IS_WORK";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";}i:7;a:4:{s:4:"name";s:7:"IS_LOSE";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";s:5:"prcnt";s:1:"4";}i:6;a:4:{s:4:"name";s:6:"IS_WON";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";s:5:"prcnt";s:1:"4";}i:11;a:3:{s:4:"name";s:19:"OPPORTUNITY_ACCOUNT";s:5:"alias";s:0:"";s:4:"aggr";s:3:"AVG";}i:10;a:3:{s:4:"name";s:19:"OPPORTUNITY_ACCOUNT";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";}i:9;a:3:{s:4:"name";s:15:"RECEIVED_AMOUNT";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";}}s:6:"filter";a:1:{i:0;a:7:{i:0;a:5:{s:4:"type";s:5:"field";s:4:"name";s:7:"TYPE_ID";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:1;a:5:{s:4:"type";s:5:"field";s:4:"name";s:11:"ASSIGNED_BY";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:2;a:5:{s:4:"type";s:5:"field";s:4:"name";s:10:"CONTACT_BY";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:3;a:5:{s:4:"type";s:5:"field";s:4:"name";s:28:"CONTACT_BY.TYPE_BY.STATUS_ID";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:4;a:5:{s:4:"type";s:5:"field";s:4:"name";s:10:"COMPANY_BY";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:5;a:5:{s:4:"type";s:5:"field";s:4:"name";s:36:"COMPANY_BY.COMPANY_TYPE_BY.STATUS_ID";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}s:5:"LOGIC";s:3:"AND";}}s:4:"sort";i:9;s:9:"sort_type";s:4:"DESC";s:5:"limit";N;}')
+					'settings' => unserialize('a:7:{s:6:"entity";s:7:"CrmDeal";s:6:"period";a:2:{s:4:"type";s:5:"month";s:5:"value";N;}s:6:"select";a:8:{i:2;a:2:{s:4:"name";s:22:"ASSIGNED_BY.SHORT_NAME";s:5:"alias";s:0:"";}i:4;a:3:{s:4:"name";s:2:"ID";s:5:"alias";s:0:"";s:4:"aggr";s:14:"COUNT_DISTINCT";}i:5;a:3:{s:4:"name";s:7:"IS_WORK";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";}i:7;a:4:{s:4:"name";s:7:"IS_LOSE";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";s:5:"prcnt";s:1:"4";}i:6;a:4:{s:4:"name";s:6:"IS_WON";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";s:5:"prcnt";s:1:"4";}i:11;a:3:{s:4:"name";s:19:"OPPORTUNITY_ACCOUNT";s:5:"alias";s:0:"";s:4:"aggr";s:3:"AVG";}i:10;a:3:{s:4:"name";s:19:"OPPORTUNITY_ACCOUNT";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";}i:9;a:3:{s:4:"name";s:15:"RECEIVED_AMOUNT";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";}}s:6:"filter";a:1:{i:0;a:7:{i:0;a:5:{s:4:"type";s:5:"field";s:4:"name";s:7:"TYPE_ID";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:1;a:5:{s:4:"type";s:5:"field";s:4:"name";s:11:"ASSIGNED_BY";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:2;a:5:{s:4:"type";s:5:"field";s:4:"name";s:10:"CONTACT_BY";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:3;a:5:{s:4:"type";s:5:"field";s:4:"name";s:28:"CONTACT_BY.TYPE_BY.STATUS_ID";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:4;a:5:{s:4:"type";s:5:"field";s:4:"name";s:10:"COMPANY_BY";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:5;a:5:{s:4:"type";s:5:"field";s:4:"name";s:36:"COMPANY_BY.COMPANY_TYPE_BY.STATUS_ID";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}s:5:"LOGIC";s:3:"AND";}}s:4:"sort";i:9;s:9:"sort_type";s:4:"DESC";s:5:"limit";N;}', ['allowed_classes' => false])
 				),
 				array(
 					'title' => GetMessage('CRM_REPORT_DEFAULT_EXPECTED_SALES'),
 					'description' => GetMessage('CRM_REPORT_DEFAULT_EXPECTED_SALES_DESCR'),
 					'mark_default' => 6,
-					'settings' => unserialize('a:7:{s:6:"entity";s:7:"CrmDeal";s:6:"period";a:2:{s:4:"type";s:5:"month";s:5:"value";N;}s:6:"select";a:9:{i:0;a:2:{s:4:"name";s:5:"TITLE";s:5:"alias";s:0:"";}i:2;a:2:{s:4:"name";s:22:"ASSIGNED_BY.SHORT_NAME";s:5:"alias";s:0:"";}i:1;a:1:{s:4:"name";s:8:"STAGE_ID";}i:15;a:1:{s:4:"name";s:11:"PROBABILITY";}i:7;a:2:{s:4:"name";s:16:"COMPANY_BY.TITLE";s:5:"alias";s:0:"";}i:6;a:2:{s:4:"name";s:20:"CONTACT_BY.LAST_NAME";s:5:"alias";s:0:"";}i:3;a:1:{s:4:"name";s:15:"BEGINDATE_SHORT";}i:4;a:1:{s:4:"name";s:15:"CLOSEDATE_SHORT";}i:14;a:2:{s:4:"name";s:19:"OPPORTUNITY_ACCOUNT";s:5:"alias";s:0:"";}}s:6:"filter";a:1:{i:0;a:10:{i:0;a:5:{s:4:"type";s:5:"field";s:4:"name";s:8:"STAGE_ID";s:7:"compare";s:9:"NOT_EQUAL";s:5:"value";s:3:"WON";s:10:"changeable";s:1:"0";}i:1;a:5:{s:4:"type";s:5:"field";s:4:"name";s:8:"STAGE_ID";s:7:"compare";s:9:"NOT_EQUAL";s:5:"value";s:4:"LOSE";s:10:"changeable";s:1:"0";}i:2;a:5:{s:4:"type";s:5:"field";s:4:"name";s:7:"TYPE_ID";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:3;a:5:{s:4:"type";s:5:"field";s:4:"name";s:19:"OPPORTUNITY_ACCOUNT";s:7:"compare";s:16:"GREATER_OR_EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:4;a:5:{s:4:"type";s:5:"field";s:4:"name";s:11:"PROBABILITY";s:7:"compare";s:16:"GREATER_OR_EQUAL";s:5:"value";s:2:"50";s:10:"changeable";s:1:"1";}i:5;a:5:{s:4:"type";s:5:"field";s:4:"name";s:10:"COMPANY_BY";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:6;a:5:{s:4:"type";s:5:"field";s:4:"name";s:10:"CONTACT_BY";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:7;a:5:{s:4:"type";s:5:"field";s:4:"name";s:11:"ASSIGNED_BY";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:8;a:5:{s:4:"type";s:5:"field";s:4:"name";s:15:"CLOSEDATE_SHORT";s:7:"compare";s:13:"LESS_OR_EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"0";}s:5:"LOGIC";s:3:"AND";}}s:4:"sort";i:4;s:9:"sort_type";s:3:"ASC";s:5:"limit";N;}')
+					'settings' => unserialize('a:7:{s:6:"entity";s:7:"CrmDeal";s:6:"period";a:2:{s:4:"type";s:5:"month";s:5:"value";N;}s:6:"select";a:9:{i:0;a:2:{s:4:"name";s:5:"TITLE";s:5:"alias";s:0:"";}i:2;a:2:{s:4:"name";s:22:"ASSIGNED_BY.SHORT_NAME";s:5:"alias";s:0:"";}i:1;a:1:{s:4:"name";s:8:"STAGE_ID";}i:15;a:1:{s:4:"name";s:11:"PROBABILITY";}i:7;a:2:{s:4:"name";s:16:"COMPANY_BY.TITLE";s:5:"alias";s:0:"";}i:6;a:2:{s:4:"name";s:20:"CONTACT_BY.LAST_NAME";s:5:"alias";s:0:"";}i:3;a:1:{s:4:"name";s:15:"BEGINDATE_SHORT";}i:4;a:1:{s:4:"name";s:15:"CLOSEDATE_SHORT";}i:14;a:2:{s:4:"name";s:19:"OPPORTUNITY_ACCOUNT";s:5:"alias";s:0:"";}}s:6:"filter";a:1:{i:0;a:10:{i:0;a:5:{s:4:"type";s:5:"field";s:4:"name";s:8:"STAGE_ID";s:7:"compare";s:9:"NOT_EQUAL";s:5:"value";s:3:"WON";s:10:"changeable";s:1:"0";}i:1;a:5:{s:4:"type";s:5:"field";s:4:"name";s:8:"STAGE_ID";s:7:"compare";s:9:"NOT_EQUAL";s:5:"value";s:4:"LOSE";s:10:"changeable";s:1:"0";}i:2;a:5:{s:4:"type";s:5:"field";s:4:"name";s:7:"TYPE_ID";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:3;a:5:{s:4:"type";s:5:"field";s:4:"name";s:19:"OPPORTUNITY_ACCOUNT";s:7:"compare";s:16:"GREATER_OR_EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:4;a:5:{s:4:"type";s:5:"field";s:4:"name";s:11:"PROBABILITY";s:7:"compare";s:16:"GREATER_OR_EQUAL";s:5:"value";s:2:"50";s:10:"changeable";s:1:"1";}i:5;a:5:{s:4:"type";s:5:"field";s:4:"name";s:10:"COMPANY_BY";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:6;a:5:{s:4:"type";s:5:"field";s:4:"name";s:10:"CONTACT_BY";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:7;a:5:{s:4:"type";s:5:"field";s:4:"name";s:11:"ASSIGNED_BY";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:8;a:5:{s:4:"type";s:5:"field";s:4:"name";s:15:"CLOSEDATE_SHORT";s:7:"compare";s:13:"LESS_OR_EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"0";}s:5:"LOGIC";s:3:"AND";}}s:4:"sort";i:4;s:9:"sort_type";s:3:"ASC";s:5:"limit";N;}', ['allowed_classes' => false])
 				),
 				array(
 					'title' => GetMessage('CRM_REPORT_DEFAULT_DELAYED_DEALS'),
 					'description' => GetMessage('CRM_REPORT_DEFAULT_DELAYED_DEALS_DESCR'),
 					'mark_default' => 7,
-					'settings' => unserialize('a:7:{s:6:"entity";s:7:"CrmDeal";s:6:"period";a:2:{s:4:"type";s:3:"all";s:5:"value";N;}s:6:"select";a:10:{i:0;a:2:{s:4:"name";s:5:"TITLE";s:5:"alias";s:0:"";}i:2;a:2:{s:4:"name";s:22:"ASSIGNED_BY.SHORT_NAME";s:5:"alias";s:0:"";}i:15;a:2:{s:4:"name";s:7:"TYPE_ID";s:5:"alias";s:0:"";}i:1;a:1:{s:4:"name";s:8:"STAGE_ID";}i:6;a:1:{s:4:"name";s:11:"PROBABILITY";}i:7;a:2:{s:4:"name";s:20:"CONTACT_BY.LAST_NAME";s:5:"alias";s:0:"";}i:8;a:2:{s:4:"name";s:16:"COMPANY_BY.TITLE";s:5:"alias";s:0:"";}i:3;a:1:{s:4:"name";s:15:"BEGINDATE_SHORT";}i:4;a:1:{s:4:"name";s:15:"CLOSEDATE_SHORT";}i:14;a:2:{s:4:"name";s:19:"OPPORTUNITY_ACCOUNT";s:5:"alias";s:0:"";}}s:6:"filter";a:1:{i:0;a:11:{i:0;a:5:{s:4:"type";s:5:"field";s:4:"name";s:8:"STAGE_ID";s:7:"compare";s:9:"NOT_EQUAL";s:5:"value";s:3:"WON";s:10:"changeable";s:1:"0";}i:1;a:5:{s:4:"type";s:5:"field";s:4:"name";s:8:"STAGE_ID";s:7:"compare";s:9:"NOT_EQUAL";s:5:"value";s:4:"LOSE";s:10:"changeable";s:1:"0";}i:2;a:5:{s:4:"type";s:5:"field";s:4:"name";s:6:"CLOSED";s:7:"compare";s:5:"EQUAL";s:5:"value";s:5:"false";s:10:"changeable";s:1:"0";}i:3;a:5:{s:4:"type";s:5:"field";s:4:"name";s:7:"TYPE_ID";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:4;a:5:{s:4:"type";s:5:"field";s:4:"name";s:19:"OPPORTUNITY_ACCOUNT";s:7:"compare";s:16:"GREATER_OR_EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:5;a:5:{s:4:"type";s:5:"field";s:4:"name";s:11:"PROBABILITY";s:7:"compare";s:16:"GREATER_OR_EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:6;a:5:{s:4:"type";s:5:"field";s:4:"name";s:36:"COMPANY_BY.COMPANY_TYPE_BY.STATUS_ID";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:7;a:5:{s:4:"type";s:5:"field";s:4:"name";s:10:"COMPANY_BY";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:8;a:5:{s:4:"type";s:5:"field";s:4:"name";s:11:"ASSIGNED_BY";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:9;a:5:{s:4:"type";s:5:"field";s:4:"name";s:15:"CLOSEDATE_SHORT";s:7:"compare";s:13:"LESS_OR_EQUAL";s:5:"value";s:5:"today";s:10:"changeable";s:1:"0";}s:5:"LOGIC";s:3:"AND";}}s:4:"sort";i:4;s:9:"sort_type";s:3:"ASC";s:5:"limit";N;}')
+					'settings' => unserialize('a:7:{s:6:"entity";s:7:"CrmDeal";s:6:"period";a:2:{s:4:"type";s:3:"all";s:5:"value";N;}s:6:"select";a:10:{i:0;a:2:{s:4:"name";s:5:"TITLE";s:5:"alias";s:0:"";}i:2;a:2:{s:4:"name";s:22:"ASSIGNED_BY.SHORT_NAME";s:5:"alias";s:0:"";}i:15;a:2:{s:4:"name";s:7:"TYPE_ID";s:5:"alias";s:0:"";}i:1;a:1:{s:4:"name";s:8:"STAGE_ID";}i:6;a:1:{s:4:"name";s:11:"PROBABILITY";}i:7;a:2:{s:4:"name";s:20:"CONTACT_BY.LAST_NAME";s:5:"alias";s:0:"";}i:8;a:2:{s:4:"name";s:16:"COMPANY_BY.TITLE";s:5:"alias";s:0:"";}i:3;a:1:{s:4:"name";s:15:"BEGINDATE_SHORT";}i:4;a:1:{s:4:"name";s:15:"CLOSEDATE_SHORT";}i:14;a:2:{s:4:"name";s:19:"OPPORTUNITY_ACCOUNT";s:5:"alias";s:0:"";}}s:6:"filter";a:1:{i:0;a:11:{i:0;a:5:{s:4:"type";s:5:"field";s:4:"name";s:8:"STAGE_ID";s:7:"compare";s:9:"NOT_EQUAL";s:5:"value";s:3:"WON";s:10:"changeable";s:1:"0";}i:1;a:5:{s:4:"type";s:5:"field";s:4:"name";s:8:"STAGE_ID";s:7:"compare";s:9:"NOT_EQUAL";s:5:"value";s:4:"LOSE";s:10:"changeable";s:1:"0";}i:2;a:5:{s:4:"type";s:5:"field";s:4:"name";s:6:"CLOSED";s:7:"compare";s:5:"EQUAL";s:5:"value";s:5:"false";s:10:"changeable";s:1:"0";}i:3;a:5:{s:4:"type";s:5:"field";s:4:"name";s:7:"TYPE_ID";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:4;a:5:{s:4:"type";s:5:"field";s:4:"name";s:19:"OPPORTUNITY_ACCOUNT";s:7:"compare";s:16:"GREATER_OR_EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:5;a:5:{s:4:"type";s:5:"field";s:4:"name";s:11:"PROBABILITY";s:7:"compare";s:16:"GREATER_OR_EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:6;a:5:{s:4:"type";s:5:"field";s:4:"name";s:36:"COMPANY_BY.COMPANY_TYPE_BY.STATUS_ID";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:7;a:5:{s:4:"type";s:5:"field";s:4:"name";s:10:"COMPANY_BY";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:8;a:5:{s:4:"type";s:5:"field";s:4:"name";s:11:"ASSIGNED_BY";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:9;a:5:{s:4:"type";s:5:"field";s:4:"name";s:15:"CLOSEDATE_SHORT";s:7:"compare";s:13:"LESS_OR_EQUAL";s:5:"value";s:5:"today";s:10:"changeable";s:1:"0";}s:5:"LOGIC";s:3:"AND";}}s:4:"sort";i:4;s:9:"sort_type";s:3:"ASC";s:5:"limit";N;}', ['allowed_classes' => false])
 				),
 
 				array(
 					'title' => GetMessage('CRM_REPORT_DEFAULT_DISTRIBUTION_BY_STAGE'),
 					'description' => GetMessage('CRM_REPORT_DEFAULT_DISTRIBUTION_BY_STAGE_DESCR'),
 					'mark_default' => 8,
-					'settings' => unserialize('a:10:{s:6:"entity";s:15:"Bitrix\Crm\Deal";s:6:"period";a:2:{s:4:"type";s:5:"month";s:5:"value";N;}s:6:"select";a:5:{i:8;a:1:{s:4:"name";s:8:"STAGE_ID";}i:7;a:3:{s:4:"name";s:2:"ID";s:5:"alias";s:0:"";s:4:"aggr";s:14:"COUNT_DISTINCT";}i:12;a:4:{s:4:"name";s:2:"ID";s:5:"alias";s:0:"";s:4:"aggr";s:14:"COUNT_DISTINCT";s:5:"prcnt";s:11:"self_column";}i:9;a:3:{s:4:"name";s:19:"OPPORTUNITY_ACCOUNT";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";}i:11;a:3:{s:4:"name";s:15:"RECEIVED_AMOUNT";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";}}s:6:"filter";a:1:{i:0;a:7:{i:0;a:5:{s:4:"type";s:5:"field";s:4:"name";s:7:"TYPE_ID";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:1;a:5:{s:4:"type";s:5:"field";s:4:"name";s:36:"COMPANY_BY.COMPANY_TYPE_BY.STATUS_ID";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:2;a:5:{s:4:"type";s:5:"field";s:4:"name";s:10:"COMPANY_BY";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:3;a:5:{s:4:"type";s:5:"field";s:4:"name";s:28:"CONTACT_BY.TYPE_BY.STATUS_ID";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:4;a:5:{s:4:"type";s:5:"field";s:4:"name";s:10:"CONTACT_BY";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:5;a:5:{s:4:"type";s:5:"field";s:4:"name";s:11:"ASSIGNED_BY";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}s:5:"LOGIC";s:3:"AND";}}s:4:"sort";i:8;s:9:"sort_type";s:3:"ASC";s:5:"limit";N;s:12:"red_neg_vals";b:0;s:13:"grouping_mode";b:0;s:5:"chart";a:4:{s:7:"display";b:1;s:4:"type";s:3:"bar";s:8:"x_column";i:8;s:9:"y_columns";a:1:{i:0;i:7;}}}')
+					'settings' => unserialize('a:10:{s:6:"entity";s:15:"Bitrix\Crm\Deal";s:6:"period";a:2:{s:4:"type";s:5:"month";s:5:"value";N;}s:6:"select";a:5:{i:8;a:1:{s:4:"name";s:8:"STAGE_ID";}i:7;a:3:{s:4:"name";s:2:"ID";s:5:"alias";s:0:"";s:4:"aggr";s:14:"COUNT_DISTINCT";}i:12;a:4:{s:4:"name";s:2:"ID";s:5:"alias";s:0:"";s:4:"aggr";s:14:"COUNT_DISTINCT";s:5:"prcnt";s:11:"self_column";}i:9;a:3:{s:4:"name";s:19:"OPPORTUNITY_ACCOUNT";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";}i:11;a:3:{s:4:"name";s:15:"RECEIVED_AMOUNT";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";}}s:6:"filter";a:1:{i:0;a:7:{i:0;a:5:{s:4:"type";s:5:"field";s:4:"name";s:7:"TYPE_ID";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:1;a:5:{s:4:"type";s:5:"field";s:4:"name";s:36:"COMPANY_BY.COMPANY_TYPE_BY.STATUS_ID";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:2;a:5:{s:4:"type";s:5:"field";s:4:"name";s:10:"COMPANY_BY";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:3;a:5:{s:4:"type";s:5:"field";s:4:"name";s:28:"CONTACT_BY.TYPE_BY.STATUS_ID";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:4;a:5:{s:4:"type";s:5:"field";s:4:"name";s:10:"CONTACT_BY";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:5;a:5:{s:4:"type";s:5:"field";s:4:"name";s:11:"ASSIGNED_BY";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}s:5:"LOGIC";s:3:"AND";}}s:4:"sort";i:8;s:9:"sort_type";s:3:"ASC";s:5:"limit";N;s:12:"red_neg_vals";b:0;s:13:"grouping_mode";b:0;s:5:"chart";a:4:{s:7:"display";b:1;s:4:"type";s:3:"bar";s:8:"x_column";i:8;s:9:"y_columns";a:1:{i:0;i:7;}}}', ['allowed_classes' => false])
 				)
 			)
 		);
@@ -2300,8 +2307,8 @@ class CCrmInvoiceReportHelper extends CCrmReportHelperBase
 				{
 					if (($uf['USER_TYPE_ID'] !== 'datetime' && $uf['USER_TYPE_ID'] !== 'boolean')
 						|| $uf['MULTIPLE'] === 'Y'
-						|| substr($ufKey, -strlen(self::UF_DATETIME_SHORT_POSTFIX)) === self::UF_DATETIME_SHORT_POSTFIX
-						|| substr($ufKey, -strlen($blPostfix)) === $blPostfix)
+						|| mb_substr($ufKey, -mb_strlen(self::UF_DATETIME_SHORT_POSTFIX)) === self::UF_DATETIME_SHORT_POSTFIX
+						|| mb_substr($ufKey, -mb_strlen($blPostfix)) === $blPostfix)
 					{
 						$columnList[] = $ufKey;
 					}
@@ -2506,7 +2513,7 @@ class CCrmInvoiceReportHelper extends CCrmReportHelperBase
 		{
 			foreach($select as $k => $v)
 			{
-				if(strpos($k, 'CRM_INVOICE_INVOICE_UTS_COMPANY_BY_') === 0)
+				if(mb_strpos($k, 'CRM_INVOICE_INVOICE_UTS_COMPANY_BY_') === 0)
 				{
 					$select['CRM_INVOICE_INVOICE_UTS_COMPANY_BY_ID'] = 'INVOICE_UTS.COMPANY_BY.ID';
 					break;
@@ -2517,7 +2524,7 @@ class CCrmInvoiceReportHelper extends CCrmReportHelperBase
 		{
 			foreach($select as $k => $v)
 			{
-				if(strpos($k, 'CRM_INVOICE_INVOICE_UTS_CONTACT_BY_') === 0)
+				if(mb_strpos($k, 'CRM_INVOICE_INVOICE_UTS_CONTACT_BY_') === 0)
 				{
 					$select['CRM_INVOICE_INVOICE_UTS_CONTACT_BY_ID'] = 'INVOICE_UTS.CONTACT_BY.ID';
 					break;
@@ -2538,7 +2545,7 @@ class CCrmInvoiceReportHelper extends CCrmReportHelperBase
 		{
 			foreach($select as $k => $v)
 			{
-				if(strpos($k, 'CRM_INVOICE_INVOICE_UTS_CONTACT_BY_') === 0)
+				if(mb_strpos($k, 'CRM_INVOICE_INVOICE_UTS_CONTACT_BY_') === 0)
 				{
 					$select['CRM_INVOICE_INVOICE_UTS_CONTACT_BY_ID'] = 'INVOICE_UTS.CONTACT_BY.ID';
 					break;
@@ -2550,7 +2557,7 @@ class CCrmInvoiceReportHelper extends CCrmReportHelperBase
 		{
 			foreach($select as $k => $v)
 			{
-				if(strpos($k, 'CRM_INVOICE_INVOICE_UTS_COMPANY_BY_') === 0)
+				if(mb_strpos($k, 'CRM_INVOICE_INVOICE_UTS_COMPANY_BY_') === 0)
 				{
 					$select['CRM_INVOICE_INVOICE_UTS_COMPANY_BY_ID'] = 'INVOICE_UTS.COMPANY_BY.ID';
 					break;
@@ -2629,7 +2636,7 @@ class CCrmInvoiceReportHelper extends CCrmReportHelperBase
 		}
 		elseif(!$aggr && $fieldName === 'ORDER_TOPIC')
 		{
-			if($isHtml && strlen($v) > 0 && self::$CURRENT_RESULT_ROW && isset(self::$CURRENT_RESULT_ROW['ID']))
+			if($isHtml && $v <> '' && self::$CURRENT_RESULT_ROW && isset(self::$CURRENT_RESULT_ROW['ID']))
 			{
 				$v = self::prepareInvoiceTitleHtml(self::$CURRENT_RESULT_ROW['ID'], $v);
 			}
@@ -2670,12 +2677,12 @@ class CCrmInvoiceReportHelper extends CCrmReportHelperBase
 				$v = self::getWebFormName($v, $isHtml);
 			}
 		}
-		elseif(!$aggr && strpos($fieldName, 'ASSIGNED_BY.') === 0)
+		elseif(!$aggr && mb_strpos($fieldName, 'ASSIGNED_BY.') === 0)
 		{
 			// unset HREF for empty value
 			if (empty($v) || trim($v) === '.' || $v === '&nbsp;')
 				unset($row['__HREF_'.$k]);
-			if((strlen($v) === 0 || trim($v) === '.') && strpos($fieldName, '.WORK_POSITION') !== strlen($fieldName) - 14)
+			if(($v == '' || trim($v) === '.') && mb_strpos($fieldName, '.WORK_POSITION') !== mb_strlen($fieldName) - 14)
 			{
 				$v = GetMessage('CRM_INVOICE_RESPONSIBLE_NOT_ASSIGNED');
 			}
@@ -2684,7 +2691,7 @@ class CCrmInvoiceReportHelper extends CCrmReportHelperBase
 				$v = htmlspecialcharsbx($v);
 			}
 		}
-		elseif(!$aggr && strpos($fieldName, 'ProductRow:LEAD_OWNER.IBLOCK_ELEMENT.') === 0)
+		elseif(!$aggr && mb_strpos($fieldName, 'ProductRow:LEAD_OWNER.IBLOCK_ELEMENT.') === 0)
 		{
 			static $defaultCatalogID;
 			if(!isset($defaultCatalogID))
@@ -2794,19 +2801,19 @@ class CCrmInvoiceReportHelper extends CCrmReportHelperBase
 					'title' => GetMessage('CRM_REPORT_DEFAULT_INVOICES_BY_MANAGER'),
 					'description' => GetMessage('CRM_REPORT_DEFAULT_INVOICES_BY_MANAGER_DESCR'),
 					'mark_default' => 1,
-					'settings' => unserialize('a:10:{s:6:"entity";s:18:"Bitrix\Crm\Invoice";s:6:"period";a:2:{s:4:"type";s:5:"month";s:5:"value";N;}s:6:"select";a:5:{i:4;a:2:{s:4:"name";s:22:"ASSIGNED_BY.SHORT_NAME";s:5:"alias";s:0:"";}i:8;a:3:{s:4:"name";s:8:"IS_PAYED";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";}i:6;a:3:{s:4:"name";s:11:"PRICE_PAYED";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";}i:9;a:3:{s:4:"name";s:11:"IS_CANCELED";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";}i:7;a:3:{s:4:"name";s:14:"PRICE_CANCELED";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";}}s:6:"filter";a:1:{i:0;a:2:{i:0;a:5:{s:4:"type";s:5:"field";s:4:"name";s:11:"ASSIGNED_BY";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}s:5:"LOGIC";s:3:"AND";}}s:4:"sort";i:6;s:9:"sort_type";s:4:"DESC";s:5:"limit";N;s:12:"red_neg_vals";b:0;s:13:"grouping_mode";b:0;s:5:"chart";a:4:{s:7:"display";b:1;s:4:"type";s:3:"bar";s:8:"x_column";i:4;s:9:"y_columns";a:1:{i:0;i:6;}}}')
+					'settings' => unserialize('a:10:{s:6:"entity";s:18:"Bitrix\Crm\Invoice";s:6:"period";a:2:{s:4:"type";s:5:"month";s:5:"value";N;}s:6:"select";a:5:{i:4;a:2:{s:4:"name";s:22:"ASSIGNED_BY.SHORT_NAME";s:5:"alias";s:0:"";}i:8;a:3:{s:4:"name";s:8:"IS_PAYED";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";}i:6;a:3:{s:4:"name";s:11:"PRICE_PAYED";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";}i:9;a:3:{s:4:"name";s:11:"IS_CANCELED";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";}i:7;a:3:{s:4:"name";s:14:"PRICE_CANCELED";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";}}s:6:"filter";a:1:{i:0;a:2:{i:0;a:5:{s:4:"type";s:5:"field";s:4:"name";s:11:"ASSIGNED_BY";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}s:5:"LOGIC";s:3:"AND";}}s:4:"sort";i:6;s:9:"sort_type";s:4:"DESC";s:5:"limit";N;s:12:"red_neg_vals";b:0;s:13:"grouping_mode";b:0;s:5:"chart";a:4:{s:7:"display";b:1;s:4:"type";s:3:"bar";s:8:"x_column";i:4;s:9:"y_columns";a:1:{i:0;i:6;}}}', ['allowed_classes' => false])
 				),
 				array(
 					'title' => GetMessage('CRM_REPORT_DEFAULT_INVOICES_BY_COMPANY'),
 					'description' => GetMessage('CRM_REPORT_DEFAULT_INVOICES_BY_COMPANY_DESCR'),
 					'mark_default' => 2,
-					'settings' => unserialize('a:10:{s:6:"entity";s:18:"Bitrix\Crm\Invoice";s:6:"period";a:2:{s:4:"type";s:5:"month";s:5:"value";N;}s:6:"select";a:3:{i:12;a:2:{s:4:"name";s:28:"INVOICE_UTS.COMPANY_BY.TITLE";s:5:"alias";s:0:"";}i:8;a:3:{s:4:"name";s:8:"IS_PAYED";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";}i:6;a:3:{s:4:"name";s:11:"PRICE_PAYED";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";}}s:6:"filter";a:1:{i:0;a:4:{i:0;a:5:{s:4:"type";s:5:"field";s:4:"name";s:25:"INVOICE_UTS.COMPANY_BY.ID";s:7:"compare";s:7:"GREATER";s:5:"value";s:1:"0";s:10:"changeable";s:1:"0";}i:1;a:5:{s:4:"type";s:5:"field";s:4:"name";s:11:"PRICE_PAYED";s:7:"compare";s:7:"GREATER";s:5:"value";s:1:"0";s:10:"changeable";s:1:"0";}i:2;a:5:{s:4:"type";s:5:"field";s:4:"name";s:11:"ASSIGNED_BY";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}s:5:"LOGIC";s:3:"AND";}}s:4:"sort";i:6;s:9:"sort_type";s:4:"DESC";s:5:"limit";N;s:12:"red_neg_vals";b:0;s:13:"grouping_mode";b:0;s:5:"chart";a:4:{s:7:"display";b:1;s:4:"type";s:3:"bar";s:8:"x_column";i:12;s:9:"y_columns";a:1:{i:0;i:6;}}}')
+					'settings' => unserialize('a:10:{s:6:"entity";s:18:"Bitrix\Crm\Invoice";s:6:"period";a:2:{s:4:"type";s:5:"month";s:5:"value";N;}s:6:"select";a:3:{i:12;a:2:{s:4:"name";s:28:"INVOICE_UTS.COMPANY_BY.TITLE";s:5:"alias";s:0:"";}i:8;a:3:{s:4:"name";s:8:"IS_PAYED";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";}i:6;a:3:{s:4:"name";s:11:"PRICE_PAYED";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";}}s:6:"filter";a:1:{i:0;a:4:{i:0;a:5:{s:4:"type";s:5:"field";s:4:"name";s:25:"INVOICE_UTS.COMPANY_BY.ID";s:7:"compare";s:7:"GREATER";s:5:"value";s:1:"0";s:10:"changeable";s:1:"0";}i:1;a:5:{s:4:"type";s:5:"field";s:4:"name";s:11:"PRICE_PAYED";s:7:"compare";s:7:"GREATER";s:5:"value";s:1:"0";s:10:"changeable";s:1:"0";}i:2;a:5:{s:4:"type";s:5:"field";s:4:"name";s:11:"ASSIGNED_BY";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}s:5:"LOGIC";s:3:"AND";}}s:4:"sort";i:6;s:9:"sort_type";s:4:"DESC";s:5:"limit";N;s:12:"red_neg_vals";b:0;s:13:"grouping_mode";b:0;s:5:"chart";a:4:{s:7:"display";b:1;s:4:"type";s:3:"bar";s:8:"x_column";i:12;s:9:"y_columns";a:1:{i:0;i:6;}}}', ['allowed_classes' => false])
 				),
 				array(
 					'title' => GetMessage('CRM_REPORT_DEFAULT_INVOICES_BY_CONTACT'),
 					'description' => GetMessage('CRM_REPORT_DEFAULT_INVOICES_BY_CONTACT_DESCR'),
 					'mark_default' => 3,
-					'settings' => unserialize('a:10:{s:6:"entity";s:18:"Bitrix\Crm\Invoice";s:6:"period";a:2:{s:4:"type";s:5:"month";s:5:"value";N;}s:6:"select";a:3:{i:15;a:1:{s:4:"name";s:33:"INVOICE_UTS.CONTACT_BY.SHORT_NAME";}i:8;a:3:{s:4:"name";s:8:"IS_PAYED";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";}i:6;a:3:{s:4:"name";s:11:"PRICE_PAYED";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";}}s:6:"filter";a:1:{i:0;a:4:{i:0;a:5:{s:4:"type";s:5:"field";s:4:"name";s:25:"INVOICE_UTS.CONTACT_BY.ID";s:7:"compare";s:7:"GREATER";s:5:"value";s:1:"0";s:10:"changeable";s:1:"0";}i:1;a:5:{s:4:"type";s:5:"field";s:4:"name";s:11:"PRICE_PAYED";s:7:"compare";s:7:"GREATER";s:5:"value";s:1:"0";s:10:"changeable";s:1:"0";}i:2;a:5:{s:4:"type";s:5:"field";s:4:"name";s:11:"ASSIGNED_BY";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}s:5:"LOGIC";s:3:"AND";}}s:4:"sort";i:6;s:9:"sort_type";s:4:"DESC";s:5:"limit";N;s:12:"red_neg_vals";b:0;s:13:"grouping_mode";b:0;s:5:"chart";a:4:{s:7:"display";b:1;s:4:"type";s:3:"bar";s:8:"x_column";i:15;s:9:"y_columns";a:1:{i:0;i:6;}}}')
+					'settings' => unserialize('a:10:{s:6:"entity";s:18:"Bitrix\Crm\Invoice";s:6:"period";a:2:{s:4:"type";s:5:"month";s:5:"value";N;}s:6:"select";a:3:{i:15;a:1:{s:4:"name";s:33:"INVOICE_UTS.CONTACT_BY.SHORT_NAME";}i:8;a:3:{s:4:"name";s:8:"IS_PAYED";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";}i:6;a:3:{s:4:"name";s:11:"PRICE_PAYED";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";}}s:6:"filter";a:1:{i:0;a:4:{i:0;a:5:{s:4:"type";s:5:"field";s:4:"name";s:25:"INVOICE_UTS.CONTACT_BY.ID";s:7:"compare";s:7:"GREATER";s:5:"value";s:1:"0";s:10:"changeable";s:1:"0";}i:1;a:5:{s:4:"type";s:5:"field";s:4:"name";s:11:"PRICE_PAYED";s:7:"compare";s:7:"GREATER";s:5:"value";s:1:"0";s:10:"changeable";s:1:"0";}i:2;a:5:{s:4:"type";s:5:"field";s:4:"name";s:11:"ASSIGNED_BY";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}s:5:"LOGIC";s:3:"AND";}}s:4:"sort";i:6;s:9:"sort_type";s:4:"DESC";s:5:"limit";N;s:12:"red_neg_vals";b:0;s:13:"grouping_mode";b:0;s:5:"chart";a:4:{s:7:"display";b:1;s:4:"type";s:3:"bar";s:8:"x_column";i:15;s:9:"y_columns";a:1:{i:0;i:6;}}}', ['allowed_classes' => false])
 				)
 			)
 		);
@@ -3011,8 +3018,8 @@ class CCrmLeadReportHelper extends CCrmReportHelperBase
 				{
 					if (($uf['USER_TYPE_ID'] !== 'datetime' && $uf['USER_TYPE_ID'] !== 'boolean')
 						|| $uf['MULTIPLE'] === 'Y'
-						|| substr($ufKey, -strlen(self::UF_DATETIME_SHORT_POSTFIX)) === self::UF_DATETIME_SHORT_POSTFIX
-						|| substr($ufKey, -strlen($blPostfix)) === $blPostfix)
+						|| mb_substr($ufKey, -mb_strlen(self::UF_DATETIME_SHORT_POSTFIX)) === self::UF_DATETIME_SHORT_POSTFIX
+						|| mb_substr($ufKey, -mb_strlen($blPostfix)) === $blPostfix)
 					{
 						$columnList[] = $ufKey;
 					}
@@ -3229,7 +3236,7 @@ class CCrmLeadReportHelper extends CCrmReportHelperBase
 		{
 			foreach($select as $k => $v)
 			{
-				if(strpos($k, 'CRM_LEAD_COMPANY_BY_') === 0)
+				if(mb_strpos($k, 'CRM_LEAD_COMPANY_BY_') === 0)
 				{
 					$select['CRM_LEAD_COMPANY_BY_ID'] = 'COMPANY_BY.ID';
 					break;
@@ -3250,7 +3257,7 @@ class CCrmLeadReportHelper extends CCrmReportHelperBase
 		{
 			foreach($select as $k => $v)
 			{
-				if(strpos($k, 'CRM_LEAD_CONTACT_BY_') === 0)
+				if(mb_strpos($k, 'CRM_LEAD_CONTACT_BY_') === 0)
 				{
 					$select['CRM_LEAD_CONTACT_BY_ID'] = 'CONTACT_BY.ID';
 					break;
@@ -3262,7 +3269,7 @@ class CCrmLeadReportHelper extends CCrmReportHelperBase
 		{
 			foreach($select as $k => $v)
 			{
-				if(strpos($k, 'CRM_LEAD_CRM_PRODUCT_ROW_LEAD_OWNER_IBLOCK_ELEMENT_') === 0)
+				if(mb_strpos($k, 'CRM_LEAD_CRM_PRODUCT_ROW_LEAD_OWNER_IBLOCK_ELEMENT_') === 0)
 				{
 					$select['CRM_LEAD_CRM_PRODUCT_ROW_LEAD_OWNER_IBLOCK_ELEMENT_ID'] = 'ProductRow:LEAD_OWNER.IBLOCK_ELEMENT.ID';
 					$select['CRM_LEAD_CRM_PRODUCT_ROW_LEAD_OWNER_IBLOCK_ELEMENT_IBLOCK_ID'] = 'ProductRow:LEAD_OWNER.IBLOCK_ELEMENT.IBLOCK_ID';
@@ -3324,7 +3331,7 @@ class CCrmLeadReportHelper extends CCrmReportHelperBase
 		}
 		elseif(!$aggr && $fieldName === 'TITLE')
 		{
-			if(strlen($v) > 0)
+			if($v <> '')
 			{
 				if ($isHtml && self::$CURRENT_RESULT_ROW && isset(self::$CURRENT_RESULT_ROW['ID']))
 				{
@@ -3350,12 +3357,12 @@ class CCrmLeadReportHelper extends CCrmReportHelperBase
 				$v = self::getCurrencyName($v, $isHtml);
 			}
 		}
-		elseif(!$aggr && strpos($fieldName, 'ASSIGNED_BY.') === 0)
+		elseif(!$aggr && mb_strpos($fieldName, 'ASSIGNED_BY.') === 0)
 		{
 			// unset HREF for empty value
 			if (empty($v) || trim($v) === '.' || $v === '&nbsp;')
 				unset($row['__HREF_'.$k]);
-			if(strlen($v) === 0 || trim($v) === '.')
+			if($v == '' || trim($v) === '.')
 			{
 				$v = GetMessage('CRM_LEAD_RESPONSIBLE_NOT_ASSIGNED');
 			}
@@ -3365,7 +3372,7 @@ class CCrmLeadReportHelper extends CCrmReportHelperBase
 			}
 		}
 
-		elseif(!$aggr && strpos($fieldName, 'ProductRow:LEAD_OWNER.IBLOCK_ELEMENT.') === 0)
+		elseif(!$aggr && mb_strpos($fieldName, 'ProductRow:LEAD_OWNER.IBLOCK_ELEMENT.') === 0)
 		{
 			static $defaultCatalogID;
 			if(!isset($defaultCatalogID))
@@ -3469,19 +3476,19 @@ class CCrmLeadReportHelper extends CCrmReportHelperBase
 					'title' => GetMessage('CRM_REPORT_DEFAULT_LEADS_BY_MANAGER'),
 					'description' => GetMessage('CRM_REPORT_DEFAULT_LEADS_BY_MANAGER_DESCR'),
 					'mark_default' => 1,
-					'settings' => unserialize('a:10:{s:6:"entity";s:15:"Bitrix\Crm\Lead";s:6:"period";a:2:{s:4:"type";s:5:"month";s:5:"value";N;}s:6:"select";a:8:{i:3;a:2:{s:4:"name";s:22:"ASSIGNED_BY.SHORT_NAME";s:5:"alias";s:0:"";}i:4;a:3:{s:4:"name";s:2:"ID";s:5:"alias";s:0:"";s:4:"aggr";s:14:"COUNT_DISTINCT";}i:5;a:4:{s:4:"name";s:2:"ID";s:5:"alias";s:0:"";s:4:"aggr";s:14:"COUNT_DISTINCT";s:5:"prcnt";s:11:"self_column";}i:6;a:3:{s:4:"name";s:7:"IS_WORK";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";}i:7;a:3:{s:4:"name";s:10:"IS_CONVERT";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";}i:8;a:4:{s:4:"name";s:10:"IS_CONVERT";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";s:5:"prcnt";s:11:"self_column";}i:9;a:3:{s:4:"name";s:9:"IS_REJECT";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";}i:10;a:4:{s:4:"name";s:9:"IS_REJECT";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";s:5:"prcnt";s:11:"self_column";}}s:6:"filter";a:1:{i:0;a:3:{i:0;a:5:{s:4:"type";s:5:"field";s:4:"name";s:11:"ASSIGNED_BY";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:1;a:5:{s:4:"type";s:5:"field";s:4:"name";s:9:"SOURCE_ID";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}s:5:"LOGIC";s:3:"AND";}}s:4:"sort";i:3;s:9:"sort_type";s:3:"ASC";s:5:"limit";N;s:12:"red_neg_vals";b:0;s:13:"grouping_mode";b:0;s:5:"chart";a:4:{s:7:"display";b:1;s:4:"type";s:3:"bar";s:8:"x_column";i:3;s:9:"y_columns";a:3:{i:0;i:6;i:1;i:9;i:2;i:7;}}}')
+					'settings' => unserialize('a:10:{s:6:"entity";s:15:"Bitrix\Crm\Lead";s:6:"period";a:2:{s:4:"type";s:5:"month";s:5:"value";N;}s:6:"select";a:8:{i:3;a:2:{s:4:"name";s:22:"ASSIGNED_BY.SHORT_NAME";s:5:"alias";s:0:"";}i:4;a:3:{s:4:"name";s:2:"ID";s:5:"alias";s:0:"";s:4:"aggr";s:14:"COUNT_DISTINCT";}i:5;a:4:{s:4:"name";s:2:"ID";s:5:"alias";s:0:"";s:4:"aggr";s:14:"COUNT_DISTINCT";s:5:"prcnt";s:11:"self_column";}i:6;a:3:{s:4:"name";s:7:"IS_WORK";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";}i:7;a:3:{s:4:"name";s:10:"IS_CONVERT";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";}i:8;a:4:{s:4:"name";s:10:"IS_CONVERT";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";s:5:"prcnt";s:11:"self_column";}i:9;a:3:{s:4:"name";s:9:"IS_REJECT";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";}i:10;a:4:{s:4:"name";s:9:"IS_REJECT";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";s:5:"prcnt";s:11:"self_column";}}s:6:"filter";a:1:{i:0;a:3:{i:0;a:5:{s:4:"type";s:5:"field";s:4:"name";s:11:"ASSIGNED_BY";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:1;a:5:{s:4:"type";s:5:"field";s:4:"name";s:9:"SOURCE_ID";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}s:5:"LOGIC";s:3:"AND";}}s:4:"sort";i:3;s:9:"sort_type";s:3:"ASC";s:5:"limit";N;s:12:"red_neg_vals";b:0;s:13:"grouping_mode";b:0;s:5:"chart";a:4:{s:7:"display";b:1;s:4:"type";s:3:"bar";s:8:"x_column";i:3;s:9:"y_columns";a:3:{i:0;i:6;i:1;i:9;i:2;i:7;}}}', ['allowed_classes' => false])
 				),
 				array(
 					'title' => GetMessage('CRM_REPORT_DEFAULT_LEADS_BY_STATUS'),
 					'description' => GetMessage('CRM_REPORT_DEFAULT_LEADS_BY_STATUS_DESCR'),
 					'mark_default' => 2,
-					'settings' => unserialize('a:10:{s:6:"entity";s:15:"Bitrix\Crm\Lead";s:6:"period";a:2:{s:4:"type";s:5:"month";s:5:"value";N;}s:6:"select";a:5:{i:4;a:1:{s:4:"name";s:9:"STATUS_ID";}i:5;a:3:{s:4:"name";s:2:"ID";s:5:"alias";s:0:"";s:4:"aggr";s:14:"COUNT_DISTINCT";}i:6;a:4:{s:4:"name";s:2:"ID";s:5:"alias";s:0:"";s:4:"aggr";s:14:"COUNT_DISTINCT";s:5:"prcnt";s:11:"self_column";}i:7;a:3:{s:4:"name";s:11:"OPPORTUNITY";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";}i:8;a:4:{s:4:"name";s:11:"OPPORTUNITY";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";s:5:"prcnt";s:11:"self_column";}}s:6:"filter";a:1:{i:0;a:3:{i:0;a:5:{s:4:"type";s:5:"field";s:4:"name";s:11:"ASSIGNED_BY";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:1;a:5:{s:4:"type";s:5:"field";s:4:"name";s:9:"SOURCE_ID";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}s:5:"LOGIC";s:3:"AND";}}s:4:"sort";i:4;s:9:"sort_type";s:3:"ASC";s:5:"limit";N;s:12:"red_neg_vals";b:0;s:13:"grouping_mode";b:0;s:5:"chart";a:4:{s:7:"display";b:1;s:4:"type";s:3:"bar";s:8:"x_column";i:4;s:9:"y_columns";a:1:{i:0;i:5;}}}')
+					'settings' => unserialize('a:10:{s:6:"entity";s:15:"Bitrix\Crm\Lead";s:6:"period";a:2:{s:4:"type";s:5:"month";s:5:"value";N;}s:6:"select";a:5:{i:4;a:1:{s:4:"name";s:9:"STATUS_ID";}i:5;a:3:{s:4:"name";s:2:"ID";s:5:"alias";s:0:"";s:4:"aggr";s:14:"COUNT_DISTINCT";}i:6;a:4:{s:4:"name";s:2:"ID";s:5:"alias";s:0:"";s:4:"aggr";s:14:"COUNT_DISTINCT";s:5:"prcnt";s:11:"self_column";}i:7;a:3:{s:4:"name";s:11:"OPPORTUNITY";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";}i:8;a:4:{s:4:"name";s:11:"OPPORTUNITY";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";s:5:"prcnt";s:11:"self_column";}}s:6:"filter";a:1:{i:0;a:3:{i:0;a:5:{s:4:"type";s:5:"field";s:4:"name";s:11:"ASSIGNED_BY";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:1;a:5:{s:4:"type";s:5:"field";s:4:"name";s:9:"SOURCE_ID";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}s:5:"LOGIC";s:3:"AND";}}s:4:"sort";i:4;s:9:"sort_type";s:3:"ASC";s:5:"limit";N;s:12:"red_neg_vals";b:0;s:13:"grouping_mode";b:0;s:5:"chart";a:4:{s:7:"display";b:1;s:4:"type";s:3:"bar";s:8:"x_column";i:4;s:9:"y_columns";a:1:{i:0;i:5;}}}', ['allowed_classes' => false])
 				),
 				array(
 					'title' => GetMessage('CRM_REPORT_DEFAULT_LEADS_BY_SOURCE'),
 					'description' => GetMessage('CRM_REPORT_DEFAULT_LEADS_BY_SOURCE_DESCR'),
 					'mark_default' => 3,
-					'settings' => unserialize('a:10:{s:6:"entity";s:15:"Bitrix\Crm\Lead";s:6:"period";a:2:{s:4:"type";s:5:"month";s:5:"value";N;}s:6:"select";a:7:{i:4;a:2:{s:4:"name";s:9:"SOURCE_ID";s:5:"alias";s:0:"";}i:5;a:3:{s:4:"name";s:2:"ID";s:5:"alias";s:0:"";s:4:"aggr";s:14:"COUNT_DISTINCT";}i:6;a:4:{s:4:"name";s:2:"ID";s:5:"alias";s:0:"";s:4:"aggr";s:14:"COUNT_DISTINCT";s:5:"prcnt";s:11:"self_column";}i:7;a:3:{s:4:"name";s:10:"IS_CONVERT";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";}i:8;a:4:{s:4:"name";s:10:"IS_CONVERT";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";s:5:"prcnt";s:11:"self_column";}i:9;a:3:{s:4:"name";s:9:"IS_REJECT";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";}i:10;a:4:{s:4:"name";s:9:"IS_REJECT";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";s:5:"prcnt";s:11:"self_column";}}s:6:"filter";a:1:{i:0;a:3:{i:0;a:5:{s:4:"type";s:5:"field";s:4:"name";s:11:"ASSIGNED_BY";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:1;a:5:{s:4:"type";s:5:"field";s:4:"name";s:9:"SOURCE_ID";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}s:5:"LOGIC";s:3:"AND";}}s:4:"sort";i:5;s:9:"sort_type";s:4:"DESC";s:5:"limit";N;s:12:"red_neg_vals";b:0;s:13:"grouping_mode";b:0;s:5:"chart";a:4:{s:7:"display";b:1;s:4:"type";s:3:"pie";s:8:"x_column";i:4;s:9:"y_columns";a:1:{i:0;i:5;}}}')
+					'settings' => unserialize('a:10:{s:6:"entity";s:15:"Bitrix\Crm\Lead";s:6:"period";a:2:{s:4:"type";s:5:"month";s:5:"value";N;}s:6:"select";a:7:{i:4;a:2:{s:4:"name";s:9:"SOURCE_ID";s:5:"alias";s:0:"";}i:5;a:3:{s:4:"name";s:2:"ID";s:5:"alias";s:0:"";s:4:"aggr";s:14:"COUNT_DISTINCT";}i:6;a:4:{s:4:"name";s:2:"ID";s:5:"alias";s:0:"";s:4:"aggr";s:14:"COUNT_DISTINCT";s:5:"prcnt";s:11:"self_column";}i:7;a:3:{s:4:"name";s:10:"IS_CONVERT";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";}i:8;a:4:{s:4:"name";s:10:"IS_CONVERT";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";s:5:"prcnt";s:11:"self_column";}i:9;a:3:{s:4:"name";s:9:"IS_REJECT";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";}i:10;a:4:{s:4:"name";s:9:"IS_REJECT";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";s:5:"prcnt";s:11:"self_column";}}s:6:"filter";a:1:{i:0;a:3:{i:0;a:5:{s:4:"type";s:5:"field";s:4:"name";s:11:"ASSIGNED_BY";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:1;a:5:{s:4:"type";s:5:"field";s:4:"name";s:9:"SOURCE_ID";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}s:5:"LOGIC";s:3:"AND";}}s:4:"sort";i:5;s:9:"sort_type";s:4:"DESC";s:5:"limit";N;s:12:"red_neg_vals";b:0;s:13:"grouping_mode";b:0;s:5:"chart";a:4:{s:7:"display";b:1;s:4:"type";s:3:"pie";s:8:"x_column";i:4;s:9:"y_columns";a:1:{i:0;i:5;}}}', ['allowed_classes' => false])
 				)
 			)
 		);
@@ -3692,7 +3699,7 @@ class CCrmActivityReportHelper extends CCrmReportHelperBase
 		{
 			foreach($select as $k => $v)
 			{
-				if(strpos($k, 'CRM_ACTIVITY_COMPANY_BY_') === 0)
+				if(mb_strpos($k, 'CRM_ACTIVITY_COMPANY_BY_') === 0)
 				{
 					$select['CRM_ACTIVITY_COMPANY_BY_ID'] = 'COMPANY_BY.ID';
 					break;
@@ -3755,14 +3762,14 @@ class CCrmActivityReportHelper extends CCrmReportHelperBase
 				$v = self::getActivityPriorityName($v, $isHtml);
 			}
 		}
-		elseif(!$aggr && strpos($fieldName, 'ASSIGNED_BY.') === 0
-				|| strpos($fieldName, 'AUTHOR_BY.') === 0
-				|| strpos($fieldName, 'EDITOR_BY.') === 0)
+		elseif(!$aggr && mb_strpos($fieldName, 'ASSIGNED_BY.') === 0
+				|| mb_strpos($fieldName, 'AUTHOR_BY.') === 0
+				|| mb_strpos($fieldName, 'EDITOR_BY.') === 0)
 		{
 			// unset HREF for empty value
 			if (empty($v) || trim($v) === '.' || $v === '&nbsp;')
 				unset($row['__HREF_'.$k]);
-			if((strlen($v) === 0 || trim($v) === '.') && strpos($fieldName, '.WORK_POSITION') !== strlen($fieldName) - 14)
+			if(($v == '' || trim($v) === '.') && mb_strpos($fieldName, '.WORK_POSITION') !== mb_strlen($fieldName) - 14)
 			{
 				$v = GetMessage('CRM_ACTIVITY_RESPONSIBLE_NOT_ASSIGNED');
 			}
@@ -3836,7 +3843,7 @@ class CCrmActivityReportHelper extends CCrmReportHelperBase
 					'title' => GetMessage('CRM_REPORT_DEFAULT_ACTIVITIES_BY_MANAGER'),
 					'description' => GetMessage('CRM_REPORT_DEFAULT_ACTIVITIES_BY_MANAGER_DESCR'),
 					'mark_default' => 1,
-					'settings' => unserialize('a:10:{s:6:"entity";s:19:"Bitrix\Crm\Activity";s:6:"period";a:2:{s:4:"type";s:5:"month";s:5:"value";N;}s:6:"select";a:7:{i:2;a:1:{s:4:"name";s:22:"ASSIGNED_BY.SHORT_NAME";}i:3;a:3:{s:4:"name";s:10:"IS_CALL_IN";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";}i:4;a:3:{s:4:"name";s:11:"IS_CALL_OUT";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";}i:5;a:3:{s:4:"name";s:10:"IS_MEETING";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";}i:6;a:3:{s:4:"name";s:11:"IS_EMAIL_IN";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";}i:7;a:3:{s:4:"name";s:12:"IS_EMAIL_OUT";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";}i:8;a:3:{s:4:"name";s:7:"IS_TASK";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";}}s:6:"filter";a:1:{i:0;a:3:{i:0;a:5:{s:4:"type";s:5:"field";s:4:"name";s:9:"COMPLETED";s:7:"compare";s:5:"EQUAL";s:5:"value";s:4:"true";s:10:"changeable";s:1:"0";}i:1;a:5:{s:4:"type";s:5:"field";s:4:"name";s:11:"ASSIGNED_BY";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}s:5:"LOGIC";s:3:"AND";}}s:4:"sort";i:2;s:9:"sort_type";s:3:"ASC";s:5:"limit";N;s:12:"red_neg_vals";b:0;s:13:"grouping_mode";b:0;s:5:"chart";a:4:{s:7:"display";b:1;s:4:"type";s:3:"bar";s:8:"x_column";i:2;s:9:"y_columns";a:6:{i:0;i:3;i:1;i:4;i:2;i:5;i:3;i:6;i:4;i:7;i:5;i:8;}}}')
+					'settings' => unserialize('a:10:{s:6:"entity";s:19:"Bitrix\Crm\Activity";s:6:"period";a:2:{s:4:"type";s:5:"month";s:5:"value";N;}s:6:"select";a:7:{i:2;a:1:{s:4:"name";s:22:"ASSIGNED_BY.SHORT_NAME";}i:3;a:3:{s:4:"name";s:10:"IS_CALL_IN";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";}i:4;a:3:{s:4:"name";s:11:"IS_CALL_OUT";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";}i:5;a:3:{s:4:"name";s:10:"IS_MEETING";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";}i:6;a:3:{s:4:"name";s:11:"IS_EMAIL_IN";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";}i:7;a:3:{s:4:"name";s:12:"IS_EMAIL_OUT";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";}i:8;a:3:{s:4:"name";s:7:"IS_TASK";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";}}s:6:"filter";a:1:{i:0;a:3:{i:0;a:5:{s:4:"type";s:5:"field";s:4:"name";s:9:"COMPLETED";s:7:"compare";s:5:"EQUAL";s:5:"value";s:4:"true";s:10:"changeable";s:1:"0";}i:1;a:5:{s:4:"type";s:5:"field";s:4:"name";s:11:"ASSIGNED_BY";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}s:5:"LOGIC";s:3:"AND";}}s:4:"sort";i:2;s:9:"sort_type";s:3:"ASC";s:5:"limit";N;s:12:"red_neg_vals";b:0;s:13:"grouping_mode";b:0;s:5:"chart";a:4:{s:7:"display";b:1;s:4:"type";s:3:"bar";s:8:"x_column";i:2;s:9:"y_columns";a:6:{i:0;i:3;i:1;i:4;i:2;i:5;i:3;i:6;i:4;i:7;i:5;i:8;}}}', ['allowed_classes' => false])
 				)
 			)
 		);
@@ -4121,7 +4128,7 @@ class CCrmProductReportHelper extends CCrmReportHelperBase
 				'DEAL_OWNER.WEBFORM_ID' =>[
 					'EQUAL',
 					'NOT_EQUAL'
-				], 
+				],
 				'DEAL_OWNER.LEAD_BY' => [
 					'EQUAL'
 				],
@@ -4223,7 +4230,7 @@ class CCrmProductReportHelper extends CCrmReportHelperBase
 		}
 		elseif(!$aggr && $fieldName === 'DEAL_OWNER.TITLE')
 		{
-			if($isHtml && strlen($v) > 0 && self::$CURRENT_RESULT_ROW && isset(self::$CURRENT_RESULT_ROW['CRM_PRODUCT_ROW_DEAL_OWNER_ID']))
+			if($isHtml && $v <> '' && self::$CURRENT_RESULT_ROW && isset(self::$CURRENT_RESULT_ROW['CRM_PRODUCT_ROW_DEAL_OWNER_ID']))
 			{
 				$v = self::prepareDealTitleHtml(self::$CURRENT_RESULT_ROW['CRM_PRODUCT_ROW_DEAL_OWNER_ID'], $v);
 			}
@@ -4274,13 +4281,13 @@ class CCrmProductReportHelper extends CCrmReportHelperBase
 				$v = self::getStatusName($v, 'SOURCE', $isHtml);
 			}
 		}
-		elseif(strpos($fieldName, 'DEAL_OWNER.COMPANY_BY.') === 0)
+		elseif(mb_strpos($fieldName, 'DEAL_OWNER.COMPANY_BY.') === 0)
 		{
-			if(!$aggr && (strlen($v) === 0 || trim($v) === '.'))
+			if(!$aggr && ($v == '' || trim($v) === '.'))
 			{
-				if(strpos($fieldName, 'DEAL_OWNER.COMPANY_BY.COMPANY_TYPE_BY') !== 0
-					&& strpos($fieldName, 'DEAL_OWNER.COMPANY_BY.INDUSTRY_BY') !== 0
-					&& strpos($fieldName, 'DEAL_OWNER.COMPANY_BY.EMPLOYEES_BY') !== 0)
+				if(mb_strpos($fieldName, 'DEAL_OWNER.COMPANY_BY.COMPANY_TYPE_BY') !== 0
+					&& mb_strpos($fieldName, 'DEAL_OWNER.COMPANY_BY.INDUSTRY_BY') !== 0
+					&& mb_strpos($fieldName, 'DEAL_OWNER.COMPANY_BY.EMPLOYEES_BY') !== 0)
 				{
 					$v = GetMessage('CRM_DEAL_COMPANY_NOT_ASSIGNED');
 				}
@@ -4314,11 +4321,11 @@ class CCrmProductReportHelper extends CCrmReportHelperBase
 				}
 			}
 		}
-		elseif(strpos($fieldName, 'DEAL_OWNER.CONTACT_BY.') === 0)
+		elseif(mb_strpos($fieldName, 'DEAL_OWNER.CONTACT_BY.') === 0)
 		{
 			if(!$aggr && ($v === '' || trim($v) === '.'))
 			{
-				if(strpos($fieldName, 'DEAL_OWNER.CONTACT_BY.TYPE_BY') !== 0)
+				if(mb_strpos($fieldName, 'DEAL_OWNER.CONTACT_BY.TYPE_BY') !== 0)
 				{
 					$v = GetMessage('CRM_DEAL_CONTACT_NOT_ASSIGNED');
 				}
@@ -4345,12 +4352,12 @@ class CCrmProductReportHelper extends CCrmReportHelperBase
 				}
 			}
 		}
-		elseif(!$aggr && strpos($fieldName, 'DEAL_OWNER.ASSIGNED_BY.') === 0)
+		elseif(!$aggr && mb_strpos($fieldName, 'DEAL_OWNER.ASSIGNED_BY.') === 0)
 		{
 			// unset HREF for empty value
 			if (empty($v) || trim($v) === '.' || $v === '&nbsp;')
 				unset($row['__HREF_'.$k]);
-			if(strlen($v) === 0 || trim($v) === '.')
+			if($v == '' || trim($v) === '.')
 			{
 				$v = GetMessage('CRM_DEAL_RESPONSIBLE_NOT_ASSIGNED');
 			}
@@ -4359,7 +4366,7 @@ class CCrmProductReportHelper extends CCrmReportHelperBase
 				$v = htmlspecialcharsbx($v);
 			}
 		}
-		elseif(!$aggr && strpos($fieldName, 'CP_PRODUCT_NAME') === 0)
+		elseif(!$aggr && mb_strpos($fieldName, 'CP_PRODUCT_NAME') === 0)
 		{
 			static $defaultCatalogID;
 			if(!isset($defaultCatalogID))
@@ -4421,7 +4428,7 @@ class CCrmProductReportHelper extends CCrmReportHelperBase
 					'title' => GetMessage('CRM_REPORT_DEFAULT_PRODUCTS_PROFIT'),
 					'description' => GetMessage('CRM_REPORT_DEFAULT_PRODUCTS_PROFIT_DESCR'),
 					'mark_default' => 1,
-					'settings' => unserialize('a:10:{s:6:"entity";s:21:"Bitrix\Crm\ProductRow";s:6:"period";a:2:{s:4:"type";s:5:"month";s:5:"value";N;}s:6:"select";a:4:{i:0;a:2:{s:4:"name";s:15:"CP_PRODUCT_NAME";s:5:"alias";s:0:"";}i:1;a:3:{s:4:"name";s:13:"DEAL_OWNER.ID";s:5:"alias";s:0:"";s:4:"aggr";s:14:"COUNT_DISTINCT";}i:2;a:3:{s:4:"name";s:8:"QUANTITY";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";}i:3;a:3:{s:4:"name";s:11:"SUM_ACCOUNT";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";}}s:6:"filter";a:1:{i:0;a:9:{i:0;a:5:{s:4:"type";s:5:"field";s:4:"name";s:13:"DEAL_OWNER.ID";s:7:"compare";s:7:"GREATER";s:5:"value";s:1:"0";s:10:"changeable";s:1:"0";}i:1;a:5:{s:4:"type";s:5:"field";s:4:"name";s:19:"DEAL_OWNER.STAGE_ID";s:7:"compare";s:5:"EQUAL";s:5:"value";s:3:"WON";s:10:"changeable";s:1:"1";}i:2;a:5:{s:4:"type";s:5:"field";s:4:"name";s:18:"DEAL_OWNER.TYPE_ID";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:3;a:5:{s:4:"type";s:5:"field";s:4:"name";s:47:"DEAL_OWNER.COMPANY_BY.COMPANY_TYPE_BY.STATUS_ID";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:4;a:5:{s:4:"type";s:5:"field";s:4:"name";s:21:"DEAL_OWNER.COMPANY_BY";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:5;a:5:{s:4:"type";s:5:"field";s:4:"name";s:39:"DEAL_OWNER.CONTACT_BY.TYPE_BY.STATUS_ID";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:6;a:5:{s:4:"type";s:5:"field";s:4:"name";s:21:"DEAL_OWNER.CONTACT_BY";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:7;a:5:{s:4:"type";s:5:"field";s:4:"name";s:22:"DEAL_OWNER.ASSIGNED_BY";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}s:5:"LOGIC";s:3:"AND";}}s:4:"sort";i:3;s:9:"sort_type";s:4:"DESC";s:5:"limit";N;s:12:"red_neg_vals";b:0;s:13:"grouping_mode";b:0;s:5:"chart";a:4:{s:7:"display";b:1;s:4:"type";s:3:"pie";s:8:"x_column";i:0;s:9:"y_columns";a:1:{i:0;i:3;}}}')
+					'settings' => unserialize('a:10:{s:6:"entity";s:21:"Bitrix\Crm\ProductRow";s:6:"period";a:2:{s:4:"type";s:5:"month";s:5:"value";N;}s:6:"select";a:4:{i:0;a:2:{s:4:"name";s:15:"CP_PRODUCT_NAME";s:5:"alias";s:0:"";}i:1;a:3:{s:4:"name";s:13:"DEAL_OWNER.ID";s:5:"alias";s:0:"";s:4:"aggr";s:14:"COUNT_DISTINCT";}i:2;a:3:{s:4:"name";s:8:"QUANTITY";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";}i:3;a:3:{s:4:"name";s:11:"SUM_ACCOUNT";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";}}s:6:"filter";a:1:{i:0;a:9:{i:0;a:5:{s:4:"type";s:5:"field";s:4:"name";s:13:"DEAL_OWNER.ID";s:7:"compare";s:7:"GREATER";s:5:"value";s:1:"0";s:10:"changeable";s:1:"0";}i:1;a:5:{s:4:"type";s:5:"field";s:4:"name";s:19:"DEAL_OWNER.STAGE_ID";s:7:"compare";s:5:"EQUAL";s:5:"value";s:3:"WON";s:10:"changeable";s:1:"1";}i:2;a:5:{s:4:"type";s:5:"field";s:4:"name";s:18:"DEAL_OWNER.TYPE_ID";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:3;a:5:{s:4:"type";s:5:"field";s:4:"name";s:47:"DEAL_OWNER.COMPANY_BY.COMPANY_TYPE_BY.STATUS_ID";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:4;a:5:{s:4:"type";s:5:"field";s:4:"name";s:21:"DEAL_OWNER.COMPANY_BY";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:5;a:5:{s:4:"type";s:5:"field";s:4:"name";s:39:"DEAL_OWNER.CONTACT_BY.TYPE_BY.STATUS_ID";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:6;a:5:{s:4:"type";s:5:"field";s:4:"name";s:21:"DEAL_OWNER.CONTACT_BY";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:7;a:5:{s:4:"type";s:5:"field";s:4:"name";s:22:"DEAL_OWNER.ASSIGNED_BY";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}s:5:"LOGIC";s:3:"AND";}}s:4:"sort";i:3;s:9:"sort_type";s:4:"DESC";s:5:"limit";N;s:12:"red_neg_vals";b:0;s:13:"grouping_mode";b:0;s:5:"chart";a:4:{s:7:"display";b:1;s:4:"type";s:3:"pie";s:8:"x_column";i:0;s:9:"y_columns";a:1:{i:0;i:3;}}}', ['allowed_classes' => false])
 				)
 			)
 		);
@@ -4449,5 +4456,3 @@ class CCrmProductReportHelper extends CCrmReportHelperBase
 		return '12.0.9';
 	}
 }
-
-?>

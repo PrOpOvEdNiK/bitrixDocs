@@ -223,6 +223,7 @@ class QueryBuilder
 	 */
 	private function fillWhere(&$where, &$hasAdditionalFilters, &$toUnset, &$filter)
 	{
+		$countUnset = count($toUnset);
 		$properties = null;
 		foreach ($filter as $filterKey => $filterValue)
 		{
@@ -444,6 +445,13 @@ class QueryBuilder
 				$hasAdditionalFilters = true;
 			}
 		}
+		if ($hasAdditionalFilters)
+		{
+			while (count($toUnset) > $countUnset)
+			{
+				array_pop($toUnset);
+			}
+		}
 	}
 
 	/**
@@ -462,7 +470,7 @@ class QueryBuilder
 		{
 			foreach ($value as $val)
 			{
-				if (strlen($val) > 0)
+				if ((string)$val <> '')
 				{
 					if ($lookup)
 					{
@@ -470,12 +478,12 @@ class QueryBuilder
 					}
 					else
 					{
-						$result[] = intval($val);
+						$result[] = (int)$val;
 					}
 				}
 			}
 		}
-		elseif (strlen($value) > 0)
+		elseif ((string)$value <> '')
 		{
 			if ($lookup)
 			{
@@ -483,7 +491,7 @@ class QueryBuilder
 			}
 			else
 			{
-				$result[] = intval($value);
+				$result[] = (int)$value;
 			}
 		}
 

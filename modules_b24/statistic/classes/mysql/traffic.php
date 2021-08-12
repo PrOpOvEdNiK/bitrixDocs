@@ -20,7 +20,7 @@ class CTraffic extends CAllTraffic
 				}
 				else
 				{
-					if( (strlen($val) <= 0) || ($val === "NOT_REF") )
+					if( ((string)$val == '') || ($val === "NOT_REF") )
 						continue;
 				}
 				$match_value_set = array_key_exists($key."_EXACT_MATCH", $arFilter);
@@ -136,7 +136,7 @@ class CTraffic extends CAllTraffic
 		return $rs;
 	}
 
-	public static function GetDailyList(&$by, &$order, &$arMaxMin, $arFilter=Array(), &$is_filtered, $get_maxmin="Y")
+	public static function GetDailyList($by = 's_date', $order = 'desc', &$arMaxMin = [], $arFilter = [], $is_filtered = null, $get_maxmin = "Y")
 	{
 		$err_mess = "File: ".__FILE__."<br>Line: ";
 		$DB = CDatabase::GetModuleConnection('statistic');
@@ -154,7 +154,7 @@ class CTraffic extends CAllTraffic
 				}
 				else
 				{
-					if( (strlen($val) <= 0) || ($val === "NOT_REF") )
+					if( ((string)$val == '') || ($val === "NOT_REF") )
 						continue;
 				}
 				$match_value_set = array_key_exists($key."_EXACT_MATCH", $arFilter);
@@ -249,14 +249,14 @@ class CTraffic extends CAllTraffic
 			$strSqlOrder = "ORDER BY D.FAVORITES";
 		else
 		{
-			$by = "s_date";
 			$strSqlOrder = "ORDER BY D.DATE_STAT";
 		}
-		if ($order!="asc")
+
+		if ($order != "asc")
 		{
 			$strSqlOrder .= " desc ";
-			$order="desc";
 		}
+
 		$table_name = ($site_filtered) ? "b_stat_day_site" : "b_stat_day";
 		$strSql = "
 			SELECT
@@ -286,7 +286,6 @@ class CTraffic extends CAllTraffic
 			";
 
 		$res = $DB->Query($strSql, false, $err_mess.__LINE__);
-		$is_filtered = (IsFiltered($strSqlSearch));
 
 		if ($get_maxmin=="Y")
 		{
@@ -326,7 +325,7 @@ class CTraffic extends CAllTraffic
 		$DB = CDatabase::GetModuleConnection('statistic');
 
 		$site_id = $arFilter["SITE_ID"];
-		if(strlen($site_id)>0 && $site_id!="NOT_REF")
+		if($site_id <> '' && $site_id!="NOT_REF")
 		{
 			$site_filter = true;
 			$strSqlSearch = " and SITE_ID = '".$DB->ForSql($site_id, 2)."' ";
@@ -339,11 +338,11 @@ class CTraffic extends CAllTraffic
 
 		$date1 = $arFilter["DATE1"];
 		$date2 = $arFilter["DATE2"];
-		if(strlen($date1)>0 && CheckDateTime($date1))
+		if($date1 <> '' && CheckDateTime($date1))
 		{
 			$is_filtered = true;
 			$date_from = MkDateTime(ConvertDateTime($date1,"D.M.Y"),"d.m.Y");
-			if(strlen($date2)>0 && CheckDateTime($date2))
+			if($date2 <> '' && CheckDateTime($date2))
 			{
 				$date_to = MkDateTime(ConvertDateTime($date2,"D.M.Y")." 23:59","d.m.Y H:i");
 				$strSqlPeriod = "sum(if(DATE_STAT<FROM_UNIXTIME('$date_from'),0, if(DATE_STAT>FROM_UNIXTIME('$date_to'),0,";
@@ -355,7 +354,7 @@ class CTraffic extends CAllTraffic
 				$strT="))";
 			}
 		}
-		elseif(strlen($date2)>0 && CheckDateTime($date2))
+		elseif($date2 <> '' && CheckDateTime($date2))
 		{
 			$is_filtered = true;
 			$date_to = MkDateTime(ConvertDateTime($date2,"D.M.Y")." 23:59","d.m.Y H:i");
@@ -435,13 +434,13 @@ class CTraffic extends CAllTraffic
 		return $result;
 	}
 
-	public static function GetRefererList(&$by, &$order, $arFilter=Array(), &$is_filtered, $limit=10)
+	public static function GetRefererList($by = 'ref_today', $order = 'desc', $arFilter = [], &$is_filtered = false, $limit = 10)
 	{
 		$err_mess = "File: ".__FILE__."<br>Line: ";
 		$DB = CDatabase::GetModuleConnection('statistic');
 
 		$site_id = $arFilter["SITE_ID"];
-		if (strlen($site_id)>0 && $site_id!="NOT_REF")
+		if ($site_id <> '' && $site_id!="NOT_REF")
 		{
 			$is_filtered = true;
 			$strSqlSearch = " and SITE_ID = '".$DB->ForSql($site_id, 2)."' ";
@@ -456,15 +455,15 @@ class CTraffic extends CAllTraffic
 		$date2 = $arFilter["DATE2"];
 		$date_from = MkDateTime(ConvertDateTime($date1,"D.M.Y"),"d.m.Y");
 		$date_to = MkDateTime(ConvertDateTime($date2,"D.M.Y")." 23:59","d.m.Y H:i");
-		if (strlen($date1)>0)
+		if ($date1 <> '')
 		{
 			$date_filtered = $is_filtered = true;
-			if (strlen($date2)>0)
+			if ($date2 <> '')
 				$strSqlPeriod = " sum(if(DATE_HIT<FROM_UNIXTIME('$date_from'),0, if(date_hit>FROM_UNIXTIME('$date_to'),0,1)))";
 			else
 				$strSqlPeriod = " sum(if(DATE_HIT<FROM_UNIXTIME('$date_from'),0,1))";
 		}
-		elseif (strlen($date2)>0)
+		elseif ($date2 <> '')
 		{
 			$date_filtered = $is_filtered = true;
 			$strSqlPeriod = " sum(if(DATE_HIT>FROM_UNIXTIME('$date_to'),0,1))";
@@ -489,15 +488,14 @@ class CTraffic extends CAllTraffic
 			$strSqlOrder = " ORDER BY PERIOD_REFERERS";
 		else
 		{
-			$by = "ref_today";
 			$strSqlOrder = "ORDER BY TODAY_REFERERS desc, YESTERDAY_REFERERS desc, B_YESTERDAY_REFERERS desc, TOTAL_REFERERS ";
 		}
 
 		if ($order!="asc")
 		{
 			$strSqlOrder .= " desc ";
-			$order="desc";
 		}
+
 		$strSql = "
 			SELECT
 				SITE_NAME,
@@ -524,14 +522,14 @@ class CTraffic extends CAllTraffic
 		return $DB->Query($strSql, false, $err_mess.__LINE__);
 	}
 
-	public static function GetPhraseList(&$s_by, &$s_order, $arFilter=Array(), &$is_filtered, $limit=10)
+	public static function GetPhraseList($s_by = 's_today', $s_order = 'desc', $arFilter = [], &$is_filtered = false, $limit = 10)
 	{
 		$err_mess = "File: ".__FILE__."<br>Line: ";
 		$DB = CDatabase::GetModuleConnection('statistic');
 		$strSqlSearch = "";
 
 		$site_id = $arFilter["SITE_ID"];
-		if (strlen($site_id)>0 && $site_id!="NOT_REF")
+		if ($site_id <> '' && $site_id!="NOT_REF")
 		{
 			$is_filtered = true;
 			$strSqlSearch = " and SITE_ID = '".$DB->ForSql($site_id, 2)."' ";
@@ -541,15 +539,15 @@ class CTraffic extends CAllTraffic
 		$date2 = $arFilter["DATE2"];
 		$date_from = MkDateTime(ConvertDateTime($date1,"D.M.Y"),"d.m.Y");
 		$date_to = MkDateTime(ConvertDateTime($date2,"D.M.Y")." 23:59","d.m.Y H:i");
-		if (strlen($date1)>0)
+		if ($date1 <> '')
 		{
 			$date_filtered = $is_filtered = true;
-			if (strlen($date2)>0)
+			if ($date2 <> '')
 				$strSqlPeriod = " sum(if(DATE_HIT<FROM_UNIXTIME('$date_from'),0, if(date_hit>FROM_UNIXTIME('$date_to'),0,1)))";
 			else
 				$strSqlPeriod = " sum(if(DATE_HIT<FROM_UNIXTIME('$date_from'),0,1))";
 		}
-		elseif (strlen($date2)>0)
+		elseif ($date2 <> '')
 		{
 			$date_filtered = $is_filtered = true;
 			$strSqlPeriod = " sum(if(DATE_HIT>FROM_UNIXTIME('$date_to'),0,1))";
@@ -574,14 +572,12 @@ class CTraffic extends CAllTraffic
 			$strSqlOrder = " ORDER BY PERIOD_PHRASES ";
 		else
 		{
-			$s_by = "s_today";
 			$strSqlOrder = " ORDER BY TODAY_PHRASES desc, YESTERDAY_PHRASES desc, B_YESTERDAY_PHRASES desc, TOTAL_PHRASES ";
 		}
 
 		if ($s_order != "asc")
 		{
 			$strSqlOrder .= " desc ";
-			$s_order="desc";
 		}
 
 		$strSql = "

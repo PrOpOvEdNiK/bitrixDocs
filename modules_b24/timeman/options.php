@@ -42,13 +42,13 @@ $aTabs = array(
 );
 $tabControl = new CAdminTabControl("tabControl", $aTabs);
 
-if($REQUEST_METHOD=="POST" && strlen($Update.$Apply.$RestoreDefaults)>0 && check_bitrix_sessid())
+if($REQUEST_METHOD=="POST" && $Update.$Apply.$RestoreDefaults <> '' && check_bitrix_sessid())
 {
-	if(strlen($RestoreDefaults)>0)
+	if($RestoreDefaults <> '')
 	{
 		COption::RemoveOption($module_id);
 
-		$z = CGroup::GetList($v1="id",$v2="asc", array("ACTIVE" => "Y", "ADMIN" => "N"));
+		$z = CGroup::GetList("id", "asc", array("ACTIVE" => "Y", "ADMIN" => "N"));
 		while($zr = $z->Fetch())
 			$APPLICATION->DelGroupRight($module_id, array($zr["ID"]));
 		CGroup::SetTasksForModule($module_id, array());
@@ -91,7 +91,7 @@ if($REQUEST_METHOD=="POST" && strlen($Update.$Apply.$RestoreDefaults)>0 && check
 		COption::SetOptionString($module_id, 'SUBORDINATE_ACCESS', serialize($SUBORDINATE_ACCESS));
 	}
 
-	if(strlen($Update)>0 && strlen($_REQUEST["back_url_settings"])>0)
+	if($Update <> '' && $_REQUEST["back_url_settings"] <> '')
 	{
 		LocalRedirect($_REQUEST["back_url_settings"]);
 	}
@@ -132,7 +132,7 @@ $workday_can_edit_current = COption::GetOptionString($module_id, 'workday_can_ed
 if (!COption::GetOptionString($module_id, "GROUP_DEFAULT_TASK", ""))
 	COption::SetOptionString($module_id, "GROUP_DEFAULT_RIGHT", "N");
 
-if (!$SUBORDINATE_ACCESS = unserialize(COption::GetOptionString($module_id, 'SUBORDINATE_ACCESS', '')))
+if (!$SUBORDINATE_ACCESS = unserialize(COption::GetOptionString($module_id, 'SUBORDINATE_ACCESS', ''), ['allowed_classes' => false]))
 {
 	$SUBORDINATE_ACCESS = array(
 		'READ' => array('EMPLOYEE' => 0, 'HEAD' => 1),
@@ -141,13 +141,12 @@ if (!$SUBORDINATE_ACCESS = unserialize(COption::GetOptionString($module_id, 'SUB
 }
 
 $arHints = array();
-reset($arAllModuleOptions);
 $tabControl->Begin();
 ?>
 <form method="post" name="tm_opt_form" action="<?echo $APPLICATION->GetCurPage()?>?mid=<?=urlencode($mid)?>&amp;lang=<?echo LANGUAGE_ID?>">
 <? echo bitrix_sessid_post();?>
 <?
-list($key, $arOptions) = each($arAllModuleOptions);
+$arOptions = current($arAllModuleOptions);
 $tabControl->BeginNextTab();
 foreach ($arOptions as $opt => $arOptDef):
 ?>
@@ -312,7 +311,7 @@ endif;
 	<input type="submit" name="Update" value="<?=GetMessage("MAIN_SAVE")?>" />
 	<input type="hidden" name="Update" value="Y" />
 	<input type="submit" name="Apply" value="<?=GetMessage("MAIN_APPLY")?>" />
-	<?if(strlen($_REQUEST["back_url_settings"])>0):?>
+	<?if($_REQUEST["back_url_settings"] <> ''):?>
 		<input type="button" name="Cancel" value="<?=GetMessage("MAIN_OPT_CANCEL")?>" title="<?=GetMessage("MAIN_OPT_CANCEL_TITLE")?>" onclick="window.location='<?echo htmlspecialcharsbx(CUtil::addslashes($_REQUEST["back_url_settings"]))?>'">
 		<input type="hidden" name="back_url_settings" value="<?=htmlspecialcharsbx($_REQUEST["back_url_settings"])?>">
 	<?endif?>

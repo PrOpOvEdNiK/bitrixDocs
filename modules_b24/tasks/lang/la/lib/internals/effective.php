@@ -1,6 +1,0 @@
-<?
-$MESS["TASKS_PRESET_CURRENT_DAY"] = "Día actual";
-$MESS["TASKS_PRESET_CURRENT_MONTH"] = "Mes actual";
-$MESS["TASKS_PRESET_CURRENT_QUARTER"] = "Trimestre actual";
-$MESS["TASKS_PRESET_CURRENT_YEAR"] = "Año actual";
-?>

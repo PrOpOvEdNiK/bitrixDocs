@@ -1,4 +1,0 @@
-<?
-$MESS["INTRANET_CONTROLLER_SEARCHENTITY_GETALL_ENTITY_EMPTY"] = "Entity type not specified.";
-$MESS["INTRANET_CONTROLLER_SEARCHENTITY_GETALL_ENTITY_INCORRECT"] = "Incorrect entity type specified.";
-?>

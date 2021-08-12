@@ -105,6 +105,11 @@ class LandingTable extends Entity\DataManager
 				'Bitrix\Landing\Internals\SiteTable',
 				array('=this.SITE_ID' => 'ref.ID')
 			),
+			'AREAS' => new Entity\ReferenceField(
+				'AREAS',
+				'Bitrix\Landing\Internals\TemplateRefTable',
+				array('=this.ID' => 'ref.LANDING_ID')
+			),
 			'SITEMAP' => new Entity\StringField('SITEMAP', array(
 				'title' => Loc::getMessage('LANDING_TABLE_FIELD_LANDING_SITEMAP'),
 				'default_value' => 'N'
@@ -120,7 +125,8 @@ class LandingTable extends Entity\DataManager
 				'title' => Loc::getMessage('LANDING_TABLE_FIELD_SEARCH_CONTENT')
 			)),
 			'VERSION' => new Entity\IntegerField('VERSION', array(
-				'title' => Loc::getMessage('LANDING_TABLE_FIELD_VERSION')
+				'title' => Loc::getMessage('LANDING_TABLE_FIELD_VERSION'),
+				'default_value' => 10
 			)),
 			'CREATED_BY_ID' => new Entity\IntegerField('CREATED_BY_ID', array(
 				'title' => Loc::getMessage('LANDING_TABLE_FIELD_CREATED_BY_ID'),
@@ -170,7 +176,10 @@ class LandingTable extends Entity\DataManager
 		}
 
 		// build filter
-		$buildFilter = Rights::getAccessFilter();
+		$allowedSites = Rights::getAllowedSites();
+		$buildFilter = Rights::getAccessFilter(
+			$allowedSites ? ['SITE_ID' => $allowedSites] : []
+		);
 		if (empty($buildFilter))
 		{
 			return $params;
@@ -209,14 +218,11 @@ class LandingTable extends Entity\DataManager
 		}
 
 		// create runtime fields
-		$runtimeParams = [
-			'=this.SITE.ID' => 'ref.ENTITY_ID',
-			'=ref.ENTITY_TYPE' => [
-				'?', Rights::ENTITY_TYPE_SITE
-			]
-			/*'=ref.TASK_ID' => [
-				'?', $tasks[$readCode]
-			]*/
+		$runtimeParams = [];
+		$runtimeParams[] = [
+			'LOGIC' => 'OR',
+			'=this.SITE_ID' => 'ref.ENTITY_ID',
+			'=ref.ENTITY_ID' => [0]
 		];
 		if ($extendedRights)
 		{
@@ -224,36 +230,15 @@ class LandingTable extends Entity\DataManager
 		}
 		else
 		{
+			$runtimeParams['=ref.ENTITY_TYPE'] = ['?', Rights::ENTITY_TYPE_SITE];
 			$runtimeParams['@ref.ROLE_ID'] = [implode(',', $expectedRoles)];
 		}
 		$params['runtime'][] = new Entity\ReferenceField(
 			'RIGHTS',
 			'Bitrix\Landing\Internals\RightsTable',
 			$runtimeParams,
-			[
-				'join_type' => 'LEFT'
-			]
+			['join_type' => 'INNER']
 		);
-		if (!$extendedRights)
-		{
-			$params['runtime'][] = new Entity\ReferenceField(
-				'RIGHTS_COMMON',
-				'Bitrix\Landing\Internals\RightsTable',
-				[
-					'=ref.ENTITY_ID' => [0],
-					'=ref.ENTITY_TYPE' => [
-						'?', Rights::ENTITY_TYPE_SITE
-					],
-					/*'=ref.TASK_ID' => [
-						$tasks[$readCode]
-					],*/
-					'@ref.ROLE_ID' => [implode(',', $expectedRoles)]
-				],
-				[
-					'join_type' => 'LEFT'
-				]
-			);
-		}
 
 		$params['group'][] = 'SITE_ID';
 
@@ -527,7 +512,7 @@ class LandingTable extends Entity\DataManager
 		// slash in CODE is not allowed
 		if (
 			array_key_exists('CODE', $fields) &&
-			strpos($fields['CODE'], '/') !== false
+			mb_strpos($fields['CODE'], '/') !== false
 		)
 		{
 			$result->setErrors(array(
@@ -774,6 +759,17 @@ class LandingTable extends Entity\DataManager
 					));
 					return $result;
 				}
+			}
+			// check lock status
+			if (\Bitrix\Landing\Lock::isLandingDeleteLocked($primary['ID']))
+			{
+				$result->setErrors(array(
+					new Entity\EntityError(
+						Loc::getMessage('LANDING_TABLE_ERROR_LD_IS_LOCK'),
+						'LANDING_IS_LOCK'
+					)
+				));
+				return $result;
 			}
 			// check if it is folder
 			$res = self::getList(array(

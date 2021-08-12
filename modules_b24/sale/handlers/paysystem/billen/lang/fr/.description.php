@@ -97,8 +97,8 @@ $MESS["SALE_HPS_BILL_EN_PHONE_SUPPLI"] = "Téléphone du revendeur";
 $MESS["SALE_HPS_BILL_EN_PHONE_SUPPLI_DESC"] = "Numéro de téléphone du revendeur";
 $MESS["SALE_HPS_BILL_EN_PRINT"] = "Timbre (taille recommandée : 150x150&nbsp;px)";
 $MESS["SALE_HPS_BILL_EN_PRINT_DESC"] = "Image du timbre du fournisseur";
-$MESS["SALE_HPS_BILL_EN_SUPPLI"] = "Revendeur";
+$MESS["SALE_HPS_BILL_EN_SUPPLI"] = "Vendeur";
 $MESS["SALE_HPS_BILL_EN_SUPPLI_DESC"] = "Nom du payeur ou du revendeur";
-$MESS["SALE_HPS_BILL_EN_TITLE"] = "Facture (anglais)";
+$MESS["SALE_HPS_BILL_EN_TITLE"] = "Facture (Anglais)";
 $MESS["SALE_HPS_BILL_EN_TOTAL_SHOW"] = "Afficher le résumé";
 ?>

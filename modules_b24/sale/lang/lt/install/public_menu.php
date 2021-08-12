@@ -1,7 +1,0 @@
-<?
-$MESS["SALE_INSTALL_MENU_ORDER"] = "Užsakymai";
-$MESS["SALE_INSTALL_MENU_BASKET"] = "Krepšelis";
-$MESS["SALE_INSTALL_MENU_REGULAR_PAYMENT"] = "Nuolatinis mokėjimas";
-$MESS["SALE_INSTALL_MENU_SALE_PROFILES"] = "Kliento iformacija";
-$MESS["SALE_INSTALL_MENU_SALE_ACCOUNT"] = "Sąskaita";
-?>

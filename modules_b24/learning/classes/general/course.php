@@ -10,7 +10,7 @@ class CCourse
 
 		foreach ($arOrder as $key => $value)
 		{
-			if (strtoupper($key) === 'ID')
+			if (mb_strtoupper($key) === 'ID')
 			{
 				$arOrder['COURSE_ID'] = $arOrder[$key];
 				unset ($arOrder[$key]);
@@ -21,14 +21,14 @@ class CCourse
 		foreach ($arFields as $key => $value)
 		{
 			// If key ends with 'ID'
-			if ((strlen($key) >= 2) && (strtoupper(substr($key, -2)) === 'ID'))
+			if ((mb_strlen($key) >= 2) && (mb_strtoupper(mb_substr($key, -2)) === 'ID'))
 			{
 				// And prefix before 'ID' doesn't contains letters
-				if ( ! preg_match ("/[a-zA-Z_]+/", substr($key, 0, -2)) )
+				if ( ! preg_match ("/[a-zA-Z_]+/", mb_substr($key, 0, -2)) )
 				{
 					$prefix = '';
-					if (strlen($key) > 2)
-						$prefix = substr($key, 0, -2);
+					if (mb_strlen($key) > 2)
+						$prefix = mb_substr($key, 0, -2);
 
 					$arFields[$prefix . 'COURSE_ID'] = $arFields[$key];
 					unset ($arFields[$key]);
@@ -72,17 +72,17 @@ class CCourse
 		global $DB;
 		$arMsg = array();
 
-		if ( (is_set($arFields, "NAME") || $ID === false) && strlen(trim($arFields["NAME"])) <= 0)
+		if ( (is_set($arFields, "NAME") || $ID === false) && trim($arFields["NAME"]) == '')
 		{
 			$arMsg[] = array("id"=>"NAME", "text"=> GetMessage("LEARNING_BAD_NAME"));
 		}
 
-		if (is_set($arFields, "ACTIVE_FROM") && strlen($arFields["ACTIVE_FROM"])>0 && (!$DB->IsDate($arFields["ACTIVE_FROM"], false, LANG, "FULL")))
+		if (is_set($arFields, "ACTIVE_FROM") && $arFields["ACTIVE_FROM"] <> '' && (!$DB->IsDate($arFields["ACTIVE_FROM"], false, LANG, "FULL")))
 		{
 			$arMsg[] = array("id"=>"ACTIVE_FROM", "text"=> GetMessage("LEARNING_BAD_ACTIVE_FROM"));
 		}
 
-		if (is_set($arFields, "ACTIVE_TO") && strlen($arFields["ACTIVE_TO"])>0 && (!$DB->IsDate($arFields["ACTIVE_TO"], false, LANG, "FULL")))
+		if (is_set($arFields, "ACTIVE_TO") && $arFields["ACTIVE_TO"] <> '' && (!$DB->IsDate($arFields["ACTIVE_TO"], false, LANG, "FULL")))
 		{
 			$arMsg[] = array("id"=>"ACTIVE_TO", "text"=> GetMessage("LEARNING_BAD_ACTIVE_TO"));
 		}
@@ -90,7 +90,7 @@ class CCourse
 		if (is_set($arFields, "PREVIEW_PICTURE") && is_array($arFields["PREVIEW_PICTURE"]))
 		{
 			$error = CFile::CheckImageFile($arFields["PREVIEW_PICTURE"]);
-			if (strlen($error)>0)
+			if ($error <> '')
 			{
 				$arMsg[] = array("id"=>"PREVIEW_PICTURE", "text"=> $error);
 			}
@@ -146,7 +146,7 @@ class CCourse
 		if (is_set($arFields, "PREVIEW_TEXT_TYPE") && $arFields["PREVIEW_TEXT_TYPE"] != "html")
 			$arFields["PREVIEW_TEXT_TYPE"]="text";
 
-		if (is_set($arFields, "PREVIEW_PICTURE") && strlen($arFields["PREVIEW_PICTURE"]["name"])<=0 && strlen($arFields["PREVIEW_PICTURE"]["del"])<=0)
+		if (is_set($arFields, "PREVIEW_PICTURE") && $arFields["PREVIEW_PICTURE"]["name"] == '' && $arFields["PREVIEW_PICTURE"]["del"] == '')
 			unset($arFields["PREVIEW_PICTURE"]);
 
 		if (is_set($arFields, "RATING") && !in_array($arFields["RATING"], Array("Y", "N")))
@@ -292,7 +292,7 @@ class CCourse
 	}
 
 
-	public function IsCertificatesExists($courseId)
+	public static function IsCertificatesExists($courseId)
 	{
 		// Check certificates (if exists => forbid removing course)
 		$certificate = CCertification::GetList(Array(), Array("COURSE_ID" => $courseId, 'CHECK_PERMISSIONS' => 'N'));
@@ -304,7 +304,7 @@ class CCourse
 
 
 	// 2012-04-17 Checked/modified for compatibility with new data model
-	function GetByID($ID)
+	public static function GetByID($ID)
 	{
 		return CCourse::GetList(Array(),Array("ID" => $ID));
 	}
@@ -320,7 +320,7 @@ class CCourse
 
 
 	// 2012-04-17 Checked/modified for compatibility with new data model
-	function GetSite($COURSE_ID)
+	public static function GetSite($COURSE_ID)
 	{
 		global $DB;
 		$strSql = "SELECT L.*, CS.* FROM b_learn_course_site CS, b_lang L WHERE L.LID=CS.SITE_ID AND CS.COURSE_ID=".intval($COURSE_ID);
@@ -329,7 +329,7 @@ class CCourse
 	}
 
 
-	function GetSiteId($COURSE_ID)
+	public static function GetSiteId($COURSE_ID)
 	{
 		global $DB;
 		$strSql = "SELECT SITE_ID FROM b_learn_course_site WHERE COURSE_ID=" . ((int) $COURSE_ID);
@@ -350,7 +350,7 @@ class CCourse
 	{
 		global $DB;
 
-		$in_type = strtoupper($in_type);
+		$in_type = mb_strtoupper($in_type);
 		switch ($in_type)
 		{
 			case 'L':
@@ -399,7 +399,7 @@ class CCourse
 
 
 	// 2012-04-18 Checked/modified for compatibility with new data model
-	function GetCourseContent(
+	public static function GetCourseContent(
 		$COURSE_ID, 
 		$arAddSelectFileds = array("DETAIL_TEXT", "DETAIL_TEXT_TYPE", "DETAIL_PICTURE"), 
 		$arSelectFields = array()
@@ -444,7 +444,7 @@ class CCourse
 	// Handlers:
 
 	// 2012-04-17 Checked/modified for compatibility with new data model
-	function OnGroupDelete($GROUP_ID)
+	public static function OnGroupDelete($GROUP_ID)
 	{
 		global $DB;
 
@@ -458,7 +458,7 @@ class CCourse
 
 
 	// 2012-04-17 Checked/modified for compatibility with new data model
-	function OnBeforeLangDelete($lang)
+	public static function OnBeforeLangDelete($lang)
 	{
 		global $APPLICATION;
 		$r = CCourse::GetList(array(), array("SITE_ID"=>$lang));
@@ -477,14 +477,14 @@ class CCourse
 
 
 	// 2012-04-17 Checked/modified for compatibility with new data model
-	function OnUserDelete($user_id)
+	public static function OnUserDelete($user_id)
 	{
 		return CStudent::Delete($user_id);
 	}
 
 
 	// 2012-04-17 Checked/modified for compatibility with new data model
-	function TimeToStr($seconds)
+	public static function TimeToStr($seconds)
 	{
 		$str = "";
 
@@ -520,13 +520,13 @@ class CCourse
 
 
 	// provided compatibility to new data model at 04.05.2012
-	function OnSearchReindex($nextStep = [], $callbackObject = null, $callbackMethod = "")
+	public static function OnSearchReindex($nextStep = [], $callbackObject = null, $callbackMethod = "")
 	{
 		return Bitrix\Learning\Integration\Search::handleReindex($nextStep, $callbackObject, $callbackMethod);
 	}
 
 
-	function _Upper($str)
+	public static function _Upper($str)
 	{
 		return $str;
 	}

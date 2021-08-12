@@ -21,6 +21,7 @@ class PhotoResizer
 	const RESIZE_UP_CROP = 20;
 	const RESIZE_DOWN = 30;
 	const RESIZE_DOWN_CROP = 40;
+
 	/**
 	 * Return picture URL by picture src
 	 *
@@ -28,9 +29,9 @@ class PhotoResizer
 	 * @param string $domain - old param. May be empty
 	 * @return string
 	 */
-	protected function buildPictureUrl($src, $domain = '')
+	protected static function buildPictureUrl($src, $domain = '')
 	{
-		if (strlen($domain) == 0)
+		if ($domain == '')
 		{
 //			get different variants of domain URL, because in diff site some variants not work
 			$server = Application::getInstance()->getContext()->getServer();
@@ -50,7 +51,7 @@ class PhotoResizer
 		
 		$protocol = \CMain::IsHTTPS() ? "https://" : "http://";
 		// relative path by '/'
-		if (substr($src, 0, 1) == "/")
+		if (mb_substr($src, 0, 1) == "/")
 		{
 			$strFile = $protocol . $domain . implode("/", array_map("rawurlencode", explode("/", $src)));
 		}
@@ -67,8 +68,7 @@ class PhotoResizer
 		
 		return $strFile;
 	}
-	
-	
+
 	public static function sortPhotoArray($photos, $type)
 	{
 		$sortedPhotos = array();
@@ -114,8 +114,7 @@ class PhotoResizer
 		
 		return $sortedPhotos;
 	}
-	
-	
+
 	/**
 	 * Check photo sizes by type of converter
 	 *
@@ -204,8 +203,7 @@ class PhotoResizer
 		
 		return $result;
 	}
-	
-	
+
 	/**
 	 * Check sizes and filesize of one photo.
 	 * Return only check passed photos
@@ -214,7 +212,7 @@ class PhotoResizer
 	 * @param $sizesLimits
 	 * @return mixed
 	 */
-	private function checkPhoto($photoId, $sizesLimits)
+	private static function checkPhoto($photoId, $sizesLimits)
 	{
 		$photoParams = \CFile::GetFileArray($photoId);
 //		check bad files
@@ -365,7 +363,7 @@ class PhotoResizer
 			$file = \CFile::GetFileArray($file);
 		}
 		
-		if (!is_array($file) || !array_key_exists("FILE_NAME", $file) || strlen($file["FILE_NAME"]) <= 0)
+		if (!is_array($file) || !array_key_exists("FILE_NAME", $file) || $file["FILE_NAME"] == '')
 			return false;
 		
 		if ($resizeType !== BX_RESIZE_IMAGE_EXACT && $resizeType !== BX_RESIZE_IMAGE_PROPORTIONAL_ALT)
@@ -463,7 +461,7 @@ class PhotoResizer
 				
 				if ($bNeedResize && self::ResizeImageFile($sourceImageFile, $cacheImageFileTmp, $arSize, $resizeType, array(), $jpgQuality, $arFilters))
 				{
-					$cacheImageFile = substr($cacheImageFileTmp, strlen($_SERVER["DOCUMENT_ROOT"]));
+					$cacheImageFile = mb_substr($cacheImageFileTmp, mb_strlen($_SERVER["DOCUMENT_ROOT"]));
 					
 					/****************************** QUOTA ******************************/
 					if (\COption::GetOptionInt("main", "disk_space") > 0)
@@ -571,10 +569,6 @@ class PhotoResizer
 			}
 		}
 		
-		if (\CFile::isEnabledTrackingResizeImage())
-		{
-			header("X-Bitrix-Resize-Image: {$arSize["width"]}_{$arSize["height"]}_{$resizeType}");
-		}
 //		imagemagick was be here. I delete them to simplification
 		
 		if ($io->Copy($sourceFile, $destinationFile))
@@ -732,8 +726,7 @@ class PhotoResizer
 		
 		return false;
 	}
-	
-	
+
 	/**
 	 * Overwrite system ScaleImage. Need for increase images
 	 *

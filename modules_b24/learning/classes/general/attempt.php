@@ -1,13 +1,13 @@
-<?
+<?php
+
 /**
  * @global $USER_FIELD_MANAGER CUserTypeManager
  */
 global $USER_FIELD_MANAGER;
 
-
 abstract class CAllTestAttempt
 {
-	function CheckFields(&$arFields, $ID = false, $bCheckRights = true)
+	public function CheckFields(&$arFields, $ID = false, $bCheckRights = true)
 	{
 		global $DB, $APPLICATION;
 
@@ -59,7 +59,7 @@ abstract class CAllTestAttempt
 			return false;
 		}
 
-		if (is_set($arFields, "DATE_END") && strlen($arFields["DATE_END"])>0 && (!$DB->IsDate($arFields["DATE_END"], false, LANG, "FULL")))
+		if (is_set($arFields, "DATE_END") && $arFields["DATE_END"] <> '' && (!$DB->IsDate($arFields["DATE_END"], false, LANG, "FULL")))
 		{
 			$APPLICATION->ThrowException(GetMessage("LEARNING_BAD_DATE_END"), "ERROR_DATE_END");
 			return false;
@@ -76,7 +76,7 @@ abstract class CAllTestAttempt
 	}
 
 
-	function Add($arFields)
+	public function Add($arFields)
 	{
 		global $DB, $USER_FIELD_MANAGER;
 
@@ -104,7 +104,7 @@ abstract class CAllTestAttempt
 	}
 
 
-	function Update($ID, $arFields, $arParams = array())
+	public function Update($ID, $arFields, $arParams = array())
 	{
 		global $DB, $USER_FIELD_MANAGER;
 
@@ -137,7 +137,7 @@ abstract class CAllTestAttempt
 	}
 
 
-	function Delete($ID)
+	public static function Delete($ID)
 	{
 		global $DB, $USER_FIELD_MANAGER;
 
@@ -160,7 +160,7 @@ abstract class CAllTestAttempt
 	}
 
 
-	function GetFilter($arFilter)
+	public static function GetFilter($arFilter)
 	{
 
 		if (!is_array($arFilter))
@@ -174,7 +174,7 @@ abstract class CAllTestAttempt
 			$key = $res["FIELD"];
 			$cOperationType = $res["OPERATION"];
 
-			$key = strtoupper($key);
+			$key = mb_strtoupper($key);
 
 			switch ($key)
 			{
@@ -223,7 +223,7 @@ abstract class CAllTestAttempt
 	}
 
 
-	function GetByID($ID)
+	public static function GetByID($ID)
 	{
 		if ((int) $ID > 0)
 			return CTestAttempt::GetList(array(), array("ID" => (int) $ID));
@@ -232,7 +232,7 @@ abstract class CAllTestAttempt
 	}
 
 
-	function GetCount($TEST_ID, $STUDENT_ID)
+	public static function GetCount($TEST_ID, $STUDENT_ID)
 	{
 		global $DB;
 
@@ -248,7 +248,7 @@ abstract class CAllTestAttempt
 	}
 
 
-	function IsTestCompleted($ATTEMPT_ID, $PERCENT)
+	public static function IsTestCompleted($ATTEMPT_ID, $PERCENT)
 	{
 		global $DB;
 
@@ -295,7 +295,7 @@ abstract class CAllTestAttempt
 	}
 
 
-	function OnAttemptChange($ATTEMPT_ID, $bCOMPLETED = false)
+	public static function OnAttemptChange($ATTEMPT_ID, $bCOMPLETED = false)
 	{
 		global $DB;
 
@@ -377,7 +377,7 @@ abstract class CAllTestAttempt
 	}
 
 
-	function AttemptFinished($ATTEMPT_ID)
+	public function AttemptFinished($ATTEMPT_ID)
 	{
 		global $DB;
 
@@ -415,7 +415,7 @@ abstract class CAllTestAttempt
 	}
 
 
-	function RecountQuestions($ATTEMPT_ID)
+	public static function RecountQuestions($ATTEMPT_ID)
 	{
 		global $DB;
 
@@ -440,7 +440,7 @@ abstract class CAllTestAttempt
 	}
 
 
-	function IsTestFailed($ATTEMPT_ID, $PERCENT)
+	public static function IsTestFailed($ATTEMPT_ID, $PERCENT)
 	{
 		global $DB;
 
@@ -536,7 +536,7 @@ abstract class CAllTestAttempt
 		$arSqlSelect = array();
 		foreach($arSelect as $field)
 		{
-			$field = strtoupper($field);
+			$field = mb_strtoupper($field);
 			if(array_key_exists($field, $arFields))
 				$arSqlSelect[$field] = $arFields[$field]." AS ".$field;
 		}
@@ -551,11 +551,11 @@ abstract class CAllTestAttempt
 		$strSqlSearch = "";
 		$arSqlSearchCnt = count($arSqlSearch);
 		for($i=0; $i<$arSqlSearchCnt; $i++)
-			if(strlen($arSqlSearch[$i])>0)
+			if($arSqlSearch[$i] <> '')
 				$strSqlSearch .= " AND ".$arSqlSearch[$i]." ";
 
 		$r = $obUserFieldsSql->GetFilter();
-		if(strlen($r)>0)
+		if($r <> '')
 			$strSqlSearch .= " AND (".$r.") ";
 
 		$bCheckPerm = 'ORPHANED VAR';
@@ -566,10 +566,11 @@ abstract class CAllTestAttempt
 		if (!is_array($arOrder))
 			$arOrder = Array();
 
+		$arSqlOrder = [];
 		foreach($arOrder as $by=>$order)
 		{
-			$by = strtolower($by);
-			$order = strtolower($order);
+			$by = mb_strtolower($by);
+			$order = mb_strtolower($order);
 			if ($order!="asc")
 				$order = "desc";
 

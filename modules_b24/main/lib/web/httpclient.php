@@ -21,6 +21,11 @@ class HttpClient
 	const HTTP_HEAD = "HEAD";
 	const HTTP_PATCH = "PATCH";
 	const HTTP_DELETE = "DELETE";
+	const HTTP_OPTIONS = "OPTIONS";
+
+	const DEFAULT_SOCKET_TIMEOUT = 30;
+	const DEFAULT_STREAM_TIMEOUT = 60;
+	const DEFAULT_STREAM_TIMEOUT_NO_WAIT = 1;
 
 	const BUF_READ_LEN = 16384;
 	const BUF_POST_LEN = 131072;
@@ -31,8 +36,8 @@ class HttpClient
 	protected $proxyPassword;
 
 	protected $resource;
-	protected $socketTimeout = 30;
-	protected $streamTimeout = 60;
+	protected $socketTimeout = self::DEFAULT_SOCKET_TIMEOUT;
+	protected $streamTimeout = self::DEFAULT_STREAM_TIMEOUT;
 	protected $error = array();
 	protected $peerSocketName;
 
@@ -70,9 +75,9 @@ class HttpClient
 	 * @param array $options Optional array with options:
 	 *		"redirect" bool Follow redirects (default true)
 	 *		"redirectMax" int Maximum number of redirects (default 5)
-	 *		"waitResponse" bool Wait for response or disconnect just after request (default true)
+	 *		"waitResponse" bool Read the body or disconnect just after reading headers (default true)
 	 *		"socketTimeout" int Connection timeout in seconds (default 30)
-	 *		"streamTimeout" int Stream reading timeout in seconds (default 60)
+	 *		"streamTimeout" int Stream reading timeout in seconds (default 60 for waitResponse == true and 1 for waitResponse == false)
 	 *		"version" string HTTP version (HttpClient::HTTP_1_0, HttpClient::HTTP_1_1) (default "1.0")
 	 *		"proxyHost" string Proxy host name/address
 	 *		"proxyPort" int Proxy port number
@@ -81,8 +86,10 @@ class HttpClient
 	 *		"compress" bool Accept gzip encoding (default false)
 	 *		"charset" string Charset for body in POST and PUT
 	 *		"disableSslVerification" bool Pass true to disable ssl check
-	 *      "bodyLengthMax" int Maximum length of the body.
-	 *      "privateIp" bool Enable or disable requests to private IPs (default true).
+	 *		"bodyLengthMax" int Maximum length of the body.
+	 *		"privateIp" bool Enable or disable requests to private IPs (default true).
+	 * 	"cookies" array of cookies for HTTP request.
+	 * 	"headers" array of headers for HTTP request.
 	 * 	All the options can be set separately with setters.
 	 */
 	public function __construct(array $options = null)
@@ -148,6 +155,14 @@ class HttpClient
 			if(isset($options["privateIp"]))
 			{
 				$this->setPrivateIp($options["privateIp"]);
+			}
+			if(isset($options["cookies"]))
+			{
+				$this->setCookies($options["cookies"]);
+			}
+			if(isset($options["headers"]))
+			{
+				$this->setHeaders($options["headers"]);
 			}
 		}
 	}
@@ -357,16 +372,16 @@ class HttpClient
 
 			$this->sendRequest($queryMethod, $parsedUrl, $entityBody);
 
-			if(!$this->waitResponse)
-			{
-				$this->disconnect();
-				return true;
-			}
-
 			if(!$this->readHeaders())
 			{
 				$this->disconnect();
 				return false;
+			}
+
+			if(!$this->waitResponse)
+			{
+				$this->disconnect();
+				return true;
 			}
 
 			if($this->redirect && ($location = $this->responseHeaders->get("Location")) !== null && $location <> '')
@@ -412,6 +427,21 @@ class HttpClient
 		if($replace == true || $this->requestHeaders->get($name) === null)
 		{
 			$this->requestHeaders->set($name, $value);
+		}
+		return $this;
+	}
+
+	/**
+	 * Sets an array of headers for HTTP request.
+	 *
+	 * @param array $headers Array of header_name => value pairs.
+	 * @return $this
+	 */
+	public function setHeaders(array $headers)
+	{
+		foreach ($headers as $name => $value)
+		{
+			$this->setHeader($name, $value);
 		}
 		return $this;
 	}
@@ -467,14 +497,19 @@ class HttpClient
 	}
 
 	/**
-	 * Sets response waiting option.
+	 * Sets response body waiting option.
 	 *
-	 * @param bool $value If true, wait for response. If false, return just after request (default true).
+	 * @param bool $value If true, wait for response body. If false, disconnect just after reading headers (default true).
 	 * @return $this
 	 */
 	public function waitResponse($value)
 	{
 		$this->waitResponse = (bool)$value;
+		if(!$this->waitResponse)
+		{
+			$this->setStreamTimeout(self::DEFAULT_STREAM_TIMEOUT_NO_WAIT);
+		}
+
 		return $this;
 	}
 
@@ -835,12 +870,12 @@ class HttpClient
 					$this->setHeader("Content-Type", $contentType);
 				}
 			}
-			if($entityBody <> '' || $method == self::HTTP_POST)
+			if($method == self::HTTP_POST || $method == self::HTTP_PUT)
 			{
 				//HTTP/1.0 requires Content-Length for POST
 				if($this->requestHeaders->get("Content-Length") === null)
 				{
-					$this->setHeader("Content-Length", BinaryString::getLength($entityBody));
+					$this->setHeader("Content-Length", strlen($entityBody));
 				}
 			}
 		}
@@ -906,9 +941,9 @@ class HttpClient
 				{
 					continue;
 				}
-				if(($pos = strpos($line, ";")) !== false)
+				if(($pos = mb_strpos($line, ";")) !== false)
 				{
-					$line = substr($line, 0, $pos);
+					$line = mb_substr($line, 0, $pos);
 				}
 
 				$length = hexdec($line);
@@ -934,7 +969,7 @@ class HttpClient
 			{
 				$buf = $this->receive();
 
-				$this->receivedBytesLength += BinaryString::getLength($buf);
+				$this->receivedBytesLength += strlen($buf);
 
 				if(!$this->checkErrors($buf))
 				{
@@ -953,13 +988,13 @@ class HttpClient
 
 	protected function receiveBytes($length)
 	{
-		while($length > 0)
+		while($length > 0 && !feof($this->resource))
 		{
 			$count = ($length > self::BUF_READ_LEN? self::BUF_READ_LEN : $length);
 
 			$buf = $this->receive($count);
 
-			$receivedBytesLength = BinaryString::getLength($buf);
+			$receivedBytesLength = strlen($buf);
 			$this->receivedBytesLength += $receivedBytesLength;
 
 			if(!$this->checkErrors($buf))
@@ -1005,7 +1040,7 @@ class HttpClient
 		if(is_resource($this->outputStream))
 		{
 			$compressed = stream_get_contents($this->outputStream, -1, 10);
-			$compressed = BinaryString::getSubstring($compressed, 0, -8);
+			$compressed = substr($compressed, 0, -8);
 			if($compressed <> '')
 			{
 				$uncompressed = gzinflate($compressed);
@@ -1017,7 +1052,7 @@ class HttpClient
 		}
 		else
 		{
-			$compressed = BinaryString::getSubstring($this->result, 10, -8);
+			$compressed = substr($this->result, 10, -8);
 			if($compressed <> '')
 			{
 				$this->result = gzinflate($compressed);
@@ -1036,10 +1071,10 @@ class HttpClient
 					$this->status = intval($find[1]);
 				}
 			}
-			elseif(strpos($header, ':') !== false)
+			elseif(mb_strpos($header, ':') !== false)
 			{
 				list($headerName, $headerValue) = explode(':', $header, 2);
-				if(strtolower($headerName) == 'set-cookie')
+				if(mb_strtolower($headerName) == 'set-cookie')
 				{
 					$this->responseCookies->addFromString($headerValue);
 				}

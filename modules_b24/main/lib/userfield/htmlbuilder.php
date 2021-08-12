@@ -57,16 +57,18 @@ class HtmlBuilder
 	public function buildTagAttributes(?array $attributes, bool $encode = true): ?string
 	{
 		$s = '';
-
-		foreach($attributes as $attribute => $value)
+		if($attributes)
 		{
-			if($encode)
+			foreach($attributes as $attribute => $value)
 			{
-				$s .= htmlspecialcharsbx($attribute) . '="' . htmlspecialcharsbx($value) . '" ';
-			}
-			else
-			{
-				$s .= $attribute . '="' . $value . '" ';
+				if($encode)
+				{
+					$s .= htmlspecialcharsbx($attribute) . '="' . htmlspecialcharsbx($value) . '" ';
+				}
+				else
+				{
+					$s .= $attribute . '="' . $value . '" ';
+				}
 			}
 		}
 

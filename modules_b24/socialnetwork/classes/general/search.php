@@ -36,12 +36,7 @@ class CSocNetSearch
 		PATH_TO_USER_FILES_ELEMENT
 		PATH_TO_USER_FILES
 	*/
-	function __construct($user_id, $group_id, $arParams)
-	{
-		$this->CSocNetSearch($user_id, $group_id, $arParams);
-	}
-
-	function CSocNetSearch($user_id, $group_id, $arParams)
+	public function __construct($user_id, $group_id, $arParams)
 	{
 		$this->_user_id = intval($user_id);
 		$this->_group_id = intval($group_id);
@@ -71,7 +66,7 @@ class CSocNetSearch
 
 	public static function SetFeaturePermissions($entity_type, $entity_id, $feature, $operation, $new_perm)
 	{
-		if(substr($operation, 0, 4) == "view")//This kind of extremely dangerous optimization
+		if(mb_substr($operation, 0, 4) == "view")//This kind of extremely dangerous optimization
 		{
 			if(CModule::IncludeModule('search'))
 			{
@@ -219,12 +214,12 @@ class CSocNetSearch
 		return $arResult;
 	}
 
-	function OnSearchReindex($NS = Array(), $oCallback = NULL, $callback_method = "")
+	public static function OnSearchReindex($NS = Array(), $oCallback = NULL, $callback_method = "")
 	{
 		global $DB;
 		$arResult = array();
 
-		if ($NS["MODULE"]=="socialnetwork" && strlen($NS["ID"]) > 0)
+		if ($NS["MODULE"]=="socialnetwork" && $NS["ID"] <> '')
 			$id = intval($NS["ID"]);
 		else
 			$id = 0;//very first id
@@ -308,7 +303,7 @@ class CSocNetSearch
 		return $arResult;
 	}
 
-	function OnSearchPrepareFilter($strSearchContentAlias, $field, $val)
+	public static function OnSearchPrepareFilter($strSearchContentAlias, $field, $val)
 	{
 		global $CACHE_MANAGER;
 
@@ -320,7 +315,7 @@ class CSocNetSearch
 		}
 	}
 
-	function OnSearchCheckPermissions($FIELD)
+	public static function OnSearchCheckPermissions($FIELD)
 	{
 		global $USER;
 
@@ -407,7 +402,7 @@ class CSocNetSearch
 			{
 				if (
 					$entity_type == SONET_ENTITY_GROUP
-					&& strpos($path_template, $arUrl["GROUPS_PATH"]) === 0
+					&& mb_strpos($path_template, $arUrl["GROUPS_PATH"]) === 0
 				)
 				{
 					$path_template = str_replace($arUrl["GROUPS_PATH"], "#GROUP_PATH#", $path_template);
@@ -415,7 +410,7 @@ class CSocNetSearch
 				}
 				elseif (
 					$entity_type == SONET_ENTITY_USER
-					&& strpos($path_template, $arUrl["USER_PATH"]) === 0
+					&& mb_strpos($path_template, $arUrl["USER_PATH"]) === 0
 				)
 				{
 					$path_template = str_replace($arUrl["USER_PATH"], "#USER_PATH#", $path_template);
@@ -496,25 +491,25 @@ class CSocNetSearch
 	function Url($url, $params, $ancor)
 	{
 		$url_params = array();
-		$p = strpos($url, "?");
+		$p = mb_strpos($url, "?");
 		if($p !== false)
 		{
-			$ar = explode("&", substr($url, $p + 1));
+			$ar = explode("&", mb_substr($url, $p + 1));
 			foreach($ar as $str)
 			{
 				list($name, $value) = explode("=", $str, 2);
 				$url_params[$name] = $name."=".$value;
 			}
-			$url = substr($url, 0, $p);
+			$url = mb_substr($url, 0, $p);
 		}
 
 		foreach($params as $name => $value)
 			$url_params[$name] = $name."=".$value;
 
 		if(count($url_params))
-			return $url."?".implode("&", $url_params).(strlen($ancor)? "#".$ancor: "");
+			return $url."?".implode("&", $url_params).($ancor <> ''? "#".$ancor : "");
 		else
-			return $url.(strlen($ancor)? "#".$ancor: "");
+			return $url.($ancor <> ''? "#".$ancor : "");
 	}
 
 	function BeforeIndex($arFields)
@@ -747,7 +742,7 @@ class CSocNetSearch
 		return $arFields;
 	}
 
-	function BeforeIndexLast($arFields)
+	public static function BeforeIndexLast($arFields)
 	{
 		if(
 			$arFields["MODULE_ID"] == "blog"
@@ -886,31 +881,39 @@ class CSocNetSearch
 
 		case intval($this->_params["PHOTO_GROUP_IBLOCK_ID"]):
 			$path_template = trim($this->_params["PATH_TO_GROUP_PHOTO_ELEMENT"]);
-			if(strlen($path_template))
+			if($path_template <> '')
+			{
 				$this->IndexIBlockElement($arFields, $this->_group_id, "G", "photo", "view", $path_template, array("PREVIEW_TEXT"));
+			}
 			break;
 
 		case intval($this->_params["PHOTO_USER_IBLOCK_ID"]):
 			$path_template = trim($this->_params["PATH_TO_USER_PHOTO_ELEMENT"]);
-			if(strlen($path_template))
+			if($path_template <> '')
+			{
 				$this->IndexIBlockElement($arFields, $this->_user_id, "U", "photo", "view", $path_template, array("PREVIEW_TEXT"));
+			}
 			break;
 
 		case intval($this->_params["CALENDAR_GROUP_IBLOCK_ID"]):
 			$path_template = trim($this->_params["PATH_TO_GROUP_CALENDAR_ELEMENT"]);
-			if(strlen($path_template))
+			if($path_template <> '')
+			{
 				$this->IndexIBlockElement($arFields, $this->_group_id, "G", "calendar", "view", $path_template, array("DETAIL_TEXT"));
+			}
 			break;
 
 		case intval($this->_params["FILES_GROUP_IBLOCK_ID"]):
 			$path_template = trim($this->_params["PATH_TO_GROUP_FILES_ELEMENT"]);
-			if(strlen($path_template))
+			if($path_template <> '')
 			{
-				$property = strtoupper(trim($this->_params["FILES_PROPERTY_CODE"]));
-				if(strlen($property) <= 0)
+				$property = mb_strtoupper(trim($this->_params["FILES_PROPERTY_CODE"]));
+				if($property == '')
+				{
 					$property = "FILE";
+				}
 
-				$rsFile = CIBlockElement::GetProperty($arFields["IBLOCK_ID"], $arFields["ID"], "sort", "asc", array("CODE"=>$property, "EMPTY"=>"N"));
+				$rsFile = CIBlockElement::GetProperty($arFields["IBLOCK_ID"], $arFields["ID"], "sort", "asc", array("CODE" => $property, "EMPTY" => "N"));
 				$arFile = $rsFile->Fetch();
 				if($arFile)
 				{
@@ -918,10 +921,14 @@ class CSocNetSearch
 					if(is_array($arFile))
 					{
 						$arFields["FILE_CONTENT"] = $arFile["CONTENT"];
-						if(strlen($arFields["TAGS"]))
+						if($arFields["TAGS"] <> '')
+						{
 							$arFields["TAGS"] .= ",".$arFile["PROPERTIES"][COption::GetOptionString("search", "page_tag_property")];
+						}
 						else
+						{
 							$arFields["TAGS"] = $arFile["PROPERTIES"][COption::GetOptionString("search", "page_tag_property")];
+						}
 					}
 				}
 				$this->IndexIBlockElement($arFields, $this->_group_id, "G", "files", "view", $path_template, array("FILE_CONTENT", "DETAIL_TEXT"));
@@ -930,13 +937,15 @@ class CSocNetSearch
 
 		case intval($this->_params["FILES_USER_IBLOCK_ID"]):
 			$path_template = trim($this->_params["PATH_TO_USER_FILES_ELEMENT"]);
-			if(strlen($path_template))
+			if($path_template <> '')
 			{
-				$property = strtoupper(trim($this->_params["FILES_PROPERTY_CODE"]));
-				if(strlen($property) <= 0)
+				$property = mb_strtoupper(trim($this->_params["FILES_PROPERTY_CODE"]));
+				if($property == '')
+				{
 					$property = "FILE";
+				}
 
-				$rsFile = CIBlockElement::GetProperty($arFields["IBLOCK_ID"], $arFields["ID"], "sort", "asc", array("CODE"=>$property, "EMPTY"=>"N"));
+				$rsFile = CIBlockElement::GetProperty($arFields["IBLOCK_ID"], $arFields["ID"], "sort", "asc", array("CODE" => $property, "EMPTY" => "N"));
 				$arFile = $rsFile->Fetch();
 				if($arFile)
 				{
@@ -944,10 +953,14 @@ class CSocNetSearch
 					if(is_array($arFile))
 					{
 						$arFields["FILE_CONTENT"] = $arFile["CONTENT"];
-						if(strlen($arFields["TAGS"]))
+						if($arFields["TAGS"] <> '')
+						{
 							$arFields["TAGS"] .= ",".$arFile["PROPERTIES"][COption::GetOptionString("search", "page_tag_property")];
+						}
 						else
+						{
 							$arFields["TAGS"] = $arFile["PROPERTIES"][COption::GetOptionString("search", "page_tag_property")];
+						}
 					}
 				}
 				$this->IndexIBlockElement($arFields, $this->_user_id, "U", "files", "view", $path_template, array("FILE_CONTENT", "DETAIL_TEXT"));
@@ -960,11 +973,11 @@ class CSocNetSearch
 		}
 	}
 
-	function IBlockElementDelete($zr)
+	public static function IBlockElementDelete($zr)
 	{
 		if(CModule::IncludeModule("search"))
 		{
-			CSearch::DeleteIndex("socialnetwork", IntVal($zr["ID"]));
+			CSearch::DeleteIndex("socialnetwork", intval($zr["ID"]));
 		}
 	}
 
@@ -1050,7 +1063,7 @@ class CSocNetSearch
 		{
 			case intval($this->_params["FILES_USER_IBLOCK_ID"]):
 				$path_template = trim($this->_params["PATH_TO_USER_FILES"]);
-				if(strlen($path_template))
+				if($path_template <> '')
 				{
 					$this->IndexIBlockSection($arFields, $this->_user_id, "U", "files", "view", $path_template);
 				}
@@ -1058,7 +1071,7 @@ class CSocNetSearch
 
 			case intval($this->_params["FILES_GROUP_IBLOCK_ID"]):
 				$path_template = trim($this->_params["PATH_TO_GROUP_FILES"]);
-				if(strlen($path_template))
+				if($path_template <> '')
 				{
 					$this->IndexIBlockSection($arFields, $this->_group_id, "G", "files", "view", $path_template);
 				}
@@ -1070,12 +1083,12 @@ class CSocNetSearch
 	{
 		if(CModule::IncludeModule("search"))
 		{
-			CSearch::DeleteIndex("socialnetwork", 'S'.IntVal($zr["ID"]));
+			CSearch::DeleteIndex("socialnetwork", 'S'.intval($zr["ID"]));
 		}
 	}
 
 
-	function OnBeforeIndexUpdate($ID, $arFields)
+	public static function OnBeforeIndexUpdate($ID, $arFields)
 	{
 		if (
 			isset($arFields["PARAMS"])
@@ -1086,7 +1099,7 @@ class CSocNetSearch
 		}
 	}
 
-	function OnAfterIndexAdd($ID, $arFields)
+	public static function OnAfterIndexAdd($ID, $arFields)
 	{
 		if (
 			isset($arFields["PARAMS"])

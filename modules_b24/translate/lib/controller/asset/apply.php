@@ -157,7 +157,7 @@ class Apply
 						$encodingOut = Main\Localization\Translation::getCurrentEncoding();
 					}
 				}
-				$this->convertEncoding = (strtolower($encodingIn) !== strtolower($encodingOut));
+				$this->convertEncoding = (mb_strtolower($encodingIn) !== mb_strtolower($encodingOut));
 				$this->encodingIn = $encodingIn;
 				$this->encodingOut = $encodingOut;
 			}
@@ -254,12 +254,7 @@ class Apply
 						$content = $source->getContents();
 						$content = str_replace(array("\r\n", "\r"), array("\n", "\n"), $content);
 
-						$errorMessage = '';
-						$content = Main\Text\Encoding::convertEncoding($content, $this->encodingIn, $this->encodingOut, $errorMessage);
-						if (!$content && !empty($errorMessage))
-						{
-							$this->addError(new Main\Error($errorMessage));
-						}
+						$content = Main\Text\Encoding::convertEncoding($content, $this->encodingIn, $this->encodingOut);
 						$target->putContents($content);
 					}
 					else
@@ -363,7 +358,7 @@ class Apply
 					continue;
 				}
 
-				if ((substr($name, -4) === '.php') && is_file($fullPath))
+				if ((mb_substr($name, -4) === '.php') && is_file($fullPath))
 				{
 					$files[$langFolderRelPath.'/'.$name] = $fullPath;
 				}

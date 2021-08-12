@@ -707,7 +707,7 @@ class Event
 
 			if ($success)
 			{
-				$files = unserialize($event['FILES'], [false]);
+				$files = unserialize($event['FILES'], ['allowed_classes' => false]);
 				if (is_array($files))
 				{
 					for ($i = count($files) - 1; $i >= 0; $i--)
@@ -743,13 +743,24 @@ class Event
 		$eventRes = Crm\EventTable::getByPrimary($eventId);
 		if ($event = $eventRes->fetch())
 		{
-			$files = unserialize($event['FILES'], [false]);
+			$files = unserialize($event['FILES'], ['allowed_classes' => false]);
 			if (is_array($files))
 			{
 				for ($i = count($files) - 1; $i >= 0; $i--)
 				{
 					\CFile::Delete((int)$files[$i]);
+
 					//todo: How to count fail here
+
+					unset($files[$i]);
+				}
+				if (count($files) > 0)
+				{
+					Crm\EventTable::update($eventId, array('FILES' => serialize($files)));
+				}
+				else
+				{
+					Crm\EventTable::update($eventId, array('FILES' => null));
 				}
 			}
 		}

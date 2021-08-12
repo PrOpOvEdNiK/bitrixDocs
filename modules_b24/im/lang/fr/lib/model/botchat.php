@@ -1,5 +1,0 @@
-<?
-$MESS["BOT_CHAT_ENTITY_BOT_ID_FIELD"] = "ID du robot";
-$MESS["BOT_CHAT_ENTITY_CHAT_ID_FIELD"] = "ID du chat";
-$MESS["BOT_CHAT_ENTITY_ID_FIELD"] = "ID unique";
-?>

@@ -3,6 +3,7 @@ IncludeModuleLangFile(__FILE__);
 
 use Bitrix\Crm;
 use Bitrix\Crm\CustomerType;
+use Bitrix\Crm\Integration\PullManager;
 use Bitrix\Crm\UtmTable;
 use Bitrix\Crm\Tracking;
 use Bitrix\Crm\Category\DealCategory;
@@ -19,9 +20,14 @@ use Bitrix\Crm\Statistics\DealActivityStatisticEntry;
 use Bitrix\Crm\Counter\EntityCounterType;
 use Bitrix\Crm\Counter\EntityCounterManager;
 use Bitrix\Crm\Integration\Channel\DealChannelBinding;
+use Bitrix\Crm\UserField\Visibility\VisibilityManager;
+use Bitrix\Crm\Entity\Traits\UserFieldPreparer;
+use Bitrix\Main\Text\HtmlFilter;
 
 class CAllCrmDeal
 {
+	use UserFieldPreparer;
+
 	static public $sUFEntityID = 'CRM_DEAL';
 	const USER_FIELD_ENTITY_ID = 'CRM_DEAL';
 	const SUSPENDED_USER_FIELD_ENTITY_ID = 'CRM_DEAL_SPD';
@@ -47,6 +53,13 @@ class CAllCrmDeal
 	public static function GetFieldCaption($fieldName)
 	{
 		$result = GetMessage("CRM_DEAL_FIELD_{$fieldName}");
+
+		if (!(is_string($result) && $result !== '')
+			&& Crm\Tracking\UI\Details::isTrackingField($fieldName))
+		{
+			$result = Crm\Tracking\UI\Details::getFieldCaption($fieldName);
+		}
+
 		return is_string($result) ? $result : '';
 	}
 	// Get Fields Metadata
@@ -65,7 +78,8 @@ class CAllCrmDeal
 				),
 				'TYPE_ID' => array(
 					'TYPE' => 'crm_status',
-					'CRM_STATUS_TYPE' => 'DEAL_TYPE'
+					'CRM_STATUS_TYPE' => 'DEAL_TYPE',
+					'ATTRIBUTES' => [CCrmFieldInfoAttr::HasDefaultValue],
 				),
 				'CATEGORY_ID' => array(
 					'TYPE' => 'crm_category',
@@ -102,6 +116,9 @@ class CAllCrmDeal
 				'OPPORTUNITY' => array(
 					'TYPE' => 'double'
 				),
+				'IS_MANUAL_OPPORTUNITY' => array(
+					'TYPE' => 'char'
+				),
 				'TAX_VALUE' => array(
 					'TYPE' => 'double'
 				),
@@ -137,10 +154,12 @@ class CAllCrmDeal
 					'ATTRIBUTES' => array(CCrmFieldInfoAttr::ReadOnly)
 				),
 				'BEGINDATE' => array(
-					'TYPE' => 'date'
+					'TYPE' => 'date',
+					'ATTRIBUTES' => [CCrmFieldInfoAttr::HasDefaultValue],
 				),
 				'CLOSEDATE' => array(
-					'TYPE' => 'date'
+					'TYPE' => 'date',
+					'ATTRIBUTES' => [CCrmFieldInfoAttr::HasDefaultValue],
 				),
 				'OPENED' => array(
 					'TYPE' => 'char'
@@ -152,7 +171,7 @@ class CAllCrmDeal
 					'TYPE' => 'string'
 				),
 				'ASSIGNED_BY_ID' => array(
-					'TYPE' => 'user'
+					'TYPE' => 'user',
 				),
 				'CREATED_BY_ID' => array(
 					'TYPE' => 'user',
@@ -215,10 +234,12 @@ class CAllCrmDeal
 			'TITLE' => array('FIELD' => 'L.TITLE', 'TYPE' => 'string'),
 			'TYPE_ID' => array('FIELD' => 'L.TYPE_ID', 'TYPE' => 'string'),
 			'STAGE_ID' => array('FIELD' => 'L.STAGE_ID', 'TYPE' => 'string'),
+			'ORDER_STAGE' => array('FIELD' => 'L.ORDER_STAGE', 'TYPE' => 'string'),
 			'PROBABILITY' => array('FIELD' => 'L.PROBABILITY', 'TYPE' => 'int'),
 			'CURRENCY_ID' => array('FIELD' => 'L.CURRENCY_ID', 'TYPE' => 'string'),
 			'EXCH_RATE' => array('FIELD' => 'L.EXCH_RATE', 'TYPE' => 'double'),
 			'OPPORTUNITY' => array('FIELD' => 'L.OPPORTUNITY', 'TYPE' => 'double'),
+			'IS_MANUAL_OPPORTUNITY' => array('FIELD' => 'L.IS_MANUAL_OPPORTUNITY', 'TYPE' => 'char'),
 			'TAX_VALUE' => array('FIELD' => 'L.TAX_VALUE', 'TYPE' => 'double'),
 			'ACCOUNT_CURRENCY_ID' => array('FIELD' => 'L.ACCOUNT_CURRENCY_ID', 'TYPE' => 'string'),
 			'OPPORTUNITY_ACCOUNT' => array('FIELD' => 'L.OPPORTUNITY_ACCOUNT', 'TYPE' => 'double'),
@@ -342,6 +363,8 @@ class CAllCrmDeal
 				$result['C_ACTIVITY_RESP_NAME'] = array('FIELD' => 'ACUSR.NAME', 'TYPE' => 'string', 'FROM' => $commonActivityJoin);
 				$result['C_ACTIVITY_RESP_LAST_NAME'] = array('FIELD' => 'ACUSR.LAST_NAME', 'TYPE' => 'string', 'FROM' => $commonActivityJoin);
 				$result['C_ACTIVITY_RESP_SECOND_NAME'] = array('FIELD' => 'ACUSR.SECOND_NAME', 'TYPE' => 'string', 'FROM' => $commonActivityJoin);
+				$result['C_ACTIVITY_TYPE_ID'] = array('FIELD' => 'AC.TYPE_ID', 'TYPE' => 'int', 'FROM' => $commonActivityJoin);
+				$result['C_ACTIVITY_PROVIDER_ID'] = array('FIELD' => 'AC.PROVIDER_ID', 'TYPE' => 'string', 'FROM' => $commonActivityJoin);
 
 				$userID = CCrmPerms::GetCurrentUserID();
 				if($userID > 0)
@@ -351,6 +374,8 @@ class CAllCrmDeal
 					$result['ACTIVITY_ID'] = array('FIELD' => 'UA.ACTIVITY_ID', 'TYPE' => 'int', 'FROM' => $activityJoin);
 					$result['ACTIVITY_TIME'] = array('FIELD' => 'UA.ACTIVITY_TIME', 'TYPE' => 'datetime', 'FROM' => $activityJoin);
 					$result['ACTIVITY_SUBJECT'] = array('FIELD' => 'A.SUBJECT', 'TYPE' => 'string', 'FROM' => $activityJoin);
+					$result['ACTIVITY_TYPE_ID'] = array('FIELD' => 'A.TYPE_ID', 'TYPE' => 'int', 'FROM' => $activityJoin);
+					$result['ACTIVITY_PROVIDER_ID'] = array('FIELD' => 'A.PROVIDER_ID', 'TYPE' => 'string', 'FROM' => $activityJoin);
 				}
 			}
 
@@ -502,7 +527,7 @@ class CAllCrmDeal
 			}
 			else
 			{
-				list($ufId, $ufType, $ufName) = \Bitrix\Crm\Integration\Calendar::parseUserfieldKey($arFilter['CALENDAR_FIELD']);
+				[$ufId, $ufType, $ufName] = \Bitrix\Crm\Integration\Calendar::parseUserfieldKey($arFilter['CALENDAR_FIELD']);
 
 				if (intval($ufId) > 0 && $ufType == 'resourcebooking' || is_null($ufType))
 				{
@@ -537,8 +562,8 @@ class CAllCrmDeal
 						$sqlData['FROM'][] = $ufSelectSql->GetJoin($alias.'.ID');
 					}
 
-					$sqlData['WHERE'][] = CDatabase::ForSql($ufName)." <= ".$DB->CharToDateFunction($arFilter['CALENDAR_DATE_TO'], 'SHORT');
-					$sqlData['WHERE'][] = CDatabase::ForSql($ufName)." >= ".$DB->CharToDateFunction($arFilter['CALENDAR_DATE_FROM'], 'SHORT');
+					$sqlData['WHERE'][] = $DB->ForSql($ufName)." <= ".$DB->CharToDateFunction($arFilter['CALENDAR_DATE_TO'], 'SHORT');
+					$sqlData['WHERE'][] = $DB->ForSql($ufName)." >= ".$DB->CharToDateFunction($arFilter['CALENDAR_DATE_FROM'], 'SHORT');
 				}
 			}
 		}
@@ -598,10 +623,15 @@ class CAllCrmDeal
 		return self::$sUFEntityID;
 	}
 
-	public static function GetUserFields($langID = false)
+	/**
+	 * @param bool|string $langId
+	 * @param int $valueId
+	 * @return array|mixed
+	 */
+	public static function GetUserFields($langId = false, int $valueId = 0)
 	{
 		global $USER_FIELD_MANAGER;
-		return $USER_FIELD_MANAGER->GetUserFields(self::$sUFEntityID, 0, $langID);
+		return $USER_FIELD_MANAGER->GetUserFields(self::$sUFEntityID, $valueId, $langId);
 	}
 
 	// GetList with navigation support
@@ -750,6 +780,7 @@ class CAllCrmDeal
 			'PRODUCT_ID' => 'L.PRODUCT_ID',
 			'PROBABILITY' => 'L.PROBABILITY',
 			'OPPORTUNITY' => 'L.OPPORTUNITY',
+			'IS_MANUAL_OPPORTUNITY' => 'L.IS_MANUAL_OPPORTUNITY',
 			'TAX_VALUE' => 'L.TAX_VALUE',
 			'CURRENCY_ID' => 'L.CURRENCY_ID',
 			'IS_RECURRING' => 'L.IS_RECURRING',
@@ -773,6 +804,7 @@ class CAllCrmDeal
 			'EXCH_RATE' => 'L.EXCH_RATE',
 			'ORIGINATOR_ID' => 'L.ORIGINATOR_ID', //EXTERNAL SYSTEM THAT OWNS THIS ITEM
 			'ORIGIN_ID' => 'L.ORIGIN_ID', //ITEM ID IN EXTERNAL SYSTEM
+			'ORDER_STAGE' => 'L.ORDER_STAGE',
 			'ASSIGNED_BY_LOGIN' => 'U.LOGIN',
 			'ASSIGNED_BY_NAME' => 'U.NAME',
 			'ASSIGNED_BY_LAST_NAME' => 'U.LAST_NAME',
@@ -851,7 +883,7 @@ class CAllCrmDeal
 
 		foreach($arSelect as $field)
 		{
-			$field = strtoupper($field);
+			$field = mb_strtoupper($field);
 			if (array_key_exists($field, $arFields))
 				$arSqlSelect[$field] = $arFields[$field].($field != '*' ? ' AS '.$field : '');
 		}
@@ -886,7 +918,7 @@ class CAllCrmDeal
 				$CDBResult->InitFromArray(array());
 				return $CDBResult;
 			}
-			if(strlen($sSqlPerm) > 0)
+			if($sSqlPerm <> '')
 			{
 				$sSqlPerm = ' AND '.$sSqlPerm;
 			}
@@ -964,6 +996,12 @@ class CAllCrmDeal
 				'TABLE_ALIAS' => 'L',
 				'FIELD_NAME' => 'L.OPPORTUNITY',
 				'FIELD_TYPE' => 'int',
+				'JOIN' => false
+			),
+			'IS_MANUAL_OPPORTUNITY' => array(
+				'TABLE_ALIAS' => 'L',
+				'FIELD_NAME' => 'L.IS_MANUAL_OPPORTUNITY',
+				'FIELD_TYPE' => 'string',
 				'JOIN' => false
 			),
 			'TAX_VALUE' => array(
@@ -1119,12 +1157,12 @@ class CAllCrmDeal
 
 		$sSqlSearch = '';
 		foreach($arSqlSearch as $r)
-			if (strlen($r) > 0)
+			if ($r <> '')
 				$sSqlSearch .= "\n\t\t\t\tAND  ($r) ";
 		$CCrmUserType = new CCrmUserType($GLOBALS['USER_FIELD_MANAGER'], self::$sUFEntityID);
 		$CCrmUserType->ListPrepareFilter($arFilter);
 		$r = $obUserFieldsSql->GetFilter();
-		if (strlen($r) > 0)
+		if ($r <> '')
 			$sSqlSearch .= "\n\t\t\t\tAND ($r) ";
 
 		if (!empty($sQueryWhereFields))
@@ -1144,8 +1182,8 @@ class CAllCrmDeal
 			$arOrder = Array('DATE_CREATE' => 'DESC');
 		foreach($arOrder as $by => $order)
 		{
-			$by = strtoupper($by);
-			$order = strtolower($order);
+			$by = mb_strtoupper($by);
+			$order = mb_strtolower($order);
 			if ($order != 'asc')
 				$order = 'desc';
 
@@ -1230,48 +1268,19 @@ class CAllCrmDeal
 
 	public static function GetTopIDs($top, $sortType = 'ASC', $userPermissions = null)
 	{
-		$top = (int) $top;
+		$top = (int)$top;
 		if ($top <= 0)
-		{
-			return array();
-		}
-
-		$sortType = strtoupper($sortType) !== 'DESC' ? 'ASC' : 'DESC';
-
-		$permissionSql = '';
-		if (!CCrmPerms::IsAdmin())
-		{
-			if (!$userPermissions)
-			{
-				$userPermissions = CCrmPerms::GetCurrentUserPermissions();
-			}
-
-			$permissionSql = self::BuildPermSql('L', 'READ', ['PERMS' => $userPermissions]);
-		}
-
-		if ($permissionSql === false)
 		{
 			return [];
 		}
 
-		$query = new Bitrix\Main\Entity\Query(Crm\DealTable::getEntity());
-		$query->addSelect('ID');
-		$query->addOrder('ID', $sortType);
-		$query->setLimit($top);
+		$sortType = mb_strtoupper($sortType) !== 'DESC' ? 'ASC' : 'DESC';
 
-		if ($permissionSql !== '')
-		{
-			$permissionSql = substr($permissionSql,7);
-			$query->where('ID', 'in', new Bitrix\Main\DB\SqlExpression($permissionSql));
-		}
-
-		$rs = $query->exec();
-		$results = [];
-		while ($field = $rs->fetch())
-		{
-			$results[] = (int) $field['ID'];
-		}
-		return $results;
+		return \Bitrix\Crm\Entity\Deal::getInstance()->getTopIDs([
+			'order' => ['ID' => $sortType],
+			'limit' => $top,
+			'userPermissions' => $userPermissions
+		]);
 	}
 
 	public static function GetTotalCount()
@@ -1429,6 +1438,9 @@ class CAllCrmDeal
 			$arFields['TITLE'] = self::GetDefaultTitle();
 		}
 
+		$fields = self::GetUserFields();
+		$this->fillEmptyFieldValues($arFields, $fields);
+
 		if (!$this->CheckFields($arFields, false, $options))
 		{
 			$result = false;
@@ -1451,7 +1463,7 @@ class CAllCrmDeal
 			//endregion
 
 			//region StageID, SemanticID and IsNew
-			if (!isset($arFields['STAGE_ID']))
+			if (!isset($arFields['STAGE_ID']) || (string)$arFields['STAGE_ID'] === '')
 			{
 				$arFields['STAGE_ID'] = self::GetStartStageID(
 					$categoryID,
@@ -1534,32 +1546,7 @@ class CAllCrmDeal
 				$arFields['EXCH_RATE'] = CCrmCurrency::GetExchangeRate($arFields['CURRENCY_ID']);
 			}
 
-			// Calculation of Account Data
-			$accData = CCrmAccountingHelper::PrepareAccountingData(
-				array(
-					'CURRENCY_ID' => $arFields['CURRENCY_ID'],
-					'SUM' => isset($arFields['OPPORTUNITY']) ? $arFields['OPPORTUNITY'] : null,
-					'EXCH_RATE' => $arFields['EXCH_RATE']
-				)
-			);
-			if(is_array($accData))
-			{
-				$arFields['ACCOUNT_CURRENCY_ID'] = $accData['ACCOUNT_CURRENCY_ID'];
-				$arFields['OPPORTUNITY_ACCOUNT'] = $accData['ACCOUNT_SUM'];
-			}
-
-			// Calculation of Tax Account Data
-			$accData = CCrmAccountingHelper::PrepareAccountingData(
-				array(
-					'CURRENCY_ID' => $arFields['CURRENCY_ID'],
-					'SUM' => isset($arFields['TAX_VALUE']) ? $arFields['TAX_VALUE'] : null,
-					'EXCH_RATE' => $arFields['EXCH_RATE']
-				)
-			);
-			if(is_array($accData))
-			{
-				$arFields['TAX_VALUE_ACCOUNT'] = $accData['ACCOUNT_SUM'];
-			}
+			$arFields = array_merge($arFields, \CCrmAccountingHelper::calculateAccountingData($arFields, [], true));
 
 			//Scavenging
 			if(isset($arFields['BEGINDATE']) && (!is_string($arFields['BEGINDATE']) || trim($arFields['BEGINDATE']) === ''))
@@ -1687,7 +1674,7 @@ class CAllCrmDeal
 			{
 				$arFields['TITLE'] = self::GetDefaultTitle($ID);
 				$sUpdate = $DB->PrepareUpdate('b_crm_deal', array('TITLE' => $arFields['TITLE']));
-				if(strlen($sUpdate) > 0)
+				if($sUpdate <> '')
 				{
 					$DB->Query("UPDATE b_crm_deal SET {$sUpdate} WHERE ID = {$ID}", false, 'FILE: '.__FILE__.'<br /> LINE: '.__LINE__);
 				};
@@ -1819,7 +1806,9 @@ class CAllCrmDeal
 			}
 
 			//region Search content index
-			Bitrix\Crm\Search\SearchContentBuilderFactory::create(CCrmOwnerType::Deal)->build($ID);
+			Bitrix\Crm\Search\SearchContentBuilderFactory::create(
+				CCrmOwnerType::Deal
+			)->build($ID, ['checkExist' => true]);
 			//endregion
 
 			if(isset($options['REGISTER_SONET_EVENT']) && $options['REGISTER_SONET_EVENT'] === true)
@@ -1893,7 +1882,7 @@ class CAllCrmDeal
 				)
 				{
 					$url = CCrmOwnerType::GetEntityShowPath(CCrmOwnerType::Deal, $ID);
-					$serverName = (CMain::IsHTTPS() ? "https" : "http")."://".((defined("SITE_SERVER_NAME") && strlen(SITE_SERVER_NAME) > 0) ? SITE_SERVER_NAME : COption::GetOptionString("main", "server_name", ""));
+					$serverName = (CMain::IsHTTPS() ? "https" : "http")."://".((defined("SITE_SERVER_NAME") && SITE_SERVER_NAME <> '') ? SITE_SERVER_NAME : COption::GetOptionString("main", "server_name", ""));
 
 					$arMessageFields = array(
 						"MESSAGE_TYPE" => IM_MESSAGE_SYSTEM,
@@ -1929,6 +1918,23 @@ class CAllCrmDeal
 			}
 
 			\Bitrix\Crm\Kanban\SupervisorTable::sendItem($ID, CCrmOwnerType::DealName, 'kanban_add');
+
+
+			if ($ID>0)
+			{
+				$item = Crm\Kanban\Entity::getInstance(self::$TYPE_NAME)
+					->createPullItem($arFields);
+
+				PullManager::getInstance()->sendItemAddedEvent(
+					$item,
+					[
+						'TYPE' => self::$TYPE_NAME,
+						'CATEGORY_ID' => \CCrmDeal::GetCategoryID($ID),
+						'SKIP_CURRENT_USER' => ($userID !== 0),
+					]
+				);
+			}
+
 		}
 
 		return $result;
@@ -1956,7 +1962,7 @@ class CAllCrmDeal
 		{
 			$arFields['OPPORTUNITY'] = str_replace(array(',', ' '), array('.', ''), $arFields['OPPORTUNITY']);
 			//HACK: MSSQL returns '.00' for zero value
-			if(strpos($arFields['OPPORTUNITY'], '.') === 0)
+			if(mb_strpos($arFields['OPPORTUNITY'], '.') === 0)
 			{
 				$arFields['OPPORTUNITY'] = '0'.$arFields['OPPORTUNITY'];
 			}
@@ -2061,15 +2067,13 @@ class CAllCrmDeal
 					}
 				}
 
-				$requiredFields = Crm\Attribute\FieldAttributeManager::isEnabled()
-					? Crm\Attribute\FieldAttributeManager::getRequiredFields(
-						CCrmOwnerType::Deal,
-						$ID,
-						$fieldsToCheck,
-						Crm\Attribute\FieldOrigin::UNDEFINED,
-						isset($options['FIELD_CHECK_OPTIONS']) && is_array($options['FIELD_CHECK_OPTIONS']) ? $options['FIELD_CHECK_OPTIONS'] : array()
-					)
-					: array();
+				$requiredFields = Crm\Attribute\FieldAttributeManager::getRequiredFields(
+					CCrmOwnerType::Deal,
+					$ID,
+					$fieldsToCheck,
+					Crm\Attribute\FieldOrigin::UNDEFINED,
+					is_array($options['FIELD_CHECK_OPTIONS']) ? $options['FIELD_CHECK_OPTIONS'] : array()
+				);
 
 				$requiredSystemFields = isset($requiredFields[Crm\Attribute\FieldOrigin::SYSTEM])
 					? $requiredFields[Crm\Attribute\FieldOrigin::SYSTEM] : array();
@@ -2091,8 +2095,7 @@ class CAllCrmDeal
 				}
 			}
 
-			$requiredUserFields = is_array($requiredFields) && isset($requiredFields[Crm\Attribute\FieldOrigin::CUSTOM])
-				? $requiredFields[Crm\Attribute\FieldOrigin::CUSTOM] : array();
+			$requiredUserFields = $this->getRequiredUserFields($requiredFields);
 
 			if (!$USER_FIELD_MANAGER->CheckFields(
 					self::$sUFEntityID,
@@ -2111,6 +2114,29 @@ class CAllCrmDeal
 		}
 
 		return ($this->LAST_ERROR === '');
+	}
+
+	/**
+	 * @param $requiredFields
+	 * @return array
+	 */
+	private function getRequiredUserFields($requiredFields): array
+	{
+		$requiredUserFields = (
+			is_array($requiredFields) && isset($requiredFields[Crm\Attribute\FieldOrigin::CUSTOM])
+			? $requiredFields[Crm\Attribute\FieldOrigin::CUSTOM] : []
+		);
+		return $this->excludeRequiredButNotAvailableFields($requiredUserFields);
+	}
+
+	/**
+	 * @param array $fields
+	 * @return array
+	 */
+	private function excludeRequiredButNotAvailableFields(array $fields): array
+	{
+		$notAccessibleFields = VisibilityManager::getNotAccessibleFields(CCrmOwnerType::Deal);
+		return array_diff($fields, $notAccessibleFields);
 	}
 
 	public function GetCheckExceptions()
@@ -2674,28 +2700,7 @@ class CAllCrmDeal
 				}
 			}
 
-			// Calculation of Account Data
-			$accData = CCrmAccountingHelper::PrepareAccountingData(
-				array(
-					'CURRENCY_ID' => isset($arFields['CURRENCY_ID']) ? $arFields['CURRENCY_ID'] : (isset($arRow['CURRENCY_ID']) ? $arRow['CURRENCY_ID'] : null),
-					'SUM' => isset($arFields['OPPORTUNITY']) ? $arFields['OPPORTUNITY'] : (isset($arRow['OPPORTUNITY']) ? $arRow['OPPORTUNITY'] : null),
-					'EXCH_RATE' => isset($arFields['EXCH_RATE']) ? $arFields['EXCH_RATE'] : (isset($arRow['EXCH_RATE']) ? $arRow['EXCH_RATE'] : null)
-				)
-			);
-			if(is_array($accData))
-			{
-				$arFields['ACCOUNT_CURRENCY_ID'] = $accData['ACCOUNT_CURRENCY_ID'];
-				$arFields['OPPORTUNITY_ACCOUNT'] = $accData['ACCOUNT_SUM'];
-			}
-			$accData = CCrmAccountingHelper::PrepareAccountingData(
-				array(
-					'CURRENCY_ID' => isset($arFields['CURRENCY_ID']) ? $arFields['CURRENCY_ID'] : (isset($arRow['CURRENCY_ID']) ? $arRow['CURRENCY_ID'] : null),
-					'SUM' => isset($arFields['TAX_VALUE']) ? $arFields['TAX_VALUE'] : (isset($arRow['TAX_VALUE']) ? $arRow['TAX_VALUE'] : null),
-					'EXCH_RATE' => isset($arFields['EXCH_RATE']) ? $arFields['EXCH_RATE'] : (isset($arRow['EXCH_RATE']) ? $arRow['EXCH_RATE'] : null)
-				)
-			);
-			if(is_array($accData))
-				$arFields['TAX_VALUE_ACCOUNT'] = $accData['ACCOUNT_SUM'];
+			$arFields = array_merge($arFields, \CCrmAccountingHelper::calculateAccountingData($arFields, $arRow, true));
 
 			$currentDate = ConvertTimeStamp(time() + \CTimeZone::GetOffset(), 'SHORT', SITE_ID);
 			$enableCloseDateSync = DealSettings::getCurrent()->isCloseDateSyncEnabled();
@@ -2745,7 +2750,7 @@ class CAllCrmDeal
 
 			unset($arFields['ID']);
 			$sUpdate = $DB->PrepareUpdate('b_crm_deal', $arFields);
-			if (strlen($sUpdate) > 0)
+			if ($sUpdate <> '')
 			{
 				$DB->Query("UPDATE b_crm_deal SET {$sUpdate} WHERE ID = {$ID}", false, 'FILE: '.__FILE__.'<br /> LINE: '.__LINE__);
 				$bResult = true;
@@ -2932,7 +2937,8 @@ class CAllCrmDeal
 			}
 
 			//region Search content index
-			Bitrix\Crm\Search\SearchContentBuilderFactory::create(CCrmOwnerType::Deal)->build($ID);
+			Bitrix\Crm\Search\SearchContentBuilderFactory::create(CCrmOwnerType::Deal)
+				->build($ID, ['checkExist' => true]);
 			//endregion
 
 			Bitrix\Crm\Timeline\DealController::getInstance()->onModify(
@@ -3065,7 +3071,7 @@ class CAllCrmDeal
 					{
 						$title = CCrmOwnerType::GetCaption(CCrmOwnerType::Deal, $ID, false);
 						$url = CCrmOwnerType::GetEntityShowPath(CCrmOwnerType::Deal, $ID);
-						$serverName = (CMain::IsHTTPS() ? "https" : "http")."://".((defined("SITE_SERVER_NAME") && strlen(SITE_SERVER_NAME) > 0) ? SITE_SERVER_NAME : COption::GetOptionString("main", "server_name", ""));
+						$serverName = (CMain::IsHTTPS() ? "https" : "http")."://".((defined("SITE_SERVER_NAME") && SITE_SERVER_NAME <> '') ? SITE_SERVER_NAME : COption::GetOptionString("main", "server_name", ""));
 
 						if (
 							$sonetEvent['TYPE'] == CCrmLiveFeedEvent::Responsible
@@ -3134,12 +3140,12 @@ class CAllCrmDeal
 									"LOG_ID" => $logEventID,
 									"NOTIFY_EVENT" => "deal_update",
 									"NOTIFY_TAG" => "CRM|DEAL_PROGRESS|".$ID,
-									"NOTIFY_MESSAGE" => GetMessage("CRM_DEAL_PROGRESS_IM_NOTIFY", Array(
+									"NOTIFY_MESSAGE" => GetMessage("CRM_DEAL_PROGRESS_IM_NOTIFY_2", Array(
 										"#title#" => "<a href=\"".$url."\" class=\"bx-notifier-item-action\">".htmlspecialcharsbx($title)."</a>",
 										"#start_status_title#" => htmlspecialcharsbx($infos[$sonetEventFields['PARAMS']['START_STATUS_ID']]['NAME']),
 										"#final_status_title#" => htmlspecialcharsbx($infos[$sonetEventFields['PARAMS']['FINAL_STATUS_ID']]['NAME'])
 									)),
-									"NOTIFY_MESSAGE_OUT" => GetMessage("CRM_DEAL_PROGRESS_IM_NOTIFY", Array(
+									"NOTIFY_MESSAGE_OUT" => GetMessage("CRM_DEAL_PROGRESS_IM_NOTIFY_2", Array(
 										"#title#" => htmlspecialcharsbx($title),
 										"#start_status_title#" => htmlspecialcharsbx($infos[$sonetEventFields['PARAMS']['START_STATUS_ID']]['NAME']),
 										"#final_status_title#" => htmlspecialcharsbx($infos[$sonetEventFields['PARAMS']['FINAL_STATUS_ID']]['NAME'])
@@ -3180,7 +3186,24 @@ class CAllCrmDeal
 					]);
 				}
 			}
+
+
+			if ($bResult && !$syncStageSemantics)
+			{
+				$item = Crm\Kanban\Entity::getInstance(self::$TYPE_NAME)
+					->createPullItem(array_merge($arRow, $arFields));
+
+				PullManager::getInstance()->sendItemUpdatedEvent(
+					$item,
+					[
+						'TYPE' => self::$TYPE_NAME,
+						'CATEGORY_ID' => \CCrmDeal::GetCategoryID($ID),
+						'SKIP_CURRENT_USER' => ($userID !== 0),
+					]
+				);
+			}
 		}
+
 		return $bResult;
 	}
 
@@ -3275,6 +3298,10 @@ class CAllCrmDeal
 			self::SynchronizeCustomerData($ID, $arFields, array('ENABLE_SOURCE' => false));
 
 			CCrmSearch::DeleteSearch('DEAL', $ID);
+
+			Bitrix\Crm\Search\SearchContentBuilderFactory::create(
+				CCrmOwnerType::Deal
+			)->removeShortIndex($ID);
 
 			Bitrix\Crm\Kanban\SortTable::clearEntity($ID, \CCrmOwnerType::DealName);
 
@@ -3394,6 +3421,18 @@ class CAllCrmDeal
 			{
 				ExecuteModuleEventEx($arEvent, array($ID));
 			}
+
+			$item = Crm\Kanban\Entity::getInstance(self::$TYPE_NAME)
+				->createPullItem($arFields);
+
+			PullManager::getInstance()->sendItemDeletedEvent(
+				$item,
+				[
+					'TYPE' => self::$TYPE_NAME,
+					'CATEGORY_ID' => $categoryID,
+					'SKIP_CURRENT_USER' => ($iUserId !== 0),
+				]
+			);
 		}
 		return true;
 	}
@@ -3530,7 +3569,7 @@ class CAllCrmDeal
 		{
 			$arUser = Array();
 			$dbUsers = CUser::GetList(
-				($sort_by = 'last_name'), ($sort_dir = 'asc'),
+				'last_name', 'asc',
 				array('ID' => implode('|', array(intval($arFieldsOrig['ASSIGNED_BY_ID']), intval($arFieldsModif['ASSIGNED_BY_ID'])))),
 				array('FIELDS' => array('ID', 'NAME', 'SECOND_NAME', 'LAST_NAME', 'LOGIN', 'TITLE', 'EMAIL'))
 			);
@@ -3602,6 +3641,18 @@ class CAllCrmDeal
 				'EVENT_NAME' => GetMessage('CRM_FIELD_COMPARE_OPPORTUNITY'),
 				'EVENT_TEXT_1' => floatval($arFieldsOrig['OPPORTUNITY']).(($val = CrmCompareFieldsList($arCurrency, $arFieldsOrig['CURRENCY_ID'], '')) != '' ? ' ('.$val.')' : ''),
 				'EVENT_TEXT_2' => floatval($arFieldsModif['OPPORTUNITY']).(($val = CrmCompareFieldsList($arCurrency, $arFieldsModif['CURRENCY_ID'], '')) != '' ? ' ('.$val.')' : '')
+			);
+		}
+
+		if (isset($arFieldsOrig['IS_MANUAL_OPPORTUNITY'])
+			&& isset($arFieldsModif['IS_MANUAL_OPPORTUNITY'])
+			&& $arFieldsOrig['IS_MANUAL_OPPORTUNITY'] != $arFieldsModif['IS_MANUAL_OPPORTUNITY'])
+		{
+			$arMsg[] = Array(
+				'ENTITY_FIELD' => 'IS_MANUAL_OPPORTUNITY',
+				'EVENT_NAME' => GetMessage('CRM_FIELD_COMPARE_IS_MANUAL_OPPORTUNITY'),
+				'EVENT_TEXT_1' => GetMessage('CRM_FIELD_COMPARE_IS_MANUAL_OPPORTUNITY_'.($arFieldsOrig['IS_MANUAL_OPPORTUNITY'] == 'Y' ? 'Y' : 'N')),
+				'EVENT_TEXT_2' => GetMessage('CRM_FIELD_COMPARE_IS_MANUAL_OPPORTUNITY_'.($arFieldsModif['IS_MANUAL_OPPORTUNITY'] == 'Y' ? 'Y' : 'N')),
 			);
 		}
 
@@ -3727,6 +3778,55 @@ class CAllCrmDeal
 		return $arMsg;
 	}
 
+	public static function addProductRows(
+		int $ID,
+		array $newRows,
+		array $options = [],
+		$checkPerms = true,
+		$regEvent = true,
+		$syncOwner = true
+	)
+	{
+		$rows = self::LoadProductRows($ID);
+		if (!is_array($rows))
+		{
+			return false;
+		}
+
+		$sort = self::getMaxProductDealSort($rows);
+		foreach ($newRows as $newRow)
+		{
+			$sort += 10;
+
+			$newRow['SORT'] = $sort;
+
+			$rows[] = $newRow;
+		}
+
+		return \CCrmDeal::SaveProductRows($ID, $rows, $checkPerms, $regEvent, $syncOwner);
+	}
+
+	/**
+	 * @param array $products
+	 * @return int
+	 */
+	private static function getMaxProductDealSort(array $products): int
+	{
+		$sort = 0;
+
+		foreach ($products as $product)
+		{
+			if ($product['SORT'] <= $sort)
+			{
+				continue;
+			}
+
+			$sort = $product['SORT'];
+		}
+
+		return $sort;
+	}
+
 	public static function LoadProductRows($ID)
 	{
 		return CCrmProductRow::LoadRows('D', $ID);
@@ -3792,13 +3892,46 @@ class CAllCrmDeal
 		if (is_array($arTotalInfo))
 		{
 			$arFields = array(
-				'OPPORTUNITY' => isset($arTotalInfo['OPPORTUNITY']) ? $arTotalInfo['OPPORTUNITY'] : 0.0,
 				'TAX_VALUE' => isset($arTotalInfo['TAX_VALUE']) ? $arTotalInfo['TAX_VALUE'] : 0.0
 			);
 
 			$entity = new CCrmDeal($checkPerms);
+			if (!$entity::isManualOpportunity($ID))
+			{
+				$arFields['OPPORTUNITY'] = isset($arTotalInfo['OPPORTUNITY']) ? $arTotalInfo['OPPORTUNITY'] : 0.0;
+
+				$arFields['OPPORTUNITY'] += static::calculateDeliveryTotal($ID);
+			}
 			$entity->Update($ID, $arFields);
 		}
+	}
+
+	/**
+	 * Collects sum of shipments from orders related to deal $id
+	 * @param int $id Deal ID
+	 * @return int|float
+	 */
+	public static function calculateDeliveryTotal($id)
+	{
+		$total = 0;
+
+		$dbRes = Crm\Order\DealBinding::getList([
+			'select' => ['ORDER_ID'],
+			'filter' => [
+				'=DEAL_ID' => $id
+			]
+		]);
+
+		foreach ($dbRes as $binding)
+		{
+			$order = Crm\Order\Order::load($binding['ORDER_ID']);
+			if ($order)
+			{
+				$total += $order->getShipmentCollection()->getPriceDelivery();
+			}
+		}
+
+		return $total;
 	}
 
 	public static function GetCategoryID($ID)
@@ -4196,7 +4329,7 @@ class CAllCrmDeal
 			}
 			elseif (preg_match('/(.*)_from$/i'.BX_UTF_PCRE_MODIFIER, $k, $arMatch))
 			{
-				if(strlen($v) > 0)
+				if($v <> '')
 				{
 					$arFilter['>='.$arMatch[1]] = $v;
 				}
@@ -4204,7 +4337,7 @@ class CAllCrmDeal
 			}
 			elseif (preg_match('/(.*)_to$/i'.BX_UTF_PCRE_MODIFIER, $k, $arMatch))
 			{
-				if(strlen($v) > 0)
+				if($v <> '')
 				{
 					if (($arMatch[1] == 'DATE_CREATE' || $arMatch[1] == 'DATE_MODIFY') && !preg_match('/\d{1,2}:\d{1,2}(:\d{1,2})?$/'.BX_UTF_PCRE_MODIFIER, $v))
 					{
@@ -4224,7 +4357,7 @@ class CAllCrmDeal
 				}
 				unset($arFilter[$k]);
 			}
-			elseif ($k != 'ID' && $k != 'LOGIC' && $k != '__INNER_FILTER' && strpos($k, 'UF_') !== 0 && preg_match('/^[^\=\%\?\>\<]{1}/', $k) === 1)
+			elseif ($k != 'ID' && $k != 'LOGIC' && $k != '__INNER_FILTER' && mb_strpos($k, 'UF_') !== 0 && preg_match('/^[^\=\%\?\>\<]{1}/', $k) === 1)
 			{
 				$arFilter['%'.$k] = $v;
 				unset($arFilter[$k]);
@@ -4508,41 +4641,62 @@ class CAllCrmDeal
 
 		$successStageID = DealCategory::prepareStageID($newCategoryID, 'WON');
 		$failureStageID = DealCategory::prepareStageID($newCategoryID, 'LOSE');
-		$processStageID = '';
-		//Looking for first process stage ID
-		foreach(array_keys(self::GetStages($newCategoryID)) as $statusID)
+		$processStageID = $options['PREFERRED_STAGE_ID'] ?? '';
+		$categoryStages = self::GetStages($newCategoryID);
+		if (!$processStageID || !array_key_exists($processStageID, $categoryStages))
 		{
-			if($successStageID !== $statusID)
+			//Looking for first process stage ID
+			foreach (array_keys($categoryStages) as $statusID)
 			{
-				$processStageID = $statusID;
-				break;
+				if ($successStageID !== $statusID)
+				{
+					$processStageID = $statusID;
+					break;
+				}
+			}
+
+			if($processStageID === '')
+			{
+				$processStageID = DealCategory::prepareStageID($newCategoryID, 'NEW');
 			}
 		}
 
-		if($processStageID === '')
-		{
-			$processStageID = DealCategory::prepareStageID($newCategoryID, 'NEW');
-		}
-
 		$semanticID = self::GetSemanticID($stageID, $categoryID);
-		if($semanticID === Bitrix\Crm\PhaseSemantics::SUCCESS)
+		$newStageID = $processStageID;
+		if (!isset($options['PREFERRED_STAGE_ID']))
 		{
-			$newStageID = $successStageID;
+			if ($semanticID === Bitrix\Crm\PhaseSemantics::SUCCESS)
+			{
+				$newStageID = $successStageID;
+			}
+			elseif ($semanticID === Bitrix\Crm\PhaseSemantics::FAILURE)
+			{
+				$newStageID = $failureStageID;
+			}
 		}
-		elseif($semanticID === Bitrix\Crm\PhaseSemantics::FAILURE)
-		{
-			$newStageID = $failureStageID;
-		}
-		else//if($semanticID === Bitrix\Crm\PhaseSemantics::PROCESS)
-		{
-			$newStageID = $processStageID;
-		}
+		$newStageSemanticID = self::GetSemanticID($newStageID, $newCategoryID);
 
 		$connection = \Bitrix\Main\Application::getConnection();
+		$sqlHelper = $connection->getSqlHelper();
+
+		$escapedCategoryId = (int)$newCategoryID;
+		$escapedStageId = $sqlHelper->forSql($newStageID);
+		$escapedNewStageSemanticId = $sqlHelper->forSql($newStageSemanticID);
 		$now = $connection->getSqlHelper()->getCurrentDateTimeFunction();
-		$connection->query(
-			"UPDATE b_crm_deal SET CATEGORY_ID = {$newCategoryID}, STAGE_ID = '{$newStageID}', DATE_MODIFY = {$now} WHERE ID = {$ID}"
-		);
+
+		$sql = "UPDATE b_crm_deal SET "
+			. " CATEGORY_ID = {$escapedCategoryId},"
+			. " STAGE_ID = '{$escapedStageId}',"
+			. (
+				($semanticID != $newStageSemanticID)
+					? " STAGE_SEMANTIC_ID='{$escapedNewStageSemanticId}', "
+					: ''
+			)
+			. " DATE_MODIFY = {$now} "
+			. " WHERE ID = {$ID}"
+		;
+
+		$connection->query($sql);
 
 		//region Update Permissions
 		CCrmPerms::DeleteEntityAttr(DealCategory::convertToPermissionEntityType($categoryID), $ID);
@@ -4642,6 +4796,35 @@ class CAllCrmDeal
 		$entity->Update($ID,$fields);
 	}
 
+	public static function RemoveObserverIDs($ID, array $userIDs)
+	{
+		if(empty($userIDs))
+		{
+			return;
+		}
+
+		$observerIDs = array_diff(
+			Crm\Observer\ObserverManager::getEntityObserverIDs(CCrmOwnerType::Deal, $ID),
+			$userIDs
+		);
+
+		$fields = array('OBSERVER_IDS' => $observerIDs);
+		$entity = new CCrmDeal(false);
+		$entity->Update($ID, $fields);
+	}
+
+	public static function ReplaceObserverIDs($ID, array $userIDs)
+	{
+		if(empty($userIDs))
+		{
+			return;
+		}
+
+		$fields = array('OBSERVER_IDS' => $userIDs);
+		$entity = new CCrmDeal(false);
+		$entity->Update($ID, $fields);
+	}
+
 	public static function PullChange($type, $arParams)
 	{
 		if(!CModule::IncludeModule('pull'))
@@ -4656,7 +4839,7 @@ class CAllCrmDeal
 		}
 		else
 		{
-			$type = strtolower($type);
+			$type = mb_strtolower($type);
 		}
 
 		CPullWatch::AddToStack(
@@ -5011,6 +5194,10 @@ class CAllCrmDeal
 		global $DB;
 		$DB->Query("UPDATE b_crm_deal SET LEAD_ID = NULL WHERE LEAD_ID = {$leadID}", false, 'FILE: '.__FILE__.'<br /> LINE: '.__LINE__);
 	}
+	/**
+	 * @deprecated
+	 * @param array $fields
+	 */
 	public static function ProcessStatusModification(array $fields)
 	{
 		$entityID = isset($fields['ENTITY_ID']) ? $fields['ENTITY_ID'] : '';
@@ -5031,6 +5218,11 @@ class CAllCrmDeal
 			);
 		}
 	}
+
+	/**
+	 * @deprecated
+	 * @param array $fields
+	 */
 	public static function ProcessStatusDeletion(array $fields)
 	{
 		$entityID = isset($fields['ENTITY_ID']) ? $fields['ENTITY_ID'] : '';
@@ -5072,6 +5264,29 @@ class CAllCrmDeal
 		);
 
 		return (bool) $queryObject->fetch();
+	}
+
+	public static function isManualOpportunity($ID)
+	{
+		$ID = intval($ID);
+		if($ID <= 0)
+		{
+			return false;
+		}
+
+		$dbRes = self::GetListEx(
+			array(),
+			array('ID' => $ID, 'CHECK_PERMISSIONS' => 'N'),
+			false,
+			false,
+			array('ID', 'IS_MANUAL_OPPORTUNITY')
+		);
+
+		if ($arRes = $dbRes->Fetch())
+		{
+			return ($arRes['IS_MANUAL_OPPORTUNITY'] == 'Y');
+		}
+		return false;
 	}
 }
 

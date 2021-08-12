@@ -1,6 +1,0 @@
-<?
-$MESS["CRM_ORDER_MATCHER_ADDRESS"] = "Address";
-$MESS["CRM_ORDER_MATCHER_BANK_DETAIL"] = "Banking details";
-$MESS["CRM_ORDER_MATCHER_LOCATION"] = "Location";
-$MESS["CRM_ORDER_MATCHER_FULL_NAME"] = "Full name";
-?>

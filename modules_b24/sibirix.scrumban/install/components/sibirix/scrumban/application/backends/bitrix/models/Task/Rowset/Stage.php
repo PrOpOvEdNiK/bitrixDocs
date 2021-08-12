@@ -1,1 +1,0 @@
-<? $GLOBALS['_791360104_']=Array(); ?><?php class Model_Db_Backend_Task_Rowset_Stage extends Core_Db_Table_Rowset{public function getById($id){foreach($this as $row){if($id == $row->ID){return $row;}}return false;}}

@@ -270,6 +270,7 @@ class DealController extends BaseController
 		$this->suspendChats($entityID, $recyclingEntityID);
 		$this->suspendProductRows($entityID, $recyclingEntityID);
 		$this->suspendScoringHistory($entityID, $recyclingEntityID);
+		$this->suspendCustomRelations((int)$entityID, (int)$recyclingEntityID);
 
 		//region Relations
 		foreach($relations as $relation)
@@ -340,6 +341,8 @@ class DealController extends BaseController
 		}
 		//endregion
 
+		$fields = $this->prepareFields($fields);
+
 		$entity = new \CCrmDeal(false);
 		$newEntityID = $entity->Add(
 			$fields,
@@ -391,6 +394,7 @@ class DealController extends BaseController
 		$this->recoverChats($recyclingEntityID, $newEntityID);
 		$this->recoverProductRows($recyclingEntityID, $newEntityID);
 		$this->recoverScoringHistory($recyclingEntityID, $newEntityID);
+		$this->recoverCustomRelations((int)$recyclingEntityID, (int)$newEntityID);
 
 		$requisiteLinks = isset($slots['REQUISITE_LINKS']) ? $slots['REQUISITE_LINKS'] : null;
 		if(is_array($requisiteLinks) && !empty($requisiteLinks))
@@ -411,6 +415,7 @@ class DealController extends BaseController
 
 		$this->rebuildSearchIndex($newEntityID);
 		$this->startRecoveryWorkflows($newEntityID);
+		//TODO: start automation???
 
 		return true;
 	}
@@ -450,6 +455,7 @@ class DealController extends BaseController
 		$relationMap->build();
 
 		$this->eraseActivities($recyclingEntityID, $params, $relationMap);
+		$this->eraseSuspendProductRows($recyclingEntityID);
 		$this->eraseSuspendedTimeline($recyclingEntityID);
 		$this->eraseSuspendedDocuments($recyclingEntityID);
 		$this->eraseSuspendedLiveFeed($recyclingEntityID);
@@ -458,10 +464,36 @@ class DealController extends BaseController
 		$this->eraseSuspendedObservers($recyclingEntityID);
 		$this->eraseSuspendedWaitings($recyclingEntityID);
 		$this->eraseSuspendedChats($recyclingEntityID);
-		$this->eraseSuspendProductRows($recyclingEntityID);
 		$this->eraseSuspendedUserFields($recyclingEntityID);
 		$this->eraseSuspendedScoringHistory($recyclingEntityID);
+		$this->eraseSuspendedCustomRelations($recyclingEntityID);
 
 		Relation::deleteByRecycleBin($recyclingEntityID);
+	}
+
+	/**
+	 * Set correct values of standard fields
+	 * @param array $fields
+	 * @return array
+	 */
+	protected function prepareFields(array $fields): array
+	{
+		$categoryId = isset($fields['CATEGORY_ID']) ? (int)$fields['CATEGORY_ID'] : 0;
+		if ($categoryId > 0 && !Crm\Category\DealCategory::isEnabled($categoryId))
+		{
+			$categoryId = 0;
+		}
+		$fields['CATEGORY_ID'] = $categoryId;
+
+		if (
+			isset($fields['STAGE_ID'])
+			&& !\CCrmDeal::IsStageExists($fields['STAGE_ID'], $categoryId)
+		)
+		{
+			// if old stage does not exist, STAGE_ID should be empty to be defined automatically
+			unset($fields['STAGE_ID']);
+		}
+
+		return $fields;
 	}
 }

@@ -213,6 +213,8 @@ class Order extends \CCrmDocument
 			),
 		];
 
+		$fields += self::getShippingFields();
+
 		self::appendReferenceFields(
 			$fields,
 			\CCrmDocumentContact::getEntityFields(\CCrmOwnerType::ContactName),
@@ -298,6 +300,7 @@ class Order extends \CCrmDocument
 			$fields['PRICE_FORMATTED'] = \CCrmCurrency::MoneyToString($fields['PRICE'], $fields['CURRENCY']);
 
 			self::fillResponsibleFields($responsibleId, $fields);
+			self::fillShippingFields($order, $fields);
 			self::fillBuyerFields($buyerId, $fields);
 			self::fillShopFields($order, $fields);
 			self::convertDateFields($fields);
@@ -386,7 +389,33 @@ class Order extends \CCrmDocument
 		return Loc::getMessage('CRM_BP_DOCUMENT_ORDER_ENTITY_NAME');
 	}
 
-	public function getDocumentName($documentId)
+	private static function getShippingFields()
+	{
+		return [
+			'SHIPPING.ALL.TRACKING_NUMBER' => [
+				'Name' => Loc::getMessage('CRM_BP_DOCUMENT_ORDER_FIELD_SHIPPING_TRACK_NUMBERS'),
+				'Type' => 'string',
+				'Multiple' => true
+			]
+		];
+	}
+
+	private static function fillShippingFields(Crm\Order\Order $order, array &$fields)
+	{
+		$fields['SHIPPING.ALL.TRACKING_NUMBER'] = [];
+
+		$collection = $order->getShipmentCollection()->getNotSystemItems();
+		/** @var \Bitrix\Sale\Shipment $shipment */
+		foreach ($collection as $shipment)
+		{
+			if ($num = $shipment->getField('TRACKING_NUMBER'))
+			{
+				$fields['SHIPPING.ALL.TRACKING_NUMBER'][] = $num;
+			}
+		}
+	}
+
+	public static function getDocumentName($documentId)
 	{
 		$arDocumentID = self::GetDocumentInfo($documentId);
 		return \CCrmOwnerType::GetCaption(\CCrmOwnerType::Order, $arDocumentID['ID'], false);
@@ -502,7 +531,7 @@ class Order extends \CCrmDocument
 	private static function fillResponsibleFields($responsibleId, array &$fields)
 	{
 		$dbUsers = \CUser::GetList(
-			($sortBy = 'id'), ($sortOrder = 'asc'),
+			'id', 'asc',
 			array('ID' => (int) $responsibleId),
 			array('SELECT' => array(
 				'EMAIL',
@@ -556,7 +585,7 @@ class Order extends \CCrmDocument
 	private static function fillBuyerFields($buyerId, array &$fields)
 	{
 		$dbUsers = \CUser::GetList(
-			($sortBy = 'id'), ($sortOrder = 'asc'),
+			'id', 'asc',
 			array('ID' => (int) $buyerId),
 			array('SELECT' => array(
 				'LOGIN',

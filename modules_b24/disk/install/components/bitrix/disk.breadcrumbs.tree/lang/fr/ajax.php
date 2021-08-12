@@ -1,5 +1,0 @@
-<?
-$MESS["DISK_BREADCRUMBS_TREE_ERROR_COULD_NOT_FIND_FOLDER"] = "Dossier introuvable.";
-$MESS["DISK_BREADCRUMBS_TREE_ERROR_COULD_NOT_FIND_OBJECT"] = "Impossible de trouver l'objet.";
-$MESS["DISK_BREADCRUMBS_TREE_ERROR_COULD_NOT_MOVE_OBJECT"] = "Impossible de déplacer l'objet.";
-?>

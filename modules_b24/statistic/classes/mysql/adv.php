@@ -75,7 +75,7 @@ class CAdv extends CAllAdv
 		return $strSql;
 	}
 
-	public static function GetList(&$by, &$order, $arFilter=Array(), &$is_filtered, $limit="", &$arrGROUP_DAYS, &$strSql_res)
+	public static function GetList($by = '', $order = 'desc', $arFilter = [], &$is_filtered = false, $limit = '', &$arrGROUP_DAYS = [], &$strSql_res = '')
 	{
 		$err_mess = "File: ".__FILE__."<br>Line: ";
 		$DB = CDatabase::GetModuleConnection('statistic');
@@ -94,10 +94,10 @@ class CAdv extends CAllAdv
 			$date2 = $arFilter["DATE2_PERIOD"];
 			$date_from = MkDateTime(ConvertDateTime($date1,"D.M.Y"),"d.m.Y");
 			$date_to = MkDateTime(ConvertDateTime($date2,"D.M.Y")." 23:59","d.m.Y H:i");
-			if (strlen($date1)>0)
+			if ($date1 <> '')
 			{
 				$filter_period = true;
-				if (strlen($date2)>0)
+				if ($date2 <> '')
 				{
 					$strSqlPeriod = "sum(if(D.DATE_STAT<FROM_UNIXTIME('$date_from'),0, if(D.DATE_STAT>FROM_UNIXTIME('$date_to'),0,";
 					$strT = ")))";
@@ -108,7 +108,7 @@ class CAdv extends CAllAdv
 					$strT = "))";
 				}
 			}
-			elseif (strlen($date2)>0)
+			elseif ($date2 <> '')
 			{
 				$filter_period = true;
 				$strSqlPeriod = "sum(if(D.DATE_STAT>FROM_UNIXTIME('$date_to'),0,";
@@ -124,7 +124,7 @@ class CAdv extends CAllAdv
 				}
 				else
 				{
-					if( (strlen($val) <= 0) || ($val === "NOT_REF") )
+					if( ((string)$val == '') || ($val === "NOT_REF") )
 						continue;
 				}
 				$match_value_set = array_key_exists($key."_EXACT_MATCH", $arFilter);
@@ -292,11 +292,11 @@ class CAdv extends CAllAdv
 		$rate = 1;
 		$base_currency = GetStatisticBaseCurrency();
 		$view_currency = $base_currency;
-		if (strlen($base_currency)>0)
+		if ($base_currency <> '')
 		{
 			if (CModule::IncludeModule("currency"))
 			{
-				if ($CURRENCY!=$base_currency && strlen($CURRENCY)>0)
+				if ($CURRENCY!=$base_currency && $CURRENCY <> '')
 				{
 					$rate = CCurrencyRates::GetConvertFactor($base_currency, $CURRENCY);
 					$view_currency = $CURRENCY;
@@ -309,7 +309,7 @@ class CAdv extends CAllAdv
 			$strSqlSearch_h .= " and (".$sqlWhere.") ";
 
 		$group = false;
-		$find_group = (strlen($find_group)<=0) ? "NOT_REF" : $find_group;
+		$find_group = ($find_group == '') ? "NOT_REF" : $find_group;
 
 		$arrFields_1 = array(
 				"C_TIME_FIRST", "C_TIME_LAST", "CURRENCY",
@@ -349,12 +349,18 @@ class CAdv extends CAllAdv
 		if ($find_group=="NOT_REF")
 			$arrFields = array_merge($arrFields, $arrFields_2);
 
-		if ($order!="asc")
+		if ($order != "asc")
+		{
 			$order = "desc";
+		}
+		else
+		{
+			$order = "asc";
+		}
 
-		$key = array_search(strtoupper($by),$arrFields);
+		$key = array_search(strtoupper($by), $arrFields);
 		if ($key===NULL || $key===false)
-			$key = array_search("A.".strtoupper($by),$arrFields);
+			$key = array_search("A.".strtoupper($by), $arrFields);
 
 		if ($key!==NULL && $key!==false)
 			$strSqlOrder = " ORDER BY ".$arrFields[$key];
@@ -372,7 +378,6 @@ class CAdv extends CAllAdv
 			{
 				$strSqlOrder = " ORDER BY SESSIONS ";
 			}
-			$by = "BY_DEFAULT";
 		}
 		$strSqlOrder .= " ".$order;
 
@@ -553,7 +558,10 @@ class CAdv extends CAllAdv
 				";
 
 			$z = $DB->Query($strSql_days, false, $err_mess.__LINE__);
-			while ($zr = $z->Fetch()) $arrGROUP_DAYS[$zr[$group]] = $zr;
+			while ($zr = $z->Fetch())
+			{
+				$arrGROUP_DAYS[$zr[$group]] = $zr;
+			}
 		}
 		$strSql_res = $strSql;
 
@@ -566,7 +574,7 @@ class CAdv extends CAllAdv
 			";
 
 		$res = $DB->Query($strSql, false, $err_mess.__LINE__);
-		$is_filtered = (IsFiltered($strSqlSearch) || strlen($strSqlSearch_h)>0 || $group || $filter_period);
+		$is_filtered = (IsFiltered($strSqlSearch) || $strSqlSearch_h <> '' || $group || $filter_period);
 		return $res;
 	}
 
@@ -591,7 +599,7 @@ class CAdv extends CAllAdv
 		return $res;
 	}
 
-	public static function GetEventList($ID, &$by, &$order, $arFilter=Array(), &$is_filtered)
+	public static function GetEventList($ID, $by = 's_counter', $order = 'desc', $arFilter = [])
 	{
 		$err_mess = "File: ".__FILE__."<br>Line: ";
 		$DB = CDatabase::GetModuleConnection('statistic');
@@ -609,10 +617,10 @@ class CAdv extends CAllAdv
 			$date2 = $arFilter["DATE2_PERIOD"];
 			$date_from = MkDateTime(ConvertDateTime($date1,"D.M.Y"),"d.m.Y");
 			$date_to = MkDateTime(ConvertDateTime($date2,"D.M.Y")." 23:59","d.m.Y H:i");
-			if (strlen($date1)>0)
+			if ($date1 <> '')
 			{
 				$filter_period = true;
-				if (strlen($date2)>0)
+				if ($date2 <> '')
 				{
 					$strSqlPeriod = "sum(if(AE.DATE_STAT<FROM_UNIXTIME('$date_from'),0, if(AE.DATE_STAT>FROM_UNIXTIME('$date_to'),0,";
 					$strT=")))";
@@ -623,7 +631,7 @@ class CAdv extends CAllAdv
 					$strT="))";
 				}
 			}
-			elseif (strlen($date2)>0)
+			elseif ($date2 <> '')
 			{
 				$filter_period = true;
 				$strSqlPeriod = "sum(if(AE.DATE_STAT>FROM_UNIXTIME('$date_to'),0,";
@@ -638,7 +646,7 @@ class CAdv extends CAllAdv
 				}
 				else
 				{
-					if( (strlen($val) <= 0) || ($val === "NOT_REF") )
+					if( ((string)$val == '') || ($val === "NOT_REF") )
 						continue;
 				}
 				$match_value_set = array_key_exists($key."_EXACT_MATCH", $arFilter);
@@ -719,21 +727,19 @@ class CAdv extends CAllAdv
 		}
 		else
 		{
-			$by = "s_counter";
 			$strSqlOrder = "ORDER BY COUNTER";
 		}
 
-		if ($order!="asc")
+		if ($order != "asc")
 		{
 			$strSqlOrder .= " desc ";
-			$order="desc";
 		}
 
 		$strSqlSearch = GetFilterSqlSearch($arSqlSearch);
 		foreach($arSqlSearch_h as $sqlWhere)
 			$strSqlSearch_h .= " and (".$sqlWhere.") ";
 
-		$find_group = (strlen($find_group)<=0) ? "NOT_REF" : $find_group;
+		$find_group = ($find_group == '') ? "NOT_REF" : $find_group;
 
 		$sqlDays = "
 			sum(if(to_days(curdate())=to_days(AE.DATE_STAT),ifnull(AE.COUNTER,0),0))						COUNTER_TODAY,
@@ -817,7 +823,7 @@ class CAdv extends CAllAdv
 		}
 
 		$res = $DB->Query($strSql, false, $err_mess.__LINE__);
-		$is_filtered = (IsFiltered($strSqlSearch) || $filter_period || strlen($strSqlSearch_h)>0 || $find_group!="NOT_REF");
+
 		return $res;
 	}
 
@@ -841,10 +847,10 @@ class CAdv extends CAllAdv
 			$date2 = $arFilter["DATE2_PERIOD"];
 			$date_from = MkDateTime(ConvertDateTime($date1,"D.M.Y"),"d.m.Y");
 			$date_to = MkDateTime(ConvertDateTime($date2,"D.M.Y")." 23:59","d.m.Y H:i");
-			if (strlen($date1)>0)
+			if ($date1 <> '')
 			{
 				$filter_period = true;
-				if (strlen($date2)>0)
+				if ($date2 <> '')
 				{
 					$strSqlPeriod = "sum(if(AE.DATE_STAT<FROM_UNIXTIME('$date_from'),0, if(AE.DATE_STAT>FROM_UNIXTIME('$date_to'),0,";
 					$strT=")))";
@@ -855,7 +861,7 @@ class CAdv extends CAllAdv
 					$strT="))";
 				}
 			}
-			elseif (strlen($date2)>0)
+			elseif ($date2 <> '')
 			{
 				$filter_period = true;
 				$strSqlPeriod = "sum(if(AE.DATE_STAT>FROM_UNIXTIME('$date_to'),0,";
@@ -864,7 +870,7 @@ class CAdv extends CAllAdv
 		}
 
 		$arFilter["GROUP"]="";
-		$a = CAdv::GetList($by, $order, $arFilter, $is_filtered, "", $arrGROUP_DAYS, $strSql_res);
+		$a = CAdv::GetList('', '', $arFilter, $is_filtered);
 		if ($is_filtered)
 		{
 			$str_id = "0";
@@ -926,7 +932,7 @@ class CAdv extends CAllAdv
 		return $res;
 	}
 
-	public static function GetDynamicList($ADV_ID, &$by, &$order, &$arMaxMin, $arFilter=Array())
+	public static function GetDynamicList($ADV_ID, $by = 's_date', $order = 'desc', &$arMaxMin = [], $arFilter = [])
 	{
 		$err_mess = "File: ".__FILE__."<br>Line: ";
 		$DB = CDatabase::GetModuleConnection('statistic');
@@ -944,7 +950,7 @@ class CAdv extends CAllAdv
 				}
 				else
 				{
-					if( (strlen($val) <= 0) || ($val === "NOT_REF") )
+					if( ((string)$val == '') || ($val === "NOT_REF") )
 						continue;
 				}
 
@@ -970,14 +976,12 @@ class CAdv extends CAllAdv
 			$strSqlOrder = "ORDER BY D.DATE_STAT";
 		else
 		{
-			$by = "s_date";
 			$strSqlOrder = "ORDER BY D.DATE_STAT";
 		}
 
 		if ($order!="asc")
 		{
 			$strSqlOrder .= " desc ";
-			$order="desc";
 		}
 
 		$strSql =	"
@@ -1053,7 +1057,7 @@ class CAdv extends CAllAdv
 		return $res;
 	}
 
-	public static function GetSimpleList(&$by, &$order, $arFilter=Array(), &$is_filtered)
+	public static function GetSimpleList($by = 's_referer1', $order = 'asc', $arFilter = [])
 	{
 		$err_mess = "File: ".__FILE__."<br>Line: ";
 		$DB = CDatabase::GetModuleConnection('statistic');
@@ -1069,7 +1073,7 @@ class CAdv extends CAllAdv
 				}
 				else
 				{
-					if( (strlen($val) <= 0) || ($val === "NOT_REF") )
+					if( ((string)$val == '') || ($val === "NOT_REF") )
 						continue;
 				}
 				$match_value_set = array_key_exists($key."_EXACT_MATCH", $arFilter);
@@ -1091,16 +1095,18 @@ class CAdv extends CAllAdv
 		}
 
 		$strSqlSearch = GetFilterSqlSearch($arSqlSearch);
-		$order= ($order!="desc") ? "asc" : "desc";
+
+		$order = ($order != "desc" ? "asc" : "desc");
+
 		if ($by == "s_id")				$strSqlOrder = "ORDER BY A.ID ".$order;
 		elseif ($by == "s_referer1")	$strSqlOrder = "ORDER BY A.REFERER1 ".$order.", A.REFERER2";
 		elseif ($by == "s_referer2")	$strSqlOrder = "ORDER BY A.REFERER2 ".$order;
 		elseif ($by == "s_description")	$strSqlOrder = "ORDER BY A.DESCRIPTION ".$order;
 		else
 		{
-			$by = "s_referer1";
 			$strSqlOrder = "ORDER BY A.REFERER1 ".$order.", A.REFERER2";
 		}
+
 		$strSql = "
 			SELECT
 				A.ID,

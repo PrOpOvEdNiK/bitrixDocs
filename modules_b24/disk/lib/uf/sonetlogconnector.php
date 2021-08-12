@@ -12,6 +12,11 @@ final class SonetLogConnector extends StubConnector implements ISupportForeignCo
 
 	public function getDataToShow()
 	{
+		return $this->getDataToShowByUser($this->getUser()->getId());
+	}
+
+	public function getDataToShowByUser(int $userId)
+	{
 		if(!($log = $this->loadLogEntryData()))
 		{
 			return null;
@@ -20,11 +25,11 @@ final class SonetLogConnector extends StubConnector implements ISupportForeignCo
 		$data = array();
 
 		if (
-			strpos($log["EVENT_ID"], "crm_") === 0
+			mb_strpos($log["EVENT_ID"], "crm_") === 0
 			&& Loader::includeModule('crm')
 		)
 		{
-			if (strpos($log["EVENT_ID"], "_message") > 0)
+			if (mb_strpos($log["EVENT_ID"], "_message") > 0)
 			{
 				$connector = new CrmMessageConnector($log["ID"]);
 				$subData = $connector->getDataToShow();
@@ -125,7 +130,7 @@ final class SonetLogConnector extends StubConnector implements ISupportForeignCo
 			return $this->canRead;
 		}
 
-		/** @noinspection PhpDynamicAsStaticMethodCallInspection */
+
 		if (\CSocNetUser::isCurrentUserModuleAdmin())
 		{
 			$this->canRead = true;
@@ -135,7 +140,7 @@ final class SonetLogConnector extends StubConnector implements ISupportForeignCo
 
 		if ($log = $this->loadLogEntryData())
 		{
-			if (strpos($log["EVENT_ID"], "crm_") === 0 && Loader::includeModule('crm'))
+			if (mb_strpos($log["EVENT_ID"], "crm_") === 0 && Loader::includeModule('crm'))
 			{
 				$userPermissions = \CCrmPerms::getUserPermissions($userId);
 				if ($log["ENTITY_TYPE"] == "CRMACTIVITY")
@@ -214,7 +219,7 @@ final class SonetLogConnector extends StubConnector implements ISupportForeignCo
 			false,
 			array("ID", "ENTITY_TYPE", "ENTITY_ID", "EVENT_ID", "SOURCE_ID")
 		);
-		/** @noinspection PhpDynamicAsStaticMethodCallInspection */
+
 
 		return ($this->logEntryData = $queryLog->fetch());
 	}

@@ -16,7 +16,7 @@ function ClearCategoryTable()
 	while( $zr = $z->Fetch() ) 
 	{
 		$arFields_i = array(
-			"SLA_ID"		=> intval( $zr["ID"] ),
+			"SLA_ID"		=> intval($zr["ID"]),
 			"CATEGORY_ID"	=> 0,
 		);
 		$ID = $DB->Insert( "b_ticket_sla_2_category", $arFields_i, $err_mess . __LINE__ );
@@ -29,16 +29,16 @@ IncludeModuleLangFile(__FILE__);
 $SUP_RIGHT = $APPLICATION->GetGroupRight($module_id);
 if ($SUP_RIGHT>="R") :
 
-if ($REQUEST_METHOD=="GET" && $SUP_RIGHT>="W" && strlen($RestoreDefaults)>0 && check_bitrix_sessid())
+if ($REQUEST_METHOD=="GET" && $SUP_RIGHT>="W" && $RestoreDefaults <> '' && check_bitrix_sessid())
 {
 	COption::RemoveOption("support");
-	$z = CGroup::GetList($v1="id",$v2="asc", array("ACTIVE" => "Y", "ADMIN" => "N"));
+	$z = CGroup::GetList("id", "asc", array("ACTIVE" => "Y", "ADMIN" => "N"));
 	while($zr = $z->Fetch())
 		$APPLICATION->DelGroupRight($module_id, array($zr["ID"]));
 }
 $message = false;
 require_once($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/".$module_id."/include.php");
-if($REQUEST_METHOD=="POST" && strlen($Update)>0 && $SUP_RIGHT>="W" && check_bitrix_sessid())
+if($REQUEST_METHOD=="POST" && $Update <> '' && $SUP_RIGHT>="W" && check_bitrix_sessid())
 {
 	$SUPPORT_DIR = str_replace("\\", "/", $SUPPORT_DIR);
 	$SUPPORT_DIR = str_replace("//", "/", $SUPPORT_DIR);
@@ -69,9 +69,9 @@ if($REQUEST_METHOD=="POST" && strlen($Update)>0 && $SUP_RIGHT>="W" && check_bitr
 	$SUPPORT_OLD_FUNCTIONALITY = ( $SUPPORT_OLD_FUNCTIONALITY == "Y" ? "Y" : "N" );
 	if( $SUPPORT_OLD_FUNCTIONALITY_OLD <> $SUPPORT_OLD_FUNCTIONALITY ) ClearCategoryTable();
 	COption::SetOptionString($module_id, "SUPPORT_OLD_FUNCTIONALITY",  $SUPPORT_OLD_FUNCTIONALITY);
-	COption::SetOptionString($module_id, "SUPPORT_DEFAULT_SLA_ID", intval(  $SUPPORT_DEFAULT_SLA_ID ) );
-	COption::SetOptionString($module_id, "SUPPORT_CACHE_DAYS_FORWARD", intval(  $SUPPORT_CACHE_DAYS_FORWARD ) );
-	COption::SetOptionString($module_id, "SUPPORT_CACHE_DAYS_BACKWARD", intval(  $SUPPORT_CACHE_DAYS_BACKWARD ) );
+	COption::SetOptionString($module_id, "SUPPORT_DEFAULT_SLA_ID", intval($SUPPORT_DEFAULT_SLA_ID) );
+	COption::SetOptionString($module_id, "SUPPORT_CACHE_DAYS_FORWARD", intval($SUPPORT_CACHE_DAYS_FORWARD) );
+	COption::SetOptionString($module_id, "SUPPORT_CACHE_DAYS_BACKWARD", intval($SUPPORT_CACHE_DAYS_BACKWARD) );
 	
 }
 $SUPPORT_DIR = COption::GetOptionString($module_id, "SUPPORT_DIR");
@@ -235,7 +235,8 @@ $tabControl->BeginNextTab();
 	</tr>
 	<?
 	$arr = Array("reference" => array(), "reference_id" => array());
-	$rs = CTicketSLA::GetList($a = array('NAME' => 'ASC'), array(), $__is_f);
+	$a = array('NAME' => 'ASC');
+	$rs = CTicketSLA::GetList($a, array(), $__is_f);
 	while ($arSla = $rs->GetNext())
 	{
 		$arr['reference'][] = htmlspecialcharsback($arSla['NAME']) . ' ['.$arSla['ID'].']';
@@ -283,12 +284,12 @@ $tabControl->BeginNextTab();
 	
 	<tr>
 		<td valign="top"><?=GetMessage('SUP_CACHE_DAYS_BACKWARD')?></td>
-		<td valign="top"><input type="text" size="30" value="<? echo intval( $SUPPORT_CACHE_DAYS_BACKWARD ); ?>" name="SUPPORT_CACHE_DAYS_BACKWARD"></td>
+		<td valign="top"><input type="text" size="30" value="<? echo intval($SUPPORT_CACHE_DAYS_BACKWARD); ?>" name="SUPPORT_CACHE_DAYS_BACKWARD"></td>
 	</tr>
 	
 	<tr>
 		<td valign="top"><?=GetMessage('SUP_CACHE_DAYS_FORWARD')?></td>
-		<td valign="top"><input type="text" size="30" value="<? echo intval( $SUPPORT_CACHE_DAYS_FORWARD ); ?>" name="SUPPORT_CACHE_DAYS_FORWARD"></td>
+		<td valign="top"><input type="text" size="30" value="<? echo intval($SUPPORT_CACHE_DAYS_FORWARD); ?>" name="SUPPORT_CACHE_DAYS_FORWARD"></td>
 	</tr>
 		
 	<tr>

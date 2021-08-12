@@ -1,27 +1,30 @@
-<?
+<?php
+
+use Bitrix\Intranet\UserField\Types\EmployeeType;
+
 IncludeModuleLangFile(__FILE__);
 
 class CIEmployeeProperty
 {
 	static $cache = array();
 
-	function _GetUserArray($user_id)
+	public static function _GetUserArray($user_id)
 	{
 		$user_id = intval($user_id);
 		if (!array_key_exists($user_id, self::$cache))
 		{
-			$rsUsers = CUser::GetList($by="", $order="", array("ID_EQUAL_EXACT" => $user_id, '!UF_DEPARTMENT' => false));
+			$rsUsers = CUser::GetList("", "", array("ID_EQUAL_EXACT" => $user_id, '!UF_DEPARTMENT' => false));
 			self::$cache[$user_id] = $rsUsers->Fetch();
 		}
 		return self::$cache[$user_id];
 	}
 
-	function GetEditForm($value, $strHTMLControlName)
+	public static function GetEditForm($value, $strHTMLControlName)
 	{
 		global $USER, $APPLICATION;
 
 		$name_x = preg_replace("/([^a-z0-9])/is", "_", $strHTMLControlName["VALUE"]);
-		if (strlen(trim($strHTMLControlName["FORM_NAME"])) <= 0)
+		if (trim($strHTMLControlName["FORM_NAME"]) == '')
 			$strHTMLControlName["FORM_NAME"] = "form_element";
 
 		global $adminSidePanelHelper;
@@ -93,7 +96,7 @@ Ch<?=$name_x?>();
 
 	}
 
-	function GetAdminListViewHTML($value)
+	public static function GetAdminListViewHTML($value)
 	{
 		$arUser = CIEmployeeProperty::_GetUserArray($value["VALUE"]);
 		if($arUser)
@@ -115,7 +118,7 @@ Ch<?=$name_x?>();
 		}
 	}
 
-	function GetPublicViewHTML($value)
+	public static function GetPublicViewHTML($value)
 	{
 		$arUser = CIEmployeeProperty::_GetUserArray($value["VALUE"]);
 		if($arUser)
@@ -131,449 +134,72 @@ Ch<?=$name_x?>();
 
 class CUserTypeEmployee extends CIEmployeeProperty
 {
-	function GetUserTypeDescription()
+	public static function getUserTypeDescription()
 	{
-		return array(
-			"USER_TYPE_ID" => \CUserTypeEmployeeDisplay::USER_TYPE_ID,
-			"CLASS_NAME" => "CUserTypeEmployee",
-			"DESCRIPTION" => GetMessage('INTR_PROP_EMP_TITLE'),
-			"BASE_TYPE" => \CUserTypeManager::BASE_TYPE_ENUM,
-			"EDIT_CALLBACK" => array('\CUserTypeEmployeeDisplay', 'getPublicEdit'),
-			"VIEW_CALLBACK" => array('\CUserTypeEmployeeDisplay', 'getPublicView'),
-		);
+		return EmployeeType::getUserTypeDescription();
 	}
 
-	function GetDBColumnType()
+	public static function getDbColumnType()
 	{
-		global $DB;
-		switch(strtolower($DB->type))
-		{
-			case "mysql":
-				return "int(18)";
-			case "oracle":
-				return "number(18)";
-			case "mssql":
-				return "int";
-		}
+		return EmployeeType::getDbColumnType();
 	}
 
 	public static function getPublicText($userField)
 	{
-		return CUserTypeEmployeeDisplay::getPublicText($userField);
+		return EmployeeType::renderText($userField);
 	}
 
-
-	// function PrepareSettings($arUserField)
-	// {
-		// return $arUserField['SETTINGS'];
-	// }
-
-	// function GetSettingsHTML($arUserField = false, $arHtmlControl, $bVarsFromForm)
-	// {
-		// return 'Settings!';
-	// }
-
-	function GetEditFormHTML($arUserField, $arHtmlControl)
+	public static function GetEditFormHTML($arUserField, $arHtmlControl)
 	{
-		return parent::GetEditForm(array('VALUE' => $arHtmlControl['VALUE']), array('VALUE' => $arHtmlControl['NAME']));
+		return EmployeeType::renderEditForm($arUserField, $arHtmlControl);
 	}
 
-	// function GetFilterHTML($arUserField, $arHtmlControl)
-	// {
-		// return 'Filter!';
-	// }
-
-	function GetAdminListViewHTML($value)
+	public static function GetAdminListViewHTML($value)
 	{
-		$arHtmlControl = func_num_args() > 1 ? func_get_arg(1) : null;
-
-		return parent::GetAdminListViewHTML($arHtmlControl);
+		$additionalParameters = (func_num_args() > 1 ? func_get_arg(1) : null);
+		return EmployeeType::renderAdminListView([], $additionalParameters);
 	}
 
-	// function GetAdminListEditHTML($arUserField, $arHtmlControl)
-	// {
-		// return 'AdminListEdit';
-	// }
-
-	function CheckFields($arUserField, $value)
+	public static function checkFields($userField, $value)
 	{
-		return array();
+		return EmployeeType::checkFields($userField, $value);
 	}
 
-	function OnSearchIndex($arUserField)
+	public static function onSearchIndex($userField)
 	{
-		$res = '';
-
-		if(is_array($arUserField["VALUE"]))
-		{
-			$val = $arUserField["VALUE"];
-		}
-		else
-		{
-			$val = array($arUserField["VALUE"]);
-		}
-		$isSearchModuleIncluded = \Bitrix\Main\Loader::includeModule('search');
-
-		$val = array_filter($val, "intval");
-		if(count($val))
-		{
-			foreach($val as $v)
-			{
-				$rs = CUser::GetList($by="", $order="", array( "ID" => $v));
-				while($ar = $rs->Fetch())
-				{
-					if($isSearchModuleIncluded)
-					{
-						$res .= CSearch::KillTags(CUser::FormatName(CSite::GetNameFormat(), $ar))."\r\n";
-					}
-					else
-					{
-						$res .= strip_tags(CUser::FormatName(CSite::GetNameFormat(), $ar))."\r\n";
-					}
-				}
-			}
-		}
-
-		return $res;
+		return EmployeeType::onSearchIndex($userField);
 	}
 
-	function OnBeforeSave($arUserField, $value)
+	public static function onBeforeSave($userField, $value)
 	{
-		return $value;
+		return EmployeeType::onBeforeSave($userField, $value);
 	}
 }
 
 class CUserTypeEmployeeDisplay extends \Bitrix\Main\UserField\TypeBase
 {
-	const USER_TYPE_ID = 'employee';
-	const SELECTOR_CONTEXT = 'USERFIELD_TYPE_EMPLOYEE';
+	const USER_TYPE_ID = EmployeeType::USER_TYPE_ID;
+	const SELECTOR_CONTEXT = EmployeeUfComponent::SELECTOR_CONTEXT;
 
-	public static function getPublicEdit($arUserField, $arAdditionalParameters = array())
+	public static function getPublicEdit($userField, $additionalParameters = array())
 	{
-		global $APPLICATION;
-
-		static::initDisplay(array('intranet_userfield_employee'));
-
-		ob_start();
-
-		$selectorName = $arUserField['FIELD_NAME'].\Bitrix\Main\Security\Random::getString(5);
-		$fieldName = static::getFieldName($arUserField, $arAdditionalParameters);
-		$fieldValue = static::getFieldValue($arUserField, $arAdditionalParameters);
-?>
-		<div id="cont_<?=$selectorName?>">
-			<div id="field_<?=$selectorName?>" class="main-ui-control-entity main-ui-control userfieldemployee-control" data-multiple="<?=$arUserField['MULTIPLE'] === 'Y' ? 'true' : 'false'?>">
-				<a href="#" class="feed-add-destination-link" id="add_user_<?=$selectorName?>" onclick="BX.Intranet.UserFieldEmployee.instance('<?=CUtil::JSEscape($selectorName)?>').open(this.parentNode); return false;"><?=GetMessage('INTR_PROP_EMP_SU')?></a>
-			</div>
-			<div id="value_<?=$selectorName?>" style="display: none;"><input type="hidden" name="<?=\Bitrix\Main\Text\HtmlFilter::encode($fieldName)?>" value=""></div>
-
-		</div>
-
-<script>
-(function(){
-	'use strict';
-
-	var selectControl = new BX.Intranet.UserFieldEmployee('<?=$selectorName?>', {
-		multiple: <?=$arUserField['MULTIPLE'] === 'Y' ? 'true' : 'false'?>
-	});
-
-	var entity = new BX.Intranet.UserFieldEmployeeEntity({
-		field: 'field_<?=$selectorName?>',
-		multiple: <?=$arUserField['MULTIPLE'] === 'Y' ? 'true' : 'false'?>
-	});
-
-	var fieldLayout = {
-		multiple: <?=$arUserField['MULTIPLE'] === 'Y' ? 'true' : 'false'?>,
-		updateHandler: function(value, userStack)
-		{
-			if(fieldLayout.multiple)
-			{
-				var result = [];
-
-				for(var i = 0; i < value.length; i++)
-				{
-					result.push({name: userStack[value[i]].name, value: value[i]});
-				}
-
-				fieldLayout.setData(result);
-			}
-			else
-			{
-				if(value === null)
-				{
-					fieldLayout.setData(null);
-				}
-				else
-				{
-					fieldLayout.setData({name: userStack[value].name, value: value});
-				}
-			}
-		},
-
-		removeHandler: function(value)
-		{
-			var result = fieldLayout.multiple ? [] : null,
-				selectControlValue = fieldLayout.multiple ? [] : null;
-
-			for(var i = 0; i < value.length; i++)
-			{
-				var item = {
-					name: value[i].label,
-					value: value[i].value
-				};
-
-				if(!fieldLayout.multiple)
-				{
-					selectControlValue = item.value;
-					result = item;
-					break;
-				}
-				else
-				{
-					selectControlValue.push(item.value);
-					result.push(item);
-				}
-			}
-
-			selectControl.setValue(selectControlValue);
-			fieldLayout.setData(result);
-		},
-
-		setData: function(value)
-		{
-			var valueContainer = BX('value_<?=$selectorName?>');
-			var html = '';
-
-			if(fieldLayout.multiple)
-			{
-				if(value.length > 0)
-				{
-					var entityValue = [];
-					for(var i = 0; i < value.length; i++)
-					{
-						entityValue.push({
-							value: value[i].value,
-							label: value[i].name
-						});
-
-						html += '<input type="hidden" name="<?=\CUtil::JSEscape($fieldName)?>" value="' + BX.util.htmlspecialchars(value[i].value) + '" />';
-					}
-
-					entity.setData(entityValue);
-				}
-				else
-				{
-					entity.removeSquares();
-				}
-			}
-			else
-			{
-				if(value !== null)
-				{
-					entity.setData(value.name, value.value);
-					html += '<input type="hidden" name="<?=\CUtil::JSEscape($fieldName)?>" value="' + BX.util.htmlspecialchars(value.value) + '" />';
-				}
-				else
-				{
-					entity.removeSquares();
-				}
-			}
-
-			if(html.length <= 0)
-			{
-				html = '<input type="hidden" name="<?=\CUtil::JSEscape($fieldName)?>" value="" />'
-			}
-
-			valueContainer.innerHTML = html;
-
-			BX.defer(function(){
-				BX.fireEvent(valueContainer.firstChild, 'change');
-			})();
-		}
-	};
-
-	BX.addCustomEvent(selectControl, 'onUpdateValue', fieldLayout.updateHandler);
-	BX.addCustomEvent(entity, 'BX.Intranet.UserFieldEmployeeEntity:remove', fieldLayout.removeHandler);
-})();
-</script>
-
-<?
-		$jsObject = 'BX.Intranet.UserFieldEmployee.instance(\''.\CUtil::JSEscape($selectorName).'\')';
-		$componentValue = array();
-		foreach($fieldValue as $userId)
-		{
-			if (intval($userId) > 0)
-			{
-				$componentValue['U'.$userId] = 'users';
-			}
-		}
-
-		$APPLICATION->IncludeComponent(
-			"bitrix:main.ui.selector",
-			".default",
-			array(
-				'API_VERSION' => 3,
-				'ID' => $selectorName,
-				'BIND_ID' => 'field_'.$selectorName,
-				'TAG_ID' => 'add_user_'.$selectorName,
-				'ITEMS_SELECTED' => $componentValue,
-				'CALLBACK' => array(
-					'select' => $jsObject.'.callback.select',
-					'unSelect' => $jsObject.'.callback.unSelect',
-				),
-				'OPTIONS' => array(
-					'useContainer' => 'Y',
-					'multiple' => ($arUserField["MULTIPLE"] === 'Y' ? 'Y' : 'N'),
-					'extranetContext' => false,
-					'eventInit' => 'BX.UFEMP:'.$selectorName.':init',
-					'eventOpen' => 'BX.UFEMP:'.$selectorName.':open',
-					'context' => static::SELECTOR_CONTEXT,
-					'contextCode' => 'U',
-					'useSearch' => 'Y',
-					'userNameTemplate' => \CSite::GetNameFormat(),
-					'useClientDatabase' => 'Y',
-					'allowEmailInvitation' => 'N',
-					'enableAll' => 'N',
-					'enableDepartments' => 'Y',
-					'enableSonetgroups' => 'N',
-					'departmentSelectDisable' => 'Y',
-					'allowAddUser' => 'N',
-					'allowAddCrmContact' => 'N',
-					'allowAddSocNetGroup' => 'N',
-					'allowSearchEmailUsers' => 'N',
-					'allowSearchCrmEmailUsers' => 'N',
-					'allowSearchNetworkUsers' => 'N'
-				)
-			),
-			false,
-			array("HIDE_ICONS" => "Y")
-		);
-
-		return ob_get_clean();
+		return EmployeeType::renderEdit($userField, $additionalParameters);
 	}
 
-	public static function getPublicView($arUserField, $arAdditionalParameters = array())
+	public static function getPublicView($userField, $additionalParameters = array())
 	{
-		$html = '';
-
-		$value = static::normalizeFieldValue($arUserField["VALUE"]);
-
-		if(count($value) > 0 && $value[0] !== null)
-		{
-			$dbRes = \Bitrix\Main\UserTable::getList(array(
-				'filter' => array(
-					'@ID' => $value
-				),
-			));
-
-			$resultList = array();
-			$imageList = array();
-
-			while($res = $dbRes->fetch())
-			{
-				$resultList[] = array(
-					'ID' => $res['ID'],
-					'NAME' => \CUser::FormatName(\CSite::GetNameFormat(), $res, true, false),
-					'PERSONAL_PHOTO' => $res['PERSONAL_PHOTO'],
-					'WORK_POSITION' => $res['WORK_POSITION']
-				);
-
-				if($res['PERSONAL_PHOTO'] > 0)
-				{
-					$imageList[$res['PERSONAL_PHOTO']] = false;
-				}
-			}
-
-			if(count($imageList) > 0)
-			{
-				foreach($imageList as $imageId => $f)
-				{
-					$imageFile = \CFile::GetFileArray($imageId);
-					if($imageFile !== false)
-					{
-						$tmpFile = \CFile::ResizeImageGet(
-							$imageFile,
-							array("width" => 60, "height" => 60),
-							BX_RESIZE_IMAGE_EXACT
-						);
-						$imageList[$imageId] = $tmpFile['src'];
-					}
-				}
-			}
-
-			$pathToUser = COption::GetOptionString("main", "TOOLTIP_PATH_TO_USER", false, SITE_ID);
-			$pathToUser = ($pathToUser ? $pathToUser : SITE_DIR."company/personal/user/#user_id#/");
-
-			$first = true;
-			foreach($resultList as $res)
-			{
-				if(!$first)
-				{
-					$html .= static::getHelper()->getMultipleValuesSeparator();
-				}
-				$first = false;
-
-				$userRow = '
-<a class="uf-employee-wrap" href="'.\Bitrix\Main\Text\HtmlFilter::encode(str_replace('#user_id#', $res['ID'], $pathToUser)).'" target="_blank">
-	<span class="uf-employee-image" '.($res['PERSONAL_PHOTO'] > 0 && $imageList[$res['PERSONAL_PHOTO']] !== false ? 'style="background-image:url('.$imageList[$res['PERSONAL_PHOTO']].'); background-size: 30px;"' : '').'></span>
-	<span class="uf-employee-data">
-		<span class="uf-employee-name">'.\Bitrix\Main\Text\HtmlFilter::encode($res['NAME']).'</span>
-		<span class="uf-employee-position">'.\Bitrix\Main\Text\HtmlFilter::encode($res['WORK_POSITION']).'</span>
-	</span>
-</a>
-';
-
-				$html .= static::getHelper()->wrapSingleField($userRow);
-			}
-		}
-
-		static::initDisplay(array('intranet_userfield_employee'));
-
-		return static::getHelper()->wrapDisplayResult($html);
+		return EmployeeType::renderView($userField, $additionalParameters);
 	}
 
 	public static function getPublicText($arUserField)
 	{
-		$values = array_filter(
-			static::normalizeFieldValue($arUserField['VALUE']),
-			function($value){ return $value > 0; }
-		);
-
-		if(empty($values))
-		{
-			return '';
-		}
-
-		static $userNames = array();
-
-		$results = array();
-		foreach($values as $k => $v)
-		{
-			if(!isset($userNames[$v]))
-			{
-				$results[$v] = null;
-				continue;
-			}
-
-			$results[$v] = $userNames[$v];
-			unset($values[$k]);
-		}
-
-		if(!empty($values))
-		{
-			$dbResult = \Bitrix\Main\UserTable::getList(array('filter' => array('@ID' => array_values($values))));
-			while($fields = $dbResult->fetch())
-			{
-				$userName = \CUser::FormatName(\CSite::GetNameFormat(), $fields, true, false);
-				$results[$fields['ID']] = $userNames[$fields['ID']] = $userName;
-			}
-		}
-		return implode(', ', array_values($results));
+		return EmployeeType::getPublicText($arUserField);
 	}
 }
 
 class CIBlockPropertyEmployee extends CIEmployeeProperty
 {
-	function GetUserTypeDescription()
+	public static function GetUserTypeDescription()
 	{
 		return array(
 			"PROPERTY_TYPE" => "S",
@@ -588,11 +214,14 @@ class CIBlockPropertyEmployee extends CIEmployeeProperty
 			"GetUIFilterProperty" => array(__CLASS__, 'GetUIFilterProperty'),
 			"ConvertToDB" => array("CIBlockPropertyEmployee","ConvertFromToDB"),
 			"CheckFields" => array("CIBlockPropertyEmployee","CheckFields"),
-			"GetLength" => array("CIBlockPropertyEmployee","GetLength")
+			"GetLength" => array("CIBlockPropertyEmployee","GetLength"),
+			"GetUIEntityEditorProperty" => array("CIBlockPropertyEmployee","GetUIEntityEditorProperty"),
+			"GetUIEntityEditorPropertyEditHtml" => array("CIBlockPropertyEmployee","GetUIEntityEditorPropertyEditHtml"),
+			"GetUIEntityEditorPropertyViewHtml" => array("CIBlockPropertyEmployee","GetUIEntityEditorPropertyViewHtml"),
 		);
 	}
 
-	function CheckFields($arProperty, $value)
+	public static function CheckFields($arProperty, $value)
 	{
 		$error = array();
 
@@ -609,31 +238,31 @@ class CIBlockPropertyEmployee extends CIEmployeeProperty
 		return $error;
 	}
 
-	function GetLength($arProperty, $value)
+	public static function GetLength($arProperty, $value)
 	{
-		return strlen(trim($value["VALUE"], "\n\r\t "));
+		return mb_strlen(trim($value["VALUE"], "\n\r\t "));
 	}
 
-	function GetPropertyFieldHtml($arProperty, $value, $strHTMLControlName)
+	public static function GetPropertyFieldHtml($arProperty, $value, $strHTMLControlName)
 	{
 		return parent::GetEditForm($value, $strHTMLControlName);
 	}
 
-	function GetAdminListViewHTML($value)
+	public static function GetAdminListViewHTML($value)
 	{
 		$value = func_num_args() > 1 ? func_get_arg(1) : null;
 
 		return parent::GetAdminListViewHTML($value);
 	}
 
-	function GetPublicViewHTML($value)
+	public static function GetPublicViewHTML($value)
 	{
 		$value = func_num_args() > 1 ? func_get_arg(1) : null;
 
 		return parent::GetPublicViewHTML($value);
 	}
 
-	function GetPublicFilterHTML($arProperty, $strHTMLControlName)
+	public static function GetPublicFilterHTML($arProperty, $strHTMLControlName)
 	{
 		global $APPLICATION;
 		ob_start();
@@ -721,7 +350,7 @@ class CIBlockPropertyEmployee extends CIEmployeeProperty
 		return $strResult;
 	}
 
-	function GetPublicEditHTML($arProperty, $value, $strHTMLControlName)
+	public static function GetPublicEditHTML($arProperty, $value, $strHTMLControlName)
 	{
 		global $APPLICATION;
 			ob_start();
@@ -805,7 +434,7 @@ class CIBlockPropertyEmployee extends CIEmployeeProperty
 		return $strResult;
 	}
 
-	function GetPublicEditHTMLMulty($arProperty, $value, $strHTMLControlName)
+	public static function GetPublicEditHTMLMulty($arProperty, $value, $strHTMLControlName)
 	{
 		global $APPLICATION;
 			ob_start();
@@ -915,13 +544,13 @@ class CIBlockPropertyEmployee extends CIEmployeeProperty
 		return $strResult;
 	}
 
-	function ConvertFromToDB($arProperty, $value)
+	public static function ConvertFromToDB($arProperty, $value)
 	{
 		$value['VALUE'] = intval($value['VALUE']);
 
 		if($value['VALUE']>0)
 		{
-			$dbRes = CUser::GetList($by = 'id', $order = 'asc', array('ID' => $value['VALUE'], '!UF_DEPARTMENT' => false), array('SELECT' => array('ID')));
+			$dbRes = CUser::GetList('id', 'asc', array('ID' => $value['VALUE'], '!UF_DEPARTMENT' => false), array('SELECT' => array('ID')));
 			if (!$dbRes->Fetch())
 			{
 				$value['VALUE'] = false;
@@ -946,5 +575,114 @@ class CIBlockPropertyEmployee extends CIEmployeeProperty
 		$field['type'] = 'custom_entity';
 		$field['filterable'] = '';
 		$field['selector'] = ['type' => 'user'];
+	}
+
+	public static function GetUIEntityEditorProperty($settings, $value)
+	{
+		return [
+			'type' => 'custom'
+		];
+	}
+
+	public static function GetUIEntityEditorPropertyViewHtml(array $params = [])
+	{
+		if (empty($params['VALUE']))
+		{
+			return '';
+		}
+
+		if (!is_array($params['VALUE']))
+		{
+			$params['VALUE'] = [$params['VALUE']];
+		}
+
+		foreach ($params['VALUE'] as $value)
+		{
+			$result[] = parent::GetPublicViewHTML(['VALUE' => $value]);
+		}
+		return implode(', ', $result);
+	}
+
+	public static function GetUIEntityEditorPropertyEditHtml(array $params = [])
+	{
+		\Bitrix\Main\UI\Extension::load(['ui.entity-selector', 'ui.buttons', 'ui.forms']);
+
+		$isMultipleValue = $params['SETTINGS']['MULTIPLE'] === 'Y';
+
+		$isMultipleValue = CUtil::PhpToJSObject($isMultipleValue);
+
+		$preselectedItems = [];
+
+		if (!is_array($params['VALUE']))
+		{
+			$params['VALUE'] = (!empty($params['VALUE'])) ? [$params['VALUE']] : [];
+		}
+
+		foreach ($params['VALUE'] as $value)
+		{
+			$preselectedItems[] = ['user', $value];
+		}
+
+		$selectedItems = \Bitrix\UI\EntitySelector\Dialog::getSelectedItems($preselectedItems)->toJsObject();
+
+		$container_id = $params['FIELD_NAME'] . '_container';
+		$container_hidden_id = $params['FIELD_NAME'] . '_container_hidden';
+
+		return <<<HTML
+			<input type="hidden" name="{$params['FIELD_NAME']}[]" value="0" />
+			<div id="{$container_id}" name="{$container_id}"></div>
+			<div id ="{$container_hidden_id}" name="{$container_hidden_id}"></div>
+			<script>
+				(function() {
+					var selector = new BX.UI.EntitySelector.TagSelector({
+						id: '{$container_id}',
+						multiple: {$isMultipleValue},
+						
+						dialogOptions: {
+							height: 300,
+							id: '{$container_id}',
+							multiple: {$isMultipleValue},
+							context: 'CATALOG_PRODUCT_CARD_EMPLOYEES',
+							selectedItems: {$selectedItems},
+	
+							events: {
+								'Item:onSelect': setSelectedInputs.bind(this, 'Item:onSelect'),
+								'Item:onDeselect': setSelectedInputs.bind(this, 'Item:onDeselect'),
+							},
+	
+							entities: [
+								{
+									id: 'user'
+								},
+								{
+									id: 'department'
+								}
+							]
+						}
+					})
+				
+					function setSelectedInputs(eventName, event)
+					{
+						var dialog = event.getData().item.getDialog();
+						dialog.hide();
+						var selectedItems = dialog.getSelectedItems();
+						if (Array.isArray(selectedItems))
+						{
+							var selectedItemsId = [];
+							var htmlInputs = '';
+							selectedItems.forEach(function(item, index, array)
+							{
+								htmlInputs += '<input type="hidden" name="{$params['FIELD_NAME']}[]" value="' + item['id'] + '" />';
+								selectedItemsId.push(item['id']);
+							});
+							document.getElementById('{$container_hidden_id}').innerHTML = htmlInputs;
+							BX.Event.EventEmitter.emit('onChangeEmployee');
+						}
+					}
+				
+					selector.renderTo(document.getElementById('{$container_id}'));
+				})();
+			</script>
+HTML;
 	}
 }

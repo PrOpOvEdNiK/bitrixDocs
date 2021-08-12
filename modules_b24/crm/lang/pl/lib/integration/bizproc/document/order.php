@@ -1,4 +1,0 @@
-<?
-$MESS["CRM_BP_DOCUMENT_ORDER_ENTITY_NAME"] = "Zamówienie";
-$MESS["CRM_BP_DOCUMENT_ORDER_FIELD_DATE_UPDATE"] = "Ostatnio modyfikowane";
-?>

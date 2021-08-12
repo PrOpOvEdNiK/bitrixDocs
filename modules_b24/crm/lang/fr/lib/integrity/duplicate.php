@@ -1,5 +1,0 @@
-<?
-$MESS["CRM_DUP_ENTITY_COUNT_GENITIVE_PLURAL"] = "coïncidences";
-$MESS["CRM_DUP_ENTITY_COUNT_GENITIVE_SINGULAR"] = "coïncidences";
-$MESS["CRM_DUP_ENTITY_COUNT_NOMINATIVE"] = "coïncidence";
-?>

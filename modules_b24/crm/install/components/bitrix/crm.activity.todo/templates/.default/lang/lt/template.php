@@ -1,7 +1,0 @@
-<?
-$MESS["CRM_ACTIVITY_TODO_VIEW_TITLE"] = "Veiksmo peržiūra";
-$MESS["CRM_ACTIVITY_TODO_CLOSE"] = "Uždaryti";
-$MESS["CRM_ACTIVITY_TODO_DEADLINE"] = "Terminas";
-$MESS["CRM_ACTIVITY_TODO_HOT"] = "(Aukštas prioritetas)";
-$MESS["CRM_ACTIVITY_TODO_CONTACT"] = "Su";
-?>

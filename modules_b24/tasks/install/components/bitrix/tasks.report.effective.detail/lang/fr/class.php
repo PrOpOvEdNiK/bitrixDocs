@@ -1,9 +1,0 @@
-<?
-$MESS["TASKS_COLUMN_CREATED_DATE"] = "Date de retard";
-$MESS["TASKS_COLUMN_DEADLINE"] = "Date limite";
-$MESS["TASKS_COLUMN_GROUP"] = "Groupe";
-$MESS["TASKS_COLUMN_ORIGINATOR"] = "Créé par";
-$MESS["TASKS_COLUMN_REPAIR_DATE"] = "Date fixe";
-$MESS["TASKS_COLUMN_TASK"] = "Tâche";
-$MESS["TASKS_COLUMN_USER_TYPE2"] = "Rôle";
-?>

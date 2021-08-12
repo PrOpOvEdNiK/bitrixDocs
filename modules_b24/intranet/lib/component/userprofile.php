@@ -1,4 +1,5 @@
 <?php
+
 namespace Bitrix\Intranet\Component;
 
 use Bitrix\Main\Loader;
@@ -7,8 +8,10 @@ use Bitrix\Main\ModuleManager;
 use Bitrix\Main\ErrorCollection;
 use Bitrix\Main\Error;
 use Bitrix\Main\Config\Option;
+use Bitrix\Main\Type\DateTime;
 use Bitrix\Socialnetwork\ComponentHelper;
 use Bitrix\Main\Engine\ActionFilter\CloseSession;
+use Bitrix\Main\Type\Date;
 
 class UserProfile extends \CBitrixComponent implements \Bitrix\Main\Engine\Contract\Controllerable, \Bitrix\Main\Errorable
 {
@@ -131,8 +134,7 @@ class UserProfile extends \CBitrixComponent implements \Bitrix\Main\Engine\Contr
 	{
 		if ($this->stressLevel === null)
 		{
-			$this->stressLevel = new \Bitrix\Intranet\Component\UserProfile\StressLevel([
-			]);
+			$this->stressLevel = new \Bitrix\Intranet\Component\UserProfile\StressLevel();
 		}
 		return $this->stressLevel;
 	}
@@ -142,18 +144,26 @@ class UserProfile extends \CBitrixComponent implements \Bitrix\Main\Engine\Contr
 	{
 		global $APPLICATION;
 
-		$urls = array(
-			"Security" => \CComponentEngine::MakePathFromTemplate($this->arParams["PATH_TO_USER_SECURITY"], array("user_id" => $this->arParams["ID"])),
-			"Passwords" => \CComponentEngine::MakePathFromTemplate($this->arParams["PATH_TO_USER_PASSWORDS"], array("user_id" => $this->arParams["ID"])),
-			"CommonSecurity" => \CComponentEngine::MakePathFromTemplate($this->arParams["PATH_TO_USER_COMMON_SECURITY"], array("user_id" => $this->arParams["ID"])),
-		);
+		$urls = [
+			'Security' => \CComponentEngine::MakePathFromTemplate($this->arParams['PATH_TO_USER_SECURITY'], [
+				"user_id" => $this->arParams["ID"]
+			]),
+			'Passwords' => \CComponentEngine::MakePathFromTemplate($this->arParams['PATH_TO_USER_PASSWORDS'], [
+				'user_id' => $this->arParams['ID']
+			]),
+			'CommonSecurity' => \CComponentEngine::MakePathFromTemplate($this->arParams["PATH_TO_USER_COMMON_SECURITY"], [
+				'user_id' => $this->arParams['ID']
+			]),
+		];
 		if (Loader::includeModule('dav'))
 		{
 			$this->arParams["PATH_TO_USER_SYNCHRONIZE"] = trim($this->arParams["PATH_TO_USER_SYNCHRONIZE"]);
-			if (strlen($this->arParams["PATH_TO_USER_SYNCHRONIZE"]) <= 0)
+			if ($this->arParams["PATH_TO_USER_SYNCHRONIZE"] == '')
 				$this->arParams["PATH_TO_USER_SYNCHRONIZE"] = htmlspecialcharsbx($APPLICATION->GetCurPage()."?".$this->arParams["PAGE_VAR"]."=user_synchronize&".$this->arParams["USER_VAR"]."=#user_id#");
 
-			$urls["Synchronize"] = \CComponentEngine::MakePathFromTemplate($this->arParams["PATH_TO_USER_SYNCHRONIZE"], array("user_id" => $this->arParams["ID"]));
+			$urls['Synchronize'] = \CComponentEngine::MakePathFromTemplate($this->arParams['PATH_TO_USER_SYNCHRONIZE'], [
+				'user_id' => $this->arParams['ID']
+			]);
 		}
 
 		$uri = new \Bitrix\Main\Web\Uri($this->arParams["LIST_URL"]);
@@ -180,8 +190,8 @@ class UserProfile extends \CBitrixComponent implements \Bitrix\Main\Engine\Contr
 
 		if (
 			empty($params['GRAT_POST_LIST_PAGE_SIZE'])
-			|| intval($params['GRAT_POST_LIST_PAGE_SIZE']) <= 0
-			|| intval($params['GRAT_POST_LIST_PAGE_SIZE']) > 20
+			|| (int)$params['GRAT_POST_LIST_PAGE_SIZE'] <= 0
+			|| (int)$params['GRAT_POST_LIST_PAGE_SIZE'] > 20
 		)
 		{
 			$params['GRAT_POST_LIST_PAGE_SIZE'] = 5;
@@ -197,7 +207,7 @@ class UserProfile extends \CBitrixComponent implements \Bitrix\Main\Engine\Contr
 
 	protected function init()
 	{
-		\CJSCore::Init(array("ajax", "webrtc_adapter", "avatar_editor", "loader"));
+		\CJSCore::Init([ 'ajax', 'webrtc_adapter', 'avatar_editor', 'loader' ]);
 
 		return true;
 	}
@@ -215,12 +225,13 @@ class UserProfile extends \CBitrixComponent implements \Bitrix\Main\Engine\Contr
 	{
 		global $USER;
 
-		$filter = array(
+		$filter = [
 			"ID_EQUAL_EXACT" => $this->arParams["ID"]
-		);
+		];
 
-		$params = array(
-			"FIELDS" => array('ID', 'ACTIVE', 'CONFIRM_CODE', 'EXTERNAL_AUTH_ID', 'LAST_ACTIVITY_DATE', 'DATE_REGISTER',
+		$params = [
+			"FIELDS" => [
+				'ID', 'ACTIVE', 'CONFIRM_CODE', 'EXTERNAL_AUTH_ID', 'LAST_ACTIVITY_DATE', 'DATE_REGISTER',
 				'LOGIN', 'EMAIL', 'NAME', 'SECOND_NAME', 'LAST_NAME', 'WORK_POSITION',
 				'PERSONAL_PHOTO', 'PERSONAL_BIRTHDAY', 'PERSONAL_GENDER',
 				'PERSONAL_WWW', 'PERSONAL_MOBILE', 'WORK_PHONE', 'PERSONAL_CITY',
@@ -228,12 +239,12 @@ class UserProfile extends \CBitrixComponent implements \Bitrix\Main\Engine\Contr
 				'PERSONAL_COUNTRY', 'PERSONAL_FAX', 'PERSONAL_MAILBOX',
 				'PERSONAL_PHONE', 'PERSONAL_STATE', 'PERSONAL_STREET', 'PERSONAL_ZIP',
 				'WORK_CITY', 'WORK_COUNTRY', 'WORK_COMPANY', 'WORK_DEPARTMENT',
-				'PERSONAL_PROFESSION', 'WORK_NOTES'
-			),
-			"SELECT" => array("UF_DEPARTMENT", "UF_PHONE_INNER", "UF_SKYPE")
-		);
+				'PERSONAL_PROFESSION', 'WORK_NOTES', 'WORK_PROFILE'
+			],
+			'SELECT' => [ 'UF_DEPARTMENT', 'UF_PHONE_INNER', 'UF_SKYPE', 'UF_SKYPE_LINK', 'UF_ZOOM', 'UF_PUBLIC' ]
+		];
 
-		$dbUser = \CUser::GetList(($by="id"), ($order="asc"), $filter, $params);
+		$dbUser = \CUser::GetList("id", "asc", $filter, $params);
 		$user = $dbUser->fetch();
 
 		foreach ($user as $field => $value)
@@ -242,26 +253,50 @@ class UserProfile extends \CBitrixComponent implements \Bitrix\Main\Engine\Contr
 			{
 				$user[$field] = "";
 			}
+
+			if ($field === "LAST_ACTIVITY_DATE" && $value != '')
+			{
+				$user["LAST_ACTIVITY_DATE_FROM_DB"] = $value;
+				$user[$field] = DateTime::createFromTimestamp(MakeTimeStamp($value, 'YYYY-MM-DD HH:MI:SS'));
+				$user[$field] = FormatDateFromDB($user[$field]);
+			}
+		}
+
+		if ((int)$user["PERSONAL_PHOTO"] <= 0)
+		{
+			switch($user["PERSONAL_GENDER"])
+			{
+				case "M":
+					$suffix = "male";
+					break;
+				case "F":
+					$suffix = "female";
+					break;
+				default:
+					$suffix = "unknown";
+				}
+				$user["PERSONAL_PHOTO"] = Option::get('socialnetwork', 'default_user_picture_'.$suffix, false, SITE_ID);
 		}
 
 		$user["PHOTO"] = self::getUserPhoto($user["PERSONAL_PHOTO"], 212);
 
-		$fullName = array(
+		$fullName = [
 			"NAME" => $user["NAME"],
 			"LAST_NAME" => $user["LAST_NAME"],
 			"SECOND_NAME" => $user["SECOND_NAME"]
-		);
+		];
 		$user["FULL_NAME"] = \CUser::FormatName(\CSite::GetNameFormat(), $fullName);
 
-		if (strlen($user["PERSONAL_WWW"]) > 0)
+		if ($user["PERSONAL_WWW"] <> '')
 		{
-			$user["PERSONAL_WWW"] = ((strpos($user["PERSONAL_WWW"], "http") === false) ? "http://" : "").$user["PERSONAL_WWW"];
+			$user["PERSONAL_WWW"] = ((mb_strpos($user["PERSONAL_WWW"], "http") === false) ? "http://" : "").$user["PERSONAL_WWW"];
 		}
 
-		$user["ONLINE_STATUS"] = \CUser::GetOnlineStatus($this->arParams["ID"], MakeTimeStamp($user["LAST_ACTIVITY_DATE"], "YYYY-MM-DD HH-MI-SS"));
+		$user["ONLINE_STATUS"] = \CUser::GetOnlineStatus($this->arParams["ID"],
+			MakeTimeStamp($user["LAST_ACTIVITY_DATE_FROM_DB"], "YYYY-MM-DD HH-MI-SS"));
 
 		$user["SHOW_SONET_ADMIN"] = false;
-		if(
+		if (
 			$this->arParams["ID"] == $USER->GetID()
 			&& Loader::includeModule("socialnetwork")
 			&& \CSocNetUser::IsCurrentUserModuleAdmin(SITE_ID, false)
@@ -281,16 +316,16 @@ class UserProfile extends \CBitrixComponent implements \Bitrix\Main\Engine\Contr
 
 	protected function checkAppsInstallation(&$user)
 	{
-		$appActivity = array(
+		$appActivity = [
 			"APP_WINDOWS_INSTALLED" => \CUserOptions::GetOption('im', 'WindowsLastActivityDate', "", $this->arParams["ID"]),
 			"APP_MAC_INSTALLED" => \CUserOptions::GetOption('im', 'MacLastActivityDate', "", $this->arParams["ID"]),
 			"APP_IOS_INSTALLED" => \CUserOptions::GetOption('mobile', 'iOsLastActivityDate', "", $this->arParams["ID"]),
 			"APP_ANDROID_INSTALLED" => \CUserOptions::GetOption('mobile', 'AndroidLastActivityDate', "", $this->arParams["ID"]),
-		);
+		];
 
 		foreach ($appActivity as $key => $lastActivity)
 		{
-			if (intval($lastActivity) <= 0 || $lastActivity < time() - 6*30*24*60*60)
+			if ((int)$lastActivity <= 0 || $lastActivity < time() - 6*30*24*60*60)
 			{
 				$user[$key] = false;
 			}
@@ -305,33 +340,38 @@ class UserProfile extends \CBitrixComponent implements \Bitrix\Main\Engine\Contr
 	{
 		global $USER, $USER_FIELD_MANAGER;
 
-		if(empty($data))
+		if (empty($data))
 		{
 			$this->errorCollection[] = new Error(Loc::getMessage('INTRANET_USER_PROFILE_NOTHING_TO_SAVE'));
 			return null;
 		}
 
 		$this->arResult['Permissions'] = $this->getPermissions();
-		if(!$this->arResult['Permissions']['edit'])
+		if (!$this->arResult['Permissions']['edit'])
 		{
 			$this->errorCollection[] = new Error(Loc::getMessage('INTRANET_USER_PROFILE_ACCESS_DENIED'));
 			return null;
 		}
 
-		$fields = array(
+		if (isset($data["UF_DEPARTMENT"]) && empty($data["UF_DEPARTMENT"][0]))
+		{
+			unset($data["UF_DEPARTMENT"]);
+		}
+
+		$fields = [
 			'NAME', 'LAST_NAME', 'SECOND_NAME', 'PERSONAL_GENDER', 'PERSONAL_BIRTHDAY',
 			'EMAIL', 'PERSONAL_MOBILE', 'PERSONAL_WWW',  'PERSONAL_COUNTRY', 'PERSONAL_CITY', 'PERSONAL_STATE',
 			'WORK_PHONE', 'WORK_POSITION', 'AUTO_TIME_ZONE', 'TIME_ZONE',
 			'LOGIN', 'PASSWORD', 'CONFIRM_PASSWORD',
 			'PERSONAL_FAX',  'PERSONAL_MAILBOX', 'PERSONAL_PHONE', 'PERSONAL_STATE', 'PERSONAL_STREET', 'PERSONAL_ZIP',
 			'WORK_CITY', 'WORK_COUNTRY', 'WORK_COMPANY', 'WORK_DEPARTMENT',
-			'PERSONAL_PROFESSION', 'WORK_NOTES'
-		);
+			'PERSONAL_PROFESSION', 'WORK_NOTES', 'WORK_PROFILE'
+		];
 
-		$newFields = array();
+		$newFields = [];
 		foreach ($fields as $key)
 		{
-			if ($key == 'PASSWORD' && strlen($data['PASSWORD']) <= 0)
+			if ($key === 'PASSWORD' && $data['PASSWORD'] == '')
 			{
 				unset($data['PASSWORD']);
 				unset($data['CONFIRM_PASSWORD']);
@@ -339,7 +379,7 @@ class UserProfile extends \CBitrixComponent implements \Bitrix\Main\Engine\Contr
 
 			if (isset($data[$key]))
 			{
-				if (in_array($key, array('NAME', 'LAST_NAME', 'SECOND_NAME')))
+				if (in_array($key, [ 'NAME', 'LAST_NAME', 'SECOND_NAME' ]))
 				{
 					$data[$key] = trim($data[$key]);
 				}
@@ -348,26 +388,24 @@ class UserProfile extends \CBitrixComponent implements \Bitrix\Main\Engine\Contr
 			}
 		}
 
-		$USER_FIELD_MANAGER->EditFormAddFields('USER', $newFields, array('FORM' => $data));
-		if(!$USER->Update($this->arParams['ID'], $newFields))
+		$USER_FIELD_MANAGER->EditFormAddFields('USER', $newFields, [ 'FORM' => $data ]);
+		if (!$USER->Update($this->arParams['ID'], $newFields))
 		{
 			$this->errorCollection[] = new Error($USER->LAST_ERROR);
 			return null;
 		}
-		else
-		{
-			if(defined('BX_COMP_MANAGED_CACHE'))
-			{
-				global $CACHE_MANAGER;
-				$CACHE_MANAGER->ClearByTag('USER_CARD_'.intval($this->arParams['ID'] / TAGGED_user_card_size));
-			}
 
-			$this->arResult['User'] = $this->getUserData();
-			return array(
-				'ENTITY_DATA' => $this->getFormInstance()->getData($this->arResult),
-				'SUCCESS' => 'Y'
-			);
+		if (defined('BX_COMP_MANAGED_CACHE'))
+		{
+			global $CACHE_MANAGER;
+			$CACHE_MANAGER->ClearByTag('USER_CARD_'.(int)($this->arParams['ID'] / TAGGED_user_card_size));
 		}
+
+		$this->arResult['User'] = $this->getUserData();
+		return [
+			'ENTITY_DATA' => $this->getFormInstance()->getData($this->arResult),
+			'SUCCESS' => 'Y'
+		];
 	}
 
 	private function checkVoximplantPhone(&$user)
@@ -410,7 +448,7 @@ class UserProfile extends \CBitrixComponent implements \Bitrix\Main\Engine\Contr
 			{
 				$fileTmp = \CFile::ResizeImageGet(
 					$file,
-					array("width" => $size, "height" => $size),
+					[ 'width' => $size, 'height' => $size ],
 					BX_RESIZE_IMAGE_PROPORTIONAL,
 					false
 				);
@@ -429,13 +467,13 @@ class UserProfile extends \CBitrixComponent implements \Bitrix\Main\Engine\Contr
 
 		$extranetGroupId = (
 			Loader::includeModule('extranet')
-				? intval(\CExtranet::getExtranetUserGroupId())
+				? (int)\CExtranet::getExtranetUserGroupId()
 				: 0
 		);
 
 		$user["IS_EXTRANET"] = false;
 
-		if(in_array(1, $arGroups))
+		if (in_array(1, $arGroups))
 		{
 			$user["STATUS"] = "admin";
 		}
@@ -443,7 +481,7 @@ class UserProfile extends \CBitrixComponent implements \Bitrix\Main\Engine\Contr
 		{
 			$user["STATUS"] = "employee";
 
-			if(
+			if (
 				!is_array($user['UF_DEPARTMENT'])
 				|| empty($user['UF_DEPARTMENT'][0])
 			)
@@ -468,13 +506,13 @@ class UserProfile extends \CBitrixComponent implements \Bitrix\Main\Engine\Contr
 			$user["STATUS"] = "integrator";
 		}
 
-		if($user["ACTIVE"] == "N")
+		if ($user["ACTIVE"] === "N")
 		{
 			$user["STATUS"] = "fired";
 		}
 
 		if (
-			$user["ACTIVE"] == "Y"
+			$user["ACTIVE"] === "Y"
 			&& !empty($user["CONFIRM_CODE"])
 		)
 		{
@@ -514,19 +552,19 @@ class UserProfile extends \CBitrixComponent implements \Bitrix\Main\Engine\Contr
 		global $CACHE_MANAGER;
 
 		$obCache = new \CPHPCache;
-		$path = "/user_card_".intval($user["ID"] / TAGGED_user_card_size);
+		$path = "/user_card_".(int)($user["ID"] / TAGGED_user_card_size);
 
-		if( $this->arParams["CACHE_TIME"] == 0 || $obCache->StartDataCache($this->arParams["CACHE_TIME"], $user["ID"], $path))
+		if ( $this->arParams["CACHE_TIME"] == 0 || $obCache->StartDataCache($this->arParams["CACHE_TIME"], $user["ID"], $path))
 		{
-			if($this->arParams["CACHE_TIME"] > 0 && defined("BX_COMP_MANAGED_CACHE"))
+			if ($this->arParams["CACHE_TIME"] > 0 && defined("BX_COMP_MANAGED_CACHE"))
 			{
 				$CACHE_MANAGER->StartTagCache($path);
-				$CACHE_MANAGER->RegisterTag("USER_CARD_".intval($user["ID"] / TAGGED_user_card_size));
+				$CACHE_MANAGER->RegisterTag("USER_CARD_".(int)($user["ID"] / TAGGED_user_card_size));
 			}
 
 			//departments and subordinate users
-			$user['DEPARTMENTS'] = array();
-			$user["SUBORDINATE"] = array();
+			$user['DEPARTMENTS'] = [];
+			$user["SUBORDINATE"] = [];
 			$dbDepartments = \CIntranetUtils::GetSubordinateDepartmentsList($user["ID"]);
 			while ($department = $dbDepartments->GetNext())
 			{
@@ -535,51 +573,93 @@ class UserProfile extends \CBitrixComponent implements \Bitrix\Main\Engine\Contr
 
 				$user['DEPARTMENTS'][$department['ID']] = $department;
 
-				$dbUsers = \CUser::GetList($o = "", $b = "", array(
-					"!ID" => $user["ID"],
-					'UF_DEPARTMENT' => $department['ID'],
-					'ACTIVE' => 'Y',
-					'CONFIRM_CODE' => false,
-					'IS_REAL_USER' => "Y"
-				), array('FIELDS' => array("ID", "NAME", "LAST_NAME", "SECOND_NAME", "LOGIN", "WORK_POSITION", "PERSONAL_PHOTO")));
+				$dbUsers = \CUser::GetList(
+					"",
+					"",
+					[
+						'!ID' => $user['ID'],
+						'UF_DEPARTMENT' => $department['ID'],
+						'ACTIVE' => 'Y',
+						'CONFIRM_CODE' => false,
+						'IS_REAL_USER' => 'Y',
+					],
+					[
+						'FIELDS' => [ 'ID', 'NAME', 'LAST_NAME', 'SECOND_NAME', 'LOGIN', 'WORK_POSITION', 'PERSONAL_PHOTO', 'PERSONAL_GENDER' ],
+					]
+				);
 
 				while($subUser = $dbUsers->GetNext())
 				{
+					if ((int)$subUser["PERSONAL_PHOTO"] <= 0)
+					{
+						switch($subUser["PERSONAL_GENDER"])
+						{
+							case "M":
+								$suffix = "male";
+								break;
+							case "F":
+								$suffix = "female";
+								break;
+							default:
+								$suffix = "unknown";
+						}
+						$subUser["PERSONAL_PHOTO"] = Option::get('socialnetwork', 'default_user_picture_'.$suffix, false, SITE_ID);
+					}
 
 					$subUser["FULL_NAME"] = \CUser::FormatName(\CSite::GetNameFormat(), $subUser, true, false);
 					$subUser["PHOTO"] = self::getUserPhoto($subUser["PERSONAL_PHOTO"], 100);
-					$subUser["LINK"] = \CComponentEngine::MakePathFromTemplate($this->arParams['PATH_TO_USER'], array("user_id" => $subUser["ID"]));
+					$subUser["LINK"] = \CComponentEngine::MakePathFromTemplate($this->arParams['PATH_TO_USER'], [
+						'user_id' => $subUser['ID'],
+					]);
 					$user["SUBORDINATE"][$subUser["ID"]] = $subUser;
 					$user['DEPARTMENTS'][$department['ID']]['EMPLOYEE_COUNT'] ++;
 				}
 			}
 
 			//managers
-			$user['MANAGERS'] = array();
+			$user['MANAGERS'] = [];
 			$managers = \CIntranetUtils::GetDepartmentManager($user["UF_DEPARTMENT"], $user["ID"], true);
 			foreach ($managers as $key => $manager)
 			{
+				if ((int)$manager["PERSONAL_PHOTO"] <= 0)
+				{
+					switch($manager["PERSONAL_GENDER"])
+					{
+						case "M":
+							$suffix = "male";
+							break;
+						case "F":
+							$suffix = "female";
+							break;
+						default:
+							$suffix = "unknown";
+					}
+					$manager["PERSONAL_PHOTO"] = Option::get('socialnetwork', 'default_user_picture_'.$suffix, false, SITE_ID);
+				}
+
 				$manager["FULL_NAME"] = \CUser::FormatName(\CSite::GetNameFormat(), $manager, true, false);
 				$manager["PHOTO"] = self::getUserPhoto($manager["PERSONAL_PHOTO"], 100);
-				$manager["LINK"] = \CComponentEngine::MakePathFromTemplate($this->arParams['PATH_TO_USER'], array("user_id" => $manager["ID"]));
+				$manager["LINK"] = \CComponentEngine::MakePathFromTemplate($this->arParams['PATH_TO_USER'], [
+					'user_id' => $manager['ID'],
+				]);
 
 				$user['MANAGERS'][$key] = $manager;
 			}
 
-			if($this->arParams["CACHE_TIME"] > 0)
+			if ($this->arParams["CACHE_TIME"] > 0)
 			{
-				$obCache->EndDataCache(array(
+				$obCache->EndDataCache([
 					'DEPARTMENTS' => $user['DEPARTMENTS'],
 					'MANAGERS' => $user['MANAGERS'],
 					'SUBORDINATE' => $user['SUBORDINATE'],
-				));
-				if(defined("BX_COMP_MANAGED_CACHE"))
+				]);
+				if (defined("BX_COMP_MANAGED_CACHE"))
 				{
 					$CACHE_MANAGER->EndTagCache();
 				}
 			}
 		}
-		elseif($this->arParams["CACHE_TIME"] > 0)
+		elseif ($this->arParams["CACHE_TIME"] > 0)
 		{
 			$vars = $obCache->GetVars();
 			$user['DEPARTMENTS'] = $vars['DEPARTMENTS'];
@@ -587,9 +667,13 @@ class UserProfile extends \CBitrixComponent implements \Bitrix\Main\Engine\Contr
 			$user['SUBORDINATE'] = $vars['SUBORDINATE'];
 		}
 
-		if ($user["STATUS"] == 'extranet')
+		if (
+			$user["STATUS"] === 'extranet'
+			|| $this->getCurrentUserStatus() === 'extranet'
+		)
 		{
-			$user['MANAGERS'] = array();
+			$user['MANAGERS'] = [];
+			$user['SUBORDINATE'] = [];
 		}
 	}
 
@@ -614,8 +698,8 @@ class UserProfile extends \CBitrixComponent implements \Bitrix\Main\Engine\Contr
 
 			$result = [
 				'view' => (
-					$currentUserPerms["IsCurrentUser"]
-					|| \CSocNetUser::canProfileView($USER->GetID(), $this->getUserData(), SITE_ID, ComponentHelper::getUrlContext())
+					$currentUserPerms['IsCurrentUser']
+					|| \CSocNetUser::canProfileView($USER->getId(), $this->getUserData(), SITE_ID, ComponentHelper::getUrlContext())
 				),
 				'edit' => (
 					$currentUserPerms["IsCurrentUser"]
@@ -626,7 +710,7 @@ class UserProfile extends \CBitrixComponent implements \Bitrix\Main\Engine\Contr
 				)
 			];
 
-			if(
+			if (
 				!ModuleManager::isModuleInstalled("bitrix24")
 				&& $USER->isAdmin()
 				&& !$currentUserPerms["IsCurrentUser"]
@@ -643,8 +727,8 @@ class UserProfile extends \CBitrixComponent implements \Bitrix\Main\Engine\Contr
 				Loader::includeModule("bitrix24")
 				&& $this->arParams["ID"] != $USER->GetID()
 				&& \Bitrix\Bitrix24\Integrator::isIntegrator($USER->GetID())
-				&& \CBitrix24::IsPortalAdmin($this->arParams["ID"])
-				&& !\Bitrix\Bitrix24\Integrator::isIntegrator($this->arParams["ID"])
+				//&& \CBitrix24::IsPortalAdmin($this->arParams["ID"])
+				//&& !\Bitrix\Bitrix24\Integrator::isIntegrator($this->arParams["ID"])
 			)
 			{
 				$result['edit'] = false;
@@ -670,53 +754,53 @@ class UserProfile extends \CBitrixComponent implements \Bitrix\Main\Engine\Contr
 		return $this->getProfilePostInstance()->getProfileBlogPostFormAction();
 	}
 
-	public function sendProfileBlogPostFormAction(array $params = array())
+	public function sendProfileBlogPostFormAction(array $params = [])
 	{
 		return $this->getProfilePostInstance()->sendProfileBlogPostFormAction($params);
 	}
 
-	public function deleteProfileBlogPostAction(array $params = array())
+	public function deleteProfileBlogPostAction(array $params = [])
 	{
 		return $this->getProfilePostInstance()->deleteProfileBlogPostAction($params);
 	}
 
-	public function getGratitudePostListAction(array $params = array())
+	public function getGratitudePostListAction(array $params = [])
 	{
 		return $this->getGratsInstance()->getGratitudePostListAction($params);
 	}
 
-	public function getTagsListAction(array $params = array())
+	public function getTagsListAction(array $params = [])
 	{
 		return $this->getTagsInstance()->getTagsListAction();
 	}
 
-	public function getTagDataAction(array $params = array())
+	public function getTagDataAction(array $params = [])
 	{
 		return $this->getTagsInstance()->getTagDataAction($params);
 	}
 
-	public function searchTagsAction(array $params = array())
+	public function searchTagsAction(array $params = [])
 	{
 		return $this->getTagsInstance()->searchTagsAction($params);
 	}
 
-	public function addTagAction(array $params = array())
+	public function addTagAction(array $params = [])
 	{
 		return $this->getTagsInstance()->addTagAction($params);
 	}
 
-	public function removeTagAction(array $params = array())
+	public function removeTagAction(array $params = [])
 	{
 		return $this->getTagsInstance()->removeTagAction($params);
 	}
 
-	public function reindexUserAction(array $params = array())
+	public function reindexUserAction(array $params = [])
 	{
 		global $USER;
 
 		$result = false;
 
-		$userId = (!empty($params['userId']) && intval($params['userId']) > 0 ? intval($params['userId']) : $this->arParams["ID"]);
+		$userId = (!empty($params['userId']) && (int)$params['userId'] > 0 ? (int)$params['userId'] : $this->arParams["ID"]);
 		if (
 			$userId != $this->arParams["ID"]
 			&& $userId != $USER->getId()
@@ -816,7 +900,7 @@ class UserProfile extends \CBitrixComponent implements \Bitrix\Main\Engine\Contr
 		$val = Option::get('intranet', 'user_profile_whitelist', false, SITE_ID);
 		if (!empty($val))
 		{
-			$val = unserialize($val);
+			$val = unserialize($val, ["allowed_classes" => false]);
 			if (
 				is_array($val)
 				&& !empty($val)
@@ -887,7 +971,7 @@ class UserProfile extends \CBitrixComponent implements \Bitrix\Main\Engine\Contr
 		{
 			if (Option::get("intranet", "show_year_for_female", "N") === "N")
 			{
-				$actualValue = 'M';
+				$actualValue = 'N';
 			}
 		}
 		elseif (
@@ -914,10 +998,10 @@ class UserProfile extends \CBitrixComponent implements \Bitrix\Main\Engine\Contr
 		$installationDate = $diskObj->getInstallationDatetime();
 		$space = $diskObj->getDiskSpaceUsage();
 
-		$diskInfo = array();
+		$diskInfo = [];
 		if (!empty($installationDate))
 		{
-			$diskInfo["INSTALLATION_DATE"] = $installationDate->toString(new \Bitrix\Main\Context\Culture(array("FORMAT_DATETIME" => FORMAT_DATE)));
+			$diskInfo['INSTALLATION_DATE'] = $installationDate->toString(new \Bitrix\Main\Context\Culture([ 'FORMAT_DATETIME' => FORMAT_DATE ]));
 		}
 
 		if (!empty($space))
@@ -926,5 +1010,62 @@ class UserProfile extends \CBitrixComponent implements \Bitrix\Main\Engine\Contr
 		}
 
 		return $diskInfo;
+	}
+
+	protected function getUserGdpr()
+	{
+		$gdprResult = [
+			"email" => [
+				"value" => "Y",
+				"date" => ""
+			],
+			"training" => [
+				"value" => "Y",
+				"date" => ""
+			],
+		];
+
+		$gdprEmail = \CUserOptions::GetOption('bitrix24', "gdpr_email_info", []);
+		$gdprTraining = \CUserOptions::GetOption('bitrix24', "gdpr_email_training", []);
+
+		if (!empty($gdprEmail))
+		{
+			$gdprResult["email"]["value"] = ($gdprEmail["value"] === "N" ? "N" : "Y");
+			if ((int)$gdprEmail["date"] > 0)
+			{
+				$gdprResult["email"]["date"] = \ConvertTimeStamp($gdprEmail["date"]);
+			}
+		}
+
+		if (!empty($gdprTraining))
+		{
+			$gdprResult["training"]["value"] = ($gdprTraining["value"] === "N" ? "N" : "Y");
+			if ((int)$gdprTraining["date"] > 0)
+			{
+				$gdprResult["training"]["date"] = \ConvertTimeStamp($gdprTraining["date"]);
+			}
+		}
+
+		return $gdprResult;
+	}
+
+	public function changeGdprAction($type = "", $value = "")
+	{
+		if (in_array($type, ["gdpr_email_info", "gdpr_email_training"]))
+		{
+			$currentDate = new Date;
+			$currentDate = $currentDate->getTimestamp();
+
+			$data = [
+				"value" => ($value === "Y" ? "Y" : "N"),
+				"date" => $currentDate
+			];
+			\CUserOptions::SetOption('bitrix24', $type, $data);
+
+			if (Loader::includeModule("bitrix24") && \CBitrix24::isPortalCreator())
+			{
+				Option::set("bitrix24", $type, $value);
+			}
+		}
 	}
 }

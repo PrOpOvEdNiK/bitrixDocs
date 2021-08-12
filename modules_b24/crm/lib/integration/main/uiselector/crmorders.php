@@ -14,7 +14,7 @@ class CrmOrders extends \Bitrix\Main\UI\Selector\EntityBase
 		return (
 			is_array($options)
 			&& isset($options['prefixType'])
-			&& strtolower($options['prefixType']) == 'short'
+			&& mb_strtolower($options['prefixType']) == 'short'
 				? self::PREFIX_SHORT
 				: self::PREFIX_FULL
 		);
@@ -27,7 +27,7 @@ class CrmOrders extends \Bitrix\Main\UI\Selector\EntityBase
 			'id' => $prefix.$data['ID'],
 			'entityType' => 'orders',
 			'entityId' => $data['ID'],
-			'name' => htmlspecialcharsbx($data['ACCOUNT_NUMBER'].(strlen($data['ORDER_TOPIC']) > 0 ? ' "'.$data['ORDER_TOPIC'].'"' : '')),
+			'name' => htmlspecialcharsbx($data['ACCOUNT_NUMBER'].($data['ORDER_TOPIC'] <> '' ? ' "'.$data['ORDER_TOPIC'].'"' : '')),
 			'desc' => ''
 		];
 
@@ -133,7 +133,7 @@ class CrmOrders extends \Bitrix\Main\UI\Selector\EntityBase
 			);
 		}
 
-		if(strlen($permissionSql) > 0)
+		if($permissionSql <> '')
 		{
 			$filter['@ID'] = new \Bitrix\Main\DB\SqlExpression($permissionSql);
 		}
@@ -215,7 +215,7 @@ class CrmOrders extends \Bitrix\Main\UI\Selector\EntityBase
 		$prefix = self::getPrefix($entityOptions);
 
 		if (
-			strlen($search) > 0
+			$search <> ''
 			&& (
 				empty($entityOptions['enableSearch'])
 				|| $entityOptions['enableSearch'] != 'N'
@@ -242,7 +242,7 @@ class CrmOrders extends \Bitrix\Main\UI\Selector\EntityBase
 					$options
 				);
 
-				if(strlen($permissionSql) > 0)
+				if($permissionSql <> '')
 				{
 					$filter['@ID'] = new \Bitrix\Main\DB\SqlExpression($permissionSql);
 				}

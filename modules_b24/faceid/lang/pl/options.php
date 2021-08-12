@@ -1,4 +1,0 @@
-<?
-$MESS["FACEID_ADM_STATS_USAGE_FTRACKER"] = "Face Tracker";
-$MESS["FACEID_TAB_SETTINGS"] = "Ustawienia";
-?>

@@ -43,9 +43,10 @@ class Site extends \Bitrix\Landing\Internals\BaseTable
 	 * Get public url for site.
 	 * @param int[]|int $id Site id or array of ids.
 	 * @param boolean $full Return full site url with relative path.
+	 * @param boolean $hostInclude Include host name in full path.
 	 * @return string|array
 	 */
-	public static function getPublicUrl($id, $full = true)
+	public static function getPublicUrl($id, bool $full = true, bool $hostInclude = true)
 	{
 		$paths = [];
 		$isB24 = Manager::isB24();
@@ -102,7 +103,7 @@ class Site extends \Bitrix\Landing\Internals\BaseTable
 
 			if ($row['DOMAIN_ID'])
 			{
-				$paths[$row['ID']] = ($disableCloud ? $hostUrl : $row['DOMAIN_PROTOCOL'] . '://' . $row['DOMAIN_NAME']) . $pubPath;
+				$paths[$row['ID']] = ($hostInclude ? ($disableCloud ? $hostUrl : $row['DOMAIN_PROTOCOL'] . '://' . $row['DOMAIN_NAME']) : '') . $pubPath;
 				if ($full)
 				{
 					if ($disableCloud && $isB24localVar)
@@ -117,7 +118,7 @@ class Site extends \Bitrix\Landing\Internals\BaseTable
 			}
 			else
 			{
-				$paths[$row['ID']] = $hostUrl . $defaultPubPath . ($full ? $row['CODE'] : '');
+				$paths[$row['ID']] = ($hostInclude ? $hostUrl : '') . $defaultPubPath . ($full ? $row['CODE'] : '');
 			}
 
 			unset($pubPath);
@@ -197,7 +198,6 @@ class Site extends \Bitrix\Landing\Internals\BaseTable
 			'PAGE' => Loc::getMessage('LANDING_TYPE_PAGE'),
 			'STORE' => Loc::getMessage('LANDING_TYPE_STORE'),
 			'SMN' => Loc::getMessage('LANDING_TYPE_SMN'),
-			'PREVIEW' => Loc::getMessage('LANDING_TYPE_PREVIEW'),
 			'KNOWLEDGE' => Loc::getMessage('LANDING_TYPE_KNOWLEDGE'),
 			'GROUP' => Loc::getMessage('LANDING_TYPE_GROUP')
 		);
@@ -227,7 +227,7 @@ class Site extends \Bitrix\Landing\Internals\BaseTable
 		{
 			$res = Landing::getList([
 				'select' => [
-					'ID'
+					'ID', 'FOLDER_ID'
 				],
 				'filter' => [
 					'SITE_ID' => $id,
@@ -236,6 +236,12 @@ class Site extends \Bitrix\Landing\Internals\BaseTable
 			]);
 			while ($row = $res->fetch())
 			{
+				if ($row['FOLDER_ID'])
+				{
+					Landing::update($row['ID'], [
+						'FOLDER_ID' => 0
+					]);
+				}
 				$resDel = Landing::delete($row['ID'], true);
 				if (!$resDel->isSuccess())
 				{
@@ -391,18 +397,16 @@ class Site extends \Bitrix\Landing\Internals\BaseTable
 		$siteForExport = intval($siteForExport);
 		$tplsXml = array();
 		$export = array();
-		Landing::setEditMode(
-			isset($params['edit_mode']) && $params['edit_mode'] === 'Y'
-		);
+		$editMode = isset($params['edit_mode']) && $params['edit_mode'] === 'Y';
+
+		Landing::setEditMode($editMode);
+		Hook::setEditMode($editMode);
 
 		if (!is_array($params))
 		{
 			$params = array();
 		}
-		$params['hooks_files'] = array(
-			'METAOG_IMAGE',
-			'BACKGROUND_PICTURE'
-		);
+		$params['hooks_files'] = Hook::HOOKS_CODES_FILES;
 
 		if (isset($params['scope']))
 		{
@@ -504,6 +508,7 @@ class Site extends \Bitrix\Landing\Internals\BaseTable
 								? $params['code']
 								: trim($row['SITE_CODE'], '/'),
 					'code_mainpage' => '',
+					'site_code' => $row['SITE_CODE'],
 					'name' => isset($params['name'])
 								? $params['name']
 								: $row['SITE_TITLE'],
@@ -523,7 +528,7 @@ class Site extends \Bitrix\Landing\Internals\BaseTable
 								? $params['preview_url']
 								: '',
 					'show_in_list' => 'Y',
-					'type' => strtolower($row['SITE_TYPE']),
+					'type' => mb_strtolower($row['SITE_TYPE']),
 					'version' => $version,
 					'fields' => array(
 						'ADDITIONAL_FIELDS' => array(),
@@ -615,7 +620,7 @@ class Site extends \Bitrix\Landing\Internals\BaseTable
 							? $params['preview_url']
 							: '',
 				'show_in_list' => ($pagesCount == 1) ? 'Y' : 'N',
-				'type' => strtolower($row['SITE_TYPE']),
+				'type' => mb_strtolower($row['SITE_TYPE']),
 				'version' => $version,
 				'fields' => array(
 					'TITLE' => (isset($params['name']) && $pagesCount == 1)
@@ -883,6 +888,170 @@ class Site extends \Bitrix\Landing\Internals\BaseTable
 		$hashes[$id] = md5(implode('', $hash));
 
 		return $hashes[$id];
+	}
+
+	/**
+	 * Switch domains between two sites. Returns true on success.
+	 * @param int $siteId1 First site id.
+	 * @param int $siteId2 Second site id.
+	 * @return bool
+	 */
+	public static function switchDomain(int $siteId1, int $siteId2): bool
+	{
+		return \Bitrix\Landing\Internals\SiteTable::switchDomain($siteId1, $siteId2);
+	}
+
+	/**
+	 * Sets new random domain to site. Actual for Bitrix24 only.
+	 * @param int $siteId Site id.
+	 * @return bool
+	 */
+	public static function randomizeDomain(int $siteId): bool
+	{
+		return \Bitrix\Landing\Internals\SiteTable::randomizeDomain($siteId);
+	}
+
+	/**
+	 * Creates site by template code.
+	 * @param string $code Template code.
+	 * @param string $type Site type.
+	 * @param mixed $additional Data for landing.demo select.
+	 * @return \Bitrix\Main\Entity\AddResult
+	 */
+	public static function addByTemplate(string $code, string $type, $additional = null): \Bitrix\Main\Entity\AddResult
+	{
+		$result = new \Bitrix\Main\Entity\AddResult;
+
+		$componentName = 'bitrix:landing.demo';
+		$className = \CBitrixComponent::includeComponentClass($componentName);
+		/** @var \LandingSiteDemoComponent $demoCmp */
+		$demoCmp = new $className;
+		$demoCmp->initComponent($componentName);
+		$demoCmp->arParams = [
+			'TYPE' => $type,
+			'DISABLE_REDIRECT' => 'Y'
+		];
+		$res = $demoCmp->actionSelect($code, $additional);
+
+		if ($res)
+		{
+			$resSite = self::getList([
+				'select' => [
+					'ID'
+				],
+				'filter' => [
+					'=TYPE' => $type
+				],
+				'order' => [
+					'ID' => 'desc'
+				]
+			]);
+			if ($rowSite = $resSite->fetch())
+			{
+				$result->setId($rowSite['ID']);
+			}
+		}
+		else
+		{
+			foreach ($demoCmp->getErrors() as $code => $title)
+			{
+				$result->addError(new \Bitrix\Main\Error($code, $title));
+			}
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Tries to add page to the all menu on the site.
+	 * Detects blocks with menu-manifests only.
+	 * @param int $siteId Site id.
+	 * @param array $data Landing data ([ID, TITLE]).
+	 * @return void
+	 */
+	public static function addLandingToMenu(int $siteId, array $data): void
+	{
+		Landing::setEditMode();
+		$res = Landing::getList([
+			'select' => [
+				'ID'
+			],
+			'filter' => [
+				'SITE_ID' => $siteId,
+				'!==AREAS.ID' => null
+			],
+		]);
+		while ($row = $res->fetch())
+		{
+			$landing = Landing::createInstance($row['ID']);
+			if ($landing->exist())
+			{
+				foreach ($landing->getBlocks() as $block)
+				{
+					$manifest = $block->getManifest();
+					if (isset($manifest['menu']))
+					{
+						foreach ($manifest['menu'] as $menuSelector => $foo)
+						{
+							$block->updateNodes([
+								$menuSelector => [
+									[
+										'text' => $data['TITLE'],
+										'href' => '#landing' . $data['ID']
+									]
+								]
+							], ['appendMenu' => true]);
+							$block->save();
+						}
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Change modified user and date for the site.
+	 * @param int $id Site id.
+	 * @return void
+	 */
+	public static function touch(int $id): void
+	{
+		static $touched = [];
+
+		if (isset($touched[$id]))
+		{
+			return;
+		}
+
+		$touched[$id] = true;
+
+		self::update($id, [
+			'TOUCH' => 'Y'
+		]);
+	}
+
+	/**
+	 * Returns site id by template code.
+	 * @param string $tplCode Template code.
+	 * @return int|null
+	 */
+	public static function getSiteIdByTemplate(string $tplCode): ?int
+	{
+		Rights::setGlobalOff();
+		$site = \Bitrix\Landing\Site::getList([
+			'select' => [
+				'ID'
+			],
+			'filter' => [
+				'=TPL_CODE' => $tplCode
+			],
+			'order' => [
+				'ID' => 'desc'
+			]
+		])->fetch();
+		Rights::setGlobalOn();
+
+		return $site['ID'] ?? null;
 	}
 
 	/**

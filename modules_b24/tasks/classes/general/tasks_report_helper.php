@@ -26,11 +26,8 @@ class CTasksReportHelper extends CReportHelper
 
 		self::$arUFId = array('TASKS_TASK');
 
-		/** @global string $DBType */
 		/** @global CUserTypeManager $USER_FIELD_MANAGER */
-		global $DBType, $USER_FIELD_MANAGER;
-
-		$dbType = ToUpper(strval($DBType));
+		global $USER_FIELD_MANAGER;
 
 //		$allowedUserTypes = array('disk_file', 'crm');
 		$allowedUserTypes = array('disk_file', 'crm', 'string', 'date', 'datetime', 'enumeration', 'double', 'integer',
@@ -57,7 +54,7 @@ class CTasksReportHelper extends CReportHelper
 							$field['EDIT_FORM_LABEL'] = $field['LIST_COLUMN_LABEL'] = $field['LIST_FILTER_LABEL'] =
 								GetMessage('TASKS_REPORT_UF_TASK_WEBDAV_FILES');
 						}
-						if (substr(trim($field['FIELD_NAME']), 0, 8) == 'UF_AUTO_')
+						if (mb_substr(trim($field['FIELD_NAME']), 0, 8) == 'UF_AUTO_')
 						{
 							$field['LIST_COLUMN_LABEL'] = $field['LIST_FILTER_LABEL'] = $field['EDIT_FORM_LABEL'];
 						}
@@ -70,9 +67,6 @@ class CTasksReportHelper extends CReportHelper
 						$blPostfix = defined('self::UF_BOOLEAN_POSTFIX') ? self::UF_BOOLEAN_POSTFIX : '_BLINL';
 						if ($field['USER_TYPE_ID'] === 'boolean' && $field['MULTIPLE'] !== 'Y')
 							self::$ufInfo[$ufId][$field['FIELD_NAME'].$blPostfix] = $field;
-
-						if (($dbType === 'ORACLE' || $dbType === 'MSSQL') && $field['MULTIPLE'] === 'Y')
-							self::$ufInfo[$ufId][$field['FIELD_NAME'] . self::UF_TEXT_TRIM_POSTFIX] = $field;
 
 						if ($field['USER_TYPE_ID'] === 'money')
 						{
@@ -100,7 +94,7 @@ class CTasksReportHelper extends CReportHelper
 				foreach ($fieldList as $field)
 				{
 					if (is_array($field) && isset($field['USER_TYPE_ID']) && $field['USER_TYPE_ID'] === 'enumeration'
-						&& isset($field['ENTITY_ID']) && strlen(strval($field['ENTITY_ID'])) > 0
+						&& isset($field['ENTITY_ID']) && strval($field['ENTITY_ID']) <> ''
 						&& !isset(self::$ufEnumerations[$field['ENTITY_ID']][$field['FIELD_NAME']])
 						&& ($usedUFMap === null || isset($usedUFMap[$field['ENTITY_ID']][$field['FIELD_NAME']]))
 						&& is_array($field['USER_TYPE']) && isset($field['USER_TYPE']['CLASS_NAME'])
@@ -237,8 +231,8 @@ class CTasksReportHelper extends CReportHelper
 				{
 					if (($uf['USER_TYPE_ID'] !== 'datetime' && $uf['USER_TYPE_ID'] !== 'boolean')
 						|| $uf['MULTIPLE'] === 'Y'
-						|| substr($ufKey, -strlen(self::UF_DATETIME_SHORT_POSTFIX)) === self::UF_DATETIME_SHORT_POSTFIX
-						|| substr($ufKey, -strlen($blPostfix)) === $blPostfix)
+						|| mb_substr($ufKey, -mb_strlen(self::UF_DATETIME_SHORT_POSTFIX)) === self::UF_DATETIME_SHORT_POSTFIX
+						|| mb_substr($ufKey, -mb_strlen($blPostfix)) === $blPostfix)
 					{
 						$columnList[] = $ufKey;
 					}
@@ -316,43 +310,7 @@ class CTasksReportHelper extends CReportHelper
 
 	public static function getCustomSelectFields($select, $fList)
 	{
-		global $DBType;
-
 		$customFields = array();
-
-		$bAggr = false;
-		foreach ($select as $elem)
-		{
-			if (isset($elem['aggr']) && !empty($elem['aggr']))
-			{
-				$bAggr = true;
-				break;
-			}
-		}
-
-		if ($bAggr)
-		{
-			$dbType = ToUpper(strval($DBType));
-
-			if ($dbType === 'ORACLE' || $dbType === 'MSSQL')
-			{
-				foreach ($select as $k => $elem)
-				{
-					$fName = $elem['name'];
-					$field = $fList[$fName];
-					$arUF = self::detectUserField($field);
-					if ($arUF['isUF'])
-					{
-						if ($arUF['ufInfo']['MULTIPLE'] === 'Y')
-						{
-							$customField = $elem;
-							$customField['name'] .= self::UF_TEXT_TRIM_POSTFIX;
-							$customFields[$k] = $customField;
-						}
-					}
-				}
-			}
-		}
 
 		return $customFields;
 	}
@@ -429,7 +387,7 @@ class CTasksReportHelper extends CReportHelper
 		}
 
 		if ($isUF && $isMultiple
-			&& substr($fieldDefinition, -strlen(self::UF_TEXT_TRIM_POSTFIX)) === self::UF_TEXT_TRIM_POSTFIX)
+			&& mb_substr($fieldDefinition, -mb_strlen(self::UF_TEXT_TRIM_POSTFIX)) === self::UF_TEXT_TRIM_POSTFIX)
 		{
 			return '';
 		}
@@ -447,7 +405,7 @@ class CTasksReportHelper extends CReportHelper
 		self::rewriteTagsFilter($filter, $runtime);
 		self::rewriteMoneyFilter($filter, $runtime);
 
-		global $DB, $DBType;
+		global $DB;
 
 		$permFilter = array(
 			'LOGIC' => 'OR'
@@ -464,7 +422,7 @@ class CTasksReportHelper extends CReportHelper
 				'data_type' => 'integer',
 				'expression' => array("(CASE WHEN EXISTS("
 					."SELECT 'x' FROM b_tasks_member TM "
-					."WHERE TM.TASK_ID = ".$DB->escL.((ToUpper($DBType) === "ORACLE") ? "TASKS_TASK" : "tasks_task").$DB->escR.".ID AND TM.USER_ID = ".$userId." AND TM.TYPE = 'A'"
+					."WHERE TM.TASK_ID = ".$DB->escL.("tasks_task").$DB->escR.".ID AND TM.USER_ID = ".$userId." AND TM.TYPE = 'A'"
 				.") THEN 1 ELSE 0 END)")
 			);
 
@@ -485,10 +443,10 @@ class CTasksReportHelper extends CReportHelper
 
 			$deptsPermSql = CTasks::GetSubordinateSql('__ULTRAUNIQUEPREFIX__');
 
-			if (strlen($deptsPermSql))
+			if($deptsPermSql <> '')
 			{
 				$deptsPermSql = "EXISTS(".$deptsPermSql.")";
-				$deptsPermSql = str_replace('__ULTRAUNIQUEPREFIX__T.', $DB->escL.((ToUpper($DBType) === "ORACLE") ? "TASKS_TASK" : "tasks_task").$DB->escR.'.', $deptsPermSql);
+				$deptsPermSql = str_replace('__ULTRAUNIQUEPREFIX__T.', $DB->escL.("tasks_task").$DB->escR.'.', $deptsPermSql);
 				$deptsPermSql = str_replace('__ULTRAUNIQUEPREFIX__', '', $deptsPermSql);
 
 				$runtime['IS_SUBORDINATED_TASK'] = array(
@@ -510,66 +468,6 @@ class CTasksReportHelper extends CReportHelper
 		{
 			$allowedGroups = CTasks::GetAllowedGroups();
 			$permFilter[] = array('=GROUP_ID' => $allowedGroups);
-		}
-
-		// re-aggregate aggregated subquery in DURATION for mssql
-		if (\Bitrix\Main\Application::getConnection() instanceof \Bitrix\Main\DB\MssqlConnection)
-		{
-			foreach ($select as $k => $v)
-			{
-				if (substr($k, -9) == '_DURATION')
-				{
-					// we have aggregated duration
-					$subQuery = new \Bitrix\Main\Entity\Query(\Bitrix\Tasks\Internals\Task\ElapsedTimeTable::getEntity());
-					$subQuery->addSelect('TASK_ID');
-					$subQuery->addSelect(new \Bitrix\Main\Entity\ExpressionField(
-						'DURATION', 'ROUND(SUM(%s)/60, 0)', 'SECONDS'
-					));
-
-					$subEntity = \Bitrix\Main\Entity\Base::getInstanceByQuery($subQuery);
-
-					// make reference
-					$subReferenceName = $k.'_REF';
-					$runtime[$subReferenceName] = array(
-						'data_type' => $subEntity,
-						'reference' => array('=this.ID' => 'ref.TASK_ID')
-					);
-
-					// rewrite aggregated duration (put it in the end, after refence)
-					$runtimeField = $runtime[$k];
-					unset($runtime[$k]);
-
-					$runtimeField['expression'][1] = $subReferenceName.'.DURATION';
-					$runtime[$k] = $runtimeField;
-				}
-				else if (substr($k, -20) == '_DURATION_FOR_PERIOD' && isset($options['SQL_TIME_INTERVAL']))
-				{
-					// we have aggregated DURATION_FOR_PERIOD field
-					$subQuery = new \Bitrix\Main\Entity\Query(\Bitrix\Tasks\Internals\Task\ElapsedTimeTable::getEntity());
-					$subQuery->addSelect('TASK_ID');
-					$subQuery->addSelect(new \Bitrix\Main\Entity\ExpressionField(
-						'DURATION_FOR_PERIOD',
-						'ROUND((SUM(CASE WHEN CREATED_DATE '.$options['SQL_TIME_INTERVAL'].' THEN %s ELSE 0 END)/60),0)',
-						'SECONDS'
-					));
-
-					$subEntity = \Bitrix\Main\Entity\Base::getInstanceByQuery($subQuery);
-
-					// make reference
-					$subReferenceName = $k.'_REF';
-					$runtime[$subReferenceName] = array(
-						'data_type' => $subEntity,
-						'reference' => array('=this.ID' => 'ref.TASK_ID')
-					);
-
-					// rewrite aggregated duration (put it in the end, after refence)
-					$runtimeField = $runtime[$k];
-					unset($runtime[$k]);
-
-					$runtimeField['expression'][1] = $subReferenceName.'.DURATION_FOR_PERIOD';
-					$runtime[$k] = $runtimeField;
-				}
-			}
 		}
 
 		// concat permissions with common filter
@@ -603,12 +501,14 @@ class CTasksReportHelper extends CReportHelper
 					if (!isset($matches[1]))
 					{
 						$matches[1] = '>%';
-						if (substr($v, -1) === '%')
-							$v = substr($v, 0, strlen($v) - 1);
+						if (mb_substr($v, -1) === '%')
+							$v = mb_substr($v, 0, mb_strlen($v) - 1);
 					}
 					$operationCode = $operationCodes[$matches[1]];
 					$caseResult = array();
 					$compareSql = '';
+					$where = new CSQLWhere();
+
 					switch ($operationCode)
 					{
 						case 'EQUAL':
@@ -620,15 +520,15 @@ class CTasksReportHelper extends CReportHelper
 							$caseResult = array(0, 1);
 							break;
 						case 'START_WITH':
-							$compareSql = \CSQLWhere::_Upper('TG.NAME')." LIKE '".\CSQLWhere::ForLIKE(ToUpper($v))."%' ESCAPE '!'";
+							$compareSql = $where->_Upper('TG.NAME')." LIKE '".$where->ForLIKE(ToUpper($v))."%' ESCAPE '!'";
 							$caseResult = array(1, 0);
 							break;
 						case 'CONTAINS':
-							$compareSql = \CSQLWhere::_Upper('TG.NAME')." LIKE '%".\CSQLWhere::ForLIKE(ToUpper($v))."%' ESCAPE '!'";
+							$compareSql = $where->_Upper('TG.NAME')." LIKE '%".$where->ForLIKE(ToUpper($v))."%' ESCAPE '!'";
 							$caseResult = array(1, 0);
 							break;
 						case 'NOT_CONTAINS':
-							$compareSql = \CSQLWhere::_Upper('TG.NAME')." LIKE '%".\CSQLWhere::ForLIKE(ToUpper($v))."%' ESCAPE '!'";
+							$compareSql = $where->_Upper('TG.NAME')." LIKE '%".$where->ForLIKE(ToUpper($v))."%' ESCAPE '!'";
 							$caseResult = array(0, 1);
 							break;
 					}
@@ -865,7 +765,7 @@ class CTasksReportHelper extends CReportHelper
 				$v = htmlspecialcharsbx(GetMessage($field->getLangCode().'_VALUE_'.$v));
 			}
 		}
-		elseif (strpos($k, 'DURATION_PLAN_HOURS') !== false && !strlen($cInfo['prcnt']))
+		elseif (mb_strpos($k, 'DURATION_PLAN_HOURS') !== false && !mb_strlen($cInfo['prcnt']))
 		{
 			$bChartValue = true;
 			$chartValueType = 'float';
@@ -892,7 +792,7 @@ class CTasksReportHelper extends CReportHelper
 				$chartValue = round($chartValue, 2);
 			}
 		}
-		elseif (strpos($k, 'DURATION') !== false && !strlen($cInfo['prcnt']))
+		elseif (mb_strpos($k, 'DURATION') !== false && !mb_strlen($cInfo['prcnt']))
 		{
 			$hours = floor($v/60);
 			$minutes = date('i', ($v % 60)*60);
@@ -904,13 +804,13 @@ class CTasksReportHelper extends CReportHelper
 		}
 		elseif (
 			(
-				strpos($k, 'TIME_ESTIMATE') !== false
+				mb_strpos($k, 'TIME_ESTIMATE') !== false
 				||
-				strpos($k, 'TIME_SPENT_IN_LOGS') !== false
+				mb_strpos($k, 'TIME_SPENT_IN_LOGS') !== false
 				||
-				strpos($k, 'TIME_SPENT_IN_LOGS_FOR_PERIOD') !== false
+				mb_strpos($k, 'TIME_SPENT_IN_LOGS_FOR_PERIOD') !== false
 			)
-			&& !strlen($cInfo['prcnt']))
+			&& !mb_strlen($cInfo['prcnt']))
 		{
 			$hours = floor($v/3600);
 			$minutes = date('i', $v % 3600);
@@ -954,11 +854,11 @@ class CTasksReportHelper extends CReportHelper
 		foreach ($total as $k => $v)
 		{
 			// remove prefix TOTAL_
-			$original_k = substr($k, 6);
+			$original_k = mb_substr($k, 6);
 
 			$cInfo = $columnInfo[$original_k];
 
-			if (strpos($k, 'DURATION_PLAN_HOURS') !== false && !strlen($cInfo['prcnt']))
+			if (mb_strpos($k, 'DURATION_PLAN_HOURS') !== false && !mb_strlen($cInfo['prcnt']))
 			{
 				if (!empty($v))
 				{
@@ -974,7 +874,7 @@ class CTasksReportHelper extends CReportHelper
 					$total[$k] = $v;
 				}
 			}
-			elseif (strpos($k, 'DURATION') !== false && !strlen($cInfo['prcnt']))
+			elseif (mb_strpos($k, 'DURATION') !== false && !mb_strlen($cInfo['prcnt']))
 			{
 				$hours = floor($v/60);
 				$minutes = date('i', ($v % 60)*60);
@@ -982,18 +882,18 @@ class CTasksReportHelper extends CReportHelper
 			}
 			elseif (
 				(
-					(strpos($k, 'TIME_ESTIMATE') !== false)
+					(mb_strpos($k, 'TIME_ESTIMATE') !== false)
 					||
-					(strpos($k, 'TIME_SPENT_IN_LOGS') !== false)
-				) && !strlen($cInfo['prcnt']))
+					(mb_strpos($k, 'TIME_SPENT_IN_LOGS') !== false)
+				) && !mb_strlen($cInfo['prcnt']))
 			{
 				$hours = floor($v/3600);
 				$minutes = date('i', $v % 3600);
 				$total[$k] = $hours.':'.$minutes;
 			}
-			elseif (strpos($k, 'IS_EFFECTIVE_PRCNT') !== false && $cInfo['prcnt'] === '')
+			elseif (mb_strpos($k, 'IS_EFFECTIVE_PRCNT') !== false && $cInfo['prcnt'] === '')
 			{
-				if (self::$nRows > 0 && substr($v, 0, 2) !== '--')
+				if (self::$nRows > 0 && mb_substr($v, 0, 2) !== '--')
 					$total[$k] = round(doubleval($v) / self::$nRows, 2).'%';
 			}
 		}
@@ -1114,26 +1014,26 @@ class CTasksReportHelper extends CReportHelper
 				array(
 					'title' => GetMessage('TASKS_REPORT_DEFAULT_2'),
 					'mark_default' => 2,
-					'settings' => unserialize('a:6:{s:6:"entity";s:5:"Tasks";s:6:"period";a:2:{s:4:"type";s:5:"month";s:5:"value";N;}s:6:"select";a:4:{i:0;a:1:{s:4:"name";s:22:"RESPONSIBLE.SHORT_NAME";}i:1;a:1:{s:4:"name";s:10:"GROUP.NAME";}i:2;a:2:{s:4:"name";s:8:"DURATION";s:4:"aggr";s:3:"SUM";}i:3;a:2:{s:4:"name";s:10:"IS_RUNNING";s:4:"aggr";s:3:"SUM";}}s:6:"filter";a:1:{i:0;a:2:{i:0;a:5:{s:4:"type";s:5:"field";s:4:"name";s:5:"GROUP";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}s:5:"LOGIC";s:3:"AND";}}s:4:"sort";i:0;s:5:"limit";N;}')
+					'settings' => unserialize('a:6:{s:6:"entity";s:5:"Tasks";s:6:"period";a:2:{s:4:"type";s:5:"month";s:5:"value";N;}s:6:"select";a:4:{i:0;a:1:{s:4:"name";s:22:"RESPONSIBLE.SHORT_NAME";}i:1;a:1:{s:4:"name";s:10:"GROUP.NAME";}i:2;a:2:{s:4:"name";s:8:"DURATION";s:4:"aggr";s:3:"SUM";}i:3;a:2:{s:4:"name";s:10:"IS_RUNNING";s:4:"aggr";s:3:"SUM";}}s:6:"filter";a:1:{i:0;a:2:{i:0;a:5:{s:4:"type";s:5:"field";s:4:"name";s:5:"GROUP";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}s:5:"LOGIC";s:3:"AND";}}s:4:"sort";i:0;s:5:"limit";N;}', ['allowed_classes' => false])
 				),
 				array(
 					'title' => GetMessage('TASKS_REPORT_DEFAULT_3'),
 					'mark_default' => 3,
-					'settings' => unserialize('a:6:{s:6:"entity";s:5:"Tasks";s:6:"period";a:2:{s:4:"type";s:5:"month";s:5:"value";N;}s:6:"select";a:8:{i:0;a:1:{s:4:"name";s:22:"RESPONSIBLE.SHORT_NAME";}i:1;a:1:{s:4:"name";s:5:"TITLE";}i:2;a:1:{s:4:"name";s:13:"STATUS_PSEUDO";}i:3;a:1:{s:4:"name";s:8:"PRIORITY";}i:4;a:1:{s:4:"name";s:12:"CREATED_DATE";}i:5;a:1:{s:4:"name";s:10:"DATE_START";}i:6;a:1:{s:4:"name";s:11:"CLOSED_DATE";}i:7;a:1:{s:4:"name";s:8:"DEADLINE";}}s:6:"filter";a:1:{i:0;a:3:{i:0;a:5:{s:4:"type";s:5:"field";s:4:"name";s:11:"RESPONSIBLE";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:1;a:5:{s:4:"type";s:5:"field";s:4:"name";s:5:"GROUP";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}s:5:"LOGIC";s:3:"AND";}}s:4:"sort";i:0;s:5:"limit";N;}')
+					'settings' => unserialize('a:6:{s:6:"entity";s:5:"Tasks";s:6:"period";a:2:{s:4:"type";s:5:"month";s:5:"value";N;}s:6:"select";a:8:{i:0;a:1:{s:4:"name";s:22:"RESPONSIBLE.SHORT_NAME";}i:1;a:1:{s:4:"name";s:5:"TITLE";}i:2;a:1:{s:4:"name";s:13:"STATUS_PSEUDO";}i:3;a:1:{s:4:"name";s:8:"PRIORITY";}i:4;a:1:{s:4:"name";s:12:"CREATED_DATE";}i:5;a:1:{s:4:"name";s:10:"DATE_START";}i:6;a:1:{s:4:"name";s:11:"CLOSED_DATE";}i:7;a:1:{s:4:"name";s:8:"DEADLINE";}}s:6:"filter";a:1:{i:0;a:3:{i:0;a:5:{s:4:"type";s:5:"field";s:4:"name";s:11:"RESPONSIBLE";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:1;a:5:{s:4:"type";s:5:"field";s:4:"name";s:5:"GROUP";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}s:5:"LOGIC";s:3:"AND";}}s:4:"sort";i:0;s:5:"limit";N;}', ['allowed_classes' => false])
 				)
 			),
 			'11.0.3' => array(
 				array(
 					'title' => GetMessage('TASKS_REPORT_DEFAULT_4'),
 					'mark_default' => 4,
-					'settings' => unserialize('a:6:{s:6:"entity";s:5:"Tasks";s:6:"period";a:2:{s:4:"type";s:5:"month";s:5:"value";N;}s:6:"select";a:7:{i:0;a:2:{s:4:"name";s:22:"RESPONSIBLE.SHORT_NAME";s:5:"alias";s:9:"SSSSSSSSS";}i:1;a:3:{s:4:"name";s:6:"IS_NEW";s:5:"alias";s:5:"SSSSS";s:4:"aggr";s:3:"SUM";}i:2;a:3:{s:4:"name";s:2:"ID";s:5:"alias";s:8:"SSSSSSSS";s:4:"aggr";s:14:"COUNT_DISTINCT";}i:3;a:3:{s:4:"name";s:11:"IS_FINISHED";s:5:"alias";s:9:"SSSSSSSSS";s:4:"aggr";s:3:"SUM";}i:4;a:4:{s:4:"name";s:10:"IS_OVERDUE";s:5:"alias";s:10:"SSSSSSSSSS";s:4:"aggr";s:3:"SUM";s:5:"prcnt";s:1:"2";}i:5;a:4:{s:4:"name";s:9:"IS_MARKED";s:5:"alias";s:7:"SSSSSSS";s:4:"aggr";s:3:"SUM";s:5:"prcnt";s:1:"2";}i:6;a:4:{s:4:"name";s:12:"IS_EFFECTIVE";s:5:"alias";s:13:"SSSSSSSSSSSSS";s:4:"aggr";s:3:"SUM";s:5:"prcnt";s:1:"2";}}s:6:"filter";a:1:{i:0;a:4:{i:0;a:5:{s:4:"type";s:5:"field";s:4:"name";s:11:"RESPONSIBLE";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:1;a:5:{s:4:"type";s:5:"field";s:4:"name";s:5:"GROUP";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:2;a:5:{s:4:"type";s:5:"field";s:4:"name";s:13:"ADD_IN_REPORT";s:7:"compare";s:5:"EQUAL";s:5:"value";s:4:"true";s:10:"changeable";s:1:"1";}s:5:"LOGIC";s:3:"AND";}}s:4:"sort";i:0;s:5:"limit";N;}')
+					'settings' => unserialize('a:6:{s:6:"entity";s:5:"Tasks";s:6:"period";a:2:{s:4:"type";s:5:"month";s:5:"value";N;}s:6:"select";a:7:{i:0;a:2:{s:4:"name";s:22:"RESPONSIBLE.SHORT_NAME";s:5:"alias";s:9:"SSSSSSSSS";}i:1;a:3:{s:4:"name";s:6:"IS_NEW";s:5:"alias";s:5:"SSSSS";s:4:"aggr";s:3:"SUM";}i:2;a:3:{s:4:"name";s:2:"ID";s:5:"alias";s:8:"SSSSSSSS";s:4:"aggr";s:14:"COUNT_DISTINCT";}i:3;a:3:{s:4:"name";s:11:"IS_FINISHED";s:5:"alias";s:9:"SSSSSSSSS";s:4:"aggr";s:3:"SUM";}i:4;a:4:{s:4:"name";s:10:"IS_OVERDUE";s:5:"alias";s:10:"SSSSSSSSSS";s:4:"aggr";s:3:"SUM";s:5:"prcnt";s:1:"2";}i:5;a:4:{s:4:"name";s:9:"IS_MARKED";s:5:"alias";s:7:"SSSSSSS";s:4:"aggr";s:3:"SUM";s:5:"prcnt";s:1:"2";}i:6;a:4:{s:4:"name";s:12:"IS_EFFECTIVE";s:5:"alias";s:13:"SSSSSSSSSSSSS";s:4:"aggr";s:3:"SUM";s:5:"prcnt";s:1:"2";}}s:6:"filter";a:1:{i:0;a:4:{i:0;a:5:{s:4:"type";s:5:"field";s:4:"name";s:11:"RESPONSIBLE";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:1;a:5:{s:4:"type";s:5:"field";s:4:"name";s:5:"GROUP";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:2;a:5:{s:4:"type";s:5:"field";s:4:"name";s:13:"ADD_IN_REPORT";s:7:"compare";s:5:"EQUAL";s:5:"value";s:4:"true";s:10:"changeable";s:1:"1";}s:5:"LOGIC";s:3:"AND";}}s:4:"sort";i:0;s:5:"limit";N;}', ['allowed_classes' => false])
 				)
 			),
 			'11.0.8' => array(
 				array(
 					'title' => GetMessage('TASKS_REPORT_DEFAULT_5'),
 					'mark_default' => 5,
-					'settings' => unserialize('a:6:{s:6:"entity";s:5:"Tasks";s:6:"period";a:2:{s:4:"type";s:9:"month_ago";s:5:"value";N;}s:6:"select";a:6:{i:0;a:1:{s:4:"name";s:5:"TITLE";}i:2;a:1:{s:4:"name";s:22:"RESPONSIBLE.SHORT_NAME";}i:7;a:1:{s:4:"name";s:8:"PRIORITY";}i:3;a:1:{s:4:"name";s:13:"STATUS_PSEUDO";}i:5;a:1:{s:4:"name";s:8:"DURATION";}i:6;a:1:{s:4:"name";s:4:"MARK";}}s:6:"filter";a:1:{i:0;a:5:{i:0;a:5:{s:4:"type";s:5:"field";s:4:"name";s:11:"RESPONSIBLE";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:1;a:5:{s:4:"type";s:5:"field";s:4:"name";s:8:"PRIORITY";s:7:"compare";s:5:"EQUAL";s:5:"value";s:1:"1";s:10:"changeable";s:1:"1";}i:2;a:5:{s:4:"type";s:5:"field";s:4:"name";s:13:"STATUS_PSEUDO";s:7:"compare";s:5:"EQUAL";s:5:"value";s:1:"5";s:10:"changeable";s:1:"1";}i:3;a:5:{s:4:"type";s:5:"field";s:4:"name";s:5:"GROUP";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}s:5:"LOGIC";s:3:"AND";}}s:4:"sort";i:0;s:5:"limit";N;}')
+					'settings' => unserialize('a:6:{s:6:"entity";s:5:"Tasks";s:6:"period";a:2:{s:4:"type";s:9:"month_ago";s:5:"value";N;}s:6:"select";a:6:{i:0;a:1:{s:4:"name";s:5:"TITLE";}i:2;a:1:{s:4:"name";s:22:"RESPONSIBLE.SHORT_NAME";}i:7;a:1:{s:4:"name";s:8:"PRIORITY";}i:3;a:1:{s:4:"name";s:13:"STATUS_PSEUDO";}i:5;a:1:{s:4:"name";s:8:"DURATION";}i:6;a:1:{s:4:"name";s:4:"MARK";}}s:6:"filter";a:1:{i:0;a:5:{i:0;a:5:{s:4:"type";s:5:"field";s:4:"name";s:11:"RESPONSIBLE";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:1;a:5:{s:4:"type";s:5:"field";s:4:"name";s:8:"PRIORITY";s:7:"compare";s:5:"EQUAL";s:5:"value";s:1:"1";s:10:"changeable";s:1:"1";}i:2;a:5:{s:4:"type";s:5:"field";s:4:"name";s:13:"STATUS_PSEUDO";s:7:"compare";s:5:"EQUAL";s:5:"value";s:1:"5";s:10:"changeable";s:1:"1";}i:3;a:5:{s:4:"type";s:5:"field";s:4:"name";s:5:"GROUP";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}s:5:"LOGIC";s:3:"AND";}}s:4:"sort";i:0;s:5:"limit";N;}', ['allowed_classes' => false])
 				)
 			),
 			'14.0.10' => array(
@@ -1141,13 +1041,13 @@ class CTasksReportHelper extends CReportHelper
 					'title' => GetMessage('TASKS_REPORT_DEFAULT_6'),
 					'description' => GetMessage('TASKS_REPORT_DEFAULT_6_DESCR'),
 					'mark_default' => 6,
-					'settings' => unserialize('a:9:{s:6:"entity";s:17:"Bitrix\Tasks\Task";s:6:"period";a:2:{s:4:"type";s:5:"month";s:5:"value";N;}s:6:"select";a:8:{i:0;a:1:{s:4:"name";s:5:"TITLE";}i:3;a:1:{s:4:"name";s:13:"STATUS_PSEUDO";}i:10;a:1:{s:4:"name";s:13:"TIME_ESTIMATE";}i:15;a:1:{s:4:"name";s:19:"DURATION_FOR_PERIOD";}i:5;a:1:{s:4:"name";s:8:"DURATION";}i:7;a:1:{s:4:"name";s:8:"DEADLINE";}i:6;a:1:{s:4:"name";s:11:"CLOSED_DATE";}i:8;a:1:{s:4:"name";s:22:"RESPONSIBLE.SHORT_NAME";}}s:6:"filter";a:2:{i:0;a:5:{i:0;a:5:{s:4:"type";s:5:"field";s:4:"name";s:5:"GROUP";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:1;a:5:{s:4:"type";s:5:"field";s:4:"name";s:13:"STATUS_PSEUDO";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:2;a:5:{s:4:"type";s:5:"field";s:4:"name";s:11:"RESPONSIBLE";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:3;a:2:{s:4:"type";s:6:"filter";s:4:"name";s:1:"1";}s:5:"LOGIC";s:3:"AND";}i:1;a:3:{i:0;a:5:{s:4:"type";s:5:"field";s:4:"name";s:19:"ALLOW_TIME_TRACKING";s:7:"compare";s:5:"EQUAL";s:5:"value";s:4:"true";s:10:"changeable";s:1:"0";}i:1;a:5:{s:4:"type";s:5:"field";s:4:"name";s:8:"DURATION";s:7:"compare";s:7:"GREATER";s:5:"value";s:1:"0";s:10:"changeable";s:1:"0";}s:5:"LOGIC";s:2:"OR";}}s:4:"sort";i:0;s:9:"sort_type";s:3:"ASC";s:5:"limit";N;s:12:"red_neg_vals";b:0;s:13:"grouping_mode";b:0;}')
+					'settings' => unserialize('a:9:{s:6:"entity";s:17:"Bitrix\Tasks\Task";s:6:"period";a:2:{s:4:"type";s:5:"month";s:5:"value";N;}s:6:"select";a:8:{i:0;a:1:{s:4:"name";s:5:"TITLE";}i:3;a:1:{s:4:"name";s:13:"STATUS_PSEUDO";}i:10;a:1:{s:4:"name";s:13:"TIME_ESTIMATE";}i:15;a:1:{s:4:"name";s:19:"DURATION_FOR_PERIOD";}i:5;a:1:{s:4:"name";s:8:"DURATION";}i:7;a:1:{s:4:"name";s:8:"DEADLINE";}i:6;a:1:{s:4:"name";s:11:"CLOSED_DATE";}i:8;a:1:{s:4:"name";s:22:"RESPONSIBLE.SHORT_NAME";}}s:6:"filter";a:2:{i:0;a:5:{i:0;a:5:{s:4:"type";s:5:"field";s:4:"name";s:5:"GROUP";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:1;a:5:{s:4:"type";s:5:"field";s:4:"name";s:13:"STATUS_PSEUDO";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:2;a:5:{s:4:"type";s:5:"field";s:4:"name";s:11:"RESPONSIBLE";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:3;a:2:{s:4:"type";s:6:"filter";s:4:"name";s:1:"1";}s:5:"LOGIC";s:3:"AND";}i:1;a:3:{i:0;a:5:{s:4:"type";s:5:"field";s:4:"name";s:19:"ALLOW_TIME_TRACKING";s:7:"compare";s:5:"EQUAL";s:5:"value";s:4:"true";s:10:"changeable";s:1:"0";}i:1;a:5:{s:4:"type";s:5:"field";s:4:"name";s:8:"DURATION";s:7:"compare";s:7:"GREATER";s:5:"value";s:1:"0";s:10:"changeable";s:1:"0";}s:5:"LOGIC";s:2:"OR";}}s:4:"sort";i:0;s:9:"sort_type";s:3:"ASC";s:5:"limit";N;s:12:"red_neg_vals";b:0;s:13:"grouping_mode";b:0;}', ['allowed_classes' => false])
 				),
 				array(
 					'title' => GetMessage('TASKS_REPORT_DEFAULT_7'),
 					'description' => GetMessage('TASKS_REPORT_DEFAULT_7_DESCR'),
 					'mark_default' => 7,
-					'settings' => unserialize('a:10:{s:6:"entity";s:17:"Bitrix\Tasks\Task";s:6:"period";a:2:{s:4:"type";s:5:"month";s:5:"value";N;}s:6:"select";a:5:{i:2;a:1:{s:4:"name";s:22:"RESPONSIBLE.SHORT_NAME";}i:4;a:3:{s:4:"name";s:2:"ID";s:5:"alias";s:0:"";s:4:"aggr";s:14:"COUNT_DISTINCT";}i:10;a:3:{s:4:"name";s:13:"TIME_ESTIMATE";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";}i:8;a:3:{s:4:"name";s:19:"DURATION_FOR_PERIOD";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";}i:6;a:3:{s:4:"name";s:8:"DURATION";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";}}s:6:"filter";a:2:{i:0;a:4:{i:0;a:5:{s:4:"type";s:5:"field";s:4:"name";s:5:"GROUP";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:1;a:5:{s:4:"type";s:5:"field";s:4:"name";s:13:"STATUS_PSEUDO";s:7:"compare";s:5:"EQUAL";s:5:"value";s:1:"5";s:10:"changeable";s:1:"1";}i:2;a:2:{s:4:"type";s:6:"filter";s:4:"name";s:1:"1";}s:5:"LOGIC";s:3:"AND";}i:1;a:3:{i:0;a:5:{s:4:"type";s:5:"field";s:4:"name";s:19:"ALLOW_TIME_TRACKING";s:7:"compare";s:5:"EQUAL";s:5:"value";s:4:"true";s:10:"changeable";s:1:"0";}i:1;a:5:{s:4:"type";s:5:"field";s:4:"name";s:8:"DURATION";s:7:"compare";s:7:"GREATER";s:5:"value";s:1:"0";s:10:"changeable";s:1:"0";}s:5:"LOGIC";s:2:"OR";}}s:4:"sort";i:8;s:9:"sort_type";s:4:"DESC";s:5:"limit";N;s:12:"red_neg_vals";b:0;s:13:"grouping_mode";b:0;s:5:"chart";a:4:{s:7:"display";b:1;s:4:"type";s:3:"bar";s:8:"x_column";i:2;s:9:"y_columns";a:2:{i:0;i:10;i:1;i:6;}}}')
+					'settings' => unserialize('a:10:{s:6:"entity";s:17:"Bitrix\Tasks\Task";s:6:"period";a:2:{s:4:"type";s:5:"month";s:5:"value";N;}s:6:"select";a:5:{i:2;a:1:{s:4:"name";s:22:"RESPONSIBLE.SHORT_NAME";}i:4;a:3:{s:4:"name";s:2:"ID";s:5:"alias";s:0:"";s:4:"aggr";s:14:"COUNT_DISTINCT";}i:10;a:3:{s:4:"name";s:13:"TIME_ESTIMATE";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";}i:8;a:3:{s:4:"name";s:19:"DURATION_FOR_PERIOD";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";}i:6;a:3:{s:4:"name";s:8:"DURATION";s:5:"alias";s:0:"";s:4:"aggr";s:3:"SUM";}}s:6:"filter";a:2:{i:0;a:4:{i:0;a:5:{s:4:"type";s:5:"field";s:4:"name";s:5:"GROUP";s:7:"compare";s:5:"EQUAL";s:5:"value";s:0:"";s:10:"changeable";s:1:"1";}i:1;a:5:{s:4:"type";s:5:"field";s:4:"name";s:13:"STATUS_PSEUDO";s:7:"compare";s:5:"EQUAL";s:5:"value";s:1:"5";s:10:"changeable";s:1:"1";}i:2;a:2:{s:4:"type";s:6:"filter";s:4:"name";s:1:"1";}s:5:"LOGIC";s:3:"AND";}i:1;a:3:{i:0;a:5:{s:4:"type";s:5:"field";s:4:"name";s:19:"ALLOW_TIME_TRACKING";s:7:"compare";s:5:"EQUAL";s:5:"value";s:4:"true";s:10:"changeable";s:1:"0";}i:1;a:5:{s:4:"type";s:5:"field";s:4:"name";s:8:"DURATION";s:7:"compare";s:7:"GREATER";s:5:"value";s:1:"0";s:10:"changeable";s:1:"0";}s:5:"LOGIC";s:2:"OR";}}s:4:"sort";i:8;s:9:"sort_type";s:4:"DESC";s:5:"limit";N;s:12:"red_neg_vals";b:0;s:13:"grouping_mode";b:0;s:5:"chart";a:4:{s:7:"display";b:1;s:4:"type";s:3:"bar";s:8:"x_column";i:2;s:9:"y_columns";a:2:{i:0;i:10;i:1;i:6;}}}', ['allowed_classes' => false])
 				)
 			)
 		);
@@ -1173,17 +1073,6 @@ class CTasksReportHelper extends CReportHelper
 					$report['settings']['select'][8]['alias'] = GetMessage('TASKS_REPORT_DEFAULT_7_ALIAS_8');
 					$report['settings']['select'][10]['alias'] = GetMessage('TASKS_REPORT_DEFAULT_7_ALIAS_10');
 				}
-
-				// remove reports, which not work in MSSQL
-				/*global $DBType;
-				if (ToUpper($DBType) === 'MSSQL')
-				{
-					if (($version === '11.0.1' && $report['mark_default'] === 2)
-						|| ($version === '14.0.10' && $report['mark_default'] === 7))
-					{
-						unset($vreports[$num]);
-					}
-				}*/
 			}
 		}
 
@@ -1344,60 +1233,9 @@ class CTasksReportHelper extends CReportHelper
 
 	public static function appendTextUserFieldsAsTrimmed(\Bitrix\Main\Entity\Base $entity)
 	{
-		/** @global string $DBType */
-		global $DBType;
-
-		$dbType = ToUpper(strval($DBType));
-
 		// Advanced fields for text user fields
 		$textFields = array();
-		foreach($entity->getFields() as $field)
-		{
-			if ($field instanceof Bitrix\Main\Entity\ExpressionField)
-			{
-				$arUF = self::detectUserField($field);
-				if ($arUF['isUF'])
-				{
-					if ($arUF['ufInfo']['MULTIPLE'] === 'Y')
-					{
-						if ($dbType === 'ORACLE' || $dbType === 'MSSQL')
-						{
-							$exprVal = '';
-							switch ($dbType)
-							{
-								case 'ORACLE':
-									$maxStrLen = 4000;
-									$exprVal = 'TO_CHAR(SUBSTR(%s, 1, '.$maxStrLen.'))';
-									break;
-								case 'MSSQL':
-									$maxStrLen = 8000;
-									$exprVal = 'SUBSTRING(%s, 1, '.$maxStrLen.')';
-									break;
-							}
-							/*$textFields[] = array(
-								'def' => array(
-									'data_type' => 'string',
-									'expression' => array(
-										$exprVal, $arUF['ufInfo']['FIELD_NAME']
-									)
-								),
-								'name' => $arUF['ufInfo']['FIELD_NAME'].self::UF_TEXT_TRIM_POSTFIX
-							);*/
-							if ($arUF['ufInfo']['USER_TYPE_ID'] === 'datetime')
-								$fdmsGetterName = 'getFDMsMultipleTrimmedDateTime';
-							else
-								$fdmsGetterName = 'getFDMsMultipleTrimmed';
-							$textFields[] = new Main\Entity\ExpressionField(
-								$arUF['ufInfo']['FIELD_NAME'].self::UF_TEXT_TRIM_POSTFIX,
-								$exprVal,
-								array($arUF['ufInfo']['FIELD_NAME']),
-								array('fetch_data_modification' => array(__CLASS__, $fdmsGetterName))
-							);
-						}
-					}
-				}
-			}
-		}
+
 		foreach ($textFields as $fieldInfo)
 		{
 			if (is_object($fieldInfo))
@@ -1434,7 +1272,7 @@ class CTasksReportHelper extends CReportHelper
 
 	public static function fdmMultipleTrimmed($value, $query, $dataRow, $columnAlias)
 	{
-		$result = @unserialize($value);
+		$result = @unserialize($value, ['allowed_classes' => false]);
 
 		return $result;
 	}

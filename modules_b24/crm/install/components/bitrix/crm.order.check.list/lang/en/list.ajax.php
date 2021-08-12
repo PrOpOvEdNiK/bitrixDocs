@@ -1,3 +1,0 @@
-<?
-$MESS["CRM_CHECK_LIST_ROW_COUNT"] = "Items: #ROW_COUNT#";
-?>

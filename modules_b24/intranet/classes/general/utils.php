@@ -12,7 +12,7 @@ class CIntranetUtils
 		if (!isset($cache[$USER_ID]))
 		{
 			$dbRes = CUser::GetList(
-				$by='ID', $order='ASC',
+				'ID', 'ASC',
 				array('ID' => $USER_ID),
 				array('SELECT' => array('UF_DEPARTMENT'), 'FIELDS' => array('ID'))
 			);
@@ -520,17 +520,17 @@ class CIntranetUtils
 
 	public static function makeGUID($data)
 	{
-		if (strlen($data) !== 32) return false;
+		if (mb_strlen($data) !== 32) return false;
 		else return
 			'{'.
-				substr($data, 0, 8).'-'.substr($data, 8, 4).'-'.substr($data, 12, 4).'-'.substr($data, 16, 4).'-'.substr($data, 20).
+			mb_substr($data, 0, 8).'-'.mb_substr($data, 8, 4).'-'.mb_substr($data, 12, 4).'-'.mb_substr($data, 16, 4).'-'.mb_substr($data, 20).
 			'}';
 	}
 
 	public static function checkGUID($data)
 	{
 		$data = str_replace(array('{', '-', '}'), '', $data);
-		if (strlen($data) !== 32 || preg_match('/[^a-z0-9]/i', $data)) return false;
+		if (mb_strlen($data) !== 32 || preg_match('/[^a-z0-9]/i', $data)) return false;
 		else return $data;
 	}
 
@@ -584,7 +584,7 @@ class CIntranetUtils
 					// 'TYPE' => string
 				// )
 
-				if (strlen($arSectionParams['XML_ID']) !== 32)
+				if (mb_strlen($arSectionParams['XML_ID']) !== 32)
 				{
 					$arSectionParams[$fld_EXTERNAL_ID] = md5($arSectionParams['TYPE'].'_'.$arSectionParams['ID'].'_'.RandString(8));
 					// Set XML_ID
@@ -609,7 +609,7 @@ class CIntranetUtils
 					}
 				}
 
-				if (strlen($arSectionParams[$fld_EXTERNAL_ID]) !== 32)
+				if (mb_strlen($arSectionParams[$fld_EXTERNAL_ID]) !== 32)
 				{
 					$arSectionParams[$fld_EXTERNAL_ID] = md5($arSectionParams['IBLOCK_ID'].'_'.$arSectionParams['ID'].'_'.RandString(8));
 
@@ -623,7 +623,7 @@ class CIntranetUtils
 			{
 				$rsSites = CSite::GetByID(SITE_ID);
 				$arSite = $rsSites->Fetch();
-				if (strlen($arSite["NAME"]) > 0)
+				if ($arSite["NAME"] <> '')
 					$arSectionParams['PREFIX'] = $arSite["NAME"];
 				else
 					$arSectionParams['PREFIX'] = COption::GetOptionString('main', 'site_name', GetMessage('INTR_OUTLOOK_PREFIX_CONTACTS'));
@@ -653,7 +653,7 @@ class CIntranetUtils
 				$rsSites = CSite::GetByID(SITE_ID);
 				$arSite = $rsSites->Fetch();
 
-				if (strlen($arSite["NAME"]) > 0)
+				if ($arSite["NAME"] <> '')
 					$arSectionParams['PREFIX'] = $arSite["NAME"];
 				else
 					$arSectionParams['PREFIX'] = COption::GetOptionString('main', 'site_name', GetMessage('INTR_OUTLOOK_PREFIX_CONTACTS'));
@@ -689,7 +689,7 @@ class CIntranetUtils
 			{
 				$rsSites = CSite::GetByID(SITE_ID);
 				$arSite = $rsSites->Fetch();
-				if (strlen($arSite["NAME"]) > 0)
+				if ($arSite["NAME"] <> '')
 					$arSectionParams['PREFIX'] = $arSite["NAME"];
 				else
 					$arSectionParams['PREFIX'] = COption::GetOptionString('main', 'site_name', GetMessage('INTR_OUTLOOK_PREFIX_CONTACTS'));
@@ -707,14 +707,14 @@ class CIntranetUtils
 			return '';
 		}
 
-		if (substr($arSectionParams['LINK_URL'], -9) == 'index.php')
-			$arSectionParams['LINK_URL'] = substr($arSectionParams['LINK_URL'], 0, -9);
+		if (mb_substr($arSectionParams['LINK_URL'], -9) == 'index.php')
+			$arSectionParams['LINK_URL'] = mb_substr($arSectionParams['LINK_URL'], 0, -9);
 
-		if (substr($arSectionParams['LINK_URL'], -4) != '.php' && substr($arSectionParams['LINK_URL'], -1) != '/')
+		if (mb_substr($arSectionParams['LINK_URL'], -4) != '.php' && mb_substr($arSectionParams['LINK_URL'], -1) != '/')
 			$arSectionParams['LINK_URL'] .= '/';
 
 		// another dirty hack to avoid some M$ stssync protocol restrictions
-		if (substr($arSectionParams['LINK_URL'], -1) != '/')
+		if (mb_substr($arSectionParams['LINK_URL'], -1) != '/')
 			$arSectionParams['LINK_URL'] .= '/';
 
 		$type_script = $type;
@@ -795,7 +795,7 @@ class CIntranetUtils
 		if (!CModule::IncludeModule("iblock"))
 			return false;
 
-		$ID = IntVal($ID);
+		$ID = intval($ID);
 
 		$dbIBlock = CIBlock::GetByID($ID);
 		$arIBlock = $dbIBlock->GetNext();
@@ -811,7 +811,7 @@ class CIntranetUtils
 	public static function ShowIBlockByID($arEntityDesc, $strEntityURL, $arParams)
 	{
 		$url = str_replace("#SITE_DIR#", SITE_DIR, $arEntityDesc["LIST_PAGE_URL"]);
-		if (strpos($url, "/") === 0)
+		if (mb_strpos($url, "/") === 0)
 			$url = "/".ltrim($url, "/");
 
 		$name = "<a href=\"".$url."\">".$arEntityDesc["NAME"]."</a>";
@@ -1004,7 +1004,7 @@ class CIntranetUtils
 
 		if(count($arManagerIDs) > 0)
 		{
-			$dbRes = CUser::GetList($by = 'ID', $sort = 'ASC', array('ID' => implode('|', array_unique($arManagerIDs))));
+			$dbRes = CUser::GetList('ID', 'ASC', array('ID' => implode('|', array_unique($arManagerIDs))));
 			while($arUser = $dbRes->GetNext())
 			{
 				$arManagers[$arUser['ID']] = $arUser;
@@ -1237,7 +1237,7 @@ class CIntranetUtils
 		if (!$USER_ID)
 			$USER_ID = $USER->GetID();
 
-		$dbRes = CUser::GetList($by='ID', $order='ASC', array('ID' => $USER_ID), array('SELECT' => array('UF_DEPARTMENT')));
+		$dbRes = CUser::GetList('ID', 'ASC', array('ID' => $USER_ID), array('SELECT' => array('UF_DEPARTMENT')));
 		if (($arRes = $dbRes->Fetch()) && is_array($arRes['UF_DEPARTMENT']) && count($arRes['UF_DEPARTMENT']) > 0)
 		{
 			return CIntranetUtils::getDepartmentEmployees($arRes['UF_DEPARTMENT'], $bRecursive, $bSkipSelf, $onlyActive, $arSelect);
@@ -1265,7 +1265,7 @@ class CIntranetUtils
 
 		$arSections = array();
 
-		if (!$USER_ID)
+		if (!$USER_ID && $USER)
 			$USER_ID = $USER->GetID();
 
 		if ($USER_ID)
@@ -1424,12 +1424,12 @@ class CIntranetUtils
 		if (COption::GetOptionString('intranet', 'allow_external_mail', 'Y') != 'Y')
 			return false;
 
-		if (COption::GetOptionString('extranet', 'extranet_site', '') == SITE_ID)
+		if (CModule::IncludeModule('extranet') && CExtranet::IsExtranetSite())
 			return false;
 
-		if (isset($_SESSION['aExtranetUser_'.$USER->GetID()][SITE_ID]))
+		if (isset(\Bitrix\Main\Application::getInstance()->getKernelSession()['aExtranetUser_'.$USER->GetID()][SITE_ID]))
 		{
-			if (!$_SESSION['aExtranetUser_'.$USER->GetID()][SITE_ID])
+			if (!\Bitrix\Main\Application::getInstance()->getKernelSession()['aExtranetUser_'.$USER->GetID()][SITE_ID])
 				return false;
 		}
 		else if (CModule::IncludeModule('extranet') && !CExtranet::IsIntranetUser())
@@ -1450,7 +1450,7 @@ class CIntranetUtils
 		if (!CUserOptions::GetOption('global', 'davex_mailbox'))
 		{
 			$arUser = CUser::GetList(
-				$by = 'ID', $order = 'ASC',
+				'ID', 'ASC',
 				array('ID_EQUAL_EXACT' => $USER->GetID()),
 				array('SELECT' => array('UF_BXDAVEX_MAILBOX'), 'FIELDS' => array('ID'))
 			)->Fetch();
@@ -1474,7 +1474,7 @@ class CIntranetUtils
 			return '';
 
 		$arAdmin = CUser::getList(
-			$by, $order,
+			'', '',
 			array('ID' => $user_id, 'GROUPS_ID' => 1, 'ACTIVE' => 'Y'),
 			array('FIELDS' => array('ID', 'TIME_ZONE_OFFSET'))
 		)->fetch();
@@ -1570,7 +1570,7 @@ class CIntranetUtils
 			return '';
 
 		$arAdmin = CUser::getList(
-			$by, $order,
+			'', '',
 			array('ID' => $user_id, 'GROUPS_ID' => 1, 'ACTIVE' => 'Y'),
 			array('FIELDS' => array('ID', 'EMAIL'))
 		)->fetch();
@@ -1741,13 +1741,16 @@ class CIntranetUtils
 
 		if (is_null($host))
 		{
+			$ttl = (CACHED_b_lang !== false ? CACHED_b_lang : 0);
+
 			$site = Bitrix\Main\SiteTable::getList(array(
-				'filter' => defined('SITE_ID') ? array('LID' => SITE_ID) : array(),
+				'filter' => defined('SITE_ID') ? array('=LID' => SITE_ID) : array(),
 				'order'  => array('ACTIVE' => 'DESC', 'DEF' => 'DESC', 'SORT' => 'ASC'),
-				'select' => array('SERVER_NAME')
+				'select' => array('SERVER_NAME'),
+				'cache' => [ 'ttl' => $ttl ],
 			))->fetch();
 
-			$host = isModuleInstalled('bitrix24') ? BX24_HOST_NAME
+			$host = isModuleInstalled('bitrix24') && defined('BX24_HOST_NAME') ? BX24_HOST_NAME
 				: ($site['SERVER_NAME'] ?: COption::getOptionString('main', 'server_name', ''));
 		}
 
@@ -1833,7 +1836,7 @@ class CIntranetUtils
 
 		if (!empty($_SERVER["QUERY_STRING"]))
 		{
-			if (strrpos($firstPagePath, "?") === false)
+			if (mb_strrpos($firstPagePath, "?") === false)
 			{
 				$firstPagePath .= "?".$_SERVER["QUERY_STRING"];
 			}
@@ -1851,27 +1854,11 @@ class CIntranetUtils
 		$woYear = (!empty($params['woYear']) && $params['woYear']);
 		$woTime = (!empty($params['woTime']) && $params['woTime']);
 
-		$rsSite = CSite::GetByID(SITE_ID);
-		if ($arSite = $rsSite->Fetch())
-		{
-			$curDateFormat = $arSite["FORMAT_DATE"];
-			$curTimeFormat = str_replace($curDateFormat." ", "", $arSite["FORMAT_DATETIME"]);
-		}
-
-		$currentDateTimeFormat = ($woYear ? "j F" : "j F Y");
-		if (LANGUAGE_ID == "de")
-			$currentDateTimeFormat = ($woYear ? "j. F" : "j. F Y");
-		else if (LANGUAGE_ID == "en")
-			$currentDateTimeFormat = ($woYear ? "F j" : "F j, Y");
-		else if (in_array(LANGUAGE_ID, array("sc", "tc", "ja")))
-			$currentDateTimeFormat = ($woYear ? "Fj" : "Y&#24180;Fj");
-
+		$culture = \Bitrix\Main\Context::getCurrent()->getCulture();
+		$currentDateTimeFormat = ($woYear ? $culture->getDayMonthFormat() : $culture->getLongDateFormat());
 		if (!$woTime)
 		{
-			if ($curTimeFormat == "HH:MI:SS")
-				$currentDateTimeFormat.= " G:i";
-			else //($curTimeFormat == "H:MI:SS TT")
-				$currentDateTimeFormat.= " g:i a";
+			$currentDateTimeFormat .= ' '.$culture->getShortTimeFormat();
 		}
 
 		return $currentDateTimeFormat;

@@ -1,11 +1,13 @@
 <?php
 IncludeModuleLangFile(__FILE__);
 
+use Bitrix\Crm\Entity\Traits\UserFieldPreparer;
 use Bitrix\Main;
 use Bitrix\Crm;
 use Bitrix\Crm\UtmTable;
 use Bitrix\Crm\Tracking;
 use Bitrix\Crm\EntityAddress;
+use Bitrix\Crm\EntityAddressType;
 use Bitrix\Crm\ContactAddress;
 use Bitrix\Crm\Binding\EntityBinding;
 use Bitrix\Crm\Binding\ContactCompanyTable;
@@ -17,15 +19,22 @@ use Bitrix\Crm\Integrity\DuplicateEntityRanking;
 use Bitrix\Crm\Integrity\DuplicateIndexMismatch;
 use Bitrix\Crm\Counter\EntityCounterType;
 use Bitrix\Crm\Counter\EntityCounterManager;
+use Bitrix\Main\Localization\Loc;
+
+Loc::loadMessages($_SERVER['DOCUMENT_ROOT'] . BX_ROOT . '/modules/crm/lib/webform/entity.php');
 
 class CAllCrmContact
 {
+	use UserFieldPreparer;
+
 	static public $sUFEntityID = 'CRM_CONTACT';
 	const USER_FIELD_ENTITY_ID = 'CRM_CONTACT';
 	const SUSPENDED_USER_FIELD_ENTITY_ID = 'CRM_CONTACT_SPD';
 	const TOTAL_COUNT_CACHE_ID =  'crm_contact_total_count';
 
 	public $LAST_ERROR = '';
+	protected $checkExceptions = array();
+
 	public $cPerms = null;
 	protected $bCheckPermission = true;
 	const TABLE_ALIAS = 'L';
@@ -47,7 +56,18 @@ class CAllCrmContact
 			return \CCrmFieldMulti::GetEntityTypeCaption($fieldName);
 		}
 
-		$result = GetMessage("CRM_CONTACT_FIELD_{$fieldName}");
+		$result = GetMessage("CRM_CONTACT_FIELD_{$fieldName}_NEW");
+		if (!(is_string($result) && $result !== ''))
+		{
+			$result = GetMessage("CRM_CONTACT_FIELD_{$fieldName}");
+		}
+
+		if (!(is_string($result) && $result !== '')
+			&& Crm\Tracking\UI\Details::isTrackingField($fieldName))
+		{
+			$result = Crm\Tracking\UI\Details::getFieldCaption($fieldName);
+		}
+
 		return is_string($result) ? $result : '';
 	}
 	// Get Fields Metadata
@@ -92,11 +112,13 @@ class CAllCrmContact
 				),
 				'TYPE_ID' => array(
 					'TYPE' => 'crm_status',
-					'CRM_STATUS_TYPE' => 'CONTACT_TYPE'
+					'CRM_STATUS_TYPE' => 'CONTACT_TYPE',
+					'ATTRIBUTES' => [CCrmFieldInfoAttr::HasDefaultValue]
 				),
 				'SOURCE_ID' => array(
 					'TYPE' => 'crm_status',
-					'CRM_STATUS_TYPE' => 'SOURCE'
+					'CRM_STATUS_TYPE' => 'SOURCE',
+					'ATTRIBUTES' => [CCrmFieldInfoAttr::HasDefaultValue]
 				),
 				'SOURCE_DESCRIPTION' => array(
 					'TYPE' => 'string'
@@ -127,6 +149,9 @@ class CAllCrmContact
 				),
 				'ADDRESS_COUNTRY_CODE' => array(
 					'TYPE' => 'string'
+				),
+				'ADDRESS_LOC_ADDR_ID' => array(
+					'TYPE' => 'integer'
 				),
 				'COMMENTS' => array(
 					'TYPE' => 'string'
@@ -268,8 +293,17 @@ class CAllCrmContact
 
 		if(!(is_array($arOptions) && isset($arOptions['DISABLE_ADDRESS']) && $arOptions['DISABLE_ADDRESS']))
 		{
-			$addrJoin = 'LEFT JOIN b_crm_addr ADDR ON L.ID = ADDR.ENTITY_ID AND ADDR.TYPE_ID = '
-				.EntityAddress::Primary.' AND ADDR.ENTITY_TYPE_ID = '.CCrmOwnerType::Contact;
+			if (COption::GetOptionString('crm', '~CRM_CONVERT_CONTACT_ADDRESSES', 'N') === 'Y')
+			{
+				$addrJoin = 'LEFT JOIN b_crm_addr ADDR ON L.ID = ADDR.ENTITY_ID AND ADDR.TYPE_ID = '
+					.EntityAddressType::Primary.' AND ADDR.ENTITY_TYPE_ID = '.CCrmOwnerType::Contact;
+			}
+			else
+			{
+				$addrJoin = 'LEFT JOIN b_crm_addr ADDR ON L.ID = ADDR.ANCHOR_ID AND ADDR.TYPE_ID = '
+					.EntityAddressType::Primary.' AND ADDR.ANCHOR_TYPE_ID = '.CCrmOwnerType::Contact.
+					' AND ADDR.IS_DEF = 1';
+			}
 
 			$result['ADDRESS'] = array('FIELD' => 'ADDR.ADDRESS_1', 'TYPE' => 'string', 'FROM' => $addrJoin);
 			$result['ADDRESS_2'] = array('FIELD' => 'ADDR.ADDRESS_2', 'TYPE' => 'string', 'FROM' => $addrJoin);
@@ -278,7 +312,7 @@ class CAllCrmContact
 			$result['ADDRESS_REGION'] = array('FIELD' => 'ADDR.REGION', 'TYPE' => 'string', 'FROM' => $addrJoin);
 			$result['ADDRESS_PROVINCE'] = array('FIELD' => 'ADDR.PROVINCE', 'TYPE' => 'string', 'FROM' => $addrJoin);
 			$result['ADDRESS_COUNTRY'] = array('FIELD' => 'ADDR.COUNTRY', 'TYPE' => 'string', 'FROM' => $addrJoin);
-			$result['ADDRESS_COUNTRY_CODE'] = array('FIELD' => 'ADDR.COUNTRY_CODE', 'TYPE' => 'string', 'FROM' => $addrJoin);
+			$result['ADDRESS_LOC_ADDR_ID'] = array('FIELD' => 'ADDR.LOC_ADDR_ID', 'TYPE' => 'integer', 'FROM' => $addrJoin);
 		}
 
 		// Creation of field aliases
@@ -397,49 +431,19 @@ class CAllCrmContact
 
 	public static function GetTopIDs($top, $sortType = 'ASC', $userPermissions = null)
 	{
-		$top = (int) $top;
+		$top = (int)$top;
 		if ($top <= 0)
 		{
 			return [];
 		}
 
-		$sortType = strtoupper($sortType) !== 'DESC' ? 'ASC' : 'DESC';
+		$sortType = mb_strtoupper($sortType) !== 'DESC' ? 'ASC' : 'DESC';
 
-		$permissionSql = '';
-		if (!CCrmPerms::IsAdmin())
-		{
-			if (!$userPermissions)
-			{
-				$userPermissions = CCrmPerms::GetCurrentUserPermissions();
-			}
-
-			$permissionSql = self::BuildPermSql('L', 'READ', ['PERMS' => $userPermissions]);
-		}
-
-		if ($permissionSql === false)
-		{
-			return [];
-		}
-
-
-		$query = new Main\Entity\Query(Crm\ContactTable::getEntity());
-		$query->addSelect('ID');
-		$query->addOrder('ID', $sortType);
-		$query->setLimit($top);
-
-		if ($permissionSql !== '')
-		{
-			$permissionSql = substr($permissionSql,7);
-			$query->where('ID', 'in', new Main\DB\SqlExpression($permissionSql));
-		}
-
-		$rs = $query->exec();
-		$results = [];
-		while ($field = $rs->fetch())
-		{
-			$results[] = (int) $field['ID'];
-		}
-		return $results;
+		return \Bitrix\Crm\Entity\Contact::getInstance()->getTopIDs([
+			'order' => ['ID' => $sortType],
+			'limit' => $top,
+			'userPermissions' => $userPermissions
+		]);
 	}
 
 	public static function GetTotalCount()
@@ -619,7 +623,7 @@ class CAllCrmContact
 
 		foreach($arSelect as $field)
 		{
-			$field = strtoupper($field);
+			$field = mb_strtoupper($field);
 			if (array_key_exists($field, $arFields))
 				$arSqlSelect[$field] = $arFields[$field].($field != '*' ? ' AS '.$field : '');
 		}
@@ -675,7 +679,7 @@ class CAllCrmContact
 				$CDBResult->InitFromArray(array());
 				return $CDBResult;
 			}
-			if(strlen($sSqlPerm) > 0)
+			if($sSqlPerm <> '')
 			{
 				$sSqlPerm = ' AND '.$sSqlPerm;
 			}
@@ -830,12 +834,12 @@ class CAllCrmContact
 
 		$sSqlSearch = '';
 		foreach($arSqlSearch as $r)
-			if (strlen($r) > 0)
+			if ($r <> '')
 				$sSqlSearch .= "\n\t\t\t\tAND  ($r) ";
 		$CCrmUserType = new CCrmUserType($GLOBALS['USER_FIELD_MANAGER'], self::$sUFEntityID);
 		$CCrmUserType->ListPrepareFilter($arFilter);
 		$r = $obUserFieldsSql->GetFilter();
-		if (strlen($r) > 0)
+		if ($r <> '')
 			$sSqlSearch .= "\n\t\t\t\tAND ($r) ";
 
 		if (!empty($sQueryWhereFields))
@@ -856,8 +860,8 @@ class CAllCrmContact
 			$arOrder = Array('DATE_CREATE' => 'DESC');
 		foreach($arOrder as $by => $order)
 		{
-			$by = strtoupper($by);
-			$order = strtolower($order);
+			$by = mb_strtoupper($by);
+			$order = mb_strtolower($order);
 			if ($order != 'asc')
 				$order = 'desc';
 
@@ -1045,6 +1049,7 @@ class CAllCrmContact
 		}
 
 		$this->LAST_ERROR = '';
+		$this->checkExceptions = [];
 
 		$isRestoration = isset($options['IS_RESTORATION']) && $options['IS_RESTORATION'];
 
@@ -1088,6 +1093,15 @@ class CAllCrmContact
 				$arFields['ASSIGNED_BY_ID'] = $userID;
 			}
 		}
+
+		if((!isset($arFields['LAST_NAME']) || trim($arFields['LAST_NAME']) === '')
+			&& (!isset($arFields['NAME']) || trim($arFields['NAME']) === ''))
+		{
+			$arFields['LAST_NAME'] = self::GetDefaultTitle();
+		}
+
+		$fields = self::GetUserFields();
+		$this->fillEmptyFieldValues($arFields, $fields);
 
 		if (!$this->CheckFields($arFields, false, $options))
 		{
@@ -1154,7 +1168,7 @@ class CAllCrmContact
 
 			if(isset($arFields['PHOTO'])
 				&& is_array($arFields['PHOTO'])
-				&& strlen(CFile::CheckImageFile($arFields['PHOTO'])) === 0)
+				&& CFile::CheckImageFile($arFields['PHOTO']) == '')
 			{
 				$arFields['PHOTO']['MODULE_ID'] = 'crm';
 				CFile::SaveForDB($arFields, 'PHOTO', 'crm');
@@ -1263,14 +1277,30 @@ class CAllCrmContact
 			}
 			//endregion
 
+			unset($arFields['ID']);
 			$ID = intval($DB->Add('b_crm_contact', $arFields, array(), 'FILE: '.__FILE__.'<br /> LINE: '.__LINE__));
+			//Append ID to LAST_NAME if required
+			if($ID > 0 && $arFields['LAST_NAME'] === self::GetDefaultTitle())
+			{
+				$arFields['LAST_NAME'] = self::GetDefaultTitle($ID);
+				$sUpdate = $DB->PrepareUpdate('b_crm_contact', array('LAST_NAME' => $arFields['LAST_NAME']));
+				if($sUpdate <> '')
+				{
+					$DB->Query(
+						"UPDATE b_crm_contact SET {$sUpdate} WHERE ID = {$ID}",
+						false,
+						'FILE: '.__FILE__.'<br /> LINE: '.__LINE__
+					);
+				};
+			}
+
+			$result = $arFields['ID'] = $ID;
 
 			if(defined('BX_COMP_MANAGED_CACHE'))
 			{
 				$GLOBALS['CACHE_MANAGER']->CleanDir('b_crm_contact');
 			}
 
-			$result = $arFields['ID'] = $ID;
 			CCrmPerms::UpdateEntityAttr('CONTACT', $ID, $arEntityAttr);
 
 			//Statistics & History -->
@@ -1323,7 +1353,7 @@ class CAllCrmContact
 			EntityAddress::register(
 				CCrmOwnerType::Contact,
 				$ID,
-				EntityAddress::Primary,
+				EntityAddressType::Primary,
 				array(
 					'ADDRESS_1' => isset($arFields['ADDRESS']) ? $arFields['ADDRESS'] : null,
 					'ADDRESS_2' => isset($arFields['ADDRESS_2']) ? $arFields['ADDRESS_2'] : null,
@@ -1332,7 +1362,9 @@ class CAllCrmContact
 					'REGION' => isset($arFields['ADDRESS_REGION']) ? $arFields['ADDRESS_REGION'] : null,
 					'PROVINCE' => isset($arFields['ADDRESS_PROVINCE']) ? $arFields['ADDRESS_PROVINCE'] : null,
 					'COUNTRY' => isset($arFields['ADDRESS_COUNTRY']) ? $arFields['ADDRESS_COUNTRY'] : null,
-					'COUNTRY_CODE' => isset($arFields['ADDRESS_COUNTRY_CODE']) ? $arFields['ADDRESS_COUNTRY_CODE'] : null
+					'COUNTRY_CODE' => isset($arFields['ADDRESS_COUNTRY_CODE']) ? $arFields['ADDRESS_COUNTRY_CODE'] : null,
+					'LOC_ADDR_ID' => isset($arFields['ADDRESS_LOC_ADDR_ID']) ? (int)$arFields['ADDRESS_LOC_ADDR_ID'] : 0,
+					'LOC_ADDR' => isset($arFields['ADDRESS_LOC_ADDR']) ? $arFields['ADDRESS_LOC_ADDR'] : null
 				)
 			);
 
@@ -1364,7 +1396,9 @@ class CAllCrmContact
 			}
 
 			//region Search content index
-			Bitrix\Crm\Search\SearchContentBuilderFactory::create(CCrmOwnerType::Contact)->build($ID);
+			Bitrix\Crm\Search\SearchContentBuilderFactory::create(
+				CCrmOwnerType::Contact
+			)->build($ID, ['checkExist' => true]);
 			//endregion
 
 			if(isset($options['REGISTER_SONET_EVENT']) && $options['REGISTER_SONET_EVENT'] === true)
@@ -1427,7 +1461,7 @@ class CAllCrmContact
 				)
 				{
 					$url = CCrmOwnerType::GetEntityShowPath(CCrmOwnerType::Contact, $ID);
-					$serverName = (CMain::IsHTTPS() ? "https" : "http")."://".((defined("SITE_SERVER_NAME") && strlen(SITE_SERVER_NAME) > 0) ? SITE_SERVER_NAME : COption::GetOptionString("main", "server_name", ""));
+					$serverName = (CMain::IsHTTPS() ? "https" : "http")."://".((defined("SITE_SERVER_NAME") && SITE_SERVER_NAME <> '') ? SITE_SERVER_NAME : COption::GetOptionString("main", "server_name", ""));
 
 					$arMessageFields = array(
 						"MESSAGE_TYPE" => IM_MESSAGE_SYSTEM,
@@ -1533,6 +1567,8 @@ class CAllCrmContact
 		global $DB;
 
 		$this->LAST_ERROR = '';
+		$this->checkExceptions = [];
+
 		$ID = (int) $ID;
 		if(!is_array($arOptions))
 		{
@@ -1588,6 +1624,8 @@ class CAllCrmContact
 		$assignedByID = (int)(isset($arFields['ASSIGNED_BY_ID']) ? $arFields['ASSIGNED_BY_ID'] : $arRow['ASSIGNED_BY_ID']);
 
 		$bResult = false;
+
+		$options['CURRENT_FIELDS'] = $arRow;
 		if (!$this->CheckFields($arFields, $ID, $arOptions))
 		{
 			$arFields['RESULT_MESSAGE'] = &$this->LAST_ERROR;
@@ -1653,7 +1691,7 @@ class CAllCrmContact
 						}
 					}
 				}
-				elseif(is_array($arFields['PHOTO']) && strlen(CFile::CheckImageFile($arFields['PHOTO'])) === 0)
+				elseif(is_array($arFields['PHOTO']) && CFile::CheckImageFile($arFields['PHOTO']) == '')
 				{
 					//Old file editor (file id is not saved yet)
 					$arFields['PHOTO']['MODULE_ID'] = 'crm';
@@ -1918,7 +1956,7 @@ class CAllCrmContact
 
 			unset($arFields['ID']);
 			$sUpdate = $DB->PrepareUpdate('b_crm_contact', $arFields, 'FILE: '.__FILE__.'<br /> LINE: '.__LINE__);
-			if (strlen($sUpdate) > 0)
+			if ($sUpdate <> '')
 			{
 				$bResult = true;
 				$DB->Query("UPDATE b_crm_contact SET {$sUpdate} WHERE ID = {$ID}", false, 'FILE: '.__FILE__.'<br /> LINE: '.__LINE__);
@@ -1972,12 +2010,13 @@ class CAllCrmContact
 				|| isset($arFields['ADDRESS_POSTAL_CODE'])
 				|| isset($arFields['ADDRESS_REGION'])
 				|| isset($arFields['ADDRESS_PROVINCE'])
-				|| isset($arFields['ADDRESS_COUNTRY']))
+				|| isset($arFields['ADDRESS_COUNTRY'])
+				|| isset($arFields['ADDRESS_LOC_ADDR_ID']))
 			{
 				EntityAddress::register(
 					CCrmOwnerType::Contact,
 					$ID,
-					EntityAddress::Primary,
+					EntityAddressType::Primary,
 					array(
 						'ADDRESS_1' => isset($arFields['ADDRESS'])
 							? $arFields['ADDRESS'] : (isset($arRow['ADDRESS']) ? $arRow['ADDRESS'] : null),
@@ -1994,8 +2033,17 @@ class CAllCrmContact
 						'COUNTRY' => isset($arFields['ADDRESS_COUNTRY'])
 							? $arFields['ADDRESS_COUNTRY'] : (isset($arRow['ADDRESS_COUNTRY']) ? $arRow['ADDRESS_COUNTRY'] : null),
 						'COUNTRY_CODE' => isset($arFields['ADDRESS_COUNTRY_CODE'])
-							? $arFields['ADDRESS_COUNTRY_CODE'] : (isset($arRow['ADDRESS_COUNTRY_CODE']) ? $arRow['ADDRESS_COUNTRY_CODE'] : null)
-					)
+							? $arFields['ADDRESS_COUNTRY_CODE'] : (isset($arRow['ADDRESS_COUNTRY_CODE']) ? $arRow['ADDRESS_COUNTRY_CODE'] : null),
+						'LOC_ADDR_ID' => isset($arFields['ADDRESS_LOC_ADDR_ID'])
+							? (int)$arFields['ADDRESS_LOC_ADDR_ID'] : (isset($arRow['ADDRESS_LOC_ADDR_ID']) ? (int)$arRow['ADDRESS_LOC_ADDR_ID'] : 0),
+						'LOC_ADDR' => isset($arFields['ADDRESS_LOC_ADDR']) ? $arFields['ADDRESS_LOC_ADDR'] : null
+					),
+					[
+						'updateLocationAddress' => !(
+							(isset($arFields['ADDRESS_LOC_ADDR_ID']) && $arFields['ADDRESS_LOC_ADDR_ID'] > 0) ||
+							(isset($arFields['ADDRESS_LOC_ADDR']) && is_object($arFields['ADDRESS_LOC_ADDR']))
+						)
+					]
 				);
 			}
 
@@ -2025,6 +2073,13 @@ class CAllCrmContact
 			));
 			//<-- Statistics & History
 
+			$enableDupIndexInvalidation = isset($arOptions['ENABLE_DUP_INDEX_INVALIDATION'])
+				? (bool)$arOptions['ENABLE_DUP_INDEX_INVALIDATION'] : true;
+			if(!$isSystemAction && $enableDupIndexInvalidation)
+			{
+				\Bitrix\Crm\Integrity\DuplicateManager::markDuplicateIndexAsDirty(CCrmOwnerType::Contact, $ID);
+			}
+
 			if($bResult)
 			{
 				$previousAssignedByID = isset($arRow['ASSIGNED_BY_ID']) ? (int)$arRow['ASSIGNED_BY_ID'] : 0;
@@ -2051,6 +2106,10 @@ class CAllCrmContact
 						),
 						$assignedByIDs
 					);
+				}
+				if ($assignedByID !== $previousAssignedByID && $enableDupIndexInvalidation)
+				{
+					\Bitrix\Crm\Integrity\DuplicateManager::onChangeEntityAssignedBy(CCrmOwnerType::Contact, $ID);
 				}
 			}
 
@@ -2117,7 +2176,8 @@ class CAllCrmContact
 			}
 
 			//region Search content index
-			Bitrix\Crm\Search\SearchContentBuilderFactory::create(CCrmOwnerType::Contact)->build($ID);
+			Bitrix\Crm\Search\SearchContentBuilderFactory::create(CCrmOwnerType::Contact)
+				->build($ID, ['checkExist' => true]);
 			//endregion
 
 			Bitrix\Crm\Timeline\ContactController::getInstance()->onModify(
@@ -2203,7 +2263,7 @@ class CAllCrmContact
 					{
 						$title = CCrmOwnerType::GetCaption(CCrmOwnerType::Contact, $ID, false);
 						$url = CCrmOwnerType::GetEntityShowPath(CCrmOwnerType::Contact, $ID);
-						$serverName = (CMain::IsHTTPS() ? "https" : "http")."://".((defined("SITE_SERVER_NAME") && strlen(SITE_SERVER_NAME) > 0) ? SITE_SERVER_NAME : COption::GetOptionString("main", "server_name", ""));
+						$serverName = (CMain::IsHTTPS() ? "https" : "http")."://".((defined("SITE_SERVER_NAME") && SITE_SERVER_NAME <> '') ? SITE_SERVER_NAME : COption::GetOptionString("main", "server_name", ""));
 
 						if ($sonetEventFields['PARAMS']['FINAL_RESPONSIBLE_ID'] != $modifiedByID)
 						{
@@ -2347,6 +2407,10 @@ class CAllCrmContact
 
 			CCrmSearch::DeleteSearch('CONTACT', $ID);
 
+			Bitrix\Crm\Search\SearchContentBuilderFactory::create(
+				CCrmOwnerType::Contact
+			)->removeShortIndex($ID);
+
 			$DB->Query("DELETE FROM b_crm_entity_perms WHERE ENTITY='CONTACT' AND ENTITY_ID = $ID", false, 'FILE: '.__FILE__.'<br /> LINE: '.__LINE__);
 			$GLOBALS['USER_FIELD_MANAGER']->Delete(self::$sUFEntityID, $ID);
 
@@ -2370,17 +2434,17 @@ class CAllCrmContact
 				}
 			}
 
-			DuplicateEntityRanking::unregisterEntityStatistics(CCrmOwnerType::Contact, $ID);
-			DuplicateCommunicationCriterion::unregister(CCrmOwnerType::Contact, $ID);
-			DuplicatePersonCriterion::unregister(CCrmOwnerType::Contact, $ID);
-			DuplicateIndexMismatch::unregisterEntity(CCrmOwnerType::Contact, $ID);
-
 			$enableDupIndexInvalidation = isset($arOptions['ENABLE_DUP_INDEX_INVALIDATION'])
 				? (bool)$arOptions['ENABLE_DUP_INDEX_INVALIDATION'] : true;
 			if($enableDupIndexInvalidation)
 			{
-				\Bitrix\Crm\Integrity\DuplicateIndexBuilder::markAsJunk(CCrmOwnerType::Contact, $ID);
+				\Bitrix\Crm\Integrity\DuplicateManager::markDuplicateIndexAsJunk(CCrmOwnerType::Contact, $ID);
 			}
+
+			DuplicateEntityRanking::unregisterEntityStatistics(CCrmOwnerType::Contact, $ID);
+			DuplicateCommunicationCriterion::unregister(CCrmOwnerType::Contact, $ID);
+			DuplicatePersonCriterion::unregister(CCrmOwnerType::Contact, $ID);
+			DuplicateIndexMismatch::unregisterEntity(CCrmOwnerType::Contact, $ID);
 
 			//Statistics & History -->
 			$leadID = isset($arFields['LEAD_ID']) ? (int)$arFields['LEAD_ID'] : 0;
@@ -2413,7 +2477,7 @@ class CAllCrmContact
 				$CCrmFieldMulti = new CCrmFieldMulti();
 				$CCrmFieldMulti->DeleteByElement('CONTACT', $ID);
 
-				EntityAddress::unregister(CCrmOwnerType::Contact, $ID, EntityAddress::Primary);
+				EntityAddress::unregister(CCrmOwnerType::Contact, $ID, EntityAddressType::Primary);
 				\Bitrix\Crm\Timeline\TimelineEntry::deleteByOwner(CCrmOwnerType::Contact, $ID);
 
 				$requisite = new \Bitrix\Crm\EntityRequisite();
@@ -2470,6 +2534,7 @@ class CAllCrmContact
 	{
 		global $APPLICATION, $USER_FIELD_MANAGER;
 		$this->LAST_ERROR = '';
+		$this->checkExceptions = [];
 
 		if (($ID == false || (isset($arFields['NAME']) && isset($arFields['LAST_NAME'])))
 			&& (empty($arFields['NAME']) && empty($arFields['LAST_NAME'])))
@@ -2484,7 +2549,7 @@ class CAllCrmContact
 
 		if (isset($arFields['PHOTO']) && is_array($arFields['PHOTO']))
 		{
-			if (($strError = CFile::CheckFile($arFields['PHOTO'], 0, 0, CFile::GetImageExtensions())) != '')
+			if (($strError = CFile::CheckFile($arFields['PHOTO'], 0, false, CFile::GetImageExtensions())) != '')
 				$this->LAST_ERROR .= $strError."<br />";
 		}
 
@@ -2511,20 +2576,118 @@ class CAllCrmContact
 
 		if($enableUserFieldCheck)
 		{
-			// We have to prepare field data before check (issue #22966)
-			CCrmEntityHelper::NormalizeUserFields($arFields, self::$sUFEntityID, $USER_FIELD_MANAGER, array('IS_NEW' => ($ID == false)));
+			CCrmEntityHelper::NormalizeUserFields(
+				$arFields,
+				self::$sUFEntityID,
+				$USER_FIELD_MANAGER,
+				array('IS_NEW' => ($ID == false))
+			);
 
 			$enableRequiredUserFieldCheck = !(isset($options['DISABLE_REQUIRED_USER_FIELD_CHECK'])
 				&& $options['DISABLE_REQUIRED_USER_FIELD_CHECK'] === true);
 
-			if(!$USER_FIELD_MANAGER->CheckFields(self::$sUFEntityID, $ID, $arFields, false, $enableRequiredUserFieldCheck))
+			$fieldsToCheck = $arFields;
+			$requiredFields = null;
+			if($enableRequiredUserFieldCheck)
+			{
+				/* Comment before status support
+				$currentFields = null;
+				if($ID > 0)
+				{
+					if(isset($options['CURRENT_FIELDS']) && is_array($options['CURRENT_FIELDS']))
+					{
+						$currentFields = $options['CURRENT_FIELDS'];
+					}
+					else
+					{
+						$dbResult = self::GetListEx(
+							array(),
+							array('ID' => $ID, 'CHECK_PERMISSIONS' => 'N'),
+							false,
+							false,
+							array('*', 'UF_*')
+						);
+						$currentFields = $dbResult->Fetch();
+					}
+				}
+
+				if(is_array($currentFields))
+				{
+					CCrmEntityHelper::NormalizeUserFields(
+						$currentFields,
+						self::$sUFEntityID,
+						$USER_FIELD_MANAGER,
+						array('IS_NEW' => ($ID == false))
+					);
+
+					//If Status ID is changed we must perform check of all fields.
+					if(isset($arFields['STATUS_ID']) && $arFields['STATUS_ID'] !== $currentFields['STATUS_ID'])
+					{
+						$fieldsToCheck = array_merge($currentFields, $arFields);
+						if(self::GetSemanticID($arFields['STATUS_ID'], $currentFields['CATEGORY_ID']) ===
+							Bitrix\Crm\PhaseSemantics::FAILURE)
+						{
+							//Disable required fields check for failure status due to backward compatibility.
+							$enableRequiredUserFieldCheck = false;
+						}
+					}
+					elseif(!isset($arFields['STATUS_ID']) && isset($currentFields['STATUS_ID']))
+					{
+						$fieldsToCheck = array_merge($arFields, array('STATUS_ID' => $currentFields['STATUS_ID']));
+					}
+				}*/
+
+				$requiredFields = Crm\Attribute\FieldAttributeManager::getRequiredFields(
+					CCrmOwnerType::Contact,
+					$ID,
+					$fieldsToCheck,
+					Crm\Attribute\FieldOrigin::UNDEFINED,
+					is_array($options['FIELD_CHECK_OPTIONS']) ? $options['FIELD_CHECK_OPTIONS'] : array()
+				);
+
+				$requiredSystemFields = isset($requiredFields[Crm\Attribute\FieldOrigin::SYSTEM])
+					? $requiredFields[Crm\Attribute\FieldOrigin::SYSTEM] : array();
+				if(!empty($requiredSystemFields))
+				{
+					$validator = new Crm\Entity\ContactValidator($ID, $fieldsToCheck);
+					$validationErrors = array();
+					foreach($requiredSystemFields as $fieldName)
+					{
+						$validator->checkFieldPresence($fieldName, $validationErrors);
+					}
+
+					if(!empty($validationErrors))
+					{
+						$e = new CAdminException($validationErrors);
+						$this->checkExceptions[] = $e;
+						$this->LAST_ERROR .= $e->GetString();
+					}
+				}
+			}
+
+			$requiredUserFields = is_array($requiredFields) && isset($requiredFields[Crm\Attribute\FieldOrigin::CUSTOM])
+				? $requiredFields[Crm\Attribute\FieldOrigin::CUSTOM] : array();
+
+			if (!$USER_FIELD_MANAGER->CheckFields(
+					self::$sUFEntityID,
+					$ID,
+					$fieldsToCheck,
+					false,
+					$enableRequiredUserFieldCheck,
+					$requiredUserFields))
 			{
 				$e = $APPLICATION->GetException();
+				$this->checkExceptions[] = $e;
 				$this->LAST_ERROR .= $e->GetString();
 			}
 		}
 
 		return $this->LAST_ERROR === '';
+	}
+
+	public function GetCheckExceptions()
+	{
+		return $this->checkExceptions;
 	}
 
 	/**
@@ -2574,19 +2737,19 @@ class CAllCrmContact
 
 		$arMsg = Array();
 
-		if (isset($arFieldsModif['HONORIFIC']))
+		if (
+			isset($arFieldsOrig['HONORIFIC'], $arFieldsModif['HONORIFIC'])
+			&&
+			$arFieldsOrig['HONORIFIC'] !== $arFieldsModif['HONORIFIC']
+		)
 		{
-			$origHonorific = isset($arFieldsOrig['HONORIFIC']) ? $arFieldsOrig['HONORIFIC'] : '';
-			$modifHonrific = isset($arFieldsModif['HONORIFIC']) ? $arFieldsModif['HONORIFIC'] : '';
-			if($origHonorific !== $modifHonrific)
-			{
-				$arMsg[] = Array(
-					'ENTITY_FIELD' => 'HONORIFIC',
-					'EVENT_NAME' => GetMessage('CRM_FIELD_COMPARE_HONORIFIC'),
-					'EVENT_TEXT_1' => $origHonorific !== '' ? $origHonorific : GetMessage('CRM_FIELD_COMPARE_EMPTY'),
-					'EVENT_TEXT_2' => $modifHonrific !== '' ? $modifHonrific : GetMessage('CRM_FIELD_COMPARE_EMPTY')
-				);
-			}
+			$honorifics = CCrmStatus::GetStatusList('HONORIFIC');
+			$arMsg[] = [
+				'ENTITY_FIELD' => 'HONORIFIC',
+				'EVENT_NAME' => GetMessage('CRM_FIELD_COMPARE_HONORIFIC'),
+				'EVENT_TEXT_1' => htmlspecialcharsbx(CrmCompareFieldsList($honorifics, $arFieldsOrig['HONORIFIC'])),
+				'EVENT_TEXT_2' => htmlspecialcharsbx(CrmCompareFieldsList($honorifics, $arFieldsModif['HONORIFIC']))
+			];
 		}
 
 		if (isset($arFieldsOrig['NAME']) && isset($arFieldsModif['NAME'])
@@ -2776,7 +2939,7 @@ class CAllCrmContact
 		{
 			$arUser = Array();
 			$dbUsers = CUser::GetList(
-				($sort_by = 'last_name'), ($sort_dir = 'asc'),
+				'last_name', 'asc',
 				array('ID' => implode('|', array(intval($arFieldsOrig['ASSIGNED_BY_ID']), intval($arFieldsModif['ASSIGNED_BY_ID'])))),
 				array('FIELDS' => array('ID', 'NAME', 'SECOND_NAME', 'LAST_NAME', 'LOGIN', 'TITLE', 'EMAIL'))
 			);
@@ -2859,7 +3022,7 @@ class CAllCrmContact
 		// converts data from filter
 		if (isset($arFilter['FIND_list']) && !empty($arFilter['FIND']))
 		{
-			$arFilter[strtoupper($arFilter['FIND_list'])] = $arFilter['FIND'];
+			$arFilter[mb_strtoupper($arFilter['FIND_list'])] = $arFilter['FIND'];
 			unset($arFilter['FIND_list'], $arFilter['FIND']);
 		}
 
@@ -2914,7 +3077,7 @@ class CAllCrmContact
 			}
 			elseif (preg_match('/(.*)_from$/i'.BX_UTF_PCRE_MODIFIER, $k, $arMatch))
 			{
-				if(strlen($v) > 0)
+				if($v <> '')
 				{
 					$arFilter['>='.$arMatch[1]] = $v;
 				}
@@ -2922,7 +3085,7 @@ class CAllCrmContact
 			}
 			elseif (preg_match('/(.*)_to$/i'.BX_UTF_PCRE_MODIFIER, $k, $arMatch))
 			{
-				if(strlen($v) > 0)
+				if($v <> '')
 				{
 					if (($arMatch[1] == 'DATE_CREATE' || $arMatch[1] == 'DATE_MODIFY') && !preg_match('/\d{1,2}:\d{1,2}(:\d{1,2})?$/'.BX_UTF_PCRE_MODIFIER, $v))
 					{
@@ -2942,7 +3105,7 @@ class CAllCrmContact
 				}
 				unset($arFilter[$k]);
 			}
-			elseif ($k != 'ID' && $k != 'LOGIC' && $k != '__INNER_FILTER' && strpos($k, 'UF_') !== 0 && preg_match('/^[^\=\%\?\>\<]{1}/', $k) === 1)
+			elseif ($k != 'ID' && $k != 'LOGIC' && $k != '__INNER_FILTER' && mb_strpos($k, 'UF_') !== 0 && preg_match('/^[^\=\%\?\>\<]{1}/', $k) === 1)
 			{
 				$arFilter['%'.$k] = $v;
 				unset($arFilter[$k]);
@@ -3166,10 +3329,10 @@ class CAllCrmContact
 			elseif($fieldName === Crm\EntityRequisite::ADDRESS)
 			{
 				$requisiteFields[Crm\EntityRequisite::ADDRESS] = array(
-					EntityAddress::Primary =>
+					EntityAddressType::Primary =>
 						ContactAddress::mapEntityFields(
 							$entityFields,
-							array('TYPE_ID' => EntityAddress::Primary, 'SKIP_EMPTY' => true)
+							array('TYPE_ID' => EntityAddressType::Primary, 'SKIP_EMPTY' => true)
 						)
 				);
 			}
@@ -3247,5 +3410,34 @@ class CAllCrmContact
 	{
 		return GetMessage('CRM_CONTACT_UNNAMED');
 	}
+
+	public static function GetDefaultTitleTemplate()
+	{
+		return GetMessage('CRM_CONTACT_DEFAULT_TITLE_TEMPLATE');
+	}
+
+	public static function GetDefaultTitle($number = '')
+	{
+		return GetMessage('CRM_CONTACT_DEFAULT_TITLE_TEMPLATE', array('%NUMBER%' => $number));
+	}
+
+	/**
+	 * Indicates if a contact has default name
+	 *
+	 * @param string $name
+	 * @return bool
+	 */
+	public static function isDefaultName(string $name): bool
+	{
+		$defaultNames = [
+			self::GetDefaultName(),
+			Loc::getMessage('CRM_WEBFORM_ENTITY_FIELD_NAME_CONTACT_TEMPLATE')
+		];
+		if (in_array($name, $defaultNames, true))
+		{
+			return true;
+		}
+
+		return mb_strpos($name, self::GetDefaultTitle('')) === 0;
+	}
 }
-?>

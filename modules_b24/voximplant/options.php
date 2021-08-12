@@ -36,13 +36,13 @@ else
 	$accountBalance = $ViAccount->GetAccountBalance().' '.$ViAccount->GetAccountCurrency();
 	$errorMessage = '';
 }
-if(strlen($_POST['Update'])>0 && check_bitrix_sessid())
+if($_POST['Update'] <> '' && check_bitrix_sessid())
 {
-	if (strlen($_POST['PUBLIC_URL']) > 0 && strlen($_POST['PUBLIC_URL']) < 12)
+	if ($_POST['PUBLIC_URL'] <> '' && mb_strlen($_POST['PUBLIC_URL']) < 12)
 	{
 		$errorMessage = GetMessage('VI_ACCOUNT_ERROR_PUBLIC');
 	}
-	else if(strlen($_POST['Update'])>0)
+	else if($_POST['Update'] <> '')
 	{
 		COption::SetOptionString("voximplant", "portal_url", $_POST['PUBLIC_URL']);
 		COption::SetOptionString("voximplant", "debug", isset($_POST['DEBUG_MODE']));
@@ -50,7 +50,7 @@ if(strlen($_POST['Update'])>0 && check_bitrix_sessid())
 		$viHttp = new CVoxImplantHttp();
 		$viHttp->ClearConfigCache();
 
-		if(strlen($Update)>0 && strlen($_REQUEST["back_url_settings"])>0)
+		if($Update <> '' && $_REQUEST["back_url_settings"] <> '')
 		{
 			LocalRedirect($_REQUEST["back_url_settings"]);
 		}
@@ -81,16 +81,14 @@ if ($errorMessage):?>
 </tr>
 <tr>
 	<td width="40%"><?=GetMessage("VI_ACCOUNT_URL")?>:</td>
-	<td width="60%"><input type="text" name="PUBLIC_URL" value="<?=htmlspecialcharsbx(CVoxImplantHttp::GetServerAddress())?>" /></td>
+	<td width="60%"><input type="text" name="PUBLIC_URL"  value="<?=htmlspecialcharsbx(CVoxImplantHttp::GetServerAddress())?>" style="width: 100%;" /></td>
 </tr>
 <tr>
 	<td width="40%"><?=GetMessage("VI_ACCOUNT_DEBUG")?>:</td>
 	<td width="60%"><input type="checkbox" name="DEBUG_MODE" value="Y" <?=(COption::GetOptionInt("voximplant", "debug")? 'checked':'')?> /></td>
 </tr>
-<?if(!IsModuleInstalled('bitrix24')):?>
 <?$tabControl->Buttons();?>
 <input type="submit" name="Update" value="<?echo GetMessage('MAIN_SAVE')?>">
 <input type="reset" name="reset" value="<?echo GetMessage('MAIN_RESET')?>">
-<?endif;?>
 <?$tabControl->End();?>
 </form>

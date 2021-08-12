@@ -1,14 +1,13 @@
 <?php
 namespace Bitrix\Crm\Requisite;
+
 use Bitrix\Main;
 use Bitrix\Main\Localization\Loc;
-use Bitrix\Crm;
 use Bitrix\Crm\EntityAddress;
-use Bitrix\Crm\Format\AddressSeparator;
-use Bitrix\Crm\Format\EntityAddressFormatter;
+use Bitrix\Crm\EntityAddressType;
 use Bitrix\Crm\EntityPreset;
 use Bitrix\Crm\EntityRequisite;
-use Bitrix\Crm\Requisite\EntityLink;
+use Bitrix\Crm\Format\AddressFormatter;
 
 class InvoiceRequisiteConverter extends EntityRequisiteConverter
 {
@@ -154,7 +153,7 @@ class InvoiceRequisiteConverter extends EntityRequisiteConverter
 					'propertyKey' => 'COMPANY_ADR',
 					'requisiteName' => EntityRequisite::ADDRESS,
 					'type' => 'address',
-					'params' => array('address_type' => EntityAddress::Registered)
+					'params' => array('address_type' => EntityAddressType::Registered)
 				);
 			}
 		}
@@ -166,7 +165,7 @@ class InvoiceRequisiteConverter extends EntityRequisiteConverter
 					'propertyKey' => 'ADDRESS',
 					'requisiteName' => EntityRequisite::ADDRESS,
 					'type' => 'address',
-					'params' => array('address_type' => EntityAddress::Primary)
+					'params' => array('address_type' => EntityAddressType::Primary)
 				);
 			}
 		}
@@ -206,7 +205,7 @@ class InvoiceRequisiteConverter extends EntityRequisiteConverter
 	}
 	/**
 	 * Remove from text all non-alphanumeric characters.
-	 * @param $str Source string;
+	 * @param string $str Source string;
 	 * @return string
 	 */
 	private static function getAlphanum($str)
@@ -253,7 +252,7 @@ class InvoiceRequisiteConverter extends EntityRequisiteConverter
 			$key = self::getAlphanum($value);
 			if($key !== '')
 			{
-				return strtoupper($key);
+				return mb_strtoupper($key);
 			}
 		}
 		return '';
@@ -286,7 +285,7 @@ class InvoiceRequisiteConverter extends EntityRequisiteConverter
 			{
 				$params = isset($binding['params']) ? $binding['params'] : array();
 				$addressType = isset($params['address_type'])
-					? (int)$params['address_type'] : EntityAddress::Primary;
+					? (int)$params['address_type'] : EntityAddressType::Primary;
 
 				if(!isset($fields[$name]))
 				{
@@ -296,7 +295,14 @@ class InvoiceRequisiteConverter extends EntityRequisiteConverter
 				if(!isset($fields[$name][$addressType]))
 				{
 					$addressFields = EntityAddress::getByOwner($addressType, $this->entityTypeID, $entityID);
-					$address = is_array($addressFields) ? EntityAddressFormatter::format($addressFields) : '';
+					if (is_array($addressFields))
+                    {
+                        $address = AddressFormatter::getSingleInstance()->formatTextComma($addressFields);
+                    }
+					else
+                    {
+                        $address = '';
+                    }
 					if($address !== '' && strcasecmp(self::getAlphanum($value), self::getAlphanum($address)) === 0)
 					{
 						$fields[$name][$addressType] = $addressFields;
@@ -566,7 +572,7 @@ class InvoiceRequisiteConverter extends EntityRequisiteConverter
 					),
 					'COMPANY_ADR' => array(
 						'TYPE' => 'REQUISITE',
-						'VALUE' => 'RQ_ADDR_'.EntityAddress::Registered.'|'.$countryId
+						'VALUE' => 'RQ_ADDR_'.EntityAddressType::Registered.'|'.$countryId
 					),
 					'PHONE' => array(
 						'TYPE' => 'REQUISITE',
@@ -586,7 +592,7 @@ class InvoiceRequisiteConverter extends EntityRequisiteConverter
 					),
 					'ADDRESS' => array(
 						'TYPE' => 'REQUISITE',
-						'VALUE' => 'RQ_ADDR_'.EntityAddress::Primary.'|'.$countryId
+						'VALUE' => 'RQ_ADDR_'.EntityAddressType::Primary.'|'.$countryId
 					)
 				)
 			);

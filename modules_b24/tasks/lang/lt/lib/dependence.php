@@ -1,5 +1,0 @@
-<?
-$MESS["DEPENDENCE_ENTITY_TASK_ID_FIELD"] = "Užduotis";
-$MESS["DEPENDENCE_ENTITY_DEPENDS_ON_ID_FIELD"] = "Pagrindinė užduotis";
-$MESS["DEPENDENCE_ENTITY_TYPE_FIELD"] = "Sąryšio tipas";
-?>

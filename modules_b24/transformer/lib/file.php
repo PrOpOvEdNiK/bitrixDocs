@@ -104,9 +104,9 @@ class File
 	private function findByURL($url)
 	{
 		$uri = new Uri($url);
-		if(strlen($uri->getHost()) > 0)
+		if($uri->getHost() <> '')
 		{
-			if(strpos($uri->getHost(), \CBXPunycode::PREFIX) === false)
+			if(mb_strpos($uri->getHost(), \CBXPunycode::PREFIX) === false)
 			{
 				$errors = array();
 				if(defined("BX_UTF"))
@@ -156,7 +156,7 @@ class File
 	 */
 	public function delete()
 	{
-		if($this->ioFile)
+		if($this->ioFile && FileUploader::isCorrectFile($this->ioFile))
 		{
 			return $this->ioFile->delete();
 		}

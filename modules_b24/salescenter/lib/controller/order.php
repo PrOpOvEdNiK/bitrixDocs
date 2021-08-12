@@ -2,28 +2,51 @@
 
 namespace Bitrix\SalesCenter\Controller;
 
-use Bitrix\Currency\CurrencyManager;
+use Bitrix\Location\Entity\Address;
 use Bitrix\Main;
 use Bitrix\Main\Config\Option;
+use Bitrix\Main\Engine\Action;
 use Bitrix\Main\Error;
+use Bitrix\Main\Localization\Loc;
 use Bitrix\Sale;
 use Bitrix\Crm;
-use Bitrix\Catalog;
-use Bitrix\Sale\Helpers\Order\Builder;
-use Bitrix\Sale\Internals\SiteCurrencyTable;
 use Bitrix\SalesCenter\Integration\Bitrix24Manager;
 use Bitrix\SalesCenter\Integration\CrmManager;
 use Bitrix\SalesCenter\Integration\ImOpenLinesManager;
-use Bitrix\SalesCenter\Integration\LandingManager;
+use Bitrix\SalesCenter\Integration\LocationManager;
 use Bitrix\SalesCenter\Integration\SaleManager;
+use Bitrix\Salescenter;
+use Bitrix\Crm\Binding\DealContactTable;
+use Bitrix\Crm\EntityRequisite;
+use Bitrix\Crm\RequisiteAddress;
+use Bitrix\Sale\Delivery;
+use Bitrix\Sale\Delivery\Services\OrderPropsDictionary;
+use Bitrix\ImOpenLines;
+use Bitrix\SalesCenter\Builder\Converter;
+
+define('SALESCENTER_RECEIVE_PAYMENT_APP_AREA', true);
+
+Loc::loadMessages(__FILE__);
 
 class Order extends Base
 {
 	public function configureActions()
 	{
-		return array(
-			'searchProduct' => array('class' => SearchProductAction::class)
-		);
+		return [
+			'searchProduct' => ['class' => SearchProductAction::class]
+		];
+	}
+
+	protected function processBeforeAction(Action $action)
+	{
+		if (!$this->checkModules())
+		{
+			return false;
+		}
+
+		\CFile::DisableJSFunction(true);
+
+		return parent::processBeforeAction($action);
 	}
 
 	private function checkModules()
@@ -31,232 +54,637 @@ class Order extends Base
 		if (!Main\Loader::includeModule('crm'))
 		{
 			$this->addError(new Main\Error('module "crm" is not installed.'));
-			return null;
+			return false;
 		}
 		if (!Main\Loader::includeModule('catalog'))
 		{
 			$this->addError(new Main\Error('module "catalog" is not installed.'));
-			return null;
+			return false;
 		}
 		if (!Main\Loader::includeModule('sale'))
 		{
 			$this->addError(new Main\Error('module "sale" is not installed.'));
-			return null;
+			return false;
 		}
-		if(Bitrix24Manager::getInstance()->isPaymentsLimitReached())
-		{
-			$this->addError(new Error('You have reached limit of payments for your tariff'));
-			return null;
-		}
+
+		return true;
 	}
 
-	public function getBaseProductPriceAction($productId)
+	protected function processBasketItems(array $basketItems)
 	{
-		$this->checkModules();
-		if (!empty($this->getErrors()))
-			return null;
-
-		$priceRaw = Catalog\PriceTable::getList(array(
-			'select' => array('PRICE', 'CURRENCY'),
-			'filter' => array('=PRODUCT_ID' => (int)$productId, '=CATALOG_GROUP_ID' => \CCatalogGroup::GetBaseGroup()),
-			'limit' => 1
-		));
-
-		if ($priceData = $priceRaw->fetch())
-		{
-			$price = (float)$priceData['PRICE'];
-			$orderBaseCurrency = SiteCurrencyTable::getSiteCurrency(SITE_ID);
-			if (empty($orderBaseCurrency))
-			{
-				$orderBaseCurrency = CurrencyManager::getBaseCurrency();
-			}
-			if (!empty($orderBaseCurrency) && $orderBaseCurrency !== $priceData['CURRENCY'])
-			{
-				$price = \CCurrencyRates::ConvertCurrency($price, $priceData['CURRENCY'], $orderBaseCurrency);
-				$currencyFormat = \CCurrencyLang::GetFormatDescription($orderBaseCurrency);
-				if ($currencyFormat === false)
-				{
-					$currencyFormat = \CCurrencyLang::GetDefaultValues();
-				}
-
-				$price = round($price,  $currencyFormat['DECIMALS']);
-			}
-			return $price;
-		}
-
-		return null;
-	}
-
-	public function refreshBasketAction(array $basketItems = array())
-	{
-		$this->checkModules();
-		if (!empty($this->getErrors()))
-		{
-			return null;
-		}
-
-		$formData = ['SITE_ID' => SITE_ID];
-
-		$sortedByCode =
-		$newProducts =
-		$catalogProducts = [];
+		$result = [];
 
 		foreach ($basketItems as $item)
 		{
-			if ($item['module'] !== 'catalog' && strlen($item['name']) === 0)
+			if (
+				!isset($item['code'])
+				|| mb_strpos($item['code'], 'n') !== false
+			)
 			{
-				continue;
+				$item['code'] = 'n'.(count($result) + 1);
 			}
 
-			if ($item['module'] === 'catalog' && (int)$item['productId'] > 0)
-			{
-				$catalogProducts[] = (int)$item['productId'];
-			}
-
-			if (!empty($item['code']))
-			{
-				$sortedByCode[$item['code']] = $item;
-			}
-
-			if (!empty($item['encodedFields']))
-			{
-				$formData['PRODUCT'][$item['code']]['FIELDS_VALUES'] = Main\Web\Json::encode($this->prepareExistProductFields($item));
-			}
-			elseif ($item['module'] !== 'catalog' || (int)$item['productId'] > 0)
-			{
-				$newProducts[] = $this->prepareNewProductFields($item);
-			}
-		}
-
-		$order = $this->buildOrder($formData);
-		if (!$order)
-		{
-			if ($this->errorCollection->getErrorByCode('SALE_BASKET_AVAILABLE_QUANTITY'))
-			{
-				$catalogProductQuantityMap = $this->getProductAvailableQuantity($catalogProducts);
-				foreach($basketItems as &$item)
-				{
-					if (
-						(int)$item['productId'] > 0 
-						&& isset($catalogProductQuantityMap[$item['productId']])
-						&& $item['module'] === 'catalog'
-						&& $catalogProductQuantityMap[$item['productId']] < $item['quantity']
-					)
-					{
-						$item['errors'] = ['SALE_BASKET_AVAILABLE_QUANTITY'];
-						$item['encodedFields'] = '';
-					}
-				}
-			}
-
-			return ['items' => $basketItems];
-		}
-
-		$basket = $order->getBasket();
-		if (!empty($newProducts))
-		{
-			$res = $this->addProductToBasket($basket, $newProducts);
-			if (!$res->isSuccess())
-			{
-				$catalogProductQuantityMap = $this->getProductAvailableQuantity($catalogProducts);
-				$this->addErrors($res->getErrors());
-				foreach($basketItems as &$item)
-				{
-					if ((int)$item['productId'] > 0 && $item['module'] === 'catalog')
-					{
-						if ($this->errorCollection->getErrorByCode('SALE_BASKET_ITEM_WRONG_PRICE'))
-						{
-							if ($item['isCustomPrice'] === 'N' && (float)$item['catalogPrice'] === 0.0)
-							{
-								$item['errors'] = ['SALE_BASKET_ITEM_WRONG_PRICE'];
-								$item['encodedFields'] = '';
-							}
-						}
-						elseif (
-							isset($catalogProductQuantityMap[$item['productId']])
-							&& $catalogProductQuantityMap[$item['productId']] < $item['quantity']
-						)
-						{
-							$item['errors'] = ['SALE_BASKET_AVAILABLE_QUANTITY'];
-							$item['encodedFields'] = '';
-						}
-					}
-				}
-
-				return ['items' => $basketItems];
-			}
-		}
-
-		$discountSum = 0;
-		foreach ($basket as $basketItem)
-		{
-			$discountSum += ($basketItem->getDiscountPrice()) * $basketItem->getQuantity();
-		}
-
-		return [
-			'items' => $this->fillResultBasket($order, $sortedByCode),
-			'total' => [
-				'discount' => SaleFormatCurrency($discountSum, $order->getCurrency()),
-				'result' => SaleFormatCurrency($order->getPrice(), $order->getCurrency()),
-			]
-		];
-	}
-
-	/**
-	 * @param Sale\BasketBase $basket
-	 * @param array $products
-	 *
-	 * @return Main\Result
-	 */
-	private function addProductToBasket(Sale\BasketBase $basket, array $products)
-	{
-		$result = new Main\Result();
-		$order = $basket->getOrder();
-
-		$context = array(
-			'SITE_ID' => $order->getSiteId(),
-			'CURRENCY' => $order->getCurrency(),
-		);
-		$maxProductId = 0;
-		foreach ($basket as $basketItem)
-		{
-			$productId = $basketItem->getProductId();
-			$maxProductId = max($maxProductId, $productId);
-		}
-		foreach ($products as $productFields)
-		{
-			$productFields['CURRENCY'] = $order->getCurrency();
-			if ($productFields['MODULE'] === 'catalog' && $productFields['CUSTOM_PRICE'] !== 'Y')
-			{
-				$result = Catalog\Product\Basket::addProductToBasket(
-					$order->getBasket(),
-					$productFields,
-					$context
-				);
-			}
-			else
-			{
-				$maxProductId++;
-				$basketItem = $basket->createItem('', $maxProductId);
-				if (isset($productFields['MODULE']))
-				{
-					$basketItem->setFieldNoDemand('MODULE', $productFields['MODULE']);
-					unset($productFields['MODULE']);
-				}
-				$basketItem->setFields($productFields);
-			}
+			$result[] = $item;
 		}
 
 		return $result;
 	}
 
+	public function refreshBasketAction($orderId, array $basketItems = [])
+	{
+		$basketItems = $this->processBasketItems($basketItems);
+
+		$order = $this->buildOrder([
+			'orderId' => $orderId,
+			'basketItems' => $basketItems
+		 ]);
+
+		if ($order === null)
+		{
+			return ['items' => $basketItems];
+		}
+
+		$discountSum = 0;
+		$baseSum = 0;
+		$price = 0;
+		$vatSum = 0;
+		foreach ($basketItems as $item)
+		{
+			$basketItem = $order->getBasket()->getItemByXmlId($item['innerId']);
+			if ($basketItem === null)
+			{
+				continue;
+			}
+
+			if ($basketItem->getBasePrice() !== $basketItem->getPrice() && empty($basketItem->getDiscountPrice()))
+			{
+				$discountSum += ($basketItem->getBasePrice() - $basketItem->getPrice()) * $item['quantity'];
+			}
+			else
+			{
+				$discountSum += $basketItem->getDiscountPrice() * $item['quantity'];
+			}
+
+			$baseSum += $basketItem->getBasePrice() * $item['quantity'];
+			$price += $basketItem->getPrice() * $item['quantity'];
+
+			if ($basketItem->isVatInPrice())
+			{
+				$vatSum += Sale\PriceMaths::roundPrecision(
+					$basketItem->getPrice()
+					* $item['quantity']
+					* $basketItem->getVatRate()
+					/ (
+						$basketItem->getVatRate() + 1
+					)
+				);
+			}
+			else
+			{
+				$vatSum += Sale\PriceMaths::roundPrecision(
+					$basketItem->getPrice()
+					* $item['quantity']
+					* $basketItem->getVatRate()
+				);
+			}
+		}
+
+		return [
+			'items' => $this->fillResultBasket($basketItems, $order),
+			'total' => [
+				'discount' => $discountSum,
+				'result' => $price,
+				'taxSum' => $vatSum,
+				'sum' => $baseSum,
+			]
+		];
+	}
+
+	protected function prepareParamsForBuilder(array $params, $scenario = null) : array
+	{
+		$basketItems = (isset($params['basketItems']) && is_array($params['basketItems']))
+			? $params['basketItems']
+			: []
+		;
+
+		$propertyValues = (isset($params['propertyValues']) && is_array($params['propertyValues']))
+			? $params['propertyValues']
+			: []
+		;
+		$formData = $this->obtainOrderFields($params);
+
+		$formData['PRODUCT'] = Converter\CatalogJSProductForm::convertToBuilderFormat($basketItems);
+
+		$formData['PROPERTIES'] = $this->obtainPropertiesFields($propertyValues);
+
+		if ($this->needObtainShipmentFields($params))
+		{
+			$formData['SHIPMENT'][] = $this->obtainShipmentFields($params, $formData['PRODUCT']);
+		}
+
+		if ($scenario !== Salescenter\Builder\SettingsContainer::BUILDER_SCENARIO_SHIPMENT)
+		{
+			$formData['PAYMENT'][] = $this->obtainPaymentFields($formData);
+		}
+
+		return $formData;
+	}
+
 	/**
-	 * @param Sale\Order $order
-	 * @param array $sortedDefaultItems
-	 *
-	 * @return array
+	 * @param array $basketItems
+	 * @param array $options
+	 * @param int $deliveryServiceId
+	 * @param array $shipmentPropValues
+	 * @param array $deliveryRelatedServiceValues
+	 * @param int $deliveryResponsibleId
+	 * @return array[]|null
 	 */
-	private function fillResultBasket(Sale\Order $order, array $sortedDefaultItems = []): array
+	public function refreshDeliveryAction(
+		array $basketItems = [],
+		array $options = [],
+		int $deliveryServiceId = 0,
+		array $shipmentPropValues = [],
+		array $deliveryRelatedServiceValues = [],
+		int $deliveryResponsibleId = 0
+	)
+	{
+		$basketItems = $this->processBasketItems($basketItems);
+
+		$options['basketItems'] = $basketItems;
+		$options['deliveryId'] = $deliveryServiceId;
+		$options['deliveryExtraServicesValues'] = $deliveryRelatedServiceValues;
+		$options['deliveryResponsibleId'] = $deliveryResponsibleId;
+		$options['shipmentPropValues'] = $shipmentPropValues;
+
+		$order = $this->buildOrder(
+			$options,
+			[
+				'orderErrorsFilter' => ['DELIVERY_CALCULATION'],
+				'builderScenario' => Salescenter\Builder\SettingsContainer::BUILDER_SCENARIO_SHIPMENT,
+			]
+		);
+		$shipment = null;
+		if ($order)
+		{
+			$shipment = $this->findNewShipment($order);
+		}
+
+		if (!$shipment)
+		{
+			if (!$this->getErrors())
+			{
+				$this->addError(new Error(Loc::getMessage('SALESCENTER_CONTROLLER_ORDER_BUILD_ERROR')));
+			}
+
+			return null;
+		}
+
+		return [
+			'deliveryPrice' => $shipment->getPrice(),
+		];
+	}
+
+	/**
+	 * @param array $basketItems
+	 * @param array $options
+	 * @param int $deliveryServiceId
+	 * @param array $shipmentPropValues
+	 * @param array $deliveryRelatedServiceValues
+	 * @param int $deliveryResponsibleId
+	 * @return array[]|null
+	 */
+	public function getCompatibleDeliverySystemsAction(
+		array $basketItems = [],
+		array $options = [],
+		int $deliveryServiceId = 0,
+		array $shipmentPropValues = [],
+		array $deliveryRelatedServiceValues = [],
+		int $deliveryResponsibleId = 0
+	)
+	{
+		$basketItems = $this->processBasketItems($basketItems);
+
+		$options['basketItems'] = $basketItems;
+		$options['deliveryId'] = $deliveryServiceId;
+		$options['deliveryExtraServicesValues'] = $deliveryRelatedServiceValues;
+		$options['deliveryResponsibleId'] = $deliveryResponsibleId;
+		$options['shipmentPropValues'] = $shipmentPropValues;
+
+		$order = $this->buildOrder(
+			$options,
+			[
+				'builderScenario' => Salescenter\Builder\SettingsContainer::BUILDER_SCENARIO_SHIPMENT,
+			]
+		);
+
+		$shipment = null;
+		if ($order)
+		{
+			$shipmentCollection = $order->getShipmentCollection()->getNotSystemItems();
+			foreach ($shipmentCollection as $shipment)
+			{
+				break;
+			}
+		}
+
+		$availableServices = [];
+		$activeServices = Delivery\Services\Manager::getActiveList();
+		foreach ($activeServices as $service)
+		{
+			$isCompatible = false;
+			$compatibleExtraServiceIds = null;
+
+			if (is_null($shipment))
+			{
+				$isCompatible = true;
+			}
+			else
+			{
+				$serviceObject = Delivery\Services\Manager::getObjectById($service['ID']);
+
+				if ($serviceObject && $serviceObject->isCompatible($shipment))
+				{
+					$isCompatible = true;
+					$compatibleExtraServiceIds = $serviceObject->getCompatibleExtraServiceIds($shipment);
+				}
+			}
+
+			if ($isCompatible)
+			{
+				$availableServices[$service['ID']] = $compatibleExtraServiceIds;
+			}
+		}
+
+		return [
+			'availableServices' => $availableServices
+		];
+	}
+
+	/**
+	 * @param array $data
+	 * @param array $options
+	 * @return Sale\Order|null
+	 */
+	private function buildOrder(
+		array $data,
+		array $options = []
+	): ?Sale\Order
+	{
+		$scenario = $this->getBuilderScenario($options);
+
+		$formData = $this->prepareParamsForBuilder($data, $scenario);
+
+		$builder = SalesCenter\Builder\Manager::getBuilder($scenario);
+
+		try
+		{
+			$builder->build($formData);
+			$order = $builder->getOrder();
+		}
+		catch (Sale\Helpers\Order\Builder\BuildingException $exception)
+		{
+			$order = null;
+		}
+
+		$errorsFilter = $options['orderErrorsFilter'] ?? null;
+		if (is_null($errorsFilter))
+		{
+			return $order;
+		}
+
+		$filteredErrors = [];
+
+		$errors = $builder->getErrorsContainer()->getErrors();
+		foreach ($errors as $error)
+		{
+			if (empty($errorsFilter) || in_array($error->getCode(), $errorsFilter, true))
+			{
+				$filteredErrors[] = $error;
+			}
+		}
+
+		$this->addErrors($filteredErrors);
+
+		return $order;
+	}
+
+	protected function getBuilderScenario(array $options) :? string
+	{
+		if (isset($options['builderScenario']))
+		{
+			return $options['builderScenario'];
+		}
+
+		if ($this->needObtainShipmentFields($options))
+		{
+			return null;
+		}
+
+		return Salescenter\Builder\SettingsContainer::BUILDER_SCENARIO_PAYMENT;
+	}
+
+	/**
+	 * @param $dealId
+	 * @param $products
+	 * @param $order
+	 * @throws Main\ArgumentException
+	 */
+	protected function syncOrderProductsWithDeal($dealId, $products, $order)
+	{
+		$result = [];
+
+		if (\CCrmSaleHelper::isWithOrdersMode())
+		{
+			if ($this->getCountBindingOrders($dealId) > 1)
+			{
+				$result = \CCrmDeal::LoadProductRows($dealId);
+			}
+
+			$sort = $this->getMaxProductDealSort($result);
+
+			foreach ($products as $product)
+			{
+				$sort += 10;
+				$item = [
+					'PRODUCT_ID' => $product['skuId'] ?? $product['productId'],
+					'PRODUCT_NAME' => $product['name'],
+					'PRICE' => $product['price'],
+					'PRICE_ACCOUNT' => $product['price'],
+					'PRICE_EXCLUSIVE' => $product['basePrice'],
+					'PRICE_NETTO' => $product['basePrice'],
+					'PRICE_BRUTTO' => $product['price'],
+					'QUANTITY' => $product['quantity'],
+					'MEASURE_CODE' => $product['measureCode'],
+					'MEASURE_NAME' => $product['measureName'],
+					'TAX_RATE' => $product['taxRate'],
+					'TAX_INCLUDED' => $product['taxIncluded'],
+					'SORT' => $sort,
+				];
+
+				if (!empty($product['discount']))
+				{
+					$item['DISCOUNT_TYPE_ID'] =
+						(int)$product['discountType'] === \Bitrix\Crm\Discount::MONETARY
+							? \Bitrix\Crm\Discount::MONETARY
+							: \Bitrix\Crm\Discount::PERCENTAGE
+					;
+					$item['DISCOUNT_RATE'] = $product['discountRate'];
+					$item['DISCOUNT_SUM'] = $product['discount'];
+				}
+
+				$result[] = $item;
+			}
+
+			/**
+			 * Delivery
+			 */
+			$hasActualDelivery = false;
+			$emptyDeliveryServiceId = Sale\Delivery\Services\EmptyDeliveryService::getEmptyDeliveryServiceId();
+			$deliverySystemIds = $order->getDeliveryIdList();
+			foreach ($deliverySystemIds as $deliverySystemId)
+			{
+				if ($deliverySystemId != $emptyDeliveryServiceId)
+				{
+					$hasActualDelivery = true;
+					break;
+				}
+			}
+
+			if ($hasActualDelivery)
+			{
+				$deliveryPrice = $order->getDeliveryPrice();
+
+				$sort += 10;
+
+				$result[] = [
+					'PRODUCT_NAME' => Loc::getMessage('SALESCENTER_CONTROLLER_ORDER_DELIVERY'),
+					'PRICE' => $deliveryPrice,
+					'PRICE_ACCOUNT' => $deliveryPrice,
+					'PRICE_EXCLUSIVE' => $deliveryPrice,
+					'PRICE_NETTO' => $deliveryPrice,
+					'PRICE_BRUTTO' => $deliveryPrice,
+					'QUANTITY' => 1,
+					'SORT' => $sort,
+				];
+			}
+		}
+		else
+		{
+			$result = \CCrmDeal::LoadProductRows($dealId);
+
+			foreach ($products as $product)
+			{
+				$productId = $product['skuId'] ?? $product['productId'];
+
+				if (
+					!empty($product['additionalFields']['originBasketId'])
+					&& $product['additionalFields']['originBasketId'] !== $product['code']
+				)
+				{
+					$basketItem = $order->getBasket()->getItemByBasketCode($product['additionalFields']['originBasketId']);
+
+					if ($basketItem)
+					{
+						$index = $this->searchProduct($result, $basketItem->getProductId());
+						if ($index !== false)
+						{
+							$result[$index]['QUANTITY'] = $basketItem->getQuantity();
+						}
+					}
+				}
+				elseif (
+					!empty($product['additionalFields']['originProductId'])
+					&& $product['additionalFields']['originProductId'] !== $productId
+				)
+				{
+					$index = $this->searchProduct($result, $product['additionalFields']['originProductId']);
+					if ($index !== false)
+					{
+						$result[$index]['PRODUCT_ID'] = $productId;
+						if ($result[$index]['QUANTITY'] < $product['quantity'])
+						{
+							$result[$index]['QUANTITY'] = $product['quantity'];
+						}
+
+						continue;
+					}
+				}
+				else
+				{
+					$index = $this->searchProduct($result, $productId);
+					if ($index !== false)
+					{
+						$basketItem = $order->getBasket()->getItemByXmlId($product['innerId']);
+						if ($basketItem)
+						{
+							if ($result[$index]['QUANTITY'] < $basketItem->getQuantity())
+							{
+								$result[$index]['QUANTITY'] = $basketItem->getQuantity();
+							}
+
+							$result[$index]['PRICE'] = $product['basePrice'];
+							$result[$index]['PRICE_EXCLUSIVE'] = $product['basePrice'];
+							$result[$index]['PRICE_ACCOUNT'] = $product['basePrice'];
+							$result[$index]['PRICE_NETTO'] = $product['basePrice'];
+							$result[$index]['PRICE_BRUTTO'] = $product['basePrice'];
+
+							$discount = 0;
+							if ((int)$product['discountType'] === \Bitrix\Crm\Discount::PERCENTAGE)
+							{
+								$discount = $product['discount'];
+
+								$result[$index]['DISCOUNT_TYPE_ID'] = \Bitrix\Crm\Discount::PERCENTAGE;
+								$result[$index]['DISCOUNT_RATE'] = $product['discountRate'];
+								$result[$index]['DISCOUNT_SUM'] = $product['discount'];
+							}
+							elseif ((int)$product['discountType'] === \Bitrix\Crm\Discount::MONETARY)
+							{
+								$result[$index]['DISCOUNT_TYPE_ID'] = \Bitrix\Crm\Discount::MONETARY;
+								$result[$index]['DISCOUNT_SUM'] = $product['discount'];
+
+								$discount = $product['discount'];
+							}
+
+							$result[$index]['PRICE'] -= $discount;
+							$result[$index]['PRICE_ACCOUNT'] -= $discount;
+							$result[$index]['PRICE_EXCLUSIVE'] -= $discount;
+
+							continue;
+						}
+					}
+				}
+
+				$item = [
+					'PRODUCT_ID' => $productId,
+					'PRODUCT_NAME' => $product['name'],
+					'PRICE' => $product['basePrice'],
+					'PRICE_ACCOUNT' => $product['basePrice'],
+					'PRICE_EXCLUSIVE' => $product['basePrice'],
+					'PRICE_NETTO' => $product['basePrice'],
+					'PRICE_BRUTTO' => $product['basePrice'],
+					'QUANTITY' => $product['quantity'],
+					'MEASURE_CODE' => $product['measureCode'],
+					'MEASURE_NAME' => $product['measureName'],
+					'TAX_RATE' => $product['taxRate'],
+					'TAX_INCLUDED' => $product['taxIncluded'],
+				];
+
+				$discount = 0;
+				if ((int)$product['discountType'] === \Bitrix\Crm\Discount::PERCENTAGE)
+				{
+					if ($product['discount'] > 0)
+					{
+						$discount = $product['discount'];
+
+						$item['DISCOUNT_TYPE_ID'] = \Bitrix\Crm\Discount::PERCENTAGE;
+						$item['DISCOUNT_RATE'] = $product['discountRate'];
+						$item['DISCOUNT_SUM'] = $product['discount'];
+					}
+				}
+				elseif ((int)$product['discountType'] === \Bitrix\Crm\Discount::MONETARY)
+				{
+					$item['DISCOUNT_TYPE_ID'] = \Bitrix\Crm\Discount::MONETARY;
+					$item['DISCOUNT_SUM'] = $product['discount'];
+
+					$discount = $product['discount'];
+				}
+
+				$item['PRICE'] -= $discount;
+				$item['PRICE_ACCOUNT'] -= $discount;
+				$item['PRICE_EXCLUSIVE'] -= $discount;
+
+				$result[] = $item;
+			}
+		}
+
+		if ($result)
+		{
+			\CCrmDeal::SaveProductRows($dealId, $result);
+		}
+	}
+
+	protected function getMaxProductDealSort($products)
+	{
+		$sort = 0;
+		foreach ($products as $product)
+		{
+			if ($product['SORT'] > $sort)
+			{
+				$sort = $product['SORT'];
+			}
+		}
+
+		return $sort;
+	}
+
+	protected function getCountBindingOrders($dealId)
+	{
+		$registry = Sale\Registry::getInstance(Sale\Registry::REGISTRY_TYPE_ORDER);
+
+		/** @var Crm\Order\DealBinding $dealBinding */
+		$dealBinding = $registry->get(ENTITY_CRM_ORDER_DEAL_BINDING);
+
+		return $dealBinding::getList([
+			'select' => ['ORDER_ID'],
+			'filter' => [
+				'=DEAL_ID' => $dealId
+			],
+			'count_total' => true
+		])->getCount();
+	}
+
+	private function searchProduct(array $productList, int $productId)
+	{
+		if ($productId === 0)
+		{
+			return false;
+		}
+
+		foreach ($productList as $index => $item)
+		{
+			if ($productId === (int)$item['PRODUCT_ID'])
+			{
+				return $index;
+			}
+		}
+
+		return false;
+	}
+
+	protected function getBasketItemByProductId(Crm\Order\Order $order, $productId)
+	{
+		foreach ($order->getBasket() as $basketItem)
+		{
+			if ((int)$basketItem->getField('PRODUCT_ID') === (int)$productId)
+			{
+				return $basketItem;
+			}
+		}
+
+		return null;
+	}
+
+	protected function getBasketByOrderId($orderId)
+	{
+		if ($orderId > 0)
+		{
+			$order = Crm\Order\Order::load($orderId);
+
+			return $order->getBasket();
+		}
+
+		return null;
+	}
+
+	/**
+	 * @param array $formBasket
+	 * @param Sale\Order $order
+	 * @return array
+	 * @throws Main\ArgumentException
+	 * @throws Main\ArgumentNullException
+	 * @throws Main\ArgumentOutOfRangeException
+	 */
+	private function fillResultBasket(array $formBasket, Sale\Order $order): array
 	{
 		$basket = $order->getBasket();
 		$discount = $order->getDiscount();
@@ -264,33 +692,53 @@ class Order extends Base
 		$discountBasket = $discountResult['RESULT']['BASKET'];
 		$discountList = $discountResult['DISCOUNT_LIST'];
 
+		$productIds = array_map(static function ($basketItem) {
+			return $basketItem->getProductId();
+		}, $basket->getBasketItems());
+
+		$measureRatios = \Bitrix\Catalog\MeasureRatioTable::getCurrentRatio($productIds);
+
 		$resultBasket = [];
-		$currencyFormat = \CCurrencyLang::GetFormatDescription($order->getCurrency());
-		if ($currencyFormat === false)
+
+		foreach ($formBasket as $index => $item)
 		{
-			$currencyFormat = \CCurrencyLang::GetDefaultValues();
-		}
-		/** @var Sale\BasketItem $basketItem */
-		foreach ($basket as $basketItem)
-		{
+			$basketItem = $basket->getItemByXmlId($item['innerId']);
+			if (!$basketItem)
+			{
+				$resultBasket[$item['sort']] = $item;
+				continue;
+			}
+
+			$errors = [];
+			if (!$basketItem->getField('NAME'))
+			{
+				$errors[] = 'SALE_BASKET_ITEM_NAME';
+			}
+
 			$code = $basketItem->getBasketCode();
 			$sort = $basketItem->getField('SORT');
+			$productId = $basketItem->getProductId();
+
 			$preparedItem = [
 				'code' => $code,
-				'productId' => $basketItem->getProductId(),
+				'productId' => $productId,
 				'sort' => $sort,
 				'name' => $basketItem->getField('NAME'),
-				'basePrice' => round($basketItem->getBasePrice(),  $currencyFormat['DECIMALS']),
-				'quantity' => $basketItem->getQuantity(),
-				'formattedPrice' => SaleFormatCurrency($basketItem->getPrice(),  $order->getCurrency()),
+				'basePrice' => Sale\PriceMaths::roundPrecision($basketItem->getBasePrice()),
+				'price' => Sale\PriceMaths::roundPrecision($basketItem->getPrice()),
+				'priceExclusive' => Sale\PriceMaths::roundPrecision($basketItem->getPrice()),
+				'quantity' => $item['quantity'],
+				'module' => $basketItem->getField('MODULE'),
+				'formattedPrice' => SaleFormatCurrency($basketItem->getPrice(), $order->getCurrency(), true),
 				'encodedFields' => Main\Web\Json::encode($basketItem->getFieldValues()),
-				'errors' => [],
-				'discountInfos' => []
+				'errors' => $errors,
+				'discountInfos' => [],
+				'measureCode' => $basketItem->getField('MEASURE_CODE'),
+				'measureName' => $basketItem->getField('MEASURE_NAME'),
+				'measureRatio' => (float)($measureRatios[(int)$productId]),
 			];
-			if (isset($sortedDefaultItems[$code]))
-			{
-				$preparedItem = array_merge($sortedDefaultItems[$code], $preparedItem);
-			}
+
+			$preparedItem = array_merge($item, $preparedItem);
 
 			if (!empty($discountBasket[$code]) && is_array($discountBasket[$code]))
 			{
@@ -312,36 +760,37 @@ class Order extends Base
 				}
 			}
 
-			if (!$basketItem->isCustomPrice())
+			if (
+				!isset($preparedItem['discountType'])
+				&& $basketItem->isCustomPrice()
+				&& (int)$preparedItem['discount'] === 0
+			)
 			{
-				if ($basketItem->getDiscountPrice() > 0)
-				{
-					if (empty($preparedItem['discountType']))
-					{
-						$preparedItem['discountType'] = 'percent';
-					}
-
-					if (empty($preparedItem['showDiscount']))
-					{
-						$preparedItem['showDiscount'] = 'Y';
-					}
-
-					if ($preparedItem['discountType'] !== 'percent')
-					{
-						$preparedItem['discount'] = (float)$basketItem->getDiscountPrice();
-					}
-					else
-					{
-						$preparedItem['discount'] = (float)(string)($basketItem->getDiscountPrice() / $basketItem->getBasePrice() * 100);
-					}
-				}
-				else
-				{
-					$preparedItem['discount'] = 0;
-				}
+				$preparedItem['discountType'] = \Bitrix\Crm\Discount::MONETARY;
 			}
 
-			$resultBasket[$sort] = $preparedItem;
+			if (!empty($basketItem->getDiscountPrice()))
+			{
+				if (empty($preparedItem['discountType']))
+				{
+					$preparedItem['discountType'] = \Bitrix\Crm\Discount::PERCENTAGE;
+				}
+
+				if (empty($preparedItem['showDiscount']))
+				{
+					$preparedItem['showDiscount'] = 'Y';
+				}
+
+				$preparedItem['discount'] = (float)$basketItem->getDiscountPrice();
+				$preparedItem['discountRate'] = roundEx($basketItem->getDiscountPrice() / $basketItem->getBasePrice() * 100, 2);
+			}
+			else
+			{
+				$preparedItem['discount'] = 0;
+			}
+
+			$key = $preparedItem['innerId'] ?? $preparedItem['code'];
+			$resultBasket[$key] = $preparedItem;
 		}
 
 		sort($resultBasket);
@@ -349,286 +798,187 @@ class Order extends Base
 		return $resultBasket;
 	}
 
+	public function resendPaymentAction($orderId, $paymentId, $shipmentId, array $options = [])
+	{
+		if ($options['sendingMethod'] === 'sms')
+		{
+			$order = Crm\Order\Order::load($orderId);
+
+			$payment = null;
+			if ($paymentId)
+			{
+				/** @var Crm\Order\Payment $payment */
+				$payment = $order->getPaymentCollection()->getItemById($paymentId);
+			}
+
+			$shipment = null;
+			if ($shipmentId)
+			{
+				/** @var Crm\Order\Shipment $shipment */
+				$shipment = $order->getShipmentCollection()->getItemById($shipmentId);
+			}
+
+			$isSent = CrmManager::getInstance()->sendPaymentBySms($payment, $options['sendingMethodDesc'], $shipment);
+			if ($isSent === false)
+			{
+				$this->addError(
+					new Error(Loc::getMessage('SALESCENTER_CONTROLLER_ORDER_SEND_SMS_ERROR'))
+				);
+			}
+		}
+	}
+
 	/**
-	 * @param array $formData
-	 *
-	 * @return Sale\Order
-	 * @throws Main\ArgumentOutOfRangeException
+	 * @param array $basketItems
+	 * @param array $options
+	 * @return array|null
 	 */
-	private function buildOrder(array $formData = [])
-	{
-		$settings =	[
-			'createUserIfNeed' => Builder\SettingsContainer::SET_ANONYMOUS_USER,
-			'acceptableErrorCodes' => [],
-			'cacheProductProviderData' => true,
-		];
-		$builderSettings = new Builder\SettingsContainer($settings);
-		$orderBuilder = new Crm\Order\OrderBuilderCrm($builderSettings);
-		$director = new Builder\Director;
-
-		/** @var Sale\Order $order */
-		$order = $director->createOrder($orderBuilder, $formData);
-		if (!$order)
-		{
-			$this->addErrors($orderBuilder->getErrorsContainer()->getErrors());
-		}
-
-		return $order;
-	}
-
-	private function prepareExistProductFields($item)
-	{
-		$productData = Main\Web\Json::decode($item['encodedFields']);
-		$productData['OFFER_ID'] = $productData['PRODUCT_ID'];
-		$productData['SORT'] = $item['sort'];
-		if ((float)$item['quantity'] > 0)
-		{
-			$productData['QUANTITY'] = (float)$item['quantity'];
-		}
-		if ($item['isCustomPrice'] === 'Y')
-		{
-			$productData['CUSTOM_PRICE'] = 'Y';
-			$productData['BASE_PRICE'] = (float)$item['basePrice'];
-			$productData['PRICE'] = $productData['BASE_PRICE'];
-			$productData['DISCOUNT_PRICE'] = 0;
-			if ((float)$item['discount'] > 0)
-			{
-				$discountValue = (float)$item['discount'];
-				if ($item['discountType'] === 'percent')
-				{
-					$discountValue = (float)$item['discount'] / 100 * $productData['BASE_PRICE'];
-				}
-
-				$productData['DISCOUNT_PRICE'] = ($discountValue < $productData['BASE_PRICE']) ? $discountValue : $productData['BASE_PRICE'];
-				$productData['PRICE'] = max(0, ($productData['BASE_PRICE'] - $discountValue));
-			}
-		}
-		if ($item['isCreatedProduct'] === 'Y')
-		{
-			$productData['NAME'] = $item['name'];
-		}
-
-		return $productData;
-	}
-
-	private function prepareNewProductFields($item)
-	{
-		$newItem = [
-			'QUANTITY' => (float)$item['quantity'] > 0 ? (float)$item['quantity'] : 1,
-			'PRODUCT_PROVIDER_CLASS' => '',
-			'SORT' => (int)$item['sort'],
-			'PRODUCT_ID' => $item['productId'],
-		];
-
-		if ($item['module'] === 'catalog')
-		{
-			$newItem['MODULE'] = 'catalog';
-			if ((float)$item['basePrice'] > 0.0)
-			{
-				$newItem['PRODUCT_PROVIDER_CLASS'] = Catalog\Product\Basket::getDefaultProviderName();
-			}
-		}
-
-		if ($item['module'] !== 'catalog' || $item['isCustomPrice'] === 'Y' || (float)$item['basePrice'] === 0.0)
-		{
-			if (empty($newItem['PRODUCT_ID']))
-			{
-				$newItem['PRODUCT_ID'] = (int)$item['sort'] + 1;
-			}
-			$newItem['BASE_PRICE'] = $item['basePrice'];
-			$newItem['PRICE'] = $newItem['BASE_PRICE'];
-			$newItem['NAME'] = $item['name'];
-			$newItem['SORT'] = $item['sort'];
-			$newItem['CUSTOM_PRICE'] = 'Y';
-			if (!empty($item['measureName']))
-			{
-				$newItem['MEASURE_NAME'] = $item['measureName'];
-			}
-			if (!empty($item['measureCode']))
-			{
-				$newItem['MEASURE_CODE'] = $item['measureCode'];
-			}
-		}
-
-		return $newItem;
-	}
-
 	public function createPaymentAction(array $basketItems = array(), array $options = [])
 	{
-		$dealId = null;
-		$this->checkModules();
-		if (!empty($this->getErrors()))
-			return null;
-
-		$formData = [
-			'SITE_ID' => SITE_ID,
-			'SHIPMENT' => [
-				[
-					'DELIVERY_ID' =>  Sale\Delivery\Services\EmptyDeliveryService::getEmptyDeliveryServiceId(),
-					'ALLOW_DELIVERY' => 'Y',
-					'DEDUCTED' => 'N'
-				]
-			]
-		];
-
-		foreach ($basketItems as $item)
+		if (Bitrix24Manager::getInstance()->isPaymentsLimitReached())
 		{
-			if (empty($item['encodedFields']))
-				continue;
+			$this->addError(
+				new Main\Error('You have reached limit of payments for your tariff')
+			);
 
-			$formData['PRODUCT'][$item['code']]['FIELDS_VALUES'] = $item['encodedFields'];
+			return [];
 		}
 
-		$userId = $this->getUserId($options);
-		$clientInfo = $this->getClientInfo($options);
-		if(isset($clientInfo['DEAL_ID']) && $clientInfo['DEAL_ID'] > 0)
-		{
-			$dealId = $clientInfo['DEAL_ID'];
-			unset($clientInfo['DEAL_ID']);
-		}
+		$basketItems = $this->processBasketItems($basketItems);
 
-		if ((int)$userId > 0)
-		{
-			$formData['USER_ID'] = (int)$userId;
-		}
-
-		$formData['CLIENT'] = $clientInfo;
-		$formData['RESPONSIBLE_ID'] = \CCrmSecurityHelper::GetCurrentUserID();
-
-		$personType = $this->getPersonTypeId($formData['CLIENT']);
-		if ($personType > 0)
-		{
-			$formData['PERSON_TYPE_ID'] = $personType;
-		}
-
-		if (LandingManager::getInstance()->isSiteExists())
-		{
-			$connectedSiteId = LandingManager::getInstance()->getConnectedSiteId();
-			$formData['TRADING_PLATFORM'] = Sale\TradingPlatform\Landing\Landing::getCodeBySiteId($connectedSiteId);
-		}
+		$options['basketItems'] = $basketItems;
 
 		/** @var Crm\Order\Order $order */
-		$order = $this->buildOrder($formData);
-		if (!$order)
+		$order = $this->buildOrder($options);
+		if ($order === null)
 		{
-			return null;
+			return [];
 		}
 
-		if (!$dealId)
+		$shipment = $this->findNewShipment($order);
+		$payment = $this->findNewPayment($order);
+
+		$result = $order->save();
+		if ($result->isSuccess())
 		{
-			$selector = SaleManager::getActualEntitySelector($order);
-			$dealId = (int)$selector->search()->getDealId();
-
-			if ($dealId <= 0)
+			$dealId = $order->getDealBinding()->getDealId();
+			if ($dealId)
 			{
-				$dealData = Crm\Order\DealBinding::getList([
-					'select' => ['DEAL_ID'],
-					'filter' => [
-						'ORDER.USER_ID' => $order->getUserId(),
-						'DEAL.CLOSED' => 'N'
-					],
-					'limit' => 1,
-					'order' => ['DEAL_ID' => 'DESC']
-				])->fetch();
-
-				$dealId = (int)$dealData['DEAL_ID'];
-			}
-		}
-
-		if ($dealId > 0)
-		{
-			$dealBinding = $order->getDealBinding();
-
-			if ($dealBinding === null)
-			{
-				$dealBinding = $order->createDealBinding();
-			}
-
-			if ($dealBinding)
-			{
-				$dealBinding->setField('DEAL_ID', $dealId);
-			}
-		}
-
-		$basket = $order->getBasket();
-		/** @var Sale\BasketItem $basketItem */
-		foreach ($basket as &$basketItem)
-		{
-			if ($basketItem->isCustom())
-			{
-				$productId = $this->createProduct($basketItem->getFieldValues());
-				if ((int)$productId > 0)
+				if (!empty($options['sessionId']) && (int)$options['ownerId'] <= 0)
 				{
-					$basketItem->setFieldsNoDemand([
-						'MODULE' => 'catalog',
-						'PRODUCT_ID' => $productId,
-						'PRODUCT_PROVIDER_CLASS' => Catalog\Product\Basket::getDefaultProviderName()
-					]);
+					$this->onAfterDealAdd($dealId, $options['sessionId']);
+				}
+
+				$this->syncOrderProductsWithDeal($dealId, $basketItems, $order);
+
+				if (isset($options['stageOnOrderPaid']))
+				{
+					CrmManager::getInstance()->saveTriggerOnOrderPaid(
+						$dealId,
+						$options['stageOnOrderPaid']
+					);
+				}
+
+				if (isset($options['stageOnDeliveryFinished']))
+				{
+					CrmManager::getInstance()->saveTriggerOnDeliveryFinished(
+						$dealId,
+						$options['stageOnDeliveryFinished']
+					);
+				}
+
+				$dealPrimaryContactId = $this->getDealPrimaryContactId($dealId);
+				if ($shipment && $dealPrimaryContactId)
+				{
+					$this->tryToFillContactDeliveryAddress($dealPrimaryContactId, $shipment->getId());
 				}
 			}
-		}
 
-		$paymentCollection = $order->getPaymentCollection();
-		$payment = $paymentCollection->current();
-		if (!$payment)
-		{
-			$payment = $paymentCollection->createItem();
-		}
-
-		$paySystemList = Sale\PaySystem\Manager::getListWithRestrictions($payment);
-
-		$selectedPaySystem = $firstPaySystemInList = null;
-		foreach ($paySystemList as $paySystem)
-		{
-			if ($paySystem['ACTION_FILE'] === 'cash')
+			if ($shipment)
 			{
-				$selectedPaySystem = $paySystem;
-				break;
+				$this->saveDeliveryAddressFrom($shipment->getId());
 			}
-			if (!$firstPaySystemInList && $paySystem['ACTION_FILE'] !== 'inner')
-			{
-				$firstPaySystemInList = $paySystem;
-			}
-		}
 
-		if (!$selectedPaySystem)
-		{
-			$selectedPaySystem = $firstPaySystemInList;
-		}
-
-		$paymentFields = [
-			'SUM' => $order->getPrice(),
-			'CURRENCY'=> $order->getCurrency(),
-		];
-		if (!empty($selectedPaySystem))
-		{
-			$paymentFields['PAY_SYSTEM_ID'] = $selectedPaySystem['ID'];
-			$paymentFields['PAY_SYSTEM_NAME'] = $selectedPaySystem['NAME'];
-		}
-		$payment->setFields($paymentFields);
-
-		$resultSaving = $order->save();
-		if ($resultSaving->isSuccess())
-		{
 			Bitrix24Manager::getInstance()->increasePaymentsCount();
 			$data = [
 				'order' => [
 					'number' => $order->getField('ACCOUNT_NUMBER'),
 					'id' => $order->getId(),
-				]
+					'paymentId' => $payment ? $payment->getId() : null,
+					'shipmentId' => $shipment ? $shipment->getId() : null,
+				],
+				'deal' => $this->getDealData((int)$dealId)
 			];
 
-			if($options['dialogId'])
+			if ($options['sendingMethod'] === 'sms')
 			{
-				$result = ImOpenLinesManager::getInstance()->sendOrderNotify($order, $options['dialogId']);
-				if(!$result->isSuccess())
+				if ($payment)
 				{
-					$this->addErrors($result->getErrors());
+					$isSent = CrmManager::getInstance()->sendPaymentBySms($payment, $options['sendingMethodDesc'], $shipment);
+					if (!$isSent)
+					{
+						$this->addError(
+							new Error(Loc::getMessage('SALESCENTER_CONTROLLER_ORDER_SEND_SMS_ERROR'))
+						);
+					}
 				}
-				if(!isset($options['skipPublicMessage']) || $options['skipPublicMessage'] == 'n')
+			}
+			elseif ($options['dialogId'])
+			{
+				if ($payment)
 				{
-					$result = ImOpenLinesManager::getInstance()->sendOrderMessage($order, $options['dialogId']);
-					if(!$result->isSuccess())
+					$r = new Main\Result();
+					if ($dealId && (int)$options['ownerId'] <= 0)
+					{
+						$r = ImOpenLinesManager::getInstance()->sendDealNotify($dealId, $options['dialogId']);
+					}
+
+					if ($r->isSuccess())
+					{
+						$r = ImOpenLinesManager::getInstance()->sendPaymentNotify($payment, $options['dialogId']);
+					}
+				}
+				else
+				{
+					$r = ImOpenLinesManager::getInstance()->sendOrderNotify($order, $options['dialogId']);
+				}
+
+				if (!$r->isSuccess())
+				{
+					$this->addErrors($r->getErrors());
+				}
+
+				if (!isset($options['skipPublicMessage']) || $options['skipPublicMessage'] === 'n')
+				{
+					$paymentData = [];
+					$paySystemService = Sale\PaySystem\Manager::getObjectById($payment->getPaymentSystemId());
+
+					if ($options['connector'] === 'imessage'
+						&& SaleManager::getInstance()->isApplePayPayment($paySystemService->getFieldsValues())
+					)
+					{
+						$request = Main\Context::getCurrent()->getRequest();
+						$request->set(array_merge($request->toArray(), [
+							"action" => "getIMessagePaymentAction",
+						]));
+
+						$initiatePayResult = $paySystemService->initiatePay(
+							$payment,
+							$request,
+							Sale\PaySystem\BaseServiceHandler::STRING
+						);
+						if ($initiatePayResult->isSuccess())
+						{
+							$paymentData = $initiatePayResult->getData();
+						}
+						else
+						{
+							$this->addErrors($initiatePayResult->getErrors());
+						}
+					}
+
+					$result = ImOpenLinesManager::getInstance()->sendPaymentMessage($payment, $options['dialogId'], $paymentData);
+					if (!$result->isSuccess())
 					{
 						$this->addErrors($result->getErrors());
 					}
@@ -636,59 +986,374 @@ class Order extends Base
 			}
 			else
 			{
-				$orderPreviewData = ImOpenLinesManager::getInstance()->getOrderPreviewData($order);
-				$orderPublicUrl = ImOpenLinesManager::getInstance()->getPublicUrlInfoForOrder($order);
-				$data['order']['title'] = $orderPreviewData['title'];
-				$data['order']['url'] = $orderPublicUrl['url'];
+				if ($payment)
+				{
+					$previewData = ImOpenLinesManager::getInstance()->getPaymentPreviewData($payment);
+					$publicUrl = ImOpenLinesManager::getInstance()->getPublicUrlInfoForPayment($payment);
+				}
+				else
+				{
+					$previewData = ImOpenLinesManager::getInstance()->getOrderPreviewData($order);
+					$publicUrl = ImOpenLinesManager::getInstance()->getPublicUrlInfoForOrder($order);
+				}
+
+				$data['order']['title'] = $previewData['title'];
+				$data['order']['url'] = $publicUrl['url'];
 			}
 
-			$resultSaving->setData($data);
+			return $data;
 		}
 		else
 		{
-			$this->addErrors($resultSaving->getErrors());
+			$this->addErrors($result->getErrors());
 		}
 
-		return $resultSaving->getData();
+		return [];
 	}
 
 	/**
-	 * @return Crm\Integrity\ActualEntitySelector
-	 * @throws Main\ArgumentException
-	 * @throws Main\ArgumentTypeException
-	 * @throws Main\SystemException
-	 */
-	protected static function getActualEntitySelector(Crm\Order\Order $order)
-	{
-		$selector = new Crm\Integrity\ActualEntitySelector();
-
-		$contactCompanyCollection = $order->getContactCompanyCollection();
-
-		foreach($contactCompanyCollection as $item)
-		{
-			$selector->setEntity($item->getEntityType(), $item->getField('ENTITY_ID'));
-		}
-
-		$selector->setEntity(\CCrmOwnerType::Order, $order->getId());
-
-		return $selector;
-	}
-
-	/**
+	 * @param array $basketItems
 	 * @param array $options
-	 * @return false|int
+	 * @return array|null
 	 */
-	protected function getUserId(array $options)
+	public function createShipmentAction(array $basketItems = array(), array $options = [])
 	{
+		$basketItems = $this->processBasketItems($basketItems);
+
+		$options['basketItems'] = $basketItems;
+		$options['withoutPayment'] = true;
+
+		/** @var Crm\Order\Order $order */
+		$order = $this->buildOrder(
+			$options,
+			[
+				'builderScenario' => Salescenter\Builder\SettingsContainer::BUILDER_SCENARIO_SHIPMENT,
+			]
+		);
+		if ($order === null)
+		{
+			return [];
+		}
+
+		$shipment = $this->findNewShipment($order);
+
+		$result = $order->save();
+		if ($result->isSuccess())
+		{
+			$dealId = $order->getDealBinding()->getDealId();
+
+			if ($shipment)
+			{
+				if ($dealId)
+				{
+					$dealPrimaryContactId = $this->getDealPrimaryContactId($dealId);
+					if ($dealPrimaryContactId)
+					{
+						$this->tryToFillContactDeliveryAddress($dealPrimaryContactId, $shipment->getId());
+					}
+
+					$this->syncOrderProductsWithDeal($dealId, $basketItems, $order);
+				}
+
+				$this->saveDeliveryAddressFrom($shipment->getId());
+			}
+
+			return [
+				'order' => [
+					'number' => $order->getField('ACCOUNT_NUMBER'),
+					'id' => $order->getId()
+				],
+				'deal' => $this->getDealData((int)$dealId)
+			];
+		}
+		else
+		{
+			$this->addErrors($result->getErrors());
+		}
+
+		return [];
+	}
+
+	/**
+	 * @param Crm\Order\Order $order
+	 * @return Crm\Order\Shipment|null
+	 */
+	private function findNewShipment(Crm\Order\Order $order): ?Crm\Order\Shipment
+	{
+		foreach ($order->getShipmentCollection()->getNotSystemItems() as $shipment)
+		{
+			if ($shipment->getId() === 0)
+			{
+				return $shipment;
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * @param Crm\Order\Order $order
+	 * @return Crm\Order\Payment|null
+	 */
+	private function findNewPayment(Crm\Order\Order $order): ?Crm\Order\Payment
+	{
+		foreach ($order->getPaymentCollection() as $payment)
+		{
+			if ($payment->getId() === 0)
+			{
+				return $payment;
+			}
+		}
+
+		return null;
+	}
+
+	protected function obtainOrderFields($options)
+	{
+		$result = [
+			'ID' => (int)$options['orderId'] ?? 0,
+			'SITE_ID' => SITE_ID,
+			'CONNECTOR' => $options['connector'],
+			'SHIPMENT' => [],
+			'PAYMENT' => [],
+		];
+
 		if (!empty($options['sessionId']))
 		{
-			return ImOpenLinesManager::getInstance()->setSessionId($options['sessionId'])->getUserId();
+			$result['USER_ID'] = ImOpenLinesManager::getInstance()->setSessionId($options['sessionId'])->getUserId();
+		}
+
+		$clientInfo = $this->getClientInfo($options);
+		if (isset($clientInfo['DEAL_ID']) && $clientInfo['DEAL_ID'] > 0)
+		{
+			$result['DEAL_ID'] = $clientInfo['DEAL_ID'];
+			unset($clientInfo['DEAL_ID']);
+		}
+
+		$result['CLIENT'] = $clientInfo;
+
+		if ($result['ID'] === 0)
+		{
+			if (isset($options['context']))
+			{
+				$platformCode = '';
+
+				if ($options['context'] === 'deal')
+				{
+					$platformCode = Crm\Order\TradingPlatform\Deal::TRADING_PLATFORM_CODE;
+				}
+				elseif ($options['context'] === 'sms')
+				{
+					$platformCode = Crm\Order\TradingPlatform\Activity::TRADING_PLATFORM_CODE;
+				}
+
+				if ($platformCode)
+				{
+					$platform = Crm\Order\TradingPlatform\Deal::getInstanceByCode($platformCode);
+					if ($platform->isInstalled())
+					{
+						$result['TRADING_PLATFORM'] = $platform->getId();
+					}
+				}
+			}
+		}
+
+		return $result;
+	}
+
+	protected function obtainPaymentFields(array $data)
+	{
+		$result = [
+			'PRODUCT' => []
+		];
+
+		$sum = 0;
+
+		if (
+			isset($data['PRODUCT'])
+			&& is_array($data['PRODUCT'])
+		)
+		{
+			foreach ($data['PRODUCT'] as $index => $item)
+			{
+				$sum += Sale\PriceMaths::roundPrecision($item['QUANTITY'] * $item['PRICE']);
+
+				$result['PRODUCT'][] = [
+					'BASKET_CODE' => $index,
+					'QUANTITY' => $item['QUANTITY']
+				];
+			}
+		}
+
+		if (
+			isset($data['SHIPMENT'])
+			&& is_array($data['SHIPMENT'])
+		)
+		{
+			foreach ($data['SHIPMENT'] as $index => $item)
+			{
+				$sum += $item['PRICE_DELIVERY'];
+
+				$result['PRODUCT'][] = [
+					'DELIVERY_ID' => $item['DELIVERY_ID'],
+					'QUANTITY' => 1
+				];
+			}
+		}
+
+		$result['SUM'] = $sum;
+
+		return $result;
+	}
+
+	protected function needObtainShipmentFields(array $params) : bool
+	{
+		$deliveryId = Delivery\Services\EmptyDeliveryService::getEmptyDeliveryServiceId();
+		return
+			isset($params['deliveryId'])
+			&& $params['deliveryId'] > 0
+			&& (int)$params['deliveryId'] !== $deliveryId
+		;
+	}
+
+	protected function obtainShipmentFields(array $data, array $basketItems)
+	{
+		$result = [
+			'ALLOW_DELIVERY' => 'Y',
+			'RESPONSIBLE_ID' =>	$data['deliveryResponsibleId'] ?? 0,
+		];
+
+		if (!empty($data['deliveryId']))
+		{
+			$result['DELIVERY_ID'] = $data['deliveryId'];
 		}
 		else
 		{
-			return (int)\CSaleUser::GetAnonymousUserID();
+			$result['DELIVERY_ID'] = Sale\Delivery\Services\EmptyDeliveryService::getEmptyDeliveryServiceId();
 		}
+
+		if (!empty($data['deliveryExtraServicesValues']))
+		{
+			$extraServices = [];
+
+			foreach ($data['deliveryExtraServicesValues'] as $deliveryRelatedServiceValue)
+			{
+				$extraServices[$deliveryRelatedServiceValue['id']] = $deliveryRelatedServiceValue['value'];
+			}
+
+			$result['EXTRA_SERVICES'] = $extraServices;
+		}
+
+		if (
+			isset($data['deliveryPrice'])
+			&& isset($data['expectedDeliveryPrice'])
+			&& $data['deliveryPrice'] !== $data['expectedDeliveryPrice']
+		)
+		{
+			$result['BASE_PRICE_DELIVERY'] = (float)$data['expectedDeliveryPrice'];
+			$result['CUSTOM_PRICE_DELIVERY'] = 'Y';
+		}
+
+		$result['PRICE_DELIVERY'] = (float)$data['deliveryPrice'];
+
+		if (isset($data['shipmentPropValues']) && is_array($data['shipmentPropValues']))
+		{
+			$result['PROPERTIES'] = $this->obtainPropertiesFields($data['shipmentPropValues']);
+		}
+
+		$result['PRODUCT'] = [];
+
+		foreach ($basketItems as $index => $item)
+		{
+			$result['PRODUCT'][] = [
+				'BASKET_CODE' => $index,
+				'QUANTITY' => $item['QUANTITY'],
+				'AMOUNT' => $item['QUANTITY']
+			];
+		}
+
+		return $result;
 	}
+
+	protected function obtainPropertiesFields(array $shipmentPropValues)
+	{
+		$result = [];
+
+		foreach ($shipmentPropValues as $prop)
+		{
+			$result[$prop['id']] = $prop['value'];
+		}
+
+		return $result;
+	}
+
+	protected function getDealData(int $dealId)
+	{
+		return [
+			'PRODUCT_LIST' => $this->getProductList($dealId)
+		];
+	}
+
+	protected function getProductList($dealId)
+	{
+		$products = \CCrmProductRow::LoadRows('D', $dealId);
+
+		$result = [];
+		foreach ($products as $product)
+		{
+			$item = [
+				'id' => $product['PRODUCT_ID'],
+				'name' => $product['PRODUCT_NAME'],
+				'price' => $product['PRICE'],
+				'quantity' => $product['QUANTITY'],
+				'measureName' => $product['MEASURE_NAME'],
+				'measureCode' => $product['MEASURE_CODE'],
+				'customized' => $product['CUSTOMIZED']
+			];
+
+			if ($product['DISCOUNT_RATE'])
+			{
+				$item['discount'] = [
+					'discountType' => $product['DISCOUNT_TYPE'],
+					'discountRate' => $product['DISCOUNT_RATE'],
+					'discountSum' => $product['DISCOUNT_SUM'],
+				];
+			}
+
+			if ($product['TAX_RATE'])
+			{
+				$item['tax'] = [
+					'id' => $this->getVatRateIdByValue($product['TAX_RATE']),
+					'included' => $product['TAX_INCLUDED'] === 'Y',
+				];
+			}
+
+
+			$result[] = $item;
+		}
+
+		return $result;
+	}
+
+	private function getVatRateIdByValue($rate)
+	{
+		$vatList = \CCrmTax::GetVatRateInfos();
+		foreach ($vatList as $vat)
+		{
+			if ((int)$vat['VALUE'] === (int)$rate)
+			{
+				return $vat['ID'];
+			}
+		}
+
+		return 0;
+	}
+
+	/**
+	 * @param $dealId
+	 * @param $products
+	 * @param int $deliveryPrice
+	 */
 
 	/**
 	 * @param array $options
@@ -710,135 +1375,10 @@ class Order extends Base
 		return $clientInfo;
 	}
 
-	private function createProduct(array $fields)
-	{
-		if (empty($fields['CURRENCY']) || empty($fields['PRICE']))
-			return null;
-
-		$elementObject = new \CIBlockElement();
-
-		$catalogIblockId = Option::get('crm', 'default_product_catalog_id');
-		if (!$catalogIblockId)
-			return null;
-
-		$productId = $elementObject->Add([
-			'NAME' => $fields['NAME'],
-			'ACTIVE' => 'Y',
-			'IBLOCK_ID' => $catalogIblockId
-		]);
-
-		if ((int)$productId <= 0)
-			return null;
-
-		$addFields = [
-			'ID' => $productId,
-			'QUANTITY_TRACE' => \Bitrix\Catalog\ProductTable::STATUS_DEFAULT,
-			'CAN_BUY_ZERO' => \Bitrix\Catalog\ProductTable::STATUS_DEFAULT,
-			'WEIGHT' => 0,
-		];
-
-		if (!empty($fields['MEASURE_CODE']))
-		{
-			$measureRaw = Catalog\MeasureTable::getList(array(
-				'select' => array('ID'),
-				'filter' => ['CODE' => $fields['MEASURE_CODE']],
-				'limit' => 1
-			));
-
-			if ($measure = $measureRaw->fetch())
-			{
-				$addFields['MEASURE'] = $measure['ID'];
-			}
-		}
-
-		if (
-			Option::get('catalog', 'default_quantity_trace') === 'Y'
-			&& Option::get('catalog', 'default_can_buy_zero') !== 'Y'
-		)
-		{
-			$addFields['QUANTITY'] = $fields['QUANTITY'];
-		}
-
-		$r = Catalog\Model\Product::add($addFields);
-		if (!$r->isSuccess())
-			return null;
-
-		\Bitrix\Catalog\MeasureRatioTable::add(array(
-			'PRODUCT_ID' => $productId,
-			'RATIO' => 1
-		));
-
-		$priceBaseGroup = \CCatalogGroup::GetBaseGroup();
-		$r = Catalog\Model\Price::add([
-			'PRODUCT_ID' => $productId,
-			'CATALOG_GROUP_ID' => $priceBaseGroup['ID'],
-			'CURRENCY' => $fields['CURRENCY'],
-			'PRICE' => $fields['PRICE'],
-		]);
-
-		if (!$r->isSuccess())
-			return null;
-
-		return $productId;
-	}
-
-	private function getPersonTypeId($clientInfo)
-	{
-		Main\Loader::includeModule('sale');
-
-		$searchCode = 'CRM_CONTACT';
-		$businessValueDomain = Sale\BusinessValue::INDIVIDUAL_DOMAIN;
-		if (!empty($clientInfo['COMPANY']))
-		{
-			$searchCode = 'CRM_COMPANY';
-			$businessValueDomain = Sale\BusinessValue::ENTITY_DOMAIN;
-		}
-
-		$personTypeRaw = Sale\PersonType::getList([
-			'filter' => [
-				'CODE' => $searchCode,
-				'ENTITY_REGISTRY_TYPE' => 'ORDER'
-			],
-			'select' => ['ID'],
-			'limit' => 1
-		]);
-		if ($personType = $personTypeRaw->fetch())
-		{
-			return $personType['ID'];
-		}
-
-		$personTypeRaw = Sale\PersonType::getList([
-			'filter' => [
-				'ENTITY_REGISTRY_TYPE' => 'ORDER',
-				'BIZVAL.DOMAIN' => $businessValueDomain,
-			],
-			'select' => ['ID'],
-			'runtime' => array(
-				new \Bitrix\Main\Entity\ReferenceField(
-					'BIZVAL',
-					'Bitrix\Sale\Internals\BusinessValuePersonDomainTable',
-					array(
-						'=this.ID' => 'ref.PERSON_TYPE_ID'
-					),
-					array('join_type' => 'LEFT')
-				),
-			),
-			'limit' => 1
-		]);
-		if ($personType = $personTypeRaw->fetch())
-		{
-			return $personType['ID'];
-		}
-
-		return null;
-	}
-
 	/**
 	 * @param array $orderIds
 	 * @param array $options
-	 * @return array
-	 * @throws Main\ArgumentNullException
-	 * @throws Main\LoaderException
+	 * @return array|null
 	 */
 	public function sendOrdersAction(array $orderIds, array $options)
 	{
@@ -899,10 +1439,94 @@ class Order extends Base
 	}
 
 	/**
+	 * @param array $paymentIds
+	 * @param array $options
+	 * @return array|null
+	 */
+	public function sendPaymentsAction(array $paymentIds, array $options)
+	{
+		$sentPayments = [];
+		$sessionId = $dialogId = false;
+
+		if (Bitrix24Manager::getInstance()->isPaymentsLimitReached())
+		{
+			$this->addError(new Error('You have reached limit of payments for your tariff'));
+			return null;
+		}
+
+		if (isset($options['sessionId']))
+		{
+			$sessionId = (int)$options['sessionId'];
+			ImOpenLinesManager::getInstance()->setSessionId($sessionId);
+		}
+
+		$dialogId = ImOpenLinesManager::getInstance()->getDialogId();
+		if (!$dialogId)
+		{
+			$this->addError(new Error('Dialog not found'));
+		}
+		elseif (!$sessionId)
+		{
+			$this->addError(new Error('Session not found'));
+		}
+		elseif (Main\Loader::includeModule('sale'))
+		{
+			$registry = Sale\Registry::getInstance(Sale\Registry::REGISTRY_TYPE_ORDER);
+
+			/** @var Sale\Order $orderClass */
+			$orderClass = $registry->getOrderClassName();
+			/** @var Sale\Payment $paymentClass */
+			$paymentClass = $registry->getPaymentClassName();
+
+			$orderPaymentBinding = [];
+			$paymentsIterator = $paymentClass::getList([
+				'select' => ['ID', 'ORDER_ID'],
+				'filter' => [
+					'=ID' => $paymentIds,
+				],
+			]);
+			while ($paymentData = $paymentsIterator->fetch())
+			{
+				$orderPaymentBinding[$paymentData['ID']] = $paymentData['ORDER_ID'];
+			}
+
+			foreach ($paymentIds as $paymentId)
+			{
+				$orderId = $orderPaymentBinding[$paymentId];
+				$order = $orderClass::load($orderId);
+				if (!$order)
+				{
+					$this->addError(new Error('Order '. $orderId .' not found'));
+				}
+				elseif (ImOpenLinesManager::getInstance()->getUserId() != $order->getUserId())
+				{
+					$this->addError(new Error('Wrong user'));
+				}
+				else
+				{
+					$payment = $order->getPaymentCollection()->getItemById($paymentId);
+					if ($payment)
+					{
+						$sendResult = ImOpenLinesManager::getInstance()->sendPaymentMessage($payment, $dialogId);
+						if ($sendResult->isSuccess())
+						{
+							$sentPayments[] = $payment->getField('ACCOUNT_NUMBER');
+						}
+						else
+						{
+							$this->addErrors($sendResult->getErrors());
+						}
+					}
+				}
+			}
+		}
+
+		return ['payments' => $sentPayments];
+	}
+
+	/**
 	 * @param $sessionId
 	 * @return int
-	 * @throws Main\ObjectPropertyException
-	 * @throws Main\SystemException
 	 */
 	public function getActiveOrdersCountAction($sessionId)
 	{
@@ -923,29 +1547,667 @@ class Order extends Base
 	}
 
 	/**
-	 * @param array $catalogProducts
-	 *
-	 * @return array
-	 * @throws Main\ArgumentException
-	 * @throws Main\ObjectPropertyException
-	 * @throws Main\SystemException
+	 * @param $sessionId
+	 * @return int
 	 */
-	private function getProductAvailableQuantity(array $catalogProducts)
+	public function getActivePaymentsCountAction($sessionId)
 	{
-		$catalogProductQuantityMap = [];
-		if (!empty($catalogProducts))
+		$count = 0;
+		if (ImOpenLinesManager::getInstance()->isEnabled() && SaleManager::getInstance()->isEnabled() && CrmManager::getInstance()->isEnabled())
 		{
-			$catalogInfo = Catalog\ProductTable::getList(array(
-				'select' => ['ID', 'QUANTITY'],
-				'filter' => ['@ID' => $catalogProducts]
-			));
-
-			while ($product = $catalogInfo->fetch())
+			$userId = ImOpenLinesManager::getInstance()->setSessionId($sessionId)->getUserId();
+			if ($userId > 0)
 			{
-				$catalogProductQuantityMap[$product['ID']] = $product['QUANTITY'];
+				$count = Sale\Internals\PaymentTable::getCount([
+					'=ORDER.USER_ID' => $userId,
+					'=ORDER.STATUS_ID' => Crm\Order\OrderStatus::getSemanticProcessStatuses(),
+					'!=PAY_SYSTEM_ID' => Sale\PaySystem\Manager::getInnerPaySystemId(),
+				]);
 			}
 		}
-		
-		return $catalogProductQuantityMap;
+
+		return $count;
+	}
+
+	/**
+	 * @param null $productId
+	 * @return string[]
+	 */
+	public function getFileControlAction($productId = null): array
+	{
+		return [
+			'fileControl' => $this->getFileControl($productId)
+		];
+	}
+
+	/**getFileControl
+	 * @param $elementId
+	 * @return string
+	 */
+	public function getFileControl($elementId = null): string
+	{
+		$productImagePropertyDescription = $this->getProductImagePropertyDescription($elementId);
+		$property = $productImagePropertyDescription['description'];
+		$value = $productImagePropertyDescription['values'];
+
+		$inputName = $this->getFilePropertyInputName($property);
+
+		if ($value && !is_array($value))
+		{
+			$value = [$value];
+		}
+
+		$fileValues = [];
+
+		if (!empty($value) && is_array($value))
+		{
+			foreach ($value as $fileId)
+			{
+				$propName = str_replace('n#IND#', $fileId, $inputName);
+				$fileValues[$propName] = $fileId;
+			}
+		}
+
+		$fileType = $property['settings']['FILE_TYPE'] ?? null;
+
+		$fileParams = [
+			'name' => $inputName,
+			'id' => $inputName.'_'.random_int(1, 1000000),
+			'description' => $property['settings']['WITH_DESCRIPTION'] ?? 'Y',
+			'allowUpload' => $fileType ? 'F' : 'I',
+			'allowUploadExt' => $fileType,
+			'maxCount' => ($property['settings']['MULTIPLE'] ?? 'N') !== 'Y' ? 1 : null,
+			'upload' => true,
+			'medialib' => false,
+			'fileDialog' => true,
+			'cloud' => true,
+		];
+
+		return $this->getFileControlComponentContent([
+			'FILE_SETTINGS' => $fileParams,
+			'FILE_VALUES' => $fileValues,
+			'LOADER_PREVIEW' => $this->getFilePropertyViewHtml($value),
+		]);
+	}
+
+	/**
+	 * @param $elementId
+	 * @return array
+	 */
+	private function getProductImagePropertyDescription($elementId = null): array
+	{
+		$result = [];
+
+		if ($elementId)
+		{
+			$imageProperty = $this->getProductImageProperty($elementId);
+		}
+		else
+		{
+			$imageProperty = $this->getDefaultImageProperty();
+		}
+
+		if ($imageProperty['entity'] === 'property')
+		{
+			$result['description'] = [
+				'entity' => $imageProperty['entity'],
+				'name' => 'PROPERTY_MORE_PHOTO',
+				'index' => 'MORE_PHOTO',
+				'propertyId' => $imageProperty['properties']['ID'],
+				'title' => $imageProperty['properties']['NAME'],
+				'editable' => true,
+				'required' => $imageProperty['properties']['IS_REQUIRED'] === 'Y',
+				'multiple' => $imageProperty['properties']['MULTIPLE'] === 'Y',
+				'defaultValue' => $imageProperty['properties']['DEFAULT_VALUE'],
+				'settings' => $imageProperty['properties'],
+				'type' => 'custom',
+				'data' => [
+					'view' => 'PROPERTY_MORE_PHOTO[VIEW_HTML]',
+					'data' => 'PROPERTY_MORE_PHOTO[EDIT_HTML]',
+				],
+			];
+
+			$result['values'] = $imageProperty['values'];
+		}
+		else
+		{
+			$result['description'] = [
+				'entity' => $imageProperty['entity'],
+				'name' => 'DETAIL_PICTURE',
+				'originalName' => 'DETAIL_PICTURE',
+				'title' => $imageProperty['properties']['NAME'],
+				'editable' => true,
+				'required' => $imageProperty['properties']['IS_REQUIRED'] === 'Y',
+				'defaultValue' => $imageProperty['properties']['DEFAULT_VALUE'],
+				'type' => 'custom',
+				'placeholders' => null,
+				'optionFlags' => 1,
+				'data' => [
+					'view' => 'DETAIL_PICTURE[VIEW_HTML]',
+					'data' => 'DETAIL_PICTURE[EDIT_HTML]',
+				],
+			];
+
+			$result['values'] = $imageProperty['values'];
+		}
+
+		return $result;
+	}
+
+	/**
+	 * @param $elementId
+	 * @return array
+	 */
+	private function getProductImageProperty($elementId): array
+	{
+		$result = [];
+
+		$elementIterator = \CIBlockElement::GetList(
+			[],
+			[
+				'ID' => $elementId,
+			],
+			false,
+			false,
+			[
+				'ID',
+				'IBLOCK_ID',
+				'DETAIL_PICTURE',
+				'PROPERTY_MORE_PHOTO',
+			]
+		);
+		if ($element = $elementIterator->GetNextElement())
+		{
+			$properties = $element->GetProperties();
+			if (isset($properties['MORE_PHOTO']))
+			{
+				$result = [
+					'entity' => 'property',
+					'properties' => $properties['MORE_PHOTO'],
+					'values' => $properties['MORE_PHOTO']['VALUE'],
+				];
+			}
+			else
+			{
+				$catalogIblockId = Option::get('crm', 'default_product_catalog_id');
+				$iblockFields = \CIBlock::GetFields($catalogIblockId);
+
+				$fields = $element->GetFields();
+				$result = [
+					'entity' => 'product',
+					'properties' => $iblockFields['DETAIL_PICTURE'],
+					'values' => $fields['DETAIL_PICTURE'],
+				];
+			}
+		}
+
+		return $result;
+	}
+
+	/**
+	 * @return array|null
+	 */
+	private function getDefaultImageProperty(): ?array
+	{
+		$catalogIblockId = Option::get('crm', 'default_product_catalog_id');
+		if (!$catalogIblockId)
+			return null;
+
+		$propertyIterator = \CIBlock::GetProperties(
+			$catalogIblockId,
+			[],
+			[
+				'CODE'=>'MORE_PHOTO',
+			]
+		);
+		if ($propertyData = $propertyIterator->Fetch())
+		{
+			$result = [
+				'entity' => 'property',
+				'properties' => $propertyData,
+				'values' => null,
+			];
+		}
+		else
+		{
+			$fields = \CIBlock::GetFields($catalogIblockId);
+			$result = [
+				'entity' => 'product',
+				'properties' => $fields['DETAIL_PICTURE'],
+				'values' => null,
+			];
+		}
+
+		return $result;
+	}
+
+	private function getFileControlComponentContent(array $params): string
+	{
+		global $APPLICATION;
+		ob_start();
+		$APPLICATION->includeComponent('bitrix:ui.image.input', '', $params);
+		return ob_get_clean();
+	}
+
+	private function getFilePropertyInputName(array $property): string
+	{
+		$inputName = $property['name'] ?? '';
+
+		if (isset($property['settings']['MULTIPLE']) && $property['settings']['MULTIPLE'] === 'Y')
+		{
+			$inputName .= '[n#IND#]';
+		}
+
+		return $inputName;
+	}
+
+	private function getFilePropertyViewHtml($value): string
+	{
+		$fileCount = 0;
+
+		// single scalar property
+		if (!empty($value) && !is_array($value))
+		{
+			$value = [$value];
+		}
+
+		if (is_array($value))
+		{
+			$fileCount = min(count($value), 3);
+			$value = reset($value);
+		}
+
+		$imageSrc = null;
+
+		if (!empty($value))
+		{
+			$image = \CFile::GetFileArray($value);
+			if ($image)
+			{
+				$imageSrc = $image['SRC'];
+			}
+		}
+
+		switch ($fileCount)
+		{
+			case 3:
+				$multipleClass = ' ui-image-input-img-block-multiple';
+				break;
+
+			case 2:
+				$multipleClass = ' ui-image-input-img-block-double';
+				break;
+
+			case 0:
+				$multipleClass = ' ui-image-input-img-block-empty';
+				break;
+
+			case 1:
+			default:
+				$multipleClass = '';
+				break;
+		}
+
+		if ($imageSrc)
+		{
+			$imageSrc = " src=\"{$imageSrc}\"";
+
+			return <<<HTML
+<div class="ui-image-input-img-block{$multipleClass}">
+	<div class="ui-image-input-img-inner">
+		<img class="ui-image-input-img"{$imageSrc}>
+	</div>
+</div>
+HTML;
+		}
+
+		return '';
+	}
+
+	/**
+	 * @param int $dealId
+	 * @return int|null
+	 */
+	private function getDealPrimaryContactId(int $dealId): ?int
+	{
+		$contacts = DealContactTable::getDealBindings($dealId);
+		foreach ($contacts as $contact)
+		{
+			if ($contact['IS_PRIMARY'] !== 'Y')
+			{
+				continue;
+			}
+
+			return (int)$contact['CONTACT_ID'];
+		}
+
+		return null;
+	}
+
+	/**
+	 * @param int $contactId
+	 * @return int|null
+	 */
+	private function getDefaultRequisiteId(int $contactId): ?int
+	{
+		$result = null;
+
+		$requisiteInstance = EntityRequisite::getSingleInstance();
+		$settings = $requisiteInstance->loadSettings(\CCrmOwnerType::Contact, $contactId);
+		if (is_array($settings)
+			&& isset($settings['REQUISITE_ID_SELECTED'])
+			&& $settings['REQUISITE_ID_SELECTED'] > 0)
+		{
+			$requisiteId = (int)$settings['REQUISITE_ID_SELECTED'];
+
+			if ($requisiteInstance->exists($requisiteId))
+			{
+				return $requisiteId;
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * @param int $contactId
+	 * @return int|null
+	 */
+	private function getFirstRequisiteId(int $contactId): ?int
+	{
+		$requisite = EntityRequisite::getSingleInstance()->getList(
+			[
+				'order' => [
+					'SORT' => 'ASC',
+					'ID' => 'ASC'
+				],
+				'filter' => [
+					'=ENTITY_TYPE_ID' => \CCrmOwnerType::Contact,
+					'=ENTITY_ID' => $contactId
+				],
+				'limit' => 1,
+			]
+		)->fetch();
+
+		if (!$requisite)
+		{
+			return null;
+		}
+
+		return (int)$requisite['ID'];
+	}
+
+	/**
+	 * @param int $contactId
+	 * @return int|null
+	 */
+	private function getRequisiteId(int $contactId): ?int
+	{
+		$defaultRequisiteId = $this->getDefaultRequisiteId($contactId);
+		if ($defaultRequisiteId)
+		{
+			return $defaultRequisiteId;
+		}
+
+		return $this->getFirstRequisiteId($contactId);
+	}
+
+	/**
+	 * @param int $contactId
+	 * @return int|null
+	 */
+	private function createDefaultRequisite(int $contactId): ?int
+	{
+		$requisiteInstance = EntityRequisite::getSingleInstance();
+
+		$result = $requisiteInstance->add(
+			[
+				'ENTITY_TYPE_ID' => \CCrmOwnerType::Contact,
+				'ENTITY_ID' => $contactId,
+				'PRESET_ID' => $requisiteInstance->getDefaultPresetId(
+					\CCrmOwnerType::Contact
+				),
+				'NAME' => \CCrmOwnerType::GetCaption(
+					\CCrmOwnerType::Contact,
+					$contactId,
+					false
+				),
+				'SORT' => 500,
+				'ADDRESS_ONLY' => 'Y',
+				'ACTIVE' => 'Y'
+			]
+		);
+		if(!$result->isSuccess())
+		{
+			return null;
+		}
+
+		return (int)$result->getId();
+	}
+
+	/**
+	 * @param int $shipmentId
+	 * @return int|null
+	 */
+	private function getClientAddressId(int $shipmentId): ?int
+	{
+		return $this->getAddressId($shipmentId, OrderPropsDictionary::ADDRESS_TO_PROPERTY_CODE);
+	}
+
+	/**
+	 * @param int $shipmentId
+	 * @return int|null
+	 */
+	private function getDeliveryFromAddressId(int $shipmentId): ?int
+	{
+		return $this->getAddressId($shipmentId, OrderPropsDictionary::ADDRESS_FROM_PROPERTY_CODE);
+	}
+
+	/**
+	 * @param int $shipmentId
+	 * @param string $propertyCode
+	 * @return int|null
+	 */
+	private function getAddressId(int $shipmentId, string $propertyCode)
+	{
+		$shipment = Sale\Repository\ShipmentRepository::getInstance()->getById($shipmentId);
+
+		/** @var \Bitrix\Sale\PropertyValue $propValue */
+		$propValue = $shipment->getPropertyCollection()
+			->getItemByOrderPropertyCode($propertyCode);
+
+		if (!$propValue)
+		{
+			return null;
+		}
+
+		$addressArray = $propValue->getValue();
+		if (!is_array($addressArray))
+		{
+			return null;
+		}
+
+		return (int)$addressArray['id'];
+	}
+
+	/**
+	 * @param int $contactId
+	 * @param int $shipmentId
+	 */
+	private function tryToFillContactDeliveryAddress(int $contactId, int $shipmentId)
+	{
+		/**
+		 * Get existing requisite or create a new one
+		 */
+		$requisiteId = $this->getRequisiteId($contactId);
+		if (!$requisiteId)
+		{
+			$requisiteId = $this->createDefaultRequisite($contactId);
+		}
+
+		if (!$requisiteId)
+		{
+			return;
+		}
+
+		/**
+		 * Check if address is specified so that we do not overwrite it
+		 */
+		$existingAddress = RequisiteAddress::getByOwner(
+			Crm\EntityAddressType::Delivery,
+			\CCrmOwnerType::Requisite,
+			$requisiteId
+		);
+		if ($existingAddress)
+		{
+			return;
+		}
+
+		$addressId = $this->getClientAddressId($shipmentId);
+		if (!$addressId)
+		{
+			return;
+		}
+
+		/**
+		 * Register address
+		 */
+		RequisiteAddress::register(
+			\CCrmOwnerType::Requisite,
+			$requisiteId,
+			Crm\EntityAddressType::Delivery,
+			[
+				//@TODO wait for the fix on the CRM's side and get back to passing ID instead of the object
+				//'LOC_ADDR_ID' => $addressId,
+				'LOC_ADDR' => Address::load($addressId),
+			]
+		);
+	}
+
+	/**
+	 * @param int $shipmentId
+	 */
+	private function saveDeliveryAddressFrom(int $shipmentId)
+	{
+		$addressId = $this->getDeliveryFromAddressId($shipmentId);
+		if (!$addressId)
+		{
+			return;
+		}
+
+		LocationManager::getInstance()->storeLocationFrom($addressId);
+	}
+
+	private function onAfterDealAdd(int $dealId, int $sessionId): void
+	{
+		$sessionInfo = ImOpenLinesManager::getInstance()->setSessionId($sessionId)->getSessionInfo();
+		if ($sessionInfo)
+		{
+			$session = new ImOpenLines\Session();
+			$sessionStart = $session->load([
+				'USER_CODE' => $sessionInfo['USER_CODE'],
+				'SKIP_CREATE' => 'Y',
+			]);
+			if ($sessionStart)
+			{
+				$dealContactData = Crm\Binding\DealContactTable::getList([
+					'select' => ['CONTACT_ID'],
+					'filter' => [
+						'=DEAL_ID' => $dealId,
+						'=IS_PRIMARY' => 'Y',
+						'!=CONTACT_ID' => 0,
+					],
+				])->fetch();
+				if ($dealContactData)
+				{
+					$contactId = $dealContactData['CONTACT_ID'];
+				}
+
+				$updateSession = [
+					'CRM_CREATE_DEAL' => 'Y',
+				];
+
+				$updateChat = [
+					'DEAL' => $dealId,
+					'ENTITY_ID' => $dealId,
+					'ENTITY_TYPE' => 'DEAL',
+					'CRM' => 'Y',
+				];
+
+				$crmManager = new ImOpenLines\Crm($session);
+				$selector = $crmManager->getEntityManageFacility()->getSelector();
+				$registeredEntities = $crmManager->getEntityManageFacility()->getRegisteredEntities();
+
+				if ($selector)
+				{
+					$entity = new Crm\Entity\Identificator\Complex(\CCrmOwnerType::Deal, $dealId);
+					$selector->setEntity($entity->getTypeId(), $entity->getId());
+					$registeredEntities->setComplex($entity, true);
+				}
+
+				if (isset($contactId))
+				{
+					$updateSession['CRM_CREATE_CONTACT'] = 'Y';
+					$updateChat['CONTACT'] = $contactId;
+
+					if ($selector)
+					{
+						$entity = new Crm\Entity\Identificator\Complex(\CCrmOwnerType::Contact, $contactId);
+						$selector->setEntity($entity->getTypeId(), $entity->getId());
+						$registeredEntities->setComplex($entity, true);
+					}
+				}
+
+				$registerActivityResult = $crmManager->registerActivity();
+				if ($registerActivityResult->isSuccess())
+				{
+					$updateSession['CRM_ACTIVITY_ID'] = $registerActivityResult->getResult();
+					$session->updateCrmFlags($updateSession);
+					$chat = $session->getChat();
+					if ($chat)
+					{
+						$chat->setCrmFlag($updateChat);
+					}
+
+					$trace = $crmManager->getEntityManageFacility()->getTrace();
+					if ($trace && !$trace->getId())
+					{
+						$traceId = $trace->save();
+						if ($traceId)
+						{
+							Crm\Tracking\Trace::appendEntity($traceId, \CCrmOwnerType::Deal, $dealId);
+						}
+					}
+
+					$crmManager->updateUserConnector();
+				}
+
+
+				$dealFields = [];
+				if (isset($contactId))
+				{
+					$contactData = Crm\Entity\Contact::getByID($contactId);
+					if (!empty($contactData['LAST_NAME']))
+					{
+						$dealFields = [
+							'TITLE' => $contactData['LAST_NAME'] . ' - ' . $session->getConfig('LINE_NAME')
+						];
+					}
+				}
+
+				if (!$dealFields && $session->getChat())
+				{
+					$dealFields = [
+						'TITLE' => $session->getChat()->getData('TITLE')
+					];
+				}
+
+				if ($dealFields)
+				{
+					$deal = new \CCrmDeal(false);
+					$deal->Update($dealId, $dealFields);
+				}
+			}
+		}
 	}
 }

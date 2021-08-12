@@ -9,7 +9,7 @@ use Bitrix\DocumentGenerator\DataProvider\ArrayDataProvider;
 use Bitrix\DocumentGenerator\DataProviderManager;
 use Bitrix\DocumentGenerator\Nameable;
 
-class Company extends CrmEntityDataProvider implements Nameable
+class Company extends CrmEntityDataProvider
 {
 	protected $bankDetailIds;
 	protected $revenue;
@@ -100,7 +100,7 @@ class Company extends CrmEntityDataProvider implements Nameable
 			];
 			$this->fields['REVENUE']['TYPE'] = Money::class;
 			$this->fields['REVENUE']['VALUE'] = [$this, 'getRevenue'];
-			$this->fields['ADDRESS']['VALUE'] = [$this, 'getPrimaryAddress'];
+			$this->fields['ADDRESS']['VALUE'] = [$this, 'getAddress'];
 			$this->fields['ADDRESS']['TYPE'] = \Bitrix\Crm\Integration\DocumentGenerator\Value\Address::class;
 			$this->fields['ADDRESS_LEGAL']['VALUE'] = [$this, 'getRegisteredAddress'];
 			$this->fields['ADDRESS_LEGAL']['TYPE'] = \Bitrix\Crm\Integration\DocumentGenerator\Value\Address::class;
@@ -152,28 +152,29 @@ class Company extends CrmEntityDataProvider implements Nameable
 	{
 		parent::fetchData();
 		// a hack to load address from requisites.
+		$isOutmodedAddressesEnabled = ((new \Bitrix\Crm\Settings\CompanySettings())->areOutmodedRequisitesEnabled());
 		if(empty($this->data['ADDRESS']))
 		{
 			unset($this->data['ADDRESS']);
-		}
-		else
-		{
-			$address = CompanyAddress::getByOwner(CompanyAddress::Primary, $this->getCrmOwnerType(), $this->source);
-			if($address)
+			if($isOutmodedAddressesEnabled)
 			{
-				$this->data['ADDRESS'] = new \Bitrix\Crm\Integration\DocumentGenerator\Value\Address($address);
+				$address = CompanyAddress::getByOwner(CompanyAddress::Primary, $this->getCrmOwnerType(), $this->source);
+				if($address)
+				{
+					$this->data['ADDRESS'] = new \Bitrix\Crm\Integration\DocumentGenerator\Value\Address($address);
+				}
 			}
 		}
 		if(empty($this->data['ADDRESS_LEGAL']))
 		{
 			unset($this->data['ADDRESS_LEGAL']);
-		}
-		else
-		{
-			$address = CompanyAddress::getByOwner(CompanyAddress::Registered, $this->getCrmOwnerType(), $this->source);
-			if($address)
+			if($isOutmodedAddressesEnabled)
 			{
-				$this->data['ADDRESS_LEGAL'] = new \Bitrix\Crm\Integration\DocumentGenerator\Value\Address($address);
+				$address = CompanyAddress::getByOwner(CompanyAddress::Registered, $this->getCrmOwnerType(), $this->source);
+				if($address)
+				{
+					$this->data['ADDRESS_LEGAL'] = new \Bitrix\Crm\Integration\DocumentGenerator\Value\Address($address);
+				}
 			}
 		}
 		if(!$this->revenue)

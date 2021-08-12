@@ -15,7 +15,12 @@ final class ForumMessageConnector extends StubConnector
 
 	private $canRead = null;
 
-	public function getDataToShow($userId = 0)
+	public function getDataToShow()
+	{
+		return $this->getDataToShowForUser($this->getUser()->getId());
+	}
+
+	public function getDataToShowForUser(int $userId)
 	{
 		$return = null;
 		if(($res = $this->getDataToCheck($this->entityId)) && !empty($res))
@@ -62,7 +67,7 @@ final class ForumMessageConnector extends StubConnector
 						\COption::getOptionString("socialnetwork", "log_entry_page", false, SITE_ID),
 						array("log_id" => $res["ID"])
 					) : $res["URL"]);
-				if (strpos($return["DETAIL_URL"], "#GROUPS_PATH#") !== false)
+				if (mb_strpos($return["DETAIL_URL"], "#GROUPS_PATH#") !== false)
 				{
 					$tmp = \CSocNetLogTools::processPath(array("URL" => $return["DETAIL_URL"]), $userId);
 					$return["DETAIL_URL"] = $tmp["URLS"]["URL"];
@@ -77,8 +82,8 @@ final class ForumMessageConnector extends StubConnector
 			}
 			else if(!empty($topic["XML_ID"]) || $topic["SOCNET_GROUP_ID"] > 0 || $topic["OWNER_ID"] > 0)
 			{
-				$entityId = substr($topic["XML_ID"], (strrpos($topic["XML_ID"], "_") + 1));
-				$entityType = substr($topic["XML_ID"], 0, strrpos($topic["XML_ID"], "_"));
+				$entityId = mb_substr($topic["XML_ID"], (mb_strrpos($topic["XML_ID"], "_") + 1));
+				$entityType = mb_substr($topic["XML_ID"], 0, mb_strrpos($topic["XML_ID"], "_"));
 				$return["TITLE"] = Loc::getMessage("DISK_UF_FORUM_MESSAGE_CONNECTOR_MESSAGE02");
 				if ((
 						in_array($entityType, array("FORUM", "TASK", "EVENT", "IBLOCK", "TIMEMAN_ENTRY", "TIMEMAN", "TIMEMAN_REPORT"))
@@ -118,7 +123,7 @@ final class ForumMessageConnector extends StubConnector
 							array("log_id" => $res["LOG_ID"])
 						)."?commentId=".$res["ID"]
 						: $res["URL"]);
-					if (strpos($return["DETAIL_URL"], "#GROUPS_PATH#") !== false)
+					if (mb_strpos($return["DETAIL_URL"], "#GROUPS_PATH#") !== false)
 					{
 						$tmp = \CSocNetLogTools::processPath(array("URL" => $return["DETAIL_URL"]), $userId);
 						$return["DETAIL_URL"] = $tmp["URLS"]["URL"];
@@ -131,7 +136,7 @@ final class ForumMessageConnector extends StubConnector
 							if(Loader::includeModule("tasks"))
 							{
 								$connector = new \Bitrix\Tasks\Integration\Disk\Connector\Task($entityId);
-								$subData = $connector->getDataToShow();
+								$subData = $connector->tryToGetDataToShowForUser($userId);
 								if($subData["MEMBERS"])
 								{
 									$return["MEMBERS"] = $subData["MEMBERS"];
@@ -267,7 +272,7 @@ final class ForumMessageConnector extends StubConnector
 					{
 						$cache->startDataCache();
 						$res = reset($topics);
-						/** @noinspection PhpDynamicAsStaticMethodCallInspection */
+
 						\CForumCacheManager::setTag($cachePath, "forum_topic_" . $res['ID']);
 						$cache->endDataCache(array($messages, $topics));
 					}
@@ -340,10 +345,10 @@ final class ForumMessageConnector extends StubConnector
 			$entityType = null;
 			if(!empty($topic["XML_ID"]))
 			{
-				$entityId = substr($topic["XML_ID"], (strrpos($topic["XML_ID"], "_") + 1));
-				$entityType = substr($topic["XML_ID"], 0, strpos($topic["XML_ID"], "_"));
+				$entityId = mb_substr($topic["XML_ID"], (mb_strrpos($topic["XML_ID"], "_") + 1));
+				$entityType = mb_substr($topic["XML_ID"], 0, mb_strpos($topic["XML_ID"], "_"));
 
-				if (strpos($topic["XML_ID"], "EVENT_") !== false)
+				if (mb_strpos($topic["XML_ID"], "EVENT_") !== false)
 				{
 					$XML_ID = explode('_', $topic["XML_ID"]);
 					if (is_array($XML_ID) && count($XML_ID) > 1)
@@ -533,14 +538,14 @@ final class ForumMessageConnector extends StubConnector
 					$userGroups = array(2);
 				}
 
-				/** @noinspection PhpDynamicAsStaticMethodCallInspection */
+
 				if(\CForumUser::isAdmin($userId, $userGroups))
 				{
 					$this->canRead = true;
 
 					return $this->canRead;
 				}
-				/** @noinspection PhpDynamicAsStaticMethodCallInspection */
+
 				$perms = \CForumNew::getUserPermission($message["FORUM_ID"], $userGroups);
 				if($perms >= "Y")
 				{
@@ -554,7 +559,7 @@ final class ForumMessageConnector extends StubConnector
 
 					return $this->canRead;
 				}
-				/** @noinspection PhpDynamicAsStaticMethodCallInspection */
+
 				$forum = \CForumNew::getByID($message["FORUM_ID"]);
 				$this->canRead = $forum["ACTIVE"] == "Y";
 
@@ -578,8 +583,8 @@ final class ForumMessageConnector extends StubConnector
 	public function addComment($authorId, array $data)
 	{
 		$return = null;
-		if(($res = $this->getDataToShow($authorId)) && !empty($res) &&
-			($res2 = $this->getDataToCheck($this->entityId)) && !empty($res2))
+		if(($res = $this->getDataToShowForUser($authorId)) && !empty($res) &&
+		   ($res2 = $this->getDataToCheck($this->entityId)) && !empty($res2))
 		{
 			list($message, $topic, $forum) = $res2;
 			$messageFields = array(

@@ -1,5 +1,0 @@
-<?
-$MESS["SBBS_DEFAULT_TEMPLATE_DESCRIPTION"] = "Mały koszyk";
-$MESS["SBBS_DEFAULT_TEMPLATE_NAME"] = "Mały koszyk";
-$MESS["SBBS_NAME"] = "Koszyk";
-?>

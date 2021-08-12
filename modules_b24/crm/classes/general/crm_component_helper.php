@@ -1,17 +1,23 @@
 <?php
+
+use Bitrix\Crm\EntityAddress;
+use Bitrix\Crm\EntityAddressType;
+use Bitrix\Crm\EntityRequisite;
+use Bitrix\Crm\StatusTable;
+
 class CCrmComponentHelper
 {
 	private static $USER_NAME_FORMATS = null;
 	public static function TrimZeroTime($str)
 	{
 		$str = trim($str);
-		if(substr($str, -9) == ' 00:00:00')
+		if(mb_substr($str, -9) == ' 00:00:00')
 		{
-			return substr($str, 0, -9);
+			return mb_substr($str, 0, -9);
 		}
-		elseif(substr($str, -3) == ':00')
+		elseif(mb_substr($str, -3) == ':00')
 		{
-			return substr($str, 0, -3);
+			return mb_substr($str, 0, -3);
 		}
 		return $str;
 	}
@@ -27,12 +33,12 @@ class CCrmComponentHelper
 		$time = "{$ary[1][0]}:{$ary[2][0]}";
 		//Treat tail as part of time (AM/PM)
 		$tailPos = $ary[3][1] + 2;
-		if($tailPos < strlen($str))
+		if($tailPos < mb_strlen($str))
 		{
-			$time .= substr($str, $tailPos);
+			$time .= mb_substr($str, $tailPos);
 		}
 		$timeFormat = is_array($options) && isset($options['TIME_FORMAT']) ? strval($options['TIME_FORMAT']) : '';
-		return substr($str, 0, $ary[0][1]).($timeFormat === '' ? $time : str_replace('#TIME#', $time, $timeFormat));
+		return mb_substr($str, 0, $ary[0][1]).($timeFormat === ''? $time : str_replace('#TIME#', $time, $timeFormat));
 	}
 
 	public static function TrimDateTimeString($str, $options = null)
@@ -64,7 +70,7 @@ class CCrmComponentHelper
 		$normalizeTabs = isset($options['NORMALIZE_TABS']) ? $options['NORMALIZE_TABS'] : array();
 		if(!empty($normalizeTabs))
 		{
-			if(COption::GetOptionString('crm', strtolower($formID).'_normalized', 'N') !== 'Y')
+			if(COption::GetOptionString('crm', mb_strtolower($formID).'_normalized', 'N') !== 'Y')
 			{
 				foreach($arOptions['tabs'] as &$tab)
 				{
@@ -92,7 +98,7 @@ class CCrmComponentHelper
 					CUserOptions::SetOption('main.interface.form', $formID, $arOptions);
 					$changed = false;
 				}
-				COption::SetOptionString('crm', strtolower($formID).'_normalized', 'Y');
+				COption::SetOptionString('crm', mb_strtolower($formID).'_normalized', 'Y');
 			}
 		}
 
@@ -185,8 +191,8 @@ class CCrmComponentHelper
 
 				foreach($tab['fields'] as $itemKey => $item)
 				{
-					$itemID = isset($item['id']) ? strtoupper($item['id']) : '';
-					if(strpos($itemID, 'UF_CRM_') === 0 && !isset($arUserFields[$itemID]))
+					$itemID = isset($item['id'])? mb_strtoupper($item['id']) : '';
+					if(mb_strpos($itemID, 'UF_CRM_') === 0 && !isset($arUserFields[$itemID]))
 					{
 						$arJunkKeys[] = $itemKey;
 					}
@@ -225,7 +231,7 @@ class CCrmComponentHelper
 			}
 			else
 			{
-				$type = isset($arFields[$k]['TYPE']) ? strtolower($arFields[$k]['TYPE']) : '';
+				$type = isset($arFields[$k]['TYPE'])? mb_strtolower($arFields[$k]['TYPE']) : '';
 				if($type !== 'string' )
 				{
 					$result["~{$k}"] = $result[$k] = $v;
@@ -318,7 +324,7 @@ class CCrmComponentHelper
 
 	public static function RegisterScriptLink($url)
 	{
-		$url = trim(strtolower(strval($url)));
+		$url = trim(mb_strtolower(strval($url)));
 		if($url === '')
 		{
 			return false;
@@ -376,6 +382,66 @@ class CCrmComponentHelper
 			array_splice($tabs, $index, 0, array($tab));
 		}
 		return true;
+	}
+
+	public static function getFieldInfoData($entityTypeId, $fieldType)
+	{
+		$result = [];
+		switch ($fieldType)
+		{
+			case "requisite":
+				$result = [
+					'presets'=> \CCrmInstantEditorHelper::prepareRequisitesPresetList(
+						EntityRequisite::getDefaultPresetId($entityTypeId)
+					),
+					'feedback_form' => EntityRequisite::getRequisiteFeedbackFormParams()
+				];
+				break;
+			case "requisite_address":
+				$featureRestriction = \Bitrix\Crm\Restriction\RestrictionManager::getAddressSearchRestriction();
+				$addressTypeInfos = [];
+				foreach (EntityAddressType::getAllDescriptions() as $id => $desc)
+				{
+					$addressTypeInfos[$id] = [
+						'ID' => $id,
+						'DESCRIPTION' => $desc
+					];
+				}
+				$countryAddressTypeMap = [];
+				foreach (EntityRequisite::getCountryAddressZoneMap() as $countryId => $addressZoneId)
+				{
+					$countryAddressTypeMap[$countryId] = EntityAddressType::getIdsByZonesOrValues([$addressZoneId]);
+				}
+				unset($countryId, $addressZoneId);
+				$result = [
+					'multiple' => true,
+					'types' => $addressTypeInfos,
+					'autocompleteEnabled' => $featureRestriction->hasPermission(),
+					'featureRestrictionCallback' => (
+						$featureRestriction ? $featureRestriction->prepareInfoHelperScript() : ''
+					),
+					'addressZoneConfig' => [
+						'defaultAddressType' => EntityAddressType::getDefaultIdByZone(EntityAddress::getZoneId()),
+						'currentZoneAddressTypes' => EntityAddressType::getIdsByZonesOrValues(
+							[EntityAddress::getZoneId()]
+						),
+						'countryAddressTypeMap' => $countryAddressTypeMap
+					]
+				];
+				break;
+			case "address":
+				$featureRestriction = \Bitrix\Crm\Restriction\RestrictionManager::getAddressSearchRestriction();
+				$result = [
+					'multiple' => false,
+					'autocompleteEnabled' => $featureRestriction->hasPermission(),
+					'featureRestrictionCallback' => (
+						$featureRestriction ? $featureRestriction->prepareInfoHelperScript() : ''
+					)
+				];
+				break;
+		}
+
+		return $result;
 	}
 }
 
@@ -458,7 +524,7 @@ class CCrmInstantEditorHelper
 	private static $IS_FILEMAN_INCLUDED = false;
 	public static function CreateMultiFields($fieldTypeID, &$fieldValues, &$formFields, $fieldParams = array(), $readOnlyMode = true)
 	{
-		$fieldTypeID = strtoupper(strval($fieldTypeID));
+		$fieldTypeID = mb_strtoupper(strval($fieldTypeID));
 		if($fieldTypeID === '' || !is_array($fieldValues) || count($fieldValues) === 0 || !is_array($formFields))
 		{
 			return false;
@@ -471,7 +537,7 @@ class CCrmInstantEditorHelper
 
 		foreach($fieldValues as $ID => &$data)
 		{
-			$valueType = isset($data['VALUE_TYPE']) ? strtoupper($data['VALUE_TYPE']) : '';
+			$valueType = isset($data['VALUE_TYPE'])? mb_strtoupper($data['VALUE_TYPE']) : '';
 			$value = isset($data['VALUE']) ? $data['VALUE'] : '';
 
 			$fieldID = "FM.{$fieldTypeID}.{$valueType}";
@@ -488,7 +554,7 @@ class CCrmInstantEditorHelper
 			else
 			{
 				$templateType = 'INPUT';
-				$editorFieldType = strtolower($fieldTypeID);
+				$editorFieldType = mb_strtolower($fieldTypeID);
 
 				if($fieldTypeID === 'PHONE' || $fieldTypeID === 'EMAIL' || $fieldTypeID === 'WEB')
 				{
@@ -498,14 +564,14 @@ class CCrmInstantEditorHelper
 					{
 						if($valueType !== 'WORK' && $valueType !== 'HOME' && $valueType !== 'OTHER')
 						{
-							$editorFieldType .= '-'.strtolower($valueType);
+							$editorFieldType .= '-'.mb_strtolower($valueType);
 						}
 					}
 				}
 				elseif($fieldTypeID === 'IM')
 				{
 					$templateType = $valueType === 'SKYPE' || $valueType === 'ICQ' || $valueType === 'MSN' ? '_LINK_' : 'INPUT';
-					$editorFieldType .= '-'.strtolower($valueType);
+					$editorFieldType .= '-'.mb_strtolower($valueType);
 				}
 
 				$template = isset(self::$TEMPLATES[$templateType]) ? self::$TEMPLATES[$templateType] : '';
@@ -793,8 +859,8 @@ class CCrmInstantEditorHelper
 		}
 
 		$dbUser = CUser::GetList(
-			$by = 'ID',
-			$order = 'ASC',
+			'ID',
+			'ASC',
 			array('ID' => $userID)
 		);
 
@@ -858,10 +924,10 @@ class CCrmInstantEditorHelper
 			{
 				$arFields[$fieldName] = \Bitrix\Crm\Format\TextHelper::sanitizeHtml($fieldValue);
 			}
-			elseif(strpos($fieldName, 'FM.') === 0)
+			elseif(mb_strpos($fieldName, 'FM.') === 0)
 			{
 				// Processing of multifield name (FM.[TYPE].[VALUE_TYPE].[ID])
-				$fmParts = explode('.', substr($fieldName, 3));
+				$fmParts = explode('.', mb_substr($fieldName, 3));
 				if(count($fmParts) === 3)
 				{
 					list($fmType, $fmValueType, $fmID) = $fmParts;
@@ -897,7 +963,7 @@ class CCrmInstantEditorHelper
 		//Cleanup not changed user fields
 		foreach($arFields as $fieldName => $fieldValue)
 		{
-			if(strpos($fieldName, 'UF_') === 0 && !isset($fieldMap[$fieldName]))
+			if(mb_strpos($fieldName, 'UF_') === 0 && !isset($fieldMap[$fieldName]))
 			{
 				unset($arFields[$fieldName]);
 			}
@@ -1069,5 +1135,81 @@ class CCrmInstantEditorHelper
 			$results[] = $item;
 		}
 		return $results;
+	}
+
+	protected static function prepareStatusItemsConfig(string $statusType, array $fakeValues): array
+	{
+		$result = [
+			'fakeValues' => $fakeValues,
+			'systemValues' => [],
+			'systemInitText' => [],
+		];
+
+		foreach (StatusTable::loadStatusesByEntityId($statusType) as $statusInfo)
+		{
+			if (isset($statusInfo['SYSTEM']) && $statusInfo['SYSTEM'] === 'Y')
+			{
+				$result['systemValues'][] = $statusInfo['STATUS_ID'];
+				$result['systemInitText'][$statusInfo['STATUS_ID']] =
+					is_string($statusInfo['NAME_INIT']) ? $statusInfo['NAME_INIT'] : ''
+				;
+			}
+		}
+
+		return $result;
+	}
+
+	public static function prepareInnerConfig(
+		string $type,
+		string $controller,
+		string $statusType,
+		array $fakeValues
+	): array
+	{
+		static $allowMap = null;
+
+		if ($allowMap === null)
+		{
+			$allowMap = array_fill_keys(
+				CCrmStatus::getAllowedInnerConfigTypes(),
+				CCrmStatus::CheckCreatePermission()
+			);
+		}
+
+		$result = [];
+
+		if (isset($allowMap[$statusType]) && $allowMap[$statusType])
+		{
+			$result = [
+				'type' => $type,
+				'controller' => $controller,
+				'statusType' => $statusType,
+				'itemsConfig' => self::prepareStatusItemsConfig($statusType, $fakeValues),
+			];
+		}
+
+		return $result;
+	}
+
+	public static function prepareRequisitesPresetList($defaultPresetId)
+	{
+		$result = [];
+		$propertyTypeByCountry = [];
+		$list = \Bitrix\Crm\EntityPreset::getListForRequisiteEntityEditor();
+		foreach ($list as $item)
+		{
+			$preset = [
+				'NAME' => $item['NAME'],
+				'VALUE' => $item['ID'],
+				'IS_DEFAULT' => ($defaultPresetId == $item['ID'])
+			];
+			if (!isset($propertyTypeByCountry[$item['COUNTRY_ID']]))
+			{
+				$propertyTypeByCountry[$item['COUNTRY_ID']] = \Bitrix\Crm\Integration\ClientResolver::getPropertyTypeByCountry((int)$item['COUNTRY_ID']);
+			}
+			$preset['CLIENT_RESOLVER_PROP'] = $propertyTypeByCountry[$item['COUNTRY_ID']];
+			$result[] = $preset;
+		}
+		return $result;
 	}
 }

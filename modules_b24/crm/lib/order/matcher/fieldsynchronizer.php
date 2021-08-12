@@ -1,6 +1,7 @@
 <?php
 namespace Bitrix\Crm\Order\Matcher;
 
+use Bitrix\Crm\EntityAddressType;
 use Bitrix\Crm\EntityBankDetail;
 use Bitrix\Crm\EntityPreset;
 use Bitrix\Crm\EntityRequisite;
@@ -17,6 +18,7 @@ use Bitrix\Sale\Delivery\Services\Manager as DeliveryManager;
 use Bitrix\Sale\Internals\Input\File;
 use Bitrix\Sale\Internals\OrderPropsGroupTable;
 use Bitrix\Sale\PaySystem\Manager as PaySystemManager;
+use Bitrix\Sale\TradingPlatform;
 use Bitrix\Sale\Internals\OrderPropsTable;
 
 class FieldSynchronizer
@@ -36,6 +38,7 @@ class FieldSynchronizer
 	const FIELD_TYPE_DATE = 'date';
 	const FIELD_TYPE_DATETIME = 'datetime';
 	const FIELD_TYPE_LOCATION = 'location';
+	const FIELD_TYPE_ADDRESS = 'address';
 
 	protected static $statusTypes = null;
 	protected static $countryId = null;
@@ -69,6 +72,7 @@ class FieldSynchronizer
 			self::FIELD_TYPE_STRING => Loc::getMessage('CRM_WEBFORM_FIELD_TYPE_STRING'),
 			self::FIELD_TYPE_TYPED_STRING => Loc::getMessage('CRM_WEBFORM_FIELD_TYPE_TYPED_STRING'),
 			self::FIELD_TYPE_LOCATION => Loc::getMessage('CRM_WEBFORM_FIELD_TYPE_LOCATION'),
+			self::FIELD_TYPE_ADDRESS => Loc::getMessage('CRM_WEBFORM_FIELD_TYPE_ADDRESS'),
 		);
 	}
 
@@ -175,7 +179,7 @@ class FieldSynchronizer
 
 		if (!empty($code))
 		{
-			if (substr($code, 0, strlen($name)) === $name)
+			if (mb_substr($code, 0, mb_strlen($name)) === $name)
 			{
 				$name = $code;
 			}
@@ -667,7 +671,7 @@ class FieldSynchronizer
 		}
 
 		// skip wrong named fields
-		if (strpos($fieldId, '.') !== false || strpos($fieldId, '[') !== false || strpos($fieldId, ']') !== false)
+		if (mb_strpos($fieldId, '.') !== false || mb_strpos($fieldId, '[') !== false || mb_strpos($fieldId, ']') !== false)
 		{
 			return false;
 		}
@@ -838,7 +842,7 @@ class FieldSynchronizer
 			'required' => false,
 			'hidden' => false,
 		]);
-		$addressTypes = RequisiteAddress::getClientTypeInfos();
+		$addressTypes = EntityAddressType::getDescriptions(EntityAddressType::getAvailableIds());
 
 		$bankDetailFields = static::getFieldsInternal(
 			'BANK_DETAIL',
@@ -880,16 +884,16 @@ class FieldSynchronizer
 			{
 				$addressTypeInfo = [];
 
-				foreach ($addressTypes as $addressType)
+				foreach ($addressTypes as $addressTypeId => $addressTypeTitle)
 				{
 					$addressFieldsInfo = [];
 
 					foreach ($addressFields as $addressField)
 					{
-						$addressField['name'] = $entityName.'_'.$addressField['entity_field_name'].'_'.$presetId.'_'.$addressType['id'];
+						$addressField['name'] = $entityName.'_'.$addressField['entity_field_name'].'_'.$presetId.'_'.$addressTypeId;
 						$addressField['preset_id'] = $presetId;
 						$addressField['address'] = 'Y';
-						$addressField['address_type'] = $addressType['id'];
+						$addressField['address_type'] = $addressTypeId;
 
 						$addressFieldsInfo[] = $addressField;
 					}
@@ -897,8 +901,8 @@ class FieldSynchronizer
 					$addressTypeInfo[] = [
 						'type' => 'tree',
 						'tree' => [
-							'ADDRESS_TYPE_'.$addressType['id'] => [
-								'CAPTION' => $addressType['name'],
+							'ADDRESS_TYPE_'.$addressTypeId => [
+								'CAPTION' => $addressTypeTitle,
 								'FIELDS' => $addressFieldsInfo
 							]
 						]
@@ -1057,6 +1061,9 @@ class FieldSynchronizer
 			case 'LOCATION':
 				$crmType = self::FIELD_TYPE_LOCATION;
 				break;
+			case 'ADDRESS':
+				$crmType = self::FIELD_TYPE_ADDRESS;
+				break;
 			default:
 				$crmType = self::FIELD_TYPE_STRING;
 		}
@@ -1080,6 +1087,8 @@ class FieldSynchronizer
 				$saleType = 'FILE'; break;
 			case self::FIELD_TYPE_LOCATION:
 				$saleType = 'LOCATION'; break;
+			case self::FIELD_TYPE_ADDRESS:
+				$saleType = 'ADDRESS'; break;
 			case self::FIELD_TYPE_STRING:
 			case self::FIELD_TYPE_TEXT:
 			default:
@@ -1251,9 +1260,38 @@ class FieldSynchronizer
 		return static::$relations['P'];
 	}
 
+	public static function getLandingRelations()
+	{
+		if (!isset(static::$relations['L']))
+		{
+			$landings = [];
+
+			$dbRes = TradingPlatform\Manager::getList(
+				[
+					'select' => ['ID', 'NAME'],
+					'filter' => [
+						'=ACTIVE' => 'Y',
+						'%CODE' => TradingPlatform\Landing\Landing::TRADING_PLATFORM_CODE,
+					]
+				]
+			);
+			foreach ($dbRes as $row)
+			{
+				$landings[$row['ID']] = [
+					"ID" => $row['ID'],
+					"VALUE" => "{$row['NAME']} [{$row['ID']}]",
+				];
+			}
+
+			static::$relations['L'] = $landings;
+		}
+
+		return static::$relations['L'];
+	}
+
 	private static function extractRelations(&$itemFields)
 	{
-		$relations = isset($itemFields['RELATIONS']) ? $itemFields['RELATIONS'] : [];
+		$relations = $itemFields['RELATIONS'] ?? [];
 		unset($itemFields['RELATIONS']);
 
 		return $relations;
@@ -1530,7 +1568,7 @@ class FieldSynchronizer
 
 	protected static function getDefaultRelations()
 	{
-		return ['P' => [], 'D' => []];
+		return ['P' => [], 'D' => [], 'L' => []];
 	}
 
 	protected static function parseRelations($relations)
@@ -1540,6 +1578,7 @@ class FieldSynchronizer
 		$existingRelationEntities = [
 			'P' => array_keys(static::getPaySystemRelations()),
 			'D' => array_keys(static::getDeliveryRelations()),
+			'L' => array_keys(static::getLandingRelations()),
 		];
 
 		foreach ($relations as $relation)
@@ -1658,7 +1697,7 @@ class FieldSynchronizer
 		return [$fieldsToCreate, $fieldsToUpdate];
 	}
 
-	public function onAfterSetEnumValues($ufId, $items = [])
+	public static function onAfterSetEnumValues($ufId, $items = [])
 	{
 		if (!Loader::includeModule('sale') || empty($items))
 			return;

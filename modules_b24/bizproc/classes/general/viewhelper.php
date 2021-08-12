@@ -64,6 +64,11 @@ class CBPViewHelper
 		$withUsers = $withUsers ? 1 : 0;
 		$extendUserInfo = $extendUserInfo ? 1 : 0;
 
+		if (!$workflowId)
+		{
+			return ['COMPLETED' => [], 'RUNNING' => []];
+		}
+
 		if (!isset(self::$cachedTasks[$workflowId][$withUsers][$extendUserInfo]))
 		{
 			$tasks = array('COMPLETED' => array(), 'RUNNING' => array());
@@ -215,7 +220,19 @@ class CBPViewHelper
 
 	public static function prepareTaskDescription($description)
 	{
-		return nl2br(preg_replace_callback(
+		$description = self::replaceFileLinks($description);
+
+		if (\Bitrix\Main\Loader::includeModule('disk'))
+		{
+			$description = self::replaceDiskLinks($description);
+		}
+
+		return nl2br($description);
+	}
+
+	private static function replaceFileLinks(string $description)
+	{
+		return preg_replace_callback(
 			'|<a href="(/bitrix/tools/bizproc_show_file.php\?)([^"]+)"\starget=\'_blank\'>|',
 			function($matches)
 			{
@@ -236,6 +253,37 @@ class CBPViewHelper
 				return $matches[0];
 			},
 			$description
-		));
+		);
+	}
+
+	private static function replaceDiskLinks(string $description)
+	{
+		return preg_replace_callback(
+			'|<a href="(/bitrix/tools/disk/uf.php\?)([^"]+)"\starget=\'_blank\'>|',
+			function($matches)
+			{
+				parse_str($matches[2], $query);
+				if (isset($query['attachedId']))
+				{
+
+					$attach = \Bitrix\Disk\AttachedObject::loadById($query['attachedId']);
+					if ($attach)
+					{
+						try
+						{
+							$attributes = \Bitrix\Main\UI\Viewer\ItemAttributes::tryBuildByFileId(
+								$attach->getFileId(),
+								$matches[1].$matches[2]
+							);
+							return "<a href=\"".$matches[1].$matches[2]."\" ".$attributes.">";
+						}
+						catch (ArgumentException $e) {}
+					}
+				}
+
+				return $matches[0];
+			},
+			$description
+		);
 	}
 }

@@ -1,3 +1,0 @@
-<?
-$MESS["BPLA_INVALID_ACTIVITY"] = "!";
-?>

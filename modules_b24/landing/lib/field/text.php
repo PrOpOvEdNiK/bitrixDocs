@@ -22,10 +22,11 @@ class Text extends \Bitrix\Landing\Field
 	 */
 	public function __construct($code, array $params = array())
 	{
-		$this->code = strtoupper($code);
+		$this->code = mb_strtoupper($code);
 		$this->value = null;
 		$this->id = isset($params['id']) ? $params['id'] : '';
 		$this->title = isset($params['title']) ? $params['title'] : '';
+		$this->default = isset($params['default']) ? $params['default'] : null;
 		$this->help = isset($params['help']) ? $params['help'] : '';
 		$this->searchable = isset($params['searchable']) && $params['searchable'] === true;
 		$this->placeholder = isset($params['placeholder']) ? $params['placeholder'] : '';
@@ -62,7 +63,7 @@ class Text extends \Bitrix\Landing\Field
 		?>name="<?= \htmlspecialcharsbx(isset($params['name_format'])
 				? str_replace('#field_code#', $this->code, $params['name_format'])
 				: $this->code)?>" <?
-		?>value="<?= \htmlspecialcharsbx($this->value)?>" <?
+		?>value="<?= \htmlspecialcharsbx($this->value ? $this->value : $this->default)?>" <?
 		?> />
 		<?
 	}
@@ -76,20 +77,11 @@ class Text extends \Bitrix\Landing\Field
 	{
 		if ($this->maxlength > 0)
 		{
-			$this->value = substr($value, 0, $this->maxlength);
+			$this->value = mb_substr($value, 0, $this->maxlength);
 		}
 		else
 		{
 			$this->value = $value;
 		}
-	}
-
-	/**
-	 * Magic method return value as string.
-	 * @return string
-	 */
-	public function __toString()
-	{
-		return (string)$this->value;
 	}
 }

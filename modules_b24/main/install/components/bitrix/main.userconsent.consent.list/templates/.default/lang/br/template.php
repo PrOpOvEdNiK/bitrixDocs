@@ -1,3 +1,0 @@
-<?
-$MESS["MAIN_USER_CONSENT_EDIT_TMPL_BTN_SAVE"] = "Salvar";
-?>

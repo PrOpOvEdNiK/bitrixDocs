@@ -1,3 +1,0 @@
-<?
-$MESS["SALE_CASHBOX_ENTITY_NAME_FIELD"] = "Nazwa";
-?>

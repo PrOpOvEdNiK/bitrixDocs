@@ -9,7 +9,8 @@ class AnalyticBoardBatchManager extends Base
 {
 	private static $analyticBoardBatchList = [];
 	private static $indices = array(
-		'batchKey' => array()
+		'batchKey' => array(),
+		'group' => array(),
 	);
 
 	/**
@@ -50,8 +51,14 @@ class AnalyticBoardBatchManager extends Base
 			{
 				self::$analyticBoardBatchList[$batch->getKey()] = $batch;
 				self::$indices['batchKey'][$batch->getKey()][] = $batch->getKey();
+				self::$indices['group'][$batch->getGroup()][] = $batch->getGroup();
 			}
 		}
 		return self::$analyticBoardBatchList;
+	}
+
+	public function clearCache()
+	{
+		self::$analyticBoardBatchList = [];
 	}
 }

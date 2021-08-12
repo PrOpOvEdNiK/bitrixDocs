@@ -81,7 +81,7 @@ class CDavICalendarTimeZone
 		{
 			if (!isset($userCache[$userId]))
 			{
-				$dbUser = CUser::GetList(($by = "id"), ($order = "asc"), array("ID_EQUAL_EXACT" => intval($userId)), array("FIELDS" => array("AUTO_TIME_ZONE", "TIME_ZONE", "TIME_ZONE_OFFSET")));
+				$dbUser = CUser::GetList("id", "asc", array("ID_EQUAL_EXACT" => intval($userId)), array("FIELDS" => array("AUTO_TIME_ZONE", "TIME_ZONE", "TIME_ZONE_OFFSET")));
 				if (($arUser = $dbUser->Fetch()))
 				{
 					$userCache[$userId] = array(
@@ -141,7 +141,7 @@ class CDavICalendarTimeZone
 	public static function GetFormattedServerDate($text)
 	{
 		if (preg_match('/(\+|-)([0-9]{2}):?([0-9]{2})([0-9]{2})?$/', $text, $match))
-			$text = substr($text, 0, -strlen($match[0]));
+			$text = mb_substr($text, 0, -mb_strlen($match[0]));
 
 		$date = CDavICalendarTimeZone::ParseDateTime($text, false, null);
 		return date($GLOBALS["DB"]->DateFormatToPHP(FORMAT_DATE), $date);
@@ -291,7 +291,7 @@ class CDavICalendarTimeZone
 
 	private static function ParseUtcOffset($text)
 	{
-		if (strlen($text) <= 0)
+		if ($text == '')
 			return null;
 		if (!preg_match('/(\+|-)([0-9]{2})([0-9]{2})([0-9]{2})?/', $text, $match))
 			return null;
@@ -383,7 +383,7 @@ class CDavICalendarTimeZone
 					$len = strspn($t[1], '1234567890-+');
 					if ($len == 0)
 						return false;
-					$weekday = substr($t[1], $len);
+					$weekday = mb_substr($t[1], $len);
 					$weekdays = array(
 						'SU' => 0,
 						'MO' => 1,
@@ -394,11 +394,11 @@ class CDavICalendarTimeZone
 						'SA' => 6
 					);
 					$weekday = $weekdays[$weekday];
-					$which = intval(substr($t[1], 0, $len));
+					$which = intval(mb_substr($t[1], 0, $len));
 					break;
 
 				case 'UNTIL':
-					if (intval($year) > intval(substr($t[1], 0, 4)))
+					if (intval($year) > intval(mb_substr($t[1], 0, 4)))
 						return false;
 					break;
 			}

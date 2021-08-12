@@ -1,6 +1,0 @@
-<?
-$MESS["FIT_SECTION_TEMPLATE_DESCRIPTION"] = "Afficher les statistiques des visites";
-$MESS["FIT_SECTION_TEMPLATE_NAME"] = "Face Tracker";
-$MESS["FIT_SERVICES_MAIN_SECTION"] = "CRM";
-$MESS["FIT_SERVICES_PARENT_SECTION"] = "Prospects";
-?>

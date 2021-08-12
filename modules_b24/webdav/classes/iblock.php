@@ -102,7 +102,7 @@ class CWebDavIblock extends CWebDavBase
 	private static $_metaSectionData = array();
 	//new end
 
-	function CWebDavIblock($IBLOCK_ID, $base_url, $arParams = array())
+	public function __construct($IBLOCK_ID, $base_url, $arParams = array())
 	{
 		$arParams = (is_array($arParams) ? $arParams : array());
 
@@ -174,7 +174,7 @@ class CWebDavIblock extends CWebDavBase
 			}
 		}
 
-		$this->CWebDavBase($base_url);
+		parent::__construct($base_url);
 
 		if (!IsModuleInstalled("iblock"))
 		{
@@ -285,7 +285,7 @@ class CWebDavIblock extends CWebDavBase
 			}
 		}
 
-		$this->file_prop = strtoupper(isset($arParams["NAME_FILE_PROPERTY"]) ? $arParams["NAME_FILE_PROPERTY"] : "FILE");
+		$this->file_prop = mb_strtoupper(isset($arParams["NAME_FILE_PROPERTY"])? $arParams["NAME_FILE_PROPERTY"] : "FILE");
 
 		if ($this->permission == "U" && $this->workflow != "workflow" && $this->workflow != "bizproc")
 			$this->permission = "R";
@@ -320,23 +320,23 @@ class CWebDavIblock extends CWebDavBase
 		$arIBlock = $oIB->GetArrayByID($this->IBLOCK_ID);
 		if(!array_key_exists("NOT_SAVE_SUG_FILES", $arParams))
 		{
-			if (strpos($arIBlock['CODE'], 'shared_files') !== false)
+			if (mb_strpos($arIBlock['CODE'], 'shared_files') !== false)
 			{
 				// without trailing slash redirects POST request to GET request
-				if (strlen($this->base_url) > 0)
+				if ($this->base_url <> '')
 					$this->LibOptions('shared_files', false, SITE_ID, array('id' => $this->IBLOCK_ID, 'base_url' => $this->base_url.'/'));
 			}
-			elseif (strpos($arIBlock['CODE'], 'group_files') !== false)
+			elseif (mb_strpos($arIBlock['CODE'], 'group_files') !== false)
 			{
 				$this->LibOptions('group_files', false, SITE_ID, array('id' => $this->IBLOCK_ID));
 			}
-			elseif (strpos($arIBlock['CODE'], 'user_files') !== false)
+			elseif (mb_strpos($arIBlock['CODE'], 'user_files') !== false)
 			{
 				$this->LibOptions('user_files', false, SITE_ID, array('id' => $this->IBLOCK_ID));
 			}
 		}
 
-		if ($arIBlock['INDEX_SECTION'] == 'Y' && strlen(trim($arIBlock['SECTION_PAGE_URL'])) == 0)
+		if ($arIBlock['INDEX_SECTION'] == 'Y' && trim($arIBlock['SECTION_PAGE_URL']) == '')
 		{
 			$arIBlock['SECTION_PAGE_URL'] = str_replace(array("///", "//"), "/", $arIBlock['LIST_PAGE_URL'] . "/folder/view/#SECTION_ID#/");
 			$oIB->Update($this->IBLOCK_ID, $arIBlock);
@@ -396,7 +396,7 @@ class CWebDavIblock extends CWebDavBase
 			$arSection = array(); $arElement = array();
 		}
 		// Params for socialnetwork /
-		if (strpos($params["path"], "#SITE_DIR#") !== false)
+		if (mb_strpos($params["path"], "#SITE_DIR#") !== false)
 			$params["path"] = str_replace("#SITE_DIR#", SITE_DIR, $params["path"]);
 		else if (array_key_exists("SITE_ID", $params) && CModule::IncludeModule('extranet') && (CExtranet::GetExtranetSiteID() == $params["SITE_ID"]))
 		{
@@ -436,7 +436,7 @@ class CWebDavIblock extends CWebDavBase
 				if ($arComponent["COMPONENT_NAME"] == $arRule["ID"])
 				{
 					$SEF_FOLDER = $arComponent["PARAMS"]["SEF_FOLDER"];
-					if (strpos($arRule["ID"], "bitrix:socialnetwork") === 0)
+					if (mb_strpos($arRule["ID"], "bitrix:socialnetwork") === 0)
 					{
 						if ($arRule["ID"] == "bitrix:socialnetwork" &&
 							$arComponent["PARAMS"]["FILES_GROUP_IBLOCK_ID"] == $arComponent["PARAMS"]["FILES_USER_IBLOCK_ID"] &&
@@ -535,7 +535,7 @@ class CWebDavIblock extends CWebDavBase
 		return $SEF_URL_TEMPLATES;
 	}
 
-	static function LibOptions($title, $user = true, $key = false, $value = false)
+	public static function LibOptions($title, $user = true, $key = false, $value = false)
 	{
 		$arLibOptions = array();
 		$user = (!!$user);
@@ -546,8 +546,7 @@ class CWebDavIblock extends CWebDavBase
 		else
 		{
 			$sLibOptions = COption::GetOptionString('webdav', $title, '');
-			if (CheckSerializedData($sLibOptions))
-				$arLibOptions = @unserialize($sLibOptions);
+			$arLibOptions = @unserialize($sLibOptions, ['allowed_classes' => false]);
 		}
 
 		if (!is_array($arLibOptions))
@@ -574,7 +573,7 @@ class CWebDavIblock extends CWebDavBase
 		return $result;
 	}
 
-	/*static*/ function _get_ib_rights_object($type, $id, $IBLOCK_ID=null)
+	public static function _get_ib_rights_object($type, $id, $IBLOCK_ID=null)
 	{
 		if ($type !== 'SECTION' && $type !== 'ELEMENT' && $type !== 'IBLOCK')
 			throw new Exception("_get_ib_rights_object invalid type \"".htmlspecialcharsbx($type)."\"");
@@ -607,7 +606,7 @@ class CWebDavIblock extends CWebDavBase
 	//{
 	//}
 
-	static function CheckRight($IBlockPermission, $permission)
+	public static function CheckRight($IBlockPermission, $permission)
 	{
 		if ($GLOBALS['USER']->CanDoOperation('webdav_change_settings'))
 			return 'Z';
@@ -635,7 +634,7 @@ class CWebDavIblock extends CWebDavBase
 			return false;
 	}
 
-	/*static*/ function GetPermissions($type, $arID, $IBLOCK_ID=null)
+	public static function GetPermissions($type, $arID, $IBLOCK_ID=null)
 	{
 		static $cache = array();
 		if ($IBLOCK_ID === null && isset($this))
@@ -736,7 +735,7 @@ class CWebDavIblock extends CWebDavBase
 		}
 
 		$ID = $object["item_id"];
-		$arProps = @unserialize($strProps);
+		$arProps = @unserialize($strProps, ['allowed_classes' => false]);
 		$arProps = (!is_array($arProps) ? array() : $arProps);
 
 		foreach ($options["props"] as $key => $prop)
@@ -799,7 +798,7 @@ class CWebDavIblock extends CWebDavBase
 		}
 		elseif($arParamsIsDir["is_dir"] != true)
 		{
-			$db_res = $this->_get_mixed_list(intVal($arParamsIsDir["parent_id"]), $arParams, intVal($arParamsIsDir["item_id"]));
+			$db_res = $this->_get_mixed_list(intval($arParamsIsDir["parent_id"]), $arParams, intval($arParamsIsDir["item_id"]));
 			if ($db_res && $res = $db_res->Fetch())
 			{
 				if ($this->MetaNames($res))
@@ -888,12 +887,12 @@ class CWebDavIblock extends CWebDavBase
 
 			if (!empty($options["depth"]))
 			{
-				if (intVal($arParamsIsDir["item_id"]) <= 0)
+				if (intval($arParamsIsDir["item_id"]) <= 0)
 					$arParamsIsDir["item_id"] = ($this->arRootSection ? $this->arRootSection["ID"] : $arParamsIsDir["item_id"]);
 
 				// content search
 				$arSearchResults = array();
-				if (isset($arParams["FILTER"]["content"]) && strlen($arParams["FILTER"]["content"])>0 && IsModuleInstalled('search') && CModule::IncludeModule('search'))
+				if (isset($arParams["FILTER"]["content"]) && $arParams["FILTER"]["content"] <> '' && IsModuleInstalled('search') && CModule::IncludeModule('search'))
 				{
 					$obSearch = new CSearch;
 					if (preg_match("/\\.[a-zA-Z]{3,4}$/", $arParams["FILTER"]["content"])) // search by file name?
@@ -954,7 +953,7 @@ class CWebDavIblock extends CWebDavBase
 
 				if (isset($arParams["FILTER"]["doctype"]))
 				{
-					$arFileTypes = @unserialize(COption::GetOptionString("webdav", "file_types"));
+					$arFileTypes = @unserialize(COption::GetOptionString("webdav", "file_types"), ['allowed_classes' => false]);
 					if ($arFileTypes !== false)
 					{
 						foreach ($arFileTypes as $arFileType)
@@ -1035,7 +1034,7 @@ class CWebDavIblock extends CWebDavBase
 									if (isset($arFltExtensions))
 									{
 										$ext = GetFileExtension($res["NAME"]);
-										if (! in_array(strtoupper($ext), $arFltExtensions))
+										if (! in_array(mb_strtoupper($ext), $arFltExtensions))
 											continue;
 									}
 
@@ -1090,7 +1089,7 @@ class CWebDavIblock extends CWebDavBase
 				return $this->ThrowAccessDenied(__LINE__);
 			}
 			elseif ($this->arParams["element_array"]["WF_NEW"] == "Y" ||
-				(intVal($this->arParams["element_array"]["WF_PARENT_ELEMENT_ID"]) > 0 &&
+				(intval($this->arParams["element_array"]["WF_PARENT_ELEMENT_ID"]) > 0 &&
 					$this->arParams["element_array"]["WF_PARENT_ELEMENT_ID"] != $this->arParams["element_array"]["ID"]) ||
 				$this->arParams["element_array"]["BP_PUBLISHED"] != "Y")
 			{
@@ -1186,7 +1185,7 @@ class CWebDavIblock extends CWebDavBase
 		$options["set_now"] = false;
 
 		if (($_SERVER['REQUEST_METHOD'] == "PUT" || $_SERVER['REQUEST_METHOD'] == "LOCK") &&
-			/*empty($_SESSION["WEBDAV_DATA"]["PUT_EMPTY"]) && */ intVal($options["content_length"]) <= 0)
+			/*empty($_SESSION["WEBDAV_DATA"]["PUT_EMPTY"]) && */ intval($options["content_length"]) <= 0)
 		{
 			// Sometimes file is uploaded in 2 steps: 1) PUT with content_length == 0, when PUT with content_length >= 0.
 			$_SESSION["WEBDAV_DATA"]["PUT_EMPTY"] = $options["~path"];
@@ -1197,8 +1196,8 @@ class CWebDavIblock extends CWebDavBase
 			if ($_SESSION["WEBDAV_DATA"]["PUT_MAC_OS"] == $options["~path"])
 			{
 			}
-			elseif (substr($options["FILE_NAME"], 0, 2) == "._" &&
-				$_SESSION["WEBDAV_DATA"]["PUT_EMPTY"] == str_replace($options["FILE_NAME"], substr($options["FILE_NAME"], 2), $options["~path"]))
+			elseif (mb_substr($options["FILE_NAME"], 0, 2) == "._" &&
+				$_SESSION["WEBDAV_DATA"]["PUT_EMPTY"] == str_replace($options["FILE_NAME"], mb_substr($options["FILE_NAME"], 2), $options["~path"]))
 			{
 				// Mac OS uploads in 4 PUT: <br>
 				// 1. PUT with content_length == 0;
@@ -1397,7 +1396,7 @@ class CWebDavIblock extends CWebDavBase
 			}
 		}
 
-		$ID = intVal($options["ELEMENT_ID"]);
+		$ID = intval($options["ELEMENT_ID"]);
 		$arError = array();
 		$arFile = array(
 			"name" => $options["FILE_NAME"],
@@ -1433,7 +1432,7 @@ class CWebDavIblock extends CWebDavBase
 			)
 				$arFile['type'] = $this->get_mime_type($arFile['name']);
 		}
-		if (isset($arFile['tmp_name']) && strlen($arFile["type"])<=0)
+		if (isset($arFile['tmp_name']) && $arFile["type"] == '')
 			$arFile["type"] = $this->get_mime_type($options["FILE_NAME"]);
 		$bDropped = isset($options['dropped']) ? $options['dropped'] : false;
 
@@ -1526,7 +1525,7 @@ class CWebDavIblock extends CWebDavBase
 					$perm = CIBlockElement::WF_GetStatusPermission($res["REFERENCE_ID"]);
 					if ($perm < 1)
 						continue;
-					$arStatusesPermission[intVal($res["REFERENCE_ID"])] = $perm;
+					$arStatusesPermission[intval($res["REFERENCE_ID"])] = $perm;
 					if ((($fw_status_id === false) && $perm >= 2) || $fw_status_id == $res["REFERENCE_ID"])
 					{
 						$fw_status_id = $res["REFERENCE_ID"];
@@ -1579,7 +1578,7 @@ class CWebDavIblock extends CWebDavBase
 
 				foreach ($arDocumentStates as $key => $arDocumentState)
 				{
-					if (strlen($arDocumentState["ID"]) <= 0 && is_array($arDocumentState["TEMPLATE_PARAMETERS"]))
+					if ($arDocumentState["ID"] == '' && is_array($arDocumentState["TEMPLATE_PARAMETERS"]))
 					{
 						$templateId = $arDocumentState["TEMPLATE_ID"];
 						foreach ($arDocumentState["TEMPLATE_PARAMETERS"] as $key => $arWorkflowParameters)
@@ -1823,7 +1822,7 @@ class CWebDavIblock extends CWebDavBase
 		if($element)
 		{
 			$strProps = $element["PROPERTY_WEBDAV_INFO_VALUE"];
-			$arProps = @unserialize($strProps);
+			$arProps = @unserialize($strProps, ['allowed_classes' => false]);
 			$arProps = (!is_array($arProps) ? array() : $arProps);
 
 			return $arProps;
@@ -1842,7 +1841,7 @@ class CWebDavIblock extends CWebDavBase
 		{
 			$strProps = $this->arParams["element_array"]["PROPERTY_WEBDAV_INFO_VALUE"];
 		}
-		$arProps = @unserialize($strProps);
+		$arProps = @unserialize($strProps, ['allowed_classes' => false]);
 		$arProps = (!is_array($arProps) ? array() : $arProps);
 
 		return $arProps;
@@ -1914,7 +1913,7 @@ class CWebDavIblock extends CWebDavBase
 						$this->put_commit($options1);
 					}
 
-					$ID = intVal($options1["ELEMENT_ID"]);
+					$ID = intval($options1["ELEMENT_ID"]);
 
 					if ($ID <= 0)
 						return "409 Conflict";
@@ -1947,7 +1946,7 @@ class CWebDavIblock extends CWebDavBase
 			{
 				$token = $options["update"];
 				$arProps["LOCK"] = (is_array($arProps["LOCK"]) ? $arProps["LOCK"] : array());
-				if (array_key_exists($token, $arProps["LOCK"]) && strlen($arProps["LOCK"][$token]["exclusivelock"]) > 0)
+				if (array_key_exists($token, $arProps["LOCK"]) && $arProps["LOCK"][$token]["exclusivelock"] <> '')
 				{
 					$arProps["LOCK"][$token]["expires"] = $options["timeout"];
 					$arProps["LOCK"][$token]["modified"] = time();
@@ -2052,7 +2051,7 @@ class CWebDavIblock extends CWebDavBase
 
 	}
 
-	static function _move_from_iblock_to_iblock($elementId, $targetIblockId, $targetSectionId = 0, $delete = true, $setNewNameIfNonUnique = false)
+	public static function _move_from_iblock_to_iblock($elementId, $targetIblockId, $targetSectionId = 0, $delete = true, $setNewNameIfNonUnique = false)
 	{
 		$elementId = intval($elementId);
 		$targetIblockId = intval($targetIblockId);
@@ -2160,7 +2159,7 @@ class CWebDavIblock extends CWebDavBase
 					while(!self::sCheckUniqueName($targetIblockId, $targetSectionId, '', $newName, $res))
 					{
 						$count++;
-						$newName = strstr($mainPartName, '.', true) . " ({$count})" . strstr($mainPartName, '.');
+						$newName = mb_strstr($mainPartName, '.', true)." ({$count})".mb_strstr($mainPartName, '.');
 					}
 					$element['NAME'] = $newName;
 				}
@@ -2213,15 +2212,15 @@ class CWebDavIblock extends CWebDavBase
 		}
 
 		$destUrl = $options["dest_url"];
-		if(substr($destUrl, -1) === "/")
+		if(mb_substr($destUrl, -1) === "/")
 		{
-			$destUrl = substr($destUrl, 0, -1);
+			$destUrl = mb_substr($destUrl, 0, -1);
 		}
 		$destName = GetFileName($destUrl);
 		if($destUrl !== "" && $destName !== "")
 		{
 			$destParentDir  = GetDirPath($destUrl);
-			$destParentDir = (count($destParentDir) > 0 ? $destParentDir : "/");
+			$destParentDir = $destParentDir ?: '/';
 
 			$o = array("path" => $destParentDir, "depth" => 1);
 			$result = $this->PROPFIND($o, $files, array("COLUMNS" => array("ID", "NAME"), "return" => "array"));
@@ -2231,7 +2230,7 @@ class CWebDavIblock extends CWebDavBase
 				{
 					if($res["NAME"] === $destName)
 					{
-						if(strlen(GetFileExtension($destName)) > 0)
+						if(GetFileExtension($destName) <> '')
 						{
 							return $this->ThrowError("400 Bad Request", "FOLDER_IS_EXISTS", str_replace("#FILE#", '"' .$res["NAME"] . '"', GetMessage("WD_FILE_ERROR8")), __LINE__);
 						}
@@ -2286,8 +2285,8 @@ class CWebDavIblock extends CWebDavBase
 				return "204 No Content";
 			}
 			elseif (
-				strtolower(substr($res2, 0, strlen($res1))) == strtolower($res1)
-				&& (strlen($res1) != strlen($res2)) // is not the same dir rename
+				mb_strtolower(mb_substr($res2, 0, mb_strlen($res1))) == mb_strtolower($res1)
+				&& (mb_strlen($res1) != mb_strlen($res2)) // is not the same dir rename
 			)
 			{
 				return $this->ThrowError("400 Bad Request", "SECTION_IS_NOT_UPDATED", GetMessage("WD_FILE_ERROR100"), __LINE__);
@@ -2311,7 +2310,7 @@ class CWebDavIblock extends CWebDavBase
 
 		////////////// CHECK TO
 		$arToParams = array("path" => $options['dest_url']);
-		if (strpos($options['dest_url'], '.Trash') !== false)
+		if (mb_strpos($options['dest_url'], '.Trash') !== false)
 		{
 			$arToParams['check_permissions'] = false;
 		}
@@ -2334,7 +2333,7 @@ class CWebDavIblock extends CWebDavBase
 		{
 			if (
 				$this->e_rights
-				&& (strpos($options['dest_url'], '.Trash') === false)
+				&& (mb_strpos($options['dest_url'], '.Trash') === false)
 				&& !$this->CheckWebRights(
 					"COPY",
 					array(
@@ -2748,7 +2747,7 @@ class CWebDavIblock extends CWebDavBase
 
 					$this->ClearCache("section");
 				}
-				elseif (is_string($result) && strpos($result, "403")!==false)
+				elseif (is_string($result) && mb_strpos($result, "403") !== false)
 					return $this->ThrowAccessDenied(__LINE__);
 			}
 
@@ -2810,14 +2809,14 @@ class CWebDavIblock extends CWebDavBase
 		$result = true;
 		$bSectionsWasUpdated = false;
 		$res = reset($arFromSections);
-		$arParentId = array(intVal($arTo["ID"]), $res["ID"]);
-		$iParentDeep = intVal($res["DEPTH_LEVEL"]);
+		$arParentId = array(intval($arTo["ID"]), $res["ID"]);
+		$iParentDeep = intval($res["DEPTH_LEVEL"]);
 		if (!empty($arFromSections))
 		{
 			$se = new CIBlockSection();
 			do
 			{
-				$res["DEPTH_LEVEL"] = intVal($res["DEPTH_LEVEL"]);
+				$res["DEPTH_LEVEL"] = intval($res["DEPTH_LEVEL"]);
 				while ($res["DEPTH_LEVEL"] <= $iParentDeep)
 				{
 					array_pop($arParentId);
@@ -2845,10 +2844,10 @@ class CWebDavIblock extends CWebDavBase
 						$this->_onEvent( 'Move', $res["ID"], "FOLDER", array( 'TO' => end($arParentId)));
 						$bSectionsWasUpdated = true;
 						// Remove brunch elements as we move all the brunch
-						$deep = intVal($res["DEPTH_LEVEL"]);
+						$deep = intval($res["DEPTH_LEVEL"]);
 						while ($res = next($arFromSections))
 						{
-							$res["DEPTH_LEVEL"] = intVal($res["DEPTH_LEVEL"]);
+							$res["DEPTH_LEVEL"] = intval($res["DEPTH_LEVEL"]);
 							if ($deep <= $res["DEPTH_LEVEL"])
 							{
 								prev($arFromSections);
@@ -2914,7 +2913,7 @@ class CWebDavIblock extends CWebDavBase
 					{
 						do
 						{
-							$arToElements[strtolower($res["NAME"])] = $res;
+							$arToElements[mb_strtolower($res["NAME"])] = $res;
 						} while ($res = $db_res->Fetch());
 					}
 				}
@@ -2930,7 +2929,7 @@ class CWebDavIblock extends CWebDavBase
 				{
 					do
 					{
-						$res["NAME"] = strtolower($res["NAME"]);
+						$res["NAME"] = mb_strtolower($res["NAME"]);
 
 						if (array_key_exists($res["NAME"], $arToElements))
 						{
@@ -3239,9 +3238,9 @@ class CWebDavIblock extends CWebDavBase
 		}
 		else
 		{
-			if (strlen($this->arParams['file_extention']) > 1)
+			if (mb_strlen($this->arParams['file_extention']) > 1)
 			{
-				$destName = substr($this->arParams['element_name'], 0, -strlen($this->arParams['file_extention'])) . " " . $this->CorrectName(ConvertTimeStamp(time(), "FULL")) . $this->arParams['file_extention'];
+				$destName = mb_substr($this->arParams['element_name'], 0, -mb_strlen($this->arParams['file_extention']))." " . $this->CorrectName(ConvertTimeStamp(time(), "FULL")) . $this->arParams['file_extention'];
 			}
 			else
 			{
@@ -3447,7 +3446,7 @@ class CWebDavIblock extends CWebDavBase
 			$this->IsDir($options);
 			$_SESSION["WEBDAV_DATA"]["PUT_MAC_OS"] = "";
 			WDPackCookie();
-			if (intVal($this->arParams["element_id"]) > 0)
+			if (intval($this->arParams["element_id"]) > 0)
 			{
 				$this->_ib_elm_delete($this->arParams["element_id"]);
 				return "204 No Content";
@@ -3539,7 +3538,7 @@ class CWebDavIblock extends CWebDavBase
 						}
 					}
 					elseif ( (!in_array($trashID, $arSectionsChain)) &&
-							(strpos($this->arParams['file_name'], "_$") !== 0) // ms office special files
+							(mb_strpos($this->arParams['file_name'], "_$") !== 0) // ms office special files
 					) // move to trash
 					{
 						return $this->_move_to_trash($options);
@@ -3573,7 +3572,7 @@ class CWebDavIblock extends CWebDavBase
 					));
 				}
 			}
-			elseif (intVal($this->arParams["element_id"]) > 0)
+			elseif (intval($this->arParams["element_id"]) > 0)
 			{
 				CWebDavDiskDispatcher::addElementForDeletingMark($this->arParams['element_array'], null, false);
 
@@ -3677,7 +3676,7 @@ class CWebDavIblock extends CWebDavBase
 		$eventName = 'On'.$objectTitle.$eventTitle;
 		//$rsEvents = GetModuleEvents("webdav", $eventName);
 		$arEventAll = GetModuleEvents("webdav", $eventName, true);
-		$arEventParams = $this->_eventParams(strtoupper($eventTitle), $elementID, $elementType, $arParams);
+		$arEventParams = $this->_eventParams(mb_strtoupper($eventTitle), $elementID, $elementType, $arParams);
 		if (count($arEventAll) > 0 && ($arEventParams))
 		{
 			$cMethod = '_onBefore'.$objectTitle.$eventTitle.'Event';
@@ -4005,7 +4004,7 @@ class CWebDavIblock extends CWebDavBase
 					$arSites = CForumNew::GetSites($this->FORUM_ID);
 					foreach ($arSites as $siteID => $forumUrl)
 					{
-						if (strpos($forumUrl, '/community/forum/') === 0)
+						if (mb_strpos($forumUrl, '/community/forum/') === 0)
 						{
 							$arSites[$siteID] = str_replace(array('///', '//'), '/', $this->base_url . "/element/comment/#TOPIC_ID#/#MESSAGE_ID#/");
 						}
@@ -4087,7 +4086,7 @@ class CWebDavIblock extends CWebDavBase
 		 */
 		$arKeys = array();
 		if (!empty($this->short_path_template) &&
-			preg_match_all("/(?<=\#)([a-z_]+)(?=\#)/is", strToLower($this->short_path_template), $arKeys))
+			preg_match_all("/(?<=\#)([a-z_]+)(?=\#)/is", mb_strtolower($this->short_path_template), $arKeys))
 		{
 			$arKeys = (is_array($arKeys) ? $arKeys[0] : false);
 			if (!empty($arKeys) && is_array($arKeys))
@@ -4120,8 +4119,8 @@ class CWebDavIblock extends CWebDavBase
 		$arFilter = array("IBLOCK_ID" => $this->IBLOCK_ID);
 		if($this->arRootSection && is_array($this->arRootSection))
 		{
-			$arFilter["RIGHT_MARGIN"] = intVal($this->arRootSection["RIGHT_MARGIN"]) - 1;
-			$arFilter["LEFT_MARGIN"] = intVal($this->arRootSection["LEFT_MARGIN"]) + 1;
+			$arFilter["RIGHT_MARGIN"] = intval($this->arRootSection["RIGHT_MARGIN"]) - 1;
+			$arFilter["LEFT_MARGIN"] = intval($this->arRootSection["LEFT_MARGIN"]) + 1;
 		}
 		if ($options["show_history"] == "Y")
 			$arFilter["SHOW_HISTORY"] = "Y";
@@ -4131,7 +4130,7 @@ class CWebDavIblock extends CWebDavBase
 		$arNewPath = array();
 		foreach ($arPath as $p)
 		{
-			if (strlen(trim($p)) > 0)
+			if (trim($p) <> '')
 				$arNewPath[] = $p;
 		}
 		$arPath = $arNewPath;
@@ -4272,7 +4271,7 @@ class CWebDavIblock extends CWebDavBase
 
 			if ($params["not_found"] == false)
 			{
-				$params["parent_id"] = intVal($params["item_id"]);
+				$params["parent_id"] = intval($params["item_id"]);
 
 				$arFilter["SECTION_ID"] =  $params["item_id"];
 				$arFilter["=NAME"] = $params["basename"];
@@ -4368,7 +4367,7 @@ class CWebDavIblock extends CWebDavBase
 			$params["element_array"] = $arElement;
 			$params["element_name"] = $arElement["NAME"];
 			$params["file_name"] = $arElement["NAME"];
-			$params["file_extention"] = strtolower(strrchr($arElement["NAME"] , '.'));
+			$params["file_extention"] = mb_strtolower(strrchr($arElement["NAME"], '.'));
 
 			$arFile = CFile::GetFileArray($arElement["PROPERTY_".$this->file_prop."_VALUE"]);
 
@@ -4411,7 +4410,7 @@ class CWebDavIblock extends CWebDavBase
 			$bLocked = false;
 		elseif (!CIBlockElement::WF_IsLocked($ID, $locked_by, $date_lock)):
 			$bLocked = false;
-		elseif (intVal($locked_by) == $GLOBALS["USER"]->GetID()):
+		elseif (intval($locked_by) == $GLOBALS["USER"]->GetID()):
 			$bLocked = false;
 		elseif (IsModuleInstalled("workflow")):
 			if (CModule::IncludeModule("workflow") && CIBlock::GetArrayByID($IBLOCK_ID, "WORKFLOW") != "N"):
@@ -4544,7 +4543,7 @@ class CWebDavIblock extends CWebDavBase
 		$order   = "desc";
 		$history = new CBPHistoryService();
 		$dbDocumentHistory = $history->GetHistoryList(
-			array(strtoupper($by) => strtoupper($order)),
+			array(mb_strtoupper($by) => mb_strtoupper($order)),
 			array(
 				"DOCUMENT_ID" => $documentId,
 			),
@@ -4694,7 +4693,7 @@ class CWebDavIblock extends CWebDavBase
 				$arr["NAME"] = $arr["DOCUMENT"]["NAME"];
 
 				$fullpath = urldecode($arFile["SRC"]);
-				if (substr($fullpath, 0, 4) != "http")
+				if (mb_substr($fullpath, 0, 4) != "http")
 				{
 					$fullpath = $io->GetPhysicalName($_SERVER['DOCUMENT_ROOT'] . $arFile["SRC"]);
 				}
@@ -4788,7 +4787,7 @@ class CWebDavIblock extends CWebDavBase
 			$this->CACHE['CWebDavIblock::GetObject'] = array();
 	}
 
-	static function GetReaders($ID, $iblockID = null)
+	public static function GetReaders($ID, $iblockID = null)
 	{
 		static $arValidTasks = null;
 		static $readersCache = array();
@@ -4878,7 +4877,7 @@ class CWebDavIblock extends CWebDavBase
 		return $readersCache[$ID];
 	}
 
-	static function UpdateSearchRights($ID, $iblockID = null)
+	public static function UpdateSearchRights($ID, $iblockID = null)
 	{
 		if (!CModule::IncludeModule('search'))
 			return true;
@@ -4916,8 +4915,8 @@ class CWebDavIblock extends CWebDavBase
 		$code = CIBlock::GetArrayByID($iblockID, "CODE");
 
 		$bSocNet = (
-			(strpos($code, "user_files") === 0)
-			|| (strpos($code, "group_files") === 0)
+			(mb_strpos($code, "user_files") === 0)
+			|| (mb_strpos($code, "group_files") === 0)
 		);
 
 		if (
@@ -4940,8 +4939,8 @@ class CWebDavIblock extends CWebDavBase
 
 	public static function sCheckUniqueName($iblockId, $sectionId, $workflow, $basename, &$res)
 	{
-		$iblockId = intVal($iblockId);
-		$sectionId = intVal($sectionId);
+		$iblockId = intval($iblockId);
+		$sectionId = intval($sectionId);
 		$basename = trim($basename);
 		if (empty($basename))
 			return false;
@@ -5085,11 +5084,11 @@ class CWebDavIblock extends CWebDavBase
 		{
 			$by = "NAME"; $order = "ASC";
 		}
-		$by = strtoupper($by);
-		$order = strtoupper($order);
+		$by = mb_strtoupper($by);
+		$order = mb_strtoupper($order);
 
-		$section_id = ($section_id === null ? null : intVal($section_id));
-		$element_id = intVal($element_id);
+		$section_id = ($section_id === null ? null : intval($section_id));
+		$element_id = intval($element_id);
 		$arParams = (is_array($arParams) ? $arParams : array());
 		$arParams["COLUMNS"] = (is_array($arParams["COLUMNS"]) ? $arParams["COLUMNS"] : array());
 		$arFilter = array(
@@ -5191,7 +5190,7 @@ class CWebDavIblock extends CWebDavBase
 
 		if (isset($arParams["FILTER"]) && sizeof($arParams["FILTER"])>0)
 		{
-			if (isset($arParams["FILTER"]["timestamp_2"]) && strlen($arParams["FILTER"]["timestamp_2"]) > 0 && $arParams["FILTER"]["timestamp_datesel"]!="before")
+			if (isset($arParams["FILTER"]["timestamp_2"]) && $arParams["FILTER"]["timestamp_2"] <> '' && $arParams["FILTER"]["timestamp_datesel"]!="before")
 				$arParams["FILTER"]["timestamp_2"] .= " 23:59:59";
 
 			$arFilter = array_merge($arFilter, $arParams["FILTER"]);
@@ -5488,7 +5487,7 @@ class CWebDavIblock extends CWebDavBase
 				unset($arFilter["user"]);
 			}
 
-			if(strlen($arFilter["SECTION_ID"])<= 0)
+			if($arFilter["SECTION_ID"] == '')
 				unset($arElementFilter["SECTION_ID"]);
 
 			if(!is_array($arSelectedFields))
@@ -5876,7 +5875,7 @@ class CWebDavIblock extends CWebDavBase
 		}
 	}
 
-	static function GetTasks()
+	public static function GetTasks()
 	{
 		static $arTasks = null;
 		if ($arTasks == null)
@@ -5896,7 +5895,6 @@ class CWebDavIblock extends CWebDavBase
 
 		return $arTasks;
 	}
-
 
 	function MetaSectionHide(&$sectionData, $excludeByDiskCondition = false)
 	{
@@ -6106,7 +6104,7 @@ class CWebDavIblock extends CWebDavBase
 								"AllUserGroups" => $res["USER_GROUPS"],
 								"DocumentStates" => $res["~arDocumentStates"],
 								"WorkflowId" => $key));
-						if (strlen($arDocumentState["ID"]) > 0 && $res["~arDocumentStates"][$key]["ViewWorkflow"])
+						if ($arDocumentState["ID"] <> '' && $res["~arDocumentStates"][$key]["ViewWorkflow"])
 						{
 							$res["arDocumentStates"][$key] = $arDocumentState;
 							$res["PERMISSION"] = "U";
@@ -6145,7 +6143,7 @@ class CWebDavIblock extends CWebDavBase
 
 					if ($this->CheckRight($res["PERMISSION"], 'element_read') > "D")
 					{
-						if ($arParams["get_clones"] == "Y" && intVal($res["WF_PARENT_ELEMENT_ID"]) <= 0)
+						if ($arParams["get_clones"] == "Y" && intval($res["WF_PARENT_ELEMENT_ID"]) <= 0)
 						{
 							$arFilter = array(
 								"WF_PARENT_ELEMENT_ID" => $res["ID"],
@@ -6241,7 +6239,7 @@ class CWebDavIblock extends CWebDavBase
 										$rs["SHOW"]["BP_VIEW"] = (!empty($rs["arDocumentStates"]) ? "Y" : "N");
 										$rs["SHOW"]["EDIT"] = ($rs["PERMISSION"] >= "W" ? "Y" : "N");
 										$rs["SHOW"]["BP"] = ($rs["SHOW"]["BP_VIEW"] == "Y" || $rs["SHOW"]["BP_START"] == "Y" ? "Y" : "N");
-										$rs["SHOW"]["EDIT"] = (($rs["PERMISSION"] >= "W" && intVal($rs["WF_PARENT_ELEMENT_ID"]) > 0) || $this->permission >= "W" ? "Y" : "N");
+										$rs["SHOW"]["EDIT"] = (($rs["PERMISSION"] >= "W" && intval($rs["WF_PARENT_ELEMENT_ID"]) > 0) || $this->permission >= "W" ? "Y" : "N");
 										if ($rs["BP_LOCK_STATUS"] == "red")
 										{
 											$rs["SHOW"]["UNLOCK"] = (CBPDocument::IsAdmin() ? "Y" : "N");
@@ -6286,16 +6284,16 @@ class CWebDavIblock extends CWebDavBase
 
 						if($this->workflow == 'bizproc')
 						{
-							$res["SHOW"]["BP_VERSIONS"] = (intVal($res["WF_PARENT_ELEMENT_ID"]) <= 0 ? "Y" : "N");
-							$res["SHOW"]["BP_CLONE"] = (intVal($res["WF_PARENT_ELEMENT_ID"]) <= 0 ? "Y" : "N");
-							$res["SHOW"]["COPY"] = (intVal($res["WF_PARENT_ELEMENT_ID"]) <= 0 ? "Y" : "N");
+							$res["SHOW"]["BP_VERSIONS"] = (intval($res["WF_PARENT_ELEMENT_ID"]) <= 0 ? "Y" : "N");
+							$res["SHOW"]["BP_CLONE"] = (intval($res["WF_PARENT_ELEMENT_ID"]) <= 0 ? "Y" : "N");
+							$res["SHOW"]["COPY"] = (intval($res["WF_PARENT_ELEMENT_ID"]) <= 0 ? "Y" : "N");
 						}
 						else
 						{
 							$res["SHOW"]["BP_VERSIONS"] = $res["SHOW"]["BP_CLONE"] = $res["SHOW"]["COPY"] = 'N';
 						}
 
-						if ($this->CheckRight($res['PERMISSION'], 'element_edit_any_wf_status') < "W" && (intVal($res["WF_PARENT_ELEMENT_ID"]) <= 0) || $res["WF_PARENT_ELEMENT_ID"] == $res["ID"])
+						if ($this->CheckRight($res['PERMISSION'], 'element_edit_any_wf_status') < "W" && (intval($res["WF_PARENT_ELEMENT_ID"]) <= 0) || $res["WF_PARENT_ELEMENT_ID"] == $res["ID"])
 						{
 							$arDocumentStates = CBPDocument::GetDocumentStates(
 								$this->wfParams["DOCUMENT_TYPE"],
@@ -6345,7 +6343,7 @@ class CWebDavIblock extends CWebDavBase
 
 							$res["SHOW"]["BP_VERSIONS"] = ($bRightsEdit_gt_W ? "Y" : "N");
 							$res["SHOW"]["BP_CLONE"] = ($bRightsEdit_gt_W ? "Y" : "N");
-							$res["SHOW"]["COPY"] = (intVal($res["WF_PARENT_ELEMENT_ID"]) <= 0 ? "Y" : "N");
+							$res["SHOW"]["COPY"] = (intval($res["WF_PARENT_ELEMENT_ID"]) <= 0 ? "Y" : "N");
 						}
 						elseif ($this->check_creator && $res["CREATED_BY"] != $GLOBALS["USER"]->GetId())
 						{
@@ -6420,7 +6418,7 @@ class CWebDavIblock extends CWebDavBase
 			}
 			else
 			{
-				$res["PERMISSION"] = ($res["WF_NEW"] == "Y" || (intVal($res["WF_PARENT_ELEMENT_ID"]) > 0 && ($res["WF_PARENT_ELEMENT_ID"] != $res['ID'])) ? "D" : $this->permission);
+				$res["PERMISSION"] = ($res["WF_NEW"] == "Y" || (intval($res["WF_PARENT_ELEMENT_ID"]) > 0 && ($res["WF_PARENT_ELEMENT_ID"] != $res['ID'])) ? "D" : $this->permission);
 				if ($res["PERMISSION"] > "D" && $this->workflow == "bizproc")
 				{
 					$res["PERMISSION"] = ($res["BP_PUBLISHED"] == "Y" ? $this->permission : "D");
@@ -6510,16 +6508,16 @@ class CWebDavIblock extends CWebDavBase
 
 	function _parse_webdav_info(&$res)
 	{
-		if (isset($res["PROPERTY_WEBDAV_INFO_VALUE"]) && strlen($res["PROPERTY_WEBDAV_INFO_VALUE"]) > 0)
+		if (isset($res["PROPERTY_WEBDAV_INFO_VALUE"]) && $res["PROPERTY_WEBDAV_INFO_VALUE"] <> '')
 		{
-			$arProps = @unserialize((strlen($res["~PROPERTY_WEBDAV_INFO_VALUE"]) > 0 ? $res["~PROPERTY_WEBDAV_INFO_VALUE"] : $res["PROPERTY_WEBDAV_INFO_VALUE"]));
+			$arProps = @unserialize(($res["~PROPERTY_WEBDAV_INFO_VALUE"] <> '' ? $res["~PROPERTY_WEBDAV_INFO_VALUE"] : $res["PROPERTY_WEBDAV_INFO_VALUE"]), ['allowed_classes' => false]);
 			if (is_array($arProps["PROPS"]))
 				$res["PROPS"] = $arProps["PROPS"];
 			return true;
 		}
-		elseif (isset($res["DESCRIPTION"]) && strlen($res["DESCRIPTION"]) > 0)
+		elseif (isset($res["DESCRIPTION"]) && $res["DESCRIPTION"] <> '')
 		{
-			$arProps = @unserialize((strlen($res["~DESCRIPTION"]) > 0 ? $res["~DESCRIPTION"] : $res["DESCRIPTION"]));
+			$arProps = @unserialize(($res["~DESCRIPTION"] <> '' ? $res["~DESCRIPTION"] : $res["DESCRIPTION"]), ['allowed_classes' => false]);
 			if (is_array($arProps["PROPS"]))
 				$res["PROPS"] = $arProps["PROPS"];
 			return true;
@@ -6530,7 +6528,7 @@ class CWebDavIblock extends CWebDavBase
 	function GetNavChain($options = array(), $for_url = false)
 	{
 		static $nav_chain = array();
-		$bReturn = (strtoupper($for_url) === "ARRAY" ? "ARRAY" :
+		$bReturn = (mb_strtoupper($for_url) === "ARRAY" ? "ARRAY" :
 			($for_url === true ? "URL" : "SITE"));
 		if (empty($options) && isset($this->arParams["dir_array"])) // === to deal with 0 at the root of IB
 			$options["section_id"] = intval($this->arParams["dir_array"]["ID"]);
@@ -6553,7 +6551,7 @@ class CWebDavIblock extends CWebDavBase
 				$options['check_permissions'] = false;
 				$arObject = $this->GetObject($options);
 				$nav_chain[$id] = array("URL" => array(), "SITE" => array(), "ARRAY" => array());
-				if ($arObject["not_found"] == false && intVal($arObject["item_id"]) > 0)
+				if ($arObject["not_found"] == false && intval($arObject["item_id"]) > 0)
 				{
 					$arFile = array();
 					$section_id = $arObject["item_id"];
@@ -6715,13 +6713,13 @@ class CWebDavIblock extends CWebDavBase
 				$bRootFounded = (empty($this->arRootSection) ? true : false);
 				if ($arElement["item_id"] > 0 && !empty($arElement["dir_array"]))
 				{
-					$arFilter["LEFT_MARGIN"] = intVal($arElement["dir_array"]["LEFT_MARGIN"]) + 1;
-					$arFilter["RIGHT_MARGIN"] = intVal($arElement["dir_array"]["RIGHT_MARGIN"]) - 1;
+					$arFilter["LEFT_MARGIN"] = intval($arElement["dir_array"]["LEFT_MARGIN"]) + 1;
+					$arFilter["RIGHT_MARGIN"] = intval($arElement["dir_array"]["RIGHT_MARGIN"]) - 1;
 				}
 				elseif (!empty($this->arRootSection))
 				{
-					$arFilter["LEFT_MARGIN"] = intVal($this->arRootSection["LEFT_MARGIN"]) + 1;
-					$arFilter["RIGHT_MARGIN"] = intVal($this->arRootSection["RIGHT_MARGIN"]) - 1;
+					$arFilter["LEFT_MARGIN"] = intval($this->arRootSection["LEFT_MARGIN"]) + 1;
+					$arFilter["RIGHT_MARGIN"] = intval($this->arRootSection["RIGHT_MARGIN"]) - 1;
 				}
 
 				if(!empty($arElement["is_dir"]) && $arElement["item_id"])
@@ -6742,8 +6740,8 @@ class CWebDavIblock extends CWebDavBase
 							), false, array('LEFT_MARGIN', 'RIGHT_MARGIN', 'IBLOCK_ID'))->fetch();
 							if($margins)
 							{
-								$arFilter["LEFT_MARGIN"] = intVal($margins["LEFT_MARGIN"]) + 1;
-								$arFilter["RIGHT_MARGIN"] = intVal($margins["RIGHT_MARGIN"]) - 1;
+								$arFilter["LEFT_MARGIN"] = intval($margins["LEFT_MARGIN"]) + 1;
+								$arFilter["RIGHT_MARGIN"] = intval($margins["RIGHT_MARGIN"]) - 1;
 							}
 						}
 					}
@@ -6774,7 +6772,7 @@ class CWebDavIblock extends CWebDavBase
 					{
 						if ($this->MetaNames($res))
 						{
-							$res["DEPTH_LEVEL"] = intVal($res["DEPTH_LEVEL"]);
+							$res["DEPTH_LEVEL"] = intval($res["DEPTH_LEVEL"]);
 							if(isset($arExclude[(int) $res["IBLOCK_SECTION_ID"]]) || $this->MetaSectionHide($res, !empty($options['NON_DROPPED_SECTION'])))
 							{
 								$arExclude[(int)$res["ID"]] = true;
@@ -6784,12 +6782,12 @@ class CWebDavIblock extends CWebDavBase
 								if ($res["DEPTH_LEVEL"] > $deep)
 								{
 									$deep = $res["DEPTH_LEVEL"];
-									array_push($arPath, strtolower(htmlspecialcharsbx($res["NAME"])));
+									array_push($arPath, mb_strtolower(htmlspecialcharsbx($res["NAME"])));
 								}
 								elseif ($res["DEPTH_LEVEL"] == $deep)
 								{
 									array_pop($arPath);
-									array_push($arPath, strtolower(htmlspecialcharsbx($res["NAME"])));
+									array_push($arPath, mb_strtolower(htmlspecialcharsbx($res["NAME"])));
 								}
 								else
 								{
@@ -6799,7 +6797,7 @@ class CWebDavIblock extends CWebDavBase
 										$deep--;
 									}
 									array_pop($arPath);
-									array_push($arPath, strtolower(htmlspecialcharsbx($res["NAME"])));
+									array_push($arPath, mb_strtolower(htmlspecialcharsbx($res["NAME"])));
 								}
 
 								$res["PATH"] = $options['prependPath'] . implode("/", $arPath);
@@ -6920,7 +6918,7 @@ class CWebDavIblock extends CWebDavBase
 		{
 			$path = $this->_udecode($path);
 			$strFileName = basename($path);
-			$extention = strtolower(strrchr($strFileName, '.'));
+			$extention = mb_strtolower(strrchr($strFileName, '.'));
 			if (in_array($method, array("COPY", "MOVE", "PUT")))
 			{
 				if (IsFileUnsafe($strFileName) || $strFileName == "index.php")
@@ -6951,7 +6949,7 @@ class CWebDavIblock extends CWebDavBase
 			return $result;
 
 		$arError = array();
-		$action = strtolower(is_set($arParams, "action") ? $arParams["action"] : $arParams["ACTION"]);
+		$action = mb_strtolower(is_set($arParams, "action")? $arParams["action"] : $arParams["ACTION"]);
 		$arElement = (is_set($arParams, "arElement") ? $arParams["arElement"] : array());
 		static $arErrors = array();
 		$static_id = md5(serialize(array($action, $arElement["ID"], $GLOBALS["USER"]->GetID())));
@@ -7748,7 +7746,7 @@ class CWebDavIblock extends CWebDavBase
 	function SetRootSection($id, $force=false, $enableRedirect = true)
 	{
 
-		$id = intVal($id);
+		$id = intval($id);
 		$this->CACHE_PATH = $this->cachePathBase;
 		$this->arRootSection = false;
 
@@ -7934,7 +7932,7 @@ class CWebDavIblock extends CWebDavBase
 	/********** IBlock Rights **********/
 	/* $this->workflow != "workflow" && $this->workflow != "bizproc" */
 
-	static protected function GetIBlockRightsObject($type, $iBlockID, $id = null)
+	protected static function GetIBlockRightsObject($type, $iBlockID, $id = null)
 	{
 		if ($type !== self::OBJ_TYPE_IBLOCK && $type !== self::OBJ_TYPE_SECTION && $type !== self::OBJ_TYPE_ELEMENT)
 		{
@@ -7968,7 +7966,7 @@ class CWebDavIblock extends CWebDavBase
 		return $ibRights;
 	}
 
-	static function CheckUserIBlockPermission($permission, $type, $iBlockID, $id = null)
+	public static function CheckUserIBlockPermission($permission, $type, $iBlockID, $id = null)
 	{
 		$obj = self::GetIBlockRightsObject($type, $iBlockID, $id);
 		if(!is_object($obj))

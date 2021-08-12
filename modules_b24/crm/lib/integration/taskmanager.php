@@ -1,8 +1,13 @@
 <?php
 namespace Bitrix\Crm\Integration;
 use Bitrix\Main\Loader;
+
 class TaskManager
 {
+	public const TASK_FIELD_NAME = 'UF_CRM_TASK';
+	public const TASK_USER_FIELD_ENTITY_ID = 'TASKS_TASK';
+	public const TASK_TEMPLATE_USER_FIELD_ENTITY_ID = 'TASKS_TASK_TEMPLATE';
+
 	/**
 	* @return \CTaskItem
 	*/
@@ -45,7 +50,11 @@ class TaskManager
 
 		try
 		{
-			return $taskItem->isActionAllowed(\CTaskItem::ACTION_EDIT);
+			if (!class_exists('\Bitrix\Tasks\Access\ActionDictionary'))
+			{
+				return $taskItem->isActionAllowed(\CTaskItem::ACTION_EDIT);
+			}
+			return $taskItem->checkAccess(\Bitrix\Tasks\Access\ActionDictionary::ACTION_TASK_EDIT);
 		}
 		catch(\TasksException $e)
 		{
@@ -77,7 +86,11 @@ class TaskManager
 
 		try
 		{
-			return $taskItem->isActionAllowed(\CTaskItem::ACTION_REMOVE);
+			if (!class_exists('\Bitrix\Tasks\Access\ActionDictionary'))
+			{
+				return $taskItem->isActionAllowed(\CTaskItem::ACTION_REMOVE);
+			}
+			return $taskItem->checkAccess(\Bitrix\Tasks\Access\ActionDictionary::ACTION_TASK_REMOVE);
 		}
 		catch(\TasksException $e)
 		{
@@ -109,7 +122,11 @@ class TaskManager
 
 		try
 		{
-			return $taskItem->isActionAllowed(\CTaskItem::ACTION_COMPLETE);
+			if (!class_exists('\Bitrix\Tasks\Access\ActionDictionary'))
+			{
+				return $taskItem->isActionAllowed(\CTaskItem::ACTION_COMPLETE);
+			}
+			return $taskItem->checkAccess(\Bitrix\Tasks\Access\ActionDictionary::ACTION_TASK_COMPLETE);
 		}
 		catch(\TasksException $e)
 		{
@@ -141,7 +158,11 @@ class TaskManager
 
 		try
 		{
-			return $taskItem->isActionAllowed(\CTaskItem::ACTION_RENEW);
+			if (!class_exists('\Bitrix\Tasks\Access\ActionDictionary'))
+			{
+				return $taskItem->isActionAllowed(\CTaskItem::ACTION_RENEW);
+			}
+			return $taskItem->checkAccess(\Bitrix\Tasks\Access\ActionDictionary::ACTION_TASK_RENEW);
 		}
 		catch(\TasksException $e)
 		{

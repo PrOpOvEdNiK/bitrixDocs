@@ -1,3 +1,0 @@
-<?
-$MESS["WORKGROUP_ENTITY_NAME"] = "Nazwa";
-?>

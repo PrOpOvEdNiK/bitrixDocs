@@ -18,7 +18,7 @@ class Welcome
 	protected $chat = null;
 
 	/**
-	 * Queue constructor.
+	 * Welcome constructor.
 	 * @param Session $session
 	 */
 	function __construct($session)
@@ -33,7 +33,6 @@ class Welcome
 	 * Automatic processing on incoming message.
 	 *
 	 * @return bool|int
-	 * @throws \Bitrix\Main\LoaderException
 	 */
 	public function automaticAddMessage()
 	{
@@ -79,15 +78,11 @@ class Welcome
 			$this->sessionManager->isEnableSendSystemMessage()
 		)
 		{
-			$result = Im::addMessage([
-				"TO_CHAT_ID" => $this->session['CHAT_ID'],
-				"MESSAGE" => $this->config['WELCOME_MESSAGE_TEXT'],
-				"SYSTEM" => 'Y',
-				"IMPORTANT_CONNECTOR" => 'Y',
-				"PARAMS" => [
-					"CLASS" => "bx-messenger-content-item-ol-output",
-				]
-			]);
+
+			$result = Im::addAutomaticSystemMessage(
+				$this->session['CHAT_ID'],
+				$this->config['WELCOME_MESSAGE_TEXT']
+			);
 		}
 
 		return $result;

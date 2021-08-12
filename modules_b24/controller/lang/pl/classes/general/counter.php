@@ -1,8 +1,0 @@
-<?
-$MESS["CTRL_COUNTER_FORMAT_NONE"] = "(żaden)";
-$MESS["CTRL_COUNTER_TYPE_DATETIME"] = "Data I Czas";
-$MESS["CTRL_COUNTER_TYPE_FILE_SIZE"] = "jak rozmiar pliku";
-$MESS["CTRL_COUNTER_TYPE_FLOAT"] = "Liczba";
-$MESS["CTRL_COUNTER_TYPE_INT"] = "Liczba całkowita";
-$MESS["CTRL_COUNTER_TYPE_STRING"] = "String";
-?>

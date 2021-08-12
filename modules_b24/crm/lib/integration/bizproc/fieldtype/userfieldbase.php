@@ -42,16 +42,24 @@ class UserFieldBase extends BaseType\Base
 			$options = $fieldType->getOptions();
 			if (is_array($options))
 			{
-				$arUserField['SETTINGS'] = $fieldType->getOptions();
+				$arUserField['SETTINGS'] = $options;
 			}
 			else
 			{
-				$arUserField['SETTINGS']['IBLOCK_ID'] = $fieldType->getOptions();
+				$arUserField['SETTINGS']['IBLOCK_ID'] = $options;
 			}
 		}
 		elseif ($sType == 'crm_status')
 		{
-			$arUserField['SETTINGS']['ENTITY_TYPE'] = $fieldType->getOptions();
+			$options = $fieldType->getOptions();
+			if (is_array($options))
+			{
+				$arUserField['SETTINGS'] = $options;
+			}
+			else
+			{
+				$arUserField['SETTINGS']['ENTITY_TYPE'] = $options;
+			}
 		}
 		elseif ($sType == 'boolean' && ($value === 'Y' || $value === 'N'))
 		{
@@ -253,6 +261,6 @@ class UserFieldBase extends BaseType\Base
 
 	protected static function getUserType(FieldType $fieldType)
 	{
-		return substr($fieldType->getType(), 3);
+		return mb_substr($fieldType->getType(), 3);
 	}
 }

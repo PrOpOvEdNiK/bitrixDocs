@@ -317,7 +317,7 @@ class CClusterSlave
 		}
 
 
-		if(strlen($arNode["MASTER_ID"]))
+		if($arNode["MASTER_ID"] <> '')
 		{
 			$arStatus = array_merge($arStatus, array(
 				'Slave_IO_State' => null,
@@ -328,7 +328,7 @@ class CClusterSlave
 				'Seconds_Behind_Master' => null,
 				'Last_IO_Error' => null,
 				'Last_SQL_Error' => null,
-	//			'Replicate_Ignore_Table' => null,
+				//			'Replicate_Ignore_Table' => null,
 				'Com_select' => null,
 			));
 
@@ -336,16 +336,22 @@ class CClusterSlave
 			{
 				$rs = $nodeDB->Query("SHOW SLAVE STATUS", true, "", array("fixed_connection" => true));
 				if(!$rs)
+				{
 					return GetMessage("CLU_NO_PRIVILEGES", array("#sql#" => "GRANT REPLICATION CLIENT on *.* to '".$nodeDB->DBLogin."'@'%';"));
+				}
 				$ar = $rs->Fetch();
 				if(is_array($ar))
 				{
-					foreach($ar as $key=>$value)
+					foreach($ar as $key => $value)
 					{
 						if($key == 'Last_Error')
+						{
 							$key = 'Last_SQL_Error';
+						}
 						if(array_key_exists($key, $arStatus))
+						{
 							$arStatus[$key] = $value;
+						}
 					}
 				}
 			}
@@ -431,24 +437,65 @@ class CClusterSlave
 		}
 	}
 
+	protected static function GetMaxSlaveDelay()
+	{
+		static $max_slave_delay = null;
+		if (!isset($max_slave_delay))
+		{
+			$max_slave_delay = COption::GetOptionInt("cluster", "max_slave_delay");
+			if (isset(\Bitrix\Main\Application::getInstance()->getKernelSession()["BX_REDIRECT_TIME"]))
+			{
+				$redirect_delay = time() - \Bitrix\Main\Application::getInstance()->getKernelSession()["BX_REDIRECT_TIME"] + 1;
+				if(
+					$redirect_delay > 0
+					&& $redirect_delay < $max_slave_delay
+				)
+				{
+					$max_slave_delay = $redirect_delay;
+				}
+			}
+		}
+		return $max_slave_delay;
+	}
+
+	protected static function IsSlaveOk($slave_id)
+	{
+		$obCache = new CPHPCache;
+		$cache_id = "cluster_slave_status_".$slave_id;
+		if ($obCache->InitCache(COption::GetOptionInt("cluster", "slave_status_cache_time"), $cache_id, "cluster"))
+		{
+			$arSlaveStatus = $obCache->GetVars();
+		}
+		else
+		{
+			$arSlaveStatus = static::GetStatus($slave_id, true, false, false);
+		}
+
+		if (
+			$arSlaveStatus['Seconds_Behind_Master'] > static::GetMaxSlaveDelay()
+			|| $arSlaveStatus['Last_SQL_Error'] != ''
+			|| $arSlaveStatus['Last_IO_Error'] != ''
+			|| $arSlaveStatus['Slave_SQL_Running'] === 'No'
+		)
+		{
+			if ($obCache->StartDataCache())
+			{
+				$obCache->EndDataCache($arSlaveStatus);
+			}
+			return false;
+		}
+		return true;
+	}
+
 	public static function GetRandomNode()
 	{
 		$arSlaves = static::GetList();
-		if(empty($arSlaves))
-			return false;
-
-		$max_slave_delay = COption::GetOptionInt("cluster", "max_slave_delay", 10);
-		if(isset($_SESSION["BX_REDIRECT_TIME"]))
+		if (empty($arSlaves))
 		{
-			$redirect_delay = time() - $_SESSION["BX_REDIRECT_TIME"] + 1;
-			if(
-				$redirect_delay > 0
-				&& $redirect_delay < $max_slave_delay
-			)
-				$max_slave_delay = $redirect_delay;
+			return false;
 		}
 
-		$total_weight = 0;
+		//Exclude slaves from other cluster groups
 		foreach($arSlaves as $i=>$slave)
 		{
 			$bOtherGroup = defined("BX_CLUSTER_GROUP") && ($slave["GROUP_ID"] != BX_CLUSTER_GROUP);
@@ -461,43 +508,39 @@ class CClusterSlave
 				$bOtherGroup = false;
 			}
 
-			if($bOtherGroup)
+			if ($bOtherGroup)
 			{
 				unset($arSlaves[$i]);
-			}
-			elseif($slave["ROLE_ID"] == "SLAVE")
-			{
-				$arSlaveStatus = static::GetStatus($slave["ID"], true, false, false);
-				if(
-					$arSlaveStatus['Seconds_Behind_Master'] > $max_slave_delay
-					|| $arSlaveStatus['Last_SQL_Error'] != ''
-					|| $arSlaveStatus['Last_IO_Error'] != ''
-					|| $arSlaveStatus['Slave_SQL_Running'] === 'No'
-				)
-				{
-					unset($arSlaves[$i]);
-				}
-				else
-				{
-					$total_weight += $slave["WEIGHT"];
-					$arSlaves[$i]["PIE_WEIGHT"] = $total_weight;
-				}
-			}
-			else
-			{
-				$total_weight += $slave["WEIGHT"];
-				$arSlaves[$i]["PIE_WEIGHT"] = $total_weight;
 			}
 		}
 
 		$found = false;
-		$rand = ($total_weight > 0? mt_rand(0, $total_weight - 1): 0);
-		foreach($arSlaves as $slave)
+		while (true)
 		{
-			if($rand < $slave["PIE_WEIGHT"])
+			$total_weight = 0;
+			foreach ($arSlaves as $i => $slave)
 			{
-				$found = $slave;
-				break;
+				$total_weight += $slave["WEIGHT"];
+				$arSlaves[$i]["PIE_WEIGHT"] = $total_weight;
+			}
+
+			$rand = ($total_weight > 0? mt_rand(1, $total_weight): 0);
+			foreach ($arSlaves as $i => $slave)
+			{
+				if ($rand <= $slave["PIE_WEIGHT"])
+				{
+					if ($slave["ROLE_ID"] == "SLAVE")
+					{
+						if (!static::IsSlaveOk($slave["ID"]))
+						{
+							unset($arSlaves[$i]);
+							continue 2;
+						}
+					}
+
+					$found = $slave;
+					break 2;
+				}
 			}
 		}
 

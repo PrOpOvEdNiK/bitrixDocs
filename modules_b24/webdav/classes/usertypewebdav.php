@@ -10,7 +10,7 @@ class CUserTypeWebdavElement
 	static $UF_MOVED = array();
 	static $UF_TO_DELETE = array();
 
-	function GetUserTypeDescription()
+	public static function GetUserTypeDescription()
 	{
 		return array(
 			"USER_TYPE_ID" => "webdav_element",
@@ -21,16 +21,16 @@ class CUserTypeWebdavElement
 		);
 	}
 
-	function GetDBColumnType($arUserField)
+	public static function GetDBColumnType($arUserField)
 	{
 		global $DB;
-		switch(strtolower($DB->type))
+		switch($DB->type)
 		{
-			case "mysql":
+			case "MYSQL":
 				return "int(18)";
-			case "oracle":
+			case "ORACLE":
 				return "number(18)";
-			case "mssql":
+			case "MSSQL":
 				return "int";
 		}
 	}
@@ -500,7 +500,7 @@ class CUserTypeWebdavElement
 		return $arFile;
 	}
 
-	function _deleteDroppedFiles($arFiles)
+	public static function _deleteDroppedFiles($arFiles)
 	{
 		if (!is_array($arFiles) || sizeof($arFiles) <= 0)
 			return false;
@@ -535,7 +535,7 @@ class CUserTypeWebdavElement
 		}
 	}
 
-	function _updateRights($files, $rights, $ufEntity = array())
+	public static function _updateRights($files, $rights, $ufEntity = array())
 	{
 		static $arIBlock = array();
 		static $op_X = 'element_rights_edit';
@@ -650,7 +650,7 @@ class CUserTypeWebdavElement
 		return false;
 	}
 
-	function _isDropped($iblockID, $sectionID)
+	public static function _isDropped($iblockID, $sectionID)
 	{
 		if (! CModule::IncludeModule('iblock'))
 			return false;
@@ -682,7 +682,7 @@ class CUserTypeWebdavElement
 		return $dropped;
 	}
 
-	function _getBlogPostCommentFiles($postID)
+	public static function _getBlogPostCommentFiles($postID)
 	{
 		$arCommentID = array();
 		$dbComments = CBlogComment::GetList(array(), array("POST_ID" => intval($postID)), false, false, array("ID"));
@@ -730,7 +730,7 @@ class CUserTypeWebdavElement
 		return array();
 	}
 
-	function OnEntityAdd($entity_type, $entity_id, $element_id, $arParams)
+	public static function OnEntityAdd($entity_type, $entity_id, $element_id, $arParams)
 	{
 		if (!isset($arParams[$entity_id]))
 			return;
@@ -752,7 +752,7 @@ class CUserTypeWebdavElement
 		static::_updateRights($arFiles, $arRights, empty($arUF[$entity_id])? array() : $arUF[$entity_id]);
 	}
 
-	function OnBeforeEntityDelete($entity_type, $entity_id, $element_id)
+	public static function OnBeforeEntityDelete($entity_type, $entity_id, $element_id)
 	{
 		$arUF = $GLOBALS["USER_FIELD_MANAGER"]->GetUserFields($entity_type, $element_id);
 
@@ -771,12 +771,12 @@ class CUserTypeWebdavElement
 		}
 	}
 
-	function OnPostAdd($id, &$arParams)
+	public static function OnPostAdd($id, &$arParams)
 	{
-		return static::OnEntityAdd(static::$UF_TYPE_BLOG_POST, static::$UF_EID_BLOG_POST, $id, $arParams);
+		static::OnEntityAdd(static::$UF_TYPE_BLOG_POST, static::$UF_EID_BLOG_POST, $id, $arParams);
 	}
 
-	function OnPostUpdate($id, &$arParams)
+	public static function OnPostUpdate($id, &$arParams)
 	{
 		// we only extend file permissions, 
 		// also we cannot figure out if the current file permissions are originally from file or from post
@@ -800,24 +800,25 @@ class CUserTypeWebdavElement
 			static::_updateRights($arFiles, $arRights);
 		}
 	}
-	function OnBeforePostDelete($id)
+
+	public static function OnBeforePostDelete($id)
 	{
-		return static::OnBeforeEntityDelete(static::$UF_TYPE_BLOG_POST, static::$UF_EID_BLOG_POST, $id);
+		static::OnBeforeEntityDelete(static::$UF_TYPE_BLOG_POST, static::$UF_EID_BLOG_POST, $id);
 	}
 
-	function OnCommentAdd($id, &$arParams)
+	public static function OnCommentAdd($id, &$arParams)
 	{
-		return static::OnEntityAdd(static::$UF_TYPE_BLOG_COMMENT, static::$UF_EID_BLOG_COMMENT, $id, $arParams);
+		static::OnEntityAdd(static::$UF_TYPE_BLOG_COMMENT, static::$UF_EID_BLOG_COMMENT, $id, $arParams);
 	}
 
-	function OnCommentUpdate($id, &$arParams)
+	public static function OnCommentUpdate($id, &$arParams)
 	{
-		return static::OnCommentAdd($id, $arParams);
+		static::OnCommentAdd($id, $arParams);
 	}
 
-	function OnBeforeCommentDelete($id)
+	public static function OnBeforeCommentDelete($id)
 	{
-		return static::OnBeforeEntityDelete(static::$UF_TYPE_BLOG_COMMENT, static::$UF_EID_BLOG_COMMENT, $id);
+		static::OnBeforeEntityDelete(static::$UF_TYPE_BLOG_COMMENT, static::$UF_EID_BLOG_COMMENT, $id);
 	}
 
 	function GetPublicViewHTML($arUserField, $id, $params = "", $settings = array(), $matches = array())

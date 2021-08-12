@@ -1,6 +1,0 @@
-<?
-$MESS["LANDING_HOOK_PIXEL_FB_COUNTER"] = "Facebook";
-$MESS["LANDING_HOOK_PIXEL_FB_HELP"] = "Détails";
-$MESS["LANDING_HOOK_PIXEL_FB_PLACEHOLDER2"] = "Saisissez le code pixel";
-$MESS["LANDING_HOOK_PIXEL_FB_USE"] = "Facebook";
-?>

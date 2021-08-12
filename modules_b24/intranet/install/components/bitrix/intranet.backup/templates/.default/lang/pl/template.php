@@ -1,7 +1,0 @@
-<?
-$MESS["BACKUP_CANCEL_BUTTON"] = "Anuluj";
-$MESS["BACKUP_HEADER_NAME"] = "Nazwa";
-$MESS["BACKUP_HEADER_PLACE"] = "Miejsce";
-$MESS["BACKUP_SAVE_BUTTON"] = "Zapisz";
-$MESS["BACKUP_STOP_BUTTON"] = "Anuluj";
-?>

@@ -256,7 +256,7 @@ class Mail
 	public static function sendSessionHistory($sessionId, $email)
 	{
 		$sessionId = intval($sessionId);
-		if ($sessionId <= 0 || strlen($email) <= 0)
+		if ($sessionId <= 0 || $email == '')
 		{
 			return false;
 		}
@@ -395,7 +395,7 @@ class Mail
 				$authorAvatar = \Bitrix\ImOpenLines\Connector::getOperatorAvatar($session['CONFIG_ID'], $message['senderId'], $session['USER_CODE']);
 				if ($authorAvatar)
 				{
-					$authorAvatar = substr($authorAvatar, 0, 4) != 'http'? \Bitrix\ImOpenLines\Common::getServerAddress().$authorAvatar: $authorAvatar;
+					$authorAvatar = mb_substr($authorAvatar, 0, 4) != 'http'? \Bitrix\ImOpenLines\Common::getServerAddress().$authorAvatar: $authorAvatar;
 				}
 				else
 				{
@@ -458,7 +458,7 @@ class Mail
 			}
 
 			$messages[$messageId] = Array(
-				'NAME' => $authorName,
+				'NAME' => htmlspecialcharsbx($authorName),
 				'AVATAR' => $authorAvatar,
 				'DATE' => $messageDate,
 				'TEXT' => $messageText,

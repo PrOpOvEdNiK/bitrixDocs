@@ -1,9 +1,10 @@
-<?
+<?php
+
 IncludeModuleLangFile(__FILE__);
 
 class CSupportUser2UserGroup
 {
-	function GetList($arOrder = array(), $arFilter = array())
+	public static function GetList($arOrder = array(), $arFilter = array())
 	{
 		global $DB;
 		$arFields = array(
@@ -78,12 +79,12 @@ class CSupportUser2UserGroup
 			{
 				if (array_key_exists($k, $arFields))
 				{
-					$v = strtoupper($v);
+					$v = mb_strtoupper($v);
 					if($v != 'DESC')
 					{
 						$v  ='ASC';
 					}
-					if (strlen($strOrder) > 0)
+					if ($strOrder <> '')
 					{
 						$strOrder .= ', ';
 					}
@@ -109,11 +110,11 @@ class CSupportUser2UserGroup
 			'INNER JOIN b_ticket_ugroups G ON (UG.GROUP_ID=G.ID) ' .
 			'INNER JOIN b_user U ON (UG.USER_ID=U.ID) ';
 
-		if (strlen($where) > 0)
+		if ($where <> '')
 		{
 			$strQuery .= ' WHERE ' . $where;
 		}
-		if (strlen($strOrder) > 0)
+		if ($strOrder <> '')
 		{
 			$strQuery .= ' ORDER BY ' . $strOrder;
 		}
@@ -124,7 +125,7 @@ class CSupportUser2UserGroup
 		return $res;
 	}
 
-	function Add($arFields)
+	public static function Add($arFields)
 	{
 		global $DB;
 		if (CSupportUser2UserGroup::CheckFields($arFields))
@@ -135,7 +136,7 @@ class CSupportUser2UserGroup
 		return false;
 	}
 
-	function Update($groupID, $userID, $arFields)
+	public static function Update($groupID, $userID, $arFields)
 	{
 		if (CSupportUser2UserGroup::CheckFields($arFields, $groupID, $userID))
 		{
@@ -144,7 +145,7 @@ class CSupportUser2UserGroup
 			$userID = intval($userID);
 
 			$strUpdate = $DB->PrepareUpdate('b_ticket_user_ugroup', $arFields);
-			if (strlen($strUpdate) > 0)
+			if ($strUpdate <> '')
 			{
 				$strSql = "UPDATE b_ticket_user_ugroup SET $strUpdate WHERE USER_ID=$userID AND GROUP_ID=$groupID";
 				return $DB->Query($strSql, false, "File: ".__FILE__."<br>Line: ".__LINE__);
@@ -153,7 +154,7 @@ class CSupportUser2UserGroup
 		return false;
 	}
 
-	function CheckFields(&$arFields, $groupID = 0, $userID = 0)
+	public static function CheckFields(&$arFields, $groupID = 0, $userID = 0)
 	{
 		global $APPLICATION, $DB, $USER;
 		$groupID = intval($groupID);
@@ -267,7 +268,7 @@ class CSupportUser2UserGroup
 		return true;
 	}
 
-	function Delete($groupID, $userID)
+	public static function Delete($groupID, $userID)
 	{
 		$groupID = intval($groupID);
 		$userID = intval($userID);
@@ -279,7 +280,7 @@ class CSupportUser2UserGroup
 		return false;
 	}
 
-	function SetGroupUsers($groupID, $arUsers)
+	public static function SetGroupUsers($groupID, $arUsers)
 	{
 		global $APPLICATION;
 		$groupID = intval($groupID);
@@ -319,5 +320,3 @@ class CSupportUser2UserGroup
 		return $ret;
 	}
 }
-
-?>

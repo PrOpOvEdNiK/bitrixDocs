@@ -17,7 +17,7 @@ class FieldSynchronizer
 {
 	protected $isCreateMode = false;
 
-	public function getSynchronizeFields($schemeId, $fieldNames, $invoicePayerEntityName = null)
+	public function getSynchronizeFields($schemeId, $fieldNames)
 	{
 		$this->isCreateMode = false;
 
@@ -45,6 +45,51 @@ class FieldSynchronizer
 		}
 
 		return $syncFieldCodes;
+	}
+
+	public function replaceOptionFields(Options $options)
+	{
+		$this->isCreateMode = true;
+
+		$form = $options->getForm();
+		$fields = $form->getFields();
+		$dependencies = $form->get()['DEPENDENCIES'];
+		$schemeId = $form->get()['ENTITY_SCHEME'];
+		$srcFieldCodes = array_column($fields, 'CODE');
+		$fields = array_combine(
+			$srcFieldCodes,
+			$fields
+		);
+
+		$srcFieldMap = $this->getFieldMap($schemeId, $srcFieldCodes);
+		foreach($srcFieldMap as $entityTypeName => $entityFields)
+		{
+			foreach($entityFields as $fieldName => $entityField)
+			{
+				$oldFieldCode = $entityField['OLD_FIELD_CODE'];
+				$newFieldCode = $entityField['NEW_FIELD_CODE'];
+
+				if($oldFieldCode == $newFieldCode)
+				{
+					continue;
+				}
+
+				// replace field
+				self::replaceField($fields, $entityField);
+
+				// replace dependencies
+				self::replaceFieldDependencies($dependencies, $entityField);
+
+				unset($fields[$entityField['OLD_FIELD_CODE']]);
+			}
+		}
+
+		$form->merge([
+			'FIELDS' => array_values($fields),
+			'DEPENDENCIES' => $dependencies,
+		]);
+
+		Options\Fields::clearCache();
 	}
 
 	public function replacePostFields($schemeId, &$fields, &$dependencies, $invoicePayerEntityName = null)
@@ -86,7 +131,7 @@ class FieldSynchronizer
 			foreach($entityTypeNames as $entityTypeName)
 			{
 				$prefix = $entityTypeName . '_';
-				if(substr($srcFieldCodeTmp, 0, strlen($prefix)) != $prefix)
+				if(mb_substr($srcFieldCodeTmp, 0, mb_strlen($prefix)) != $prefix)
 				{
 					continue;
 				}
@@ -94,7 +139,7 @@ class FieldSynchronizer
 				$srcEntity = Entity::getMap($entityTypeName);
 				$srcEntityFields = EntityFieldProvider::getFieldsInternal($entityTypeName, $srcEntity);
 
-				$fieldName = substr($srcFieldCodeTmp, strlen($prefix));
+				$fieldName = mb_substr($srcFieldCodeTmp, mb_strlen($prefix));
 				$srcFieldMap[$entityTypeName][$fieldName] = array(
 					'FIELD_NAME' => $fieldName,
 					'OLD_FIELD_CODE' => $srcFieldCodeTmp,
@@ -140,8 +185,12 @@ class FieldSynchronizer
 					$srcFieldMap[$entityTypeName][$syncFieldOld]['NEW_FIELD_CODE'] = $prefix . $syncFieldNew;
 					$srcFieldMap[$entityTypeName][$syncFieldOld]['NEW_FIELD'] = self::findField($syncFieldNew, $dstEntityFields);
 				}
-			}
 
+				if ($this->isCreateMode && is_callable($dstEntity['CLEAR_FIELDS_CACHE_CALL'] ?? null))
+				{
+					$dstEntity['CLEAR_FIELDS_CACHE_CALL']();
+				}
+			}
 		}
 
 		return $srcFieldMap;
@@ -174,7 +223,12 @@ class FieldSynchronizer
 		}
 
 		// replace field codes and items
-		$fields[$newFieldCode] = $fields[$oldFieldCode];
+		$field = $fields[$oldFieldCode];
+		if (!empty($field['CODE']))
+		{
+			$field['CODE'] = $newFieldCode;
+		}
+		$fields[$newFieldCode] = $field;
 		if(!$fields[$newFieldCode]['ITEMS'])
 		{
 			return;
@@ -282,9 +336,9 @@ class FieldSynchronizer
 		{
 			$prefix = 'CRM_WEBFORM_' . $dstEntityTypeName . '_';
 
-			if(substr($dstField['XML_ID'], 0, strlen($prefix)) == $prefix)
+			if(mb_substr($dstField['XML_ID'], 0, mb_strlen($prefix)) == $prefix)
 			{
-				return substr($dstField['XML_ID'], strlen($prefix));
+				return mb_substr($dstField['XML_ID'], mb_strlen($prefix));
 			}
 		}
 
@@ -381,7 +435,7 @@ class FieldSynchronizer
 
 		do
 		{
-			$dstFieldName = 'UF_CRM_'.strtoupper(uniqid());
+			$dstFieldName = 'UF_CRM_'.mb_strtoupper(uniqid());
 			$resultDb = $userTypeEntity->GetList(
 				array(),
 				array('ENTITY_ID' => $entityId, 'FIELD_NAME' => $dstFieldName)
@@ -554,7 +608,7 @@ class FieldSynchronizer
 
 		foreach($srcFieldNames as $fieldName)
 		{
-			if(substr($fieldName, 0, 3) == 'UF_')
+			if(mb_substr($fieldName, 0, 3) == 'UF_')
 			{
 				$userFieldNames[] = $fieldName;
 			}

@@ -1,3 +1,0 @@
-<?
-$MESS["SALE_DLVR_RSTR_BY_LOCATION_LOC"] = "Miejsce";
-?>

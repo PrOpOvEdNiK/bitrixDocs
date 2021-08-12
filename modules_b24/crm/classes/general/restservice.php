@@ -1,11 +1,7 @@
 <?php
-if(!CModule::IncludeModule('rest'))
-{
-	return;
-}
-
 
 use Bitrix\Main;
+use Bitrix\Main\Loader;
 use Bitrix\Main\Localization\Loc;
 use Bitrix\Rest\AccessException;
 use Bitrix\Rest\RestException;
@@ -14,10 +10,6 @@ use Bitrix\Crm\Integration\StorageFileType;
 use Bitrix\Crm\Integration\StorageType;
 use Bitrix\Crm\Integration\DiskManager;
 use Bitrix\Crm\Integration\Bitrix24Manager;
-use Bitrix\Crm\Color\PhaseColorSchemeElement;
-use Bitrix\Crm\Color\DealStageColorScheme;
-use Bitrix\Crm\Color\LeadStatusColorScheme;
-use Bitrix\Crm\Color\QuoteStatusColorScheme;
 use Bitrix\Crm\Category\DealCategory;
 use Bitrix\Crm\Rest;
 use Bitrix\Crm\Tracking;
@@ -34,7 +26,12 @@ use Bitrix\Crm\Binding\DealContactTable;
 use Bitrix\Crm\Binding\QuoteContactTable;
 use Bitrix\Crm\Binding\ContactCompanyTable;
 use Bitrix\Crm\Security\EntityAuthorization;
-use Bitrix\Crm\Integration\Rest\AppPlacement;
+use Bitrix\Iblock;
+
+if (!Loader::includeModule('rest'))
+{
+	return;
+}
 
 Loc::loadMessages(__FILE__);
 
@@ -287,13 +284,22 @@ final class CCrmRestService extends IRestService
 		'crm.requisite.link.get',
 		'crm.requisite.link.register',
 		'crm.requisite.link.unregister',
-		//
+		//endregion Requisite
+		//region Address
 		'crm.address.fields',
 		'crm.address.add',
 		'crm.address.update',
 		'crm.address.list',
 		'crm.address.delete',
-		//endregion Requisite
+		'crm.address.getzoneid',
+		'crm.address.setzoneid',
+		//endregion Address
+		//region Address type
+		'crm.addresstype.getavailable',
+		'crm.addresstype.getzonemap',
+		'crm.addresstype.getdefaultbyzone',
+		'crm.addresstype.getbyzonesorvalues',
+		//endregion Address type
 		//region Measures
 		'crm.measure.fields',
 		'crm.measure.add',
@@ -473,10 +479,10 @@ final class CCrmRestService extends IRestService
 			throw new RestException("Method '{$methodName}' is not supported in current context.");
 		}
 
-		$typeName = strtoupper($parts[1]);
+		$typeName = mb_strtoupper($parts[1]);
 		$proxy = null;
 
-		$subType = isset($parts[2]) ? strtoupper($parts[2]) : '';
+		$subType = isset($parts[2])? mb_strtoupper($parts[2]) : '';
 
 		if (isset(self::$PROXIES[$typeName.'.'.$subType]))
 		{
@@ -590,6 +596,10 @@ final class CCrmRestService extends IRestService
 			{
 				$proxy = self::$PROXIES[$typeName] = new CCrmAddressRestProxy();
 			}
+			elseif($typeName === 'ADDRESSTYPE')
+			{
+				$proxy = self::$PROXIES[$typeName] = new CCrmAddressTypeRestProxy();
+			}
 			elseif($typeName === 'ACTIVITY')
 			{
 				if($subType === 'TYPE')
@@ -702,14 +712,14 @@ class CCrmRestHelper
 		}
 
 		// Check for upper case notation (FILTER, SORT, SELECT, etc)
-		$upper = strtoupper($name);
+		$upper = mb_strtoupper($name);
 		if(isset($arParams[$upper]))
 		{
 			return $arParams[$upper];
 		}
 
 		// Check for lower case notation (filter, sort, select, etc)
-		$lower = strtolower($name);
+		$lower = mb_strtolower($name);
 		if(isset($arParams[$lower]))
 		{
 			return $arParams[$lower];
@@ -749,14 +759,14 @@ class CCrmRestHelper
 		}
 
 		// Check for lower case notation (type, etc)
-		$lower = strtolower($name);
+		$lower = mb_strtolower($name);
 		if(isset($arParams[$lower]))
 		{
 			return $arParams[$lower];
 		}
 
 		// Check for upper case notation (TYPE, etc)
-		$upper = strtoupper($name);
+		$upper = mb_strtoupper($name);
 		if(isset($arParams[$upper]))
 		{
 			return $arParams[$upper];
@@ -833,12 +843,12 @@ class CCrmRestHelper
 
 		if($scheme === self::PARAM_KEY_SCHEME_LOWER_CASE)
 		{
-			return implode('', array_map('strtolower', $parts));
+			return implode('', array_map('mb_strtolower', $parts));
 		}
 
 		if($scheme === self::PARAM_KEY_SCHEME_UPPER_CASE)
 		{
-			return implode('', array_map('strtoupper', $parts));
+			return implode('', array_map('mb_strtoupper', $parts));
 		}
 
 		if($scheme === self::PARAM_KEY_SCHEME_LOWER_CAMEL_CASE)
@@ -848,9 +858,9 @@ class CCrmRestHelper
 			return implode(
 				'',
 				array_merge(
-					array(strtolower($first)),
+					array(mb_strtolower($first)),
 					array_map(
-						function($s){ return ucfirst(strtolower($s)); },
+						function($s){ return ucfirst(mb_strtolower($s)); },
 						$parts
 					)
 				)
@@ -862,7 +872,7 @@ class CCrmRestHelper
 			return implode(
 				'',
 				array_map(
-					function($s){ return ucfirst(strtolower($s)); },
+					function($s){ return ucfirst(mb_strtolower($s)); },
 					$parts
 				)
 			);
@@ -876,7 +886,7 @@ class CCrmRestHelper
 		$key = '';
 
 		// Check for lower case notation (type, etc)
-		$nameLC = strtolower($name);
+		$nameLC = mb_strtolower($name);
 		if(isset($arParams[$nameLC]))
 		{
 			$value = $arParams[$nameLC];
@@ -884,7 +894,7 @@ class CCrmRestHelper
 		}
 
 		// Check for upper case notation (TYPE, etc)
-		$nameUC = strtoupper($name);
+		$nameUC = mb_strtoupper($name);
 		if(isset($arParams[$nameUC]))
 		{
 			$value = $arParams[$nameUC];
@@ -958,7 +968,7 @@ class CCrmRestHelper
 
 			if (empty($field['title']))
 			{
-				$field['title'] = isset($fieldInfo['CAPTION']) && strlen($fieldInfo['CAPTION']) > 0 ? $fieldInfo['CAPTION'] : $fieldID;
+				$field['title'] = isset($fieldInfo['CAPTION']) && $fieldInfo['CAPTION'] <> '' ? $fieldInfo['CAPTION'] : $fieldID;
 			}
 
 			if(isset($fieldInfo['LABELS']) && is_array($fieldInfo['LABELS']))
@@ -1047,7 +1057,7 @@ class CCrmRestEventDispatcher
 	public static function onUserFieldAdd($fields)
 	{
 		if (is_array($fields) && isset($fields['ID']) && $fields['ID'] > 0
-			&& isset($fields['FIELD_NAME']) && is_string($fields['FIELD_NAME']) && strlen($fields['FIELD_NAME']) > 0
+			&& isset($fields['FIELD_NAME']) && is_string($fields['FIELD_NAME']) && $fields['FIELD_NAME'] <> ''
 			&& isset($fields['ENTITY_ID']) && static::verifyEntityId($fields['ENTITY_ID']))
 		{
 			$id = (int)$fields['ID'];
@@ -1068,7 +1078,7 @@ class CCrmRestEventDispatcher
 			$id = (int)$id;
 			$fields = CUserTypeEntity::GetByID($id);
 			if (is_array($fields)
-				&& isset($fields['FIELD_NAME']) && is_string($fields['FIELD_NAME']) && strlen($fields['FIELD_NAME']) > 0
+				&& isset($fields['FIELD_NAME']) && is_string($fields['FIELD_NAME']) && $fields['FIELD_NAME'] <> ''
 				&& isset($fields['ENTITY_ID']) && static::verifyEntityId($fields['ENTITY_ID']))
 			{
 				$entityId = $fields['ENTITY_ID'];
@@ -1085,7 +1095,7 @@ class CCrmRestEventDispatcher
 	public static function onUserFieldDelete($fields, $id)
 	{
 		if ($id > 0 && is_array($fields)
-			&& isset($fields['FIELD_NAME']) && is_string($fields['FIELD_NAME']) && strlen($fields['FIELD_NAME']) > 0
+			&& isset($fields['FIELD_NAME']) && is_string($fields['FIELD_NAME']) && $fields['FIELD_NAME'] <> ''
 			&& isset($fields['ENTITY_ID']) && static::verifyEntityId($fields['ENTITY_ID']))
 		{
 			$id = (int)$id;
@@ -1108,7 +1118,7 @@ class CCrmRestEventDispatcher
 			{
 				$fields = CUserTypeEntity::GetByID($id);
 				if (is_array($fields)
-					&& isset($fields['FIELD_NAME']) && is_string($fields['FIELD_NAME']) && strlen($fields['FIELD_NAME']) > 0
+					&& isset($fields['FIELD_NAME']) && is_string($fields['FIELD_NAME']) && $fields['FIELD_NAME'] <> ''
 					&& isset($fields['ENTITY_ID']) && static::verifyEntityId($fields['ENTITY_ID']))
 				{
 					$entityId = $fields['ENTITY_ID'];
@@ -1130,7 +1140,7 @@ class CCrmRestEventDispatcher
 			$ufEntityId = $options['UF_ENTITY_ID'];
 			if (is_string($ufEntityId) && $ufEntityId !== '')
 			{
-				$entityName = ucfirst(strtolower(static::getOwnerTypeNameByEntityId($ufEntityId)));
+				$entityName = ucfirst(mb_strtolower(static::getOwnerTypeNameByEntityId($ufEntityId)));
 				$event = new Main\Event(
 					'crm',
 					'OnAfterCrmRest'.$entityName.'UserField'.$action,
@@ -1421,7 +1431,7 @@ abstract class CCrmRestProxyBase implements ICrmRestProxy
 	{
 		$ownerTypeID = $this->getOwnerTypeID();
 
-		$name = strtoupper($name);
+		$name = mb_strtoupper($name);
 		if($name === 'FIELDS')
 		{
 			return $this->getFields();
@@ -1491,7 +1501,7 @@ abstract class CCrmRestProxyBase implements ICrmRestProxy
 		{
 			$ufProxy = new CCrmUserFieldRestProxy($ownerTypeID);
 
-			$nameSuffix = strtoupper(!empty($nameDetails) ? implode('_', $nameDetails) : '');
+			$nameSuffix = mb_strtoupper(!empty($nameDetails)? implode('_', $nameDetails) : '');
 			if($nameSuffix === 'ADD')
 			{
 				$fields = $this->resolveArrayParam($arParams, 'fields', null);
@@ -1555,13 +1565,13 @@ abstract class CCrmRestProxyBase implements ICrmRestProxy
 			return $default;
 		}
 
-		$upperUnderscoreName = strtoupper(implode('_', $nameParts));
+		$upperUnderscoreName = mb_strtoupper(implode('_', $nameParts));
 		if(isset($arParams[$upperUnderscoreName]))
 		{
 			return $arParams[$upperUnderscoreName];
 		}
 
-		$lowerUnderscoreName = strtolower($upperUnderscoreName);
+		$lowerUnderscoreName = mb_strtolower($upperUnderscoreName);
 		if(isset($arParams[$lowerUnderscoreName]))
 		{
 			return $arParams[$lowerUnderscoreName];
@@ -1596,7 +1606,7 @@ abstract class CCrmRestProxyBase implements ICrmRestProxy
 	}
 	protected function resolveRelationID(&$arParams, $relationName)
 	{
-		$nameLowerCase = strtolower($relationName);
+		$nameLowerCase = mb_strtolower($relationName);
 		// Check for camel case (entityId or entityID)
 		$camel = "{$nameLowerCase}Id";
 		if(isset($arParams[$camel]))
@@ -1618,7 +1628,7 @@ abstract class CCrmRestProxyBase implements ICrmRestProxy
 		}
 
 		// Check for upper case (ENTITY_ID)
-		$upper = strtoupper($lower);
+		$upper = mb_strtoupper($lower);
 		if(isset($arParams[$upper]))
 		{
 			return $arParams[$upper];
@@ -1803,7 +1813,7 @@ abstract class CCrmRestProxyBase implements ICrmRestProxy
 				continue;
 			}
 
-			if($ID > 0 && isset($v['DELETE']) && strtoupper($v['DELETE']) === 'Y')
+			if($ID > 0 && isset($v['DELETE']) && mb_strtoupper($v['DELETE']) === 'Y')
 			{
 				//Empty fields will be deleted.
 				$value = '';
@@ -1846,7 +1856,7 @@ abstract class CCrmRestProxyBase implements ICrmRestProxy
 			}
 
 			$fileID = isset($v['id']) ? intval($v['id']) : 0;
-			$removeFile = isset($v['remove']) && is_string($v['remove']) && strtoupper($v['remove']) === 'Y';
+			$removeFile = isset($v['remove']) && is_string($v['remove']) && mb_strtoupper($v['remove']) === 'Y';
 			$fileData = isset($v['fileData']) ? $v['fileData'] : '';
 
 			if(!self::isIndexedArray($fileData))
@@ -1930,7 +1940,7 @@ abstract class CCrmRestProxyBase implements ICrmRestProxy
 
 		//$fileID = isset($fields[$fieldName]['id']) ? intval($fields[$fieldName]['id']) : 0;
 		$removeFile = isset($fields[$fieldName]['remove']) && is_string($fields[$fieldName]['remove'])
-			&& strtoupper($fields[$fieldName]['remove']) === 'Y';
+			&& mb_strtoupper($fields[$fieldName]['remove']) === 'Y';
 		$fileData = isset($fields[$fieldName]['fileData']) ? $fields[$fieldName]['fileData'] : '';
 
 		if(!self::isIndexedArray($fileData))
@@ -2004,7 +2014,7 @@ abstract class CCrmRestProxyBase implements ICrmRestProxy
 			}
 
 			$elementID = isset($v['id']) ? intval($v['id']) : 0;
-			$removeElement = isset($v['remove']) && is_string($v['remove']) && strtoupper($v['remove']) === 'Y';
+			$removeElement = isset($v['remove']) && is_string($v['remove']) && mb_strtoupper($v['remove']) === 'Y';
 			$fileData = isset($v['fileData']) ? $v['fileData'] : '';
 
 			if(!self::isIndexedArray($fileData))
@@ -2121,7 +2131,7 @@ abstract class CCrmRestProxyBase implements ICrmRestProxy
 			}
 
 			$fileID = isset($v['id']) ? intval($v['id']) : 0;
-			$removeElement = isset($v['remove']) && is_string($v['remove']) && strtoupper($v['remove']) === 'Y';
+			$removeElement = isset($v['remove']) && is_string($v['remove']) && mb_strtoupper($v['remove']) === 'Y';
 			$fileData = isset($v['fileData']) ? $v['fileData'] : '';
 
 			if(!self::isIndexedArray($fileData))
@@ -2270,7 +2280,7 @@ abstract class CCrmRestProxyBase implements ICrmRestProxy
 				elseif($propertyType === 'S' && $userType === 'HTML')
 				{
 					if (is_array($v) && isset($v['TYPE']) && isset($v['TEXT'])
-						&& strtolower($v['TYPE']) === 'html' && !empty($v['TEXT']))
+						&& mb_strtolower($v['TYPE']) === 'html' && !empty($v['TEXT']))
 					{
 						if ($sanitizer === null)
 						{
@@ -2748,7 +2758,7 @@ abstract class CCrmRestProxyBase implements ICrmRestProxy
 			foreach (['urlPreview', 'urlShow', 'urlDownload'] as $field)
 			{
 				$url = $fileData[$key][$field];
-				if (is_string($url) && $url && strpos($url, 'http') !== 0)
+				if (is_string($url) && $url && mb_strpos($url, 'http') !== 0)
 				{
 					$fileData[$key][$field] = self::getPublicDomain().$url;
 				}
@@ -2763,7 +2773,7 @@ abstract class CCrmRestProxyBase implements ICrmRestProxy
 		static $result = null;
 		if ($result === null)
 		{
-			$result = (\Bitrix\Main\Context::getCurrent()->getRequest()->isHttps() ? "https" : "http")."://".((defined("SITE_SERVER_NAME") && strlen(SITE_SERVER_NAME) > 0) ? SITE_SERVER_NAME : \Bitrix\Main\Config\Option::get("main", "server_name", $_SERVER['SERVER_NAME']));
+			$result = (\Bitrix\Main\Context::getCurrent()->getRequest()->isHttps() ? "https" : "http")."://".((defined("SITE_SERVER_NAME") && SITE_SERVER_NAME <> '') ? SITE_SERVER_NAME : \Bitrix\Main\Config\Option::get("main", "server_name", $_SERVER['SERVER_NAME']));
 		}
 
 		return $result;
@@ -2908,7 +2918,7 @@ abstract class CCrmRestProxyBase implements ICrmRestProxy
 				continue;
 			}
 
-			$operation = substr($k, 0, strlen($k) - strlen($fieldName));
+			$operation = mb_substr($k, 0, mb_strlen($k) - mb_strlen($fieldName));
 			if(isset($info['FORBIDDEN_FILTERS'])
 				&& is_array($info['FORBIDDEN_FILTERS'])
 				&& in_array($operation, $info['FORBIDDEN_FILTERS'], true))
@@ -3000,7 +3010,7 @@ abstract class CCrmRestProxyBase implements ICrmRestProxy
 	}
 	protected function externalizeFile($ownerTypeID, $ownerID, $fieldName, $fileID, $dynamic = true)
 	{
-		$ownerTypeName = strtolower(CCrmOwnerType::ResolveName($ownerTypeID));
+		$ownerTypeName = mb_strtolower(CCrmOwnerType::ResolveName($ownerTypeID));
 		if($ownerTypeName === '')
 		{
 			return '';
@@ -3134,7 +3144,7 @@ abstract class CCrmRestProxyBase implements ICrmRestProxy
 
 		$user = CCrmSecurityHelper::GetCurrentUser();
 
-		$opt = unserialize($opt);
+		$opt = unserialize($opt, ['allowed_classes' => false]);
 		$iblockID = intval($opt[CSite::GetDefSite()]['id']);
 		$userSectionID = CWebDavIblock::getRootSectionIdForUser($iblockID, $user->GetID());
 		if(!is_numeric($userSectionID) || $userSectionID <= 0)
@@ -3294,35 +3304,35 @@ abstract class CCrmRestProxyBase implements ICrmRestProxy
 		$eventName = $arHandler['EVENT_NAME'];
 
 		$eventNamePrefix = 'ONCRM'.$entityTypeName;
-		if(strpos(strtoupper($eventName), $eventNamePrefix) !== 0)
+		if(mb_strpos(mb_strtoupper($eventName), $eventNamePrefix) !== 0)
 		{
 			throw new RestException("The Event \"{$eventName}\" is not supported in current context");
 		}
 
 		$eventNamePrefix .= 'USERFIELD';
-		if(strpos(strtoupper($eventName), $eventNamePrefix) === 0)
+		if(mb_strpos(mb_strtoupper($eventName), $eventNamePrefix) === 0)
 		{
 			return self::processEntityUserFieldEvent($entityTypeID, $arParams, $arHandler);
 		}
 
-		$action = substr($eventName, 5 + strlen($entityTypeName));
+		$action = mb_substr($eventName, 5 + mb_strlen($entityTypeName));
 		if($action === false || $action === '')
 		{
 			throw new RestException("The Event \"{$eventName}\" is not supported in current context");
 		}
 
-		switch (strtoupper($action))
+		switch(mb_strtoupper($action))
 		{
 			case 'ADD':
 			case 'UPDATE':
 				{
-					$fields = isset($arParams[0]) ? $arParams[0] : null;
-					$ID = is_array($fields) && isset($fields['ID']) ? (int)$fields['ID'] : 0;
+					$fields = isset($arParams[0])? $arParams[0] : null;
+					$ID = is_array($fields) && isset($fields['ID'])? (int)$fields['ID'] : 0;
 				}
 				break;
 			case 'DELETE':
 				{
-					$ID = isset($arParams[0]) ? (int)$arParams[0] : 0;
+					$ID = isset($arParams[0])? (int)$arParams[0] : 0;
 				}
 				break;
 			default:
@@ -3346,11 +3356,11 @@ abstract class CCrmRestProxyBase implements ICrmRestProxy
 		$eventName = $arHandler['EVENT_NAME'];
 
 		$eventNamePrefix = 'ONCRM'.$entityTypeName.'USERFIELD';
-		if(strpos(strtoupper($eventName), $eventNamePrefix) !== 0)
+		if(mb_strpos(mb_strtoupper($eventName), $eventNamePrefix) !== 0)
 		{
 			throw new RestException("The Event \"{$eventName}\" is not supported in current context");
 		}
-		
+
 		if (!($arParams[0] instanceof Bitrix\Main\Event))
 		{
 			throw new RestException("Invalid parameters of event \"{$eventName}\"");
@@ -3358,7 +3368,7 @@ abstract class CCrmRestProxyBase implements ICrmRestProxy
 
 		$params = $arParams[0]->getParameters();
 
-		$action = substr($eventName, strlen($eventNamePrefix));
+		$action = mb_substr($eventName, mb_strlen($eventNamePrefix));
 		switch ($action)
 		{
 			case 'ADD':
@@ -3419,8 +3429,8 @@ class CCrmSettingsRestProxy extends CCrmRestProxyBase
 {
 	public function processMethodRequest($name, $nameDetails, $arParams, $nav, $server)
 	{
-		$name = strtoupper($name);
-		$nameSuffix = strtoupper(!empty($nameDetails) ? implode('_', $nameDetails) : '');
+		$name = mb_strtoupper($name);
+		$nameSuffix = mb_strtoupper(!empty($nameDetails)? implode('_', $nameDetails) : '');
 		if($name === 'MODE')
 		{
 			if($nameSuffix === 'GET')
@@ -3463,8 +3473,8 @@ class CCrmEnumerationRestProxy extends CCrmRestProxyBase
 	{
 		$descriptions = null;
 
-		$name = strtoupper($name);
-		$nameSuffix = strtoupper(!empty($nameDetails) ? implode('_', $nameDetails) : '');
+		$name = mb_strtoupper($name);
+		$nameSuffix = mb_strtoupper(!empty($nameDetails)? implode('_', $nameDetails) : '');
 		if($name === 'SETTINGS')
 		{
 			if($nameSuffix === 'MODE')
@@ -3488,14 +3498,7 @@ class CCrmEnumerationRestProxy extends CCrmRestProxyBase
 		}
 		elseif($name === 'ADDRESSTYPE')
 		{
-			$descriptions = EntityAddressType::getDescriptions(
-				array(
-					EntityAddressType::Primary,
-					EntityAddressType::Home,
-					EntityAddressType::Registered,
-					EntityAddressType::Beneficiary
-				)
-			);
+			$descriptions = EntityAddressType::getDescriptions(EntityAddressType::getAvailableIds());
 		}
 		elseif($name === 'CONTENTTYPE')
 		{
@@ -3738,7 +3741,7 @@ class CCrmProductRestProxy extends CCrmRestProxyBase
 				'html' : 'text';
 			$fields['DESCRIPTION_TYPE'] = $descriptionType;
 			$description = isset($fields['DESCRIPTION']) ? trim($fields['DESCRIPTION']) : '';
-			$isNeedSanitize = ($descriptionType === 'html' && $description !== '' && strpos($description, '<'));
+			$isNeedSanitize = ($descriptionType === 'html' && $description !== '' && mb_strpos($description, '<'));
 			if ($isNeedSanitize)
 			{
 				$description = self::sanitizeHtml($description);
@@ -3832,7 +3835,7 @@ class CCrmProductRestProxy extends CCrmRestProxyBase
 			$idInSort = false;
 			foreach (array_keys($order) as $by)
 			{
-				if (strtoupper($by) === 'ID')
+				if (mb_strtoupper($by) === 'ID')
 				{
 					$idInSort = true;
 					break;
@@ -3895,6 +3898,11 @@ class CCrmProductRestProxy extends CCrmRestProxyBase
 
 			$catalogSelect = array_merge($priceSelect, $vatSelect);
 			$enableCatalogData = !empty($catalogSelect);
+		}
+
+		if (empty($propertiesSelect) && $selectAll)
+		{
+			$propertiesSelect[] = 'PROPERTY_*';
 		}
 
 		$filter['CATALOG_ID'] = $catalogID;
@@ -3978,6 +3986,11 @@ class CCrmProductRestProxy extends CCrmRestProxyBase
 		if ($productID <= 0)
 			return;
 
+		if (empty($propertiesSelect))
+		{
+			return;
+		}
+
 		$this->initializePropertiesInfo($catalogID);
 
 		$selectAll = false;
@@ -3986,6 +3999,7 @@ class CCrmProductRestProxy extends CCrmRestProxyBase
 			if($v === 'PROPERTY_*')
 			{
 				$selectAll = true;
+				unset($propertiesSelect[$k]);
 				break;
 			}
 		}
@@ -4092,7 +4106,7 @@ class CCrmProductRestProxy extends CCrmRestProxyBase
 			}
 
 			$description = isset($fields['DESCRIPTION']) ? trim($fields['DESCRIPTION']) : '';
-			$isNeedSanitize = ($descriptionType === 'html' && $description !== '' && strpos($description, '<'));
+			$isNeedSanitize = ($descriptionType === 'html' && $description !== '' && mb_strpos($description, '<'));
 			if ($isNeedSanitize)
 			{
 				$description = self::sanitizeHtml($description);
@@ -4110,7 +4124,7 @@ class CCrmProductRestProxy extends CCrmRestProxyBase
 				$propertyValues[$property['ID']] = $fields[$propId];
 			unset($fields[$propId]);
 		}
-		if(count($propertyValues) > 0)
+		if(!empty($propertyValues))
 		{
 			$fields['PROPERTY_VALUES'] = $propertyValues;
 			$rsProperties = CIBlockElement::GetProperty(
@@ -4121,10 +4135,6 @@ class CCrmProductRestProxy extends CCrmRestProxyBase
 			);
 			while($property = $rsProperties->Fetch())
 			{
-				if (isset($property['USER_TYPE']) && !empty($property['USER_TYPE'])
-					&& !array_key_exists($property['USER_TYPE'], $this->userTypes))
-					continue;
-
 				if($property['PROPERTY_TYPE'] !== 'F' && !array_key_exists($property['ID'], $propertyValues))
 				{
 					if(!array_key_exists($property['ID'], $fields['PROPERTY_VALUES']))
@@ -4182,12 +4192,12 @@ class CCrmProductRestProxy extends CCrmRestProxyBase
 	public static function processEvent(array $arParams, array $arHandler)
 	{
 		$eventName = $arHandler['EVENT_NAME'];
-		switch (strtolower($eventName))
+		switch(mb_strtolower($eventName))
 		{
 			case 'oncrmproductadd':
 			case 'oncrmproductupdate':
 				{
-					$ID = isset($arParams[0]) ? (int)$arParams[0] : 0;
+					$ID = isset($arParams[0])? (int)$arParams[0] : 0;
 
 					if($ID <= 0)
 					{
@@ -4195,7 +4205,7 @@ class CCrmProductRestProxy extends CCrmRestProxyBase
 					}
 
 					$fields = CCrmProduct::GetByID($ID);
-					$catalogID = is_array($fields) && isset($fields['CATALOG_ID']) ? (int)$fields['CATALOG_ID'] : 0;
+					$catalogID = is_array($fields) && isset($fields['CATALOG_ID'])? (int)$fields['CATALOG_ID'] : 0;
 					if($catalogID !== CCrmCatalog::GetDefaultID())
 					{
 						throw new RestException("Outside CRM product event is detected");
@@ -4205,15 +4215,15 @@ class CCrmProductRestProxy extends CCrmRestProxyBase
 				break;
 			case 'oncrmproductdelete':
 				{
-					$fields = isset($arParams[0]) && is_array($arParams[0]) ? $arParams[0] : array();
-					$ID = isset($fields['ID']) ? (int)$fields['ID'] : 0;
+					$fields = isset($arParams[0]) && is_array($arParams[0])? $arParams[0] : array();
+					$ID = isset($fields['ID'])? (int)$fields['ID'] : 0;
 
 					if($ID <= 0)
 					{
 						throw new RestException("Could not find entity ID in fields of event \"{$eventName}\"");
 					}
 
-					$catalogID = isset($fields['IBLOCK_ID']) ? (int)$fields['IBLOCK_ID'] : 0;
+					$catalogID = isset($fields['IBLOCK_ID'])? (int)$fields['IBLOCK_ID'] : 0;
 					if($catalogID !== CCrmCatalog::GetDefaultID())
 					{
 						throw new RestException("Outside CRM product event is detected");
@@ -4437,12 +4447,11 @@ class CCrmProductPropertyRestProxy extends CCrmRestProxyBase
 		/** @global CMain $APPLICATION */
 		global $APPLICATION;
 
-		if(!CModule::IncludeModule('iblock'))
+		if(!Loader::includeModule('iblock'))
 		{
 			throw new RestException('Could not load iblock module.');
 		}
 
-		/** @var CCrmPerms $userPerms */
 		$userPerms = CCrmPerms::GetCurrentUserPermissions();
 		if (!$userPerms->HavePerm('CONFIG', BX_CRM_PERM_CONFIG, 'WRITE'))
 		{
@@ -4450,58 +4459,76 @@ class CCrmProductPropertyRestProxy extends CCrmRestProxyBase
 			return false;
 		}
 
-		$iblockId = intval(CCrmCatalog::EnsureDefaultExists());
+		$iblockId = (int)CCrmCatalog::EnsureDefaultExists();
 
-		$userTypeSettings = array();
+		if (!isset($fields['PROPERTY_TYPE']))
+		{
+			$fields['PROPERTY_TYPE'] = Iblock\PropertyTable::TYPE_STRING;
+		}
+
+		$userTypeSettings = [];
 		if (isset($fields['USER_TYPE_SETTINGS']) && is_array($fields['USER_TYPE_SETTINGS']))
 			foreach ($fields['USER_TYPE_SETTINGS'] as $key => $value)
-				$userTypeSettings[strtolower($key)] = $value;
+				$userTypeSettings[mb_strtolower($key)] = $value;
 
-		$arFields = array(
+		$arFields = [
 			'ACTIVE' => isset($fields['ACTIVE']) ? ($fields['ACTIVE'] === 'Y' ? 'Y' : 'N') : 'Y',
 			'IBLOCK_ID' => $iblockId,
 			'PROPERTY_TYPE' => $fields['PROPERTY_TYPE'],
-			'USER_TYPE' => isset($fields['USER_TYPE']) ? $fields['USER_TYPE'] : '',
-			'LINK_IBLOCK_ID' => ($fields['PROPERTY_TYPE'] === 'E' || $fields['PROPERTY_TYPE'] === 'G') ? $iblockId : 0,
+			'USER_TYPE' => $fields['USER_TYPE'] ?? '',
+			'LINK_IBLOCK_ID' => $fields['PROPERTY_TYPE'] === Iblock\PropertyTable::TYPE_ELEMENT ? $iblockId : 0,
 			'NAME' => $fields['NAME'],
-			'SORT' => isset($fields['SORT']) ? $fields['SORT'] : 500,
-			'CODE' => '',
+			'SORT' => (int)$fields['SORT'] ?? 500,
+			'CODE' => $fields['CODE'] ?? '',
 			'MULTIPLE' => isset($fields['MULTIPLE']) ? ($fields['MULTIPLE'] === 'Y' ? 'Y' : 'N') : 'N',
 			'IS_REQUIRED' => isset($fields['IS_REQUIRED']) ? ($fields['IS_REQUIRED'] === 'Y' ? 'Y' : 'N') : 'N',
 			'SEARCHABLE' => 'N',
 			'FILTRABLE' => 'N',
 			'WITH_DESCRIPTION' => '',
-			'MULTIPLE_CNT' => isset($fields['MULTIPLE_CNT']) ? $fields['MULTIPLE_CNT'] : 0,
+			'MULTIPLE_CNT' => $fields['MULTIPLE_CNT'] ?? 0,
 			'HINT' => '',
-			'ROW_COUNT' => isset($fields['ROW_COUNT']) ? $fields['ROW_COUNT'] : 1,
-			'COL_COUNT' => isset($fields['COL_COUNT']) ? $fields['COL_COUNT'] : 30,
-			'DEFAULT_VALUE' => isset($fields['DEFAULT_VALUE']) ? $fields['DEFAULT_VALUE'] : null,
+			'ROW_COUNT' => $fields['ROW_COUNT'] ?? 1,
+			'COL_COUNT' => $fields['COL_COUNT'] ?? 30,
+			'DEFAULT_VALUE' => $fields['DEFAULT_VALUE'] ?? null,
 			'LIST_TYPE' => 'L',
 			'USER_TYPE_SETTINGS' => $userTypeSettings,
-			'FILE_TYPE' => isset($fields['FILE_TYPE']) ? $fields['FILE_TYPE'] : '',
-			'XML_ID' => isset($fields['XML_ID']) ? $fields['XML_ID'] : ''
-		);
+			'FILE_TYPE' => $fields['FILE_TYPE'] ?? '',
+			'XML_ID' => $fields['XML_ID'] ?? '',
+		];
 
 		if ($arFields['PROPERTY_TYPE'].':'.$arFields['USER_TYPE'] === 'S:map_yandex')
+		{
 			$arFields['MULTIPLE'] = 'N';
+		}
 
-		if ($fields['PROPERTY_TYPE'] === 'L' && isset($fields['VALUES']) && is_array($fields['VALUES']))
+		if (
+			$fields['PROPERTY_TYPE'] === Iblock\PropertyTable::TYPE_LIST
+			&& isset($fields['VALUES'])
+			&& is_array($fields['VALUES'])
+		)
 		{
 			$values = array();
 
 			$newKey = 0;
 			foreach ($fields['VALUES'] as $key => $value)
 			{
-				if (!is_array($value) || !isset($value['VALUE']) || '' == trim($value['VALUE']))
+				if (!is_array($value) || !isset($value['VALUE']) || trim($value['VALUE']) === '')
+				{
 					continue;
-				$values[(0 < intval($key) ? $key : 'n'.$newKey)] = array(
-					'ID' => (0 < intval($key) ? $key : 'n'.$newKey),
-					'VALUE' => strval($value['VALUE']),
-					'XML_ID' => (isset($value['XML_ID']) ? strval($value['XML_ID']) : ''),
-					'SORT' => (isset($value['SORT']) ? intval($value['SORT']) : 500),
-					'DEF' => (isset($value['DEF']) ? ($value['DEF'] === 'Y' ? 'Y' : 'N') : 'N')
-				);
-				$newKey++;
+				}
+				$valueId = (int)$key;
+				if ($valueId <= 0)
+				{
+					$valueId = 'n'.$newKey;
+					$newKey++;
+				}
+				$values[$valueId] = [
+					'ID' => $valueId,
+					'VALUE' => (string)$value['VALUE'],
+					'XML_ID' => $value['XML_ID'] ?? '',
+					'SORT' => (int)$value['SORT'] ?? 500,
+					'DEF' => (isset($value['DEF']) ? ($value['DEF'] === 'Y' ? 'Y' : 'N') : 'N'),
+				];
 			}
 
 			$arFields['VALUES'] = $values;
@@ -4510,12 +4537,16 @@ class CCrmProductPropertyRestProxy extends CCrmRestProxyBase
 		$property = new CIBlockProperty;
 		$result = $property->Add($arFields);
 
-		if (intval($result) <= 0)
+		if ((int)$result <= 0)
 		{
 			if (!empty($property->LAST_ERROR))
+			{
 				$errors[] = $property->LAST_ERROR;
-			else if($e = $APPLICATION->GetException())
+			}
+			else if ($e = $APPLICATION->GetException())
+			{
 				$errors[] = $e->GetString();
+			}
 		}
 
 		return $result;
@@ -4573,7 +4604,7 @@ class CCrmProductPropertyRestProxy extends CCrmRestProxyBase
 		if (isset($result['USER_TYPE_SETTINGS']) && is_array($result['USER_TYPE_SETTINGS']))
 		{
 			foreach ($result['USER_TYPE_SETTINGS'] as $key => $value)
-				$userTypeSettings[strtoupper($key)] = $value;
+				$userTypeSettings[mb_strtoupper($key)] = $value;
 			$result['USER_TYPE_SETTINGS'] = $userTypeSettings;
 		}
 
@@ -4671,7 +4702,7 @@ class CCrmProductPropertyRestProxy extends CCrmRestProxyBase
 		{
 			$userTypeSettings = array();
 			foreach ($fields['USER_TYPE_SETTINGS'] as $key => $value)
-				$userTypeSettings[strtolower($key)] = $value;
+				$userTypeSettings[mb_strtolower($key)] = $value;
 			$fields['USER_TYPE_SETTINGS'] = $userTypeSettings;
 			unset($userTypeSettings);
 		}
@@ -4765,10 +4796,10 @@ class CCrmProductPropertyRestProxy extends CCrmRestProxyBase
 
 	public function processMethodRequest($name, $nameDetails, $arParams, $nav, $server)
 	{
-		$name = strtoupper($name);
+		$name = mb_strtoupper($name);
 		if($name === 'PROPERTY')
 		{
-			$nameSuffix = strtoupper(!empty($nameDetails) ? implode('_', $nameDetails) : '');
+			$nameSuffix = mb_strtoupper(!empty($nameDetails)? implode('_', $nameDetails) : '');
 			if($nameSuffix === 'FIELDS')
 			{
 				return self::getFields();
@@ -4782,7 +4813,7 @@ class CCrmProductPropertyRestProxy extends CCrmRestProxyBase
 				$propertyType = $userType = '';
 				foreach ($arParams as $name => $value)
 				{
-					switch (strtolower($name))
+					switch(mb_strtolower($name))
 					{
 						case 'propertytype':
 							$propertyType = strval($value);
@@ -4832,21 +4863,21 @@ class CCrmProductPropertyRestProxy extends CCrmRestProxyBase
 	public static function processEvent(array $arParams, array $arHandler)
 	{
 		$eventName = $arHandler['EVENT_NAME'];
-		switch (strtolower($eventName))
+		switch(mb_strtolower($eventName))
 		{
 			case 'oncrmproductpropertyadd':
 			case 'oncrmproductpropertyupdate':
 			case 'oncrmproductpropertydelete':
 				{
-					$fields = isset($arParams[0]) && is_array($arParams[0]) ? $arParams[0] : array();
+					$fields = isset($arParams[0]) && is_array($arParams[0])? $arParams[0] : array();
 
-					$id = isset($fields['ID']) ? (int)$fields['ID'] : 0;
+					$id = isset($fields['ID'])? (int)$fields['ID'] : 0;
 					if($id <= 0)
 					{
 						throw new RestException("Could not find entity ID in fields of event \"{$eventName}\"");
 					}
 
-					$iblockId = isset($fields['IBLOCK_ID']) ? (int)$fields['IBLOCK_ID'] : 0;
+					$iblockId = isset($fields['IBLOCK_ID'])? (int)$fields['IBLOCK_ID'] : 0;
 					if($iblockId <= 0)
 					{
 						throw new RestException("Could not find IBLOCK_ID in fields of event \"{$eventName}\"");
@@ -4891,7 +4922,7 @@ class CCrmProductSectionRestProxy extends CCrmRestProxyBase
 			return false;
 		}
 
-		$result = CCrmProductSection::Add($fields);
+		$result = CCrmProductSection::Add($fields, ['GENERATE_CODE' => true]);
 		if(!(is_int($result) && $result > 0))
 		{
 			$errors[] = CCrmProductSection::GetLastError();
@@ -4972,20 +5003,20 @@ class CCrmProductSectionRestProxy extends CCrmRestProxyBase
 	public static function processEvent(array $arParams, array $arHandler)
 	{
 		$eventName = $arHandler['EVENT_NAME'];
-		switch (strtolower($eventName))
+		switch(mb_strtolower($eventName))
 		{
 			case 'oncrmproductsectionadd':
 			case 'oncrmproductsectionupdate':
 			case 'oncrmproductsectiondelete':
-				$fields = isset($arParams[0]) && is_array($arParams[0]) ? $arParams[0] : array();
+				$fields = isset($arParams[0]) && is_array($arParams[0])? $arParams[0] : array();
 
-				$id = isset($fields['ID']) ? (int)$fields['ID'] : 0;
+				$id = isset($fields['ID'])? (int)$fields['ID'] : 0;
 				if($id <= 0)
 				{
 					throw new RestException("Could not find entity ID in fields of event \"{$eventName}\"");
 				}
 
-				$iblockId = isset($fields['IBLOCK_ID']) ? (int)$fields['IBLOCK_ID'] : 0;
+				$iblockId = isset($fields['IBLOCK_ID'])? (int)$fields['IBLOCK_ID'] : 0;
 				if($iblockId <= 0)
 				{
 					throw new RestException("Could not find IBLOCK_ID in fields of event \"{$eventName}\"");
@@ -5271,6 +5302,13 @@ class CCrmLeadRestProxy extends CCrmRestProxyBase
 			return false;
 		}
 
+		$diskQuotaRestriction = \Bitrix\Crm\Restriction\RestrictionManager::getDiskQuotaRestriction();
+		if (!$diskQuotaRestriction->hasPermission())
+		{
+			$errors[] = $diskQuotaRestriction->getErrorMessage();
+			return false;
+		}
+
 		if(isset($fields['COMMENTS']))
 		{
 			$fields['COMMENTS'] = $this->sanitizeHtml($fields['COMMENTS']);
@@ -5284,7 +5322,7 @@ class CCrmLeadRestProxy extends CCrmRestProxyBase
 		}
 		if(is_array($params) && isset($params['REGISTER_SONET_EVENT']))
 		{
-			$options['REGISTER_SONET_EVENT'] = strtoupper($params['REGISTER_SONET_EVENT']) === 'Y';
+			$options['REGISTER_SONET_EVENT'] = mb_strtoupper($params['REGISTER_SONET_EVENT']) === 'Y';
 		}
 		$result = $entity->Add($fields, true, $options);
 		if($result <= 0)
@@ -5303,11 +5341,11 @@ class CCrmLeadRestProxy extends CCrmRestProxyBase
 					$errors
 				);
 			}
+			//Region automation
+			$starter = new \Bitrix\Crm\Automation\Starter(\CCrmOwnerType::Lead, $result);
+			$starter->setContextToRest()->setUserId($this->getCurrentUserID())->runOnAdd();
+			//End region
 		}
-
-		//Region automation
-		\Bitrix\Crm\Automation\Factory::runOnAdd(\CCrmOwnerType::Lead, $result);
-		//End region
 
 		return $result;
 	}
@@ -5400,6 +5438,13 @@ class CCrmLeadRestProxy extends CCrmRestProxyBase
 			return false;
 		}
 
+		$diskQuotaRestriction = \Bitrix\Crm\Restriction\RestrictionManager::getDiskQuotaRestriction();
+		if (!$diskQuotaRestriction->hasPermission())
+		{
+			$errors[] = $diskQuotaRestriction->getErrorMessage();
+			return false;
+		}
+
 		if(isset($fields['COMMENTS']))
 		{
 			$fields['COMMENTS'] = $this->sanitizeHtml($fields['COMMENTS']);
@@ -5416,17 +5461,17 @@ class CCrmLeadRestProxy extends CCrmRestProxyBase
 		{
 			if(isset($params['REGISTER_HISTORY_EVENT']))
 			{
-				$compare = strtoupper($params['REGISTER_HISTORY_EVENT']) === 'Y';
+				$compare = mb_strtoupper($params['REGISTER_HISTORY_EVENT']) === 'Y';
 			}
 
 			if(isset($params['REGISTER_SONET_EVENT']))
 			{
-				$options['REGISTER_SONET_EVENT'] = strtoupper($params['REGISTER_SONET_EVENT']) === 'Y';
+				$options['REGISTER_SONET_EVENT'] = mb_strtoupper($params['REGISTER_SONET_EVENT']) === 'Y';
 			}
 		}
 
 		//check STATUS_ID changes
-		$statusChanged = false;
+		$arPresentFields = [];
 		if (isset($fields['STATUS_ID']))
 		{
 			$dbDocumentList = CCrmLead::GetListEx(
@@ -5437,8 +5482,10 @@ class CCrmLeadRestProxy extends CCrmRestProxyBase
 				array('ID', 'STATUS_ID')
 			);
 			$arPresentFields = $dbDocumentList->Fetch();
-			if ($arPresentFields['STATUS_ID'] != $fields['STATUS_ID'])
-				$statusChanged = true;
+			if (!is_array($arPresentFields))
+			{
+				$arPresentFields = [];
+			}
 		}
 
 		$result = $entity->Update($ID, $fields, $compare, true, $options);
@@ -5458,12 +5505,12 @@ class CCrmLeadRestProxy extends CCrmRestProxyBase
 					$errors
 				);
 			}
+			//Region automation
+			$starter = new \Bitrix\Crm\Automation\Starter(\CCrmOwnerType::Lead, $ID);
+			$starter->setContextToRest()->setUserId($this->getCurrentUserID());
+			$starter->runOnUpdate($fields, $arPresentFields);
+			//End region
 		}
-
-		//Region automation
-		if ($statusChanged)
-			\Bitrix\Crm\Automation\Factory::runOnStatusChanged(\CCrmOwnerType::Lead, $ID);
-		//End region
 
 		return $result;
 	}
@@ -5564,10 +5611,10 @@ class CCrmLeadRestProxy extends CCrmRestProxyBase
 	}
 	public function processMethodRequest($name, $nameDetails, $arParams, $nav, $server)
 	{
-		$name = strtoupper($name);
+		$name = mb_strtoupper($name);
 		if($name === 'PRODUCTROWS')
 		{
-			$nameSuffix = strtoupper(!empty($nameDetails) ? implode('_', $nameDetails) : '');
+			$nameSuffix = mb_strtoupper(!empty($nameDetails)? implode('_', $nameDetails) : '');
 
 			if($nameSuffix === 'GET')
 			{
@@ -5657,6 +5704,13 @@ class CCrmDealRestProxy extends CCrmRestProxyBase
 			return false;
 		}
 
+		$diskQuotaRestriction = \Bitrix\Crm\Restriction\RestrictionManager::getDiskQuotaRestriction();
+		if (!$diskQuotaRestriction->hasPermission())
+		{
+			$errors[] = $diskQuotaRestriction->getErrorMessage();
+			return false;
+		}
+
 		if(isset($fields['COMMENTS']))
 		{
 			$fields['COMMENTS'] = $this->sanitizeHtml($fields['COMMENTS']);
@@ -5674,7 +5728,7 @@ class CCrmDealRestProxy extends CCrmRestProxyBase
 		}
 		if(is_array($params) && isset($params['REGISTER_SONET_EVENT']))
 		{
-			$options['REGISTER_SONET_EVENT'] = strtoupper($params['REGISTER_SONET_EVENT']) === 'Y';
+			$options['REGISTER_SONET_EVENT'] = mb_strtoupper($params['REGISTER_SONET_EVENT']) === 'Y';
 		}
 		$result = $entity->Add($fields, true, $options);
 		if($result <= 0)
@@ -5699,11 +5753,11 @@ class CCrmDealRestProxy extends CCrmRestProxyBase
 					$errors
 				);
 			}
+			//Region automation
+			$starter = new \Bitrix\Crm\Automation\Starter(\CCrmOwnerType::Deal, $result);
+			$starter->setContextToRest()->setUserId($this->getCurrentUserID())->runOnAdd();
+			//End region
 		}
-
-		//Region automation
-		\Bitrix\Crm\Automation\Factory::runOnAdd(\CCrmOwnerType::Deal, $result);
-		//End region
 
 		return $result;
 	}
@@ -5784,6 +5838,13 @@ class CCrmDealRestProxy extends CCrmRestProxyBase
 			return false;
 		}
 
+		$diskQuotaRestriction = \Bitrix\Crm\Restriction\RestrictionManager::getDiskQuotaRestriction();
+		if (!$diskQuotaRestriction->hasPermission())
+		{
+			$errors[] = $diskQuotaRestriction->getErrorMessage();
+			return false;
+		}
+
 		if(isset($fields['COMMENTS']))
 		{
 			$fields['COMMENTS'] = $this->sanitizeHtml($fields['COMMENTS']);
@@ -5800,17 +5861,17 @@ class CCrmDealRestProxy extends CCrmRestProxyBase
 		{
 			if(isset($params['REGISTER_HISTORY_EVENT']))
 			{
-				$compare = strtoupper($params['REGISTER_HISTORY_EVENT']) === 'Y';
+				$compare = mb_strtoupper($params['REGISTER_HISTORY_EVENT']) === 'Y';
 			}
 
 			if(isset($params['REGISTER_SONET_EVENT']))
 			{
-				$options['REGISTER_SONET_EVENT'] = strtoupper($params['REGISTER_SONET_EVENT']) === 'Y';
+				$options['REGISTER_SONET_EVENT'] = mb_strtoupper($params['REGISTER_SONET_EVENT']) === 'Y';
 			}
 		}
 
 		//check STAGE_ID changes
-		$stageChanged = false;
+		$arPresentFields = [];
 		if (isset($fields['STAGE_ID']))
 		{
 			$dbDocumentList = CCrmDeal::GetListEx(
@@ -5821,8 +5882,10 @@ class CCrmDealRestProxy extends CCrmRestProxyBase
 				array('ID', 'STAGE_ID')
 			);
 			$arPresentFields = $dbDocumentList->Fetch();
-			if ($arPresentFields['STAGE_ID'] != $fields['STAGE_ID'])
-				$stageChanged = true;
+			if (!is_array($arPresentFields))
+			{
+				$arPresentFields = [];
+			}
 		}
 
 		$defaultRequisiteLinkParams = Requisite\EntityLink::determineRequisiteLinkBeforeSave(
@@ -5852,12 +5915,12 @@ class CCrmDealRestProxy extends CCrmRestProxyBase
 					$errors
 				);
 			}
+			//Region automation
+			$starter = new \Bitrix\Crm\Automation\Starter(\CCrmOwnerType::Deal, $ID);
+			$starter->setContextToRest()->setUserId($this->getCurrentUserID());
+			$starter->runOnUpdate($fields, $arPresentFields);
+			//End region
 		}
-
-		//Region automation
-		if ($stageChanged)
-			\Bitrix\Crm\Automation\Factory::runOnStatusChanged(\CCrmOwnerType::Deal, $ID);
-		//End region
 
 		return $result;
 	}
@@ -5981,8 +6044,8 @@ class CCrmDealRestProxy extends CCrmRestProxyBase
 	}
 	public function processMethodRequest($name, $nameDetails, $arParams, $nav, $server)
 	{
-		$name = strtoupper($name);
-		$nameSuffix = strtoupper(!empty($nameDetails) ? implode('_', $nameDetails) : '');
+		$name = mb_strtoupper($name);
+		$nameSuffix = mb_strtoupper(!empty($nameDetails)? implode('_', $nameDetails) : '');
 		if($name === 'PRODUCTROWS')
 		{
 			if($nameSuffix === 'GET')
@@ -6189,10 +6252,10 @@ class CCrmDealCategoryProxy extends CCrmRestProxyBase
 	}
 	public function processMethodRequest($name, $nameDetails, $arParams, $nav, $server)
 	{
-		$name = strtoupper($name);
+		$name = mb_strtoupper($name);
 		if($name === 'DEFAULT')
 		{
-			$nameSuffix = strtoupper(!empty($nameDetails) ? implode('_', $nameDetails) : '');
+			$nameSuffix = mb_strtoupper(!empty($nameDetails)? implode('_', $nameDetails) : '');
 			if($nameSuffix === 'GET')
 			{
 				return array('ID' => 0, 'NAME' => \Bitrix\Crm\Category\DealCategory::getDefaultCategoryName());
@@ -6213,7 +6276,7 @@ class CCrmDealCategoryProxy extends CCrmRestProxyBase
 		}
 		elseif($name === 'STAGE')
 		{
-			$nameSuffix = strtoupper(!empty($nameDetails) ? implode('_', $nameDetails) : '');
+			$nameSuffix = mb_strtoupper(!empty($nameDetails)? implode('_', $nameDetails) : '');
 			if($nameSuffix === 'LIST')
 			{
 				$statusProxy = new CCrmStatusRestProxy();
@@ -6639,10 +6702,10 @@ class CCrmDealRecurringRestProxy extends CCrmRestProxyBase
 	}
 	public function processMethodRequest($name, $nameDetails, $arParams, $nav, $server)
 	{
-		$name = strtoupper($name);
+		$name = mb_strtoupper($name);
 		if($name === 'RECURRING')
 		{
-			$nameSuffix = strtoupper(!empty($nameDetails) ? implode('_', $nameDetails) : '');
+			$nameSuffix = mb_strtoupper(!empty($nameDetails)? implode('_', $nameDetails) : '');
 			switch ($nameSuffix)
 			{
 				case 'EXPOSE':
@@ -6681,7 +6744,7 @@ class CCrmDealRecurringRestProxy extends CCrmRestProxyBase
 		{
 			$eventFields = $event->getParameters();
 		}
-		$eventName = strtolower($arHandler['EVENT_NAME']);
+		$eventName = mb_strtolower($arHandler['EVENT_NAME']);
 		if ($eventName === 'oncrmdealrecurringexpose')
 		{
 			$id = isset($eventFields['ID']) ? (int)$eventFields['ID'] : 0;
@@ -7130,10 +7193,10 @@ class CCrmInvoiceRecurringRestProxy extends CCrmRestProxyBase
 	}
 	public function processMethodRequest($name, $nameDetails, $arParams, $nav, $server)
 	{
-		$name = strtoupper($name);
+		$name = mb_strtoupper($name);
 		if($name === 'RECURRING')
 		{
-			$nameSuffix = strtoupper(!empty($nameDetails) ? implode('_', $nameDetails) : '');
+			$nameSuffix = mb_strtoupper(!empty($nameDetails)? implode('_', $nameDetails) : '');
 			switch ($nameSuffix)
 			{
 				case 'EXPOSE':
@@ -7166,7 +7229,7 @@ class CCrmInvoiceRecurringRestProxy extends CCrmRestProxyBase
 	}
 	public static function processEvent(array $arParams, array $arHandler)
 	{
-		$eventName = strtolower($arHandler['EVENT_NAME']);
+		$eventName = mb_strtolower($arHandler['EVENT_NAME']);
 		$event = $arParams[0];
 		$eventFields = [];
 		if ($event instanceof Main\Event)
@@ -7279,6 +7342,13 @@ class CCrmCompanyRestProxy extends CCrmRestProxyBase
 			return false;
 		}
 
+		$diskQuotaRestriction = \Bitrix\Crm\Restriction\RestrictionManager::getDiskQuotaRestriction();
+		if (!$diskQuotaRestriction->hasPermission())
+		{
+			$errors[] = $diskQuotaRestriction->getErrorMessage();
+			return false;
+		}
+
 		if(isset($fields['COMMENTS']))
 		{
 			$fields['COMMENTS'] = $this->sanitizeHtml($fields['COMMENTS']);
@@ -7292,7 +7362,7 @@ class CCrmCompanyRestProxy extends CCrmRestProxyBase
 		}
 		if(is_array($params) && isset($params['REGISTER_SONET_EVENT']))
 		{
-			$options['REGISTER_SONET_EVENT'] = strtoupper($params['REGISTER_SONET_EVENT']) === 'Y';
+			$options['REGISTER_SONET_EVENT'] = mb_strtoupper($params['REGISTER_SONET_EVENT']) === 'Y';
 		}
 		$result = $entity->Add($fields, true, $options);
 		if($result <= 0)
@@ -7403,14 +7473,30 @@ class CCrmCompanyRestProxy extends CCrmRestProxyBase
 			return false;
 		}
 
+		$diskQuotaRestriction = \Bitrix\Crm\Restriction\RestrictionManager::getDiskQuotaRestriction();
+		if (!$diskQuotaRestriction->hasPermission())
+		{
+			$errors[] = $diskQuotaRestriction->getErrorMessage();
+			return false;
+		}
+
 		if(isset($fields['COMMENTS']))
 		{
 			$fields['COMMENTS'] = $this->sanitizeHtml($fields['COMMENTS']);
 		}
 
+		if(isset($fields['LOGO']) )
+		{
+			$fields['LOGO_del'] = 'Y';
+		}
+
 		$arRow = array();
 		$this->prepareMultiFieldData($this->getOwnerTypeID(), $ID, $arRow);
-		CCrmFieldMulti::CompareValuesFields($arRow['FM'], $fields['FM']);
+
+		if (isset($fields['FM']) && is_array($fields['FM']))
+		{
+			CCrmFieldMulti::CompareValuesFields($arRow['FM'], $fields['FM']);
+		}
 
 		$entity = self::getEntity();
 		$compare = true;
@@ -7423,12 +7509,12 @@ class CCrmCompanyRestProxy extends CCrmRestProxyBase
 		{
 			if(isset($params['REGISTER_HISTORY_EVENT']))
 			{
-				$compare = strtoupper($params['REGISTER_HISTORY_EVENT']) === 'Y';
+				$compare = mb_strtoupper($params['REGISTER_HISTORY_EVENT']) === 'Y';
 			}
 
 			if(isset($params['REGISTER_SONET_EVENT']))
 			{
-				$options['REGISTER_SONET_EVENT'] = strtoupper($params['REGISTER_SONET_EVENT']) === 'Y';
+				$options['REGISTER_SONET_EVENT'] = mb_strtoupper($params['REGISTER_SONET_EVENT']) === 'Y';
 			}
 		}
 
@@ -7484,7 +7570,7 @@ class CCrmCompanyRestProxy extends CCrmRestProxyBase
 
 	public function processMethodRequest($name, $nameDetails, $arParams, $nav, $server)
 	{
-		$name = strtoupper($name);
+		$name = mb_strtoupper($name);
 		if($name === 'CONTACT')
 		{
 			$bindRequestDetails = $nameDetails;
@@ -7563,6 +7649,13 @@ class CCrmContactRestProxy extends CCrmRestProxyBase
 			return false;
 		}
 
+		$diskQuotaRestriction = \Bitrix\Crm\Restriction\RestrictionManager::getDiskQuotaRestriction();
+		if (!$diskQuotaRestriction->hasPermission())
+		{
+			$errors[] = $diskQuotaRestriction->getErrorMessage();
+			return false;
+		}
+
 		if(isset($fields['COMMENTS']))
 		{
 			$fields['COMMENTS'] = $this->sanitizeHtml($fields['COMMENTS']);
@@ -7576,7 +7669,7 @@ class CCrmContactRestProxy extends CCrmRestProxyBase
 		}
 		if(is_array($params) && isset($params['REGISTER_SONET_EVENT']))
 		{
-			$options['REGISTER_SONET_EVENT'] = strtoupper($params['REGISTER_SONET_EVENT']) === 'Y';
+			$options['REGISTER_SONET_EVENT'] = mb_strtoupper($params['REGISTER_SONET_EVENT']) === 'Y';
 		}
 		$result = $entity->Add($fields, true, $options);
 		if($result <= 0)
@@ -7682,14 +7775,30 @@ class CCrmContactRestProxy extends CCrmRestProxyBase
 			return false;
 		}
 
+		$diskQuotaRestriction = \Bitrix\Crm\Restriction\RestrictionManager::getDiskQuotaRestriction();
+		if (!$diskQuotaRestriction->hasPermission())
+		{
+			$errors[] = $diskQuotaRestriction->getErrorMessage();
+			return false;
+		}
+
 		if(isset($fields['COMMENTS']))
 		{
 			$fields['COMMENTS'] = $this->sanitizeHtml($fields['COMMENTS']);
 		}
 
+		if(isset($fields['PHOTO']) )
+		{
+			$fields['PHOTO_del'] = 'Y';
+		}
+
 		$arRow = array();
 		$this->prepareMultiFieldData($this->getOwnerTypeID(), $ID, $arRow);
-		CCrmFieldMulti::CompareValuesFields($arRow['FM'], $fields['FM']);
+
+		if (isset($fields['FM']) && is_array($fields['FM']))
+		{
+			CCrmFieldMulti::CompareValuesFields($arRow['FM'], $fields['FM']);
+		}
 
 		$entity = self::getEntity();
 		$compare = true;
@@ -7702,12 +7811,12 @@ class CCrmContactRestProxy extends CCrmRestProxyBase
 		{
 			if(isset($params['REGISTER_HISTORY_EVENT']))
 			{
-				$compare = strtoupper($params['REGISTER_HISTORY_EVENT']) === 'Y';
+				$compare = mb_strtoupper($params['REGISTER_HISTORY_EVENT']) === 'Y';
 			}
 
 			if(isset($params['REGISTER_SONET_EVENT']))
 			{
-				$options['REGISTER_SONET_EVENT'] = strtoupper($params['REGISTER_SONET_EVENT']) === 'Y';
+				$options['REGISTER_SONET_EVENT'] = mb_strtoupper($params['REGISTER_SONET_EVENT']) === 'Y';
 			}
 		}
 
@@ -7763,7 +7872,7 @@ class CCrmContactRestProxy extends CCrmRestProxyBase
 
 	public function processMethodRequest($name, $nameDetails, $arParams, $nav, $server)
 	{
-		$name = strtoupper($name);
+		$name = mb_strtoupper($name);
 		if($name === 'COMPANY')
 		{
 			$bindRequestDetails = $nameDetails;
@@ -7922,8 +8031,8 @@ class CCrmCurrencyRestProxy extends CCrmRestProxyBase
 	protected function resolveEntityID(&$arParams)
 	{
 		return isset($arParams['ID'])
-			? strtoupper($arParams['ID'])
-			: (isset($arParams['id']) ? strtoupper($arParams['id']) : '');
+			? mb_strtoupper($arParams['ID'])
+			: (isset($arParams['id'])? mb_strtoupper($arParams['id']) : '');
 	}
 	protected function checkEntityID($ID)
 	{
@@ -7986,10 +8095,10 @@ class CCrmCurrencyRestProxy extends CCrmRestProxyBase
 	}
 	public function processMethodRequest($name, $nameDetails, $arParams, $nav, $server)
 	{
-		$name = strtoupper($name);
+		$name = mb_strtoupper($name);
 		if($name === 'LOCALIZATIONS')
 		{
-			$nameSuffix = strtoupper(!empty($nameDetails) ? implode('_', $nameDetails) : '');
+			$nameSuffix = mb_strtoupper(!empty($nameDetails)? implode('_', $nameDetails) : '');
 			if($nameSuffix === 'FIELDS')
 			{
 				$fildsInfo = $this->getLocalizationFieldsInfo();
@@ -8014,7 +8123,7 @@ class CCrmCurrencyRestProxy extends CCrmRestProxyBase
 		}
 		elseif($name === 'BASE')
 		{
-			$nameSuffix = strtoupper(!empty($nameDetails) ? implode('_', $nameDetails) : '');
+			$nameSuffix = mb_strtoupper(!empty($nameDetails)? implode('_', $nameDetails) : '');
 			if($nameSuffix === 'GET')
 			{
 				return \CCrmCurrency::GetBaseCurrencyID();
@@ -8048,13 +8157,13 @@ class CCrmCurrencyRestProxy extends CCrmRestProxyBase
 	public static function processEvent(array $arParams, array $arHandler)
 	{
 		$eventName = $arHandler['EVENT_NAME'];
-		switch (strtolower($eventName))
+		switch(mb_strtolower($eventName))
 		{
 			case 'oncrmcurrencyadd':
 			case 'oncrmcurrencyupdate':
 			case 'oncrmcurrencydelete':
 				{
-					$ID = isset($arParams[0]) && is_string($arParams[0]) ? $arParams[0] : '';
+					$ID = isset($arParams[0]) && is_string($arParams[0])? $arParams[0] : '';
 				}
 				break;
 			default:
@@ -8096,8 +8205,9 @@ class CCrmStatusRestProxy extends CCrmRestProxyBase
 			return false;
 		}
 
-		$entityID = isset($fields['ENTITY_ID']) ? $fields['ENTITY_ID'] : '';
-		$statusID = isset($fields['STATUS_ID']) ? $fields['STATUS_ID'] : '';
+		$entityID = $fields['ENTITY_ID'] ?? '';
+		$statusID = $fields['STATUS_ID'] ?? '';
+		$color = $fields['COLOR'] ?? $fields['EXTRA']['COLOR'] ?? '';
 		if($entityID === '' || $statusID === '')
 		{
 			if($entityID === '')
@@ -8121,15 +8231,12 @@ class CCrmStatusRestProxy extends CCrmRestProxyBase
 		}
 
 		$fields['SYSTEM'] = 'N';
+		$fields['COLOR'] = $color;
 		$entity = new CCrmStatus($entityID);
 		$result = $entity->Add($fields, true);
 		if($result === false)
 		{
 			$errors[] = $entity->GetLastError();
-		}
-		elseif(isset($fields['EXTRA']))
-		{
-			self::saveExtra($fields);
 		}
 		return $result;
 	}
@@ -8198,8 +8305,12 @@ class CCrmStatusRestProxy extends CCrmRestProxyBase
 			return false;
 		}
 
+		if(!isset($fields['COLOR']) && isset($fields['EXTRA']['COLOR']))
+		{
+			$fields['COLOR'] = $fields['EXTRA']['COLOR'];
+		}
 		$result = true;
-		if(isset($fields['NAME']) || isset($fields['SORT']) || isset($fields['STATUS_ID']))
+		if(isset($fields['NAME']) || isset($fields['SORT']) || isset($fields['STATUS_ID']) || isset($fields['COLOR']))
 		{
 			if(!isset($fields['NAME']))
 			{
@@ -8216,15 +8327,6 @@ class CCrmStatusRestProxy extends CCrmRestProxyBase
 			{
 				$errors[] = $entity->GetLastError();
 			}
-		}
-		if($result && isset($fields['EXTRA']))
-		{
-			$fields['ENTITY_ID'] = $currentFields['ENTITY_ID'];
-			if(!isset($fields['STATUS_ID']))
-			{
-				$fields['STATUS_ID'] = $currentFields['STATUS_ID'];
-			}
-			self::saveExtra($fields);
 		}
 
 		return $result !== false;
@@ -8271,114 +8373,36 @@ class CCrmStatusRestProxy extends CCrmRestProxyBase
 	}
 	private static function prepareExtra(array &$fields)
 	{
-		$statusID = isset($fields['STATUS_ID']) ? $fields['STATUS_ID'] : '';
+		$statusID = $fields['STATUS_ID'] ?? '';
 		if($statusID === '')
 		{
 			return null;
 		}
 
 		$result = null;
-		$colorScheme = null;
 		$entityID = isset($fields['ENTITY_ID']) ? $fields['ENTITY_ID'] : '';
 		if($entityID === 'STATUS')
 		{
 			$result = array('SEMANTICS' => CCrmLead::GetStatusSemantics($statusID));
-			$colorScheme = LeadStatusColorScheme::getCurrent();
 		}
 		elseif($entityID === 'QUOTE_STATUS')
 		{
 			$result = array('SEMANTICS' => CCrmQuote::GetStatusSemantics($statusID));
-			$colorScheme = QuoteStatusColorScheme::getCurrent();
 		}
 		elseif($entityID === 'DEAL_STAGE')
 		{
 			$result = array('SEMANTICS' => CCrmDeal::GetStageSemantics($statusID, 0));
-			$colorScheme = DealStageColorScheme::getByCategory(0);
 		}
 		elseif(DealCategory::hasStatusEntity($entityID))
 		{
 			$categoryID = DealCategory::convertFromStatusEntityID($entityID);
 			$result = array('SEMANTICS' => CCrmDeal::GetStageSemantics($statusID, $categoryID));
-			$colorScheme = DealStageColorScheme::getByCategory($categoryID);
 		}
 
 		if(is_array($result))
 		{
-			if($colorScheme !== null && $colorScheme->isPersistent())
-			{
-				$element = $colorScheme->getElementByName($statusID);
-				if($element !== null)
-				{
-					$result['COLOR'] = $element->getColor();
-				}
-			}
+			$result['COLOR'] = $fields['COLOR'] ?? '';
 			$fields['EXTRA'] = $result;
-		}
-	}
-	private static function saveExtra(array $fields)
-	{
-		$extra = isset($fields['EXTRA']) && is_array($fields['EXTRA']) ? $fields['EXTRA'] : null;
-		if(empty($extra) || !isset($extra['COLOR']) || !is_string($extra['COLOR']))
-		{
-			return;
-		}
-		$color = $extra['COLOR'];
-
-		$statusID = isset($fields['STATUS_ID']) ? $fields['STATUS_ID'] : '';
-		if($statusID === '')
-		{
-			return;
-		}
-
-		$colorScheme = null;
-		$entityID = isset($fields['ENTITY_ID']) ? $fields['ENTITY_ID'] : '';
-		if($entityID === 'STATUS')
-		{
-			$colorScheme = LeadStatusColorScheme::getCurrent();
-		}
-		elseif($entityID === 'QUOTE_STATUS')
-		{
-			$colorScheme = QuoteStatusColorScheme::getCurrent();
-		}
-		elseif($entityID === 'DEAL_STAGE')
-		{
-			$colorScheme = DealStageColorScheme::getByCategory(0);
-		}
-		elseif(DealCategory::hasStatusEntity($entityID))
-		{
-			$colorScheme = DealStageColorScheme::getByCategory(
-				DealCategory::convertFromStatusEntityID($entityID)
-			);
-		}
-
-		if($colorScheme !== null)
-		{
-			$isChanged = false;
-
-			$element = $colorScheme->getElementByName($statusID);
-			if($element !== null)
-			{
-				if($color === '')
-				{
-					$color = $colorScheme->getDefaultColor($statusID);
-				}
-
-				if($element->getColor() !== $color)
-				{
-					$element->setColor($color);
-					$isChanged = true;
-				}
-			}
-			else
-			{
-				$colorScheme->addElement(new PhaseColorSchemeElement($statusID, $color));
-				$isChanged = true;
-			}
-
-			if($isChanged)
-			{
-				$colorScheme->save();
-			}
 		}
 	}
 	private static function prepareEntityTypes()
@@ -8407,7 +8431,7 @@ class CCrmStatusRestProxy extends CCrmRestProxyBase
 		}
 
 		//return CCrmStatus::GetStatusList($entityID);
-		$dbResult = CCrmStatus::GetList(array('sort' => 'asc'), array('ENTITY_ID' => strtoupper($entityID)));
+		$dbResult = CCrmStatus::GetList(array('sort' => 'asc'), array('ENTITY_ID' => mb_strtoupper($entityID)));
 		if(!$dbResult)
 		{
 			return array();
@@ -8427,10 +8451,10 @@ class CCrmStatusRestProxy extends CCrmRestProxyBase
 	}
 	public function processMethodRequest($name, $nameDetails, $arParams, $nav, $server)
 	{
-		$name = strtoupper($name);
+		$name = mb_strtoupper($name);
 		if($name === 'ENTITY')
 		{
-			$nameSuffix = strtoupper(!empty($nameDetails) ? implode('_', $nameDetails) : '');
+			$nameSuffix = mb_strtoupper(!empty($nameDetails)? implode('_', $nameDetails) : '');
 			if($nameSuffix === 'TYPES')
 			{
 				return $this->getEntityTypes();
@@ -8439,13 +8463,13 @@ class CCrmStatusRestProxy extends CCrmRestProxyBase
 			{
 				return $this->getEntityItems($this->resolveRelationID($arParams, 'entity'));
 			}
-		}
-		elseif($name === 'EXTRA')
-		{
-			$nameSuffix = strtoupper(!empty($nameDetails) ? implode('_', $nameDetails) : '');
-			if($nameSuffix === 'FIELDS')
+			elseif($name === 'EXTRA')
 			{
-				return CCrmStatus::GetFieldExtraTypeInfo();
+				$nameSuffix = mb_strtoupper(!empty($nameDetails)? implode('_', $nameDetails) : '');
+				if($nameSuffix === 'FIELDS')
+				{
+					return CCrmStatus::GetFieldExtraTypeInfo();
+				}
 			}
 		}
 		return parent::processMethodRequest($name, $nameDetails, $arParams, $nav, $server);
@@ -8529,7 +8553,7 @@ class CCrmStatusInvoiceRestProxy extends CCrmRestProxyBase
 
 		$filter['ENTITY_ID'] = 'INVOICE_STATUS';
 
-		return CCrmStatusInvoice::GetList($order, $filter, $select);
+		return CCrmStatusInvoice::GetList($order, $filter);
 	}
 	protected function innerUpdate($ID, &$fields, &$errors, array $params = null)
 	{
@@ -8606,10 +8630,10 @@ class CCrmStatusInvoiceRestProxy extends CCrmRestProxyBase
 
 	public function processMethodRequest($name, $nameDetails, $arParams, $nav, $server)
 	{
-		$name = strtoupper($name);
+		$name = mb_strtoupper($name);
 		if($name === 'STATUS')
 		{
-			$nameSuffix = strtoupper(!empty($nameDetails) ? implode('_', $nameDetails) : '');
+			$nameSuffix = mb_strtoupper(!empty($nameDetails)? implode('_', $nameDetails) : '');
 
 			switch ($nameSuffix)
 			{
@@ -8716,7 +8740,14 @@ class CCrmActivityRestProxy extends CCrmRestProxyBase
 				$commEntityID = $v['ENTITY_ID'] = $ownerID;
 			}
 
-			if($commEntityTypeID <= 0 || $commEntityID <= 0 || $commValue === '')
+			if($commEntityTypeID <= 0 || $commEntityID <= 0)
+			{
+				unset($communications[$k]);
+				continue;
+			}
+
+			// value can be empty for meetings and tasks
+			if ($commValue === '' && !in_array($typeID, [CCrmActivityType::Meeting, CCrmActivityType::Task]))
 			{
 				unset($communications[$k]);
 				continue;
@@ -8831,7 +8862,7 @@ class CCrmActivityRestProxy extends CCrmRestProxyBase
 		}
 
 		$direction = isset($fields['DIRECTION']) ? intval($fields['DIRECTION']) : CCrmActivityDirection::Undefined;
-		$completed = isset($fields['COMPLETED']) && strtoupper($fields['COMPLETED']) === 'Y';
+		$completed = isset($fields['COMPLETED']) && mb_strtoupper($fields['COMPLETED']) === 'Y';
 		$communications = isset($fields['COMMUNICATIONS']) && is_array($fields['COMMUNICATIONS'])
 			? $fields['COMMUNICATIONS'] : array();
 
@@ -8932,8 +8963,6 @@ class CCrmActivityRestProxy extends CCrmRestProxyBase
 			$errors[] = CCrmActivity::GetLastErrorMessage();
 			return false;
 		}
-
-		CCrmActivity::SaveCommunications($ID, $communications, $fields, false, false);
 
 		if($completed
 			&& $typeID === CCrmActivityType::Email
@@ -9188,7 +9217,7 @@ class CCrmActivityRestProxy extends CCrmRestProxyBase
 		$regEvent = true;
 		if(is_array($params) && isset($params['REGISTER_HISTORY_EVENT']))
 		{
-			$regEvent = strtoupper($params['REGISTER_HISTORY_EVENT']) === 'Y';
+			$regEvent = mb_strtoupper($params['REGISTER_HISTORY_EVENT']) === 'Y';
 		}
 		$result = CCrmActivity::Update($ID, $fields, false, $regEvent, array());
 		if($result === false)
@@ -9278,10 +9307,10 @@ class CCrmActivityRestProxy extends CCrmRestProxyBase
 	}
 	public function processMethodRequest($name, $nameDetails, $arParams, $nav, $server)
 	{
-		$name = strtoupper($name);
+		$name = mb_strtoupper($name);
 		if($name === 'COMMUNICATION')
 		{
-			$nameSuffix = strtoupper(!empty($nameDetails) ? implode('_', $nameDetails) : '');
+			$nameSuffix = mb_strtoupper(!empty($nameDetails)? implode('_', $nameDetails) : '');
 			if($nameSuffix === 'FIELDS')
 			{
 				$fieldsInfo = $this->getCommunicationFieldsInfo();
@@ -9306,13 +9335,13 @@ class CCrmActivityRestProxy extends CCrmRestProxyBase
 	public static function processEvent(array $arParams, array $arHandler)
 	{
 		$eventName = $arHandler['EVENT_NAME'];
-		switch (strtolower($eventName))
+		switch(mb_strtolower($eventName))
 		{
 			case 'oncrmactivityadd':
 			case 'oncrmactivityupdate':
 			case 'oncrmactivitydelete':
 				{
-					$ID = isset($arParams[0]) ? (int)$arParams[0] : 0;
+					$ID = isset($arParams[0])? (int)$arParams[0] : 0;
 				}
 				break;
 			default:
@@ -9339,9 +9368,9 @@ class CCrmDuplicateRestProxy extends CCrmRestProxyBase
 			throw new RestException('Access denied.');
 		}
 
-		if(strtoupper($name) === 'FINDBYCOMM')
+		if(mb_strtoupper($name) === 'FINDBYCOMM')
 		{
-			$type = strtoupper($this->resolveParam($arParams, 'type'));
+			$type = mb_strtoupper($this->resolveParam($arParams, 'type'));
 			if($type !== 'EMAIL' && $type !== 'PHONE')
 			{
 				if($type === '')
@@ -9451,7 +9480,7 @@ class CCrmLiveFeedMessageRestProxy extends CCrmRestProxyBase
 	{
 		global $USER;
 
-		$name = strtoupper($name);
+		$name = mb_strtoupper($name);
 		if($name === 'ADD')
 		{
 			$fields = $this->resolveArrayParam($arParams, 'fields');
@@ -9468,7 +9497,7 @@ class CCrmLiveFeedMessageRestProxy extends CCrmRestProxyBase
 
 			if (
 				isset($fields['POST_TITLE'])
-				&& strlen($fields['POST_TITLE']) > 0
+				&& $fields['POST_TITLE'] <> ''
 			)
 			{
 				$arPOST['POST_TITLE'] = $fields['POST_TITLE'];
@@ -10529,7 +10558,7 @@ class CCrmEntityBindingProxy extends CCrmRestProxyBase
 	}
 	public function processMethodRequest($name, $nameDetails, $arParams, $nav, $server)
 	{
-		$name = strtoupper($name);
+		$name = mb_strtoupper($name);
 		if($name === 'FIELDS')
 		{
 			return $this->getFields();
@@ -10550,7 +10579,7 @@ class CCrmEntityBindingProxy extends CCrmRestProxyBase
 		}
 		elseif($name === 'ITEMS')
 		{
-			$nameSuffix = strtoupper(!empty($nameDetails) ? implode('_', $nameDetails) : '');
+			$nameSuffix = mb_strtoupper(!empty($nameDetails)? implode('_', $nameDetails) : '');
 			if($nameSuffix === 'GET')
 			{
 				return $this->getItems(CCrmRestHelper::resolveEntityID($arParams));
@@ -10597,7 +10626,7 @@ class CCrmUserFieldRestProxy extends UserFieldProxy implements ICrmRestProxy
 	}
 	public function processMethodRequest($name, $nameDetails, $arParams, $nav, $server)
 	{
-		$name = strtoupper($name);
+		$name = mb_strtoupper($name);
 		if($name === 'FIELDS')
 		{
 			return self::getFields();
@@ -10608,7 +10637,7 @@ class CCrmUserFieldRestProxy extends UserFieldProxy implements ICrmRestProxy
 		}
 		elseif($name === 'SETTINGS')
 		{
-			$nameSuffix = strtoupper(!empty($nameDetails) ? implode('_', $nameDetails) : '');
+			$nameSuffix = mb_strtoupper(!empty($nameDetails)? implode('_', $nameDetails) : '');
 			if($nameSuffix === 'FIELDS')
 			{
 				$type = CCrmRestHelper::resolveParam($arParams, 'type', '');
@@ -10622,7 +10651,7 @@ class CCrmUserFieldRestProxy extends UserFieldProxy implements ICrmRestProxy
 		}
 		elseif($name === 'ENUMERATION')
 		{
-			$nameSuffix = strtoupper(!empty($nameDetails) ? implode('_', $nameDetails) : '');
+			$nameSuffix = mb_strtoupper(!empty($nameDetails)? implode('_', $nameDetails) : '');
 			if($nameSuffix === 'FIELDS')
 			{
 				return self::getEnumerationElementFields();
@@ -10923,7 +10952,7 @@ class CCrmQuoteRestProxy extends CCrmRestProxyBase
 		{
 			if(isset($params['REGISTER_HISTORY_EVENT']))
 			{
-				$compare = strtoupper($params['REGISTER_HISTORY_EVENT']) === 'Y';
+				$compare = mb_strtoupper($params['REGISTER_HISTORY_EVENT']) === 'Y';
 			}
 		}
 
@@ -11048,10 +11077,10 @@ class CCrmQuoteRestProxy extends CCrmRestProxyBase
 	}
 	public function processMethodRequest($name, $nameDetails, $arParams, $nav, $server)
 	{
-		$name = strtoupper($name);
+		$name = mb_strtoupper($name);
 		if($name === 'PRODUCTROWS')
 		{
-			$nameSuffix = strtoupper(!empty($nameDetails) ? implode('_', $nameDetails) : '');
+			$nameSuffix = mb_strtoupper(!empty($nameDetails)? implode('_', $nameDetails) : '');
 
 			if($nameSuffix === 'GET')
 			{
@@ -11166,9 +11195,9 @@ class CCrmRequisitePresetRestProxy extends CCrmRestProxyBase
 		{
 			$countryInfo = is_array($countriesInfo[$countryId]) ? $countriesInfo[$countryId] : array();
 			$result[] = array(
-				'ID' => $countryId,
-				'CODE' => isset($countryInfo['CODE']) ? $countryInfo['CODE'] : '',
-				'TITLE' => isset($countryInfo['TITLE']) ? $countryInfo['TITLE'] : ''
+					'ID' => $countryId,
+					'CODE' => isset($countryInfo['CODE']) ? $countryInfo['CODE'] : '',
+					'TITLE' => isset($countryInfo['TITLE']) ? $countryInfo['TITLE'] : ''
 			);
 		}
 
@@ -11383,7 +11412,7 @@ class CCrmRequisitePresetRestProxy extends CCrmRestProxyBase
 
 	public function processMethodRequest($name, $nameDetails, $arParams, $nav, $server)
 	{
-		$name = strtoupper($name);
+		$name = mb_strtoupper($name);
 		if ($name === 'COUNTRIES')
 		{
 			return $this->getCountriesInfo();
@@ -11543,7 +11572,7 @@ class CCrmRequisitePresetFieldRestProxy extends CCrmRestProxyBase
 
 		$preset = self::getEntity();
 		$result = $this->getByFieldId($id, $preset->settingsGetFields($r['SETTINGS']), array(
-			'COUNTRY_ID' => $r['COUNTRY_ID']
+				'COUNTRY_ID' => $r['COUNTRY_ID']
 		));
 		if(empty($result))
 		{
@@ -11593,7 +11622,7 @@ class CCrmRequisitePresetFieldRestProxy extends CCrmRestProxyBase
 		$preset = self::getEntity();
 
 		$presetField = $this->getByFieldId($id, $preset->settingsGetFields($r['SETTINGS']), array(
-			'COUNTRY_ID' => $r['COUNTRY_ID']
+				'COUNTRY_ID' => $r['COUNTRY_ID']
 		));
 		if(empty($presetField))
 		{
@@ -11654,7 +11683,7 @@ class CCrmRequisitePresetFieldRestProxy extends CCrmRestProxyBase
 		$preset = self::getEntity();
 
 		$presetField = $this->getByFieldId($id, $preset->settingsGetFields($r['SETTINGS']), array(
-			'COUNTRY_ID' => $r['COUNTRY_ID']
+				'COUNTRY_ID' => $r['COUNTRY_ID']
 		));
 		if(empty($presetField))
 		{
@@ -11699,7 +11728,7 @@ class CCrmRequisitePresetFieldRestProxy extends CCrmRestProxyBase
 	public function processMethodRequest($name, $nameDetails, $arParams, $nav, $server)
 	{
 		$errors = array();
-		$name = strtoupper($name);
+		$name = mb_strtoupper($name);
 
 		$presetId = 0;
 		if($name !== 'FIELDS')
@@ -11882,8 +11911,8 @@ class CCrmRequisitePresetFieldRestProxy extends CCrmRestProxyBase
 			if (!in_array($fields['FIELD_NAME'], $fieldsAvailableToAdd, true))
 			{
 				$errors = 'The field '.
-					(isset($fields['FIELD_NAME']) ? "'".$fields['FIELD_NAME']."' " : "").
-					'can not be added.';
+						(isset($fields['FIELD_NAME']) ? "'".$fields['FIELD_NAME']."' " : "").
+						'can not be added.';
 				return false;
 			}
 		}
@@ -11894,13 +11923,13 @@ class CCrmRequisitePresetFieldRestProxy extends CCrmRestProxyBase
 		$entity = self::getEntity();
 
 		$res = $entity->getList(array(
-			'order' => array('SORT' => 'ASC', 'ID' => 'ASC'),
-			'filter' => array(
-				'=ENTITY_TYPE_ID' => $entityTypeID,
-				'=ID' => (int)$ID
-			),
-			'select' => array('ID', 'ENTITY_TYPE_ID', 'SETTINGS', 'COUNTRY_ID'),
-			'limit' => 1
+				'order' => array('SORT' => 'ASC', 'ID' => 'ASC'),
+				'filter' => array(
+						'=ENTITY_TYPE_ID' => $entityTypeID,
+						'=ID' => (int)$ID
+				),
+				'select' => array('ID', 'ENTITY_TYPE_ID', 'SETTINGS', 'COUNTRY_ID'),
+				'limit' => 1
 		));
 
 		return $res->fetch();
@@ -11997,6 +12026,12 @@ class CCrmRequisiteRestProxy extends CCrmRestProxyBase
 			return false;
 		}
 
+		if (!$this->entityExists($entityTypeID, $entityID))
+		{
+			$errors[] = 'Entity not found.';
+			return false;
+		}
+
 		$entity = self::getEntity();
 
 		$result = $entity->add($fields);
@@ -12014,10 +12049,10 @@ class CCrmRequisiteRestProxy extends CCrmRestProxyBase
 			if(self::isBizProcEnabled())
 			{
 				CCrmBizProcHelper::AutoStartWorkflows(
-					CCrmOwnerType::Requisite,
-					$result->getId(),
-					CCrmBizProcEventType::Create,
-					$errors
+						CCrmOwnerType::Requisite,
+						$result->getId(),
+						CCrmBizProcEventType::Create,
+						$errors
 				);
 			}
 		}
@@ -12091,13 +12126,13 @@ class CCrmRequisiteRestProxy extends CCrmRestProxyBase
 			$select = array_keys($this->getFieldsInfo());
 
 		$result = $entity->getList(
-			array(
-				'order' => $order,
-				'filter' => $filter,
-				'select' => $select,
-				'offset' => $offset,
-				'count_total' => true
-			)
+				array(
+						'order' => $order,
+						'filter' => $filter,
+						'select' => $select,
+						'offset' => $offset,
+						'count_total' => true
+				)
 		);
 
 		$dbResult = new CDBResult($result);
@@ -12153,10 +12188,10 @@ class CCrmRequisiteRestProxy extends CCrmRestProxyBase
 			$GLOBALS['USER_FIELD_MANAGER']->Update(EntityRequisite::$sUFEntityID, $ID, $fields);
 
 			CCrmBizProcHelper::AutoStartWorkflows(
-				CCrmOwnerType::Company,
-				$result->getId(),
-				CCrmBizProcEventType::Edit,
-				$errors
+					CCrmOwnerType::Company,
+					$result->getId(),
+					CCrmBizProcEventType::Edit,
+					$errors
 			);
 		}
 		return $result->isSuccess();
@@ -12196,7 +12231,7 @@ class CCrmRequisiteRestProxy extends CCrmRestProxyBase
 
 	public function processMethodRequest($name, $nameDetails, $arParams, $nav, $server)
 	{
-		$name = strtoupper($name);
+		$name = mb_strtoupper($name);
 
 		if($name === 'BANKDETAIL')
 		{
@@ -12207,7 +12242,7 @@ class CCrmRequisiteRestProxy extends CCrmRestProxyBase
 		elseif($name === 'PRESET')
 		{
 			$name = array_shift($nameDetails);
-			$name = strtoupper($name);
+			$name = mb_strtoupper($name);
 			if($name === 'FIELD')
 			{
 				$name = array_shift($nameDetails);
@@ -12248,7 +12283,7 @@ class CCrmRequisiteRestProxy extends CCrmRestProxyBase
 		$event = $arParams[0];
 
 		$eventName = $arHandler['EVENT_NAME'];
-		switch (strtolower($eventName))
+		switch(mb_strtolower($eventName))
 		{
 			case 'oncrmrequisiteadd':
 			case 'oncrmrequisiteupdate':
@@ -12268,6 +12303,18 @@ class CCrmRequisiteRestProxy extends CCrmRestProxyBase
 		}
 
 		return parent::processEntityEvent(CCrmOwnerType::Requisite, $arParams, $arHandler);
+	}
+
+	protected function entityExists(int $entityTypeId, int $entityId): bool
+	{
+		switch ($entityTypeId)
+		{
+			case CCrmOwnerType::Contact:
+				return CCrmContact::Exists($entityId);
+			case CCrmOwnerType::Company:
+				return CCrmCompany::Exists($entityId);
+		}
+		return false;
 	}
 }
 
@@ -12328,10 +12375,10 @@ class CCrmRequisiteBankDetailRestProxy extends CCrmRestProxyBase
 		elseif(self::isBizProcEnabled())
 		{
 			CCrmBizProcHelper::AutoStartWorkflows(
-				CCrmOwnerType::Requisite,
-				$result->getId(),
-				CCrmBizProcEventType::Create,
-				$errors
+					CCrmOwnerType::Requisite,
+					$result->getId(),
+					CCrmBizProcEventType::Create,
+					$errors
 			);
 		}
 		return $result->getId();
@@ -12374,13 +12421,13 @@ class CCrmRequisiteBankDetailRestProxy extends CCrmRestProxyBase
 			$select = array_keys($this->getFieldsInfo());
 
 		$result = $entity->getList(
-			array(
-				'order' => $order,
-				'filter' => $filter,
-				'select' => $select,
-				'offset' => $offset,
-				'count_total' => true
-			)
+				array(
+						'order' => $order,
+						'filter' => $filter,
+						'select' => $select,
+						'offset' => $offset,
+						'count_total' => true
+				)
 		);
 
 		$dbResult = new CDBResult($result);
@@ -12427,10 +12474,10 @@ class CCrmRequisiteBankDetailRestProxy extends CCrmRestProxyBase
 		elseif(self::isBizProcEnabled())
 		{
 			CCrmBizProcHelper::AutoStartWorkflows(
-				CCrmOwnerType::Company,
-				$result->getId(),
-				CCrmBizProcEventType::Edit,
-				$errors
+					CCrmOwnerType::Company,
+					$result->getId(),
+					CCrmBizProcEventType::Edit,
+					$errors
 			);
 		}
 		return $result->isSuccess();
@@ -12484,7 +12531,7 @@ class CCrmRequisiteBankDetailRestProxy extends CCrmRestProxyBase
 	public static function processEvent(array $arParams, array $arHandler)
 	{
 		$eventName = $arHandler['EVENT_NAME'];
-		switch (strtolower($eventName))
+		switch(mb_strtolower($eventName))
 		{
 			case 'oncrmbankdetailadd':
 			case 'oncrmbankdetailupdate':
@@ -12524,8 +12571,8 @@ class CCrmRequisiteLinkRestProxy extends CCrmRestProxyBase
 	}
 
 	protected function checkRequisiteLinks($entityTypeId, $entityId,
-										   $requisiteId, $bankDetailId,
-										   $mcRequisiteId, $mcBankDetailId, &$errors)
+											$requisiteId, $bankDetailId,
+											$mcRequisiteId, $mcBankDetailId, &$errors)
 	{
 		$params = array(
 			'ENTITY_TYPE_ID' => $entityTypeId,
@@ -12700,10 +12747,10 @@ class CCrmRequisiteLinkRestProxy extends CCrmRestProxyBase
 
 	public function processMethodRequest($name, $nameDetails, $arParams, $nav, $server)
 	{
-		$name = strtoupper($name);
+		$name = mb_strtoupper($name);
 		if($name === 'LINK')
 		{
-			$nameSuffix = strtoupper(!empty($nameDetails) ? implode('_', $nameDetails) : '');
+			$nameSuffix = mb_strtoupper(!empty($nameDetails)? implode('_', $nameDetails) : '');
 			if ($nameSuffix === 'FIELDS' || $nameSuffix === 'LIST')
 			{
 				return parent::processMethodRequest($nameSuffix, '', $arParams, $nav, $server);
@@ -12831,7 +12878,7 @@ class CCrmAddressRestProxy extends CCrmRestProxyBase
 
 		//For backward compatibility only
 		if(isset($filter['ENTITY_TYPE_ID']) &&
-			($filter['ENTITY_TYPE_ID'] == CCrmOwnerType::Company || $filter['ENTITY_TYPE_ID'] == CCrmOwnerType::Contact))
+				($filter['ENTITY_TYPE_ID'] == CCrmOwnerType::Company || $filter['ENTITY_TYPE_ID'] == CCrmOwnerType::Contact))
 		{
 			$filter['ANCHOR_TYPE_ID'] = $filter['ENTITY_TYPE_ID'];
 			unset($filter['ENTITY_TYPE_ID']);
@@ -12844,13 +12891,13 @@ class CCrmAddressRestProxy extends CCrmRestProxyBase
 		}
 
 		$result = $entity->getList(
-			array(
-				'order' => $order,
-				'filter' => $filter,
-				'select' => $select,
-				'offset' => $offset,
-				'count_total' => true
-			)
+				array(
+						'order' => $order,
+						'filter' => $filter,
+						'select' => $select,
+						'offset' => $offset,
+						'count_total' => true
+				)
 		);
 
 		if (is_object($result))
@@ -12869,7 +12916,7 @@ class CCrmAddressRestProxy extends CCrmRestProxyBase
 
 	public function processMethodRequest($name, $nameDetails, $arParams, $nav, $server)
 	{
-		$name = strtoupper($name);
+		$name = mb_strtoupper($name);
 
 		if($name === 'FIELDS' || $name === 'LIST')
 		{
@@ -12964,7 +13011,20 @@ class CCrmAddressRestProxy extends CCrmRestProxyBase
 
 			$this->internalizeFields($fields, $this->getFieldsInfo(), array());
 
-			EntityAddress::register($entityTypeID, $entityID, $typeID, $fields);
+			if (isset($fields['ENTITY_TYPE_ID']) && $fields['ENTITY_TYPE_ID'] == CCrmOwnerType::Requisite &&
+				isset($fields['ENTITY_ID']) && $fields['ENTITY_ID'] > 0)
+			{
+				$requisite = (new EntityRequisite)->getById( $fields['ENTITY_ID']);
+				if (is_array($requisite) && isset($requisite['ENTITY_TYPE_ID']) && $requisite['ENTITY_TYPE_ID'] > 0 &&
+					isset($requisite['ENTITY_ID']) && $requisite['ENTITY_ID'] > 0)
+				{
+					$fields['ANCHOR_TYPE_ID'] = $requisite['ENTITY_TYPE_ID'];
+					$fields['ANCHOR_ID'] = $requisite['ENTITY_ID'];
+				}
+			}
+			EntityAddress::register($entityTypeID, $entityID, $typeID, $fields, [
+				'updateLocationAddress' => !( isset($fields['ADDRESS_LOC_ADDR_ID']) && $fields['ADDRESS_LOC_ADDR_ID'] > 0 )
+			]);
 
 			return true;
 		}
@@ -13009,6 +13069,18 @@ class CCrmAddressRestProxy extends CCrmRestProxyBase
 
 			return true;
 		}
+		elseif($name === 'GETZONEID')
+		{
+			return EntityAddress::getZoneId();
+		}
+		elseif($name === 'SETZONEID')
+		{
+			$zoneId = $this->resolveParam($arParams, 'ID');
+
+			EntityAddress::setZoneId($zoneId);
+
+			return true;
+		}
 
 		throw new RestException("Resource '{$name}' is not supported in current context.");
 	}
@@ -13018,9 +13090,9 @@ class CCrmAddressRestProxy extends CCrmRestProxyBase
 		$entity = self::getEntity();
 
 		$result = $entity->getList(array(
-			'filter' => array('TYPE_ID' => $typeID,
-				'ENTITY_TYPE_ID' => $entityTypeID,
-				'ENTITY_ID' => $entityID)
+				'filter' => array('TYPE_ID' => $typeID,
+						'ENTITY_TYPE_ID' => $entityTypeID,
+						'ENTITY_ID' => $entityID)
 		));
 
 		return $result->fetch();
@@ -13042,16 +13114,16 @@ class CCrmAddressRestProxy extends CCrmRestProxyBase
 	public static function processEvent(array $arParams, array $arHandler)
 	{
 		$eventName = $arHandler['EVENT_NAME'];
-		switch (strtolower($eventName))
+		switch(mb_strtolower($eventName))
 		{
 			case 'oncrmaddressregister':
 			case 'oncrmaddressunregister':
 
-				$fields = isset($arParams[0]) ? $arParams[0]->getParameter('fields') : null;
+				$fields = isset($arParams[0])? $arParams[0]->getParameter('fields') : null;
 
-				$typeID = is_array($fields) && isset($fields['TYPE_ID']) ? (int)$fields['TYPE_ID'] : 0;
-				$entityTypeID = is_array($fields) && isset($fields['ENTITY_TYPE_ID']) ? (int)$fields['ENTITY_TYPE_ID'] : 0;
-				$entityID = is_array($fields) && isset($fields['ENTITY_ID']) ? (int)$fields['ENTITY_ID'] : 0;
+				$typeID = is_array($fields) && isset($fields['TYPE_ID'])? (int)$fields['TYPE_ID'] : 0;
+				$entityTypeID = is_array($fields) && isset($fields['ENTITY_TYPE_ID'])? (int)$fields['ENTITY_TYPE_ID'] : 0;
+				$entityID = is_array($fields) && isset($fields['ENTITY_ID'])? (int)$fields['ENTITY_ID'] : 0;
 
 				$address = new static();
 
@@ -13068,17 +13140,17 @@ class CCrmAddressRestProxy extends CCrmRestProxyBase
 					throw new RestException("Could not find ENTITY_ID in fields of event \"{$eventName}\"");
 				}
 
-				if(strtolower($eventName) == 'oncrmaddressunregister')
+				if(mb_strtolower($eventName) == 'oncrmaddressunregister')
 				{
 					$r = \Bitrix\Crm\AddressTable::getList(array(
-						'select'=>array(
+						'select' => array(
 							'ANCHOR_ID',
 							'ANCHOR_TYPE_ID'
 						),
-						'filter'=>array(
-							'=ENTITY_ID'=>$entityID,
-							'=ENTITY_TYPE_ID'=>$entityTypeID,
-							'=TYPE_ID'=>$typeID,
+						'filter' => array(
+							'=ENTITY_ID' => $entityID,
+							'=ENTITY_TYPE_ID' => $entityTypeID,
+							'=TYPE_ID' => $typeID,
 						)
 					));
 
@@ -13091,8 +13163,8 @@ class CCrmAddressRestProxy extends CCrmRestProxyBase
 				}
 				else
 				{
-					$anchorID = is_array($fields) && isset($fields['ANCHOR_ID']) ? (int)$fields['ANCHOR_ID'] : 0;
-					$anchorTypeID = is_array($fields) && isset($fields['ANCHOR_TYPE_ID']) ? (int)$fields['ANCHOR_TYPE_ID'] : 0;
+					$anchorID = is_array($fields) && isset($fields['ANCHOR_ID'])? (int)$fields['ANCHOR_ID'] : 0;
+					$anchorTypeID = is_array($fields) && isset($fields['ANCHOR_TYPE_ID'])? (int)$fields['ANCHOR_TYPE_ID'] : 0;
 				}
 
 				if(!$address->isValidID($anchorTypeID) || !CCrmOwnerType::IsDefined($anchorTypeID))
@@ -13104,11 +13176,86 @@ class CCrmAddressRestProxy extends CCrmRestProxyBase
 					throw new RestException("Could not find ANCHOR_ID in fields of event \"{$eventName}\"");
 				}
 
-				return array('FIELDS' => array('TYPE_ID' => EntityAddressType::resolveName($typeID), 'ENTITY_TYPE_ID'=>CCrmOwnerType::resolveName($entityTypeID), 'ENTITY_ID'=>$entityID, 'ANCHOR_ID'=>$anchorID, 'ANCHOR_TYPE_ID'=>CCrmOwnerType::resolveName($anchorTypeID)));
+				return array('FIELDS' => array('TYPE_ID' => EntityAddressType::resolveName($typeID), 'ENTITY_TYPE_ID' => CCrmOwnerType::resolveName($entityTypeID), 'ENTITY_ID' => $entityID, 'ANCHOR_ID' => $anchorID, 'ANCHOR_TYPE_ID' => CCrmOwnerType::resolveName($anchorTypeID)));
 				break;
 			default:
 				throw new RestException("The Event \"{$eventName}\" is not supported in current context");
 		}
+	}
+}
+
+class CCrmAddressTypeRestProxy extends CCrmRestProxyBase
+{
+	public function processMethodRequest($name, $nameDetails, $arParams, $nav, $server)
+	{
+		$name = mb_strtoupper($name);
+
+		if ($name === 'GETAVAILABLE')
+		{
+			$result = [];
+			$descriptions = EntityAddressType::getDescriptions(EntityAddressType::getAvailableIds());
+			foreach($descriptions as $k => $v)
+			{
+				$result[] = array('ID' => $k, 'NAME' => $v);
+			}
+			return $result;
+		}
+		else if ($name === 'GETZONEMAP')
+		{
+			$result = [];
+
+			foreach (EntityAddressType::getZoneMap() as $zoneId => $zoneInfo)
+			{
+				$info = ['ID' => $zoneId];
+				foreach ($zoneInfo as $paramName => $paramValue)
+				{
+					$info[mb_strtoupper($paramName)] = $paramValue;
+				}
+				$result[] = $info;
+			}
+
+			return $result;
+		}
+		else if ($name === 'GETDEFAULTBYZONE')
+		{
+			$addressZoneId = (string)$this->resolveParam($arParams, 'ID');
+
+			return EntityAddressType::getDefaultIdByZone($addressZoneId);
+		}
+		else if ($name === 'GETBYZONESORVALUES')
+		{
+			$zoneIds = $this->resolveArrayParam($arParams, 'ID');
+			$values = $this->resolveArrayParam($arParams, 'VALUE');
+
+			if (!is_array($zoneIds))
+			{
+				$zoneIds = [$zoneIds];
+			}
+
+			foreach ($zoneIds as $k => $v)
+			{
+				$zoneIds[$k] = (string)$zoneIds[$k];
+			}
+
+			if (!is_array($values))
+			{
+				$values = [$values];
+			}
+
+			foreach ($values as $k => $v)
+			{
+				$values[$k] = (int)$values[$k];
+			}
+
+			$result = [];
+			foreach (EntityAddressType::getDescriptionsByZonesOrValues($zoneIds, $values) as $typeId => $description)
+			{
+				$result[] = ['ID' => $typeId, 'NAME' => $description];
+			}
+			return $result;
+		}
+
+		throw new RestException("Resource '{$name}' is not supported in current context.");
 	}
 }
 
@@ -13150,13 +13297,13 @@ class CCrmExternalChannelConnectorRestProxy  extends CCrmRestProxyBase
 			$select = array_keys($this->getFieldsInfo());
 
 		$result = $entity->getList(
-			array(
-				'order' => $order,
-				'filter' => $filter,
-				'select' => $select,
-				'offset' => $offset,
-				'count_total' => true
-			)
+				array(
+						'order' => $order,
+						'filter' => $filter,
+						'select' => $select,
+						'offset' => $offset,
+						'count_total' => true
+				)
 		);
 
 		if (is_object($result))
@@ -13175,11 +13322,11 @@ class CCrmExternalChannelConnectorRestProxy  extends CCrmRestProxyBase
 
 	public function processMethodRequest($name, $nameDetails, $arParams, $nav, $server)
 	{
-		$name = strtoupper($name);
+		$name = mb_strtoupper($name);
 
 		if ($name === 'CONNECTOR')
 		{
-			$nameSuffix = strtoupper(!empty($nameDetails) ? implode('_', $nameDetails) : '');
+			$nameSuffix = mb_strtoupper(!empty($nameDetails)? implode('_', $nameDetails) : '');
 
 			if($nameSuffix === 'FIELDS' || $nameSuffix === 'LIST')
 			{
@@ -13206,7 +13353,7 @@ class CCrmExternalChannelConnectorRestProxy  extends CCrmRestProxyBase
 					throw new RestException(implode('; ', $error), self::ERROR_CONNECTOR_REGISTRATION, CRestServer::STATUS_WRONG_REQUEST);
 				}
 
-				if(strlen($channelId)>0)
+				if($channelId <> '')
 				{
 					return array("result"=>$channelId);
 				}
@@ -13253,7 +13400,7 @@ class CCrmExternalChannelConnectorRestProxy  extends CCrmRestProxyBase
 
 	public function isValidCode($code)
 	{
-		return is_string($code) && strlen($code) > 0;
+		return is_string($code) && $code <> '';
 	}
 
 	protected function exists($typeID, $originatorId)
@@ -13261,8 +13408,8 @@ class CCrmExternalChannelConnectorRestProxy  extends CCrmRestProxyBase
 		$entity = self::getEntity();
 
 		$result = $entity->getList(array(
-			'filter' => array('TYPE_ID' => $typeID,
-				'ORIGINATOR_ID' => $originatorId)
+				'filter' => array('TYPE_ID' => $typeID,
+						'ORIGINATOR_ID' => $originatorId)
 		));
 
 		return $result->fetch();
@@ -13283,7 +13430,7 @@ class CCrmExternalChannelRestProxy  extends CCrmRestProxyBase
 	{
 		$connector = new Rest\CCrmExternalChannelConnector();
 
-		$name = strtoupper($name);
+		$name = mb_strtoupper($name);
 
 		if ($name === 'COMPANY' || $name === 'CONTACT' || $name === 'ACTIVITY')
 		{
@@ -13292,7 +13439,7 @@ class CCrmExternalChannelRestProxy  extends CCrmRestProxyBase
 
 			$isRegistered = false;
 			$methodParams = $this->resolveArrayParam($arParams, 'params');
-			if(($channel_id = $methodParams['CHANNEL_ID']) && strlen($channel_id)>0)
+			if(($channel_id = $methodParams['CHANNEL_ID']) && $channel_id <> '')
 			{
 				$connector->setChannelId($channel_id);
 				$isRegistered = $connector->isRegistered();
@@ -13309,7 +13456,7 @@ class CCrmExternalChannelRestProxy  extends CCrmRestProxyBase
 			}
 			else
 			{
-				$nameSuffix = strtoupper(!empty($nameDetails) ? implode('_', $nameDetails) : '');
+				$nameSuffix = mb_strtoupper(!empty($nameDetails)? implode('_', $nameDetails) : '');
 
 				if($name === 'COMPANY' || $nameSuffix === 'COMPANY')
 					$entity = new CCrmCompanyRestProxy();
@@ -13699,7 +13846,7 @@ class CCrmPersonTypeRestProxy extends CCrmRestProxyBase
 
 		foreach ($filter as $field => $value)
 		{
-			if (strpos($field, 'NAME') !== false)
+			if (mb_strpos($field, 'NAME') !== false)
 			{
 				$newFieldName = str_replace('NAME', 'CODE', $field);
 				$filter[$newFieldName] = $value;
@@ -14182,10 +14329,10 @@ class CCrmMeasureRestProxy extends CCrmRestProxyBase
 	public static function processEvent(array $arParams, array $arHandler)
 	{
 		$eventName = $arHandler['EVENT_NAME'];
-		switch (strtolower($eventName))
+		switch(mb_strtolower($eventName))
 		{
 			case 'oncrmmeasureadd':
-				if (!isset($arParams[0]) || !($arParams[0] instanceof Main\Entity\Event))
+				if(!isset($arParams[0]) || !($arParams[0] instanceof Main\Entity\Event))
 				{
 					throw new RestException("Bad result of event \"{$eventName}\"");
 				}
@@ -14193,7 +14340,7 @@ class CCrmMeasureRestProxy extends CCrmRestProxyBase
 				$event = $arParams[0];
 				$id = (int)$event->getParameter('id');
 				unset($event);
-				if ($id <= 0)
+				if($id <= 0)
 				{
 					throw new RestException("Could not find entity ID in fields of event \"{$eventName}\"");
 				}
@@ -14204,7 +14351,7 @@ class CCrmMeasureRestProxy extends CCrmRestProxyBase
 				break;
 			case 'oncrmmeasureupdate':
 			case 'oncrmmeasuredelete':
-				if (!isset($arParams[0]) || !($arParams[0] instanceof Main\Entity\Event))
+				if(!isset($arParams[0]) || !($arParams[0] instanceof Main\Entity\Event))
 				{
 					throw new RestException("Bad result of event \"{$eventName}\"");
 				}
@@ -14212,8 +14359,8 @@ class CCrmMeasureRestProxy extends CCrmRestProxyBase
 				$event = $arParams[0];
 				$primary = $event->getParameter('id');
 				unset($event);
-				$id = (!empty($primary['ID']) ? (int)$primary['ID'] : 0);
-				if ($id <= 0)
+				$id = (!empty($primary['ID'])? (int)$primary['ID'] : 0);
+				if($id <= 0)
 				{
 					throw new RestException("Could not find entity ID in fields of event \"{$eventName}\"");
 				}
@@ -14317,14 +14464,14 @@ class CCrmTimelineCommentRestProxy extends CCrmRestProxyBase
 		}
 
 		$comment['ENTITY_ID'] = $entityId;
-		$comment['ENTITY_TYPE'] = strtolower(CCrmOwnerType::ResolveName($entityTypeId));
+		$comment['ENTITY_TYPE'] = mb_strtolower(CCrmOwnerType::ResolveName($entityTypeId));
 
 		return $this->prepareGetResult($comment);
 	}
 	protected function innerGetList($order, $filter, $select, $navigation, &$errors)
 	{
 		$entityId = (int)$filter['ENTITY_ID'];
-		$entityTypeId = CCrmOwnerType::ResolveID(strtoupper($filter['ENTITY_TYPE']));
+		$entityTypeId = CCrmOwnerType::ResolveID(mb_strtoupper($filter['ENTITY_TYPE']));
 
 		if (!Bitrix\Crm\Security\EntityAuthorization::checkReadPermission($entityTypeId, $entityId))
 		{
@@ -14364,7 +14511,7 @@ class CCrmTimelineCommentRestProxy extends CCrmRestProxyBase
 		while($fields = $dataRaw->fetch())
 		{
 			$fields['ENTITY_ID'] = $entityId;
-			$fields['ENTITY_TYPE'] = strtolower(CCrmOwnerType::ResolveName($entityTypeId));
+			$fields['ENTITY_TYPE'] = mb_strtolower(CCrmOwnerType::ResolveName($entityTypeId));
 			$items[] = $this->prepareGetResult($fields, $select);
 		}
 
@@ -14607,10 +14754,10 @@ class CCrmTimelineCommentRestProxy extends CCrmRestProxyBase
 	}
 	public function processMethodRequest($name, $nameDetails, $arParams, $nav, $server)
 	{
-		$name = strtoupper($name);
+		$name = mb_strtoupper($name);
 		if($name === 'COMMENT')
 		{
-			$nameSuffix = strtoupper(!empty($nameDetails) ? implode('_', $nameDetails) : '');
+			$nameSuffix = mb_strtoupper(!empty($nameDetails)? implode('_', $nameDetails) : '');
 			switch ($nameSuffix)
 			{
 				case 'FIELDS':
@@ -14641,7 +14788,7 @@ class CCrmTimelineCommentRestProxy extends CCrmRestProxyBase
 	public static function processEvent(array $arParams, array $arHandler)
 	{
 		$eventName = $arHandler['EVENT_NAME'];
-		switch (strtolower($eventName))
+		switch(mb_strtolower($eventName))
 		{
 			case 'oncrmtimelinecommentadd':
 			case 'oncrmtimelinecommentupdate':
@@ -14725,7 +14872,7 @@ class CCrmTimelineBindingRestProxy extends CCrmRestProxyBase
 			$items[] = [
 				'OWNER_ID' => $fields['OWNER_ID'],
 				'ENTITY_ID' => $fields['ENTITY_ID'],
-				'ENTITY_TYPE' => strtolower(\CCrmOwnerType::ResolveName($fields['ENTITY_TYPE_ID']))
+				'ENTITY_TYPE' => mb_strtolower(\CCrmOwnerType::ResolveName($fields['ENTITY_TYPE_ID']))
 			];
 		}
 		$dbResult = new CDBResult();
@@ -14748,7 +14895,7 @@ class CCrmTimelineBindingRestProxy extends CCrmRestProxyBase
 		$entityTypeId = null;
 		if (isset($fields['ENTITY_TYPE']))
 		{
-			$entityTypeName = strtoupper($fields['ENTITY_TYPE']);
+			$entityTypeName = mb_strtoupper($fields['ENTITY_TYPE']);
 			$entityTypeId = \CCrmOwnerType::ResolveID($entityTypeName);
 		}
 
@@ -14794,7 +14941,7 @@ class CCrmTimelineBindingRestProxy extends CCrmRestProxyBase
 		$entityTypeId = null;
 		if (isset($fields['ENTITY_TYPE']))
 		{
-			$entityTypeName = strtoupper($fields['ENTITY_TYPE']);
+			$entityTypeName = mb_strtoupper($fields['ENTITY_TYPE']);
 			$entityTypeId = \CCrmOwnerType::ResolveID($entityTypeName);
 		}
 
@@ -14841,10 +14988,10 @@ class CCrmTimelineBindingRestProxy extends CCrmRestProxyBase
 	}
 	public function processMethodRequest($name, $nameDetails, $arParams, $nav, $server)
 	{
-		$name = strtoupper($name);
+		$name = mb_strtoupper($name);
 		if($name === 'BINDINGS')
 		{
-			$nameSuffix = strtoupper(!empty($nameDetails) ? implode('_', $nameDetails) : '');
+			$nameSuffix = mb_strtoupper(!empty($nameDetails)? implode('_', $nameDetails) : '');
 			if ($nameSuffix === 'LIST' || $nameSuffix === 'FIELDS' )
 			{
 				return parent::processMethodRequest($nameSuffix, '', $arParams, $nav, $server);
@@ -14888,10 +15035,10 @@ class CCrmWebformRestProxy implements ICrmRestProxy
 
 	public function processMethodRequest($name, $nameDetails, $arParams, $nav, $server)
 	{
-		$name = strtoupper($name);
+		$name = mb_strtoupper($name);
 		if ($name === 'CONFIGURATION')
 		{
-			$nameSuffix = strtoupper(!empty($nameDetails) ? implode('_', $nameDetails) : '');
+			$nameSuffix = mb_strtoupper(!empty($nameDetails)? implode('_', $nameDetails) : '');
 			if($nameSuffix === 'GET')
 			{
 				return array('URL' => CCrmUrlUtil::ToAbsoluteUrl(Bitrix\Crm\WebForm\Manager::getUrl()));
@@ -14926,10 +15073,10 @@ class CCrmSiteButtonRestProxy implements ICrmRestProxy
 
 	public function processMethodRequest($name, $nameDetails, $arParams, $nav, $server)
 	{
-		$name = strtoupper($name);
+		$name = mb_strtoupper($name);
 		if ($name === 'CONFIGURATION')
 		{
-			$nameSuffix = strtoupper(!empty($nameDetails) ? implode('_', $nameDetails) : '');
+			$nameSuffix = mb_strtoupper(!empty($nameDetails)? implode('_', $nameDetails) : '');
 			if($nameSuffix === 'GET')
 			{
 				return array('URL' => CCrmUrlUtil::ToAbsoluteUrl(Bitrix\Crm\SiteButton\Manager::getUrl()));
@@ -14989,7 +15136,7 @@ class CCrmEntityEditorRestProxy implements ICrmRestProxy
 
 	public function processMethodRequest($name, $nameDetails, $arParams, $nav, $server)
 	{
-		$name = strtoupper($name);
+		$name = mb_strtoupper($name);
 		if($name !== 'CONFIGURATION')
 		{
 			throw new RestException("Resource '{$name}' is not supported in current context.");
@@ -15012,7 +15159,7 @@ class CCrmEntityEditorRestProxy implements ICrmRestProxy
 		}
 
 		$scope = \CCrmRestHelper::resolveParam($arParams, 'scope', '');
-		if(!\Bitrix\Crm\Entity\EntityEditorConfigScope::isDefined($scope))
+		if ($scope !== \Bitrix\Crm\Entity\EntityEditorConfigScope::COMMON)
 		{
 			$scope = \Bitrix\Crm\Entity\EntityEditorConfigScope::PERSONAL;
 		}
@@ -15038,7 +15185,7 @@ class CCrmEntityEditorRestProxy implements ICrmRestProxy
 
 		$config = new \Bitrix\Crm\Entity\EntityEditorConfig($this->entityTypeID, $userID, $scope, $extras);
 
-		$nameSuffix = strtoupper(!empty($nameDetails) ? implode('_', $nameDetails) : '');
+		$nameSuffix = mb_strtoupper(!empty($nameDetails)? implode('_', $nameDetails) : '');
 		if($nameSuffix === 'GET')
 		{
 			if(!$config->canDoOperation(\Bitrix\Crm\Entity\EntityEditorConfigOperation::GET))
@@ -15060,6 +15207,8 @@ class CCrmEntityEditorRestProxy implements ICrmRestProxy
 			{
 				throw new RestException("Parameter 'data' must be array.");
 			}
+
+			$data = $config->normalize($data);
 
 			if(empty($data))
 			{

@@ -1,4 +1,7 @@
 <?
+
+use Bitrix\Main\Web\IpAddress;
+
 IncludeModuleLangFile(__FILE__);
 
 class CDavGroupdavClient
@@ -31,10 +34,12 @@ class CDavGroupdavClient
 
 	private $googleAuth = null;
 	private $googleOAuth = null;
+	private $privateIp = true;
+	private $effectiveIp;
 
 	public function __construct($scheme, $server, $port, $userName, $userPassword)
 	{
-		$this->scheme = ((strtolower($scheme) == "https") ? "https" : "http");
+		$this->scheme = ((mb_strtolower($scheme) == "https") ? "https" : "http");
 		$this->server = $server;
 		$this->port = $port;
 		$this->userName = $userName;
@@ -65,13 +70,13 @@ class CDavGroupdavClient
 
 	public function SetProxy($proxyScheme, $proxyServer, $proxyPort, $proxyUserName, $proxyUserPassword)
 	{
-		$this->proxyScheme = ((strtolower($proxyScheme) == "https") ? "https" : "http");
+		$this->proxyScheme = ((mb_strtolower($proxyScheme) == "https") ? "https" : "http");
 		$this->proxyServer = $proxyServer;
 		$this->proxyPort = $proxyPort;
 		$this->proxyUserName = $proxyUserName;
 		$this->proxyUserPassword = $proxyUserPassword;
 
-		$this->proxyUsed = (strlen($this->proxyServer) > 0 && strlen($this->proxyPort) > 0);
+		$this->proxyUsed = ($this->proxyServer <> '' && $this->proxyPort <> '');
 	}
 
 	public function setGoogleOAuth($token)
@@ -208,7 +213,7 @@ class CDavGroupdavClient
 		{
 			if (($statusCode = $response->GetStatus('code')) && (strcmp($statusCode, '207') == 0))
 			{
-				if (($contentType = $response->GetHeader('Content-Type')) && (strpos($contentType, '/xml') !== false))
+				if (($contentType = $response->GetHeader('Content-Type')) && (mb_strpos($contentType, '/xml') !== false))
 					return $response->GetBodyXml();
 			}
 		}
@@ -232,7 +237,7 @@ class CDavGroupdavClient
 		{
 			if (($statusCode = $response->GetStatus('code')) && (strcmp($statusCode, '207') == 0))
 			{
-				if (($contentType = $response->GetHeader('Content-Type')) && (strpos($contentType, '/xml') !== false))
+				if (($contentType = $response->GetHeader('Content-Type')) && (mb_strpos($contentType, '/xml') !== false))
 					return $response->GetBodyXml();
 			}
 		}
@@ -254,7 +259,7 @@ class CDavGroupdavClient
 
 			if (strcmp($statusCode, '207') == 0)
 			{
-				if (($contentType = $response->GetHeader('Content-Type')) && (strpos($contentType, '/xml') !== false))
+				if (($contentType = $response->GetHeader('Content-Type')) && (mb_strpos($contentType, '/xml') !== false))
 					return $response->GetBodyXml();
 			}
 			elseif (strcmp($statusCode, '404') == 0)
@@ -318,6 +323,12 @@ class CDavGroupdavClient
 		return $APPLICATION->ConvertCharset($text, $this->encoding, "utf-8");
 	}
 
+	public function SetPrivateIp($value)
+	{
+		$this->privateIp = (bool)$value;
+		return $this;
+	}
+
 	private function FormatUri($path)
 	{
 		return $path;
@@ -327,7 +338,7 @@ class CDavGroupdavClient
 		$arPartsNew = array();
 		for ($i = 0, $cnt = count($arParts); $i < $cnt; $i++)
 		{
-			if (strlen($arParts[$i]) > 0)
+			if ($arParts[$i] <> '')
 				$arPartsNew[] = str_replace("%40", "@", rawurlencode($arParts[$i]));
 		}
 		return "/".implode('/', $arPartsNew);
@@ -370,6 +381,21 @@ class CDavGroupdavClient
 				fwrite($f, $request ? $request->ToString() : "???");
 				fwrite($f, "\n<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n\n");
 				fclose($f);
+			}
+
+			if ($this->privateIp === false)
+			{
+				$parsedUrl = new \Bitrix\Main\Web\Uri($this->scheme. '://'
+					. $this->server . ':'
+					. ($this->port) . '/'
+					. $request->GetPath()
+				);
+				$ip = IpAddress::createByUri($parsedUrl);
+				if($ip->isPrivate())
+				{
+					$this->AddError("401", GetMessage("DAV_GDC_INCORRECT_SERVER"));
+					return null;
+				}
 			}
 
 			$this->SendRequest($request);
@@ -446,11 +472,11 @@ class CDavGroupdavClient
 			foreach ($authenticate as $auth)
 			{
 				$auth = trim($auth);
-				$p = strpos($auth, " ");
+				$p = mb_strpos($auth, " ");
 				if ($p !== false)
-					$arAuth[strtolower(substr($auth, 0, $p))] = trim(substr($auth, $p));
+					$arAuth[mb_strtolower(mb_substr($auth, 0, $p))] = trim(mb_substr($auth, $p));
 				else
-					$arAuth[strtolower($auth)] = "";
+					$arAuth[mb_strtolower($auth)] = "";
 			}
 
 			if (array_key_exists("digest", $arAuth))
@@ -477,11 +503,11 @@ class CDavGroupdavClient
 			foreach ($authenticateProxy as $auth)
 			{
 				$auth = trim($auth);
-				$p = strpos($auth, " ");
+				$p = mb_strpos($auth, " ");
 				if ($p !== false)
-					$arAuthProxy[strtolower(substr($auth, 0, $p))] = trim(substr($auth, $p));
+					$arAuthProxy[mb_strtolower(mb_substr($auth, 0, $p))] = trim(mb_substr($auth, $p));
 				else
-					$arAuthProxy[strtolower($auth)] = "";
+					$arAuthProxy[mb_strtolower($auth)] = "";
 			}
 
 			if (array_key_exists("digest", $arAuthProxy))
@@ -497,7 +523,7 @@ class CDavGroupdavClient
 
 	private static function gmailUsernameFix($name, $link)
 	{
-		if (strpos($name, '@gmail.com') !== false)
+		if (mb_strpos($name, '@gmail.com') !== false)
 		{
 			$arN = explode('@', $name);
 			$name = str_replace('.', '', $arN[0]).'@'.$arN[1];
@@ -698,13 +724,13 @@ If the "algorithm" directive's value is "MD5" or is unspecified, then
 			do
 			{
 				$line = fgets($this->fp, 4096);
-				$line = strtolower($line);
+				$line = mb_strtolower($line);
 
 				$chunkSize = "";
 				$i = 0;
-				while ($i < strlen($line))
+				while ($i < mb_strlen($line))
 				{
-					$c = substr($line, $i, 1);
+					$c = mb_substr($line, $i, 1);
 					if (in_array($c, array("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f")))
 						$chunkSize .= $c;
 					else
@@ -736,7 +762,7 @@ If the "algorithm" directive's value is "MD5" or is unspecified, then
 							$crutchCnt = 0;
 
 							$body1 .= $d;
-							$lb = $chunkSize - ((function_exists('mb_strlen') ? mb_strlen($body1, 'latin1') : strlen($body1)));
+							$lb = $chunkSize - ((function_exists('mb_strlen')? mb_strlen($body1, 'latin1') : mb_strlen($body1)));
 						}
 					}
 					$body .= $body1;
@@ -759,7 +785,7 @@ If the "algorithm" directive's value is "MD5" or is unspecified, then
 					break;
 
 				$body .= $d;
-				$lb = $contentLength - (function_exists('mb_strlen') ? mb_strlen($body, 'latin1') : strlen($body));
+				$lb = $contentLength - (function_exists('mb_strlen')? mb_strlen($body, 'latin1') : mb_strlen($body));
 			}
 		}
 		else
@@ -773,9 +799,9 @@ If the "algorithm" directive's value is "MD5" or is unspecified, then
 					break;
 
 				$body .= $d;
-				if (substr($body, -9) == "\r\n\r\n0\r\n\r\n")
+				if (mb_substr($body, -9) == "\r\n\r\n0\r\n\r\n")
 				{
-					$body = substr($body, 0, -9);
+					$body = mb_substr($body, 0, -9);
 					break;
 				}
 			}

@@ -1,4 +1,0 @@
-<?
-$MESS["SENDER_DISPATCH_DURATION_LESS_HOUR"] = "menos de una hora";
-$MESS["SENDER_DISPATCH_DURATION_MORE_3_DAYS"] = "más de 3 días";
-?>

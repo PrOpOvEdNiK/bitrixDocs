@@ -1,6 +1,0 @@
-<?
-$MESS["CRM_ORDER_MENU_NAME"] = "Toolbar";
-$MESS["CRM_ORDER_MENU_DESCRIPTION"] = "Toolbar";
-$MESS["CRM_NAME"] = "CRM";
-$MESS["CRM_ORDER_NAME"] = "Orders";
-?>

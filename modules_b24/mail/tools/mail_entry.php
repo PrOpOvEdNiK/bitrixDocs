@@ -44,7 +44,7 @@ try
 	{
 		if (empty($to['user']) || empty($to['host']))
 			continue;
-		if (strtolower($hostname) != strtolower($to['host']))
+		if (mb_strtolower($hostname) != mb_strtolower($to['host']))
 			continue;
 		if (preg_match('/^no-?reply$/i', $to['user']))
 			continue;
@@ -87,7 +87,7 @@ try
 			{
 				$item['fileName'] = $fileId;
 
-				if (strpos($item['contentType'], 'message/') === 0)
+				if (mb_strpos($item['contentType'], 'message/') === 0)
 					$item['fileName'] .= '.eml';
 			}
 
@@ -98,8 +98,8 @@ try
 
 				if (is_set($imageExts, $item['contentType']))
 				{
-					$extPos = strrpos($item['fileName'], '.');
-					$ext    = substr($item['fileName'], $extPos);
+					$extPos = mb_strrpos($item['fileName'], '.');
+					$ext = mb_substr($item['fileName'], $extPos);
 
 					if ($extPos === false || !in_array($ext, $imageExts[$item['contentType']]))
 						$item['fileName'] .= $imageExts[$item['contentType']][0];
@@ -116,7 +116,7 @@ try
 
 			if (is_uploaded_file($file['tmp_name']) && $file['size'] > 0)
 			{
-				$uploadFile = $tmpDir . bx_basename($file['name']);
+				$uploadFile = $tmpDir . md5(mt_rand().$file['name']);
 				move_uploaded_file($file['tmp_name'], $uploadFile);
 
 				$file['tmp_name'] = $uploadFile;
@@ -159,11 +159,6 @@ catch (Exception $e)
 {
 	addMessage2Log(sprintf('Mail entry: %s', $e->getMessage()), 'mail', 0, false);
 	$response->setStatus('500 Internal Server Error');
-}
-
-if (\Bitrix\Main\Loader::includeModule('compression'))
-{
-	\CCompress::disableCompression();
 }
 
 require $_SERVER['DOCUMENT_ROOT'].'/bitrix/modules/main/include/epilog_after.php';

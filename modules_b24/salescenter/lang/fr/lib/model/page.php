@@ -1,3 +1,0 @@
-<?
-$MESS["SALESCENTER_MODIFIED_AGO_SUFFIX"] = "Il y a #DATE#";
-?>

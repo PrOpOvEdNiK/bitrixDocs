@@ -1,4 +1,5 @@
 <?php
+
 IncludeModuleLangFile(__FILE__);
 
 if (!CModule::IncludeModule("iblock"))
@@ -41,13 +42,12 @@ class CIBlockWebdavSocnet
 	RegisterModuleDependences('socialnetwork', 'OnAfterSocNetLogCommentAdd', 'webdav', 'CIBlockWebdavSocnet', 'CopyCommentRights');
 	*/
 
-
 	public static function storeFileIdsByComment($id, array $fileIds)
 	{
 		self::$storedFileIdsByComment[$id] = $fileIds;
 	}
 
-	function CopyCommentRights($ID, $arFields)
+	public static function CopyCommentRights($ID, $arFields)
 	{
 		if(empty($arFields['LOG_ID']))
 		{
@@ -508,7 +508,7 @@ class CIBlockWebdavSocnet
 		return $result;
 	}
 
-	static function GetUsers($iblockID)
+	public static function GetUsers($iblockID)
 	{
 		$userTree = array();
 
@@ -533,7 +533,7 @@ class CIBlockWebdavSocnet
 		return $userTree;
 	}
 
-	static function GetUserGroups($userID = 0, $bGetFolders = true)
+	public static function GetUserGroups($userID = 0, $bGetFolders = true)
 	{
 		static $oCache = null;
 		static $CACHE_PATH = "/webdav/sonet_user_groups/";
@@ -600,7 +600,7 @@ class CIBlockWebdavSocnet
 		return $currentUserGroups;
 	}
 
-	static function GetGroups($iblockID)
+	public static function GetGroups($iblockID)
 	{
 		$groupTree = array();
 
@@ -625,7 +625,7 @@ class CIBlockWebdavSocnet
 		return $groupTree;
 	}
 
-	static function GetSectionID($iblockID, $entity_type, $entity_id)
+	public static function GetSectionID($iblockID, $entity_type, $entity_id)
 	{
 		$result = false;
 		if (CModule::IncludeModule('iblock'))
@@ -649,7 +649,7 @@ class CIBlockWebdavSocnet
 		return $result;
 	}
 
-	static function CanAccessFiles($iblock_id, $entity_type, $entity_id)
+	public static function CanAccessFiles($iblock_id, $entity_type, $entity_id)
 	{
 		$result = false;
 		$iblock_id = intval($iblock_id);
@@ -757,8 +757,7 @@ class CIBlockWebdavSocnet
 		return $result;
 	}
 
-
-	static function UserERights($iblockID)
+	public static function UserERights($iblockID)
 	{
 		if (CIBlock::GetArrayByID($iblockID, "RIGHTS_MODE") === "E")
 		{
@@ -1033,7 +1032,7 @@ class CIBlockWebdavSocnet
 		return false;
 	}
 
-	static function GroupERights($iblockID)
+	public static function GroupERights($iblockID)
 	{
 		if (CIBlock::GetArrayByID($iblockID, "RIGHTS_MODE") === "E")
 			return;
@@ -1115,13 +1114,13 @@ class CIBlockWebdavSocnet
 		}
 	}
 
-	public function GetUserMaxPermission($ownerType, $ownerId, $userId, $iblockId)
+	public static function GetUserMaxPermission($ownerType, $ownerId, $userId, $iblockId)
 	{
 		$arParameters = array(
 			"PERMISSION" => "D",
 			"CHECK_CREATOR" => "N");
-		$ownerId = intVal($ownerId);
-		$userId = intVal($userId);
+		$ownerId = intval($ownerId);
+		$userId = intval($userId);
 		$iblockId = intval($iblockId);
 
 		if (!in_array($ownerType, array("user", "group")) || $ownerId <= 0 || $iblockId <= 0):
@@ -1242,7 +1241,7 @@ class CIBlockWebdavSocnet
 				"MANDATORY" => "N",
 				"SETTINGS" => array("DEFAULT_VALUE" => "Y"));
 			$arFieldName = array();
-			$rsLanguage = CLanguage::GetList($by, $order, array());
+			$rsLanguage = CLanguage::GetList();
 			while($arLanguage = $rsLanguage->Fetch())
 			{
 				$dir = str_replace(array("\\", "//"), "/", dirname(__FILE__));

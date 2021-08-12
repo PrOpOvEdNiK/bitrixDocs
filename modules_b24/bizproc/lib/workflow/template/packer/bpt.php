@@ -32,10 +32,10 @@ class Bpt extends BasePacker
 		$documentFieldsAliasesMap = CBPDocument::getDocumentFieldsAliasesMap($documentFieldsTmp);
 
 		$documentFields = [];
-		$len = strlen("_PRINTABLE");
+		$len = mb_strlen("_PRINTABLE");
 		foreach ($documentFieldsTmp as $k => $v)
 		{
-			if (strtoupper(substr($k, -$len)) != "_PRINTABLE")
+			if (mb_strtoupper(mb_substr($k, -$len)) != "_PRINTABLE")
 			{
 				$documentFields[$k] = $v;
 			}
@@ -78,12 +78,12 @@ class Bpt extends BasePacker
 	{
 		$result = new Result\Unpack();
 
-		$datumTmp = \CheckSerializedData($data) ? @unserialize($data) : null;
+		$datumTmp = \CheckSerializedData($data) ? @unserialize($data, ['allowed_classes' => false]) : null;
 
 		if (!is_array($datumTmp) || is_array($datumTmp) && !array_key_exists("TEMPLATE", $datumTmp))
 		{
 			$datumTmp = $this->uncompress($data);
-			$datumTmp = \CheckSerializedData($datumTmp) ? @unserialize($datumTmp) : null;
+			$datumTmp = \CheckSerializedData($datumTmp) ? @unserialize($datumTmp, ['allowed_classes' => false]) : null;
 		}
 
 		if (!is_array($datumTmp) || is_array($datumTmp) && !array_key_exists("TEMPLATE", $datumTmp))
@@ -207,7 +207,7 @@ class Bpt extends BasePacker
 
 	private static function ConvertValueCharset($s, $direction)
 	{
-		if ("utf-8" == strtolower(LANG_CHARSET))
+		if ("utf-8" == mb_strtolower(LANG_CHARSET))
 			return $s;
 
 		if (is_numeric($s))

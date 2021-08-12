@@ -1,4 +1,5 @@
 <?php
+
 use Bitrix\Disk\File;
 
 IncludeModuleLangFile(__FILE__);
@@ -20,12 +21,12 @@ class CIBlockDocumentWebdavSocnet extends CIBlockDocument
 		}
 
 		//call_user_func don't like &
-		if(strtolower($methodName) == 'getfieldinputvalue')
+		if(mb_strtolower($methodName) == 'getfieldinputvalue')
 		{
 			list($documentType, $fieldType, $fieldName, $request, $errors) = $args;
 			return \Bitrix\Disk\BizProcDocumentCompatible::getFieldInputValue($documentType, $fieldType, $fieldName, $request, $errors);
 		}
-		if(strtolower($methodName) == 'getfieldinputcontroloptions')
+		if(mb_strtolower($methodName) == 'getfieldinputcontroloptions')
 		{
 			list($documentType, $arFieldType, $jsFunctionName, $value) = $args;
 			return \Bitrix\Disk\BizProcDocumentCompatible::getFieldInputControlOptions($documentType, $arFieldType, $jsFunctionName, $value);
@@ -91,9 +92,9 @@ class CIBlockDocumentWebdavSocnet extends CIBlockDocument
 			return false;
 		}
 		$storage = null;
-		if(substr($documentType, 0, 7) == 'STORAGE')
+		if(mb_substr($documentType, 0, 7) == 'STORAGE')
 		{
-			$storageId = (int)substr($documentType, 8);
+			$storageId = (int)mb_substr($documentType, 8);
 			if($storageId)
 			{
 				$storage = \Bitrix\Disk\Storage::loadById($storageId);
@@ -126,7 +127,7 @@ class CIBlockDocumentWebdavSocnet extends CIBlockDocument
 		return $documentProperties['UF_DISK_FILE_ID']['VALUE'];
 	}
 
-	function GetFieldInputControl($documentType, $arFieldType, $arFieldName, $fieldValue, $bAllowSelection = false, $publicMode = false)
+	public static function GetFieldInputControl($documentType, $arFieldType, $arFieldName, $fieldValue, $bAllowSelection = false, $publicMode = false)
 	{
 		if($storage = self::needProxyToDiskByDocType($documentType))
 		{
@@ -256,9 +257,9 @@ class CIBlockDocumentWebdavSocnet extends CIBlockDocument
 			}
 
 			$customMethodName = "";
-			if (strpos($arFieldType["Type"], ":") !== false)
+			if (mb_strpos($arFieldType["Type"], ":") !== false)
 			{
-				$ar = CIBlockProperty::GetUserType(substr($arFieldType["Type"], 2));
+				$ar = CIBlockProperty::GetUserType(mb_substr($arFieldType["Type"], 2));
 				if (array_key_exists("GetPublicEditHTML", $ar))
 					$customMethodName = $ar["GetPublicEditHTML"];
 			}
@@ -278,7 +279,7 @@ class CIBlockDocumentWebdavSocnet extends CIBlockDocument
 				if ($arFieldType["Multiple"])
 					echo '<tr><td>';
 
-				if (is_array($customMethodName) && count($customMethodName) > 0 || !is_array($customMethodName) && strlen($customMethodName) > 0)
+				if (is_array($customMethodName) && count($customMethodName) > 0 || !is_array($customMethodName) && $customMethodName <> '')
 				{
 					$value1 = $value;
 					if ($bAllowSelection && preg_match("#^\{=[a-z0-9_]+:[a-z0-9_]+\}$#i", trim($value1)))
@@ -352,7 +353,7 @@ class CIBlockDocumentWebdavSocnet extends CIBlockDocument
 
 				if ($bAllowSelection)
 				{
-					if (!in_array($arFieldType["Type"], array("file", "bool", "date", "datetime")) && (is_array($customMethodName) && count($customMethodName) <= 0 || !is_array($customMethodName) && strlen($customMethodName) <= 0))
+					if (!in_array($arFieldType["Type"], array("file", "bool", "date", "datetime")) && (is_array($customMethodName) && count($customMethodName) <= 0 || !is_array($customMethodName) && $customMethodName == ''))
 					{
 						?><input type="button" value="..." onclick="BPAShowSelector('<?= $fieldNameId ?>', '<?= $arFieldType["BaseType"] ?>');"><?
 					}
@@ -370,7 +371,7 @@ class CIBlockDocumentWebdavSocnet extends CIBlockDocument
 
 			if ($bAllowSelection)
 			{
-				if (in_array($arFieldType["Type"], array("file", "bool", "date", "datetime")) || (is_array($customMethodName) && count($customMethodName) > 0 || !is_array($customMethodName) && strlen($customMethodName) > 0))
+				if (in_array($arFieldType["Type"], array("file", "bool", "date", "datetime")) || (is_array($customMethodName) && count($customMethodName) > 0 || !is_array($customMethodName) && $customMethodName <> ''))
 				{
 					?>
 					<input type="text" id="id_<?= $arFieldName["Field"] ?>_text" name="<?= $arFieldName["Field"] ?>_text" value="<?
@@ -392,7 +393,7 @@ class CIBlockDocumentWebdavSocnet extends CIBlockDocument
 		return $s;
 	}
 
-	function GetFieldInputValue($documentType, $arFieldType, $arFieldName, $arRequest, &$arErrors)
+	public static function GetFieldInputValue($documentType, $arFieldType, $arFieldName, $arRequest, &$arErrors)
 	{
 		if($storage = self::needProxyToDiskByDocType($documentType))
 		{
@@ -404,7 +405,7 @@ class CIBlockDocumentWebdavSocnet extends CIBlockDocument
 		if ($arFieldType["Type"] == "user")
 		{
 			$value = $arRequest[$arFieldName["Field"]];
-			if (strlen($value) > 0)
+			if ($value <> '')
 			{
 				$result = CBPHelper::UsersStringToArray($value, array("webdav", "CIBlockDocumentWebdavSocnet", $documentType), $arErrors);
 				if (count($arErrors) > 0)
@@ -432,7 +433,7 @@ class CIBlockDocumentWebdavSocnet extends CIBlockDocument
 				{
 					if ($arFieldType["Type"] == "int")
 					{
-						if (strlen($value) > 0)
+						if ($value <> '')
 						{
 							$value = str_replace(" ", "", $value);
 							if ($value."|" == intval($value)."|")
@@ -456,7 +457,7 @@ class CIBlockDocumentWebdavSocnet extends CIBlockDocument
 					}
 					elseif ($arFieldType["Type"] == "double")
 					{
-						if (strlen($value) > 0)
+						if ($value <> '')
 						{
 							$value = str_replace(" ", "", str_replace(",", ".", $value));
 							if ($value."|" == doubleval($value)."|")
@@ -480,7 +481,7 @@ class CIBlockDocumentWebdavSocnet extends CIBlockDocument
 					}
 					elseif ($arFieldType["Type"] == "select")
 					{
-						if (!is_array($arFieldType["Options"]) || count($arFieldType["Options"]) <= 0 || strlen($value) <= 0)
+						if (!is_array($arFieldType["Options"]) || count($arFieldType["Options"]) <= 0 || $value == '')
 						{
 							$value = null;
 						}
@@ -534,9 +535,9 @@ class CIBlockDocumentWebdavSocnet extends CIBlockDocument
 							{
 								$value = "N";
 							}
-							elseif (strlen($value) > 0)
+							elseif ($value <> '')
 							{
-								$value = strtolower($value);
+								$value = mb_strtolower($value);
 								if (in_array($value, array("y", "yes", "true", "1")))
 								{
 									$value = "Y";
@@ -563,9 +564,9 @@ class CIBlockDocumentWebdavSocnet extends CIBlockDocument
 					}
 					elseif ($arFieldType["Type"] == "file")
 					{
-						if (is_array($value) && array_key_exists("name", $value) && strlen($value["name"]) > 0)
+						if (is_array($value) && array_key_exists("name", $value) && $value["name"] <> '')
 						{
-							if (!array_key_exists("MODULE_ID", $value) || strlen($value["MODULE_ID"]) <= 0)
+							if (!array_key_exists("MODULE_ID", $value) || $value["MODULE_ID"] == '')
 								$value["MODULE_ID"] = "bizproc";
 
 							$value = CFile::SaveFile($value, "bizproc_wf", true, true);
@@ -584,9 +585,9 @@ class CIBlockDocumentWebdavSocnet extends CIBlockDocument
 							$value = null;
 						}
 					}
-					elseif (strpos($arFieldType["Type"], ":") !== false)
+					elseif (mb_strpos($arFieldType["Type"], ":") !== false)
 					{
-						$arCustomType = CIBlockProperty::GetUserType(substr($arFieldType["Type"], 2));
+						$arCustomType = CIBlockProperty::GetUserType(mb_substr($arFieldType["Type"], 2));
 						if (array_key_exists("GetLength", $arCustomType))
 						{
 							if (call_user_func_array(
@@ -624,7 +625,7 @@ class CIBlockDocumentWebdavSocnet extends CIBlockDocument
 					}
 					else
 					{
-						if (!is_array($value) && strlen($value) <= 0)
+						if (!is_array($value) && $value == '')
 							$value = null;
 					}
 				}
@@ -645,7 +646,7 @@ class CIBlockDocumentWebdavSocnet extends CIBlockDocument
 		return $result;
 	}
 
-	function GetFieldInputValuePrintable($documentType, $arFieldType, $fieldValue)
+	public static function GetFieldInputValuePrintable($documentType, $arFieldType, $fieldValue)
 	{
 		if($storage = self::needProxyToDiskByDocType($documentType))
 		{
@@ -667,11 +668,11 @@ class CIBlockDocumentWebdavSocnet extends CIBlockDocument
 				{
 					$result = array();
 					foreach ($fieldValue as $r)
-						$result[] = ((strtoupper($r) != "N" && !empty($r)) ? GetMessage("BPVDX_YES") : GetMessage("BPVDX_NO"));
+						$result[] = ((mb_strtoupper($r) != "N" && !empty($r)) ? GetMessage("BPVDX_YES") : GetMessage("BPVDX_NO"));
 				}
 				else
 				{
-					$result = ((strtoupper($fieldValue) != "N" && !empty($fieldValue)) ? GetMessage("BPVDX_YES") : GetMessage("BPVDX_NO"));
+					$result = ((mb_strtoupper($fieldValue) != "N" && !empty($fieldValue)) ? GetMessage("BPVDX_YES") : GetMessage("BPVDX_NO"));
 				}
 				break;
 
@@ -717,9 +718,9 @@ class CIBlockDocumentWebdavSocnet extends CIBlockDocument
 				break;
 		}
 
-		if (strpos($arFieldType['Type'], ":") !== false)
+		if (mb_strpos($arFieldType['Type'], ":") !== false)
 		{
-			$arCustomType = CIBlockProperty::GetUserType(substr($arFieldType['Type'], 2));
+			$arCustomType = CIBlockProperty::GetUserType(mb_substr($arFieldType['Type'], 2));
 			if (array_key_exists("GetPublicViewHTML", $arCustomType))
 			{
 				if (is_array($fieldValue) && !CBPHelper::IsAssociativeArray($fieldValue))
@@ -758,7 +759,7 @@ class CIBlockDocumentWebdavSocnet extends CIBlockDocument
 		return $result;
 	}
 
-	function GetFieldValuePrintable($documentId, $fieldName, $fieldType, $fieldValue, $arFieldType)
+	public static function GetFieldValuePrintable($documentId, $fieldName, $fieldType, $fieldValue, $arFieldType)
 	{
 		$documentType = null;
 
@@ -767,7 +768,7 @@ class CIBlockDocumentWebdavSocnet extends CIBlockDocument
 			static $arCache = array();
 			if (!array_key_exists($documentId, $arCache))
 			{
-				if (substr($documentId, 0, strlen("iblock_")) == "iblock_")
+				if (mb_substr($documentId, 0, mb_strlen("iblock_")) == "iblock_")
 					$arCache[$documentId] = $documentId;
 				else
 					$arCache[$documentId] = self::GetDocumentType($documentId);
@@ -782,7 +783,7 @@ class CIBlockDocumentWebdavSocnet extends CIBlockDocument
 		return self::GetFieldInputValuePrintable($documentType, $arFieldType, $fieldValue);
 	}
 
-	public function GetDocumentFieldTypes($documentType)
+	public static function GetDocumentFieldTypes($documentType)
 	{
 		if($storage = self::needProxyToDiskByDocType($documentType))
 		{
@@ -820,7 +821,7 @@ class CIBlockDocumentWebdavSocnet extends CIBlockDocument
 	* @param string $documentId - код документа.
 	* @return string - ссылка на страницу документа в административной части.
 	*/
-	public function GetDocumentAdminPage($documentId)
+	public static function GetDocumentAdminPage($documentId)
 	{
 		$documentId = intval($documentId);
 		if ($documentId <= 0)
@@ -885,7 +886,7 @@ class CIBlockDocumentWebdavSocnet extends CIBlockDocument
 		return null;
 	}
 
-	public function GetDocumentType($documentId)
+	public static function GetDocumentType($documentId)
 	{
 		$diskId = self::processGetDiskIdByDocId($documentId);
 		if($diskId !== null)
@@ -899,7 +900,7 @@ class CIBlockDocumentWebdavSocnet extends CIBlockDocument
 		if (!$arResult)
 			throw new Exception("Element is not found");
 
-		$nav = CIBlockSection::GetNavChain(IntVal($arResult['IBLOCK_ID']), IntVal($arResult['IBLOCK_SECTION_ID']));
+		$nav = CIBlockSection::GetNavChain(intval($arResult['IBLOCK_ID']), intval($arResult['IBLOCK_SECTION_ID']));
 		if ($nav && $arSection = $nav->GetNext())
 		{
 			$result = implode('_', array(
@@ -919,7 +920,7 @@ class CIBlockDocumentWebdavSocnet extends CIBlockDocument
 	* @param string $documentId - код документа.
 	* @return array - массив документа.
 	*/
-	public function GetDocumentForHistory($documentId, $historyIndex, $update = false)
+	public static function GetDocumentForHistory($documentId, $historyIndex, $update = false)
 	{
 		$documentId = intval($documentId);
 		if ($documentId <= 0)
@@ -949,22 +950,22 @@ class CIBlockDocumentWebdavSocnet extends CIBlockDocument
 			{
 				if ($fieldKey == "~PREVIEW_PICTURE" || $fieldKey == "~DETAIL_PICTURE")
 				{
-					$arResult["FIELDS"][substr($fieldKey, 1)] = CBPDocument::PrepareFileForHistory(
+					$arResult["FIELDS"][mb_substr($fieldKey, 1)] = CBPDocument::PrepareFileForHistory(
 						array("webdav", "CIBlockDocumentWebdavSocnet", $documentId),
 						$fieldValue,
 						$historyIndex
 					);
 				}
-				elseif (substr($fieldKey, 0, 1) == "~")
+				elseif (mb_substr($fieldKey, 0, 1) == "~")
 				{
-					$arResult["FIELDS"][substr($fieldKey, 1)] = $fieldValue;
+					$arResult["FIELDS"][mb_substr($fieldKey, 1)] = $fieldValue;
 				}
 			}
 
 			$arResult["PROPERTIES"] = array();
 			foreach ($arDocumentProperties as $propertyKey => $propertyValue)
 			{
-				if (strlen($propertyValue["USER_TYPE"]) > 0)
+				if ($propertyValue["USER_TYPE"] <> '')
 				{
 					$arResult["PROPERTIES"][$propertyKey] = array(
 						"VALUE" => $propertyValue["VALUE"],
@@ -1027,10 +1028,10 @@ class CIBlockDocumentWebdavSocnet extends CIBlockDocument
 	* @param array $arParameters - ассициативный массив вспомогательных параметров. Используется для того, чтобы не рассчитывать заново те вычисляемые значения, которые уже известны на момент вызова метода. Стандартными являются ключи массива DocumentStates - массив состояний рабочих потоков данного документа, WorkflowId - код рабочего потока (если требуется проверить операцию на одном рабочем потоке). Массив может быть дополнен другими произвольными ключами.
 	* @return bool
 	*/
-	function CanUserOperateDocument($operation, $userId, $documentId, $arParameters = array())
+	public static function CanUserOperateDocument($operation, $userId, $documentId, $arParameters = array())
 	{
 		$documentId = trim($documentId);
-		if (strlen($documentId) <= 0)
+		if ($documentId == '')
 			return false;
 
 		$diskId = self::processGetDiskIdByDocId($documentId);
@@ -1081,11 +1082,11 @@ class CIBlockDocumentWebdavSocnet extends CIBlockDocument
 				$dbSectionsChain = CIBlockSection::GetNavChain($arElement["IBLOCK_ID"], $arElement["IBLOCK_SECTION_ID"]);
 				if ($arSect = $dbSectionsChain->Fetch())
 				{
-					$arParameters["OwnerType"] = (intVal($arSect["SOCNET_GROUP_ID"]) > 0 ? "group" : "user");
-					$arParameters["OwnerId"] = (intVal($arSect["SOCNET_GROUP_ID"]) > 0 ? $arSect["SOCNET_GROUP_ID"] : $arSect["CREATED_BY"]);
+					$arParameters["OwnerType"] = (intval($arSect["SOCNET_GROUP_ID"]) > 0 ? "group" : "user");
+					$arParameters["OwnerId"] = (intval($arSect["SOCNET_GROUP_ID"]) > 0 ? $arSect["SOCNET_GROUP_ID"] : $arSect["CREATED_BY"]);
 				}
 			}
-			$arParameters["Published"] = ((intVal($arElement["WF_STATUS_ID"]) == 1 && intVal($arElement["WF_PARENT_ELEMENT_ID"]) <= 0) ? "Y" : "N");
+			$arParameters["Published"] = ((intval($arElement["WF_STATUS_ID"]) == 1 && intval($arElement["WF_PARENT_ELEMENT_ID"]) <= 0) ? "Y" : "N");
 		}
 		elseif (array_key_exists("DocumentType", $arParameters))
 		{
@@ -1186,7 +1187,7 @@ class CIBlockDocumentWebdavSocnet extends CIBlockDocument
 		return $r;
 	}
 
-	function GetUserGroups($documentType = null, $documentId = null, $userId = 0)
+	public static function GetUserGroups($documentType = null, $documentId = null, $userId = 0)
 	{
 		$documentType = trim(is_array($documentType) ? $documentType[2] : $documentType);
 
@@ -1195,9 +1196,9 @@ class CIBlockDocumentWebdavSocnet extends CIBlockDocument
 		else
 			$documentType = (($documentType == null || $documentType == '') ? null : $documentType);
 
-		$userId = intVal($userId);
+		$userId = intval($userId);
 		$documentIdReal = $documentId = (is_array($documentId) ? $documentId[2] : $documentId);
-		$documentId = intVal($documentId);
+		$documentId = intval($documentId);
 		$arParameters = array();
 
 		if (($documentType == null && $documentId <= 0) || $userId <= 0)
@@ -1227,8 +1228,8 @@ class CIBlockDocumentWebdavSocnet extends CIBlockDocument
 				$dbSectionsChain = CIBlockSection::GetNavChain($arElement["IBLOCK_ID"], $arElement["IBLOCK_SECTION_ID"]);
 				if ($arSect = $dbSectionsChain->Fetch())
 				{
-					$arParameters["OwnerType"] = (intVal($arSect["SOCNET_GROUP_ID"]) > 0 ? "group" : "user");
-					$arParameters["OwnerId"] = (intVal($arSect["SOCNET_GROUP_ID"]) > 0 ? $arSect["SOCNET_GROUP_ID"] : $arSect["CREATED_BY"]);
+					$arParameters["OwnerType"] = (intval($arSect["SOCNET_GROUP_ID"]) > 0 ? "group" : "user");
+					$arParameters["OwnerId"] = (intval($arSect["SOCNET_GROUP_ID"]) > 0 ? $arSect["SOCNET_GROUP_ID"] : $arSect["CREATED_BY"]);
 
 					$arParameters["IBlockId"] = $arElement["IBLOCK_ID"];
 					$arParameters["CreatedBy"] = $arElement["CREATED_BY"];
@@ -1242,7 +1243,7 @@ class CIBlockDocumentWebdavSocnet extends CIBlockDocument
 		{
 			$arParameters["UserGroups"][] = SONET_ROLES_ALL;
 			$r = CSocNetUserToGroup::GetUserRole($userId, $arParameters["OwnerId"]);
-			if (strlen($r) > 0)
+			if ($r <> '')
 			{
 				$arParameters["UserGroups"][] = $r;
 				foreach ($GLOBALS["arSocNetAllowedInitiatePerms"] as $perm)
@@ -1272,10 +1273,10 @@ class CIBlockDocumentWebdavSocnet extends CIBlockDocument
 	* @param array $arParameters - ассициативный массив вспомогательных параметров. Используется для того, чтобы не рассчитывать заново те вычисляемые значения, которые уже известны на момент вызова метода. Стандартными являются ключи массива DocumentStates - массив состояний рабочих потоков данного документа, WorkflowId - код рабочего потока (если требуется проверить операцию на одном рабочем потоке). Массив может быть дополнен другими произвольными ключами.
 	* @return bool
 	*/
-	function CanUserOperateDocumentType($operation, $userId, $documentType, $arParameters = array())
+	public static function CanUserOperateDocumentType($operation, $userId, $documentType, $arParameters = array())
 	{
 		$documentType = trim($documentType);
-		if (strlen($documentType) <= 0)
+		if ($documentType == '')
 			return false;
 
 		if($storage = self::needProxyToDiskByDocType($documentType))
@@ -1383,7 +1384,7 @@ class CIBlockDocumentWebdavSocnet extends CIBlockDocument
 	}
 
 	// array(SONET_RELATIONS_TYPE_FRIENDS => "Друзья", SONET_RELATIONS_TYPE_FRIENDS2 => "Друзья друзей", 3 => ..., "Author" => "Автор")
-	public function GetAllowableUserGroups($documentType, $withExtended = false)
+	public static function GetAllowableUserGroups($documentType, $withExtended = false)
 	{
 		if($storage = self::needProxyToDiskByDocType($documentType))
 		{
@@ -1415,7 +1416,7 @@ class CIBlockDocumentWebdavSocnet extends CIBlockDocument
 		return $arResult;
 	}
 
-	public function GetUsersFromUserGroup($group, $documentId)
+	public static function GetUsersFromUserGroup($group, $documentId)
 	{
 		$diskId = self::processGetDiskIdByDocId((int)$documentId);
 		if($diskId !== null)
@@ -1429,7 +1430,7 @@ class CIBlockDocumentWebdavSocnet extends CIBlockDocument
 			"OwnerType" => "",
 			"OwnerId" => 0);
 
-		if (strLen($documentId) <= 0)
+		if ($documentId == '')
 			return $arResult;
 
 		$res = explode("_", $documentId);
@@ -1440,7 +1441,7 @@ class CIBlockDocumentWebdavSocnet extends CIBlockDocument
 				"OwnerType" => $res[2],
 				"OwnerId" => $res[3]);
 		}
-		elseif (intVal($documentId) > 0)
+		elseif (intval($documentId) > 0)
 		{
 			$db_res = CIBlockElement::GetList(
 				array(),
@@ -1460,12 +1461,12 @@ class CIBlockDocumentWebdavSocnet extends CIBlockDocument
 			$dbSectionsChain = CIBlockSection::GetNavChain($arElement["IBLOCK_ID"], $arElement["IBLOCK_SECTION_ID"]);
 			if ($arSect = $dbSectionsChain->Fetch())
 			{
-				$arParameters["OwnerType"] = (intVal($arSect["SOCNET_GROUP_ID"]) > 0 ? "group" : "user");
-				$arParameters["OwnerId"] = (intVal($arSect["SOCNET_GROUP_ID"]) > 0 ? $arSect["SOCNET_GROUP_ID"] : $arSect["CREATED_BY"]);
+				$arParameters["OwnerType"] = (intval($arSect["SOCNET_GROUP_ID"]) > 0 ? "group" : "user");
+				$arParameters["OwnerId"] = (intval($arSect["SOCNET_GROUP_ID"]) > 0 ? $arSect["SOCNET_GROUP_ID"] : $arSect["CREATED_BY"]);
 			}
 		}
 
-		$sGroup = strtoupper($group);
+		$sGroup = mb_strtoupper($group);
 		if ($sGroup == "AUTHOR")
 		{
 			return array($arParameters["CreatedBy"]);
@@ -1545,7 +1546,7 @@ class CIBlockDocumentWebdavSocnet extends CIBlockDocument
 	*
 	* @param string $documentId - код документа.
 	*/
-	public function PublishDocument($documentId)
+	public static function PublishDocument($documentId)
 	{
 		global $DB;
 		$documentId = intval($documentId);
@@ -1599,7 +1600,7 @@ class CIBlockDocumentWebdavSocnet extends CIBlockDocument
 		$user_id = $group_id = false;
 		if ($arSection = $dbSectionsChain->Fetch())
 		{
-			if (intVal($arSection["SOCNET_GROUP_ID"]) > 0)
+			if (intval($arSection["SOCNET_GROUP_ID"]) > 0)
 			{
 				$arConstructor["FILES_GROUP_IBLOCK_ID"] = $arElement["IBLOCK_ID"];
 				$arConstructor["PATH_TO_GROUP_FILES_ELEMENT"] = CIBlockDocumentWebdavSocnet::GetDocumentAdminPage($documentId);
@@ -1634,7 +1635,7 @@ class CIBlockDocumentWebdavSocnet extends CIBlockDocument
 	* @param string $documentId - ID документа.
 	* @param string $arFields - поля для замены.
 	*/
-	public function CloneElement($ID, $arFields = array(), $arParams = array())
+	public static function CloneElement($ID, $arFields = array(), $arParams = array())
 	{
 		global $DB;
 		$ID = intval($ID);
@@ -1664,7 +1665,7 @@ class CIBlockDocumentWebdavSocnet extends CIBlockDocument
 	*
 	* @param string $documentId - код документа.
 	*/
-	public function UnpublishDocument($documentId)
+	public static function UnpublishDocument($documentId)
 	{
 		global $DB;
 
@@ -1685,7 +1686,7 @@ class CIBlockDocumentWebdavSocnet extends CIBlockDocument
 		CSocNetSearch::IBlockElementDelete(array("ID" => $documentId));
 	}
 
-	public function RecoverDocumentFromHistory($documentId, $arDocument)
+	public static function RecoverDocumentFromHistory($documentId, $arDocument)
 	{
 		if(parent::RecoverDocumentFromHistory($documentId, $arDocument))
 		{
@@ -1694,7 +1695,7 @@ class CIBlockDocumentWebdavSocnet extends CIBlockDocument
 		}
 	}
 
-	public function GetDocument($documentId)
+	public static function GetDocument($documentId)
 	{
 		$diskId = self::processGetDiskIdByDocId((int)$documentId);
 		if($diskId !== null)
@@ -1704,7 +1705,7 @@ class CIBlockDocumentWebdavSocnet extends CIBlockDocument
 		return parent::GetDocument($documentId);
 	}
 
-	public function GetDocumentFields($documentType)
+	public static function GetDocumentFields($documentType)
 	{
 		if($storage = self::needProxyToDiskByDocType($documentType))
 		{
@@ -1713,7 +1714,7 @@ class CIBlockDocumentWebdavSocnet extends CIBlockDocument
 		return parent::GetDocumentFields($documentType);
 	}
 
-	public function AddDocumentField($documentType, $arFields)
+	public static function AddDocumentField($documentType, $arFields)
 	{
 		if($storage = self::needProxyToDiskByDocType($documentType))
 		{
@@ -1722,7 +1723,7 @@ class CIBlockDocumentWebdavSocnet extends CIBlockDocument
 		return parent::AddDocumentField($documentType, $arFields);
 	}
 
-	public function UpdateDocument($documentId, $arFields)
+	public static function UpdateDocument($documentId, $arFields)
 	{
 		$diskId = self::processGetDiskIdByDocId((int)$documentId);
 		if($diskId !== null)
@@ -1732,7 +1733,7 @@ class CIBlockDocumentWebdavSocnet extends CIBlockDocument
 		parent::UpdateDocument($documentId, $arFields);
 	}
 
-	public function LockDocument($documentId, $workflowId)
+	public static function LockDocument($documentId, $workflowId)
 	{
 		$diskId = self::processGetDiskIdByDocId((int)$documentId);
 		if($diskId !== null)
@@ -1742,7 +1743,7 @@ class CIBlockDocumentWebdavSocnet extends CIBlockDocument
 		return parent::LockDocument($documentId, $workflowId);
 	}
 
-	public function UnlockDocument($documentId, $workflowId)
+	public static function UnlockDocument($documentId, $workflowId)
 	{
 		$diskId = self::processGetDiskIdByDocId((int)$documentId);
 		if($diskId !== null)
@@ -1753,7 +1754,7 @@ class CIBlockDocumentWebdavSocnet extends CIBlockDocument
 		return parent::UnlockDocument($documentId, $workflowId);
 	}
 
-	public function IsDocumentLocked($documentId, $workflowId)
+	public static function IsDocumentLocked($documentId, $workflowId)
 	{
 		$diskId = self::processGetDiskIdByDocId((int)$documentId);
 		if($diskId !== null)
@@ -1764,7 +1765,7 @@ class CIBlockDocumentWebdavSocnet extends CIBlockDocument
 		return parent::IsDocumentLocked($documentId, $workflowId);
 	}
 
-	public function DeleteDocument($documentId)
+	public static function DeleteDocument($documentId)
 	{
 		$diskId = self::processGetDiskIdByDocId((int)$documentId);
 		if($diskId !== null)
@@ -1774,9 +1775,9 @@ class CIBlockDocumentWebdavSocnet extends CIBlockDocument
 		parent::DeleteDocument($documentId);
 	}
 
-	function GetFieldInputControlOptions($documentType, &$arFieldType, $jsFunctionName, &$value)
+	public static function GetFieldInputControlOptions($documentType, &$arFieldType, $jsFunctionName, &$value)
 	{
-		$iblockId = intval(substr($documentType, strlen("iblock_")));
+		$iblockId = intval(mb_substr($documentType, mb_strlen("iblock_")));
 		if($iblockId > 0 && $storage = self::needProxyToDiskByDocType($documentType))
 		{
 			return self::proxyToDisk(__FUNCTION__, array(\Bitrix\Disk\BizProcDocumentCompatible::generateDocumentType($storage->getId()), $arFieldType, $jsFunctionName, $value));
@@ -1785,7 +1786,7 @@ class CIBlockDocumentWebdavSocnet extends CIBlockDocument
 		return parent::GetFieldInputControlOptions($documentType, $arFieldType, $jsFunctionName, $value);
 	}
 
-	public function SetPermissions($documentId, $workflowId, $arPermissions, $bRewrite = true)
+	public static function SetPermissions($documentId, $workflowId, $arPermissions, $bRewrite = true)
 	{
 		$diskId = self::processGetDiskIdByDocId((int)$documentId);
 		if($diskId !== null)

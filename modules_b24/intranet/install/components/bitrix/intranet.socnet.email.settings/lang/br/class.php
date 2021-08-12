@@ -1,5 +1,0 @@
-<?
-$MESS["INTRANET_USER_PROFILE_SECURITY_OTP_TITLE"] = "Opções de segurança adicionais";
-$MESS["INTRANET_USER_PROFILE_SECURITY_PASSWORDS_TITLE"] = "Senhas do aplicativo";
-$MESS["INTRANET_USER_PROFILE_SYNCHRONIZE_TITLE"] = "Sincronizar";
-?>

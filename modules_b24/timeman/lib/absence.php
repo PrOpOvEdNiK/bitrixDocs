@@ -139,7 +139,16 @@ class Absence
 		$requestReport = \Bitrix\Main\Config\Option::get('timeman', 'request_report', "0");
 		if ($requestReport == "1")
 		{
-			$result = true;
+			$skipReport = \Bitrix\Main\Config\Option::get('timeman', 'skip_report', "0");
+			if ($skipReport == "0")
+			{
+				$result = true;
+			}
+			else
+			{
+				$skipReport = Json::decode($skipReport);
+				$result = !$skipReport || !in_array($userId, $skipReport);
+			}
 		}
 		else if ($requestReport == "0")
 		{
@@ -175,6 +184,18 @@ class Absence
 		}
 
 		\Bitrix\Main\Config\Option::set('timeman', 'request_report', $result);
+
+		return true;
+	}
+
+	private static function setOptionSkipReport($userIds): bool
+	{
+		if (!is_array($userIds))
+		{
+			return false;
+		}
+
+		\Bitrix\Main\Config\Option::set('timeman', 'skip_report', Json::encode($userIds));
 
 		return true;
 	}
@@ -730,7 +751,7 @@ class Absence
 		}
 
 		$text = trim($text);
-		if (strlen($text) <= 0)
+		if ($text == '')
 		{
 			return false;
 		}
@@ -1133,7 +1154,7 @@ class Absence
 
 		$params = $event->getParameters();
 
-		if (isset($_SESSION['SESS_AUTH']['SET_LAST_DESKTOP']))
+		if (isset(\Bitrix\Main\Application::getInstance()->getKernelSession()['IM']['SET_LAST_DESKTOP']))
 		{
 			return false;
 		}
@@ -1141,7 +1162,7 @@ class Absence
 		$result = self::setDesktopStart($params['USER_ID']);
 		if ($result)
 		{
-			$_SESSION['SESS_AUTH']['SET_LAST_DESKTOP'] = 'Y';
+			\Bitrix\Main\Application::getInstance()->getKernelSession()['IM']['SET_LAST_DESKTOP'] = 'Y';
 		}
 
 		return true;
@@ -1673,5 +1694,54 @@ class Absence
 		$result = trim($result);
 
 		return $result? $result: Loc::getMessage('TIMEMAN_ABSENCE_FORMAT_LESS_MINUTE');
+	}
+
+	public static function getReportUsers()
+	{
+		$enableType = self::getOptionReportEnableType();
+		if ($enableType !== self::TYPE_FOR_USER)
+		{
+			return $enableType;
+		}
+
+		$reportUsers = \Bitrix\Main\Config\Option::get('timeman', 'request_report', '0');
+		return Json::decode($reportUsers);
+	}
+
+	public static function disableForUsers($userIds)
+	{
+		if (!is_array($userIds))
+		{
+			$userIds = [$userIds];
+		}
+
+		$reportUsers = self::getReportUsers();
+		if ($reportUsers === self::TYPE_NONE)
+		{
+			return null;
+		}
+
+		if ($reportUsers === self::TYPE_ALL)
+		{
+			$reportSkipUsers = \Bitrix\Main\Config\Option::get('timeman', 'skip_report', '0');
+
+			if ($reportSkipUsers === '0')
+			{
+				return self::setOptionSkipReport($userIds);
+			}
+
+			$reportSkipUsers = array_unique(array_merge(Json::decode($reportSkipUsers), $userIds));
+
+			return self::setOptionSkipReport($reportSkipUsers);
+		}
+
+		$reportUsers = array_diff($reportUsers, $userIds);
+
+		return self::setOptionRequestReport($reportUsers);
+	}
+
+	public static function disableForAll(): void
+	{
+		self::setOptionRequestReport(false);
 	}
 }

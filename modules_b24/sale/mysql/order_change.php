@@ -1,4 +1,4 @@
-<?
+<?php
 
 use Bitrix\Sale\Compatible;
 
@@ -6,7 +6,7 @@ require_once($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/sale/general/order_chang
 
 class CSaleOrderChange extends CAllSaleOrderChange
 {
-	public function Add($arFields)
+	public static function Add($arFields)
 	{
 		if (defined("SALE_DEBUG") && SALE_DEBUG)
 		{
@@ -15,9 +15,9 @@ class CSaleOrderChange extends CAllSaleOrderChange
 
 		foreach ($arFields as $key => $value)
 		{
-			if (substr($key, 0, 1)=="=")
+			if (mb_substr($key, 0, 1) == "=")
 			{
-				$arFields[substr($key, 1)] = $value;
+				$arFields[mb_substr($key, 1)] = $value;
 				unset($arFields[$key]);
 			}
 		}
@@ -41,20 +41,20 @@ class CSaleOrderChange extends CAllSaleOrderChange
 		return (int)$result->getId();
 	}
 
-	function Update($ID, $arFields)
+	public static function Update($ID, $arFields)
 	{
 		if (defined("SALE_DEBUG") && SALE_DEBUG)
 		{
 			CSaleHelper::WriteToLog("CSaleOrderChange - Update", array("ID" => $ID, "arFields" => $arFields), "SOCU2");
 		}
 
-		$ID = IntVal($ID);
+		$ID = intval($ID);
 
 		foreach ($arFields as $key => $value)
 		{
-			if (substr($key, 0, 1)=="=")
+			if (mb_substr($key, 0, 1) == "=")
 			{
-				$arFields[substr($key, 1)] = $value;
+				$arFields[mb_substr($key, 1)] = $value;
 				unset($arFields[$key]);
 			}
 		}
@@ -71,7 +71,7 @@ class CSaleOrderChange extends CAllSaleOrderChange
 		return $ID;
 	}
 
-	static function GetList($arOrder = array("ID"=>"DESC"), $arFilter = array(), $arGroupBy = false, $arNavStartParams = false, $arSelectFields = array())
+	public static function GetList($arOrder = array("ID"=>"DESC"), $arFilter = array(), $arGroupBy = false, $arNavStartParams = false, $arSelectFields = array())
 	{
 		if (array_key_exists("DATE_CREATE_FROM", $arFilter))
 		{

@@ -1,6 +1,0 @@
-<?
-$MESS["SONET_C30_DATE_FILTER_DAYS"] = "dni";
-$MESS["SONET_C30_DATE_FILTER_MONTH"] = "ten miesiąc";
-$MESS["SONET_C30_DATE_FILTER_TODAY"] = "dzisiaj";
-$MESS["SONET_C30_DATE_FILTER_WEEK"] = "ten tydzień";
-?>

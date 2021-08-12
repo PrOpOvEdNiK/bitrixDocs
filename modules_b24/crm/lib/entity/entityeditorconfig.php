@@ -3,20 +3,40 @@ namespace Bitrix\Crm\Entity;
 
 use Bitrix\Main;
 use Bitrix\Crm;
+use Bitrix\Ui\EntityForm\Scope;
 
 class EntityEditorConfig
 {
+	public const CATEGORY_NAME = 'crm.entity.editor';
+
 	protected $entityTypeID = \CCrmOwnerType::Undefined;
 	protected $userID = 0;
 	protected $scope = EntityEditorConfigScope::UNDEFINED;
+	protected $userScopeId;
+	protected $configuration;
 	protected $extras = null;
 
 	public function __construct($entityTypeID, $userID, $scope, array $extras)
 	{
+		if (!Main\Loader::includeModule('ui'))
+		{
+			throw new Main\NotSupportedException('ui module is required');
+		}
+
 		$this->entityTypeID = $entityTypeID;
 		$this->setUserID($userID > 0 ? $userID : \CCrmSecurityHelper::GetCurrentUserID());
 		$this->setScope($scope);
 		$this->extras = $extras;
+		$this->configuration = new \Bitrix\UI\Form\EntityEditorConfiguration(self::CATEGORY_NAME);
+	}
+
+	public static function createWithCurrentScope(int $entityTypeId, array $extras = [])
+	{
+		$userId = $extras['USER_ID'] ?? \CCrmSecurityHelper::GetCurrentUserID();
+		$result = new self($entityTypeId, $userId, EntityEditorConfigScope::PERSONAL, $extras);
+		$result->setCurrentScope();
+
+		return $result;
 	}
 
 	public function getUserID()
@@ -38,6 +58,40 @@ class EntityEditorConfig
 		return $this->scope;
 	}
 
+	public function setCurrentScope()
+	{
+		$configId = $this->getConfigId();
+		$configScope = $this->configuration->getScope($configId);
+		$userScopeId = 0;
+		if (is_array($configScope))
+		{
+			$userScopeId = (int)$configScope['userScopeId'];
+			$configScope = $configScope['scope'];
+		}
+		if (!Crm\Entity\EntityEditorConfigScope::isDefined($configScope))
+		{
+			$configScope = Crm\Entity\EntityEditorConfigScope::COMMON;
+		}
+		if (
+			$configScope !== Crm\Entity\EntityEditorConfigScope::CUSTOM
+			|| !$userScopeId
+			|| !isset(Scope::getInstance()->getUserScopes($configId, 'crm')[$userScopeId])
+		)
+		{
+			$userScopeId = null;
+			if ($configScope === Crm\Entity\EntityEditorConfigScope::CUSTOM)
+			{
+				$configScope = Crm\Entity\EntityEditorConfigScope::COMMON;
+			}
+		}
+
+		$this->setScope($configScope);
+		if ($userScopeId > 0)
+		{
+			$this->setUserScopeId($userScopeId);
+		}
+	}
+
 	public function setScope($scope)
 	{
 		if(!is_string($scope))
@@ -52,12 +106,34 @@ class EntityEditorConfig
 		$this->scope = $scope;
 	}
 
+	public function getUserScopeId()
+	{
+		return $this->userScopeId;
+	}
+
+	public function setUserScopeId(int $userScopeId)
+	{
+		$this->userScopeId = $userScopeId;
+	}
+
 	public static function isEntityTypeSupported($entityTypeID)
 	{
 		return $entityTypeID === \CCrmOwnerType::Lead
 			|| $entityTypeID === \CCrmOwnerType::Deal
 			|| $entityTypeID === \CCrmOwnerType::Contact
 			|| $entityTypeID === \CCrmOwnerType::Company;
+	}
+
+	protected function getConfigId(): string
+	{
+		$optionName = $this->resolveOptionName();
+		if($optionName === '')
+		{
+			$entityTypeName = \CCrmOwnerType::ResolveName($this->entityTypeID);
+			throw new Main\NotSupportedException("The entity type '{$entityTypeName}' is not supported in current context.");
+		}
+
+		return $optionName;
 	}
 
 	protected function resolveOptionName()
@@ -71,7 +147,7 @@ class EntityEditorConfig
 						? (int)$this->extras['LEAD_CUSTOMER_TYPE'] : Crm\CustomerType::UNDEFINED;
 					if($customerType !== Crm\CustomerType::UNDEFINED && $customerType !== Crm\CustomerType::GENERAL)
 					{
-						$prefix = strtolower(Crm\CustomerType::resolveName($customerType));
+						$prefix = mb_strtolower(Crm\CustomerType::resolveName($customerType));
 					}
 					$optionName = $prefix !== '' ? "{$prefix}_lead_details" : 'lead_details';
 					break;
@@ -149,24 +225,19 @@ class EntityEditorConfig
 			throw new Main\InvalidOperationException("This operation is not permitted at current settings.");
 		}
 
-		$optionName = $this->resolveOptionName();
-		if($optionName === '')
+		if(
+			$this->getScope() === Crm\Entity\EntityEditorConfigScope::CUSTOM
+			&& $this->getUserScopeId()
+		)
 		{
-			$entityTypeName = \CCrmOwnerType::ResolveName($this->entityTypeID);
-			throw new Main\NotSupportedException("The entity type '{$entityTypeName}' is not supported in current context.");
+			$result = Scope::getInstance()->getScopeById($this->getUserScopeId());
+		}
+		else
+		{
+			$result = $this->configuration->get($this->getConfigId(), $this->getScope());
 		}
 
-		if($this->scope === Crm\Entity\EntityEditorConfigScope::COMMON)
-		{
-			$optionName = "{$optionName}_common";
-		}
-
-		return \CUserOptions::GetOption(
-			'crm.entity.editor',
-			$optionName,
-			null,
-			$this->scope === Crm\Entity\EntityEditorConfigScope::PERSONAL ? $this->userID : false
-		);
+		return is_array($result) ? $this->normalize($result) : $result;
 	}
 
 	public function set(array $data)
@@ -176,31 +247,36 @@ class EntityEditorConfig
 			throw new Main\ArgumentException("Must be not empty array.", "data");
 		}
 
-		if(!Crm\Entity\EntityEditorConfigScope::isDefined($this->scope) ||
-			($this->scope === Crm\Entity\EntityEditorConfigScope::PERSONAL && $this->userID <= 0)
+		if(
+			!Crm\Entity\EntityEditorConfigScope::isDefined($this->scope)
+			|| ($this->scope === Crm\Entity\EntityEditorConfigScope::PERSONAL && $this->userID <= 0)
 		)
 		{
 			throw new Main\InvalidOperationException("This operation is not permitted at current settings.");
 		}
 
-		$optionName = $this->resolveOptionName();
-		if($optionName === '')
+		if ( // compatibility mode
+			is_array($data) &&
+			isset($data[0]['type']) &&
+			$data[0]['type'] === 'section'
+		)
 		{
-			$entityTypeName = \CCrmOwnerType::ResolveName($this->entityTypeID);
-			throw new Main\NotSupportedException("The entity type '{$entityTypeName}' is not supported in current context.");
+			$data = [
+				[
+					'name' => 'default_column',
+					'type' => 'column',
+					'elements' => $data
+				]
+			];
 		}
 
-		if($this->scope === Crm\Entity\EntityEditorConfigScope::COMMON)
-		{
-			$optionName = "{$optionName}_common";
-		}
-
-		return \CUserOptions::SetOption(
-			'crm.entity.editor',
-			$optionName,
+		$this->configuration->set(
+			$this->getConfigId(),
 			$data,
-			$this->scope === Crm\Entity\EntityEditorConfigScope::COMMON,
-			$this->scope === Crm\Entity\EntityEditorConfigScope::PERSONAL ? $this->userID : false
+			[
+				'scope' => $this->getScope(),
+				'userScopeId' => $this->getUserScopeId() ?: null,
+			]
 		);
 	}
 
@@ -226,7 +302,7 @@ class EntityEditorConfig
 		}
 
 		return \CUserOptions::DeleteOption(
-			'crm.entity.editor',
+			self::CATEGORY_NAME,
 			$optionName,
 			$this->scope === Crm\Entity\EntityEditorConfigScope::COMMON,
 			$this->scope === Crm\Entity\EntityEditorConfigScope::PERSONAL ? $this->userID : false
@@ -242,8 +318,42 @@ class EntityEditorConfig
 			throw new Main\NotSupportedException("The entity type '{$entityTypeName}' is not supported in current context.");
 		}
 
-		\CUserOptions::DeleteOptionsByName('crm.entity.editor', $optionName);
-		\CUserOptions::DeleteOptionsByName('crm.entity.editor', "{$optionName}_scope");
+		\CUserOptions::DeleteOptionsByName(self::CATEGORY_NAME, $optionName);
+		\CUserOptions::DeleteOptionsByName(self::CATEGORY_NAME, "{$optionName}_scope");
+	}
+
+	public function normalize(array $data, array $options = [])
+	{
+		if ( // compatibility mode
+			isset($data[0]) &&
+			isset($data[0]['type']) &&
+			$data[0]['type'] === 'column'
+		)
+		{
+			$data = (array)$data[0]['elements'];
+		}
+
+		if (isset($options['remove_if_empty_name']) && $options['remove_if_empty_name'])
+		{
+			for($i = 0, $sectionCount = count($data); $i < $sectionCount; $i++)
+			{
+				if((isset($data[$i]['elements']) && is_array($data[$i]['elements'])))
+				{
+					for ($j = 0, $elementCount = count($data[$i]['elements']); $j < $elementCount; $j++)
+					{
+						if (
+							!isset($data[$i]['elements'][$j]['name']) ||
+							trim($data[$i]['elements'][$j]['name']) === ''
+						)
+						{
+							unset($data[$i]['elements'][$j]);
+						}
+					}
+				}
+			}
+		}
+
+		return $data;
 	}
 
 	public function sanitize(array $data)
@@ -293,6 +403,12 @@ class EntityEditorConfig
 					)
 					{
 						$effectiveElement['optionFlags'] = $data[$i]['elements'][$j]['optionFlags'];
+					}
+					if(isset($data[$i]['elements'][$j]['options'])
+						&& is_array($data[$i]['elements'][$j]['options'])
+					)
+					{
+						$effectiveElement['options'] = $data[$i]['elements'][$j]['options'];
 					}
 
 					$effectiveElements[] = $effectiveElement;
@@ -359,5 +475,25 @@ class EntityEditorConfig
 		}
 
 		return true;
+	}
+
+	public function isFormFieldVisible(string $fieldName): bool
+	{
+		static $data = [];
+		$cacheKey = (string)$this->userID . '_' . (string)$this->scope . '_' . (string)$this->userScopeId;
+		if (!array_key_exists($cacheKey, $data))
+		{
+			$data[$cacheKey] = [];
+			$config = $this->get();
+			foreach ($config as $section)
+			{
+				foreach ($section['elements'] as $element)
+				{
+					$data[$cacheKey][] = $element['name'];
+				}
+			}
+		}
+
+		return in_array($fieldName, $data[$cacheKey], true);
 	}
 }

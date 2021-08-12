@@ -11,7 +11,7 @@ class FieldAdapter
 	 * @param array $sourceField
 	 * @return array
 	 */
-	public static function adapt(array $sourceField)
+	public static function adapt(array $sourceField, $filterId = '')
 	{
 		$sourceField = static::normalize($sourceField);
 		switch ($sourceField["type"])
@@ -25,12 +25,12 @@ class FieldAdapter
 					{
 						if (is_array($selectItem))
 						{
-							$selectItem["VALUE"] = $selectItemValue;
+							$selectItem["VALUE"] = (string)$selectItemValue;
 							$listItem = $selectItem;
 						}
 						else
 						{
-							$listItem = array("NAME" => $selectItem, "VALUE" => $selectItemValue);
+							$listItem = ["NAME" => $selectItem, "VALUE" => (string)$selectItemValue];
 						}
 
 						$items[] = $listItem;
@@ -171,7 +171,18 @@ class FieldAdapter
 					$sourceField["placeholder"],
 					$sourceField["params"]["multiple"],
 					$sourceField["params"],
-					(isset($sourceField["lightweight"]) ? $sourceField["lightweight"] : false)
+					(isset($sourceField["lightweight"]) ? $sourceField["lightweight"] : false),
+					$filterId
+				);
+				break;
+
+			case 'entity_selector' :
+				$field = Field::entitySelector(
+					isset($sourceField['id']) ? (string)$sourceField['id'] : '',
+					isset($sourceField['name']) ? (string)$sourceField['name'] : '',
+					isset($sourceField['placeholder']) ? (string)$sourceField['placeholder'] : '',
+					(isset($sourceField['params']) && is_array($sourceField['params'])) ? $sourceField['params'] : [],
+					(string)$filterId
 				);
 				break;
 

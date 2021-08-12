@@ -12,6 +12,8 @@ use Bitrix\Main\Entity;
 use Bitrix\Main\Entity\EnumField;
 use Bitrix\Main\Localization\Loc;
 
+use Bitrix\Main\ORM\Fields\Relations\OneToMany;
+use Bitrix\Tasks\Internals\Task\MemberTable;
 use Bitrix\Tasks\Util\Entity\DateTimeField;
 use Bitrix\Tasks\Util\UserField;
 
@@ -19,6 +21,11 @@ Loc::loadMessages(__FILE__);
 
 class TaskTable extends Entity\DataManager
 {
+	public static function getObjectClass()
+	{
+		return TaskObject::class;
+	}
+
 	/**
 	 * Returns userfield entity code, to make userfields work with orm
 	 *
@@ -145,6 +152,7 @@ class TaskTable extends Entity\DataManager
 				'data_type' => 'integer',
 			),
 			new DateTimeField('CLOSED_DATE'),
+			new DateTimeField('ACTIVITY_DATE'),
 			'GUID' => array(
 				'data_type' => 'string',
 				'validation' => array(__CLASS__, 'validateGuid'),
@@ -239,6 +247,8 @@ class TaskTable extends Entity\DataManager
 				'data_type' => 'integer',
 				'default_value' => '1',
 			),
+
+			(new OneToMany("MEMBER_LIST", MemberTable::class, "TASK"))->configureJoinType("inner")
 
 		);
 	}

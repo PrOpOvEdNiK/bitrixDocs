@@ -1,6 +1,0 @@
-<?
-$MESS["MARKETPLACE_BEST"] = "Góra";
-$MESS["MARKETPLACE_DEV"] = "W toku";
-$MESS["MARKETPLACE_NEW"] = "Natychmiast";
-$MESS["MARKETPLACE_TITLE"] = "Góra";
-?>

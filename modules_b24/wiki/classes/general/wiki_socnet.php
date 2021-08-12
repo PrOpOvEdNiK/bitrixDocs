@@ -1,19 +1,22 @@
-<?
+<?php
+
+use \Bitrix\Main\Localization\Loc;
+
 IncludeModuleLangFile(__FILE__);
 
 class CWikiSocnet
 {
-	static public $bActive = false;
+	public static $bActive = false;
 
-	static public $bInit = false;
+	public static $bInit = false;
 
-	static public $iCatId = 0;
-	static public $iCatLeftBorder = 0;
-	static public $iCatRightBorder = 0;
+	public static $iCatId = 0;
+	public static $iCatLeftBorder = 0;
+	public static $iCatRightBorder = 0;
 
-	static public $iSocNetId = 0;
+	public static $iSocNetId = 0;
 
-	static function Init($SOCNET_GROUP_ID, $IBLOCK_ID)
+	public static function Init($SOCNET_GROUP_ID, $IBLOCK_ID)
 	{
 		if (self::$bInit)
 			return self::$bInit;
@@ -21,7 +24,7 @@ class CWikiSocnet
 		if (!self::IsEnabledSocnet())
 			return false;
 
-		self::$iSocNetId = intVal($SOCNET_GROUP_ID);
+		self::$iSocNetId = intval($SOCNET_GROUP_ID);
 
 		// detect work group
 		$arFilter = Array();
@@ -72,7 +75,7 @@ class CWikiSocnet
 		return self::$bInit;
 	}
 
-	static function IsEnabledSocnet()
+	public static function IsEnabledSocnet()
 	{
 		if (self::$bActive)
 			return self::$bActive;
@@ -91,12 +94,12 @@ class CWikiSocnet
 		return $bActive;
 	}
 
-	static function IsSocNet()
+	public static function IsSocNet()
 	{
 		return self::$bInit;
 	}
 
-	static function EnableSocnet($bActive = false)
+	public static function EnableSocnet($bActive = false)
 	{
 		if($bActive)
 		{
@@ -120,7 +123,7 @@ class CWikiSocnet
 		}
 	}
 
-	static function OnFillSocNetFeaturesList(&$arSocNetFeaturesSettings)
+	public static function OnFillSocNetFeaturesList(&$arSocNetFeaturesSettings)
 	{
 		$arSocNetFeaturesSettings['wiki'] = array(
 			'allowed' => array(SONET_ENTITY_GROUP),
@@ -179,12 +182,12 @@ class CWikiSocnet
 		);
 	}
 
-	static function OnFillSocNetMenu(&$arResult, $arParams = array())
+	public static function OnFillSocNetMenu(&$arResult, $arParams = array())
 	{
 		$arResult['AllowSettings']['wiki'] = true;
 
 		$arResult['CanView']['wiki'] = ((array_key_exists('ActiveFeatures', $arResult) ? array_key_exists('wiki', $arResult['ActiveFeatures']) : true) && CSocNetFeaturesPerms::CanPerformOperation($GLOBALS['USER']->GetID(), $arParams['ENTITY_TYPE'], $arParams['ENTITY_ID'], 'wiki', 'view', CSocNetUser::IsCurrentUserModuleAdmin()));
-		$arResult['Title']['wiki'] = (array_key_exists('ActiveFeatures', $arResult) && array_key_exists('wiki', $arResult['ActiveFeatures']) && strlen($arResult['ActiveFeatures']['wiki']) > 0 ? $arResult['ActiveFeatures']['wiki'] : GetMessage('WIKI_SOCNET_TAB'));
+		$arResult['Title']['wiki'] = (array_key_exists('ActiveFeatures', $arResult) && array_key_exists('wiki', $arResult['ActiveFeatures']) && $arResult['ActiveFeatures']['wiki'] <> '' ? $arResult['ActiveFeatures']['wiki'] : GetMessage('WIKI_SOCNET_TAB'));
 
 		if (!array_key_exists('SEF_MODE', $arResult) || $arResult['SEF_MODE'] != 'N')
 			$arResult['Urls']['wiki'] = $arResult['Urls']['view'].'wiki/';
@@ -200,7 +203,7 @@ class CWikiSocnet
 		}
 	}
 
-	static function OnParseSocNetComponentPath(&$arUrlTemplates, &$arCustomPagesPath, $arParams)
+	public static function OnParseSocNetComponentPath(&$arUrlTemplates, &$arCustomPagesPath, $arParams)
 	{
 		if ($arParams['SEF_MODE'] == 'N')
 		{
@@ -251,7 +254,7 @@ class CWikiSocnet
 		}
 	}
 
-	static function OnInitSocNetComponentVariables(&$arVariableAliases, &$arCustomPagesPath)
+	public static function OnInitSocNetComponentVariables(&$arVariableAliases, &$arCustomPagesPath)
 	{
 		$arVariableAliases['wiki_name'] = 'wiki_name';
 		$arVariableAliases['title'] = 'title';
@@ -259,7 +262,7 @@ class CWikiSocnet
 		$arVariableAliases['message_id'] = 'message_id';
 	}
 
-	static function FormatEvent_Wiki($arFields, $arParams, $bMail = false)
+	public static function FormatEvent_Wiki($arFields, $arParams, $bMail = false)
 	{
 		$GLOBALS['APPLICATION']->SetAdditionalCSS('/bitrix/themes/.default/wiki_sonet_log.css');
 
@@ -299,7 +302,7 @@ class CWikiSocnet
 		if (
 			!$bMail
 			&& array_key_exists('URL', $arFields)
-			&& strlen($arFields['URL']) > 0
+			&& $arFields['URL'] <> ''
 		)
 			$wiki_tmp = '<a href="'.$arFields['URL'].'">'.$arFields['TITLE'].'</a>';
 		else
@@ -310,10 +313,12 @@ class CWikiSocnet
 			$title_tmp = ($bMail ? GetMessage('WIKI_SOCNET_LOG_TITLE_MAIL') : GetMessage('WIKI_SOCNET_LOG_TITLE'));
 			$title_tmp_24 = GetMessage("WIKI_SOCNET_LOG_TITLE_24");
 		}
-		elseif ($arFields['EVENT_ID'] == 'wiki_del')
+		elseif ($arFields['EVENT_ID'] === 'wiki_del')
 		{
-			$title_tmp = ($bMail ? GetMessage('WIKI_DEL_SOCNET_LOG_TITLE_MAIL') : GetMessage('WIKI_DEL_SOCNET_LOG_TITLE'));
-			$title_tmp_24 = GetMessage("WIKI_DEL_SOCNET_LOG_TITLE_24");
+			$title_tmp = ($bMail ? Loc::getMessage('WIKI_DEL_SOCNET_LOG_TITLE_MAIL') : Loc::getMessage('WIKI_DEL_SOCNET_LOG_TITLE'));
+			$title_tmp_24 = Loc::getMessage("WIKI_DEL_SOCNET_LOG_TITLE_24", [
+				'#TITLE#' => $arFields['~TITLE']
+			]);
 		}
 
 		$title = str_replace(
@@ -337,7 +342,7 @@ class CWikiSocnet
 		if (
 			intval($arFields['SOURCE_ID']) > 0
 			&& array_key_exists('PARAMS', $arFields)
-			&& strlen($arFields['PARAMS']) > 0
+			&& $arFields['PARAMS'] <> ''
 		)
 		{
 			$arFieldsParams = explode('&', $arFields['PARAMS']);
@@ -356,7 +361,7 @@ class CWikiSocnet
 		if ($bMail)
 		{
 			$url = CSocNetLogTools::FormatEvent_GetURL($arFields);
-			if (strlen($url) > 0)
+			if ($url <> '')
 				$arResult['EVENT_FORMATTED']['URL'] = $url;
 
 			$parserLog = new logTextParser(false, $arParams["PATH_TO_SMILE"]);
@@ -401,7 +406,7 @@ class CWikiSocnet
 		return $arResult;
 	}
 
-	static function FormatComment_Wiki($arFields, $arParams, $bMail = false, $arLog = array())
+	public static function FormatComment_Wiki($arFields, $arParams, $bMail = false, $arLog = array())
 	{
 		$arResult = array(
 			"EVENT_FORMATTED" => array()
@@ -416,7 +421,7 @@ class CWikiSocnet
 		if (
 			!$bMail
 			&& array_key_exists('URL', $arLog)
-			&& strlen($arLog['URL']) > 0
+			&& $arLog['URL'] <> ''
 		)
 			$wiki_tmp = '<a href="'.$arLog['URL'].'">'.$arLog['TITLE'].'</a>';
 		else
@@ -436,7 +441,7 @@ class CWikiSocnet
 		if ($bMail)
 		{
 			$url = CSocNetLogTools::FormatEvent_GetURL($arLog);
-			if (strlen($url) > 0)
+			if ($url <> '')
 				$arResult['EVENT_FORMATTED']['URL'] = $url;
 		}
 		else
@@ -509,7 +514,7 @@ class CWikiSocnet
 		return $arResult;
 	}
 
-	static function AddComment_Wiki($arFields)
+	public static function AddComment_Wiki($arFields)
 	{
 		if (!CModule::IncludeModule('iblock'))
 			return false;
@@ -531,7 +536,7 @@ class CWikiSocnet
 		$bFound = false;
 		if ($arLog = $dbResult->Fetch())
 		{
-			if (strlen($arLog['PARAMS']) > 0)
+			if ($arLog['PARAMS'] <> '')
 			{
 				$arFieldsParams = explode('&', $arLog['PARAMS']);
 				if (is_array($arFieldsParams) && count($arFieldsParams) > 0)
@@ -580,7 +585,10 @@ class CWikiSocnet
 
 				$dbMessage = CForumMessage::GetList(
 					array(),
-					array('PARAM2' => $arElement['ID'])
+					array(
+						'FORUM_ID' => $FORUM_ID,
+						'PARAM2' => $arElement['ID']
+					)
 				);
 
 				if (!$arMessage = $dbMessage->Fetch())
@@ -671,7 +679,7 @@ class CWikiSocnet
 								$arMessageFields["NOTIFY_TAG"] = "WIKI|COMMENT|".$arElement['ID'];
 								$arMessageFields["NOTIFY_MESSAGE"] = GetMessage("WIKI_SONET_FROM_LOG_IM_COMMENT", Array(
 									"#title#" => (
-										strlen($url) > 0 
+										$url <> ''
 											? "<a href=\"".$url."\" class=\"bx-notifier-item-action\">".htmlspecialcharsbx($arParams["TITLE"])."</a>"
 											: htmlspecialcharsbx($arParams["TITLE"])
 									)
@@ -679,7 +687,7 @@ class CWikiSocnet
 
 								$arMessageFields["NOTIFY_MESSAGE_OUT"] = GetMessage("WIKI_SONET_FROM_LOG_IM_COMMENT", Array(
 									"#title#" => htmlspecialcharsbx($arParams["TITLE"])
-								)).(strlen($url) > 0 
+								)).($url <> ''
 									? " (".$serverName.$url.")"
 									: ""
 								)."#BR##BR#".$arFields["TEXT_MESSAGE"];
@@ -711,7 +719,7 @@ class CWikiSocnet
 		);
 	}
 
-	static function RecalcIBlockID($SocNetGroupID)
+	public static function RecalcIBlockID($SocNetGroupID)
 	{
 		if(!CModule::IncludeModule('iblock'))
 			return false;
@@ -721,7 +729,7 @@ class CWikiSocnet
 		if (intval($iblock_id_tmp) > 0)
 			$arWikiIblockID[] = $iblock_id_tmp;
 
-		$rsSite = CSite::GetList($by="sort", $order="asc", array("ACTIVE"=>"Y"));
+		$rsSite = CSite::GetList("sort", "asc", array("ACTIVE"=>"Y"));
 		while($arSite = $rsSite->Fetch())
 		{
 			$iblock_id_tmp = COption::GetOptionString("wiki", "socnet_iblock_id", false, $arSite["LID"]);
@@ -747,7 +755,7 @@ class CWikiSocnet
 		return false;
 	}
 
-	static function PrepareTextForFeed($text)
+	public static function PrepareTextForFeed($text)
 	{
 /*		$retText = preg_replace("/(<\s*\/(h(\d+)|li|ul)\s*>)\s*(<\s*br\s*\/*\s*>){0,1}(\s*(\r*\n)\s*){1,2}/ism", "$1##NN##", $text);
 		$retText = preg_replace("/(<\s*(ul)\s*>)\s*(<\s*br\s*\/*\s*>){0,1}(\s*(\r*\n)\s*){1,2}/ism", "$1##NN##", $retText);
@@ -761,12 +769,12 @@ class CWikiSocnet
 		return $retText;
 	}
 
-	function __ProcessPath($arUrl, $user_id)
+	public static function __ProcessPath($arUrl, $user_id)
 	{
 		return CSocNetLogTools::ProcessPath($arUrl, $user_id);
 	}
 	
-	function BeforeIndexSocNet($bxSocNetSearch, $arFields)
+	public static function BeforeIndexSocNet($bxSocNetSearch, $arFields)
 	{
 		static $isSonetEnable = false;
 		static $sonetForumId = false;
@@ -814,4 +822,3 @@ class CWikiSocnet
 		return $arFields;
 	}
 }
-?>

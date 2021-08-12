@@ -565,6 +565,11 @@ class LeadConverter extends EntityConverter
 			}
 			//endregion
 
+			if (isset($this->contextData['RESPONSIBLE_ID']))
+			{
+				$fields['ASSIGNED_BY_ID'] = $this->contextData['RESPONSIBLE_ID'];
+			}
+
 			if($entityTypeID === \CCrmOwnerType::Company)
 			{
 				$entity = new \CCrmCompany(false);
@@ -749,7 +754,8 @@ class LeadConverter extends EntityConverter
 				//endregion
 
 				//Region automation
-				Crm\Automation\Factory::runOnAdd(\CCrmOwnerType::Deal, $entityID);
+				$starter = new Crm\Automation\Starter(\CCrmOwnerType::Deal, $entityID);
+				$starter->runOnAdd();
 				//end region
 
 				self::setDestinationEntityID(
@@ -817,8 +823,8 @@ class LeadConverter extends EntityConverter
 								array('ADDRESS', 'ADDRESS_2', 'ADDRESS_CITY')
 							);
 
-							$fields = is_object($dbResult) ? $dbResult->Fetch() : null;
-							if(is_array($fields))
+							$addressFields = is_object($dbResult) ? $dbResult->Fetch() : null;
+							if(is_array($addressFields))
 							{
 								$requisite = new EntityRequisite();
 								try
@@ -881,19 +887,22 @@ class LeadConverter extends EntityConverter
 						}
 						//endregion
 
-						//region BizProcess
-						$arErrors = array();
-						\CCrmBizProcHelper::AutoStartWorkflows(
-							\CCrmOwnerType::Lead,
-							$this->entityID,
-							\CCrmBizProcEventType::Edit,
-							$arErrors
-						);
-						//endregion
+						if (!$this->shouldSkipBizProcAutoStart())
+						{
+							//region BizProcess
+							$arErrors = array();
+							\CCrmBizProcHelper::AutoStartWorkflows(
+								\CCrmOwnerType::Lead,
+								$this->entityID,
+								\CCrmBizProcEventType::Edit,
+								$arErrors
+							);
+							//endregion
+						}
 
 						//region Automation
-						if ($statusID !== 'CONVERTED')
-							Crm\Automation\Factory::runOnStatusChanged(\CCrmOwnerType::Lead, $this->entityID);
+						$starter = new Crm\Automation\Starter(\CCrmOwnerType::Lead, $this->entityID);
+						$starter->runOnUpdate($fields, $presentFields);
 						//end region
 					}
 				}

@@ -1,2 +1,0 @@
-<?php
-$MESS["CRM_DOCGEN_DATAPROVIDER_ADDRESS_TEXT_TITLE"] = "Полный адрес";

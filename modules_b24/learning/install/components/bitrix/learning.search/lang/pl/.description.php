@@ -1,6 +1,0 @@
-<?
-$MESS["LEARNING_SEARCH_COMPLEX_DESC"] = "Szukaj kursów";
-$MESS["LEARNING_SEARCH_COMPLEX_NAME"] = "Szukaj kursów";
-$MESS["LEARNING_SEARCH_SERVICE"] = "Szukaj";
-$MESS["LEARNING_SERVICE"] = "e-Nauka";
-?>

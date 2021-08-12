@@ -25,6 +25,7 @@ class Base
 	const Site = 'site';
 	const Site24 = 'site24';
 	const Shop24 = 'shop24';
+	const CrmShop = 'crm-shop';
 	const SiteDomain = 'site-domain';
 	const Button = 'button';
 	const Form = 'form';
@@ -65,7 +66,7 @@ class Base
 	 */
 	public static function getNameByCode($code)
 	{
-		return Loc::getMessage('CRM_TRACKING_CHANNEL_BASE_NAME_' . strtoupper($code)) ?: $code;
+		return Loc::getMessage('CRM_TRACKING_CHANNEL_BASE_NAME_'.mb_strtoupper($code)) ?: $code;
 	}
 
 	/**
@@ -76,7 +77,7 @@ class Base
 	 */
 	public static function getGridNameByCode($code)
 	{
-		return Loc::getMessage('CRM_TRACKING_CHANNEL_BASE_GRID_NAME_' . strtoupper($code)) ?: self::getNameByCode($code);
+		return Loc::getMessage('CRM_TRACKING_CHANNEL_BASE_GRID_NAME_'.mb_strtoupper($code)) ?: self::getNameByCode($code);
 	}
 
 	/**

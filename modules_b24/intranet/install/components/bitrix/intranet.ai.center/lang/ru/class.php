@@ -1,2 +1,0 @@
-<?
-$MESS["INTRANET_AI_CENTER_PAGE_TITLE"] = "Лаборатория AI";

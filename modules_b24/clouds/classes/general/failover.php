@@ -13,7 +13,7 @@ class CCloudFailover
 	{
 		return (COption::GetOptionString("clouds", "failover_enabled") === "Y");
 	}
-	
+
 	public static function queueDelete($obBucket, $FILE_PATH)
 	{
 		if (
@@ -128,7 +128,7 @@ class CCloudFailover
 			}
 		}
 	}
-	
+
 	public static function executeDeleteQueue()
 	{
 		$deleteTask = \Bitrix\Clouds\DeleteQueueTable::getList(array(
@@ -202,7 +202,7 @@ class CCloudFailover
 			{
 				\Bitrix\Clouds\CopyQueueTable::delete($task["ID"]);
 			}
-			
+
 			return CCloudFailover::ST_CONTINUE;
 		}
 		else
@@ -210,7 +210,7 @@ class CCloudFailover
 			return CCloudFailover::ST_END;
 		}
 	}
-	
+
 	public static function executeCopyTask($copyTask, $overwrite)
 	{
 		//Check if failover condition is active
@@ -267,10 +267,18 @@ class CCloudFailover
 		}
 
 		$CONTENT_TYPE = $sourceBucket->GetService()->GetLastRequestHeader('Content-Type');
+		$CONTENT_LENGTH = $sourceBucket->GetService()->GetLastRequestHeader('Content-Length');
 
 		if ($copyTask["FILE_SIZE"] == -1)
 		{
-			$copyTask["FILE_SIZE"] = $sourceBucket->GetFileSize($copyTask["SOURCE_FILE_PATH"]);
+			if ($CONTENT_LENGTH)
+			{
+				$copyTask["FILE_SIZE"] = intval($CONTENT_LENGTH);
+			}
+			else
+			{
+				$copyTask["FILE_SIZE"] = $sourceBucket->GetFileSize($copyTask["SOURCE_FILE_PATH"]);
+			}
 			\Bitrix\Clouds\CopyQueueTable::update($copyTask["ID"], array(
 				"FILE_SIZE" => $copyTask["FILE_SIZE"],
 			));
@@ -278,6 +286,50 @@ class CCloudFailover
 		//AddMessage2Log($copyTask);
 		$targetBucket->setQueueFlag(false);
 		$tempPath = $copyTask["TARGET_FILE_PATH"].".fail-over-copy-part";
+
+		$CLOchunkSize = $targetBucket->GetService()->GetMinUploadPartSize();
+		if ($copyTask["FILE_SIZE"] <= $CLOchunkSize)
+		{
+			$http = new \Bitrix\Main\Web\HttpClient(array(
+				"streamTimeout" => 0,
+			));
+			$arFile = array(
+				"type" => $CONTENT_TYPE,
+				"content" => false,
+			);
+			$arFile["content"] = $http->get($sourceBucket->GetFileSRC($copyTask["SOURCE_FILE_PATH"]));
+			if ($arFile["content"] === false)
+			{
+				\Bitrix\Clouds\CopyQueueTable::update($copyTask["ID"], array(
+					"FAIL_COUNTER" => $copyTask["FAIL_COUNTER"] + 1,
+					"STATUS" => $copyTask["FAIL_COUNTER"] >= COption::GetOptionInt("clouds", "max_copy_fail_count")? "F": $copyTask["STATUS"],
+					"ERROR_MESSAGE" => "CCloudFailover::executeCopyQueue(".$copyTask["ID"]."): failed to download."
+				));
+				return CCloudFailover::ST_ERROR;
+			}
+
+			if (!$overwrite && $targetBucket->FileExists($copyTask["TARGET_FILE_PATH"]))
+			{
+				\Bitrix\Clouds\CopyQueueTable::delete($copyTask["ID"]);
+				return CCloudFailover::ST_CONTINUE;
+			}
+
+			$res = $targetBucket->SaveFile($copyTask["TARGET_FILE_PATH"], $arFile);
+			if ($res)
+			{
+				\Bitrix\Clouds\CopyQueueTable::delete($copyTask["ID"]);
+				return CCloudFailover::ST_CONTINUE;
+			}
+			else
+			{
+				\Bitrix\Clouds\CopyQueueTable::update($copyTask["ID"], array(
+					"FAIL_COUNTER" => $copyTask["FAIL_COUNTER"] + 1,
+					"STATUS" => $copyTask["FAIL_COUNTER"] >= COption::GetOptionInt("clouds", "max_copy_fail_count")? "F": $copyTask["STATUS"],
+					"ERROR_MESSAGE" => "CCloudFailover::executeCopyQueue(".$copyTask["ID"]."): failed to upload file."
+				));
+				return CCloudFailover::ST_ERROR;
+			}
+		}
 
 		$upload = new CCloudStorageUpload($tempPath);
 		if ($copyTask["FILE_POS"] == 0)
@@ -309,7 +361,7 @@ class CCloudFailover
 		$rangeEnd = min($copyTask["FILE_POS"] + $targetBucket->getService()->GetMinUploadPartSize(), $copyTask["FILE_SIZE"]) - 1;
 		$http->setHeader("Range", "bytes=".$rangeStart."-".$rangeEnd);
 		$data = $http->get($sourceBucket->GetFileSRC($copyTask["SOURCE_FILE_PATH"]));
-		
+
 		$uploadResult = false;
 		while ($upload->hasRetries())
 		{
@@ -421,7 +473,7 @@ class CCloudFailover
 						break;
 					}
 				}
-				
+
 				if ($copyStatus === CCloudFailover::ST_CONTINUE)
 				{
 					$copyStatus = static::executeCopyQueue();
@@ -430,7 +482,7 @@ class CCloudFailover
 						break;
 					}
 				}
-				
+
 				if (
 					($deleteStatus !== CCloudFailover::ST_CONTINUE)
 					&& ($copyStatus !== CCloudFailover::ST_CONTINUE)
@@ -445,7 +497,7 @@ class CCloudFailover
 
 		return 'CCloudFailover::queueAgent();';
 	}
-	
+
 	public static function syncAgent($bucketFrom, $bucketTo, $limit = 100)
 	{
 		$bucketFrom = intval($bucketFrom);
@@ -534,7 +586,7 @@ class CCloudFailover
 		}
 		return false;
 	}
-	
+
 	public static function unlock()
 	{
 		if (static::$lock)
@@ -544,7 +596,7 @@ class CCloudFailover
 			static::$lock = false;
 		}
 	}
-	
+
 	protected static function _lock_by_id($lockId)
 	{
 		$lock_file_template = CTempFile::GetAbsoluteRoot()."/clouds-%d.lock";

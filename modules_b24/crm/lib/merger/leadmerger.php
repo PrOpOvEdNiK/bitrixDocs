@@ -33,6 +33,15 @@ class LeadMerger extends EntityMerger
 	{
 		return \CCrmLead::GetUserFields();
 	}
+	/**
+	 * Get field caption
+	 * @param string $fieldId
+	 * @return string
+	 */
+	protected function getFieldCaption(string $fieldId):string
+	{
+		return \CCrmLead::GetFieldCaption($fieldId);
+	}
 	protected function getEntityResponsibleID($entityID, $roleID)
 	{
 		$dbResult = \CCrmLead::GetListEx(
@@ -89,56 +98,65 @@ class LeadMerger extends EntityMerger
 		}
 	}
 
-	protected static function resolveEntityFieldConflict(array &$seed, array &$targ, $fieldID)
+	protected static function getFieldConflictResolver(string $fieldId, string $type): ConflictResolver\Base
 	{
-		$seedID = isset($seed['ID']) ? (int)$seed['ID'] : 0;
-		$targID = isset($targ['ID']) ? (int)$targ['ID'] : 0;
-
-		//Field Title is ignored
-		if($fieldID === 'TITLE')
+		$userDefinedResolver = static::getUserDefinedConflictResolver(
+			\CCrmOwnerType::Lead,
+			$fieldId,
+			$type
+		);
+		if ($userDefinedResolver)
 		{
-			return true;
+			return $userDefinedResolver;
 		}
 
-		if($fieldID === 'CONTACT_ID')
+		switch($fieldId)
 		{
-			//Crutch for ContactID Field. It is obsolete and can be ignored. See LeadMerger::innerMergeBoundEntities.
-			return true;
+			case 'NAME':
+				$resolver = new Crm\Merger\ConflictResolver\NameField($fieldId);
+				$resolver->setRelatedFieldsCheckRequired(true);
+				return $resolver;
+
+			case 'SECOND_NAME':
+			case 'LAST_NAME':
+				return new Crm\Merger\ConflictResolver\NameField($fieldId);
+
+			case 'TITLE':
+				//Field Title is ignored
+				return new Crm\Merger\ConflictResolver\IgnoredField($fieldId);
+
+			case 'ADDRESS_LOC_ADDR_ID':
+				//Field Location in address is ignored
+				return new Crm\Merger\ConflictResolver\IgnoredField($fieldId);
+
+			case 'CONTACT_ID':
+				//Crutch for ContactID Field. It is obsolete and can be ignored. See DealMerger::innerMergeBoundEntities.
+				return new Crm\Merger\ConflictResolver\IgnoredField($fieldId);
+
+			case 'OPPORTUNITY':
+				//Crutch for Opportunity Field. It can be ignored if ProductRows are not empty. We will recalculate Opportunity after merging of ProductRows. See DealMerger::innerMergeBoundEntities.
+				$resolver = new Crm\Merger\ConflictResolver\OpportunityField($fieldId);
+				$resolver->setEntityTypeId(\CCrmOwnerType::Lead);
+				return $resolver;
+
+			case 'TAX_VALUE':
+				//Crutch for TaxValue Field. It can be ignored. We will recalculate TaxValue after merging of ProductRows. See DealMerger::innerMergeBoundEntities.
+				return new Crm\Merger\ConflictResolver\IgnoredField($fieldId);
+
+			case 'COMMENTS':
+				return new Crm\Merger\ConflictResolver\HtmlField($fieldId);
+
+			case 'SOURCE_ID':
+				return new Crm\Merger\ConflictResolver\SourceField($fieldId);
+
+			case 'SOURCE_DESCRIPTION':
+				return new Crm\Merger\ConflictResolver\TextField($fieldId);
+
+			case 'OPENED':
+				return new Crm\Merger\ConflictResolver\IgnoredField($fieldId);
 		}
 
-		//Crutch for Opportunity Field. It can be ignored if ProductRows are not empty. We will recalculate Opportunity after merging of ProductRows. See LeadMerger::innerMergeBoundEntities.
-		if($fieldID === 'OPPORTUNITY')
-		{
-			$seedProductRows = isset($seed['PRODUCT_ROWS']) && is_array($seed['PRODUCT_ROWS'])
-				? $seed['PRODUCT_ROWS'] : \CCrmLead::LoadProductRows($seedID);
-
-			if(!empty($seedProductRows))
-			{
-				$seed['PRODUCT_ROWS'] = $seedProductRows;
-			}
-
-			$targProductRows = isset($targ['PRODUCT_ROWS']) && is_array($targ['PRODUCT_ROWS'])
-				? $targ['PRODUCT_ROWS'] : \CCrmLead::LoadProductRows($targID);
-
-			if(!empty($targProductRows))
-			{
-				$targ['PRODUCT_ROWS'] = $targProductRows;
-			}
-
-			if(!empty($seedProductRows) || !empty($targProductRows))
-			{
-				//Opportunity is depends on Product Rows. Product Rows will be merged in innerMergeBoundEntities
-				return true;
-			}
-		}
-
-		//Crutch for TaxValue Field. It can be ignored. We will recalculate TaxValue after merging of ProductRows. See DealMerger::innerMergeBoundEntities.
-		if($fieldID === 'TAX_VALUE')
-		{
-			return true;
-		}
-
-		return parent::resolveEntityFieldConflict($seed,$targ, $fieldID);
+		return parent::getFieldConflictResolver($fieldId, $type);
 	}
 
 	protected static function canMergeEntityField($fieldID)
@@ -146,11 +164,48 @@ class LeadMerger extends EntityMerger
 		//Field ContactID is obsolete. It is replaced by ContactIDs
 		//Field StatusID is progress field
 		//Field StatusDescription depend on StatusID
-		if($fieldID === 'CONTACT_ID' || $fieldID === 'STATUS_ID' || $fieldID === 'STATUS_DESCRIPTION')
+		//Field ADDRESS_LOC_ADDR_ID is redundant if other address parts are same
+		if($fieldID === 'CONTACT_ID' || $fieldID === 'STATUS_ID' || $fieldID === 'STATUS_DESCRIPTION' || $fieldID === 'ADDRESS_LOC_ADDR_ID')
 		{
 			return false;
 		}
 		return parent::canMergeEntityField($fieldID);
+	}
+
+	protected static function applyMappedValue(string $fieldID, array &$seed, array &$targ)
+	{
+		if ($fieldID === 'ADDRESS')
+		{
+			$locationAddressId = (int)$seed['ADDRESS_LOC_ADDR_ID'];
+			if ($locationAddressId > 0 && Main\Loader::includeModule('location'))
+			{
+				unset($targ['ADDRESS_LOC_ADDR_ID']);
+				$targ['ADDRESS_LOC_ADDR'] = \Bitrix\Crm\EntityAddress::cloneLocationAddress($locationAddressId);
+			}
+			else
+			{
+				foreach (self::getBaseAddressFieldNames() as $fieldName)
+				{
+					$targ[$fieldName] = $seed[$fieldName];
+				}
+			}
+			return;
+		}
+		parent::applyMappedValue($fieldID, $seed, $targ);
+	}
+
+	protected static function getBaseAddressFieldNames():array
+	{
+		return [
+			'ADDRESS',
+			'ADDRESS_2',
+			'ADDRESS_CITY',
+			'ADDRESS_POSTAL_CODE',
+			'ADDRESS_REGION',
+			'ADDRESS_PROVINCE',
+			'ADDRESS_COUNTRY',
+			'ADDRESS_COUNTRY_CODE',
+		];
 	}
 
 	protected function mergeBoundEntitiesBatch(array &$seeds, array &$targ, $skipEmpty = false, array $options = array())
@@ -334,6 +389,108 @@ class LeadMerger extends EntityMerger
 				'SOURCE_ENTITY_IDS' => array_unique($sourceEntityIDs, SORT_NUMERIC),
 				'VALUE' => Binding\EntityBinding::prepareEntityIDs(\CCrmOwnerType::Contact, $resultContactBindings),
 			);
+		}
+		// check all address components
+		if($fieldID === 'ADDRESS')
+		{
+			$addressFields = [];
+			$result = parent::innerPrepareEntityFieldMergeData(
+				'ADDRESS_LOC_ADDR_ID',
+				$fieldParams,
+				$seeds,
+				$targ,
+				$options
+			);
+			if ($result['VALUE'] > 0)
+			{
+				$addressFields['LOC_ADDR_ID'] = $result['VALUE'];
+			}
+			else
+			{
+				$result = parent::innerPrepareEntityFieldMergeData(
+					$fieldID,
+					$fieldParams,
+					$seeds,
+					$targ,
+					$options
+				);
+				foreach (self::getBaseAddressFieldNames() as $addrFieldId)
+				{
+					if ($addrFieldId === $fieldID)
+					{
+						continue;
+					}
+					$extraFieldMergeResult = parent::innerPrepareEntityFieldMergeData(
+						$addrFieldId,
+						$fieldParams,
+						$seeds,
+						$targ,
+						$options
+					);
+
+					if (empty($result['SOURCE_ENTITY_IDS']))
+					{
+						$result = $extraFieldMergeResult;
+					}
+
+					$result['IS_MERGED'] = $result['IS_MERGED'] && $extraFieldMergeResult['IS_MERGED'];
+					if (!$result['IS_MERGED'])
+					{
+						break;
+					}
+				}
+
+				$addressSourceId = $result['SOURCE_ENTITY_IDS'][0] ?? null;
+				if ($addressSourceId)
+				{
+					$addressSource = null;
+					if ($targ['ID'] === $addressSourceId)
+					{
+						$addressSource = $targ;
+					}
+					else
+					{
+						foreach ($seeds as $seed)
+						{
+							if ($seed['ID'] === $addressSourceId)
+							{
+								$addressSource = $seed;
+								break;
+							}
+						}
+					}
+					if ($addressSource)
+					{
+						foreach (self::getBaseAddressFieldNames() as $addrFieldId)
+						{
+							$addressValue = (string)$addressSource[$addrFieldId];
+							if ($addressValue !== '')
+							{
+								if ($addrFieldId !== 'ADDRESS' && $addrFieldId !== 'ADDRESS_2')
+								{
+									$addrFieldId = str_replace('ADDRESS_', '', $addrFieldId);
+								}
+								if ($addrFieldId === 'ADDRESS')
+								{
+									$addrFieldId = 'ADDRESS_1';
+								}
+								$addressFields[$addrFieldId] = $addressValue;
+							}
+						}
+					}
+				}
+			}
+
+			if (Main\Loader::includeModule('location') && !empty($addressFields))
+			{
+				$address = \Bitrix\Crm\EntityAddress::makeLocationAddressByFields($addressFields);
+				if ($address)
+				{
+					$result['VALUE'] = $address->toJson();
+				}
+			}
+
+			return $result;
 		}
 		return parent::innerPrepareEntityFieldMergeData($fieldID, $fieldParams, $seeds, $targ, $options);
 	}

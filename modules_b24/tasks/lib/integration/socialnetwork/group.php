@@ -5,11 +5,16 @@
 
 namespace Bitrix\Tasks\Integration\SocialNetwork;
 
-use Bitrix\Main\Entity;
-
+use Bitrix\Main;
+use Bitrix\Main\Entity\ExpressionField;
+use Bitrix\Main\Entity\Query\Join;
+use Bitrix\Main\Entity\ReferenceField;
+use Bitrix\Main\ORM\Query\Filter;
+use Bitrix\Main\Search\Content;
 use Bitrix\Socialnetwork\WorkgroupTable;
+use Bitrix\Tasks\Internals\Project\Event;
 use Bitrix\Tasks\Internals\TaskTable;
-use Bitrix\Tasks\Util\User as UtilUser;
+use Bitrix\Tasks\Util\User;
 
 class Group extends \Bitrix\Tasks\Integration\SocialNetwork
 {
@@ -40,7 +45,7 @@ class Group extends \Bitrix\Tasks\Integration\SocialNetwork
 
 		if(!$userId)
 		{
-			$userId = UtilUser::getId();
+			$userId = User::getId();
 		}
 
 		return \CSocNetFeaturesPerms::canPerformOperation(
@@ -49,102 +54,94 @@ class Group extends \Bitrix\Tasks\Integration\SocialNetwork
 		);
 	}
 
-	public static function getIdsByAllowedAction($actionCode = 'view_all', $ownGroups = true, $userId = 0)
+	public static function getIdsByAllowedAction($actionCode = self::ACTION_VIEW_ALL_TASKS, $ownGroups = true, $userId = 0)
 	{
-		$result = array();
-
-		if(static::includeModule())
+		if (!static::includeModule())
 		{
-			$cacheKey = $actionCode.'-'.$ownGroups.'-'.$userId;
-
-			if(array_key_exists($cacheKey, static::$cache))
-			{
-				return static::$cache[$cacheKey];
-			}
-
-			$runtime = array();
-			if($ownGroups) // select only groups that are used in tasks
-			{
-				$runtime = array(new Entity\ReferenceField(
-					'TASKS',
-					TaskTable::getEntity(),
-					array(
-						'=ref.GROUP_ID' => 'this.ID',
-						// todo: get rid of zombie tasks, make an additional table to keep deleted tasks for MSExchange
-						'=ref.ZOMBIE' => array('?', 'N'),
-					),
-					array('join_type' => 'inner')
-				));
-			}
-
-			$res = WorkgroupTable::getList(array(
-				'runtime' => $runtime,
-				'filter' => array(
-					'=ACTIVE' => 'Y'
-				),
-				'select' => array(
-					'ID'
-				),
-				'group' => array(
-				    'ID'
-				)
-			));
-			$groupIds = array();
-			while($item = $res->fetch())
-			{
-				$groupIds[] = $item['ID'];
-			}
-
-			if(!empty($groupIds))
-			{
-				$access = static::can($groupIds, $actionCode, $userId);
-				if(is_array($access))
-				{
-					foreach($access as $id => $can)
-					{
-						if($can)
-						{
-							$result[] = intval($id);
-						}
-					}
-				}
-
-				static::$cache[$cacheKey] = $result;
-			}
+			return [];
 		}
 
-		return $result;
+		$cacheKey = $actionCode.'-'.$userId;
+
+		if(array_key_exists($cacheKey, static::$cache))
+		{
+			return static::$cache[$cacheKey];
+		}
+
+		$groups = \Bitrix\Socialnetwork\Item\Workgroup::getByFeatureOperation([
+			'feature' 	=> 'tasks',
+			'operation' => $actionCode,
+			'userId' 	=> $userId
+		]);
+
+		$groups = array_column($groups, 'ID');
+
+		static::$cache[$cacheKey] = $groups;
+
+		return static::$cache[$cacheKey];
 	}
 
-	public static function getData(array $groupIds)
+	/**
+	 * @param array $groupIds
+	 * @param array $select
+	 * @return array
+	 * @throws Main\ArgumentException
+	 * @throws Main\ObjectPropertyException
+	 * @throws Main\SystemException
+	 */
+	public static function getData(array $groupIds, array $select = []): array
 	{
-		if(!static::includeModule())
-		{
-			return array(); // no module = no groups
-		}
-
 		$groupIds = array_unique(array_filter($groupIds, 'intval'));
-		if(empty($groupIds))
+
+		if (empty($groupIds) || !static::includeModule())
 		{
-			return array(); // which groups?
+			return [];
 		}
 
-		$expanded = UtilUser::getOption('opened_projects');
-		if(!$expanded)
-		{
-			$expanded = array();
-		}
+		$defaultSelect = ['ID', 'NAME'];
+		$parameters = [
+			'select' => (empty($select) ? $defaultSelect : array_merge($defaultSelect, $select)),
+			'filter' => ['ID' => $groupIds],
+		];
+		$expanded = (User::getOption('opened_projects') ?: []);
 
-		$result = array();
 		// todo: make static caches here
-		$res = WorkgroupTable::getList(array('filter' => array('ID' => $groupIds)));
-		while($item = $res->fetch())
+		$groups = [];
+		$groupResult = WorkgroupTable::getList($parameters);
+		while ($group = $groupResult->fetch())
 		{
-			$item['EXPANDED'] = array_key_exists($item["ID"], $expanded) && $expanded[$item["ID"]] == "false" ? false : true;
-			$result[$item['ID']] = $item;
+			$groupId = $group['ID'];
+			$group['EXPANDED'] = !(array_key_exists($groupId, $expanded) && $expanded[$groupId] === "false");
+			$groups[$groupId] = $group;
 		}
 
-		return $result;
+		return $groups;
+	}
+
+	/**
+	 * @param string $searchText
+	 * @param array $select
+	 * @return array
+	 * @throws Main\ArgumentException
+	 * @throws Main\ObjectPropertyException
+	 * @throws Main\SystemException
+	 */
+	public static function searchGroups(string $searchText, array $select = []): array
+	{
+		$defaultSelect = ['ID', 'NAME'];
+		$searchText = Filter\Helper::matchAgainstWildcard(Content::prepareStringToken($searchText));
+
+		if ($searchText === '')
+		{
+			return [];
+		}
+
+		$query = WorkgroupTable::query()
+			->setSelect((empty($select) ? $defaultSelect : array_merge($defaultSelect, $select)))
+			->whereMatch('SEARCH_INDEX', $searchText)
+		;
+
+		return $query->exec()->fetchAll();
 	}
 
 	public static function updateLastActivity($id)
@@ -173,5 +170,227 @@ class Group extends \Bitrix\Tasks\Integration\SocialNetwork
 		}
 
 		return $safe;
+	}
+
+	public static function getLastViewedProject($userId): int
+	{
+		$res = \Bitrix\Socialnetwork\WorkgroupViewTable::getList(array(
+			'select' => array(
+				'GROUP_ID'
+			),
+			'filter' => array(
+				'USER_ID' => $userId,
+				'=GROUP.ACTIVE' => 'Y',
+				'=GROUP.CLOSED' => 'N',
+			),
+			'order' => array(
+				'DATE_VIEW' => 'DESC'
+			)
+		));
+		while ($row = $res->fetch())
+		{
+			if (self::canReadGroupTasks($userId, $row['GROUP_ID']))
+			{
+				$lastGroupId = $row['GROUP_ID'];
+				break;
+			}
+		}
+		if (!$lastGroupId)
+		{
+			// get by date activity
+			$res = \CSocNetUserToGroup::GetList(
+				array(
+					'GROUP_DATE_ACTIVITY' => 'DESC'
+				),
+				array(
+					'USER_ID' => $userId,
+					'!ROLE' => array(
+						SONET_ROLES_BAN,
+						SONET_ROLES_REQUEST
+					),
+					'USER_ACTIVE' => 'Y',
+					'GROUP_ACTIVE' => 'Y'
+				),
+				false, false,
+				array(
+					'GROUP_ID'
+				)
+			);
+			while ($row = $res->fetch())
+			{
+				if (self::canReadGroupTasks($userId, $row['GROUP_ID']))
+				{
+					$lastGroupId = $row['GROUP_ID'];
+					break;
+				}
+			}
+		}
+		return (int) $lastGroupId;
+	}
+
+	public static function setLastViewedProject($userId, int $groupId)
+	{
+		if (!$groupId)
+		{
+			return true;
+		}
+
+		\Bitrix\Socialnetwork\WorkgroupViewTable::set(array(
+			'GROUP_ID' => $groupId,
+			'USER_ID' => $userId
+		));
+	}
+
+	public static function canReadGroupTasks($userId, $groupId)
+	{
+		static $access = [];
+
+		if (
+			array_key_exists($userId, $access)
+			&& array_key_exists($groupId, $access[$userId])
+		)
+		{
+			return $access[$userId][$groupId];
+		}
+
+		$activeFeatures = \CSocNetFeatures::GetActiveFeaturesNames(SONET_ENTITY_GROUP, $groupId);
+		if (!is_array($activeFeatures) || !array_key_exists('tasks', $activeFeatures))
+		{
+			$access[$userId][$groupId] = false;
+			return $access[$userId][$groupId];
+		}
+
+		$featurePerms = \CSocNetFeaturesPerms::CurrentUserCanPerformOperation(SONET_ENTITY_GROUP, array($groupId), 'tasks', 'view_all');
+		$bCanViewGroup = is_array($featurePerms) && isset($featurePerms[$groupId]) && $featurePerms[$groupId];
+		if (!$bCanViewGroup)
+		{
+			$featurePerms = \CSocNetFeaturesPerms::CurrentUserCanPerformOperation(SONET_ENTITY_GROUP, array($groupId), 'tasks', 'view');
+			$bCanViewGroup = is_array($featurePerms) && isset($featurePerms[$groupId]) && $featurePerms[$groupId];
+		}
+
+		$access[$userId][$groupId] = $bCanViewGroup;
+
+		return $access[$userId][$groupId];
+	}
+
+	public static function delete(array $groupIds): array
+	{
+		global $APPLICATION;
+
+		$result = [];
+
+		if (empty($groupIds) || !static::includeModule())
+		{
+			return $result;
+		}
+
+		$permissions = static::checkPermissions($groupIds);
+		foreach ($permissions as $groupId => $canDelete)
+		{
+			$APPLICATION->ResetException();
+
+			$deleteResult = ($canDelete && \CSocNetGroup::Delete($groupId));
+			if (!$deleteResult && ($e = $APPLICATION->GetException()))
+			{
+				$deleteResult = $e->GetString();
+			}
+
+			$result[$groupId] = $deleteResult;
+		}
+
+		return $result;
+	}
+
+	public static function addToArchive(array $groupIds): array
+	{
+		$result = [];
+
+		if (empty($groupIds) || !static::includeModule())
+		{
+			return $result;
+		}
+
+		$permissions = static::checkPermissions($groupIds);
+		foreach ($permissions as $groupId => $canUpdate)
+		{
+			$result[$groupId] = ($canUpdate ? \CSocNetGroup::Update($groupId, ['CLOSED' => 'Y']) : false);
+		}
+
+		return $result;
+	}
+
+	public static function removeFromArchive(array $groupIds): array
+	{
+		$result = [];
+
+		if (empty($groupIds) || !static::includeModule())
+		{
+			return $result;
+		}
+
+		$permissions = static::checkPermissions($groupIds);
+		foreach ($permissions as $groupId => $canUpdate)
+		{
+			$result[$groupId] = ($canUpdate ? \CSocNetGroup::Update($groupId, ['CLOSED' => 'N']) : false);
+		}
+
+		return $result;
+	}
+
+	public static function checkPermissions(array $groupIds): array
+	{
+		$permissions = array_fill_keys($groupIds, false);
+
+		$userId = User::getId();
+		$isAdmin = \CSocNetUser::IsCurrentUserModuleAdmin(SITE_ID, false);
+
+		$filter = ['@ID' => $groupIds];
+		if (!$isAdmin)
+		{
+			$filter['CHECK_PERMISSIONS'] = $userId;
+		}
+
+		$dbRes = \CSocNetGroup::GetList([], $filter, false, false, ['ID', 'OWNER_ID']);
+		while ($group = $dbRes->Fetch())
+		{
+			$permissions[$group['ID']] = ($isAdmin || (int)$group['OWNER_ID'] === $userId);
+		}
+
+		return $permissions;
+	}
+
+	public static function getGroupLastActivityDate(int $groupId): ?Main\Type\DateTime
+	{
+		if (!static::includeModule())
+		{
+			return null;
+		}
+
+		$query = WorkgroupTable::query()
+			->setSelect([
+				'DATE_CREATE',
+				new ExpressionField('ACTIVITY_DATE', 'MAX(%1$s)', ['T.ACTIVITY_DATE']),
+			])
+			->registerRuntimeField(
+				'T',
+				new ReferenceField(
+					'T',
+					TaskTable::getEntity(),
+					Join::on('this.ID', 'ref.GROUP_ID'),
+					['join_type' => 'left']
+				)
+			)
+			->where('ID', $groupId)
+		;
+
+		$lastActivityDate = null;
+
+		$res = $query->exec();
+		if ($row = $res->fetch())
+		{
+			$lastActivityDate = ($row['ACTIVITY_DATE'] ?? $row['DATE_CREATE']);
+		}
+
+		return $lastActivityDate;
 	}
 }

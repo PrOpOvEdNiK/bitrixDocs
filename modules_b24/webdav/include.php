@@ -2,6 +2,7 @@
 CModule::IncludeModule("iblock");
 //IncludeModuleLangFile(__FILE__);
 
+
 $GLOBALS["WEBDAV"] = array(
 	"FORBIDDEN_SYMBOLS" => array(
 		"/", "\\", ":", "*", "?", "\"", "'", "<", ">", "|", "#", "{", "}", "%", "&", "~", "+"),
@@ -125,15 +126,15 @@ function WDAddPageParams($page_url="", $params=array(), $htmlSpecialChars = true
 	{
 		foreach ($params as $key => $val)
 		{
-			if ((is_array($val) && (count($val) > 0)) || ((strLen($val)>0) && ($val!="0")) || (intVal($val) > 0))
+			if ((is_array($val) && (count($val) > 0)) || (($val <> '') && ($val!="0")) || (intval($val) > 0))
 			{
 				if (is_array($val))
 					$param = implode(",", $val);
 				else
 					$param = $val;
-				if (strLen($param) > 0)
+				if ($param <> '')
 				{
-					if (strPos($page_url, $key) !== false)
+					if (mb_strpos($page_url, $key) !== false)
 					{
 						$page_url = preg_replace("/".$key."\=[^\&]*((\&amp\;)|(\&)*)/", "", $page_url);
 					}
@@ -144,9 +145,9 @@ function WDAddPageParams($page_url="", $params=array(), $htmlSpecialChars = true
 
 		if (count($arParams) > 0)
 		{
-			if (strPos($page_url, "?") === false)
+			if (mb_strpos($page_url, "?") === false)
 				$strParams = "?";
-			elseif ((substr($page_url, -5, 5) != "&amp;") && (substr($page_url, -1, 1) != "&") && (substr($page_url, -1, 1) != "?"))
+			elseif ((mb_substr($page_url, -5, 5) != "&amp;") && (mb_substr($page_url, -1, 1) != "&") && (mb_substr($page_url, -1, 1) != "?"))
 			{
 				$strParams = "&";
 			}
@@ -201,7 +202,7 @@ function WDClearComponentCache($components)
 	{
 		$component_name = "bitrix:".$component_name;
 		$componentRelativePath = CComponentEngine::MakeComponentPath($component_name);
-		if (strlen($componentRelativePath) > 0)
+		if ($componentRelativePath <> '')
 		{
 			$arComponentDescription = CComponentUtil::GetComponentDescr($component_name);
 			if (isset($arComponentDescription) && is_array($arComponentDescription))
@@ -210,7 +211,7 @@ function WDClearComponentCache($components)
 				{
 					if($arComponentDescription["CACHE_PATH"] == "Y")
 						$arComponentDescription["CACHE_PATH"] = "/".SITE_ID.$componentRelativePath;
-					if(strlen($arComponentDescription["CACHE_PATH"]) > 0)
+					if($arComponentDescription["CACHE_PATH"] <> '')
 						BXClearCache(true, $arComponentDescription["CACHE_PATH"]);
 				}
 			}
@@ -289,7 +290,7 @@ function WDUnpackCookie()
 		{
 			$res = file_get_contents($GLOBALS["WEBDAV"]["PATH"]."cookie".$id);
 			if (!empty($res))
-				$_SESSION["WEBDAV_DATA"] = @unserialize($res);
+				$_SESSION["WEBDAV_DATA"] = @unserialize($res, ['allowed_classes' => false]);
 		}
 	}
 	elseif ($_SESSION["WEBDAV_DATA_PACKED"] == "Y")
@@ -322,7 +323,7 @@ function WDGetComponentsOnPage($filesrc = false)
 			foreach ($arPHP as $php)
 			{
 				$src = $php[2];
-				if (stripos($src, '$APPLICATION->IncludeComponent(') !== false)
+				if (mb_stripos($src, '$APPLICATION->IncludeComponent(') !== false)
 					$arResult[] = PHPParser::CheckForComponent2($src);
 			}
 		}

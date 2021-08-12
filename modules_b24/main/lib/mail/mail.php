@@ -12,7 +12,6 @@ use Bitrix\Main\Config as Config;
 use Bitrix\Main\IO\File;
 use Bitrix\Main\Application;
 use Bitrix\Main\Web\Uri;
-use Bitrix\Main\Text\BinaryString;
 
 class Mail
 {
@@ -71,7 +70,7 @@ class Mail
 	 */
 	public function __construct(array $mailParams)
 	{
-		if(array_key_exists('LINK_PROTOCOL', $mailParams) && strlen($mailParams['LINK_PROTOCOL']) > 0)
+		if(array_key_exists('LINK_PROTOCOL', $mailParams) && $mailParams['LINK_PROTOCOL'] <> '')
 		{
 			$this->trackLinkProtocol = $mailParams['LINK_PROTOCOL'];
 		}
@@ -97,7 +96,7 @@ class Mail
 			}
 		}
 
-		if(array_key_exists('LINK_DOMAIN', $mailParams) && strlen($mailParams['LINK_DOMAIN']) > 0)
+		if(array_key_exists('LINK_DOMAIN', $mailParams) && $mailParams['LINK_DOMAIN'] <> '')
 		{
 			$this->settingServerName = $mailParams['LINK_DOMAIN'];
 		}
@@ -261,7 +260,7 @@ class Mail
 			$this->settingMailEncodeQuotedPrintable = true;
 		}
 
-		if(!isset($this->settingServerName) || strlen($this->settingServerName) <= 0)
+		if(!isset($this->settingServerName) || $this->settingServerName == '')
 		{
 			$this->settingServerName = Config\Option::get("main", "server_name", "");
 		}
@@ -444,7 +443,7 @@ class Mail
 			foreach($files as $attachment)
 			{
 				$isLimitExceeded = $this->isFileLimitExceeded(
-					!empty($attachment["SIZE"]) ? $attachment["SIZE"] : 0,
+					!empty($attachment["SIZE"]) ? $attachment["SIZE"] : strlen($attachment["CONTENT"] ?? ''),
 					$summarySize
 				);
 
@@ -452,7 +451,9 @@ class Mail
 				{
 					try
 					{
-						$fileContent = File::getFileContents($attachment["PATH"]);
+						$fileContent = isset($attachment["CONTENT"])
+							? $attachment["CONTENT"]
+							: File::getFileContents($attachment["PATH"]);
 					}
 					catch (\Exception $exception)
 					{
@@ -465,7 +466,7 @@ class Mail
 				}
 
 				$isLimitExceeded = $this->isFileLimitExceeded(
-					BinaryString::getLength($fileContent),
+					strlen($fileContent),
 					$summarySize
 				);
 				if ($isLimitExceeded)
@@ -481,14 +482,28 @@ class Mail
 						'This is not the original file. The size of the original file `%name%` exceeded the limit of %limit% MB.'
 					);
 				}
-
-				$name = $this->encodeSubject($attachment["NAME"], $this->charset);
-				$part = (new Part())
-					->addHeader('Content-Type', $attachment['CONTENT_TYPE'] . "; name=\"$name\"")
-					->addHeader('Content-Disposition', "attachment; filename=\"$name\"")
-					->addHeader('Content-Transfer-Encoding', 'base64')
-					->addHeader('Content-ID', "<{$attachment['ID']}>")
-					->setBody($fileContent);
+				
+				if(isset($attachment['METHOD']))
+				{
+					$name = $this->encodeSubject($attachment["NAME"], $attachment['CHARSET']);
+					$part = (new Part())
+						->addHeader('Content-Type', $attachment['CONTENT_TYPE'] .
+								"; name=\"$name\"; method=".$attachment['METHOD']."; charset=".$attachment['CHARSET'])
+						->addHeader('Content-Disposition', "attachment; filename=\"$name\"")
+						->addHeader('Content-Transfer-Encoding', 'base64')
+						->addHeader('Content-ID', "<{$attachment['ID']}>")
+						->setBody($fileContent);
+				}
+				else
+				{
+					$name = $this->encodeSubject($attachment["NAME"], $this->charset);
+					$part = (new Part())
+						->addHeader('Content-Type', $attachment['CONTENT_TYPE'] . "; name=\"$name\"")
+						->addHeader('Content-Disposition', "attachment; filename=\"$name\"")
+						->addHeader('Content-Transfer-Encoding', 'base64')
+						->addHeader('Content-ID', "<{$attachment['ID']}>")
+						->setBody($fileContent);
+				}
 
 				if ($this->multipartRelated && $this->isAttachmentImage($attachment, true))
 				{
@@ -514,7 +529,7 @@ class Mail
 			return false;
 		}
 
-		if (strpos($attachment['CONTENT_TYPE'], 'image/') === 0)
+		if (mb_strpos($attachment['CONTENT_TYPE'], 'image/') === 0)
 		{
 			return true;
 		}
@@ -524,7 +539,7 @@ class Mail
 
 	private function isFileLimitExceeded($fileSize, &$summarySize)
 	{
-		// magic for length after base64
+		// for length after base64
 		$summarySize += 4 * ceil($fileSize / 3);
 
 		return $this->settingMaxFileSize > 0
@@ -705,11 +720,11 @@ class Mail
 	 */
 	public function getTo()
 	{
-		$resultTo = $this->to;
+		$resultTo = static::toPunycode($this->to);
 
 		if($this->settingMailConvertMailHeader)
 		{
-			$resultTo = $this->encodeHeaderFrom($resultTo, $this->charset);
+			$resultTo = static::encodeHeaderFrom($resultTo, $this->charset);
 		}
 
 		if($this->settingServerMsSmtp)
@@ -787,12 +802,12 @@ class Mail
 		$res = "";
 		$maxl = 40;
 		$eol = static::getMailEol();
-		$len = strlen($text);
+		$len = mb_strlen($text);
 		for($i=0; $i<$len; $i=$i+$maxl)
 		{
 			if($i>0)
 				$res .= $eol."\t";
-			$res .= "=?".$charset."?B?".base64_encode(substr($text, $i, $maxl))."?=";
+			$res .= "=?".$charset."?B?".base64_encode(mb_substr($text, $i, $maxl))."?=";
 		}
 		return $res;
 	}
@@ -818,17 +833,17 @@ class Mail
 	 */
 	public static function encodeHeaderFrom($text, $charset)
 	{
-		$i = strlen($text);
+		$i = mb_strlen($text);
 		while($i > 0)
 		{
-			if(ord(substr($text, $i-1, 1))>>7)
+			if(ord(mb_substr($text, $i - 1, 1))>>7)
 				break;
 			$i--;
 		}
 		if($i==0)
 			return $text;
 		else
-			return "=?".$charset."?B?".base64_encode(substr($text, 0, $i))."?=".substr($text, $i);
+			return "=?".$charset."?B?".base64_encode(mb_substr($text, 0, $i))."?=".mb_substr($text, $i);
 	}
 
 	/**
@@ -840,14 +855,22 @@ class Mail
 	{
 		static $eol = false;
 		if($eol !== false)
+		{
 			return $eol;
+		}
 
-		if(strtoupper(substr(PHP_OS,0,3)) == 'WIN')
-			$eol="\r\n";
-		elseif(strtoupper(substr(PHP_OS,0,3)) <> 'MAC')
-			$eol="\n"; 	 //unix
+		if(strtoupper(substr(PHP_OS, 0, 3)) == 'WIN')
+		{
+			$eol = "\r\n";
+		}
+		elseif(strtoupper(substr(PHP_OS, 0, 3)) <> 'MAC')
+		{
+			$eol = "\n"; 	 //unix
+		}
 		else
-			$eol="\r";
+		{
+			$eol = "\r";
+		}
 
 		return $eol;
 	}
@@ -901,19 +924,19 @@ class Mail
 		}
 
 
-		$imageSize = \CFile::GetImageSize($filePath, true);
-		if (!is_array($imageSize))
+		$imageInfo = (new \Bitrix\Main\File\Image($filePath))->getInfo();
+		if (!$imageInfo)
 		{
 			return $matches[0];
 		}
 
 		if (function_exists("image_type_to_mime_type"))
 		{
-			$contentType = image_type_to_mime_type($imageSize[2]);
+			$contentType = image_type_to_mime_type($imageInfo->getFormat());
 		}
 		else
 		{
-			$contentType = $this->imageTypeToMimeType($imageSize[2]);
+			$contentType = $this->imageTypeToMimeType($imageInfo->getFormat());
 		}
 
 		$uid = uniqid(md5($src));
@@ -943,11 +966,11 @@ class Mail
 		}
 
 		$srcTrimmed = trim($src);
-		if(substr($srcTrimmed,0, 2) == "//")
+		if(mb_substr($srcTrimmed, 0, 2) == "//")
 		{
 			$src = $this->trackLinkProtocol . ":" . $srcTrimmed;
 		}
-		else if(substr($srcTrimmed,0, 1) == "/")
+		else if(mb_substr($srcTrimmed, 0, 1) == "/")
 		{
 			$srcModified = false;
 			if(count($this->attachment)>0)
@@ -973,7 +996,7 @@ class Mail
 		}
 
 		$add = '';
-		if (stripos($matches[0], '<img') === 0 && !preg_match("/<img[^>]*?\\s+alt\\s*=[^>]+>/is", $matches[0]))
+		if (mb_stripos($matches[0], '<img') === 0 && !preg_match("/<img[^>]*?\\s+alt\\s*=[^>]+>/is", $matches[0]))
 		{
 			$add = ' alt="" ';
 		}
@@ -1038,7 +1061,7 @@ class Mail
 		}
 
 		$url = $this->trackReadLink;
-		if (substr($url, 0, 4) !== 'http')
+		if (mb_substr($url, 0, 4) !== 'http')
 		{
 			$url = $this->trackLinkProtocol . "://" . $this->settingServerName . $url;
 		}
@@ -1085,12 +1108,12 @@ class Mail
 			return $matches[0];
 		}
 
-		if(substr($href, 0, 2) == '//')
+		if(mb_substr($href, 0, 2) == '//')
 		{
 			$href = $this->trackLinkProtocol . ':' . $href;
 		}
 
-		if(substr($href, 0, 1) == '/')
+		if(mb_substr($href, 0, 1) == '/')
 		{
 			$href = $this->trackLinkProtocol . '://' . $this->settingServerName . $href;
 		}
@@ -1104,7 +1127,7 @@ class Mail
 					$hrefAddParam .= '&'.htmlspecialcharsbx($k).'='.htmlspecialcharsbx($v);
 
 				$parsedHref = explode("#", $href);
-				$parsedHref[0] .= (strpos($parsedHref[0], '?') === false ? '?' : '&') . substr($hrefAddParam, 1);
+				$parsedHref[0] .= (mb_strpos($parsedHref[0], '?') === false? '?' : '&').mb_substr($hrefAddParam, 1);
 				$href = implode("#", $parsedHref);
 			}
 
@@ -1167,16 +1190,16 @@ class Mail
 
 		// modify links to text version
 		$body = preg_replace_callback(
-			"/<a\\s[^>]*?href=['|\\\"](.*?)['|\\\"][^>]*?>([^>]*?)<\\/a>/i",
+			"%<a[^>]*?href=(['\"])(?<href>[^\1]*?)(?1)[^>]*?>(?<text>.*?)<\/a>%ims",
 			function ($matches)
 			{
-				$href = $matches[1];
-				$text = trim($matches[2]);
+				$href = $matches['href'];
+				$text = trim($matches['text']);
 				if (!$href)
 				{
 					return $matches[0];
 				}
-
+				$text = strip_tags($text);
 				return ($text ? "$text:" : '') ."\n$href\n";
 			},
 			$body
@@ -1184,6 +1207,9 @@ class Mail
 
 		// change <br> to new line
 		$body = preg_replace('/\<br(\s*)?\/?\>/i', "\n", $body);
+
+		$body = preg_replace('|(<style[^>]*>)(.*?)(<\/style>)|isU', '', $body);
+		$body = preg_replace('|(<script[^>]*>)(.*?)(<\/script>)|isU', '', $body);
 
 		// remove tags
 		$body = strip_tags($body);
@@ -1219,13 +1245,13 @@ class Mail
 		}
 
 		$list = [];
-		$allEmails = [strtolower($this->to)];
+		$allEmails = [mb_strtolower($this->to)];
 
 		// get all emails for query Blacklist, prepare emails as Address instances
 		foreach ($headers as $name => $value)
 		{
 			// exclude non target headers
-			if (!in_array(strtolower($name), static::$emailHeaders))
+			if (!in_array(mb_strtolower($name), static::$emailHeaders))
 			{
 				continue;
 			}
@@ -1274,7 +1300,7 @@ class Mail
 		foreach ($headers as $name => $value)
 		{
 			// exclude non target headers
-			if (!in_array(strtolower($name), static::$emailHeaders))
+			if (!in_array(mb_strtolower($name), static::$emailHeaders))
 			{
 				continue;
 			}
@@ -1307,5 +1333,42 @@ class Mail
 				$headers[$name] = $emails;
 			}
 		}
+	}
+
+	/**
+	 * Converts an international domain in the email to Punycode.
+	 * @param string $to Email address, possibly with a comment
+	 * @return string
+	 */
+	public static function toPunycode($to)
+	{
+		$email = $to;
+		$withComment = false;
+
+		if (preg_match("#.*?[<\\[(](.*?)[>\\])].*#i", $to, $matches) && $matches[1] <> '')
+		{
+			$email = $matches[1];
+			$withComment = true;
+		}
+
+		$parts = explode("@", $email);
+		$domain = $parts[1];
+
+		$errors = [];
+		$domain = \CBXPunycode::ToASCII($domain, $errors);
+
+		if (empty($errors))
+		{
+			$email = "{$parts[0]}@{$domain}";
+
+			if ($withComment)
+			{
+				$email = preg_replace("#(.*?)[<\\[(](.*?)[>\\])](.*)#i", '$1<'.$email.'>$3', $to);
+			}
+
+			return $email;
+		}
+
+		return $to;
 	}
 }

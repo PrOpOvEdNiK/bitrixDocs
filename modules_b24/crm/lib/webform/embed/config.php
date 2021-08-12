@@ -9,7 +9,6 @@
 namespace Bitrix\Crm\WebForm\Embed;
 
 use Bitrix\Main;
-use Bitrix\Crm;
 use Bitrix\Crm\WebForm;
 
 /**
@@ -22,7 +21,16 @@ class Config
 	protected $form;
 
 	/** @var array $fields Fields. */
-	protected $fields;
+	protected $fields = [];
+
+	/** @var WebForm\Options\Fields $fieldsConfig Fields config. */
+	protected $fieldsConfig;
+
+	/** @var WebForm\Options\Deps $deps Dep config. */
+	protected $deps;
+
+	/** @var bool $editMode Edit mode with special using fields like `id`.  */
+	protected $editMode = false;
 
 	/**
 	 * Create config by form ID.
@@ -30,7 +38,7 @@ class Config
 	 * @param int $formId Form ID.
 	 * @return static
 	 */
-	public function createById($formId)
+	public static function createById($formId)
 	{
 		return new static(new Webform\Form($formId));
 	}
@@ -43,6 +51,21 @@ class Config
 	public function __construct(WebForm\Form $form)
 	{
 		$this->form = $form;
+		$this->fieldsConfig = new WebForm\Options\Fields($this->form);
+		$this->deps = new WebForm\Options\Deps($this->form);
+	}
+
+	/**
+	 * Set edit mode.
+	 *
+	 * @param bool $mode Mode.
+	 * @return $this
+	 */
+	public function setEditMode($mode)
+	{
+		$this->editMode = $mode;
+		$this->fieldsConfig->setEditMode($this->editMode);
+		return $this;
 	}
 
 	/**
@@ -61,11 +84,12 @@ class Config
 			'address' => Main\Web\WebPacker\Builder::getDefaultSiteUri(),
 			'views' => $this->getViews(),
 			'data' => [
+				'language' => $this->form->getLanguageId(),
 				'design' => $this->getDesign(),
 				'title' => $data['CAPTION'],
 				'desc' => $this->getDescription(),
 				'buttonCaption' => $data['BUTTON_CAPTION'],
-				'useSign' => $data['COPYRIGHT_REMOVED'] !== 'Y',
+				'useSign' => $data['COPYRIGHT_REMOVED'] !== 'Y' || !WebForm\Form::canRemoveCopyright(),
 				'date' => [
 					'dateFormat' => Main\Context::getCurrent()->getCulture()->getDateFormat(),
 					'dateTimeFormat' => Main\Context::getCurrent()->getCulture()->getDateTimeFormat(),
@@ -80,6 +104,98 @@ class Config
 				],
 			]
 		];
+	}
+
+	public function setDataFromArray(array $data)
+	{
+		$this->fieldsConfig->setData($data['fields'] ?? []);
+		$this->deps->setData($data['dependencies'] ?? []);
+		$parameters = [
+			'CAPTION' => $data['title'],
+			'DESCRIPTION' => $data['desc'],
+			'BUTTON_CAPTION' => $data['buttonCaption'],
+			'USE_CAPTCHA' => $data['recaptcha']['use'] ? 'Y' : 'N',
+
+			//'FIELDS' => [],
+			//'DEPENDENCIES' => [],
+
+			'AGREEMENTS' => array_map(
+				function ($agreement)
+				{
+					return [
+						'AGREEMENT_ID' => $agreement['id'],
+						'CHECKED' => $agreement['checked'] ? 'Y' : 'N',
+						'REQUIRED' => $agreement['required'] ? 'Y' : 'N',
+					];
+				},
+				self::filterAgreements($data['agreements'] ?? [])
+			),
+			'COPYRIGHT_REMOVED' => (!$data['useSign'] && WebForm\Form::canRemoveCopyright()) ? 'Y' : 'N',
+			'LANGUAGE_ID' => $data['language'],
+		];
+		$this->form->merge($parameters);
+		if (!empty($data['design']) && is_array($data['design']))
+		{
+			$this->form->setDesignOptions($data['design']);
+		}
+		return $this;
+	}
+
+	public function appendAgreement($id)
+	{
+		$id = (int) $id;
+		if (!$id)
+		{
+			return;
+		}
+
+		$agreements = $this->form->get()['AGREEMENTS'];
+		$agreements[] = [
+			'AGREEMENT_ID' => $id,
+			'CHECKED' => true,
+			'REQUIRED' => true,
+		];
+		$this->form->merge(['AGREEMENTS' => $agreements]);
+	}
+
+	public function appendField(array $options)
+	{
+		if (!empty($options['type']))
+		{
+			$isSupportedType = in_array(
+				$options['type'],
+				array_merge(
+					array_keys(WebForm\Helper::getFieldNonValueTypes()),
+					['product']
+				)
+			);
+			if (!$isSupportedType)
+			{
+				return; //todo: need ErrorCollection
+			}
+
+			$options += [
+				'name' => $options['type'] . '_' . mt_rand(1000000, 9999999),
+				'label' => WebForm\Internals\FieldTable::getTypeList()[$options['type']]
+			];
+			switch ($options['type'])
+			{
+				case 'product':
+					$options += [
+						'bigPic' => true,
+						'multiple' => true,
+						'items' => [],
+					];
+					break;
+				default:
+					$options += [
+						'type' => 'layout',
+						'content' => ['type' => $options['type']],
+					] + $options;
+			}
+		}
+
+		$this->fieldsConfig->append($options);
 	}
 
 	/**
@@ -101,7 +217,11 @@ class Config
 	public function getDesign()
 	{
 		$design = $this->form->getDesignOptions(true);
-		unset($design['theme']);
+		if (!$this->editMode)
+		{
+			unset($design['theme']);
+		}
+
 		foreach ($design as $key => $value)
 		{
 			if (is_array($value))
@@ -110,7 +230,7 @@ class Config
 					$value,
 					function ($v)
 					{
-						return is_bool($v) ? true : strlen($v) > 0;
+						return is_bool($v) ? true : mb_strlen($v) > 0;
 					}
 				);
 				if (count($value) > 0)
@@ -120,7 +240,7 @@ class Config
 			}
 			else
 			{
-				if (strlen($value) > 0)
+				if (mb_strlen($value) > 0)
 				{
 					continue;
 				}
@@ -149,232 +269,14 @@ class Config
 	 */
 	public function getFields()
 	{
-		if ($this->isDisabled())
+		if (!$this->editMode && $this->isDisabled())
 		{
 			return $this->fields;
 		}
 
-		if (empty($this->fields))
-		{
-			$this->fields = array_map(
-				function ($field)
-				{
-					$options = [];
-					$type = $field['type'];
-					switch ($type)
-					{
-						case 'resourcebooking':
-							if (!$field['multiple'])
-							{
-								$options['booking'] = [
-									'name' => $field['name'],
-									'caption' => $field['caption'],
-									'entity_field_name' => $field['entity_field_name'],
-									'settings_data' => $field['settings_data'],
-								];
-							}
-							break;
-						case 'checkbox':
-							if (!$field['multiple'])
-							{
-								$type = 'bool';
-								$options['checked'] = false;
-								$options['value'] = 'Y';
-							}
-							break;
-						case 'typed_string':
-							$stringType = strtolower($field['entity_field_name']);
-							switch ($stringType)
-							{
-								case 'phone':
-								case 'email':
-									$type = $stringType;
-									break;
-								default:
-									$type = 'string';
-									break;
-							}
-							break;
-
-						case 'hr':
-						case 'br':
-						case 'section':
-							return [
-								'id' =>  $field['name'],
-								'name' => $field['name'],
-								'type' => 'layout',
-								'label' => $field['caption'],
-								'content' => [
-									'type' => $type
-								]
-							];
-
-						default:
-							$type = isset(WebForm\Internals\FieldTable::getTypeList()[$type])
-								? $type
-								:'string';
-							break;
-					}
-
-					switch ($field['name'])
-					{
-						case 'LEAD_NAME':
-						case 'CONTACT_NAME':
-							$type = 'name';
-							break;
-						case 'LEAD_LAST_NAME':
-						case 'CONTACT_LAST_NAME':
-							$type = 'last-name';
-							break;
-						case 'LEAD_SECOND_NAME':
-						case 'CONTACT_SECOND_NAME':
-							$type = 'second-name';
-							break;
-						case 'COMPANY_TITLE':
-						case 'LEAD_COMPANY_TITLE':
-							$type = 'company-name';
-							break;
-					}
-
-					return $options + [
-						'id' =>  $field['name'],
-						'name' => $field['name'],
-						'type' => $type,
-						'label' => $field['caption'],
-						'visible' => !$field['hidden'],
-						'required' => $field['required'],
-						'multiple' => $field['multiple'],
-						'placeholder' => $field['placeholder'],
-						'value' => $field['value'],
-						'items' => $this->getFieldItems($field),
-						'bigPic' => !empty($field['settings_data']['BIG_PIC'])
-							? $field['settings_data']['BIG_PIC'] === 'Y'
-							: false,
-					];
-				},
-				$this->form->getFieldsMap()
-			);
-		}
+		$this->fields = $this->fieldsConfig->toArray();
 
 		return $this->fields;
-	}
-
-	protected function getFieldItems(array $field)
-	{
-		$items = is_array($field['items']) ? $field['items'] : [];
-		switch ($field['type'])
-		{
-			case 'product':
-				$items = array_map(
-					function ($item) use ($field)
-					{
-						$data = [
-							'label' => $item['title'],
-							'value' => $item['value'],
-							'selected' => false,
-							'price' => $item['price'],
-							'discount' => $item['discount'],
-							'pics' => [],
-							'quantity' => [],
-							'changeablePrice' => !empty($item['changeablePrice']),
-							//quantity: {min: 2, max: 50, step: 2, unit: 'רע.'},
-							//'discount' => isset($item['discount']) ? $item['discount'] : 0,
-						];
-
-						if ($field['settings_data']['QUANTITY_MIN'])
-						{
-							$data['quantity']['min'] = $field['settings_data']['QUANTITY_MIN'];
-						}
-						if ($field['settings_data']['QUANTITY_MAX'])
-						{
-							$data['quantity']['max'] = $field['settings_data']['QUANTITY_MAX'];
-						}
-						if ($field['settings_data']['QUANTITY_STEP'])
-						{
-							$data['quantity']['step'] = $field['settings_data']['QUANTITY_STEP'];
-						}
-
-						$product = \CCrmProduct::getByID($item['value']);
-						if (!$product)
-						{
-							return $data;
-						}
-
-						if (!empty($product['MEASURE']))
-						{
-							static $measures;
-							if (!is_array($measures))
-							{
-								$measures = Crm\Measure::getMeasures();
-								$measures = array_combine(
-									array_column($measures, 'ID'),
-									array_column($measures, 'SYMBOL')
-								);
-							}
-							if (isset($measures[$product['MEASURE']]))
-							{
-								$data['quantity']['unit'] = $measures[$product['MEASURE']];
-							}
-						}
-
-						$pics = [];
-						if ($product['DETAIL_PICTURE'] && isset($item['bigPic']) && $item['bigPic'])
-						{
-							$pics[] = $product['DETAIL_PICTURE'];
-						}
-						elseif (!$product['PREVIEW_PICTURE'] && $product['DETAIL_PICTURE'])
-						{
-							$pics[] = $product['DETAIL_PICTURE'];
-						}
-						elseif ($product['PREVIEW_PICTURE'])
-						{
-							$pics[] = $product['PREVIEW_PICTURE'];
-						}
-
-						if (!empty($pics))
-						{
-							foreach ($pics as $fileId)
-							{
-								$file = \CFile::getByID($fileId)->fetch();
-								if (!$file)
-								{
-									continue;
-								}
-								$uri = $file['~src'];
-								if (empty($uri))
-								{
-									$uri = Main\Web\WebPacker\Builder::getDefaultSiteUri() . \CFile::GetFileSRC($file);
-								}
-
-								$data['pics'][] = $uri;
-							}
-						}
-
-						return $data;
-					},
-					$items
-				);
-				if ($field['required'] && count($items) === 1)
-				{
-					$items[0]['selected'] = true;
-				}
-				return $items;
-			default:
-				return array_map(
-					function ($item)
-					{
-						return [
-							'label' => $item['title'],
-							'value' => $item['value'],
-							'selected' => false,
-							//'discount' => isset($item['discount']) ? $item['discount'] : 0,
-							//'pics' => [],
-							//quantity: {min: 2, max: 50, step: 2, unit: 'רע.'},
-						];
-					},
-					$items
-				);
-		}
 	}
 
 	/**
@@ -384,66 +286,7 @@ class Config
 	 */
 	public function getDependencies()
 	{
-		$deps = $this->form->get()['DEPENDENCIES'];
-		if (empty($deps))
-		{
-			return [];
-		}
-
-		$fieldsBySection = [];
-		$currentSection = false;
-		foreach ($this->getFields() as $field)
-		{
-			if ($field['type'] === 'layout' && $field['content']['type'] === 'section')
-			{
-				$currentSection = $field['name'];
-			}
-			elseif ($field['type'] === 'page')
-			{
-				$currentSection = null;
-			}
-
-			if($currentSection)
-			{
-				$fieldsBySection[$currentSection][] = $field['name'];
-			}
-		}
-
-		$list = [];
-		foreach ($deps as $dep)
-		{
-			$condition = [
-				'target' => $dep['IF_FIELD_CODE'],
-				'event' => $dep['IF_ACTION'],
-				'value' => $dep['IF_VALUE'],
-				'operation' => $dep['IF_VALUE_OPERATION'],
-			];
-
-			if (!empty($fieldsBySection[$dep['DO_FIELD_CODE']]))
-			{
-				$fieldNames = $fieldsBySection[$dep['DO_FIELD_CODE']];
-			}
-			else
-			{
-				$fieldNames = [$dep['DO_FIELD_CODE']];
-			}
-
-			foreach ($fieldNames as $fieldName)
-			{
-				$action = [
-					'target' => $fieldName,
-					'type' => $dep['DO_ACTION'],
-					'value' => $dep['DO_VALUE'],
-				];
-
-				$list[] = [
-					'condition' => $condition,
-					'action' => $action,
-				];
-			}
-		}
-
-		return $list;
+		return $this->deps->toArray();
 	}
 
 	/**
@@ -455,13 +298,38 @@ class Config
 	{
 		$result = [];
 
-		if ($this->isDisabled())
+		if (!$this->editMode && $this->isDisabled())
 		{
 			return $result;
 		}
 
 		$data = $this->form->get();
-		if ($data['USE_LICENCE'] !== 'Y' || !$data['AGREEMENT_ID'])
+		if (!$this->editMode && $data['USE_LICENCE'] !== 'Y')
+		{
+			return $result;
+		}
+
+		$agreements = [];
+		if ($data['AGREEMENT_ID'])
+		{
+			$agreements[$data['AGREEMENT_ID']] = [
+				'ID' => $data['AGREEMENT_ID'],
+				'CHECKED' => $data['LICENCE_BUTTON_IS_CHECKED'] === 'Y',
+				'REQUIRED' => true,
+			];
+		}
+
+		foreach ($data['AGREEMENTS'] as $agreementRow)
+		{
+			$agreements[$agreementRow['AGREEMENT_ID']] = [
+				'ID' => $agreementRow['AGREEMENT_ID'],
+				'CHECKED' => $agreementRow['CHECKED'] === 'Y',
+				'REQUIRED' => $agreementRow['REQUIRED'] === 'Y',
+			];
+		}
+		$agreements = array_values($agreements);
+
+		if (empty($agreements))
 		{
 			return $result;
 		}
@@ -471,27 +339,36 @@ class Config
 			'fields' => array_column($this->getFields(), 'label')
 		);
 
-		$agreementIds = [$data['AGREEMENT_ID']];
-		foreach ($agreementIds as $agreementId)
+		foreach ($agreements as $agreementData)
 		{
-			$agreement = new Main\UserConsent\Agreement($agreementId, $replace);
+			$agreement = new Main\UserConsent\Agreement($agreementData['ID'], $replace);
 			if (!$agreement->isActive() || !$agreement->isExist())
 			{
 				continue;
 			}
 
-			$name = "AGREEMENT_$agreementId";
+			$content = [
+				'title' => $agreement->getTitle(),
+				'url' => $agreement->getUrl(),
+			];
+			if ($agreement->isAgreementTextHtml())
+			{
+				$content['html'] = $agreement->getHtml();
+			}
+			else
+			{
+				$content['text'] = $agreement->getText(true);
+			}
+
+			$name = 'AGREEMENT_' . $agreementData['ID'];
 			$result[] = [
-				'id' => $name,
+				'id' => $this->editMode ? $agreementData['ID'] : $name,
 				'name' => $name,
-				'label' => $agreement->getLabelText(),
+				'label' => $agreement->getLabel(),
 				'value' => 'Y',
-				'required' => true,
-				'checked' => $data['LICENCE_BUTTON_IS_CHECKED'] === 'Y',
-				'content' => [
-					'title' => $agreement->getTitle(),
-					'text' => $agreement->getText(true),
-				],
+				'required' => $agreementData['REQUIRED'],
+				'checked' => $agreementData['CHECKED'],
+				'content' => $content,
 			];
 		}
 
@@ -544,5 +421,89 @@ class Config
 	public function getDescription()
 	{
 		return (new \CTextParser())->convertText($this->form->get()['DESCRIPTION']);
+	}
+
+	private static function filterAgreements(array $list)
+	{
+		$result = [];
+		foreach ($list as $item)
+		{
+			if (empty($item) || empty($item['id']) || !is_array($item))
+			{
+				continue;
+			}
+
+			$id = (int) $item['id'];
+			if (!$id)
+			{
+				continue;
+			}
+
+			$result[] = [
+				'id' => $id,
+				'checked' => (bool) ($item['checked'] ?? true),
+				'required' => (bool) ($item['required'] ?? true),
+			];
+		}
+
+		return $result;
+	}
+
+	private static function filterFields()
+	{
+
+	}
+
+	private static function filterDependencies(array $deps, array $fields)
+	{
+		$dict = WebForm\Options\Dictionary::instance()->getDeps();
+		$actionTypes = array_column($dict['action']['types'], 'id');
+		$conditionEvents = array_column($dict['condition']['events'], 'id');
+		$conditionOperations = array_column($dict['condition']['operations'], 'id');
+		$conditionOperations[] = '<>';
+
+		$result = [];
+		foreach ($deps as $dep)
+		{
+			if (!is_array($dep))
+			{
+				continue;
+			}
+
+			$condition = $dep['condition'] ?? null;
+			$action = $dep['action'] ?? null;
+			if (!$condition || !$action)
+			{
+				continue;
+			}
+
+			// TODO: $condition['target'] check existed in fields
+			$condition['event'] = $condition['event'] ?? null;
+			if (!$condition['event'] || !in_array($condition['event'], $conditionEvents))
+			{
+				$condition['event'] = $conditionEvents[0];
+			}
+			$condition['operation'] = $condition['operation'] ?? null;
+			if (!$condition['operation'] || !in_array($condition['operation'], $conditionOperations))
+			{
+				$condition['operation'] = $conditionOperations[0];
+			}
+			$condition['value'] = $condition['value'] ?? null;
+
+			// TODO: $action['target'] check existed in fields
+			$action['type'] = $action['type'] ?? null;
+			if (!$action['type'] || !in_array($action['type'], $actionTypes))
+			{
+				$action['type'] = $actionTypes[0];
+			}
+			$action['value'] = $action['value'] ?? null;
+
+			$result[] = [
+				'condition' => $condition,
+				'action' => $action,
+			];
+		}
+
+		return $result;
 	}
 }

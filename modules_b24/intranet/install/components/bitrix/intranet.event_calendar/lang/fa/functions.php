@@ -1,5 +1,0 @@
-<?
-$MESS["EC_PARENT_EVENT"] = "منبع";
-$MESS["EC_PROP_CONFIRMED_YES"] = "بله";
-$MESS["EC_PROP_CONFIRMED_NO"] = "خیر";
-?>

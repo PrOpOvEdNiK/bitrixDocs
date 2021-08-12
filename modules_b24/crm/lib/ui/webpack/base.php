@@ -4,6 +4,9 @@ namespace Bitrix\Crm\UI\Webpack;
 
 use Bitrix\Main\ArgumentNullException;
 use Bitrix\Main\InvalidOperationException;
+use Bitrix\Main\Type\Date;
+use Bitrix\Main\Type\DateTime;
+use Bitrix\Main\Web\HttpClient;
 use Bitrix\Main\Web\WebPacker;
 
 /**
@@ -50,6 +53,9 @@ abstract class Base
 
 	private $configured = false;
 	private $fileConfigured = false;
+	private $hasRow = false;
+	/** @var DateTime|null */
+	private $builtDate;
 
 	/**
 	 * Rebuild all packs.
@@ -93,10 +99,22 @@ abstract class Base
 		$this->id = (int) $id;
 		$this->fileName = static::$type . '.js';
 
-		$row = Internals\WebpackTable::getByPrimary($this->getWebpackPrimary())->fetch();
+		$row = Internals\WebpackTable::getByPrimary(
+			$this->getWebpackPrimary(),
+			['select' => ['*', 'FILE_DATE_UPDATE']]
+		)
+			->fetch()
+		;
 		$this->fileId = $row ? (int) $row['FILE_ID'] : null;
+		$this->hasRow = $row ? true : false;
+		$this->builtDate = $row['FILE_DATE_UPDATE'] ?: null;
 
 		$this->controller = (new WebPacker\FileController());
+	}
+
+	public function hasRow()
+	{
+		return $this->hasRow;
 	}
 
 	private function getWebpackPrimary()
@@ -294,11 +312,25 @@ abstract class Base
 	/**
 	 * Return true if it was built.
 	 *
+	 * @param Date $dateFrom Check if file date update is greater Date from parameter.
 	 * @return bool
 	 */
-	public function isBuilt()
+	public function isBuilt(Date $dateFrom = null)
 	{
-		return !empty($this->fileId);
+		if (!$this->fileId)
+		{
+			return false;
+		}
+
+		if (!$dateFrom)
+		{
+			return true;
+		}
+
+		return $this->builtDate
+			? $this->builtDate->getTimestamp() >= $dateFrom->getTimestamp()
+			: false
+		;
 	}
 
 	/**
@@ -314,8 +346,8 @@ abstract class Base
 		{
 			$this->fileId = $result->getId();
 
-			Internals\WebpackTable::delete(self::getWebpackPrimary());
-			$data = self::getWebpackPrimary();
+			Internals\WebpackTable::delete($this->getWebpackPrimary());
+			$data = $this->getWebpackPrimary();
 			$data['FILE_ID'] = $this->fileId;
 			Internals\WebpackTable::add($data);
 		}
@@ -333,5 +365,33 @@ abstract class Base
 	public function delete()
 	{
 		$this->controller->delete();
+	}
+
+	/**
+	 * Check file exists.
+	 *
+	 * @return bool
+	 */
+	final public function checkFileExists()
+	{
+		if (!$this->hasRow())
+		{
+			return true;
+		}
+
+		$url = $this->getEmbeddedFileUrl();
+		if (!$url)
+		{
+			return true;
+		}
+
+		$client = new HttpClient();
+		$client->setTimeout(5);
+		if (!$client->head($url) || $client->getStatus() !== 200)
+		{
+			return false;
+		}
+
+		return true;
 	}
 }

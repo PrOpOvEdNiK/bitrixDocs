@@ -100,30 +100,26 @@ class Company extends EntityBase
 		);
 	}
 
-	public function getTopIDs(array $params)
+	protected function getTopIdsInCompatibilityMode(
+		int $limit,
+		array $order = [],
+		array $filter = []
+	): array
 	{
-		$order = isset($params['order']) && is_array($params['order']) ? $params['order'] : array('ID' => 'ASC');
-		$filter = isset($params['filter']) && is_array($params['filter']) ? $params['filter'] : array();
-		$enablePermissionCheck = isset($params['enablePermissionCheck']) ? (bool)$params['enablePermissionCheck'] : true;
-		if(!$enablePermissionCheck)
-		{
-			$filter['CHECK_PERMISSIONS'] = 'N';
-		}
-		$limit = isset($params['limit']) ? (int)$params['limit'] : 0;
-
 		$dbResult = \CCrmCompany::GetListEx(
 			$order,
 			$filter,
 			false,
-			$limit > 0 ? array('nTopCount' => $limit) : false,
-			array('ID')
+			$limit > 0 ? ['nTopCount' => $limit] : false,
+			['ID']
 		);
 
-		$results = array();
-		while($fields = $dbResult->Fetch())
+		$results = [];
+		while ($fields = $dbResult->Fetch())
 		{
 			$results[] = (int)$fields['ID'];
 		}
+
 		return $results;
 	}
 

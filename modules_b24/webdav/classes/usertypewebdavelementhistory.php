@@ -2,7 +2,7 @@
 
 class CUserTypeWebdavElementHistory extends CUserTypeWebdavElement
 {
-	function GetUserTypeDescription()
+	public static function GetUserTypeDescription()
 	{
 		\Bitrix\Main\Localization\Loc::loadLanguageFile($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/webdav/classes/usertypewebdav.php");
 
@@ -14,16 +14,16 @@ class CUserTypeWebdavElementHistory extends CUserTypeWebdavElement
 		);
 	}
 
-	function GetDBColumnType($arUserField)
+	public static function GetDBColumnType($arUserField)
 	{
 		global $DB;
-		switch(strtolower($DB->type))
+		switch($DB->type)
 		{
-			case "mysql":
+			case "MYSQL":
 				return "text";
-			case "oracle":
+			case "ORACLE":
 				return "varchar2(2000 char)";
-			case "mssql":
+			case "MSSQL":
 				return "varchar(2000)";
 		}
 	}
@@ -59,7 +59,7 @@ class CUserTypeWebdavElementHistory extends CUserTypeWebdavElement
 		return static::genData($file[0], $file[1]);
 	}
 
-	protected function getPostIdForComment()
+	protected static function getPostIdForComment()
 	{
 		return !empty($_POST['comment_post_id'])? $_POST['comment_post_id'] : false;
 	}
@@ -95,7 +95,7 @@ class CUserTypeWebdavElementHistory extends CUserTypeWebdavElement
 	protected static function getEntityType($iblockCode)
 	{
 		$entityType = explode('_', $iblockCode);
-		$entityType = strtolower(array_shift($entityType));
+		$entityType = mb_strtolower(array_shift($entityType));
 
 		return $entityType;
 	}
@@ -142,7 +142,7 @@ class CUserTypeWebdavElementHistory extends CUserTypeWebdavElement
 		$order   = "desc";
 		$history = new CBPHistoryService();
 		$dbDocumentHistory = $history->GetHistoryList(
-			array(strtoupper($by) => strtoupper($order)),
+			array(mb_strtoupper($by) => mb_strtoupper($order)),
 			$filter,
 			false,
 			array('nTopCount' => 1),
@@ -184,9 +184,9 @@ class CUserTypeWebdavElementHistory extends CUserTypeWebdavElement
 	 */
 	public static function getDataFromValue($value)
 	{
-		if(is_string($value) && CheckSerializedData($value))
+		if(is_string($value))
 		{
-			$value = @unserialize($value);
+			$value = @unserialize($value, ['allowed_classes' => false]);
 			if($value === false)
 			{
 				return array();

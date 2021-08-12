@@ -7,6 +7,22 @@ use Bitrix\Main\Localization;
 
 Localization\Loc::loadMessages(__FILE__);
 
+/**
+ * Class MailboxTable
+ *
+ * DO NOT WRITE ANYTHING BELOW THIS
+ *
+ * <<< ORMENTITYANNOTATION
+ * @method static EO_Mailbox_Query query()
+ * @method static EO_Mailbox_Result getByPrimary($primary, array $parameters = array())
+ * @method static EO_Mailbox_Result getById($id)
+ * @method static EO_Mailbox_Result getList(array $parameters = array())
+ * @method static EO_Mailbox_Entity getEntity()
+ * @method static \Bitrix\Mail\EO_Mailbox createObject($setDefaultValues = true)
+ * @method static \Bitrix\Mail\EO_Mailbox_Collection createCollection()
+ * @method static \Bitrix\Mail\EO_Mailbox wakeUpObject($row)
+ * @method static \Bitrix\Mail\EO_Mailbox_Collection wakeUpCollection($rows)
+ */
 class MailboxTable extends Entity\DataManager
 {
 
@@ -249,10 +265,6 @@ class MailboxTable extends Entity\DataManager
 					return array(
 						function ($options)
 						{
-							if (!empty($options['imap']['dirsMd5']) && is_array($options['imap']['dirsMd5']))
-							{
-								unset($options['imap']['dirsMd5']);
-							}
 							return serialize($options);
 						}
 					);
@@ -262,16 +274,7 @@ class MailboxTable extends Entity\DataManager
 					return array(
 						function ($values)
 						{
-							$values = unserialize($values);
-							if (!empty($values['imap']['dirs']) && is_array($values['imap']['dirs']))
-							{
-								foreach ($values['imap']['dirs'] as $name => $dir)
-								{
-									$values['imap']['dirsMd5'][$name] = md5($name);
-								}
-							}
-
-							return $values;
+							return unserialize($values);
 						}
 					);
 				}

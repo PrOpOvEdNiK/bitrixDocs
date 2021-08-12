@@ -1,3 +1,0 @@
-<?
-$MESS["SALE_CASHBOX_RESTRICTION_SORT"] = "Sortowanie";
-?>

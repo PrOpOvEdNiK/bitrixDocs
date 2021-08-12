@@ -3,18 +3,23 @@
 namespace Bitrix\SalesCenter\Integration;
 
 use Bitrix\Crm\Tracking\Channel\Imol;
-use Bitrix\ImOpenLines\Im;
+use Bitrix\ImOpenLines\Im,
+	Bitrix\ImOpenLines\SalesCenter as ImOlSalesCenter;
 use Bitrix\ImOpenLines\Model\SessionTable;
+use Bitrix\Main;
 use Bitrix\Main\Engine\UrlManager;
 use Bitrix\Main\Error;
 use Bitrix\Main\Loader;
 use Bitrix\Main\Localization\Loc;
 use Bitrix\Main\Result;
 use Bitrix\Main\Web\Uri;
-use Bitrix\Sale\Order;
+use Bitrix\Crm\Order\Order;
+use Bitrix\Crm\Order\Payment;
+use Bitrix\Crm;
 use Bitrix\SalesCenter\Driver;
 use Bitrix\SalesCenter\Model\Meta;
 use Bitrix\SalesCenter\Model\Page;
+use Bitrix\Sale;
 
 class ImOpenLinesManager extends Base
 {
@@ -192,7 +197,7 @@ class ImOpenLinesManager extends Base
 			if($this->sessionInfo === null)
 			{
 				$this->sessionInfo = SessionTable::getList([
-					'select' => ['ID', 'CRM', 'CRM_ACTIVITY_ID', 'USER_ID', 'CHAT_ID', 'SOURCE'],
+					'select' => ['ID', 'USER_CODE', 'CRM', 'CRM_ACTIVITY_ID', 'USER_ID', 'CHAT_ID', 'SOURCE', 'CONFIG_ID'],
 					'filter' => [
 						'=ID' => $this->sessionId,
 					]
@@ -220,26 +225,76 @@ class ImOpenLinesManager extends Base
 	}
 
 	/**
+	 * Sending a landing page or CRM form
+	 *
 	 * @param Page $page
 	 * @param $dialogId
 	 * @return Result
+	 * @throws \Bitrix\Main\ArgumentException
+	 * @throws \Bitrix\Main\LoaderException
+	 * @throws \Bitrix\Main\ObjectPropertyException
+	 * @throws \Bitrix\Main\SystemException
 	 */
 	public function sendPage(Page $page, $dialogId)
 	{
 		$result = new Result();
 		if($this->isEnabled())
 		{
-			$messageId = Im::addMessage([
+			$fieldsMessage = [
 				'DIALOG_ID' => $dialogId,
 				'AUTHOR_ID' => Driver::getInstance()->getUserId(),
 				'FROM_USER_ID' => Driver::getInstance()->getUserId(),
 				'PARAMS' => $this->createImParamsByPage($page),
 				'MESSAGE' => $this->createImMessageByPage($page),
-			]);
-			if(!$messageId)
+			];
+
+			$formIds = $this->getWebFormIdsByPage($page);
+
+			if(!empty($formIds))
 			{
-				global $APPLICATION;
-				$result->addError(new Error($APPLICATION->LAST_ERROR));
+				$imOlMessage = new ImOlSalesCenter\Form(ImOlSalesCenter\Form::normalizeChatId($dialogId));
+				$imOlMessage->setFormIds($formIds);
+			}
+			else
+			{
+				$imOlMessage = new ImOlSalesCenter\Other(ImOlSalesCenter\Other::normalizeChatId($dialogId));
+			}
+
+			$imOlMessage->setMessage($fieldsMessage);
+
+			$resultSendMessage = $imOlMessage->send();
+
+			if(!$resultSendMessage->isSuccess())
+			{
+				$result->addErrors($resultSendMessage->getErrors());
+			}
+		}
+
+		return $result;
+	}
+
+	/**
+	 * @param Page $page
+	 * @return array
+	 */
+	protected function getWebFormIdsByPage(Page $page): array
+	{
+		$result = [];
+
+		$landingPageId = $page->getLandingId();
+		if ($landingPageId > 0)
+		{
+			$forms = LandingManager::getInstance()->getConnectedWebForms();
+			foreach ($forms as $form)
+			{
+				$landingWebForm = (int)$form['formId'];
+				if (
+					$landingPageId === (int)$form['landingId'] &&
+					!in_array($landingWebForm, $result, true)
+				)
+				{
+					$result[] = $landingWebForm;
+				}
 			}
 		}
 
@@ -287,6 +342,80 @@ class ImOpenLinesManager extends Base
 	}
 
 	/**
+	 * @param Payment $payment
+	 * @return array|false
+	 */
+	public function getPublicUrlInfoForPayment(Payment $payment)
+	{
+		static $info = [];
+		$order = $payment->getOrder();
+		if(!isset($info[$order->getId()]))
+		{
+			$urlInfo = false;
+			if(LandingManager::getInstance()->isOrderPublicUrlAvailable())
+			{
+				$urlParams = [
+					'orderId' => $order->getId(),
+					'paymentId' => $payment->getId(),
+					'access' => $order->getHash(),
+				];
+
+				if ($this->isEnabled() && $this->sessionId > 0)
+				{
+					$urlParams['sessionIm'] = $this->sessionId;
+				}
+
+				$urlInfo = LandingManager::getInstance()->getOrderPublicUrlInfo($urlParams);
+
+				if($urlInfo)
+				{
+					$paymentPreviewData = $this->getPaymentPreviewData($payment);
+					if(!empty($paymentPreviewData))
+					{
+						$urlInfo['url'] = $this->addMetaData($urlInfo['url'], $order->getUserId(), $paymentPreviewData);
+					}
+					$urlInfo['url'] = $this->preparePublicUrl($urlInfo['url']);
+				}
+			}
+			$info[$order->getId()] = $urlInfo;
+		}
+
+		return $info[$order->getId()];
+	}
+
+	/**
+	 * Sends system message to the manager about the deal.
+	 *
+	 * @param int $dealId
+	 * @param $dialogId
+	 * @return Result
+	 */
+	public function sendDealNotify(int $dealId, $dialogId)
+	{
+		$result = new Result();
+		if($this->isEnabled())
+		{
+			$messageId = Im::addMessage([
+				'DIALOG_ID' => $dialogId,
+				'AUTHOR_ID' => Driver::getInstance()->getUserId(),
+				'FROM_USER_ID' => Driver::getInstance()->getUserId(),
+				'SYSTEM' => 'Y',
+				'PARAMS' => $this->getCommonImParams(),
+				'ATTACH' => $this->createImSystemAttachByDeal($dealId),
+				'SKIP_CONNECTOR' => 'Y',
+			]);
+
+			if(!$messageId)
+			{
+				global $APPLICATION;
+				$result->addError(new Error($APPLICATION->LAST_ERROR));
+			}
+		}
+
+		return $result;
+	}
+
+	/**
 	 * Sends system message to the manager about the order and its current payment status.
 	 *
 	 * @param Order $order
@@ -326,32 +455,19 @@ class ImOpenLinesManager extends Base
 		return $result;
 	}
 
-	/**
-	 * Sends text messages to the client and the manager about the order with public url.
-	 *
-	 * @param Order $order
-	 * @param $dialogId
-	 * @return Result
-	 */
-	public function sendOrderMessage(Order $order, $dialogId)
+	public function sendPaymentNotify(Payment $payment, $dialogId, bool $isNew = true)
 	{
 		$result = new Result();
-
 		if($this->isEnabled())
 		{
-			$urlInfo = $this->getPublicUrlInfoForOrder($order);
-			if(!$urlInfo)
-			{
-				$result->addError(new Error('Page not found'));
-				return $result;
-			}
-
 			$messageId = Im::addMessage([
 				'DIALOG_ID' => $dialogId,
 				'AUTHOR_ID' => Driver::getInstance()->getUserId(),
 				'FROM_USER_ID' => Driver::getInstance()->getUserId(),
-				'PARAMS' => $this->createImParamsByOrder($order, $urlInfo['url']),
-				'MESSAGE' => $this->createImMessageByOrder($order, $urlInfo['url'])
+				'SYSTEM' => 'Y',
+				'PARAMS' => $this->getCommonImParams(),
+				'ATTACH' => $this->createImSystemAttachByPayment($payment, $isNew),
+				'SKIP_CONNECTOR' => 'Y',
 			]);
 
 			if(!$messageId)
@@ -359,9 +475,111 @@ class ImOpenLinesManager extends Base
 				global $APPLICATION;
 				$result->addError(new Error($APPLICATION->LAST_ERROR));
 			}
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Sends text messages to the client and the manager about the order with public url.
+	 *
+	 * @param Order $order
+	 * @param $dialogId
+	 * @param array $paymentData
+	 * @return Result
+	 * @throws \Bitrix\Main\ArgumentException
+	 * @throws \Bitrix\Main\LoaderException
+	 * @throws \Bitrix\Main\ObjectPropertyException
+	 * @throws \Bitrix\Main\SystemException
+	 */
+	public function sendOrderMessage(Order $order, $dialogId, array $paymentData = []): Result
+	{
+		$result = new Result();
+
+		if ($this->isEnabled())
+		{
+			$urlInfo = $this->getPublicUrlInfoForOrder($order);
+			if (!$urlInfo)
+			{
+				$result->addError(new Error('Page not found'));
+				return $result;
+			}
+			$fieldsMessage = [
+				'DIALOG_ID' => $dialogId,
+				'AUTHOR_ID' => Driver::getInstance()->getUserId(),
+				'FROM_USER_ID' => Driver::getInstance()->getUserId(),
+				'PARAMS' => $this->createImParamsByOrder($order, $urlInfo['url']),
+				'MESSAGE' => $this->createImMessageByOrder($order, $urlInfo['url'])
+			];
+
+			$imOlMessage = new ImOlSalesCenter\Payment(ImOlSalesCenter\Payment::normalizeChatId($dialogId));
+			$imOlMessage->setMessage($fieldsMessage);
+			if (!empty($paymentData))
+			{
+				$imOlMessage->setData($paymentData);
+			}
+
+			$resultSendMessage = $imOlMessage->send();
+
+			if ($resultSendMessage->isSuccess())
+			{
+				CrmManager::getInstance()->addTimelineEntryOnOrderSend($order, ['DESTINATION' => 'CHAT']);
+			}
+			else
+			{
+				$result->addErrors($resultSendMessage->getErrors());
+			}
 
 			$notifyResult = $this->sendOrderCheckWarning($order, $dialogId);
-			if(!$notifyResult->isSuccess())
+			if (!$notifyResult->isSuccess())
+			{
+				$result->addErrors($notifyResult->getErrors());
+			}
+		}
+
+		return $result;
+	}
+
+	public function sendPaymentMessage(Payment $payment, $dialogId, array $paymentData = []): Result
+	{
+		$result = new Result();
+
+		if ($this->isEnabled())
+		{
+			$urlInfo = $this->getPublicUrlInfoForPayment($payment);
+			if (!$urlInfo)
+			{
+				$result->addError(new Error('Page not found'));
+				return $result;
+			}
+			$fieldsMessage = [
+				'DIALOG_ID' => $dialogId,
+				'AUTHOR_ID' => Driver::getInstance()->getUserId(),
+				'FROM_USER_ID' => Driver::getInstance()->getUserId(),
+				'PARAMS' => $this->createImParamsByPayment($payment, $urlInfo['url']),
+				'MESSAGE' => $this->createImMessageByPayment($payment, $urlInfo['url'])
+			];
+
+			$imOlMessage = new ImOlSalesCenter\Payment(ImOlSalesCenter\Payment::normalizeChatId($dialogId));
+			$imOlMessage->setMessage($fieldsMessage);
+			if (!empty($paymentData))
+			{
+				$imOlMessage->setData($paymentData);
+			}
+
+			$resultSendMessage = $imOlMessage->send();
+
+			if ($resultSendMessage->isSuccess())
+			{
+				CrmManager::addTimelineEntryOnPaymentSend($payment, ['DESTINATION' => 'CHAT']);
+			}
+			else
+			{
+				$result->addErrors($resultSendMessage->getErrors());
+			}
+
+			$notifyResult = $this->sendOrderCheckWarning($payment->getOrder(), $dialogId);
+			if (!$notifyResult->isSuccess())
 			{
 				$result->addErrors($notifyResult->getErrors());
 			}
@@ -373,18 +591,19 @@ class ImOpenLinesManager extends Base
 	/**
 	 * Sends system message about the order to the operator and payment status to the client and the manager.
 	 *
-	 * @param Order $order
+	 * @param Payment $payment
 	 * @return Result
-	 * @throws \Bitrix\Main\LoaderException
 	 */
-	public function sendOrderPayNotify(Order $order)
+	public function sendPaymentPayNotify(Payment $payment): Result
 	{
 		$result = new Result();
+
+		$order = $payment->getOrder();
 		$responsibleId = $order->getField('RESPONSIBLE_ID');
 		$dialogs = $this->getDialogIdsByUserId($order->getUserId());
 
-		$urlInfo = $this->getPublicUrlInfoForOrder($order);
-		if(!$urlInfo)
+		$urlInfo = $this->getPublicUrlInfoForPayment($payment);
+		if (!$urlInfo)
 		{
 			$result->addError(new Error('Page not found'));
 			return $result;
@@ -392,9 +611,8 @@ class ImOpenLinesManager extends Base
 
 		foreach ($dialogs as $dialogId)
 		{
-			$notifyResult = $this->sendOrderNotify($order, $dialogId, false);
-
-			if(!$notifyResult->isSuccess())
+			$notifyResult = $this->sendPaymentNotify($payment, $dialogId, false);
+			if (!$notifyResult->isSuccess())
 			{
 				$result->addErrors($notifyResult->getErrors());
 			}
@@ -404,10 +622,10 @@ class ImOpenLinesManager extends Base
 				'AUTHOR_ID' => $responsibleId,
 				'FROM_USER_ID' => $responsibleId,
 				'PARAMS' => $this->getCommonImParams(),
-				'MESSAGE' => $this->createImMessageForPaymentStatus($order),
+				'MESSAGE' => $this->createImMessageForPaymentStatus($payment),
 			]);
 
-			if(!$messageId)
+			if (!$messageId)
 			{
 				global $APPLICATION;
 				$result->addError(new Error($APPLICATION->LAST_ERROR));
@@ -421,7 +639,7 @@ class ImOpenLinesManager extends Base
 				'MESSAGE' => $this->createImMessageForPaymentOrder($urlInfo['url']),
 			]);
 
-			if(!$messageId)
+			if (!$messageId)
 			{
 				global $APPLICATION;
 				$result->addError(new Error($APPLICATION->LAST_ERROR));
@@ -435,40 +653,41 @@ class ImOpenLinesManager extends Base
 	 * Send message with check public url after printing. In case such url is available.
 	 *
 	 * @param int $checkId
-	 * @param Order $order
+	 * @param Payment $payment
 	 * @return Result
 	 */
-	public function sendOrderCheckNotify(int $checkId, Order $order): Result
+	public function sendPaymentCheckNotify(int $checkId, Payment $payment): Result
 	{
 		$result = new Result();
 
-		if($this->isEnabled())
+		if ($this->isEnabled())
 		{
-			$check = \Bitrix\Sale\Cashbox\CheckManager::getObjectById($checkId);
-			if(!$check)
+			$check = Sale\Cashbox\CheckManager::getObjectById($checkId);
+			if (!$check)
 			{
 				return $result->addError(new Error('Check #'.$checkId.' is not found'));
 			}
 
-			$cashbox = \Bitrix\Sale\Cashbox\Manager::getObjectById($check->getField('CASHBOX_ID'));
-			if(!$cashbox)
+			$cashbox = Sale\Cashbox\Manager::getObjectById($check->getField('CASHBOX_ID'));
+			if (!$cashbox)
 			{
 				return $result->addError(new Error('Cashbox #'.$check->getField('CASHBOX_ID').' is not found'));
 			}
-			$url = (string)$cashbox->getCheckLink($check->getField('LINK_PARAMS'));
-			if(empty($url))
+
+			$url = $cashbox->getCheckLink($check->getField('LINK_PARAMS'));
+			if (empty($url))
 			{
 				return $result->addError(new Error('No public url for check #'.$checkId));
 			}
 
+			$order = $payment->getOrder();
 			$responsibleId = $order->getField('RESPONSIBLE_ID');
 			$dialogs = $this->getDialogIdsByUserId($order->getUserId());
 
 			foreach ($dialogs as $dialogId)
 			{
-				$notifyResult = $this->sendOrderNotify($order, $dialogId, false);
-
-				if(!$notifyResult->isSuccess())
+				$notifyResult = $this->sendPaymentNotify($payment, $dialogId, false);
+				if (!$notifyResult->isSuccess())
 				{
 					$result->addErrors($notifyResult->getErrors());
 				}
@@ -478,14 +697,41 @@ class ImOpenLinesManager extends Base
 					'AUTHOR_ID' => $responsibleId,
 					'FROM_USER_ID' => $responsibleId,
 					'PARAMS' => $this->getCommonImParams(),
-					'MESSAGE' => $this->createImMessageForOrderCheck($order, $url),
+					'MESSAGE' => $this->createImMessageForPaymentCheck($payment, $url),
 				]);
 
-				if(!$messageId)
+				if (!$messageId)
 				{
 					global $APPLICATION;
 					$result->addError(new Error($APPLICATION->LAST_ERROR));
 				}
+			}
+
+			if ($dialogs)
+			{
+				$bindings = [
+					[
+						'ENTITY_TYPE_ID' => \CCrmOwnerType::Order,
+						'ENTITY_ID' => $order->getId()
+					]
+				];
+
+				if ($order->getDealBinding())
+				{
+					$bindings[] = [
+						'ENTITY_TYPE_ID' => \CCrmOwnerType::Deal,
+						'ENTITY_ID' => $order->getDealBinding()->getDealId()
+					];
+				}
+
+				Crm\Timeline\OrderCheckController::getInstance()->onSendCheckToIm(
+					$checkId,
+					[
+						'ORDER_FIELDS' => $order->getFieldValues(),
+						'SETTINGS' => ['SENDED' => 'Y'],
+						'BINDINGS' => $bindings
+					]
+				);
 			}
 		}
 
@@ -496,17 +742,17 @@ class ImOpenLinesManager extends Base
 	 * Send system notify about check printing error.
 	 *
 	 * @param int $checkId
-	 * @param Order $order
+	 * @param Payment $payment
 	 * @param string $message Error message.
 	 * @return Result
 	 */
-	public function sendOrderCheckNotifyError(int $checkId, Order $order, string $message): Result
+	public function sendPaymentCheckNotifyError(int $checkId, Payment $payment, string $message): Result
 	{
 		$result = new Result();
 
-		if($this->isEnabled())
+		if ($this->isEnabled())
 		{
-			$dialogs = $this->getDialogIdsByUserId($order->getUserId());
+			$dialogs = $this->getDialogIdsByUserId($payment->getOrder()->getUserId());
 
 			foreach ($dialogs as $dialogId)
 			{
@@ -516,11 +762,11 @@ class ImOpenLinesManager extends Base
 					'FROM_USER_ID' => Driver::getInstance()->getUserId(),
 					'SYSTEM' => 'Y',
 					'PARAMS' => $this->getCommonImParams(),
-					'ATTACH' => $this->createImSystemAttachByCheck($checkId, $order, $message),
+					'ATTACH' => $this->createImSystemAttachByCheck($checkId, $payment, $message),
 					'SKIP_CONNECTOR' => 'Y',
 				]);
 
-				if(!$messageId)
+				if (!$messageId)
 				{
 					global $APPLICATION;
 					$result->addError(new Error($APPLICATION->LAST_ERROR));
@@ -531,11 +777,11 @@ class ImOpenLinesManager extends Base
 		return $result;
 	}
 
-	protected function createImMessageForOrderCheck(Order $order, string $url): string
+	protected function createImMessageForPaymentCheck(Payment $payment, string $url): string
 	{
-		$message = Loc::getMessage('SALESCENTER_IMOPMANAGER_SYSTEM_ORDER_CHECK_TEXT_TOP', [
-			'#SUM#' => html_entity_decode(SaleManager::getInstance()->getOrderFormattedPrice($order)),
-			'#ORDER_DATE#' => SaleManager::getInstance()->getOrderFormattedInsertDate($order),
+		$message = Loc::getMessage('SALESCENTER_IMOPMANAGER_SYSTEM_PAYMENT_CHECK_TEXT_TOP', [
+			'#SUM#' => html_entity_decode(SaleManager::getInstance()->getPaymentFormattedPrice($payment)),
+			'#BILL_DATE#' => SaleManager::getInstance()->getPaymentFormattedInsertDate($payment),
 		]);
 		$message .= '[BR]';
 		$message .= Loc::getMessage('SALESCENTER_IMOPMANAGER_SYSTEM_ORDER_CHECK_TEXT_BOTTOM');
@@ -545,15 +791,15 @@ class ImOpenLinesManager extends Base
 		return $message;
 	}
 
-	protected function createImSystemAttachByCheck(int $checkId, Order $order, string $message): \CIMMessageParamAttach
+	protected function createImSystemAttachByCheck(int $checkId, Payment $payment, string $message): \CIMMessageParamAttach
 	{
 		$attach = new \CIMMessageParamAttach();
 		$attach->AddLink([
-			'NAME' => Loc::getMessage('SALESCENTER_IMOPMANAGER_SYSTEM_ORDER_ADD_LINK', [
-				'#ORDER_ID#' => $order->getField('ACCOUNT_NUMBER'),
-				'#ORDER_DATE#' => SaleManager::getInstance()->getOrderFormattedInsertDate($order),
+			'NAME' => Loc::getMessage('SALESCENTER_IMOPMANAGER_SYSTEM_PAYMENT_ADD_LINK', [
+				'#PAYMENT_ID#' => $payment->getField('ACCOUNT_NUMBER'),
+				'#BILL_DATE#' => SaleManager::getInstance()->getPaymentFormattedInsertDate($payment),
 			]),
-			'LINK' => SaleManager::getInstance()->getOrderLink($order->getId()),
+			'LINK' => SaleManager::getInstance()->getPaymentLink($payment->getId()),
 		]);
 		$attach->AddMessage(Loc::getMessage('SALESCENTER_IMOPMANAGER_SYSTEM_ORDER_CHECK_NOTIFY_ERROR', [
 			'#CHECK_ID#' => $checkId,
@@ -607,11 +853,11 @@ class ImOpenLinesManager extends Base
 	 * @param Order $order
 	 * @return string
 	 */
-	protected function createImMessageForPaymentStatus(Order $order)
+	protected function createImMessageForPaymentStatus(Payment $payment)
 	{
-		$message = Loc::getMessage('SALESCENTER_IMOPMANAGER_SYSTEM_ORDER_PAID_TEXT_TOP', [
-			'#SUM#' => html_entity_decode(SaleManager::getInstance()->getOrderFormattedPrice($order)),
-			'#DATE#' => SaleManager::getInstance()->getOrderFormattedInsertDate($order),
+		$message = Loc::getMessage('SALESCENTER_IMOPMANAGER_SYSTEM_PAYMENT_PAID_TEXT_TOP', [
+			'#SUM#' => html_entity_decode(SaleManager::getInstance()->getPaymentFormattedPrice($payment)),
+			'#DATE#' => SaleManager::getInstance()->getPaymentFormattedInsertDate($payment),
 		]);
 
 		return $message;
@@ -623,7 +869,7 @@ class ImOpenLinesManager extends Base
 	 */
 	protected function createImMessageForPaymentOrder($publicUrl)
 	{
-		$message = Loc::getMessage('SALESCENTER_IMOPMANAGER_SYSTEM_ORDER_PAID_TEXT_BOTTOM');
+		$message = Loc::getMessage('SALESCENTER_IMOPMANAGER_SYSTEM_PAYMENT_PAID_TEXT_BOTTOM');
 		$message .= '[BR]';
 		$message .= $publicUrl;
 
@@ -673,6 +919,47 @@ class ImOpenLinesManager extends Base
 	}
 
 	/**
+	 * @param Payment $payment
+	 * @param $publicUrl
+	 * @return string
+	 */
+	protected function createImMessageByPayment(Payment $payment, $publicUrl)
+	{
+		$paymentPreviewData = $this->getPaymentPreviewData($payment);
+		$message = '[B]'.$paymentPreviewData['title'].'[/B]';
+		$message .= '[BR]';
+		if($paymentPreviewData['description'])
+		{
+			$message .= $paymentPreviewData['description'];
+			$message .= '[BR]';
+		}
+		$message .= $publicUrl;
+
+		return $message;
+	}
+
+	/**
+	 * @param int $dealId
+	 * @return \CIMMessageParamAttach
+	 */
+	protected function createImSystemAttachByDeal(int $dealId)
+	{
+		$dealData = \CCrmDeal::GetByID($dealId);
+
+		$attach = new \CIMMessageParamAttach();
+		$attach->AddLink([
+			'NAME' => Loc::getMessage('SALESCENTER_IMOPMANAGER_SYSTEM_DEAL_ADD_LINK', [
+				'#DEAL_ID#' => $dealId,
+				'#DEAL_DATE#' => FormatDate('j F', new Main\Type\Date($dealData['DATE_CREATE'])),
+			]),
+			'LINK' => SaleManager::getInstance()->getDealLink($dealId),
+		]);
+		$attach->AddMessage($this->getDealDescription($dealData));
+
+		return $attach;
+	}
+
+	/**
 	 * @param Order $order
 	 * @param bool $isNew
 	 * @return \CIMMessageParamAttach
@@ -690,6 +977,37 @@ class ImOpenLinesManager extends Base
 		$attach->AddMessage($this->getOrderDescription($order, $isNew));
 
 		return $attach;
+	}
+
+	/**
+	 * @param Order $order
+	 * @param bool $isNew
+	 * @return \CIMMessageParamAttach
+	 */
+	protected function createImSystemAttachByPayment(Payment $payment, $isNew = true)
+	{
+		$attach = new \CIMMessageParamAttach();
+		$attach->AddLink([
+			'NAME' => Loc::getMessage('SALESCENTER_IMOPMANAGER_SYSTEM_PAYMENT_ADD_LINK', [
+				'#PAYMENT_ID#' => $payment->getField('ACCOUNT_NUMBER'),
+				'#BILL_DATE#' => SaleManager::getInstance()->getPaymentFormattedInsertDate($payment),
+			]),
+			'LINK' => SaleManager::getInstance()->getPaymentLink($payment->getId()),
+		]);
+		$attach->AddMessage($this->getPaymentDescription($payment, $isNew));
+
+		return $attach;
+	}
+
+	/**
+	 * @param array $dealData
+	 * @return string
+	 */
+	protected function getDealDescription(array $dealData)
+	{
+		return Loc::getMessage('SALESCENTER_IMOPMANAGER_SYSTEM_DEAL_ADD_TEXT', [
+			'#SUM#' => html_entity_decode(SaleFormatCurrency($dealData['OPPORTUNITY'], $dealData['CURRENCY_ID'])),
+		]);
 	}
 
 	/**
@@ -714,6 +1032,32 @@ class ImOpenLinesManager extends Base
 
 		$description .= '[BR]';
 		$description .= SaleManager::getInstance()->getOrderPayStatus($order);
+
+		return $description;
+	}
+
+	/**
+	 * @param Payment $payment
+	 * @param bool $isNew
+	 * @return string
+	 */
+	protected function getPaymentDescription(Payment $payment, $isNew = true): string
+	{
+		if ($isNew)
+		{
+			$description = Loc::getMessage('SALESCENTER_IMOPMANAGER_SYSTEM_PAYMENT_ADD_TEXT', [
+				'#SUM#' => html_entity_decode(SaleManager::getInstance()->getPaymentFormattedPrice($payment)),
+			]);
+		}
+		else
+		{
+			$description = Loc::getMessage('SALESCENTER_IMOPMANAGER_SYSTEM_PAYMENT_TEXT', [
+				'#SUM#' => html_entity_decode(SaleManager::getInstance()->getPaymentFormattedPrice($payment)),
+			]);
+		}
+
+		$description .= '[BR]';
+		$description .= SaleManager::getInstance()->getPaymentPayStatus($payment);
 
 		return $description;
 	}
@@ -764,6 +1108,33 @@ class ImOpenLinesManager extends Base
 				'#DATE#' => SaleManager::getInstance()->getOrderFormattedInsertDate($order),
 			]),
 			'description' => $description,
+		];
+	}
+
+	/**
+	 * @param Payment $payment
+	 * @param $publicUrl
+	 * @return array
+	 */
+	protected function createImParamsByPayment(Payment $payment, $publicUrl)
+	{
+		return array_merge($this->getCommonImParams($publicUrl), [
+			'richUrlPreview' => $this->getPaymentPreviewData($payment),
+		]);
+	}
+
+	/**
+	 * @param Payment $payment
+	 * @return array
+	 */
+	public function getPaymentPreviewData(Payment $payment)
+	{
+		return [
+			'title' => Loc::getMessage('SALESCENTER_IMOPMANAGER_PAYMENT_ADD_MESSAGE_TOP', [
+				'#SUM#' => html_entity_decode(SaleManager::getInstance()->getPaymentFormattedPrice($payment)),
+				'#DATE#' => SaleManager::getInstance()->getPaymentFormattedInsertDate($payment),
+			]),
+			'description' => Loc::getMessage('SALESCENTER_IMOPMANAGER_PAYMENT_ADD_MESSAGE_BOTTOM'),
 		];
 	}
 

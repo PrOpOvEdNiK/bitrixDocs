@@ -1,3 +1,0 @@
-<?
-$MESS["MOBILE_MODULE_FOLDERS_FILES"] = "Foldery: #FOLDERS#  Pliki: #FILES#";
-?>

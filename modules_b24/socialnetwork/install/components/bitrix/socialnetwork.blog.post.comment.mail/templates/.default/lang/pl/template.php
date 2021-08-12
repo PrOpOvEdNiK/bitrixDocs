@@ -1,5 +1,0 @@
-<?
-$MESS["SBPCM_TEMPLATE_ADD_COMMENT_LINK"] = "Komentuj";
-$MESS["SBPCM_TEMPLATE_LIKE"] = "Lubię to";
-$MESS["SBPCM_TEMPLATE_MORE"] = "Więcej";
-?>

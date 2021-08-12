@@ -43,6 +43,8 @@ abstract class AbstractEntity
 
 	abstract public function checkAccess($userId);
 
+	abstract public function getChatId();
+
 	abstract public function getUsers();
 
 	abstract public function getName($currentUserId);

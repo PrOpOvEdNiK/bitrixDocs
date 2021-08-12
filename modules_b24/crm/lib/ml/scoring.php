@@ -34,7 +34,7 @@ class Scoring
 	const MINIMAL_TRAINING_SET = 2000;
 	const MINIMAL_CLASS_SIZE = 200;
 
-	const RETRAIN_PERIOD = 30; // days
+	const RETRAIN_PERIOD = 90; // days
 
 	const ERROR_MODEL_ALREADY_EXISTS = "model_already_exists";
 	const ERROR_NOT_ENOUGH_DATA = "not_enough_data";
@@ -252,16 +252,8 @@ class Scoring
 		$scheduledId = $insertResult->getId();
 		if($type === self::PREDICTION_REAL_TIME && $scoringModel->isReady())
 		{
-			// Try to execute request immediately, if forking is available. Otherwise, request will be executed with agent.
-			if(\CMain::forkActions([\Bitrix\Crm\Ml\PredictionQueue::class, "executeRequest"], [$scheduledId]))
-			{
-				$scheduledRequest->setState(PredictionQueue::STATE_EXECUTING);
-			}
-			else
-			{
-				// forking is not available
-				$scheduledRequest->setState(PredictionQueue::STATE_IDLE);
-			}
+			\Bitrix\Main\Application::getInstance()->addBackgroundJob([PredictionQueue::class, "executeRequest"], [$scheduledId]);
+			$scheduledRequest->setState(PredictionQueue::STATE_EXECUTING);
 			$scheduledRequest->save();
 		}
 		else if($type === self::PREDICTION_IMMEDIATE && $scoringModel->isReady())
@@ -503,6 +495,11 @@ class Scoring
 	 */
 	public static function getModelByName($modelName)
 	{
+		static $cache = [];
+		if (isset($cache[$modelName]))
+		{
+			return $cache[$modelName];
+		}
 		$possibleModels = [Model\LeadScoring::class, Model\DealScoring::class];
 
 		foreach ($possibleModels as $model)
@@ -511,7 +508,8 @@ class Scoring
 
 			if(in_array($modelName, $possibleNames))
 			{
-				return new $model($modelName);
+				$cache[$modelName] = new $model($modelName);
+				return $cache[$modelName];
 			}
 		}
 

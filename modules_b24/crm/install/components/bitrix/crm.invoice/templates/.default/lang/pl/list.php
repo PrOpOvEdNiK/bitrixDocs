@@ -1,4 +1,0 @@
-<?
-$MESS["CRM_INVOICE_LIST_SWITCHER_RECUR"] = "Cykliczne";
-$MESS["CRM_INVOICE_LIST_SWITCHER_STANDART"] = "Standardowe";
-?>

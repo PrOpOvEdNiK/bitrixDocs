@@ -4,7 +4,7 @@ namespace Bitrix\Tasks\Rest\Controllers;
 use Bitrix\Main\Engine\AutoWire\Parameter;
 use Bitrix\Main\Engine\Controller;
 use Bitrix\Main\Engine\CurrentUser;
-use Bitrix\Tasks\Item\Task;
+use Bitrix\Main\SystemException;
 use Bitrix\Tasks\Item\Task\Template;
 
 class Base extends Controller
@@ -33,7 +33,7 @@ class Base extends Controller
 				{
 					case 'param':
 						list($fieldType, $fieldName, $fieldDesc) = explode(' ', $paramText, 3);
-						$fieldName = substr($fieldName, 1);
+						$fieldName = mb_substr($fieldName, 1);
 
 						$docParams[$paramName][$fieldName] = [
 							'type'        => $fieldType,
@@ -58,7 +58,7 @@ class Base extends Controller
 					'name'        => $param->getName(),
 					'description' => $docParams['param'][$param->getName()]['description'],
 					'optional'    => $param->isOptional(),
-					'default'     => $param->isOptional() ? strtolower((string)$param->getDefaultValue()) : 'null',
+					'default'     => $param->isOptional()? mb_strtolower((string)$param->getDefaultValue()) : 'null',
 					'type'        => $docParams['param'][$param->getName()]['type'] //TODO php 7+
 				];
 			}
@@ -66,7 +66,7 @@ class Base extends Controller
 			preg_match('#\/\*\*\n.*?\* (.*?)$#im', $method->getDocComment(), $match);
 			$title = trim($match[1]);
 
-			$methodName = substr($method->getName(), 0, -6);
+			$methodName = mb_substr($method->getName(), 0, -6);
 			$list[$methodName] = [
 				'comment'   => $title,
 				//				'docComment'=>trim($method->getDocComment()),
@@ -86,18 +86,18 @@ class Base extends Controller
         return [
             new Parameter(
                 \CTaskItem::class,
-                function ($className, $id)  {
-                    $userId = CurrentUser::get()->getId();
-                    /** @var Task $className */
-                    return new $className($id, $userId);
+                function ($className, $id) {
+					if (($id = (int)$id) <= 0)
+					{
+						throw new SystemException('wrong task id');
+					}
+                    return new $className($id, CurrentUser::get()->getId());
                 }
             ),
             new Parameter(
                 Template::class,
                 function ($className, $id) {
-                    $userId = CurrentUser::get()->getId();
-                    /** @var Template $className */
-                    return new $className($id, $userId);
+                    return new $className($id, CurrentUser::get()->getId());
                 }
             ),
         ];

@@ -18,9 +18,9 @@ class Type
 	 * @param string $type Node type.
 	 * @return string
 	 */
-	public static function getClassName($type)
+	public static function getClassName(string $type): string
 	{
-		$type = strtolower($type);
+		$type = mb_strtolower($type);
 
 		if ($type === '' || $type === 'type')
 		{

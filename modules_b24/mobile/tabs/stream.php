@@ -20,7 +20,11 @@ class Stream implements Tabable
 			"sort" => 200,
 			"imageName" => "stream",
 			"badgeCode" => "stream",
-			"page" => ["url" => $this->context->siteDir . "mobile/index.php?version=" . $this->context->version],
+			"page" => [
+				"url" => $this->context->siteDir . "mobile/index.php?version=" . $this->context->version,
+				"titleParams"=>["useLargeTitleMode"=>true, "text"=>$this->getTitle()],
+				"useSearchBar" => true
+			],
 		];
 	}
 
@@ -45,6 +49,8 @@ class Stream implements Tabable
 			"imageUrl" => "favorite/stream.png",
 			"title" => $this->getTitle(),
 			"params" => [
+				"useSearchBar"=>true,
+				"titleParams"=>["useLargeTitleMode"=>true, "text"=>$this->getTitle()],
 				"url" => $this->context->siteDir . "mobile/index.php?version=" . $this->context->version,
 				"counter"=>"**"
 			],
@@ -71,7 +77,7 @@ class Stream implements Tabable
 
 	public function getTitle()
 	{
-		return Loc::getMessage("TAB_NAME_STREAM");
+		return Loc::getMessage("TAB_NAME_NEWS");
 	}
 
 	public function setContext($context)
@@ -79,5 +85,14 @@ class Stream implements Tabable
 		$this->context = $context;
 	}
 
+	public function getShortTitle()
+	{
+		return Loc::getMessage("TAB_NAME_NEWS_SHORT");
+	}
+
+	public function getId()
+	{
+		return "news";
+	}
 }
 

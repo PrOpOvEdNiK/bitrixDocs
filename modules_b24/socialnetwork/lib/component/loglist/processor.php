@@ -14,7 +14,7 @@ class Processor
 	protected $request;
 	protected $logPageProcessorInstance = null;
 
-	protected $filter = [ ];
+	protected $filter = [];
 	protected $order = [ 'LOG_DATE' => 'DESC' ];
 	protected $select = [];
 	protected $listParams = [];
@@ -24,15 +24,16 @@ class Processor
 	protected $firstPage = false;
 	protected $eventsList = [];
 	protected $tasksCount = 0;
+	protected $showPinnedPanel = true;
 
 	public function __construct($params)
 	{
-		if (!empty($params['component']))
+		if(!empty($params['component']))
 		{
 			$this->component = $params['component'];
 		}
 
-		if (!empty($params['request']))
+		if(!empty($params['request']))
 		{
 			$this->request = $params['request'];
 		}
@@ -74,7 +75,7 @@ class Processor
 	}
 	public function setFilterKey($key = '', $value = false)
 	{
-		if (strlen($key) <= 0)
+		if ($key == '')
 		{
 			return;
 		}
@@ -82,7 +83,7 @@ class Processor
 	}
 	public function unsetFilterKey($key = '')
 	{
-		if (strlen($key) <= 0)
+		if ($key == '')
 		{
 			return;
 		}
@@ -90,7 +91,7 @@ class Processor
 	}
 	public function getFilterKey($key = '')
 	{
-		if (strlen($key) <= 0)
+		if ($key == '')
 		{
 			return false;
 		}
@@ -107,7 +108,7 @@ class Processor
 	}
 	public function getFilterDataKey($key = '')
 	{
-		if (strlen($key) <= 0)
+		if ($key == '')
 		{
 			return false;
 		}
@@ -147,7 +148,7 @@ class Processor
 	}
 	public function setOrderKey($key = '', $value = false)
 	{
-		if (strlen($key) <= 0)
+		if ($key == '')
 		{
 			return;
 		}
@@ -159,7 +160,7 @@ class Processor
 	}
 	public function getOrderKey($key = '')
 	{
-		if (strlen($key) <= 0)
+		if ($key == '')
 		{
 			return false;
 		}
@@ -172,7 +173,7 @@ class Processor
 	}
 	public function setListParamsKey($key = '', $value = false)
 	{
-		if (strlen($key) <= 0)
+		if ($key == '')
 		{
 			return;
 		}
@@ -184,40 +185,68 @@ class Processor
 	}
 	public function getListParamsKey($key = '')
 	{
-		if (strlen($key) <= 0)
+		if ($key == '')
 		{
 			return false;
 		}
 		return (isset($this->listParams[$key]) ? $this->listParams[$key] : false);
 	}
 
-	public function setEventsList(array $value = [])
+	public function setEventsList(array $value = [], $type = 'main')
 	{
-		$this->eventsList = $value;
+		if (!isset($this->eventsList[$type]))
+		{
+			$this->eventsList[$type] = [];
+		}
+		$this->eventsList[$type] = $value;
 	}
-	public function setEventsListKey($key = '', $value = [])
+	public function setEventsListKey($key = '', array $value = [], $type = 'main')
 	{
-		if (strlen($key) <= 0)
+		if ($key == '')
 		{
 			return;
 		}
-		$this->eventsList[$key] = $value;
+
+		if (!isset($this->eventsList[$type]))
+		{
+			$this->eventsList[$type] = [];
+		}
+
+		$this->eventsList[$type][$key] = $value;
 	}
-	public function appendEventsList($value = [])
+	public function appendEventsList(array $value = [], $type = 'main')
 	{
-		$this->eventsList[] = $value;
+		if (!isset($this->eventsList[$type]))
+		{
+			$this->eventsList[$type] = [];
+		}
+
+		$this->eventsList[$type][] = $value;
 	}
-	public function unsetEventsListKey($key = '')
+	public function unsetEventsListKey($key = '', $type = 'main')
 	{
-		if (strlen($key) <= 0)
+		if ($key == '')
 		{
 			return;
 		}
-		unset($this->eventsList[$key]);
+
+		if (!isset($this->eventsList[$type]))
+		{
+			return;
+		}
+
+		unset($this->eventsList[$type][$key]);
 	}
-	public function getEventsList(array $value = [])
+	public function getEventsList($type = 'main')
 	{
-		return $this->eventsList;
+		$result = [];
+
+		if (!isset($this->eventsList[$type]))
+		{
+			return $result;
+		}
+
+		return $this->eventsList[$type];
 	}
 
 	public function incrementTasksCount()
@@ -267,8 +296,8 @@ class Processor
 		{
 			if ($params['ENTITY_TYPE'] == SONET_ENTITY_USER)
 			{
-				$rsUser = \CUser::getById($params['USER_ID']);
-				$result['User'] = $rsUser->fetch();
+				$res = \CUser::getById($params['USER_ID']);
+				$result['User'] = $res->fetch();
 			}
 			elseif ($params['ENTITY_TYPE'] == SONET_ENTITY_GROUP)
 			{
@@ -277,7 +306,7 @@ class Processor
 					$result['Group']['OPENED'] == 'Y'
 					&& Util::checkUserAuthorized()
 					&& !$this->getComponent()->getCurrentUserAdmin()
-					&& !in_array(\CSocNetUserToGroup::getUserRole($result['currentUserId'], $result['Group']['ID']), [ \Bitrix\Socialnetwork\UserToGroupTable::getRolesMember() ])
+					&& !in_array(\CSocNetUserToGroup::getUserRole($result['currentUserId'], $result['Group']['ID']), \Bitrix\Socialnetwork\UserToGroupTable::getRolesMember())
 				)
 				{
 					$result['Group']['READ_ONLY'] = 'Y';
@@ -295,6 +324,7 @@ class Processor
 		if ($params['LOG_ID'] > 0)
 		{
 			$this->setFilterKey('ID', $params['LOG_ID']);
+			$this->showPinnedPanel = false;
 		}
 
 		$turnFollowModeOff = false;
@@ -336,6 +366,7 @@ class Processor
 			{
 				$result['IS_FILTERED'] = true;
 			}
+			$this->showPinnedPanel = false;
 		}
 
 		if (
@@ -376,6 +407,7 @@ class Processor
 
 			$result['SHOW_FOLLOW_CONTROL'] = 'N';
 			$result['SHOW_UNREAD'] = 'N';
+			$this->showPinnedPanel = false;
 		}
 		elseif ($params['TO_USER_ID'] > 0)
 		{
@@ -403,16 +435,17 @@ class Processor
 			$this->setFilterKey('ENTITY_TYPE', SONET_ENTITY_USER);
 			$this->setFilterKey('ENTITY_ID',  $params['USER_ID']);
 		}
-		elseif (strLen($params['ENTITY_TYPE']) > 0)
+		elseif ($params['ENTITY_TYPE'] <> '')
 		{
 			$this->setFilterKey('ENTITY_TYPE', $params['ENTITY_TYPE']);
 		}
-		elseif (strlen($params['TAG']) > 0)
+
+		if ($params['TAG'] <> '')
 		{
 			$this->setFilterKey('=TAG', $params['TAG']);
 			$turnFollowModeOff = true;
 		}
-		elseif (strlen($params['FIND']) > 0)
+		elseif ($params['FIND'] <> '')
 		{
 			$operation = \Bitrix\Socialnetwork\LogIndexTable::getEntity()->fullTextIndexEnabled('CONTENT') ? '*' : '*%';
 			$this->setFilterKey($operation.'CONTENT', \Bitrix\Socialnetwork\Item\LogIndex::prepareToken($params['FIND']));
@@ -422,11 +455,12 @@ class Processor
 			]);
 			*/
 			$turnFollowModeOff = true;
+			$this->showPinnedPanel = false;
 		}
 
 		if (
 			isset($params['!EXACT_EVENT_ID'])
-			&& strlen($params['!EXACT_EVENT_ID']) > 0
+			&& $params['!EXACT_EVENT_ID'] <> ''
 		)
 		{
 			$this->setFilterKey('!EVENT_ID', $params['!EXACT_EVENT_ID']);
@@ -435,7 +469,7 @@ class Processor
 
 		if (
 			isset($params['EXACT_EVENT_ID'])
-			&& strlen($params['EXACT_EVENT_ID']) > 0
+			&& $params['EXACT_EVENT_ID'] <> ''
 		)
 		{
 			$this->setFilterKey('EVENT_ID', [ $params['EXACT_EVENT_ID'] ]);
@@ -458,12 +492,12 @@ class Processor
 				$turnFollowModeOff = true;
 			}
 		}
-		elseif (strLen($params['EVENT_ID']) > 0)
+		elseif ($params['EVENT_ID'] <> '')
 		{
 			$this->setFilterKey('EVENT_ID', \CSocNetLogTools::findFullSetByEventID($params['EVENT_ID']));
 			$turnFollowModeOff = true;
 		}
-		elseif ($this->getComponent()->getPresetFilterIdValue() == 'extranet')
+		elseif ($this->getComponent()->getPresetFilterIdValue() === 'extranet')
 		{
 			$turnFollowModeOff = true;
 		}
@@ -489,7 +523,7 @@ class Processor
 
 		if (
 			isset($params['FLT_ALL'])
-			&& $params['FLT_ALL'] == 'Y'
+			&& $params['FLT_ALL'] === 'Y'
 		)
 		{
 			$this->setFilterKey('ALL', 'Y');
@@ -499,7 +533,7 @@ class Processor
 		{
 			$this->setFilterKey('SITE_ID', $params['FILTER_SITE_ID']);
 		}
-		elseif ($params['MODE'] != 'LANDING')
+		elseif ($params['MODE'] !== 'LANDING')
 		{
 			$this->setFilterKey('SITE_ID', (
 				$result['isExtranetSite']
@@ -510,7 +544,7 @@ class Processor
 
 		if (
 			isset($params['LOG_DATE_FROM'])
-			&& strlen($params['LOG_DATE_FROM']) > 0
+			&& $params['LOG_DATE_FROM'] <> ''
 			&& $this->makeTimeStampFromDateTime($params['LOG_DATE_FROM'], 'SHORT') < time() + $result['TZ_OFFSET']
 		)
 		{
@@ -524,7 +558,7 @@ class Processor
 
 		if (
 			isset($params['LOG_DATE_TO'])
-			&& strlen($params['LOG_DATE_TO']) > 0
+			&& $params['LOG_DATE_TO'] <> ''
 			&& $this->makeTimeStampFromDateTime($params['LOG_DATE_TO'], 'SHORT') < time() + $result['TZ_OFFSET']
 		)
 		{
@@ -539,7 +573,7 @@ class Processor
 
 		$this->processMainUIFilterData($result);
 
-		if ($params['IS_CRM'] == 'Y')
+		if ($params['IS_CRM'] === 'Y')
 		{
 			if (Loader::includeModule('crm'))
 			{
@@ -548,21 +582,25 @@ class Processor
 			}
 
 			if (
-				strlen($params['CRM_ENTITY_TYPE']) > 0
+				$params['CRM_ENTITY_TYPE'] <> ''
 				|| $this->getComponent()->getPresetFilterTopIdValue()
 			)
 			{
 				$result['SHOW_UNREAD'] = 'N';
 			}
+			$this->showPinnedPanel = false;
 		}
+
+		$result['presetFilterTopIdValue'] = $this->getComponent()->getPresetFilterTopIdValue();
+		$result['presetFilterIdValue'] = $this->getComponent()->getPresetFilterIdValue();
 
 		if (
 			(
 				!isset($params['USE_FAVORITES'])
-				|| $params['USE_FAVORITES'] != 'N'
+				|| $params['USE_FAVORITES'] !== 'N'
 			)
 			&& isset($params['FAVORITES'])
-			&& $params['FAVORITES'] == 'Y'
+			&& $params['FAVORITES'] === 'Y'
 		)
 		{
 			$this->setFilterKey('>FAVORITES_USER_ID', 0);
@@ -575,6 +613,70 @@ class Processor
 			$result['SHOW_FOLLOW_CONTROL'] = 'N';
 			$result['IS_FILTERED'] = true;
 		}
+
+		if (
+			$params["IS_CRM"] !== "Y"
+			&& !\Bitrix\Socialnetwork\ComponentHelper::checkLivefeedTasksAllowed()
+		)
+		{
+			$eventIdFilter = $this->getFilterKey('EVENT_ID');
+			$notEventIdFilter = $this->getFilterKey('!EVENT_ID');
+
+			if (empty($notEventIdFilter))
+			{
+				$notEventIdFilter = [];
+			}
+			elseif(!is_array($notEventIdFilter))
+			{
+				$notEventIdFilter = [ $notEventIdFilter ];
+			}
+
+			if (empty($eventIdFilter))
+			{
+				$eventIdFilter = [];
+			}
+			elseif(!is_array($eventIdFilter))
+			{
+				$eventIdFilter = [ $eventIdFilter ];
+			}
+
+			if (ModuleManager::isModuleInstalled('tasks'))
+			{
+				$notEventIdFilter = array_merge($notEventIdFilter, [ 'tasks' ]);
+				$eventIdFilter = array_filter($eventIdFilter, function($eventId) { return ($eventId !== 'tasks'); });
+			}
+			if (
+				ModuleManager::isModuleInstalled('crm')
+				&& Option::get('crm', 'enable_livefeed_merge', 'N') === 'Y'
+			)
+			{
+				$notEventIdFilter = array_merge($notEventIdFilter, [ 'crm_activity_add' ]);
+				$eventIdFilter = array_filter($eventIdFilter, function($eventId) { return ($eventId !== 'crm_activity_add'); });
+			}
+
+			if (!empty($notEventIdFilter))
+			{
+				$this->setFilterKey('!EVENT_ID', $notEventIdFilter);
+			}
+			$this->setFilterKey('EVENT_ID', $eventIdFilter);
+		}
+
+		$result['USE_PINNED'] = 'N';
+		$result['SHOW_PINNED_PANEL'] = 'N';
+
+		if (
+			$result['currentUserId'] > 0
+			&& $params['MODE'] !== 'LANDING'
+		)
+		{
+			$result['USE_PINNED'] = 'Y';
+
+			if ($this->showPinnedPanel)
+			{
+				$this->setFilterKey('PINNED_USER_ID', 0);
+				$result['SHOW_PINNED_PANEL'] = 'Y';
+			}
+		}
 	}
 
 	protected function processMainUIFilterData(&$result)
@@ -583,16 +685,43 @@ class Processor
 		$params = $this->getComponent()->arParams;
 
 		if (
-			defined('SITE_TEMPLATE_ID')
-			&& SITE_TEMPLATE_ID === 'bitrix24'
-			&& $request->get('useBXMainFilter') == 'Y'
-			&& intval($params['LOG_ID']) <= 0
+			(
+				(
+					defined('SITE_TEMPLATE_ID')
+					&& SITE_TEMPLATE_ID === 'bitrix24'
+				)
+				|| (
+					isset($params['siteTemplateId'])
+					&& in_array($params['siteTemplateId'], [ 'bitrix24', 'landing24' ])
+				)
+			)
+			&& (
+				$request->get('useBXMainFilter') === 'Y'
+				|| $params['useBXMainFilter'] === 'Y'
+			)
+			&& (int)$params['LOG_ID'] <= 0
 		)
 		{
 			$filtered = false;
 			$filterOption = new \Bitrix\Main\UI\Filter\Options($result['FILTER_ID']);
 			$filterData = $filterOption->getFilter();
 			$this->setFilterData($filterData);
+
+			if (
+				!empty($filterData['GROUP_ID'])
+				&& preg_match('/^SG(\d+)$/', $filterData['GROUP_ID'], $matches)
+			)
+			{
+				$this->setFilterKey('LOG_RIGHTS', 'SG'.intval($matches[1]));
+			}
+
+			if (
+				!empty($filterData['AUTHOR_ID'])
+				&& preg_match('/^U(\d+)$/', $filterData['AUTHOR_ID'], $matches)
+			)
+			{
+				$this->setFilterKey('USER_ID', intval($matches[1]));
+			}
 
 			if (
 				!empty($filterData['CREATED_BY_ID'])
@@ -744,6 +873,7 @@ class Processor
 
 				$result['SHOW_UNREAD'] = 'N';
 				$result['IS_FILTERED'] = true;
+				$this->showPinnedPanel = false;
 			}
 		}
 		elseif (
@@ -756,6 +886,17 @@ class Processor
 		{
 			$filterOption = new \Bitrix\Main\UI\Filter\Options($result['FILTER_ID']);
 			$filterOption->reset();
+		}
+
+		if (
+			(
+				$params['TAG'] !== ''
+				|| $params['FIND'] !== ''
+			)
+			&& $this->getRequest()->get('apply_filter') === 'Y'
+		)
+		{
+			$this->getComponent()->arParams['useBXMainFilter'] = 'Y';
 		}
 	}
 
@@ -773,7 +914,6 @@ class Processor
 			'bSkipPageReset' => true,
 			'nRecordCount' => 1000000
 		]);
-
 		if ($params['LOG_CNT'] > 0)
 		{
 			$this->setNavParams([
@@ -796,6 +936,13 @@ class Processor
 		elseif (intval($request->get('PAGEN_'.($NavNum + 1))) > 0)
 		{
 			$result['PAGE_NUMBER'] = intval($request->get('PAGEN_'.($NavNum + 1)));
+		}
+		elseif (intval($params['PAGE_NUMBER']) > 0)
+		{
+			$result['PAGE_NUMBER'] = intval($params['PAGE_NUMBER']);
+			$navParams = $this->getNavParams();
+			$navParams['iNumPage'] = $result['PAGE_NUMBER'];
+			$this->setNavParams($navParams);
 		}
 	}
 
@@ -847,7 +994,7 @@ class Processor
 		$request = $this->getRequest();
 		$params = $this->getComponent()->arParams;
 
-		$result['LAST_LOG_TS'] = intval($request->get('ts'));
+		$result['LAST_LOG_TS'] = (isset($params['LAST_LOG_TIMESTAMP']) ? intval($params['LAST_LOG_TIMESTAMP']) : intval($request->get('ts')));
 
 		if (
 			$params['LOG_ID'] <= 0
@@ -969,7 +1116,7 @@ class Processor
 			$this->setListParamsKey('USER_ID', 'A');
 		}
 
-		if ($params['USE_FOLLOW'] == 'Y')
+		if ($params['USE_FOLLOW'] === 'Y')
 		{
 			$this->setListParamsKey('USE_FOLLOW', 'Y');
 		}
@@ -981,7 +1128,7 @@ class Processor
 
 		if (
 			isset($params['USE_FAVORITES'])
-			&& $params['USE_FAVORITES'] == 'N'
+			&& $params['USE_FAVORITES'] === 'N'
 		)
 		{
 			$this->setListParamsKey('USE_FAVORITES', 'N');
@@ -990,10 +1137,15 @@ class Processor
 		if (
 			empty($result['RETURN_EMPTY_LIST'])
 			&& !empty($params['EMPTY_EXPLICIT'])
-			&& $params['EMPTY_EXPLICIT'] == 'Y'
+			&& $params['EMPTY_EXPLICIT'] === 'Y'
 		)
 		{
 			$this->setListParamsKey('EMPTY_LIST', 'Y');
+		}
+
+		if ($result['USE_PINNED'] === 'Y')
+		{
+			$this->setListParamsKey('USE_PINNED', 'Y');
 		}
 	}
 
@@ -1006,7 +1158,7 @@ class Processor
 		}
 	}
 
-	public function processSelectData()
+	public function processSelectData(&$result)
 	{
 		$params = $this->getComponent()->arParams;
 
@@ -1015,7 +1167,7 @@ class Processor
 			'LOG_DATE', 'LOG_UPDATE', 'DATE_FOLLOW',
 			'ENTITY_TYPE', 'ENTITY_ID', 'EVENT_ID', 'SOURCE_ID', 'USER_ID', 'FOLLOW',
 			'RATING_TYPE_ID', 'RATING_ENTITY_ID',
-			'LOG_DATE_TS'
+			'LOG_DATE_TS',
 		];
 
 		if (
@@ -1024,6 +1176,11 @@ class Processor
 		)
 		{
 			$select[] = 'FAVORITES_USER_ID';
+		}
+
+		if ($result['currentUserId'] > 0)
+		{
+			$select[] = 'PINNED_USER_ID';
 		}
 
 		$this->setSelect($select);
@@ -1068,16 +1225,22 @@ class Processor
 			);
 			while(
 				($activityFields = $res->fetch())
-				&& (intval($activityFields['ASSOCIATED_ENTITY_ID']) > 0)
+				&& ((int)$activityFields['ASSOCIATED_ENTITY_ID'] > 0)
 			)
 			{
-				$taskItem = new \CTaskItem(intval($activityFields['ASSOCIATED_ENTITY_ID']), $result['currentUserId']);
-				if (!$taskItem->checkCanRead())
+				try
 				{
-					$activity2LogList = $this->getComponent()->getActivity2LogListValue();
-					unset($activity2LogList[$activityFields['ID']]);
-					$this->getComponent()->setActivity2LogListValue($activity2LogList);
-					unset($activity2LogList);
+					$taskItem = new \CTaskItem((int)$activityFields['ASSOCIATED_ENTITY_ID'], $result['currentUserId']);
+					if (!$taskItem->checkCanRead())
+					{
+						$activity2LogList = $this->getComponent()->getActivity2LogListValue();
+						unset($activity2LogList[$activityFields['ID']]);
+						$this->getComponent()->setActivity2LogListValue($activity2LogList);
+						unset($activity2LogList);
+					}
+				}
+				catch (\CTaskAssertException $e)
+				{
 				}
 			}
 		}
@@ -1127,16 +1290,23 @@ class Processor
 		);
 	}
 
-	public function processEventsList(&$result)
+	public function processEventsList(&$result, $type = 'main')
 	{
 		$params = $this->getComponent()->arParams;
 		$activity2LogList = $this->getComponent()->getActivity2LogListValue();
-		$eventsList = $this->getEventsList();
 
-		$logPageProcessorInstance = $this->getLogPageProcessorInstance();
-		if (!$logPageProcessorInstance)
+		$eventsList = $this->getEventsList($type);
+
+		$prevPageLogIdList = [];
+		if ($type == 'main')
 		{
-			return;
+			$logPageProcessorInstance = $this->getLogPageProcessorInstance();
+			if (!$logPageProcessorInstance)
+			{
+				return;
+			}
+
+			$prevPageLogIdList = $logPageProcessorInstance->getPrevPageLogIdList();
 		}
 
 		foreach ($eventsList as $key => $eventFields)
@@ -1149,18 +1319,26 @@ class Processor
 			{
 				$this->unsetEventsListKey($key);
 			}
-
-			elseif (!in_array($eventFields['ID'], $logPageProcessorInstance->getPrevPageLogIdList()))
+			elseif (
+				empty($prevPageLogIdList)
+				|| !in_array($eventFields['ID'], $prevPageLogIdList)
+			)
 			{
 				$eventFields['EVENT_ID_FULLSET'] = \CSocNetLogTools::findFullSetEventIDByEventID($eventFields['EVENT_ID']);
-				$this->setEventsListKey($key, $eventFields);
+				$this->setEventsListKey($key, $eventFields, $type);
 
-				if ($eventFields['EVENT_ID'] == 'tasks')
+				if (
+					$type == 'main'
+					&& $eventFields['EVENT_ID'] == 'tasks'
+				)
 				{
 					$this->incrementTasksCount();
 				}
 
-				if ($key == 0)
+				if (
+					$type == 'main'
+					&& $key == 0
+				)
 				{
 					if ($eventFields['DATE_FOLLOW'])
 					{
@@ -1177,30 +1355,39 @@ class Processor
 			}
 			else
 			{
-				$this->unsetEventsListKey($key);
+				$this->unsetEventsListKey($key, $type);
 			}
 		}
 
-		$result['Events'] = $this->getEventsList();
+		if ($type === 'main')
+		{
+			$result['Events'] = $this->getEventsList($type);
+		}
+		elseif ($type === 'pinned')
+		{
+			$result['pinnedEvents'] = $this->getEventsList($type);
+		}
 	}
 
 	public function processFavoritesData($result)
 	{
 		$params = $this->getComponent()->arParams;
 
+		$idList = array_merge($result['arLogTmpID'], $result['pinnedIdList']);
+
 		if (
-			!empty($result['arLogTmpID'])
+			!empty($idList)
 			&& $result['currentUserId'] > 0
 			&& (
 				!isset($params['USE_FAVORITES'])
-				|| $params['USE_FAVORITES'] != 'N'
+				|| $params['USE_FAVORITES'] !== 'N'
 			)
 		)
 		{
 			$favLogIdList = [];
 			$res = \Bitrix\Socialnetwork\LogFavoritesTable::getList([
 				'filter' => [
-					'@LOG_ID' => $result['arLogTmpID'],
+					'@LOG_ID' => $idList,
 					'USER_ID' => $result['currentUserId']
 				],
 				'select' => [ 'LOG_ID' ]
@@ -1214,9 +1401,9 @@ class Processor
 			foreach($eventsList as $key => $entry)
 			{
 				$entry['FAVORITES_USER_ID'] = $entry['!FAVORITES_USER_ID'] = (
-				in_array($entry['ID'], $favLogIdList)
-					? $result['currentUserId']
-					: 0
+					in_array($entry['ID'], $favLogIdList)
+						? $result['currentUserId']
+						: 0
 				);
 				$this->setEventsListKey($key, $entry);
 			}
@@ -1320,5 +1507,29 @@ class Processor
 		}
 	}
 
+	public function warmUpStaticCache($result)
+	{
+		$logEventsData = [];
+
+		if (is_array($result['Events']))
+		{
+			foreach($result['Events'] as $eventFields)
+			{
+				$logEventsData[(int)$eventFields['ID']] = $eventFields['EVENT_ID'];
+			}
+		}
+		if (is_array($result['pinnedEvents']))
+		{
+			foreach($result['pinnedEvents'] as $eventFields)
+			{
+				$logEventsData[(int)$eventFields['ID']] = $eventFields['EVENT_ID'];
+			}
+		}
+
+		$forumPostLivefeedProvider = new \Bitrix\Socialnetwork\Livefeed\ForumPost();
+		$forumPostLivefeedProvider->warmUpAuxCommentsStaticCache([
+			'logEventsData' => $logEventsData
+		]);
+	}
 }
 ?>

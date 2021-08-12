@@ -2,7 +2,7 @@
 
 class CPage
 {
-	public static function GetDynamicList($URL, &$by, &$order, $arFilter=Array())
+	public static function GetDynamicList($URL, $by = 's_date', $order = 'desc', $arFilter = [])
 	{
 		$err_mess = "File: ".__FILE__."<br>Line: ";
 		$DB = CDatabase::GetModuleConnection('statistic');
@@ -14,7 +14,7 @@ class CPage
 		$exit_counter = "SUM(if(D.EXIT_COUNTER>0,D.EXIT_COUNTER,0))";
 		if (is_array($arFilter))
 		{
-			if (strlen($arFilter["ADV"])>0)
+			if ($arFilter["ADV"] <> '')
 			{
 				$from_adv = " , b_stat_page_adv A ";
 				$where_adv = "and A.PAGE_ID = D.ID";
@@ -48,7 +48,7 @@ class CPage
 				}
 				else
 				{
-					if( (strlen($val) <= 0) || ($val === "NOT_REF") )
+					if( ((string)$val == '') || ($val === "NOT_REF") )
 						continue;
 				}
 				$match_value_set = array_key_exists($key."_EXACT_MATCH", $arFilter);
@@ -78,14 +78,12 @@ class CPage
 			$strSqlOrder = "ORDER BY D.DATE_STAT";
 		else
 		{
-			$by = "s_date";
 			$strSqlOrder = "ORDER BY D.DATE_STAT";
 		}
 
 		if ($order != "asc")
 		{
 			$strSqlOrder .= " desc ";
-			$order = "desc";
 		}
 
 		$strSqlSearch = GetFilterSqlSearch($arSqlSearch);
@@ -112,7 +110,7 @@ class CPage
 		return $res;
 	}
 
-	public static function GetList($COUNTER_TYPE, &$by, &$order, $arFilter=Array(), &$is_filtered)
+	public static function GetList($COUNTER_TYPE, $by = 's_counter', $order = 'desc', $arFilter = [])
 	{
 		$err_mess = "File: ".__FILE__."<br>Line: ";
 		$DB = CDatabase::GetModuleConnection('statistic');
@@ -127,7 +125,7 @@ class CPage
 		$where_adv = "";
 		if (is_array($arFilter))
 		{
-			if (strlen($arFilter["ADV"])>0)
+			if ($arFilter["ADV"] <> '')
 			{
 				$from_adv = " , b_stat_page_adv A ";
 				$where_adv = "and A.PAGE_ID = V.ID";
@@ -158,7 +156,7 @@ class CPage
 				}
 				else
 				{
-					if( (strlen($val) <= 0) || ($val === "NOT_REF") )
+					if( ((string)$val == '') || ($val === "NOT_REF") )
 						continue;
 				}
 				$match_value_set = array_key_exists($key."_EXACT_MATCH", $arFilter);
@@ -213,14 +211,12 @@ class CPage
 			$strSqlOrder = "ORDER BY COUNTER";
 		else
 		{
-			$by = "s_counter";
 			$strSqlOrder = "ORDER BY COUNTER desc, V.URL";
 		}
 
 		if ($order!="asc")
 		{
 			$strSqlOrder .= " desc ";
-			$order="desc";
 		}
 
 		$strSql = "
@@ -246,7 +242,7 @@ class CPage
 			";
 
 		$res = $DB->Query($strSql, false, $err_mess.__LINE__);
-		$is_filtered = (IsFiltered($strSqlSearch) || strlen($strSqlSearch_h)>0);
+
 		return $res;
 	}
 }

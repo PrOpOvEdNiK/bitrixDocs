@@ -420,7 +420,8 @@ class QuoteConverter extends EntityConverter
 					$arErrors
 				);
 
-				Crm\Automation\Factory::runOnAdd(\CCrmOwnerType::Deal, $entityID);
+				$starter = new Crm\Automation\Starter(\CCrmOwnerType::Deal, $entityID);
+				$starter->runOnAdd();
 				//endregion
 
 				$this->resultData[\CCrmOwnerType::DealName] = $entityID;

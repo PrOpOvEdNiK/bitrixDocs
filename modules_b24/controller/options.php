@@ -21,7 +21,7 @@ while ($ar_groups = $dbr_groups->GetNext())
 
 $arOptions = array(
 	array("default_group", GetMessage("CTRLR_OPTIONS_DEF_GROUP"), 1, array("selectbox", $arGroups)),
-	array("group_update_time", GetMessage("CTRLR_OPTIONS_TIME_AUTOUPDATE"), 0, array("text", 5)),
+	array("group_update_time", GetMessage("CTRLR_OPTIONS_TIME_AUTOUPDATE"), 0, array("text", 6)),
 	array("show_hostname", GetMessage("CTRLR_OPTIONS_SHOW_HOSTNAME"), 0, array("checkbox")),
 );
 if (ControllerIsSharedMode())
@@ -29,6 +29,8 @@ if (ControllerIsSharedMode())
 	$arOptions[] = array("shared_kernel_path", GetMessage("CTRLR_OPTIONS_SHARED_KERNEL_PATH"), "", array("text", 50));
 }
 $arOptions[] = array("auth_log_days", GetMessage("CTRLR_OPTIONS_AUTH_LOG_DAYS"), 0, array("text", 6));
+$arOptions[] = array("task_retry_count", GetMessage("CTRLR_OPTIONS_TASK_RETRY_COUNT"), 0, array("text", 6));
+$arOptions[] = array("task_retry_timeout", GetMessage("CTRLR_OPTIONS_TASK_RETRY_TIMEOUT"), 0, array("text", 6));
 
 $aTabs = array();
 $aTabs[] = array(
@@ -51,12 +53,12 @@ $tabControl = new CAdminTabControl("tabControl", $aTabs);
 
 if (
 	$_SERVER['REQUEST_METHOD'] == "POST"
-	&& (strlen($_REQUEST['Update']) > 0 || strlen($_REQUEST['Apply']) > 0 || strlen($_REQUEST['RestoreDefaults']) > 0)
+	&& ($_REQUEST['Update'] <> '' || $_REQUEST['Apply'] <> '' || $_REQUEST['RestoreDefaults'] <> '')
 	&& $USER->CanDoOperation("controller_settings_change")
 	&& check_bitrix_sessid()
 )
 {
-	if (strlen($_REQUEST['RestoreDefaults']) > 0)
+	if ($_REQUEST['RestoreDefaults'] <> '')
 	{
 		COption::RemoveOption("controller");
 	}
@@ -86,9 +88,9 @@ if (
 		ob_end_clean();
 	}
 
-	if (strlen($_REQUEST["back_url_settings"]) > 0)
+	if ($_REQUEST["back_url_settings"] <> '')
 	{
-		if ((strlen($_REQUEST['Apply']) > 0) || (strlen($_REQUEST['RestoreDefaults']) > 0))
+		if (($_REQUEST['Apply'] <> '') || ($_REQUEST['RestoreDefaults'] <> ''))
 			LocalRedirect($APPLICATION->GetCurPage()."?mid=".urlencode($module_id)."&lang=".urlencode(LANGUAGE_ID)."&back_url_settings=".urlencode($_REQUEST["back_url_settings"])."&".$tabControl->ActiveTabParam());
 		else
 			LocalRedirect($_REQUEST["back_url_settings"]);
@@ -117,7 +119,7 @@ if (
 		$tabControl->Buttons(); ?>
 		<input <? if (!$USER->CanDoOperation("controller_settings_change")) echo "disabled" ?> type="submit" name="Update" value="<?=GetMessage("MAIN_SAVE")?>" title="<?=GetMessage("MAIN_OPT_SAVE_TITLE")?>" class="adm-btn-save">
 		<input <? if (!$USER->CanDoOperation("controller_settings_change")) echo "disabled" ?> type="submit" name="Apply" value="<?=GetMessage("MAIN_OPT_APPLY")?>" title="<?=GetMessage("MAIN_OPT_APPLY_TITLE")?>">
-		<? if (strlen($_REQUEST["back_url_settings"]) > 0): ?>
+		<? if ($_REQUEST["back_url_settings"] <> ''): ?>
 			<input <? if (!$USER->CanDoOperation("controller_settings_change")) echo "disabled" ?> type="button" name="Cancel" value="<?=GetMessage("MAIN_OPT_CANCEL")?>" title="<?=GetMessage("MAIN_OPT_CANCEL_TITLE")?>" onclick="window.location='<? echo htmlspecialcharsbx(CUtil::addslashes($_REQUEST["back_url_settings"])) ?>'">
 			<input type="hidden" name="back_url_settings" value="<?=htmlspecialcharsbx($_REQUEST["back_url_settings"])?>">
 		<? endif ?>

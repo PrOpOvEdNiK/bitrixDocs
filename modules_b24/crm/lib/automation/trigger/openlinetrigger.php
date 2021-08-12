@@ -8,6 +8,16 @@ Loc::loadMessages(__FILE__);
 
 class OpenLineTrigger extends BaseTrigger
 {
+	public static function isSupported($entityTypeId)
+	{
+		return $entityTypeId !== \CCrmOwnerType::Quote ? parent::isSupported($entityTypeId) : false;
+	}
+
+	protected static function areDynamicTypesSupported(): bool
+	{
+		return false;
+	}
+
 	public static function isEnabled()
 	{
 		return (Integration\OpenLineManager::isEnabled()
@@ -39,8 +49,28 @@ class OpenLineTrigger extends BaseTrigger
 			&& $trigger['APPLY_RULES']['config_id'] > 0
 		)
 		{
-			return (int)$trigger['APPLY_RULES']['config_id'] === (int)$this->getInputData('CONFIG_ID');
+			if (
+				(int)$trigger['APPLY_RULES']['config_id'] !== (int)$this->getInputData('CONFIG_ID')
+			)
+			{
+				return false;
+			}
 		}
+
+		$msg = $this->getInputData('MESSAGE');
+		if (
+			$msg
+			&& is_array($trigger['APPLY_RULES'])
+			&& !empty($trigger['APPLY_RULES']['msg_text'])
+		)
+		{
+			$msgText = $msg['PLAIN_TEXT'] ?? $msg['TEXT'];
+			if ($msgText)
+			{
+				return (mb_stripos($msgText, $trigger['APPLY_RULES']['msg_text']) !== false);
+			}
+		}
+
 		return true;
 	}
 
@@ -49,21 +79,30 @@ class OpenLineTrigger extends BaseTrigger
 		$result = parent::toArray();
 		if (static::isEnabled())
 		{
-			$configs = [];
-			$orm = \Bitrix\ImOpenLines\Model\ConfigTable::getList(Array(
-				'filter' => Array(
-					'=TEMPORARY' => 'N'
-				)
-			));
-			while ($config = $orm->fetch())
-			{
-				$configs[] = array(
-					'ID' => $config['ID'],
-					'NAME' => $config['LINE_NAME']
-				);
-			}
-			$result['CONFIG_LIST'] = $configs;
+			$result['CONFIG_LIST'] = static::getConfigList();
 		}
 		return $result;
+	}
+
+	protected static function getConfigList()
+	{
+		if (!static::isEnabled())
+		{
+			return [];
+		}
+		$configs = [];
+		$orm = \Bitrix\ImOpenLines\Model\ConfigTable::getList(Array(
+			'filter' => Array(
+				'=TEMPORARY' => 'N'
+			)
+		));
+		while ($config = $orm->fetch())
+		{
+			$configs[] = array(
+				'ID' => $config['ID'],
+				'NAME' => $config['LINE_NAME']
+			);
+		}
+		return $configs;
 	}
 }

@@ -295,6 +295,7 @@ class ActualEntitySelector
 	 */
 	public function __construct(array $criteria = array())
 	{
+		$this->fillDynamicEntityDictionary();
 		$this->isAutoUsingFinishedLeadEnabled = LeadSettings::getCurrent()->isAutoUsingFinishedLeadEnabled()
 			&& LeadSettings::getCurrent()->isEnabled();
 		$this->initialEntities = $this->entities;
@@ -311,13 +312,13 @@ class ActualEntitySelector
 	 */
 	public function __call($name, $arguments)
 	{
-		$operation = substr($name, 0, 3);
+		$operation = mb_substr($name, 0, 3);
 		if (!in_array($operation, ['get', 'set'], true))
 		{
 			throw new SystemException("Unknown method name `$name`");
 		}
 
-		$action = lcfirst(substr($name, 3));
+		$action = lcfirst(mb_substr($name, 3));
 		if ($action)
 		{
 			return call_user_func_array([$this, $operation], array_merge([$action], $arguments));
@@ -409,6 +410,11 @@ class ActualEntitySelector
 	 */
 	public function appendPersonCriterion($lastName, $name = '', $secondName = '')
 	{
+		if (!trim($lastName) || !trim($name))
+		{
+			return $this;
+		}
+
 		$criterion = new DuplicatePersonCriterion($lastName, $name, $secondName);
 		$criterion->setStrictComparison(true);
 		$this->duplicateCriteria[] = $criterion;
@@ -452,14 +458,14 @@ class ActualEntitySelector
 		// prepare codes
 		$expectSingle = false;
 		$codes = [$code];
-		if (substr($code, -3) === 'yId')
+		if (mb_substr($code, -3) === 'yId')
 		{
-			$codes[] = substr($code, 0,-3) . 'ies';
+			$codes[] = mb_substr($code, 0, -3).'ies';
 			$expectSingle = true;
 		}
-		else if (substr($code, -2) === 'Id')
+		else if (mb_substr($code, -2) === 'Id')
 		{
-			$codes[] = substr($code, 0,-2) . 's';
+			$codes[] = mb_substr($code, 0, -2).'s';
 			$expectSingle = true;
 		}
 
@@ -516,13 +522,13 @@ class ActualEntitySelector
 
 		// prepare $codes
 		$codes = [$code];
-		if (substr($code, -3) === 'yId')
+		if (mb_substr($code, -3) === 'yId')
 		{
-			$codes[] = substr($code, 0,-3) . 'ies';
+			$codes[] = mb_substr($code, 0, -3).'ies';
 		}
-		elseif (substr($code, -2) === 'Id')
+		elseif (mb_substr($code, -2) === 'Id')
 		{
-			$codes[] = substr($code, 0,-2) . 's';
+			$codes[] = mb_substr($code, 0, -2).'s';
 		}
 
 		// set value
@@ -999,12 +1005,45 @@ class ActualEntitySelector
 	protected function findDuplicates()
 	{
 		$result = [];
-		foreach ($this->duplicateCriteria as $criterion)
+
+		$sortedCriteria = [];
+		$hasCommCriterion = false;
+		foreach ($this->duplicateCriteria as $index => $criterion)
 		{
+			$sort = 10000;
+			if ($criterion instanceof DuplicateCommunicationCriterion)
+			{
+				$sort = 1000;
+				$hasCommCriterion = true;
+			}
+			else if ($criterion instanceof DuplicatePersonCriterion)
+			{
+				$sort = 100000;
+			}
+			$sortedCriteria[$sort + $index] = $criterion;
+		}
+		ksort($sortedCriteria);
+
+		$found = false;
+		foreach ($sortedCriteria as $criterion)
+		{
+			if (($hasCommCriterion || $found) && $criterion instanceof DuplicatePersonCriterion)
+			{
+				if (!$criterion->getSecondName() || !$criterion->getName())
+				{
+					continue;
+				}
+			}
+
 			$criterion->sortDescendingByEntityTypeId();
 			$duplicate = $criterion->find(\CCrmOwnerType::Undefined, 250);
 			if($duplicate !== null)
 			{
+				if ($duplicate->getEntityIDs())
+				{
+					$found = true;
+				}
+
 				$result[] = $duplicate;
 			}
 		}
@@ -1219,5 +1258,10 @@ class ActualEntitySelector
 		}
 
 		return true;
+	}
+
+	protected function fillDynamicEntityDictionary()
+	{
+
 	}
 }

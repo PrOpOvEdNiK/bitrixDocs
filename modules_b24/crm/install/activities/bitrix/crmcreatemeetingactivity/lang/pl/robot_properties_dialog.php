@@ -1,6 +1,0 @@
-<?
-$MESS["CRM_CREATE_MEETING_RPD_DAY_0"] = "Dzisiaj";
-$MESS["CRM_CREATE_MEETING_RPD_DAY_1"] = "Jutro";
-$MESS["CRM_CREATE_MEETING_RPD_DAY_2"] = "Za dwa dni";
-$MESS["CRM_CREATE_MEETING_RPD_DAY_3"] = "Za trzy dni";
-?>

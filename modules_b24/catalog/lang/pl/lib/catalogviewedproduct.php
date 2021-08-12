@@ -1,3 +1,0 @@
-<?
-$MESS["VIEWED_PRODUCT_ENTITY_VIEW_COUNT_FIELD"] = "Wyświetlenia";
-?>

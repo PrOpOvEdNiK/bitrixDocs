@@ -161,6 +161,7 @@ class CAllCrmMailTemplate
 		{
 			$options = array();
 		}
+		$ID = (int)$ID;
 
 		if (!self::CheckFields('UPDATE', $arFields, $ID))
 		{
@@ -449,7 +450,7 @@ class CAllCrmMailTemplate
 			return 0;
 		}
 
-		$entityTypeName = strtolower(CCrmOwnerType::ResolveName($entityTypeID));
+		$entityTypeName = mb_strtolower(CCrmOwnerType::ResolveName($entityTypeID));
 		$userID = intval($userID);
 		if($userID <= 0)
 		{
@@ -462,7 +463,7 @@ class CAllCrmMailTemplate
 	{
 		$templateID = intval($templateID);
 		$entityTypeID = intval($entityTypeID);
-		$entityTypeName = strtolower(CCrmOwnerType::ResolveName($entityTypeID));
+		$entityTypeName = mb_strtolower(CCrmOwnerType::ResolveName($entityTypeID));
 		$userID = intval($userID);
 		if($userID <= 0)
 		{

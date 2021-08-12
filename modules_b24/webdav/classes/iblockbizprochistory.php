@@ -1,5 +1,7 @@
 <?php
+
 IncludeModuleLangFile(__FILE__);
+
 if (!CModule::IncludeModule("bizproc"))
 	return;
 
@@ -99,6 +101,8 @@ class CWebdavDocumentHistory
 
 	public static function IsHistoryUpdate($documentID)
 	{
+		global $USER;
+
 		static $arHistoryFields = array("ID", "DOCUMENT_ID", "MODIFIED", "DOCUMENT");
 
 		$historyService = self::GetHistoryService();
@@ -108,7 +112,7 @@ class CWebdavDocumentHistory
 		{
 			$arFilter = array(
 				"DOCUMENT_ID" => $documentID,
-				"USER_ID" => CUser::GetID()
+				"USER_ID" => $USER->GetID()
 			);
 
 			$dbDoc = $historyService->GetHistoryList(
@@ -137,7 +141,7 @@ class CWebdavDocumentHistory
 		return $result;
 	}
 
-	public function UpdateDocumentHistory($parameterDocumentId, $historyId)
+	public static function UpdateDocumentHistory($parameterDocumentId, $historyId)
 	{
 		$historyService = self::GetHistoryService();
 		list($moduleId, $entity, $documentId) = CBPHelper::ParseDocumentId($parameterDocumentId);
@@ -204,7 +208,7 @@ class CWebdavDocumentHistory
 		return $result;
 	}
 
-	static function OnBeforeDeleteFileFromHistory($historyId, $documentId)
+	public static function OnBeforeDeleteFileFromHistory($historyId, $documentId)
 	{
 		static $arHistoryFields = array("ID", "DOCUMENT_ID", "DOCUMENT");
 
@@ -258,5 +262,4 @@ class CWebdavDocumentHistory
 		}
 		return $result;
 	}
-
 }

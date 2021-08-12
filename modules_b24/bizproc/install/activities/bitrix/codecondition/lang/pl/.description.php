@@ -1,4 +1,0 @@
-<?
-$MESS["BPC_DESCR_DESCR"] = "Kod PHP";
-$MESS["BPC_DESCR_NAME"] = "Kod PHP";
-?>

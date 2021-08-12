@@ -33,7 +33,7 @@ class CSiteCheckerTest
 				if (preg_match("/[\xC0-\xFF]/",$host0))
 				{
 					// utf-8;
-					if (!defined('BX_UTF') && BX_UTF !== true)
+					if (!defined('BX_UTF') || BX_UTF !== true)
 						$host = $host0;
 				}
 				elseif (preg_match("/[\xC0-\xFF]/",$host))
@@ -70,7 +70,7 @@ class CSiteCheckerTest
 		$arGroupName[2] = GetMessage("MAIN_SC_BUSINESS");
 		$arGroupDesc[2] = GetMessage("MAIN_SC_CORRECT_DESC");
 		$arTestGroup[2] = array(
-			array('check_pull_stream' => GetMessage("MAIN_SC_TEST_CHAT")),
+			array('check_pull_stream' => GetMessage("MAIN_SC_TEST_PUSH_SERVER")),
 			array('check_pull_comments' => GetMessage("MAIN_SC_TEST_COMMENTS")),
 			array('check_turn' => GetMessage("MAIN_SC_TEST_VIDEO")),
 			array('check_access_mobile' => GetMessage("MAIN_SC_TEST_MOBILE")),
@@ -86,7 +86,7 @@ class CSiteCheckerTest
 			array('check_mail_push' => GetMessage("MAIN_SC_TEST_MAIL_PUSH")),
 		);
 		if (IsModuleInstalled('extranet'))
-			$arTestGroup[2][] = array('check_extranet' => GetMessage("MAIN_SC_EXTRANET_ACCESS")); 
+			$arTestGroup[2][] = array('check_extranet' => GetMessage("MAIN_SC_EXTRANET_ACCESS"));
 
 		$arGroupName[4] = GetMessage("MAIN_SC_WINDOWS_ENV");
 		$arGroupDesc[4] = '';
@@ -127,7 +127,7 @@ class CSiteCheckerTest
 			array('check_memory_limit' => GetMessage('SC_T_MEMORY')),
 			array('check_cache' => GetMessage('SC_T_CACHE')),
 
-			array('check_update' => GetMessage('SC_UPDATE_ACCESS')), 
+			array('check_update' => GetMessage('SC_UPDATE_ACCESS')),
 			array('check_http_auth' => GetMessage('SC_T_AUTH')),
 			array('check_exec' => GetMessage('SC_T_EXEC')),
 			array('check_getimagesize' => GetMessage('SC_T_GETIMAGESIZE')),
@@ -195,7 +195,7 @@ class CSiteCheckerTest
 			else
 			{
 				$profile |= 16;
-				if (strtolower($GLOBALS['DB']->type) == 'mysql')
+				if ($GLOBALS['DB']->type == 'MYSQL')
 					$profile |= 32;
 			}
 			$this->arTest = array();
@@ -220,7 +220,8 @@ class CSiteCheckerTest
 			}
 		}
 
-		list($this->function, $this->strCurrentTestName) = each($this->arTest[$this->step]);
+		$this->function = key($this->arTest[$this->step]);
+		$this->strCurrentTestName = current($this->arTest[$this->step]);
 		$this->strNextTestName = $this->strCurrentTestName;
 
 		$LICENSE_KEY = '';
@@ -302,7 +303,8 @@ class CSiteCheckerTest
 				$this->step++;
 				$this->test_percent = 0;
 				$this->arTestVars['last_value'] = '';
-				list($this->function, $this->strNextTestName) = each($this->arTest[$this->step]);
+				$this->function = key($this->arTest[$this->step]);
+				$this->strNextTestName = current($this->arTest[$this->step]);
 			}
 			else // finish
 			{
@@ -363,7 +365,7 @@ class CSiteCheckerTest
 
 		echo "Connection to $ssl$host:$port	";
 		$res = false;
-		try 
+		try
 		{
 			$res = fsockopen($ssl.$host, $port, $errno, $errstr, 5);
 		}
@@ -408,7 +410,7 @@ class CSiteCheckerTest
 			&&
 			preg_match('#^([a-z]+)\(([0-9]+)\)(.*)$#i',$f_tmp['Type'],$regs_tmp)
 			&&
-			str_replace('varchar','char',strtolower($regs[1])) == str_replace('varchar','char',strtolower($regs_tmp[1]))
+			str_replace('varchar', 'char', strtolower($regs[1])) == str_replace('varchar', 'char', strtolower($regs_tmp[1]))
 			&&
 			$regs[2] <= $regs_tmp[2]
 			&&
@@ -448,7 +450,7 @@ class CSiteCheckerTest
 			$strError .= GetMessage("MAIN_SC_MCRYPT").' OpenSSL';
 
 
-		if (defined('BX_UTF') && BX_UTF === true && !function_exists('mb_substr'))
+		if (!function_exists('mb_substr'))
 			$strError .= GetMessage("SC_MOD_MBSTRING")."<br>";
 
 		if (!in_array('ssl', stream_get_transports()))
@@ -502,7 +504,7 @@ class CSiteCheckerTest
 			if ($cur != $val)
 				$strError .=  GetMessage('SC_ERR_PHP_PARAM', array('#PARAM#' => $param, '#CUR#' => $cur ? htmlspecialcharsbx($cur) : 'off', '#REQ#' => $val ? 'on' : 'off'))."<br>";
 		}
-		
+
 		$param = 'opcache.revalidate_freq';
 		if (($cur = ini_get($param)) <> 0)
 			$strError .= GetMessage('SC_ERR_PHP_PARAM', array('#PARAM#' => $param, '#CUR#' => htmlspecialcharsbx($cur), '#REQ#' => '0'))."<br>";
@@ -628,7 +630,7 @@ class CSiteCheckerTest
 		$f = $res->Fetch();
 		if ($f['A'] > 0)
 		{
-			$info = defined('BX_CRONTAB_SUPPORT') && BX_CRONTAB_SUPPORT ? '<br> '.GetMessage('SC_CRON_WARN') : ''; 
+			$info = defined('BX_CRONTAB_SUPPORT') && BX_CRONTAB_SUPPORT ? '<br> '.GetMessage('SC_CRON_WARN') : '';
 			if(CACHED_b_event !== false && $CACHE_MANAGER->Read(CACHED_b_event, "events"))
 				$info .= "<br> ".GetMessage('SC_CACHED_EVENT_WARN');
 			return $this->Result(false, GetMessage('SC_T_MAIL_B_EVENT_ERR').' '.$f['A'].$info);
@@ -705,7 +707,7 @@ class CSiteCheckerTest
 		echo fgets($res);
 		fwrite($res, "DATA\r\n");
 		echo fgets($res);
-		fwrite($res, 
+		fwrite($res,
 		"From: sitecheckerfrom@".$domain."\r\n".
 		"To: rplsitecheckerto@".$domain."\r\n".
 		"Subject: Site checker mail test\r\n".
@@ -751,13 +753,12 @@ class CSiteCheckerTest
 		if (!$res = $this->ConnectToHost())
 			return false;
 
-		$compression = IsModuleInstalled('compression');
 		$strRes = GetHttpResponse($res, $strRequest, $strHeaders);
 
-		if (preg_match('#gzip|deflate#mi', $strHeaders) && CUtil::BinStrlen($strRes) < 64 * 1024) // comression not supported by server
-			return $compression ? $this->Result(false, GetMessage("MAIN_SC_ENABLED")) : $this->Result(true, GetMessage("MAIN_SC_ENABLED_MOD"));
+		if (preg_match('#gzip|deflate#mi', $strHeaders) && strlen($strRes) < 64 * 1024) // comression not supported by server
+			return $this->Result(true, GetMessage("MAIN_SC_ENABLED_MOD"));
 		else
-			return $compression ? $this->Result(false, GetMessage("MAIN_SC_COMP_DISABLED")) : $this->Result(false, GetMessage("MAIN_SC_COMP_DISABLED_MOD"));
+			return $this->Result(false, GetMessage("MAIN_SC_COMP_DISABLED_MOD"));
 	}
 
 	function check_socket_ssl()
@@ -925,7 +926,7 @@ class CSiteCheckerTest
 		$strRequest.= "Host: ".$this->host."\r\n";
 		if (!$raw)
 			$strRequest.= "Content-Type: multipart/form-data; boundary=$boundary\r\n";
-		$strRequest.= "Content-Length: ".(function_exists('mb_strlen') ? mb_strlen($POST, 'ISO-8859-1') : strlen($POST))."\r\n";
+		$strRequest.= "Content-Length: ".strlen($POST)."\r\n";
 		$strRequest.= "\r\n";
 		$strRequest.= $POST;
 
@@ -952,7 +953,7 @@ class CSiteCheckerTest
 
 		$strRequest = "POST "."/bitrix/admin/site_checker.php?test_type=post_test&unique_id=".checker_get_unique_id()." HTTP/1.1\r\n";
 		$strRequest.= "Host: ".$this->host."\r\n";
-		$strRequest.= "Content-Length: ".(function_exists('mb_strlen') ? mb_strlen($POST, 'ISO-8859-1') : strlen($POST))."\r\n";
+		$strRequest.= "Content-Length: ".strlen($POST)."\r\n";
 		$strRequest.= "Content-Type: application/x-www-form-urlencoded\r\n";
 
 		$strRequest.= "\r\n";
@@ -977,7 +978,7 @@ class CSiteCheckerTest
 		{
 			if (!CheckSerializedData($this->arTestVars['last_value']))
 				return false;
-			list($last_success, $max, $step) = unserialize($this->arTestVars['last_value']);
+			list($last_success, $max, $step) = unserialize($this->arTestVars['last_value'], ['allowed_classes' => false]);
 		}
 
 		$strRequest = "GET "."/bitrix/admin/site_checker.php?test_type=memory_test&unique_id=".checker_get_unique_id()."&max=".($max - 1)." HTTP/1.1\r\n";
@@ -1005,7 +1006,7 @@ class CSiteCheckerTest
 			$this->arTestVars['last_value'] = serialize(array($last_success, $max, $step));
 			return true;
 		}
-		
+
 		$ok = false;
 		$res = GetMessage('SC_NOT_LESS',array('#VAL#' => $last_success));
 		if (intval($last_success) > 32)
@@ -1096,34 +1097,50 @@ class CSiteCheckerTest
 		if (\Bitrix\Main\Config\Configuration::getValue("utf_mode") !== (defined('BX_UTF') && BX_UTF === true))
 		{
 			return $this->Result(false, GetMessage('MAIN_SC_MBSTRING_SETTIGNS_DIFFER'));
-			$this->arTestVars['check_mbstring_fail'] = true;
+		}
+
+		$encoding = strtolower(ini_get('mbstring.internal_encoding'));
+		$default = strtolower(ini_get('default_charset'));
+
+		if($default == "")
+		{
+			return $this->Result(false, GetMessage("MAIN_SC_DEFAULT_CHARSET"));
+		}
+
+		if($encoding <> '' && $encoding <> $default)
+		{
+			return $this->Result(false, GetMessage("MAIN_SC_ENC_EQUAL"));
+		}
+
+		if(ini_get('mbstring.func_overload') > 0)
+		{
+			//should be non-existent
+			return $this->Result(false, GetMessage("MAIN_SC_FUNC_OVERLOAD"));
 		}
 
 		$retVal = true;
 		$bUtf = false;
 
-		$rs = CSite::GetList($by,$order,array('ACTIVE'=>'Y'));
+		$rs = CSite::GetList('', '', array('ACTIVE'=>'Y'));
 		while($f = $rs->Fetch())
-			if (strpos(strtolower($f['CHARSET']),'utf')!==false)
+		{
+			if (strpos(strtolower($f['CHARSET']), 'utf') !== false)
 			{
 				$bUtf = true;
 				break;
 			}
-
-
-		$overload  = intval(ini_get('mbstring.func_overload'));
-		$encoding = strtolower(ini_get('mbstring.internal_encoding'));
-		$default = strtolower(ini_get('default_charset'));
-		$current = str_replace(array("-", "windows"), array("", "cp"), $encoding ? $encoding : $default);
+		}
 
 		if ($bUtf)
 		{
 			$text = GetMessage('SC_MB_UTF');
 
-			$retVal = $overload == 2 && $current == 'utf8';
-			if (!$retVal)
-				$text .= ', '.GetMessage('SC_MB_CUR_SETTINGS').'<br>mbstring.func_overload='.$overload.'<br>mbstring.internal_encoding="'.$encoding.'"<br>default_charset="'.$default.'"'.
-				'<br>'.GetMessage('SC_MB_REQ_SETTINGS').'<br>mbstring.func_overload=2<br>mbstring.internal_encoding=""<br>default_charset="utf-8"';
+			if($default <> "utf-8")
+			{
+				$retVal = false;
+				$text .= '<br>'.GetMessage("MAIN_SC_ENC_UTF");
+				$this->arTestVars['check_mbstring_fail'] = true;
+			}
 
 			if (!defined('BX_UTF') || BX_UTF !== true)
 			{
@@ -1136,21 +1153,12 @@ class CSiteCheckerTest
 		{
 			$text = GetMessage('SC_MB_NOT_UTF');
 
-			if ($overload == 2)
+			if($default == "utf-8")
 			{
-				$ru = LANG_CHARSET == 'windows-1251';
-				$mb_string_req = '<br>mbstring.internal_encoding=""<br>default_charset="'.($ru ? 'cp1251' : 'latin1').'"';
-
-				$retVal = false === strpos($current,'utf');
+				$retVal = false;
+				$text .= '<br>'.GetMessage("MAIN_SC_ENC_NON_UTF");
+				$this->arTestVars['check_mbstring_fail'] = true;
 			}
-			else
-			{
-				$mb_string_req = '<br>mbstring.func_overload=0';
-				$retVal = $overload == 0;
-			}
-			if (!$retVal)
-				$text .= ', '.GetMessage('SC_MB_CUR_SETTINGS').'<br>mbstring.func_overload='.$overload.'<br>mbstring.internal_encoding="'.$encoding.'"<br>default_charset="'.$default.'"'.
-				'<br>'.GetMessage('SC_MB_REQ_SETTINGS').$mb_string_req;
 
 			if (defined('BX_UTF'))
 			{
@@ -1162,8 +1170,8 @@ class CSiteCheckerTest
 
 		if ($retVal)
 		{
-			$l = strlen("\xd0\xa2");
-			if (!($retVal = $bUtf && $l == 1 || !$bUtf && $l == 2))
+			$retVal = (strlen("\xd0\xa2") == 2);
+			if (!$retVal)
 				$text = GetMessage('SC_STRLEN_FAIL_PHP56');
 
 			if (!$bUtf && LANG_CHARSET == 'windows-1251' && !($retVal = strtoupper("\xe0") == "\xc0"))
@@ -1195,11 +1203,11 @@ class CSiteCheckerTest
 		$proxyUserName = COption::GetOptionString("main", "update_site_proxy_user", "");
 		$proxyPassword = COption::GetOptionString("main", "update_site_proxy_pass", "");
 
-		$bUseProxy = !$this->arTestVars['last_value'] && strlen($proxyAddr) > 0 && strlen($proxyPort) > 0;
+		$bUseProxy = !$this->arTestVars['last_value'] && $proxyAddr <> '' && $proxyPort <> '';
 
 		if ($bUseProxy)
 		{
-			$proxyPort = IntVal($proxyPort);
+			$proxyPort = intval($proxyPort);
 			if ($proxyPort <= 0)
 				$proxyPort = 80;
 
@@ -1217,7 +1225,7 @@ class CSiteCheckerTest
 		if ($bUseProxy)
 		{
 			$strRequest .= "POST http://".$ServerIP."/bitrix/updates/".$page." HTTP/1.0\r\n";
-			if (strlen($proxyUserName) > 0)
+			if ($proxyUserName <> '')
 				$strRequest .= "Proxy-Authorization: Basic ".base64_encode($proxyUserName.":".$proxyPassword)."\r\n";
 		}
 		else
@@ -1233,7 +1241,7 @@ class CSiteCheckerTest
 		$strRequest.= "\r\n";
 
 		$res = false;
-		try 
+		try
 		{
 			$res = fsockopen($requestIP, $requestPort, $errno, $errstr, 5);
 		}
@@ -1256,11 +1264,14 @@ class CSiteCheckerTest
 
 			$strRes = GetHttpResponse($res, $strRequest, $strHeaders);
 
-			$strRes = strtolower(strip_tags($strRes));
-			if ($strRes === "license key is invalid" || $strRes === "license key is required")
+			if ((strpos($strRes, "EMPTY_LICENSE_KEY") !== false)
+				|| (strpos($strRes, "LICENSE_KEY_REQUIRED") !== false))
+			{
 				return true;
+			}
 			else
 			{
+				$strRes = mb_strtolower(strip_tags($strRes));
 				PrintHTTP($strRequest, $strHeaders, $strRes);
 				if ($bUseProxy)
 					return $this->Result(false, GetMessage('SC_PROXY_ERR_RESP'));
@@ -1272,21 +1283,6 @@ class CSiteCheckerTest
 
 	function check_pull_stream()
 	{
-		if (IsModuleInstalled('xmpp') && CModule::IncludeModule('xmpp'))
-		{
-			$arMessage = array(
-				"query" => array(
-					"." => array("type" => "get"),
-					"common" => array("#" => ""),
-				),
-			);
-			$t = microtime(1);
-			$arResponce = CXMPPUtility::_SendToServer($arMessage, $errorNo, $errorStr);
-			if (microtime(1) - $t > 1)
-				return $this->Result(false, 'XMPP server has failed');
-		}
-
-
 		if (CModule::IncludeModule('pull'))
 		{
 			$text = md5(mt_rand(100000,999999));
@@ -1294,10 +1290,16 @@ class CSiteCheckerTest
 			$id = CPullChannel::SignChannel($channelId);
 			if (CPullOptions::GetQueueServerStatus())
 			{
-				$isServerShared = method_exists("CPullOptions", "IsServerShared") && CPullOptions::IsServerShared();
+				$isServerShared = CPullOptions::IsServerShared();
 				if($isServerShared && !\Bitrix\Pull\SharedServer\Config::isRegistered())
 				{
+					$this->arTestVars['push_stream_fail'] = true;
 					return $this->Result(false, GetMessage("MAIN_SC_PULL_NOT_REGISTERED"));
+				}
+				else if (CPullOptions::GetQueueServerVersion() < 4)
+				{
+					$this->arTestVars['push_stream_warn'] = true;
+					return $this->Result(null, GetMessage("MAIN_SC_PULL_UNSUPPORTED_VERSION"));
 				}
 				else
 				{
@@ -1335,7 +1337,7 @@ class CSiteCheckerTest
 			else
 			{
 				$this->arTestVars['push_stream_fail'] = true;
-				return $this->Result(false, GetMessage("MAIN_SC_STREAM_DISABLED"));
+				return $this->Result(false, GetMessage("MAIN_SC_STREAM_DISABLED_2"));
 			}
 		}
 		else
@@ -1375,7 +1377,7 @@ class CSiteCheckerTest
 		if (!$res1 = $this->ConnectToHost($sub_host, $sub_port))
 		{
 			$this->arTestVars['push_stream_fail'] = true;
-			return $this->Result(false, GetMessage("MAIN_SC_NO_SUB_CONNECTION"));
+			return $this->Result(false, GetMessage("MAIN_SC_NO_SUB_CONNECTION_2"));
 		}
 		fwrite($res1, $strRequest1);
 		sleep(1); // we need some time to create channel
@@ -1399,36 +1401,50 @@ class CSiteCheckerTest
 			$this->arTestVars['push_stream_fail'] = true;
 			$retVal = $this->Result(false, GetMessage("MAIN_SC_PUSH_INCORRECT", ['#MODULE#' => $bNodeJS ? 'Bitrix Push server' : 'nginx-push-stream-module']));
 		}
-	
+
 		// DELETE
 		if (!$res2 = $this->ConnectToHost($pub_host, $pub_port))
 		{
 			$this->arTestVars['push_stream_fail'] = true;
-			return $this->Result(false, GetMessage("MAIN_SC_NO_PUSH_STREAM_CONNECTION"));
+			return $this->Result(false, GetMessage("MAIN_SC_NO_PUSH_STREAM_CONNECTION_2"));
 		}
 		fwrite($res2, $strRequest2);
 		fclose($res2);
 
 		if ($retVal == true && COption::GetOptionString('main', 'session_expand', 'Y') <> 'N' && (!defined("BX_SKIP_SESSION_EXPAND") || BX_SKIP_SESSION_EXPAND === false))
 			return $this->Result(null, GetMessage('MAIN_SC_WARN_EXPAND_SESSION'));
-	
+
 		return $retVal;
 	}
 
 	function check_pull_comments()
 	{
-		if ($this->arTestVars['push_stream_fail'])
-			return $this->Result(false, GetMessage("MAIN_SC_NO_PUSH_STREAM"));
+		if ($this->arTestVars['push_stream_warn'])
+		{
+			return $this->Result(null, GetMessage("MAIN_SC_NO_PUSH_STREAM_2"));
+		}
+		else if ($this->arTestVars['push_stream_fail'])
+		{
+			return $this->Result(false, GetMessage("MAIN_SC_NO_PUSH_STREAM_2"));
+		}
 		return true;
 	}
 
 	function check_turn()
 	{
 		if (!IsModuleInstalled('im'))
+		{
 			return $this->Result(null, GetMessage("MAIN_SC_NO_IM"));
+		}
 
-		if ($this->arTestVars['push_stream_fail'])
-			return $this->Result(false, GetMessage("MAIN_SC_NO_PUSH_STREAM_VIDEO"));
+		if ($this->arTestVars['push_stream_warn'])
+		{
+			return $this->Result(null, GetMessage("MAIN_SC_NO_PUSH_STREAM_VIDEO_2"));
+		}
+		else if ($this->arTestVars['push_stream_fail'])
+		{
+			return $this->Result(false, GetMessage("MAIN_SC_NO_PUSH_STREAM_VIDEO_2"));
+		}
 
 		if (COption::GetOptionString("im", "turn_server_self") == 'Y')
 			$host = COption::GetOptionString("im", "turn_server");
@@ -1569,7 +1585,7 @@ class CSiteCheckerTest
 		$tmp = $_SERVER['DOCUMENT_ROOT'].'/bitrix/tmp/success.txt';
 		if (!CheckDirPath($tmp) || !file_put_contents($tmp, 'SUCCESS'))
 			return $this->Result(false, GetMessage("MAIN_TMP_FILE_ERROR"));
-		
+
 		$strRequest = "GET "."/bitrix/admin/site_checker.php?test_type=fast_download&unique_id=".checker_get_unique_id()." HTTP/1.1\r\n";
 		$strRequest.= "Host: ".$this->host."\r\n";
 		$strRequest.= "\r\n";
@@ -1588,12 +1604,12 @@ class CSiteCheckerTest
 	{
 		$checker = 'checker.internal.bitrix24.com';
 		$retVal = null;
-		
+
 		if (preg_match('#^(127|10|172\.16|192\.168)\.#', $this->host))
 			$status = 0;
 		else
 		{
-			$strRequest = 
+			$strRequest =
 				'GET /check/?license_hash='.LICENSE_HASH.'&host='.urlencode($this->host).'&port='.urlencode($this->port).'&https='.($this->ssl ? 'Y' : 'N').' HTTP/1.1'."\r\n".
 				'host: '.$checker."\r\n".
 				"\r\n";
@@ -1638,7 +1654,7 @@ class CSiteCheckerTest
 			$sub_port = 80;
 		if ($sub_port != $this->port)
 		{
-			$strRequest = 
+			$strRequest =
 				'GET /check/?license_hash='.LICENSE_HASH.'&host='.urlencode($this->host).'&port='.urlencode($sub_port).'&https='.($ar['scheme'] == 'https' ? 'Y' : 'N').' HTTP/1.1'."\r\n".
 				'host: '.$checker."\r\n".
 				"\r\n";
@@ -1651,7 +1667,7 @@ class CSiteCheckerTest
 				return $this->Result($retVal, GetMessage("MAIN_SC_UNKNOWN_ANSWER", array('#HOST#' => $checker)));
 			$status = intval($regs[1]);
 			if (!$status)
-				return $this->Result($retVal, GetMessage("MAIN_SC_NO_PULL_EXTERNAL"));
+				return $this->Result($retVal, GetMessage("MAIN_SC_NO_PULL_EXTERNAL_2"));
 		}
 
 		return true;
@@ -1697,7 +1713,7 @@ class CSiteCheckerTest
 			$strResult = GetMessage("MAIN_PERF_LOW");
 		elseif ($r < 30)
 			$strResult = GetMessage("MAIN_PERF_MID");
-		else 
+		else
 			$strResult = GetMessage("MAIN_PERF_HIGH");
 		return $this->Result($r >= 10, $strResult.' ('.number_format($r , 2, ".", " ").' '.GetMessage("MAIN_PAGES_PER_SECOND").')');
 	}
@@ -1869,11 +1885,11 @@ class CSiteCheckerTest
 		$bUtf = $bChar = $bFound = false;
 		$arDocRoot = array();
 
-		$rs = CSite::GetList($by,$order,array('ACTIVE'=>'Y'));
+		$rs = CSite::GetList('', '', array('ACTIVE'=>'Y'));
 		while($f = $rs->Fetch())
 		{
 			$arDocRoot[] = trim($f['DOC_ROOT']);
-			$bFound = strpos(strtolower($f['CHARSET']),'utf')!==false;
+			$bFound = strpos(strtolower($f['CHARSET']), 'utf') !== false;
 
 			$bUtf = $bUtf || $bFound;
 			$bChar = $bChar || !$bFound;
@@ -1965,7 +1981,7 @@ class CSiteCheckerTest
 		if ($ver == '4.1.21' // sorting
 			|| $ver == '5.1.34' // auto_increment
 			|| $ver == '5.0.41' // search
-//			|| $ver == '5.1.66' // forum page navigation 
+//			|| $ver == '5.1.66' // forum page navigation
 			)
 			return $this->Result(false,GetMessage('SC_DB_ERR').' '.$ver);
 
@@ -1982,7 +1998,7 @@ class CSiteCheckerTest
 			$strError = GetMessage('SC_DB_ERR_INNODB_STRICT', ['#VALUE#' => $f['Value']])."<br>";
 
 		$f = $DB->Query('SHOW VARIABLES LIKE \'sql_mode\'')->Fetch();
-		if (strlen($f['Value']) > 0)
+		if ($f['Value'] <> '')
 			$strError .= GetMessage('SC_DB_ERR_MODE').' '.$f['Value'];
 
 		return $strError ? $this->Result(false, $strError) : true;
@@ -2014,7 +2030,7 @@ class CSiteCheckerTest
 		while($f = $res->Fetch())
 		{
 			$i++;
-			list($k, $table) = each($f);
+			$table = current($f);
 
 			if ($this->arTestVars['last_value'])
 			{
@@ -2200,7 +2216,7 @@ class CSiteCheckerTest
 		while($f = $res->Fetch())
 		{
 			$i++;
-			list($k, $table) = each($f);
+			$table = current($f);
 
 			if ($this->arTestVars['last_value'])
 			{
@@ -2394,7 +2410,7 @@ class CSiteCheckerTest
 		}
 		else
 			return false;
-				
+
 		$file = $_SERVER['DOCUMENT_ROOT'].'/bitrix/modules/'.$module.'/install/db/mysql/install.sql';
 		if (!file_exists($file))
 			$file = $_SERVER['DOCUMENT_ROOT'].'/bitrix/modules/'.$module.'/install/mysql/install.sql';
@@ -2427,7 +2443,7 @@ class CSiteCheckerTest
 						else
 						{
 							$strError .= GetMessage('SC_ERR_NO_TABLE', array('#TABLE#' => $table))."<br>";
-							$_SESSION['FixQueryList'][] = $sql;
+							\Bitrix\Main\Application::getInstance()->getSession()['FixQueryList'][] = $sql;
 							$this->arTestVars['iError']++;
 							$this->arTestVars['iErrorAutoFix']++;
 							$this->arTestVars['cntNoTables']++;
@@ -2470,7 +2486,7 @@ class CSiteCheckerTest
 						}
 						$arColumns = $arTableColumns[$tmp_table];
 					}
-					
+
 					$strValues = $regs[3];
 					$ar = explode(",",$strValues);
 					$arValues = array();
@@ -2479,14 +2495,14 @@ class CSiteCheckerTest
 					foreach($ar as $v)
 					{
 						$str .= ($str ? ',' : '').$v;
-						if (preg_match('#^ *(-?[0-9]+|\'.*\'|".*"|null|now\(\)) *$#i',$str)) 
+						if (preg_match('#^ *(-?[0-9]+|\'.*\'|".*"|null|now\(\)) *$#i',$str))
 						{
 							$arValues[$i] = $str;
 							$str = '';
 							$i++;
 						}
 					}
-					
+
 					if (!$str)
 					{
 						$sqlSelect = 'SELECT * FROM `'.$table.'` WHERE 1=1 ';
@@ -2507,7 +2523,7 @@ class CSiteCheckerTest
 							else
 							{
 								$strError .= GetMessage('SC_ERR_NO_VALUE', array('#TABLE#' => $table, '#SQL#' => $sql))."<br>";
-								$_SESSION['FixQueryList'][] = $sql;
+								\Bitrix\Main\Application::getInstance()->getSession()['FixQueryList'][] = $sql;
 								$this->arTestVars['iError']++;
 								$this->arTestVars['iErrorAutoFix']++;
 								$this->arTestVars['cntNoValues']++;
@@ -2519,7 +2535,7 @@ class CSiteCheckerTest
 				}
 			}
 
-			if (version_compare($this->db_ver, '5.6', '>=') && file_exists($file = str_replace('/install.sql', '/install_ft.sql', $file)))
+			if (file_exists($file = str_replace('/install.sql', '/install_ft.sql', $file)))
 			{
 				if (false === ($query = file_get_contents($file)))
 					return false;
@@ -2539,7 +2555,7 @@ class CSiteCheckerTest
 				$rs = $DB->Query('SHOW INDEXES FROM `'.$table.'`');
 				while($f = $rs->Fetch())
 				{
-					$column = strtolower($f['Column_name'].($f['Sub_part'] ? '('.$f['Sub_part'].')' : ''));
+					$column = strtolower($f['Column_name'].($f['Sub_part']? '('.$f['Sub_part'].')' : ''));
 					if ($arIndexes[$f['Key_name']])
 						$arIndexes[$f['Key_name']] .= ','.$column;
 					else
@@ -2551,7 +2567,7 @@ class CSiteCheckerTest
 				$rs = $DB->Query('SHOW INDEXES FROM `'.$tmp_table.'`');
 				while($f = $rs->Fetch())
 				{
-					$column = strtolower($f['Column_name'].($f['Sub_part'] ? '('.$f['Sub_part'].')' : ''));
+					$column = strtolower($f['Column_name'].($f['Sub_part']? '('.$f['Sub_part'].')' : ''));
 					if ($arIndexes_tmp[$f['Key_name']])
 						$arIndexes_tmp[$f['Key_name']] .= ','.$column;
 					else
@@ -2577,7 +2593,7 @@ class CSiteCheckerTest
 							}
 							else
 							{
-								$_SESSION['FixQueryList'][] = $sql;
+								\Bitrix\Main\Application::getInstance()->getSession()['FixQueryList'][] = $sql;
 								$this->arTestVars['iError']++;
 								$this->arTestVars['iErrorAutoFix']++;
 							}
@@ -2611,7 +2627,7 @@ class CSiteCheckerTest
 							}
 							else
 							{
-								$_SESSION['FixQueryList'][] = $sql;
+								\Bitrix\Main\Application::getInstance()->getSession()['FixQueryList'][] = $sql;
 								$strError .= GetMessage('SC_ERR_FIELD_DIFFERS', array('#TABLE#' => $table, '#FIELD#' => $f['Field'], '#CUR#' => $cur, '#NEW#' => $tmp))."<br>";
 								$this->arTestVars['iError']++;
 								if ($this->TableFieldCanBeAltered($f, $f_tmp))
@@ -2630,7 +2646,7 @@ class CSiteCheckerTest
 						}
 						else
 						{
-							$_SESSION['FixQueryList'][] = $sql;
+							\Bitrix\Main\Application::getInstance()->getSession()['FixQueryList'][] = $sql;
 							$strError .= GetMessage('SC_ERR_NO_FIELD', array('#TABLE#' => $table, '#FIELD#' => $f_tmp['Field']))."<br>";
 							$this->arTestVars['iError']++;
 							$this->arTestVars['iErrorAutoFix']++;
@@ -2658,7 +2674,7 @@ class CSiteCheckerTest
 						}
 						else
 						{
-							$_SESSION['FixQueryList'][] = $sql;
+							\Bitrix\Main\Application::getInstance()->getSession()['FixQueryList'][] = $sql;
 							$strError .= GetMessage('SC_ERR_NO_INDEX', array('#TABLE#' => $table, '#INDEX#' => $name.' ('.$ix.')'))."<br>";
 							$this->arTestVars['iError']++;
 							$this->arTestVars['iErrorAutoFix']++;
@@ -2683,7 +2699,7 @@ class CSiteCheckerTest
 		if ($this->fix_mode)
 		{
 			if ($this->arTestVars['iErrorFix'] > 0)
-				return $this->Result(null, GetMessage('SC_CHECK_TABLES_STRUCT_ERRORS_FIX', 
+				return $this->Result(null, GetMessage('SC_CHECK_TABLES_STRUCT_ERRORS_FIX',
 					array(
 						'#VAL#' => intval($this->arTestVars['iErrorFix']),
 					)));
@@ -2693,10 +2709,10 @@ class CSiteCheckerTest
 		{
 			if ($this->arTestVars['iError'] > 0)
 			{
-				if (is_array($_SESSION['FixQueryList']) && count($_SESSION['FixQueryList']))
-					echo implode(";\n", $_SESSION['FixQueryList']).';';
-				$_SESSION['FixQueryList'] = array();
-				return $this->Result(false, GetMessage('SC_CHECK_TABLES_STRUCT_ERRORS', 
+				if (is_array(\Bitrix\Main\Application::getInstance()->getSession()['FixQueryList']) && count(\Bitrix\Main\Application::getInstance()->getSession()['FixQueryList']))
+					echo implode(";\n", \Bitrix\Main\Application::getInstance()->getSession()['FixQueryList']).';';
+				\Bitrix\Main\Application::getInstance()->getSession()['FixQueryList'] = array();
+				return $this->Result(false, GetMessage('SC_CHECK_TABLES_STRUCT_ERRORS',
 					array(
 						'#VAL#' => intval($this->arTestVars['iError']),
 						'#VAL1#' => intval($this->arTestVars['iErrorAutoFix']),
@@ -2714,7 +2730,7 @@ class CSiteCheckerTest
 	# }
 	#
 
-	function CommonTest()
+	public static function CommonTest()
 	{
 		if (defined('BX_CRONTAB') || (defined('CHK_EVENT') && CHK_EVENT === true) || !$_SERVER['HTTP_HOST']) // can't get real HTTP server vars from cron
 			return "CSiteCheckerTest::CommonTest();";
@@ -2783,24 +2799,6 @@ class CSiteCheckerTest
 
 		return "CSiteCheckerTest::CommonTest();";
 	}
-
-	function enableFullTextIndex($table, $field)
-	{
-		$name = '~ft_'.strtolower($table);
-		global $DB;
-		$options = array();
-		$f = $DB->Query('SELECT * FROM b_option WHERE MODULE_ID="main" AND NAME="'.$name.'"')->Fetch();
-		$optionString = $f['VALUE'];
-		if($optionString <> '')
-		{
-			$options = unserialize($optionString);
-		}
-		$options[strtoupper($field)] = true;
-		if ($f)
-			$DB->Query('UPDATE b_option SET VALUE="'.$DB->ForSQL(serialize($options)).'" WHERE MODULE_ID="main" AND NAME="'.$name.'"');
-		else
-			$DB->Query('INSERT INTO b_option (MODULE_ID, NAME, VALUE) VALUES("main", "'.$name.'", "'.$DB->ForSQL(serialize($options)).'")');
-	}
 }
 
 class CSearchFiles
@@ -2831,7 +2829,7 @@ class CSearchFiles
 
 		if ($this->SkipPath)
 		{
-			if (0!==strpos($this->SkipPath, dirname($path)))
+			if (0 !== strpos($this->SkipPath, dirname($path)))
 				return null;
 
 			if ($this->SkipPath == $path)
@@ -2928,7 +2926,7 @@ function GetHttpResponse($res, $strRequest, &$strHeaders)
 
 		$strChunkSize = "";
 		$i = 0;
-		while ($i < CUtil::BinStrlen($line) && in_array($line[$i], array("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f")))
+		while ($i < strlen($line) && in_array($line[$i], array("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f")))
 		{
 			$strChunkSize .= $line[$i];
 			$i++;
@@ -2944,7 +2942,7 @@ function GetHttpResponse($res, $strRequest, &$strHeaders)
 			while ($readSize > 0 && $line = fread($res, $readSize))
 			{
 				$strRes .= $line;
-				$processedSize += CUtil::BinStrlen($line);
+				$processedSize += strlen($line);
 				$newSize = $chunkSize - $processedSize;
 				$readSize = (($newSize > $maxReadSize) ? $maxReadSize : $newSize);
 			}
@@ -2955,7 +2953,7 @@ function GetHttpResponse($res, $strRequest, &$strHeaders)
 
 			$strChunkSize = "";
 			$i = 0;
-			while ($i < CUtil::BinStrlen($line) && in_array($line[$i], array("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f")))
+			while ($i < strlen($line) && in_array($line[$i], array("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "a", "b", "c", "d", "e", "f")))
 			{
 				$strChunkSize .= $line[$i];
 				$i++;
@@ -3003,12 +3001,8 @@ function getCharsetByCollation($collation)
 
 function InitPureDB()
 {
-	if (!function_exists('SendError'))
-	{
-		function SendError($str)
-		{
-		}
-	}
+	require_once($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/tools.php");
+
 	if (!function_exists('IsModuleInstalled'))
 	{
 		function IsModuleInstalled($module)
@@ -3018,28 +3012,11 @@ function InitPureDB()
 			return false;
 		}
 	}
-	if (!function_exists('GetMessageJS'))
-	{
-		function GetMessageJS($name, $aReplace=false)
-		{
-			return GetMessage($name, $aReplace);
-		}
-	}
-	if (!function_exists('bx_accelerator_reset'))
-	{
-		function bx_accelerator_reset()
-		{
-			if(function_exists("accelerator_reset"))
-				accelerator_reset();
-			elseif(function_exists("wincache_refresh_if_changed"))
-				wincache_refresh_if_changed();
-		}
-	}
-	global $DB, $DBType, $DBDebug, $DBDebugToFile, $DBHost, $DBName, $DBLogin, $DBPassword;
+
+	global $DB, $DBDebug, $DBDebugToFile, $DBHost, $DBName, $DBLogin, $DBPassword;
 
 	/**
 	 * Defined in dbconn.php
-	 * @var $DBType
 	 * @var $DBDebug
 	 * @var $DBDebugToFile
 	 * @var $DBHost
@@ -3048,16 +3025,19 @@ function InitPureDB()
 	 * @var $DBPassword
 	 */
 	require_once($_SERVER["DOCUMENT_ROOT"]."/bitrix/php_interface/dbconn.php");
+
 	if(defined('BX_UTF'))
 		define('BX_UTF_PCRE_MODIFIER', 'u');
 	else
 		define('BX_UTF_PCRE_MODIFIER', '');
 
-	include_once($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/lib/loader.php");
+	require_once($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/lib/loader.php");
+	require_once($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/include/autoload.php");
+
 	$application = \Bitrix\Main\HttpApplication::getInstance();
 	$application->initializeBasicKernel();
 
-	require_once($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/classes/".$DBType."/database.php");
+	require_once($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/classes/mysql/database.php");
 
 	$DB = new CDatabase;
 	$DB->debug = $DBDebug;
@@ -3065,16 +3045,9 @@ function InitPureDB()
 
 	if(!($DB->Connect($DBHost, $DBName, $DBLogin, $DBPassword)) || !($DB->DoConnect()))
 	{
-		if(file_exists(($fname = $_SERVER["DOCUMENT_ROOT"]."/bitrix/php_interface/dbconn_error.php")))
-			include($fname);
-		else
-			include($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/include/dbconn_error.php");
+		CDatabase::showConnectionError();
 		die();
 	}
-	if (file_exists($fname = $_SERVER["DOCUMENT_ROOT"]."/bitrix/php_interface/after_connect.php"))
-		require_once($fname);
-	if (file_exists($fname = $_SERVER["DOCUMENT_ROOT"]."/bitrix/php_interface/after_connect_d7.php"))
-		require_once($fname);
 }
 
 function TableFieldConstruct($f0)
@@ -3087,7 +3060,7 @@ function TableFieldConstruct($f0)
 			($f0['Null'] == 'YES' ? ' DEFAULT NULL ' : '')
 		:
 			' DEFAULT '.
-			($f0['Type'] == 'timestamp' && !preg_match('#^\d{4}#', $f0['Default'])
+			(($f0['Type'] == 'timestamp' || $f0['Type'] == 'datetime') && !preg_match('#^\d{4}#', $f0['Default'])
 			?
 				$f0['Default']
 				:
@@ -3105,13 +3078,13 @@ function fix_link($mode = 2)
 
 function PrintHTTP($strRequest, $strHeaders, $strRes)
 {
-	echo 
+	echo
 	"== Request ==\n".
-	(($l = CUtil::BinStrlen($strRequest)) > 1000 ? CUtil::BinSubstr($strRequest, 0, 1000).' ... ('.$l.' bytes)' : $strRequest)."\n".
+	(($l = strlen($strRequest)) > 1000 ? substr($strRequest, 0, 1000).' ... ('.$l.' bytes)' : $strRequest)."\n".
 	"== Response ==\n".
 	$strHeaders."\n".
 	"== Body ==\n".
-	(($l = CUtil::BinStrlen($strRes)) > 1000 ? CUtil::BinSubstr($strRes, 0, 1000).' ... ('.$l.' bytes)' : $strRes)."\n".
+	(($l = strlen($strRes)) > 1000 ? substr($strRes, 0, 1000).' ... ('.$l.' bytes)' : $strRes)."\n".
 	"==========\n";
 }
 

@@ -63,19 +63,22 @@ abstract class Queue
 	 * Basic check that the operator is active.
 	 *
 	 * @param $userId
-	 * @return bool
+	 * @param bool $ignorePause
+	 * @return bool|string
 	 * @throws \Bitrix\Main\ArgumentException
 	 * @throws \Bitrix\Main\LoaderException
 	 * @throws \Bitrix\Main\ObjectException
 	 * @throws \Bitrix\Main\SystemException
 	 */
-	public function isOperatorActive($userId)
+	public function isOperatorActive($userId, bool $ignorePause = false)
 	{
-		return ImOpenLines\Queue::isOperatorActive($userId, $this->configLine['CHECK_AVAILABLE']);
+		return ImOpenLines\Queue::isOperatorActive($userId, $this->configLine['CHECK_AVAILABLE'], $ignorePause);
 	}
 
 	/**
 	 * Are there any available operators in the line.
+	 *
+	 * @param bool $ignorePause
 	 *
 	 * @return bool
 	 * @throws \Bitrix\Main\ArgumentException
@@ -83,9 +86,9 @@ abstract class Queue
 	 * @throws \Bitrix\Main\ObjectPropertyException
 	 * @throws \Bitrix\Main\SystemException
 	 */
-	public function isOperatorsActiveLine(): bool
+	public function isOperatorsActiveLine(bool $ignorePause = false): bool
 	{
-		return ImOpenLines\Queue::isOperatorsActiveLine($this->configLine['ID'], $this->configLine['CHECK_AVAILABLE']);
+		return ImOpenLines\Queue::isOperatorsActiveLine($this->configLine['ID'], $this->configLine['CHECK_AVAILABLE'], $ignorePause);
 	}
 
 	/**
@@ -110,14 +113,18 @@ abstract class Queue
 
 		$res = ImOpenLines\Queue::getList([
 			'select' => $select,
-			'filter' => $filter
+			'filter' => $filter,
+			'order' => [
+				'SORT' => 'ASC',
+				'ID' => 'ASC'
+			]
 		]);
 
 		while($queueUser = $res->fetch())
 		{
-			if($this->isOperatorActive($queueUser['USER_ID']))
+			if($this->isOperatorActive($queueUser['USER_ID']) === true)
 			{
-				$result = $result + ImOpenLines\Queue::getCountFreeSlotOperator($queueUser['USER_ID'], $this->configLine['ID'], $this->configLine['MAX_CHAT'], $this->configLine['TYPE_MAX_CHAT']);
+				$result += ImOpenLines\Queue::getCountFreeSlotOperator($queueUser['USER_ID'], $this->configLine['ID'], $this->configLine['MAX_CHAT'], $this->configLine['TYPE_MAX_CHAT']);
 			}
 		}
 

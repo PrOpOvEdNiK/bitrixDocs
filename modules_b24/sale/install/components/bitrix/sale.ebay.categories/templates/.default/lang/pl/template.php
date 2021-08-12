@@ -1,6 +1,0 @@
-<?
-$MESS["SALE_EBAY_SEC_CATEGORY"] = "Kategoria";
-$MESS["SALE_EBAY_SEC_JS_CANCEL"] = "Anuluj";
-$MESS["SALE_EBAY_SEC_JS_CONTINUE"] = "Kontynuuj";
-$MESS["SALE_EBAY_SEC_REQUIRED"] = "Wymagane";
-?>

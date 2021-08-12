@@ -9,7 +9,7 @@ use Bitrix\DocumentGenerator\DataProviderManager;
 use Bitrix\DocumentGenerator\Nameable;
 use Bitrix\DocumentGenerator\Value\DateTime;
 
-class Quote extends ProductsDataProvider implements Nameable
+class Quote extends ProductsDataProvider
 {
 	protected $contacts;
 
@@ -136,14 +136,6 @@ class Quote extends ProductsDataProvider implements Nameable
 	/**
 	 * @return string
 	 */
-	protected function getCrmProductOwnerType()
-	{
-		return \CCrmQuote::OWNER_TYPE;
-	}
-
-	/**
-	 * @return string
-	 */
 	protected function getUserFieldEntityID()
 	{
 		return \CCrmQuote::GetUserFieldEntityID();
@@ -155,6 +147,7 @@ class Quote extends ProductsDataProvider implements Nameable
 	protected function getHiddenFields()
 	{
 		return array_merge(parent::getHiddenFields(), [
+			'STATUS_ID',
 			'BEGINDATE_SHORT',
 			'CLOSEDATE_SHORT',
 			'MYCOMPANY_ID',
@@ -193,5 +186,10 @@ class Quote extends ProductsDataProvider implements Nameable
 		}
 
 		return $this->contacts;
+	}
+
+	protected function getStatusEntityId(): ?string
+	{
+		return 'QUOTE_STATUS';
 	}
 }

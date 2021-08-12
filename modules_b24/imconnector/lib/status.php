@@ -31,9 +31,6 @@ class Status
 	 *
 	 * @param $connector
 	 * @return array|mixed
-	 * @throws \Bitrix\Main\ArgumentException
-	 * @throws \Bitrix\Main\ObjectPropertyException
-	 * @throws \Bitrix\Main\SystemException
 	 */
 	public static function getInstanceAllLine($connector)
 	{
@@ -52,7 +49,7 @@ class Status
 		{
 			if (empty(self::$instance[$connector][$row["LINE"]]) )
 			{
-				self::$instance[$connector][$row["LINE"]]= new self($connector,$row["LINE"]);
+				self::$instance[$connector][$row["LINE"]] = new self($connector,$row["LINE"]);
 			}
 		}
 
@@ -66,9 +63,6 @@ class Status
 	 * Receiving the status of all connectors and lines.
 	 *
 	 * @return array
-	 * @throws \Bitrix\Main\ArgumentException
-	 * @throws \Bitrix\Main\ObjectPropertyException
-	 * @throws \Bitrix\Main\SystemException
 	 */
 	public static function getInstanceAll()
 	{
@@ -97,12 +91,9 @@ class Status
 	 *
 	 * @param $connector
 	 * @param string $line
-	 * @return mixed
-	 * @throws \Bitrix\Main\ArgumentException
-	 * @throws \Bitrix\Main\ObjectPropertyException
-	 * @throws \Bitrix\Main\SystemException
+	 * @return self
 	 */
-	public static function getInstance($connector, $line = '#empty#')
+	public static function getInstance($connector, $line = '#empty#'): Status
 	{
 		$connector = Connector::getConnectorRealId($connector);
 
@@ -119,7 +110,6 @@ class Status
 	 *
 	 * @param string $line ID.
 	 * @return bool.
-	 * @throws \Exception.
 	 */
 	public static function deleteAll($line = '#empty#')
 	{
@@ -162,7 +152,6 @@ class Status
 	 * @param string $connector ID connector.
 	 * @param string $line ID open line.
 	 * @return bool
-	 * @throws \Exception.
 	 */
 	public static function delete($connector, $line = '#empty#')
 	{
@@ -191,6 +180,53 @@ class Status
 		];
 		$event = new Event(Library::MODULE_ID, Library::EVENT_STATUS_DELETE, $dataEvent);
 		$event->send();
+
+		if(!empty($delete) && is_object($delete) && $delete->isSuccess())
+			return true;
+		else
+			return false;
+	}
+
+	/**
+	 * Removal of all lines for the connector, except one
+	 *
+	 * @param string $connector ID connector.
+	 * @param string $lineToKeep ID open line to be keeped.
+	 * @return bool
+	 */
+	public static function deleteLinesExcept(string $connector, int $lineToKeep)
+	{
+		if (!empty(self::$instance[$connector]) && is_array(self::$instance[$connector]))
+		{
+			foreach (self::$instance[$connector] as $lineId => $_)
+			{
+				if ($lineId != $lineToKeep)
+				{
+					unset(self::$instance[$connector][$lineId]);
+				}
+			}
+		}
+
+		$raw = StatusConnectorsTable::getList([
+			'select' => ['ID', 'LINE'],
+			'filter' => [
+				'!=LINE' => $lineToKeep,
+				'=CONNECTOR' => $connector
+			]
+		]);
+		while($row = $raw->fetch())
+		{
+			$delete = StatusConnectorsTable::delete($row['ID']);
+			self::cleanCache($connector, $row['LINE']);
+
+			//Event
+			$dataEvent = [
+				"connector" => $connector,
+				"line" => $row['LINE'],
+			];
+			$event = new Event(Library::MODULE_ID, Library::EVENT_STATUS_DELETE, $dataEvent);
+			$event->send();
+		}
 
 		if(!empty($delete) && is_object($delete) && $delete->isSuccess())
 			return true;
@@ -258,30 +294,42 @@ class Status
 	/**
 	 * The event handler OnAfterEpilog.
 	 * Data is saved only when the script completes.
-	 *
-	 * @throws \Exception
 	 */
-	public static function save()
+	public static function save(): void
 	{
 		foreach (self::$instance as $currentConnector => $listLine)
 		{
 			foreach ($listLine as $line => $value)
 			{
 				$connector = self::$instance[$currentConnector][$line];
-				if(!empty($connector) && $connector instanceof \Bitrix\ImConnector\Status && !empty($connector->id))
+				if(
+					!empty($connector)
+					&& $connector instanceof Status
+					&& !empty($connector->id)
+				)
 				{
-					$fields = array();
+					$fields = [];
 
 					if(!empty($connector->active))
-						$fields["ACTIVE"] = $connector->active;
+					{
+						$fields['ACTIVE'] = $connector->active;
+					}
 					if(!empty($connector->connection))
-						$fields["CONNECTION"] = $connector->connection;
+					{
+						$fields['CONNECTION'] = $connector->connection;
+					}
 					if(!empty($connector->register))
-						$fields["REGISTER"] = $connector->register;
+					{
+						$fields['REGISTER'] = $connector->register;
+					}
 					if(!empty($connector->error))
-						$fields["ERROR"] = $connector->error;
+					{
+						$fields['ERROR'] = $connector->error;
+					}
 					if($connector->data !== false)
-						$fields["DATA"] = $connector->data;
+					{
+						$fields['DATA'] = $connector->data;
+					}
 
 					StatusConnectorsTable::update($connector->id, $fields);
 					self::cleanCache($currentConnector, $line);
@@ -413,9 +461,6 @@ class Status
 	 *
 	 * @param $connector
 	 * @param string $line
-	 * @throws \Bitrix\Main\ArgumentException
-	 * @throws \Bitrix\Main\ObjectPropertyException
-	 * @throws \Bitrix\Main\SystemException
 	 */
 	private function __construct($connector, $line = '#empty#')
 	{
@@ -478,11 +523,9 @@ class Status
 
 	private function __clone()
 	{
-
 	}
 	private function __wakeup()
 	{
-
 	}
 
 	/**

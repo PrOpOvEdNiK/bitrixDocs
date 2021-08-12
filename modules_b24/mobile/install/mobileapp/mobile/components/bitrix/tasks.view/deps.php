@@ -1,4 +1,0 @@
-<?php
-return [
-	'task/taskcard',
-];

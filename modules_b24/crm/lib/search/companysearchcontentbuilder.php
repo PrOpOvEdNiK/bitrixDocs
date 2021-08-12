@@ -1,6 +1,8 @@
 <?php
 namespace Bitrix\Crm\Search;
 use \Bitrix\Crm\CompanyTable;
+use Bitrix\Main\Application;
+
 class CompanySearchContentBuilder extends SearchContentBuilder
 {
 	public function getEntityTypeID()
@@ -64,7 +66,11 @@ class CompanySearchContentBuilder extends SearchContentBuilder
 			return $map;
 		}
 
-		$map->add($entityID);
+		$isShortIndex = ($options['isShortIndex'] ?? false);
+		if(!$isShortIndex)
+		{
+			$map->add($entityID);
+		}
 
 		$title = isset($fields['TITLE']) ? $fields['TITLE'] : '';
 		if($title !== '')
@@ -72,14 +78,14 @@ class CompanySearchContentBuilder extends SearchContentBuilder
 			$map->addText($title);
 			$map->addText(SearchEnvironment::prepareSearchContent($title));
 
-			$customerNumber = $this->parseCustomerNumber($title, '');
+			$customerNumber = $this->parseCustomerNumber($title, \CCrmCompany::GetAutoTitleTemplate());
 			if($customerNumber != $entityID)
 			{
 				$map->addTextFragments($customerNumber);
 			}
 		}
 
-		if(isset($fields['ASSIGNED_BY_ID']))
+		if(isset($fields['ASSIGNED_BY_ID']) && !$isShortIndex)
 		{
 			$map->addUserByID($fields['ASSIGNED_BY_ID']);
 		}
@@ -106,20 +112,23 @@ class CompanySearchContentBuilder extends SearchContentBuilder
 			}
 		}
 
-		if(isset($fields['INDUSTRY']))
+		if(isset($fields['INDUSTRY']) && !$isShortIndex)
 		{
 			$map->addStatus('INDUSTRY', $fields['INDUSTRY']);
 		}
 
-		if(isset($fields['COMMENTS']))
+		if(isset($fields['COMMENTS']) && !$isShortIndex)
 		{
 			$map->addHtml($fields['COMMENTS'], 1024);
 		}
 
 		//region UserFields
-		foreach($this->getUserFields($entityID) as $userField)
+		if (!$isShortIndex)
 		{
-			$map->addUserField($userField);
+			foreach($this->getUserFields($entityID) as $userField)
+			{
+				$map->addUserField($userField);
+			}
 		}
 		//endregion
 
@@ -153,5 +162,42 @@ class CompanySearchContentBuilder extends SearchContentBuilder
 	protected function save($entityID, SearchMap $map)
 	{
 		CompanyTable::update($entityID, array('SEARCH_CONTENT' => $map->getString()));
+	}
+
+	protected function saveShortIndex(int $entityId, SearchMap $map, bool $checkExist = false): \Bitrix\Main\DB\Result
+	{
+		$connection = \Bitrix\Main\Application::getConnection();
+		$helper = $connection->getSqlHelper();
+
+		$searchContent = $helper->forSql($map->getString());
+
+		if ($checkExist)
+		{
+			$sql = "
+				INSERT INTO b_crm_company_index(COMPANY_ID, SEARCH_CONTENT)
+				VALUES({$entityId}, '{$searchContent}')
+				ON DUPLICATE KEY UPDATE SEARCH_CONTENT= '{$searchContent}'
+			";
+			try
+			{
+				return $connection->query($sql);
+			}
+			catch (\Exception $exception)
+			{
+				return $connection->query($sql);
+			}
+		}
+
+		$sql = "
+			UPDATE b_crm_company_index SET SEARCH_CONTENT= '{$searchContent}' WHERE COMPANY_ID = {$entityId}
+		";
+		return $connection->query($sql);
+	}
+
+	public function removeShortIndex(int $entityId): \Bitrix\Main\ORM\Data\Result
+	{
+		return \Bitrix\Crm\Entity\Index\CompanyTable::delete([
+			'COMPANY_ID' => $entityId,
+		]);
 	}
 }

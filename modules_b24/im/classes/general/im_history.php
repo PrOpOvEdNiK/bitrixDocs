@@ -22,11 +22,11 @@ class CIMHistory
 	{
 		global $DB;
 
-		$fromUserId = IntVal($fromUserId);
+		$fromUserId = intval($fromUserId);
 		if ($fromUserId <= 0)
 			$fromUserId = $this->user_id;
 
-		$toUserId = IntVal($toUserId);
+		$toUserId = intval($toUserId);
 		if ($toUserId <= 0)
 		{
 			$GLOBALS["APPLICATION"]->ThrowException(GetMessage("IM_HISTORY_ERROR_TO_USER_ID"), "ERROR_TO_USER_ID");
@@ -34,7 +34,7 @@ class CIMHistory
 		}
 
 		$searchText = trim($searchText);
-		if (strlen($searchText) <= 3)
+		if (mb_strlen($searchText) <= 3)
 		{
 			$GLOBALS["APPLICATION"]->ThrowException(GetMessage("IM_HISTORY_SEARCH_EMPTY"), "ERROR_SEARCH_EMPTY");
 			return false;
@@ -66,16 +66,13 @@ class CIMHistory
 				'=CHAT_ID'	=> $chatId,
 				'*%MESSAGE'	=> $searchText,
 			];
-			if (\Bitrix\Main\Search\Content::canUseFulltextSearch($searchText))
+			if ($this->checkFullText($searchText))
 			{
-				if (\Bitrix\Im\Model\MessageIndexTable::getEntity()->fullTextIndexEnabled("SEARCH_CONTENT"))
-				{
-					$searchText = \Bitrix\Main\Search\Content::prepareStringToken($searchText);
-					$where = [
-						'=CHAT_ID' => $chatId,
-						'*INDEX.SEARCH_CONTENT' => $searchText,
-					];
-				}
+				$searchText = \Bitrix\Main\Search\Content::prepareStringToken($searchText);
+				$where = [
+					'=CHAT_ID' => $chatId,
+					'*INDEX.SEARCH_CONTENT' => $searchText,
+				];
 			}
 			if ($startId)
 			{
@@ -152,11 +149,11 @@ class CIMHistory
 	{
 		global $DB;
 
-		$fromUserId = IntVal($fromUserId);
+		$fromUserId = intval($fromUserId);
 		if ($fromUserId <= 0)
 			$fromUserId = $this->user_id;
 
-		$toUserId = IntVal($toUserId);
+		$toUserId = intval($toUserId);
 		if ($toUserId <= 0)
 		{
 			$GLOBALS["APPLICATION"]->ThrowException(GetMessage("IM_HISTORY_ERROR_TO_USER_ID"), "ERROR_TO_USER_ID");
@@ -287,11 +284,11 @@ class CIMHistory
 		if (intval($pageId) > 0)
 			$iNumPage = intval($pageId);
 
-		$fromUserId = IntVal($fromUserId);
+		$fromUserId = intval($fromUserId);
 		if ($fromUserId <= 0)
 			$fromUserId = $this->user_id;
 
-		$toUserId = IntVal($toUserId);
+		$toUserId = intval($toUserId);
 		if ($toUserId <= 0)
 		{
 			$GLOBALS["APPLICATION"]->ThrowException(GetMessage("IM_HISTORY_ERROR_TO_USER_ID"), "ERROR_TO_USER_ID");
@@ -336,7 +333,7 @@ class CIMHistory
 			$res_cnt = $res_cnt->Fetch();
 			$cnt = $res_cnt["CNT"];
 
-			if ($cnt > 0 && ceil($cnt/20) >= $iNumPage)
+			if ($cnt > 0 && ceil($cnt/30) >= $iNumPage)
 			{
 				if (!$bTimeZone)
 					CTimeZone::Disable();
@@ -359,7 +356,7 @@ class CIMHistory
 				if (!$bTimeZone)
 					CTimeZone::Enable();
 				$dbRes = new CDBResult();
-				$dbRes->NavQuery($strSql, $cnt, Array('iNumPage' => $iNumPage, 'nPageSize' => 20));
+				$dbRes->NavQuery($strSql, $cnt, Array('iNumPage' => $iNumPage, 'nPageSize' => 30));
 
 				while ($arRes = $dbRes->Fetch())
 				{
@@ -466,8 +463,6 @@ class CIMHistory
 					IM\Model\MessageTable::delete($messageInfo['ID']);
 				}
 			}
-			$obCache = new CPHPCache();
-			$obCache->CleanDir('/bx/imc/recent'.CIMMessenger::GetCachePath($this->user_id));
 		}
 
 		return true;
@@ -503,9 +498,6 @@ class CIMHistory
 		{
 			$strSql = "UPDATE b_im_relation SET START_ID = ".intval($arRes['MAX_ID']).", LAST_ID = ".(intval($arRes['MAX_ID'])-1)." WHERE ID = ".intval($arRes['R1_ID']);
 			$dbRes = $DB->Query($strSql, false, "File: ".__FILE__."<br>Line: ".__LINE__);
-
-			$obCache = new CPHPCache();
-			$obCache->CleanDir('/bx/imc/recent'.CIMMessenger::GetCachePath($this->user_id));
 		}
 
 		return true;
@@ -515,10 +507,10 @@ class CIMHistory
 	{
 		global $DB;
 
-		$chatId = IntVal($chatId);
+		$chatId = intval($chatId);
 		$searchText = trim($searchText);
 
-		if (strlen($searchText) <= 0)
+		if ($searchText == '')
 		{
 			$GLOBALS["APPLICATION"]->ThrowException(GetMessage("IM_HISTORY_SEARCH_EMPTY"), "ERROR_SEARCH_EMPTY");
 			return false;
@@ -641,7 +633,7 @@ class CIMHistory
 	{
 		global $DB;
 
-		$chatId = IntVal($chatId);
+		$chatId = intval($chatId);
 
 		$sqlHelper = Bitrix\Main\Application::getInstance()->getConnection()->getSqlHelper();
 		try
@@ -740,7 +732,7 @@ class CIMHistory
 		if (intval($pageId) > 0)
 			$iNumPage = intval($pageId);
 
-		$chatId = IntVal($chatId);
+		$chatId = intval($chatId);
 
 		$orm = IM\Model\ChatTable::getById($chatId);
 		if (!($chatData = $orm->fetch()))
@@ -761,10 +753,10 @@ class CIMHistory
 		if ($chatData['TYPE'] == IM_MESSAGE_OPEN)
 		{
 			$strCountSql ="
-			SELECT COUNT(M.ID) as CNT
-			FROM b_im_message M
-			INNER JOIN b_im_chat C ON C.ID = M.CHAT_ID AND C.TYPE = '".IM_MESSAGE_OPEN."'
-			WHERE M.CHAT_ID = ".$chatId." ".$limitById."
+				SELECT COUNT(M.ID) as CNT
+				FROM b_im_message M
+				INNER JOIN b_im_chat C ON C.ID = M.CHAT_ID AND C.TYPE = '".IM_MESSAGE_OPEN."'
+				WHERE M.CHAT_ID = ".$chatId." ".$limitById."
 			";
 
 			$strResultSql ="
@@ -787,10 +779,10 @@ class CIMHistory
 		else if ($chatData['TYPE'] == IM_MESSAGE_OPEN_LINE && \Bitrix\Main\Loader::includeModule('imopenlines') && \Bitrix\ImOpenLines\Config::canJoin($chatId))
 		{
 			$strCountSql ="
-			SELECT COUNT(M.ID) as CNT
-			FROM b_im_message M
-			INNER JOIN b_im_chat C ON C.ID = M.CHAT_ID AND C.TYPE = '".IM_MESSAGE_OPEN_LINE."'
-			WHERE M.CHAT_ID = ".$chatId." ".$limitById."
+				SELECT COUNT(M.ID) as CNT
+				FROM b_im_message M
+				INNER JOIN b_im_chat C ON C.ID = M.CHAT_ID AND C.TYPE = '".IM_MESSAGE_OPEN_LINE."'
+				WHERE M.CHAT_ID = ".$chatId." ".$limitById."
 			";
 
 			$strResultSql ="
@@ -813,10 +805,10 @@ class CIMHistory
 		else
 		{
 			$strCountSql ="
-			SELECT COUNT(M.ID) as CNT
-			FROM b_im_message M
-			INNER JOIN b_im_relation R1 ON M.CHAT_ID = R1.CHAT_ID
-			WHERE R1.CHAT_ID = ".$chatId." AND R1.USER_ID = ".$this->user_id." ".$limitById."
+				SELECT COUNT(M.ID) as CNT
+				FROM b_im_message M
+				INNER JOIN b_im_relation R1 ON M.CHAT_ID = R1.CHAT_ID
+				WHERE R1.CHAT_ID = ".$chatId." AND R1.USER_ID = ".$this->user_id." ".$limitById."
 			";
 
 			$strResultSql ="
@@ -846,10 +838,10 @@ class CIMHistory
 		$arMessageFiles = Array();
 		$arMessageId = Array();
 		$usersMessage = Array();
-		if ($cnt > 0 && ceil($cnt/20) >= $iNumPage)
+		if ($cnt > 0 && ceil($cnt/30) >= $iNumPage)
 		{
 			$dbRes = new CDBResult();
-			$dbRes->NavQuery($strResultSql, $cnt, Array('iNumPage' => $iNumPage, 'nPageSize' => 20));
+			$dbRes->NavQuery($strResultSql, $cnt, Array('iNumPage' => $iNumPage, 'nPageSize' => 30));
 
 			while ($arRes = $dbRes->Fetch())
 			{
@@ -869,6 +861,7 @@ class CIMHistory
 
 				$usersMessage[$arRes['CHAT_ID']][] = $arRes['ID'];
 				$arMessageId[] = $arRes['ID'];
+				$arUsersIds[] = $arRes['AUTHOR_ID'];
 			}
 
 			$params = CIMMessageParam::Get($arMessageId);
@@ -886,9 +879,25 @@ class CIMHistory
 			}
 			$arMessageFiles = CIMDisk::GetFiles($chatId, $arFiles);
 			$arMessages = CIMMessageLink::prepareShow($arMessages, $params);
+
 		}
 
-		return Array('chatId' => $chatId, 'message' => $arMessages, 'usersMessage' => $usersMessage, 'files' => $arMessageFiles);
+		$users = CIMContactList::GetUserData(array(
+			 'ID' => $arUsersIds,
+			 'DEPARTMENT' => 'Y',
+			 'USE_CACHE' => 'N',
+			 'PHONES' => IsModuleInstalled('voximplant')? 'Y': 'N'
+		 ));
+
+		return Array(
+			'chatId' => $chatId,
+			'message' => $arMessages,
+			'usersMessage' => $usersMessage,
+			'users' => $users['users'],
+			'userInGroup' => $users['userInGroup'],
+			'phones' => $users['phones'],
+			'files' => $arMessageFiles
+		);
 	}
 
 
@@ -1030,11 +1039,11 @@ class CIMHistory
 		$arMessages = CIMMessageLink::prepareShow($arMessages, $params);
 
 		$users = CIMContactList::GetUserData(array(
-												 'ID' => $arUsersIds,
-												 'DEPARTMENT' => 'Y',
-												 'USE_CACHE' => 'N',
-												 'PHONES' => IsModuleInstalled('voximplant')? 'Y': 'N'
-											 ));
+			 'ID' => $arUsersIds,
+			 'DEPARTMENT' => 'Y',
+			 'USE_CACHE' => 'N',
+			 'PHONES' => IsModuleInstalled('voximplant')? 'Y': 'N'
+		 ));
 
 		return Array(
 			'chatId' => $chatId,
@@ -1058,19 +1067,48 @@ class CIMHistory
 	public function GetRelatedMessages($messageId, $previous = 10, $next = 10, $timezone = true, $textParser = true)
 	{
 		$message = \Bitrix\Im\Model\MessageTable::getList(Array(
-															  'select' => Array('ID','DATE_CREATE', 'CHAT_ID', 'CHAT_TYPE' => 'CHAT.TYPE', 'AUTHOR_ID', 'ENTITY_TYPE' => 'CHAT.ENTITY_TYPE'),
-															  'filter' => Array(
-																  '=ID' => $messageId,
-																  '=RELATION.USER_ID' => $this->user_id
-															  ))
+			'select' => Array(
+				'ID','DATE_CREATE', 'CHAT_ID', 'AUTHOR_ID',
+				'CHAT_TYPE' => 'CHAT.TYPE',
+				'CHAT_ENTITY_TYPE' => 'CHAT.ENTITY_TYPE',
+				'CHAT_ENTITY_DATA_1' => 'CHAT.ENTITY_DATA_1',
+			),
+			'filter' => Array(
+				'=ID' => $messageId
+			))
 		)->fetch();
 		if (!$message)
+		{
 			return false;
+		}
+
+		$relations = CIMChat::GetRelationById($message['CHAT_ID']);
+		if (!isset($relations[$this->user_id]))
+		{
+			if (
+				$message['CHAT_ENTITY_TYPE'] == 'LINES'
+				&& \Bitrix\Main\Loader::includeModule('imopenlines')
+			)
+			{
+				$explodeData = explode('|', $message['CHAT_ENTITY_DATA_1']);
+				$crmEntityType = ($explodeData[0] == 'Y') ? $explodeData[1] : null;
+				$crmEntityId = ($explodeData[0] == 'Y') ? intval($explodeData[2]) : null;
+
+				if (!\Bitrix\ImOpenLines\Config::canJoin($message['CHAT_ID'], $crmEntityType, $crmEntityId))
+				{
+					return false;
+				}
+			}
+			else
+			{
+				return false;
+			}
+		}
 
 		$dialogId = 0;
 		if ($message['CHAT_TYPE'] == IM_MESSAGE_PRIVATE)
 		{
-			if($message['ENTITY_TYPE'] == IM_CHAT_TYPE_PERSONAL)
+			if($message['CHAT_ENTITY_TYPE'] == IM_CHAT_TYPE_PERSONAL)
 			{
 				$dialogId = $this->user_id;
 			}
@@ -1080,7 +1118,6 @@ class CIMHistory
 			}
 			else
 			{
-				$relations = CIMChat::GetRelationById($message['CHAT_ID']);
 				foreach ($relations as $userId => $data)
 				{
 					if ($userId != $this->user_id)
@@ -1278,10 +1315,13 @@ class CIMHistory
 
 	private function checkFullText($searchText)
 	{
+		$indexEnabled = \Bitrix\Main\Config\Option::get('im', 'message_history_index');
+
 		if (
-			\CIMMessenger::IsMysqlDb()
-			&& \Bitrix\Main\Search\Content::canUseFulltextSearch($searchText)
-			&& \Bitrix\Im\Model\MessageIndexTable::getEntity()->fullTextIndexEnabled("SEARCH_CONTENT")
+			$indexEnabled &&
+			\CIMMessenger::IsMysqlDb() &&
+			\Bitrix\Main\Search\Content::canUseFulltextSearch($searchText) &&
+			\Bitrix\Im\Model\MessageIndexTable::getEntity()->fullTextIndexEnabled("SEARCH_CONTENT")
 		)
 		{
 			return true;

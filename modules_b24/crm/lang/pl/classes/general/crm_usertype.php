@@ -1,3 +1,0 @@
-<?
-$MESS["CRM_USER_TYPE_ENUM_NOT_SELECTED"] = "(wszystkie)";
-?>

@@ -1,8 +1,0 @@
-<?
-$MESS["CRM_MODULE_NOT_INSTALLED"] = "CRM modulis nėra įdiegtas.";
-$MESS["CRM_PERMISSION_DENIED"] = "Negalima įeiti";
-$MESS["M_CRM_COMM_SELECTOR_OWNER_NOT_FOUND"] = "Savininkas nerastas.";
-$MESS["M_CRM_COMM_SELECT_SEARCH_PLACEHOLDER_PERSON"] = "Vardas";
-$MESS["M_CRM_COMM_SELECT_SEARCH_PLACEHOLDER_PHONE"] = "Vardas arba telefonas";
-$MESS["M_CRM_COMM_SELECT_SEARCH_PLACEHOLDER_EMAIL"] = "Vardas arba el.paštas";
-?>

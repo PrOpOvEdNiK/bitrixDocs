@@ -46,7 +46,12 @@ class Result extends Model
 	 */
 	public function getUrl()
 	{
-		return $this->url;
+		if (preg_match('#^(?:/|https?://)#', $this->url))
+		{
+			return $this->url;
+		}
+
+		return null;
 	}
 
 	/**
@@ -229,7 +234,7 @@ class Result extends Model
 
 		if($field['required'] && count($values) == 0 && empty($this->params['DISABLE_FIELD_CHECKING']))
 		{
-			$this->errors[] = Loc::getMessage('CRM_WEBFORM_RESULT_ERROR_REQUIRED_FIELD_EMPTY', array('%field%', $field['caption']));
+			$this->errors[] = Loc::getMessage('CRM_WEBFORM_RESULT_ERROR_REQUIRED_FIELD_EMPTY', array('%field%' => $field['caption']));
 			return false;
 		}
 		else if(count($values) == 0)
@@ -287,7 +292,7 @@ class Result extends Model
 
 		if(!$result)
 		{
-			$this->errors[] = Loc::getMessage('CRM_WEBFORM_RESULT_ERROR_REQUIRED_FIELD_EMPTY', array('%field%', $field['caption']));
+			$this->errors[] = Loc::getMessage('CRM_WEBFORM_RESULT_ERROR_REQUIRED_FIELD_EMPTY', array('%field%' => $field['caption']));
 		}
 
 		return $result;

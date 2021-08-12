@@ -9,17 +9,19 @@
 namespace Bitrix\Tasks\Item;
 
 use Bitrix\Main\Localization\Loc;
-
-use Bitrix\Tasks\Manager;
+use Bitrix\Tasks\Access\TaskAccessController;
+use Bitrix\Tasks\Comments\Task\CommentPoster;
 use Bitrix\Tasks\Integration\Search;
 use Bitrix\Tasks\Integration\Pull;
 use Bitrix\Tasks\Integration\SocialNetwork\Group;
 use Bitrix\Tasks\Internals\Counter;
 use Bitrix\Tasks\Internals\SearchIndex;
+use Bitrix\Tasks\Internals\Task\ProjectLastActivityTable;
 use Bitrix\Tasks\Internals\TaskTable;
 use Bitrix\Tasks\Internals\Task\FavoriteTable;
 use Bitrix\Tasks\Internals\Task\LogTable;
 use Bitrix\Tasks\Internals\Helper\Task\Dependence;
+use Bitrix\Tasks\Internals\UserOption;
 use Bitrix\Tasks\UI;
 use Bitrix\Tasks\Util;
 use Bitrix\Tasks\Util\User;
@@ -51,6 +53,17 @@ final class Task extends \Bitrix\Tasks\Item
 	public static function getUserFieldControllerClass()
 	{
 		return Util\UserField\Task::getClass();
+	}
+
+	public function save($settings = array())
+	{
+		$result = parent::save($settings);
+		$id = (int) $this->getId();
+		if ($id)
+		{
+			TaskAccessController::dropItemCache($id);
+		}
+		return $result;
 	}
 
 	protected static function generateMap(array $parameters = array())
@@ -211,6 +224,10 @@ final class Task extends \Bitrix\Tasks\Item
 				{
 					$this['STATUS_CHANGED_DATE'] = $now;
 				}
+				if(!$this->isFieldModified('ACTIVITY_DATE'))
+				{
+					$this['ACTIVITY_DATE'] = $now;
+				}
 
 				if($this->isFieldModified('DESCRIPTION_IN_BBCODE') && $this['DESCRIPTION_IN_BBCODE'] != 'Y')
 				{
@@ -231,77 +248,7 @@ final class Task extends \Bitrix\Tasks\Item
 
 	public function checkData($result)
 	{
-		if(parent::checkData($result))
-		{
-			// data looks good for orm, now check some high-level conditions...
-
-			//		$data = $this->getTransitionState();
-			//		$result = $data->getResult();
-			//		if($data->isInProgress())
-			//		{
-			//			$id = $this->getId();
-			//
-			//			// checking for update()
-			//			if($id)
-			//			{
-			//				// todo: update action is not implemented currently
-			//
-			//				/*
-			//				if($ID && ((isset($arFields['END_DATE_PLAN']) && (string) $arFields['END_DATE_PLAN'] == '')))
-			//				{
-			//					if(DependenceTable::checkItemLinked($ID))
-			//					{
-			//						$this->_errors[] = array("text" => GetMessage("TASKS_IS_LINKED_END_DATE_PLAN_REMOVE"), "id" => "ERROR_TASKS_IS_LINKED");
-			//					}
-			//				}
-			//
-			//				if($ID && (isset($arFields['PARENT_ID']) && intval($arFields['PARENT_ID']) > 0))
-			//				{
-			//					if(DependenceTable::checkLinkExists($ID, $arFields['PARENT_ID'], array('BIDIRECTIONAL' => true)))
-			//					{
-			//						$this->_errors[] = array("text" => GetMessage("TASKS_IS_LINKED_SET_PARENT"), "id" => "ERROR_TASKS_IS_LINKED");
-			//					}
-			//				}
-			//
-			//				if ($ID !== false && $ID == $arFields["PARENT_ID"])
-			//				{
-			//					$this->_errors[] = array("text" => GetMessage("TASKS_PARENT_SELF"), "id" => "ERROR_TASKS_PARENT_SELF");
-			//				}
-			//
-			//				if ($ID !== false && is_array($arFields["DEPENDS_ON"]) && in_array($ID, $arFields["DEPENDS_ON"]))
-			//				{
-			//					$this->_errors[] = array("text" => GetMessage("TASKS_DEPENDS_ON_SELF"), "id" => "ERROR_TASKS_DEPENDS_ON_SELF");
-			//				}
-			//				 */
-			//			}
-			//
-			//			// common checking for both add() and update()
-			//
-			//			// if plan dates were set
-			//			if (isset($data['START_DATE_PLAN'])
-			//				&& isset($data['END_DATE_PLAN'])
-			//				&& ($data['START_DATE_PLAN'] != '')
-			//				&& ($data['END_DATE_PLAN'] != '')
-			//			)
-			//			{
-			//				$startDate = \MakeTimeStamp($data['START_DATE_PLAN']);
-			//				$endDate   = \MakeTimeStamp($data['END_DATE_PLAN']);
-			//
-			//				// and they were really set
-			//				if (($startDate > 0)
-			//					&& ($endDate > 0)
-			//				)
-			//				{
-			//					// and end date is before start date => then emit error
-			//					if ($endDate < $startDate)
-			//					{
-			//						$result->getErrors()->add('ILLEGAL_PLAN_DATES', Loc::getMessage('TASKS_BAD_PLAN_DATES')); // todo: include lang file
-			//					}
-			//				}
-			//			}
-			//		}
-		}
-
+		parent::checkData($result);
 		return $result->isSuccess();
 	}
 
@@ -339,8 +286,18 @@ final class Task extends \Bitrix\Tasks\Item
 			$fullTaskData = $this->getData();
 
 			$groupId = $data['GROUP_ID'];
-			$parentId = intval($data['PARENT_ID']);
-			$participants = array_merge([$data['CREATED_BY'], $data['RESPONSIBLE_ID']], $data['ACCOMPLICES'], $data['AUDITORS']);
+			$parentId = (int)$data['PARENT_ID'];
+
+			$participants = [$data['CREATED_BY'], $data['RESPONSIBLE_ID']];
+			if (isset($data['ACCOMPLICES']) && is_array($data['ACCOMPLICES']))
+			{
+				$participants = array_merge($participants, $data['ACCOMPLICES']);
+			}
+			if (isset($data['AUDITORS']) && is_array($data['AUDITORS']))
+			{
+				$participants = array_merge($participants, $data['AUDITORS']);
+			}
+			$participants = array_unique($participants);
 
 			// add to favorite, if parent is in the favorites too
 			if ($parentId && FavoriteTable::check(['TASK_ID' => $parentId, 'USER_ID' => $userId]))
@@ -348,11 +305,28 @@ final class Task extends \Bitrix\Tasks\Item
 				FavoriteTable::add(['TASK_ID' => $taskId, 'USER_ID' => $userId], ['CHECK_EXISTENCE' => false]);
 			}
 
-			\CTasks::__updateViewed($taskId, $data['CREATED_BY'], $onTaskAdd = true); // todo: create processor instead of it
-			Counter::onAfterTaskAdd($data);
+			if ($groupId)
+			{
+				ProjectLastActivityTable::update($groupId, ['ACTIVITY_DATE' => $fullTaskData['ACTIVITY_DATE']]);
+			}
 
 			// note that setting occur as is deprecated. use access checker switch off instead
-			$occurAsUserId = (User::getOccurAsId()?: $userId);
+			$occurAsUserId = (User::getOccurAsId() ?: $userId);
+
+			\CTaskNotifications::sendAddMessage(
+				array_merge($data, ['CHANGED_BY' => $occurAsUserId]),
+				['SPAWNED_BY_AGENT' => $data['SPAWNED_BY_AGENT'] === 'Y' || $data['SPAWNED_BY_AGENT'] === true]
+			);
+
+			foreach ($data['AUDITORS'] as $auditorId)
+			{
+				UserOption::add($taskId, $auditorId, UserOption\Option::MUTED);
+			}
+
+			Counter\CounterService::addEvent(
+				Counter\Event\EventDictionary::EVENT_AFTER_TASK_ADD,
+				$data
+			);
 
 			// changes log
 			$this->addLogRecord([
@@ -367,6 +341,9 @@ final class Task extends \Bitrix\Tasks\Item
 
 			\CTaskSync::addItem($data); // MS Exchange
 
+			$commentPoster = CommentPoster::getInstance($taskId, $data['CREATED_BY']);
+			$commentPoster->postCommentsOnTaskAdd($data);
+
 			$this->sendPullEvents($data, $result);
 
 			$batchState = static::getBatchState();
@@ -376,11 +353,6 @@ final class Task extends \Bitrix\Tasks\Item
 			{
 				$batchState->accumulateArray('GROUP', [$groupId]);
 			}
-
-			\CTaskNotifications::sendAddMessage(
-				array_merge($data, ['CHANGED_BY' => $occurAsUserId]),
-				['SPAWNED_BY_AGENT' => $data['SPAWNED_BY_AGENT'] === 'Y' || $data['SPAWNED_BY_AGENT'] === true]
-			);
 
 			// todo: this should be moved inside PARENT_ID field controller:
 			if ($parentId)
@@ -736,8 +708,11 @@ final class Task extends \Bitrix\Tasks\Item
 				'event_GUID' => isset($data['META::EVENT_GUID']) ? $data['META::EVENT_GUID'] : sha1(uniqid('AUTOGUID', true))
 			);
 
-			Pull::emitMultiple($recipients, 'TASKS_GENERAL_#USER_ID#', 'task_add', $arPullData);
-			Pull::emitMultiple($recipients, 'TASKS_TASK_'.$id, 'task_add', $arPullData);
+			Pull\PushService::addEvent($recipients, [
+				'module_id'  => 'tasks',
+				'command'    => 'task_add',
+				'params'     => $arPullData
+			]);
 		}
 		catch (\Exception $e)
 		{

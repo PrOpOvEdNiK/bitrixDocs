@@ -1,4 +1,5 @@
-<?
+<?php
+
 class CXMPPParser
 {
 	var $arTagList = array();
@@ -7,7 +8,7 @@ class CXMPPParser
 	var $string;
 	var $raw;
 
-	function ToArray($text)
+	public static function ToArray($text)
 	{
 		$parser = new CXMPPParser($text);
 		if (!$parser->Parse())
@@ -15,14 +16,14 @@ class CXMPPParser
 		return $parser->array;
 	}
 
-	function ToXml($ar)
+	public static function ToXml($ar)
 	{
 		$parser = new CXMPPParser();
 		$text = $parser->toString($ar);
 		return $text;
 	}
 
-	function CXMPPParser($raw=false)
+	public function __construct($raw=false)
 	{
 		$this->raw = $this->ConvertCharsetToSite(trim($raw));
 	}
@@ -31,18 +32,18 @@ class CXMPPParser
 	{
 		$str = $this->raw;
 
-		$start = strpos($str,'<',$pos);
-		$end = strpos($str,'>',$start)+1;
+		$start = mb_strpos($str, '<', $pos);
+		$end = mb_strpos($str, '>', $start) + 1;
 
 		if ($start===false || $end===false)
 			return;
 
-		$tag = trim(substr($str,$start,$end-$start));
+		$tag = trim(mb_substr($str, $start, $end - $start));
 		if ($tag)
 		{
 			$this->arTagList[] = array($tag,$start,$end);
 
-			if ($end < strlen($str))
+			if ($end < mb_strlen($str))
 				return $end;
 			else
 				return true;
@@ -62,13 +63,11 @@ class CXMPPParser
 		$level_items = array();
 		$level = 0;
 		$bLastOpenTag = false;
-		foreach($this->arTagList as $arTag) // парсим теги
+		foreach($this->arTagList as $arTag)
 		{
 			$name = $this->GetName($arTag[0]);
-//			if ($name == 'stream:stream')
-//				continue;
 
-			if (substr($arTag[0],-2) == '/>') // сам себя закрывает
+			if (mb_substr($arTag[0], -2) == '/>') // self closed
 			{
 				$val = array(
 					'.' => $this->GetAttr($arTag[0]),
@@ -85,13 +84,13 @@ class CXMPPParser
 				$child = $level_items[$level];
 				$bLastOpenTag = 0;
 			}
-			elseif (substr($arTag[0],0,2) != '</') // открывающий
+			elseif (mb_substr($arTag[0], 0, 2) != '</') // opener
 			{
 				$level++;
 				$arTmpTags[] = $arTag;
 				$bLastOpenTag = 1;
 			}
-			else // закрывающий
+			else // closer
 			{
 				unset($level_items[$level]);
 				$level--;
@@ -104,7 +103,7 @@ class CXMPPParser
 					{
 						$start = $arOpenTag[2];
 						$end = $arTag[1];
-						$val = array('#' => substr($this->raw,$start,$end-$start));
+						$val = array('#' => mb_substr($this->raw, $start, $end - $start));
 					}
 					else
 						$val = $child;
@@ -121,12 +120,12 @@ class CXMPPParser
 					$child = $level_items[$level];
 				}
 				else
-					return; // закрывается не текущий тег
+					return; // close non current tag
 
 				$bLastOpenTag = 0;
 			}
 		}
-		if ($level != 0) // остались открытые или есть незакрытые
+		if ($level != 0) // opened or non closed tags left
 			return;
 
 		$this->array = $child;
@@ -149,7 +148,7 @@ class CXMPPParser
 				$content = $child['#'];
 				if (is_array($child['.']))
 					foreach($child['.'] as $k => $v)
-						$attr[] = $k.'="'.$v.'"'; // кавычки в атрибутах не ждём
+						$attr[] = $k.'="'.$v.'"'; // there are no quotes in attributes
 			}
 			else
 			{
@@ -168,12 +167,12 @@ class CXMPPParser
 					{
 						if (is_array($child['.']))
 							foreach($child['.'] as $k => $v)
-								$attr[] = $k.'="'.$v.'"'; // кавычки в атрибутах не ждём
+								$attr[] = $k.'="'.$v.'"'; // there are no quotes in attributes
 						$content = $this->__toStringInternal($child);
 					}
 				}
 			}
-			$str .= '<'.$name.(count($attr)?' '.implode(' ',$attr):'').(isset($content)?'>'.$content.'</'.$name.'>':'/>');#."\n";
+			$str .= '<'.$name.(count($attr)?' '.implode(' ',$attr):'').(isset($content)?'>'.$content.'</'.$name.'>':'/>');
 		}
 
 
@@ -206,22 +205,22 @@ class CXMPPParser
 
 	function GetName($tag)
 	{
-		$pos = strpos($tag,' ');
+		$pos = mb_strpos($tag, ' ');
 		if (!$pos)
-			$pos = strpos($tag,'>');
-		if (!$pos) // 0 тоже не катит
+			$pos = mb_strpos($tag, '>');
+		if (!$pos) // ignoring 0
 			return;
 
-		return strtolower(trim(substr($tag,1,$pos - 1),'/'));
+		return mb_strtolower(trim(mb_substr($tag, 1, $pos - 1), '/'));
 	}
 
 	function GetAttr($tag)
 	{
-		if (($pos = strpos($tag,' '))===false)
+		if (($pos = mb_strpos($tag, ' '))===false)
 			return array();
 
-		$tag = substr($tag,$pos,-1);
-		$l = strlen($tag);
+		$tag = mb_substr($tag, $pos, -1);
+		$l = mb_strlen($tag);
 
 		$arAttr = array();
 		$bParam = true;
@@ -245,11 +244,11 @@ class CXMPPParser
 				if ($chr == '"' || $chr = "'")
 				{
 					$open = $chr;
-					$pos = strpos($tag,$open,$i+1);
+					$pos = mb_strpos($tag, $open, $i + 1);
 					if ($pos === false)
 						return;
 
-					$val = substr($tag,$i+1,$pos-$i-1);
+					$val = mb_substr($tag, $i + 1, $pos - $i - 1);
 					$arAttr[trim($param)] = $val;
 					$i = $pos;
 					$param = '';
@@ -262,4 +261,3 @@ class CXMPPParser
 		return $arAttr;
 	}
 }
-?>

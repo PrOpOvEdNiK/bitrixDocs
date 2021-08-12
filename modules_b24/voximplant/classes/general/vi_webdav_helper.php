@@ -192,9 +192,19 @@ class CVoxImplantWebDavHelper
 		$editUrl = $editUrlTemplate !== ''
 			? self::PrepareUrl($editUrlTemplate, $arElement)
 			: str_replace('view', 'edit', $showUrl).'EDIT/';
-		$deleteUrl = $deleteUrlTemplate !== ''
-			? self::PrepareUrl($deleteUrlTemplate, $arElement)
-			: preg_match('/\/docs\/shared\//i', $showUrl) ? '' : str_replace('view', 'edit', $showUrl).'DELETE_DROPPED/';
+
+		if ($deleteUrlTemplate !== '')
+		{
+			$deleteUrl = self::PrepareUrl($deleteUrlTemplate, $arElement);
+		}
+		else if (preg_match('/\/docs\/shared\//i', $showUrl))
+		{
+			$deleteUrl = '';
+		}
+		else
+		{
+			$deleteUrl = str_replace('view', 'edit', $showUrl).'DELETE_DROPPED/';
+		}
 
 		$size = '';
 		$dbSize = CIBlockElement::GetProperty($arElement['IBLOCK_ID'], $arElement['ID'], array(), array('CODE' => 'WEBDAV_SIZE'));
@@ -359,7 +369,7 @@ class CVoxImplantWebDavHelper
 		}
 
 		$blockID = 0;
-		$sharedFilesSettings = unserialize(COption::GetOptionString('webdav', 'shared_files', ''));
+		$sharedFilesSettings = unserialize(COption::GetOptionString('webdav', 'shared_files', ''), ['allowed_classes' => false]);
 		if(isset($sharedFilesSettings[$siteID]))
 		{
 			$siteSettings = $sharedFilesSettings[$siteID];
@@ -475,7 +485,7 @@ class CVoxImplantWebDavHelper
 			}
 			else
 			{
-				$dbSites = CSite::GetList($by = 'sort', $order = 'desc', array('DEF' => 'Y'));
+				$dbSites = CSite::GetList('sort', 'desc', array('DEF' => 'Y'));
 				while($arSite = $dbSites->Fetch())
 				{
 					$siteID = $arSite['LID'];
@@ -695,13 +705,13 @@ class CVoxImplantDiskHelper
 		if (!($arHistory['CALL_START_DATE'] instanceof Bitrix\Main\Type\DateTime))
 			return false;
 
-		if (strlen($arHistory['PHONE_NUMBER']) <= 0)
+		if ($arHistory['PHONE_NUMBER'] == '')
 			return false;
 
 		if (intval($arFile['ID']) <= 0)
 			return false;
 
-		if (strlen($arFile['ORIGINAL_NAME']) <= 0)
+		if ($arFile['ORIGINAL_NAME'] == '')
 			return false;
 
 		if (intval($arFile['FILE_SIZE']) <= 0)

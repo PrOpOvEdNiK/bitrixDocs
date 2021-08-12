@@ -1,3 +1,0 @@
-<?
-$MESS["MAIN_SRV_GEOIP_HNDL_ENTITY_SORT_FIELD"] = "Sortowanie";
-?>

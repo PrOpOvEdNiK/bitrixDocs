@@ -459,7 +459,7 @@ class CCrmWebDavHelper
 		}
 		else
 		{
-			$sharedFilesSettings = unserialize(COption::GetOptionString('webdav', 'shared_files', ''));
+			$sharedFilesSettings = unserialize(COption::GetOptionString('webdav', 'shared_files', ''), ['allowed_classes' => false]);
 			if(isset($sharedFilesSettings[$siteID]))
 			{
 				$siteSettings = $sharedFilesSettings[$siteID];
@@ -570,7 +570,7 @@ class CCrmWebDavHelper
 			}
 			else
 			{
-				$dbSites = CSite::GetList($by = 'sort', $order = 'desc', array('DEFAULT' => 'Y'));
+				$dbSites = CSite::GetList('sort', 'desc', array('DEFAULT' => 'Y'));
 				while($arSite = $dbSites->Fetch())
 				{
 					$siteID = $arSite['LID'];

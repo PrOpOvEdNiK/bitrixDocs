@@ -1,5 +1,5 @@
 <?
-$MESS["DEMO_MENU_ALERT"] = "Alerter et confirmer";
+$MESS["DEMO_MENU_ALERT"] = "Notifier et confirmer";
 $MESS["DEMO_MENU_API"] = "Vérifier la version de l'API";
 $MESS["DEMO_MENU_BUTTONS"] = "Boutons";
 $MESS["DEMO_MENU_CHOSE_PHOTO"] = "Sélectionneur de photo";

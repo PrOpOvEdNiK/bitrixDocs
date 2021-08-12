@@ -1,6 +1,0 @@
-<?
-$MESS["LEARNING_SEARCH_COMPLEX_NAME"]="Ieškoti kursuose";
-$MESS["LEARNING_SEARCH_COMPLEX_DESC"]="Ieškoti kursuose";
-$MESS["LEARNING_SERVICE"]="E. mokymasis";
-$MESS["LEARNING_SEARCH_SERVICE"]="Paieška";
-?>

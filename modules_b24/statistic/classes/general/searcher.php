@@ -3,11 +3,9 @@ class CAllSearcher
 {
 	public static function DynamicDays($SEARCHER_ID, $date1="", $date2="")
 	{
-		$by = "";
-		$order = "";
 		$arMaxMin = array();
 		$arFilter = array("DATE1"=>$date1, "DATE2"=>$date2);
-		$z = CSearcher::GetDynamicList($SEARCHER_ID, $by, $order, $arMaxMin, $arFilter);
+		$z = CSearcher::GetDynamicList($SEARCHER_ID, '', '', $arMaxMin, $arFilter);
 		$d = 0;
 		while($zr = $z->Fetch())
 			if(intval($zr["TOTAL_HITS"]) > 0)
@@ -33,7 +31,7 @@ class CAllSearcher
 				}
 				else
 				{
-					if( (strlen($val) <= 0) || ($val === "NOT_REF") )
+					if( ((string)$val == '') || ($val === "NOT_REF") )
 						continue;
 				}
 
@@ -90,7 +88,7 @@ class CAllSearcher
 		return $arrDays;
 	}
 
-	public static function GetDomainList(&$by, &$order, $arFilter=Array(), &$is_filtered)
+	public static function GetDomainList($by = 's_id', $order = 'desc', $arFilter = [])
 	{
 		$err_mess = "File: ".__FILE__."<br>Line: ";
 		$DB = CDatabase::GetModuleConnection('statistic');
@@ -107,7 +105,7 @@ class CAllSearcher
 				}
 				else
 				{
-					if( (strlen($val) <= 0) || ($val === "NOT_REF") )
+					if( ((string)$val == '') || ($val === "NOT_REF") )
 						continue;
 				}
 				$match_value_set = array_key_exists($key."_EXACT_MATCH", $arFilter);
@@ -133,14 +131,14 @@ class CAllSearcher
 		elseif ($by == "s_variable") $strSqlOrder = "ORDER BY P.VARIABLE";
 		else
 		{
-			$by = "s_id";
 			$strSqlOrder = "ORDER BY P.ID";
 		}
-		if ($order!="asc")
+
+		if ($order != "asc")
 		{
 			$strSqlOrder .= " desc ";
-			$order="desc";
 		}
+
 		$strSqlSearch = GetFilterSqlSearch($arSqlSearch);
 		$strSql = "
 			SELECT
@@ -156,7 +154,7 @@ class CAllSearcher
 			";
 
 		$rs = $DB->Query($strSql, false, $err_mess.__LINE__);
-		$is_filtered = (IsFiltered($strSqlSearch));
+
 		return $rs;
 	}
 

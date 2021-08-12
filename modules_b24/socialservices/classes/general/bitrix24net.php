@@ -10,7 +10,7 @@ if(!defined('B24NETWORK_NODE'))
 {
 	$defaultValue = \Bitrix\Main\Config\Option::get('socialservices', 'network_url', '');
 
-	if(strlen($defaultValue) > 0)
+	if($defaultValue <> '')
 	{
 		define('B24NETWORK_NODE', $defaultValue);
 	}
@@ -175,12 +175,13 @@ class CSocServBitrix24Net extends CSocServAuth
 
 					if($authError === true)
 					{
-						if(strlen(SITE_ID) > 0)
+						if(SITE_ID <> '')
 						{
 							$arFields["SITE_ID"] = SITE_ID;
 						}
 
-						$authError = $this->AuthorizeUser($arFields);
+						$bSaveNetworkAuth = COption::GetOptionString("main", "allow_external_auth_stored_hash", "N") == "Y";
+						$authError = $this->AuthorizeUser($arFields, $bSaveNetworkAuth);
 					}
 				}
 
@@ -197,6 +198,11 @@ class CSocServBitrix24Net extends CSocServAuth
 		}
 
 		$bSuccess = $authError === true;
+
+		if ($bSuccess)
+		{
+			CSocServAuthManager::SetAuthorizedServiceId(self::ID);
+		}
 
 		// hack to update option used for visualization in module options
 		if($bSuccess && !self::GetOption("bitrix24net_domain"))
@@ -232,7 +238,7 @@ class CSocServBitrix24Net extends CSocServAuth
 				{
 					foreach($aRemove as $param)
 					{
-						if(strpos($value, $param."=") === 0)
+						if(mb_strpos($value, $param."=") === 0)
 						{
 							unset($arUrlQuery[$key]);
 							break;
@@ -249,7 +255,7 @@ class CSocServBitrix24Net extends CSocServAuth
 			}
 		}
 
-		if(strlen($url) <= 0 || preg_match("'^(http://|https://|ftp://|//)'i", $url))
+		if($url == '' || preg_match("'^(http://|https://|ftp://|//)'i", $url))
 		{
 			$url = \CHTTP::URN2URI('/');
 		}
@@ -268,7 +274,7 @@ class CSocServBitrix24Net extends CSocServAuth
 				{
 					unset($_SESSION['B24_NETWORK_REDIRECT_TRY']);
 					$url = self::getUrl();
-					$url .= (strpos($url, '?') >= 0 ? '&' : '?').'skip_redirect=1&error_message='.urlencode($errorMessage);
+					$url .= (mb_strpos($url, '?') >= 0 ? '&' : '?').'skip_redirect=1&error_message='.urlencode($errorMessage);
 				}else
 				{
 					$_SESSION['B24_NETWORK_REDIRECT_TRY'] = true;
@@ -286,16 +292,16 @@ class CSocServBitrix24Net extends CSocServAuth
 				{
 					$url = (isset($urlPath)) ? $urlPath.'?auth_service_id='.self::ID.'&auth_service_error='.$authError : $GLOBALS['APPLICATION']->GetCurPageParam(('auth_service_id='.self::ID.'&auth_service_error='.$authError), $aRemove);
 				}
-				if (strlen($errorMessage))
+				if($errorMessage <> '')
 				{
-					$url .= '&error_message=' . urlencode($errorMessage);
+					$url .= '&error_message='.urlencode($errorMessage);
 				}
 			}
 		}
 
-		if(CModule::IncludeModule("socialnetwork") && strpos($url, "current_fieldset=") === false)
+		if(CModule::IncludeModule("socialnetwork") && mb_strpos($url, "current_fieldset=") === false)
 		{
-			$url .= ((strpos($url, "?") === false) ? '?' : '&')."current_fieldset=SOCSERV";
+			$url .= ((mb_strpos($url, "?") === false) ? '?' : '&')."current_fieldset=SOCSERV";
 		}
 
 		if($url === $APPLICATION->GetCurPageParam())

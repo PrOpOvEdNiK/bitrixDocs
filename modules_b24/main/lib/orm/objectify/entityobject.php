@@ -17,6 +17,7 @@ use Bitrix\Main\ORM\Data\UpdateResult;
 use Bitrix\Main\ORM\Entity;
 use Bitrix\Main\ORM\Fields\ExpressionField;
 use Bitrix\Main\ORM\Fields\IReadable;
+use Bitrix\Main\ORM\Fields\ObjectField;
 use Bitrix\Main\ORM\Fields\Relations\CascadePolicy;
 use Bitrix\Main\ORM\Fields\Relations\ManyToMany;
 use Bitrix\Main\ORM\Fields\Relations\OneToMany;
@@ -117,10 +118,38 @@ abstract class EntityObject implements ArrayAccess
 			// we have custom default values
 			foreach ($setDefaultValues as $fieldName => $defaultValue)
 			{
-				$this->set($fieldName, $defaultValue);
+				$field = $this->entity->getField($fieldName);
+
+				if ($field instanceof Reference)
+				{
+					if (is_array($defaultValue))
+					{
+						$defaultValue = $field->getRefEntity()->createObject($defaultValue);
+					}
+
+					$this->set($fieldName, $defaultValue);
+				}
+				elseif (($field instanceof OneToMany || $field instanceof ManyToMany)
+					&& is_array($defaultValue))
+				{
+					foreach ($defaultValue as $subValue)
+					{
+						if (is_array($subValue))
+						{
+							$subValue = $field->getRefEntity()->createObject($subValue);
+						}
+
+						$this->addTo($fieldName, $subValue);
+					}
+				}
+				else
+				{
+					$this->set($fieldName, $defaultValue);
+				}
 			}
 		}
 
+		// set map default values
 		if ($setDefaultValues || is_array($setDefaultValues))
 		{
 			foreach ($this->entity->getScalarFields() as $fieldName => $field)
@@ -141,17 +170,48 @@ abstract class EntityObject implements ArrayAccess
 		}
 	}
 
+	public function __clone()
+	{
+		$this->_actualValues = $this->cloneValues($this->_actualValues);
+		$this->_currentValues = $this->cloneValues($this->_currentValues);
+	}
+
+	protected function cloneValues(array $values): array
+	{
+		// Do not clone References to avoid infinite recursion
+		$valuesWithoutReferences = $this->filterValuesByMask($values, FieldTypeMask::REFERENCE, true);
+		$references = array_diff_key($values, $valuesWithoutReferences);
+
+		return array_merge($references, \Bitrix\Main\Type\Collection::clone($valuesWithoutReferences));
+	}
+
+	protected function filterValuesByMask(array $values, int $fieldsMask, bool $invertedFilter = false): array
+	{
+		if ($fieldsMask === FieldTypeMask::ALL)
+		{
+			return $invertedFilter ? [] : $values;
+		}
+
+		return array_filter($values, function($fieldName) use ($fieldsMask, $invertedFilter)
+		{
+			$maskOfSingleField = $this->entity->getField($fieldName)->getTypeMask();
+			$matchesMask = (bool)($fieldsMask & $maskOfSingleField);
+
+			return $invertedFilter ? !$matchesMask: $matchesMask;
+		}, ARRAY_FILTER_USE_KEY);
+	}
+
 	/**
 	 * Returns all objects values as an array
 	 *
-	 * @param int $valuesType
-	 * @param int $fieldsMask
+	 * @param int  $valuesType
+	 * @param int  $fieldsMask
+	 * @param bool $recursive
 	 *
 	 * @return array
 	 * @throws ArgumentException
-	 * @throws SystemException
 	 */
-	final public function collectValues($valuesType = Values::ALL, $fieldsMask = FieldTypeMask::ALL)
+	final public function collectValues($valuesType = Values::ALL, $fieldsMask = FieldTypeMask::ALL, $recursive = false)
 	{
 		switch ($valuesType)
 		{
@@ -174,6 +234,27 @@ abstract class EntityObject implements ArrayAccess
 				if (!($fieldsMask & $fieldMask))
 				{
 					unset($objectValues[$fieldName]);
+				}
+			}
+		}
+
+		// recursive convert object to array
+		if ($recursive)
+		{
+			foreach ($objectValues as $fieldName => $value)
+			{
+				if ($value instanceof EntityObject)
+				{
+					$objectValues[$fieldName] = $value->collectValues($valuesType, $fieldsMask, $recursive);
+				}
+				elseif ($value instanceof Collection)
+				{
+					$arrayCollection = [];
+					foreach ($value as $relationObject)
+					{
+						$arrayCollection[] = $relationObject->collectValues($valuesType, $fieldsMask, $recursive);
+					}
+					$objectValues[$fieldName] = $arrayCollection;
 				}
 			}
 		}
@@ -215,6 +296,32 @@ abstract class EntityObject implements ArrayAccess
 
 		$dataClass = $this->entity->getDataClass();
 
+		// check for object fields, it could be changed without notification
+		foreach ($this->_currentValues as $fieldName => $currentValue)
+		{
+			$field = $this->entity->getField($fieldName);
+
+			if ($field instanceof ObjectField)
+			{
+				$actualValue = $this->_actualValues[$fieldName];
+
+				if ($field->encode($currentValue) !== $field->encode($actualValue))
+				{
+					if ($this->_state === State::ACTUAL)
+					{
+						// value has changed, set new state
+						$this->_state = State::CHANGED;
+					}
+				}
+				else
+				{
+					// value has not changed, hide it until postSave
+					unset($this->_currentValues[$fieldName]);
+				}
+			}
+		}
+
+		// save data
 		if ($this->_state == State::RAW)
 		{
 			$data = $this->_currentValues;
@@ -233,6 +340,9 @@ abstract class EntityObject implements ArrayAccess
 			foreach ($result->getPrimary() as $primaryName => $primaryValue)
 			{
 				$this->sysSetActual($primaryName, $primaryValue);
+
+				// db value has priority in case of custom value for autocomplete
+				$this->sysSetValue($primaryName, $primaryValue);
 			}
 
 			// on primary gain event
@@ -814,7 +924,7 @@ abstract class EntityObject implements ArrayAccess
 		{
 			$fieldName = self::sysMethodToFieldCase(substr($name, 3));
 
-			if (!strlen($fieldName))
+			if ($fieldName == '')
 			{
 				$fieldName = StringHelper::strtoupper($arguments[0]);
 
@@ -849,7 +959,7 @@ abstract class EntityObject implements ArrayAccess
 			$fieldName = self::sysMethodToFieldCase(substr($name, 3));
 			$value = $arguments[0];
 
-			if (!strlen($fieldName))
+			if ($fieldName == '')
 			{
 				$fieldName = StringHelper::strtoupper($arguments[0]);
 				$value = $arguments[1];
@@ -893,7 +1003,7 @@ abstract class EntityObject implements ArrayAccess
 		{
 			$fieldName = self::sysMethodToFieldCase(substr($name, 3));
 
-			if (!strlen($fieldName))
+			if ($fieldName == '')
 			{
 				$fieldName = StringHelper::strtoupper($arguments[0]);
 
@@ -939,7 +1049,7 @@ abstract class EntityObject implements ArrayAccess
 			$fieldName = self::sysMethodToFieldCase(substr($name, 5));
 			$value = $arguments[0];
 
-			if (!strlen($fieldName))
+			if ($fieldName == '')
 			{
 				$fieldName = StringHelper::strtoupper($arguments[0]);
 				$value = $arguments[1];
@@ -967,7 +1077,7 @@ abstract class EntityObject implements ArrayAccess
 		{
 			$fieldName = self::sysMethodToFieldCase(substr($name, 5));
 
-			if (!strlen($fieldName))
+			if ($fieldName == '')
 			{
 				$fieldName = StringHelper::strtoupper($arguments[0]);
 
@@ -994,7 +1104,7 @@ abstract class EntityObject implements ArrayAccess
 		{
 			$fieldName = self::sysMethodToFieldCase(substr($name, 5));
 
-			if (!strlen($fieldName))
+			if ($fieldName == '')
 			{
 				$fieldName = StringHelper::strtoupper($arguments[0]);
 
@@ -1032,7 +1142,7 @@ abstract class EntityObject implements ArrayAccess
 		{
 			$fieldName = self::sysMethodToFieldCase(substr($name, 9));
 
-			if (!strlen($fieldName))
+			if ($fieldName == '')
 			{
 				$fieldName = StringHelper::strtoupper($arguments[0]);
 
@@ -1062,7 +1172,7 @@ abstract class EntityObject implements ArrayAccess
 			$fieldName = self::sysMethodToFieldCase(substr($name, 10));
 			$value = $arguments[0];
 
-			if (!strlen($fieldName))
+			if ($fieldName == '')
 			{
 				$fieldName = StringHelper::strtoupper($arguments[0]);
 				$value = $arguments[1];
@@ -1092,7 +1202,7 @@ abstract class EntityObject implements ArrayAccess
 		{
 			$fieldName = self::sysMethodToFieldCase(substr($name, 12));
 
-			if (!strlen($fieldName))
+			if ($fieldName == '')
 			{
 				$fieldName = StringHelper::strtoupper($arguments[0]);
 
@@ -1122,7 +1232,7 @@ abstract class EntityObject implements ArrayAccess
 		{
 			$fieldName = self::sysMethodToFieldCase(substr($name, 7));
 
-			if (!strlen($fieldName))
+			if ($fieldName == '')
 			{
 				$fieldName = StringHelper::strtoupper($arguments[0]);
 
@@ -1153,7 +1263,7 @@ abstract class EntityObject implements ArrayAccess
 		{
 			$fieldName = self::sysMethodToFieldCase(substr($name, 2, -6));
 
-			if (!strlen($fieldName))
+			if ($fieldName == '')
 			{
 				$fieldName = StringHelper::strtoupper($arguments[0]);
 
@@ -1191,7 +1301,7 @@ abstract class EntityObject implements ArrayAccess
 		{
 			$fieldName = self::sysMethodToFieldCase(substr($name, 2, -7));
 
-			if (!strlen($fieldName))
+			if ($fieldName == '')
 			{
 				$fieldName = StringHelper::strtoupper($arguments[0]);
 
@@ -1301,7 +1411,15 @@ abstract class EntityObject implements ArrayAccess
 	 */
 	public function sysSetActual($fieldName, $value)
 	{
-		$this->_actualValues[StringHelper::strtoupper($fieldName)] = $value;
+		$fieldName = StringHelper::strtoupper($fieldName);
+		$this->_actualValues[$fieldName] = $value;
+
+		// special condition for object values - it should be gotten and changed as current value
+		// and actual value will be used for comparison
+		if ($this->entity->getField($fieldName) instanceof ObjectField)
+		{
+			$this->_currentValues[$fieldName] = clone $value;
+		}
 	}
 
 	/**
@@ -1567,6 +1685,15 @@ abstract class EntityObject implements ArrayAccess
 	public function sysIsChanged($fieldName)
 	{
 		$fieldName = StringHelper::strtoupper($fieldName);
+		$field = $this->entity->getField($fieldName);
+
+		if ($field instanceof ObjectField)
+		{
+			$currentValue = $this->_currentValues[$fieldName];
+			$actualValue = $this->_actualValues[$fieldName];
+
+			return $field->encode($currentValue) !== $field->encode($actualValue);
+		}
 
 		return array_key_exists($fieldName, $this->_currentValues);
 	}
@@ -1944,7 +2071,7 @@ abstract class EntityObject implements ArrayAccess
 					$this->sysSetActual($k, $v);
 				}
 			}
-			elseif ($field instanceof ScalarField)
+			elseif ($field instanceof ScalarField || $field instanceof UserTypeField)
 			{
 				$v = $field->cast($v);
 				$this->sysSetActual($k, $v);
@@ -1956,6 +2083,15 @@ abstract class EntityObject implements ArrayAccess
 
 		// change state
 		$this->sysChangeState(State::ACTUAL);
+
+		// return object field to current values
+		foreach ($this->_actualValues as $fieldName => $actualValue)
+		{
+			if ($this->entity->getField($fieldName) instanceof ObjectField)
+			{
+				$this->_currentValues[$fieldName] = clone $actualValue;
+			}
+		}
 	}
 
 	/**

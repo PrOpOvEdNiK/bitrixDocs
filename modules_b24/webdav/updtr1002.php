@@ -9,7 +9,7 @@ class CWebdavUpdateAgent1002
 		$document_id = array("webdav",$entityID, $arFileElement["ID"]);
 		$history = new CBPHistoryService();
 		$db_res = $history->GetHistoryList(
-			array(strtoupper($by) => strtoupper($order)),
+			array(mb_strtoupper($by) => mb_strtoupper($order)),
 			array("DOCUMENT_ID" => $document_id),
 			false,
 			false,
@@ -35,7 +35,7 @@ class CWebdavUpdateAgent1002
 			return false;
 		}
 		$status = COption::GetOptionString("webdav", $this->optionID, "empty");
-		if ($status == "empty" || $status == "done" || strpos($status, ",") === false)
+		if ($status == "empty" || $status == "done" || mb_strpos($status, ",") === false)
 			return false;
 		list($startIBID, $startFileID) = explode(",", $status);
 		

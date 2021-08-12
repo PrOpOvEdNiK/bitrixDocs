@@ -347,6 +347,11 @@ final class FileUserType
 			return;
 		}
 
+		if (!$realValue)
+		{
+			return;
+		}
+
 		$attachedModel = AttachedObject::loadById($realValue, array('OBJECT'));
 		if (!$attachedModel)
 		{
@@ -438,9 +443,9 @@ final class FileUserType
 	 */
 	public static function detectType($value)
 	{
-		if (is_string($value) && substr($value, 0, 1) == self::NEW_FILE_PREFIX)
+		if (is_string($value) && mb_substr($value, 0, 1) == self::NEW_FILE_PREFIX)
 		{
-			return [self::TYPE_NEW_OBJECT, substr($value, 1)];
+			return [self::TYPE_NEW_OBJECT, mb_substr($value, 1)];
 		}
 
 		return [self::TYPE_ALREADY_ATTACHED, (int)$value];

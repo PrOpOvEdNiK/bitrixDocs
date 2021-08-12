@@ -1,3 +1,0 @@
-<?
-$MESS["CPST_SUBSCRIBE_BUTTON_CLOSE"] = "Zamknij";
-?>

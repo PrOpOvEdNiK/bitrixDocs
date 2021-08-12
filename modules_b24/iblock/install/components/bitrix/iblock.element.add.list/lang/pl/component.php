@@ -1,5 +1,0 @@
-<?
-$MESS["IBLOCK_FORM_STATUS_ACTIVE"] = "Aktywne";
-$MESS["IBLOCK_FORM_STATUS_INACTIVE"] = "nieaktywna";
-$MESS["IBLOCK_LIST_PAGES_TITLE"] = "Strony";
-?>

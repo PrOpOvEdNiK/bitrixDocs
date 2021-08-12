@@ -16,13 +16,20 @@ final class CrmContact extends CrmEntity
 
 	public function getEventId()
 	{
-		return array(
+		return [
 			\CCrmLiveFeedEvent::ContactPrefix.\CCrmLiveFeedEvent::Add,
 			\CCrmLiveFeedEvent::ContactPrefix.\CCrmLiveFeedEvent::Owner,
 			\CCrmLiveFeedEvent::ContactPrefix.\CCrmLiveFeedEvent::Denomination,
 			\CCrmLiveFeedEvent::ContactPrefix.\CCrmLiveFeedEvent::Responsible,
 			\CCrmLiveFeedEvent::ContactPrefix.\CCrmLiveFeedEvent::Message
-		);
+		];
+	}
+
+	public function getMessageEventId()
+	{
+		return [
+			\CCrmLiveFeedEvent::ContactPrefix.\CCrmLiveFeedEvent::Message
+		];
 	}
 
 	public function getCurrentEntityFields()
@@ -40,7 +47,7 @@ final class CrmContact extends CrmEntity
 			$res = \CCrmContact::getListEx(
 				[],
 				[
-					'ID' => $this->getEntityId(),
+					'ID' => $logEntryFields['ENTITY_ID'],
 					'CHECK_PERMISSIONS' => 'N'
 				],
 				false,
@@ -76,7 +83,6 @@ final class CrmContact extends CrmEntity
 		]));
 	}
 
-	// $arResult["canGetPostContent"] = ($reflectionClass->getMethod('initSourceFields')->class == $postProviderClassName);
 	public function initSourceFields()
 	{
 		$entityId = $this->getEntityId();
@@ -105,7 +111,7 @@ final class CrmContact extends CrmEntity
 				&& !empty($fields['CURRENT_ENTITY'])
 			) // not-message
 			{
-				$logEntry['PARAMS'] = unserialize($logEntry['PARAMS']);
+				$logEntry['PARAMS'] = unserialize($logEntry['PARAMS'], [ 'allowed_classes' => false ]);
 				if (is_array($logEntry['PARAMS']))
 				{
 					$this->setCrmEntitySourceTitle($fields['CURRENT_ENTITY']);
@@ -128,11 +134,24 @@ final class CrmContact extends CrmEntity
 			elseif ($logEntry['EVENT_ID'] == $this->getLogCommentEventId())
 			{
 				$this->setSourceDescription($logEntry['MESSAGE']);
-				$this->setSourceTitle(truncateText(($logEntry['TITLE'] != '__EMPTY__' ? $logEntry['TITLE'] : $logEntry['MESSAGE']), 100));
+				$this->setSourceTitle(truncateText(($logEntry['TITLE'] !== '__EMPTY__' ? $logEntry['TITLE'] : $logEntry['MESSAGE']), 100));
 			}
 		}
 
 		$this->setSourceFields($fields);
 	}
 
+	public function getSuffix()
+	{
+		$logEventId = $this->getLogEventId();
+		if (
+			!empty($logEventId)
+			&& in_array($logEventId, $this->getMessageEventId())
+		)
+		{
+			return 'MESSAGE';
+		}
+
+		return '';
+	}
 }

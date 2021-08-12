@@ -1,3 +1,0 @@
-<?
-$MESS["SOCIALNETWORK_WORKGROUP_CHAT_TITLE"] = "Darbo grupė: \"#GROUP_NAME#\"";
-?>

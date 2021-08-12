@@ -1,5 +1,0 @@
-<?
-$MESS["OL_COMPONENT_LIST_ACTIONS_VIEW"] = "Peržiūrėti";
-$MESS["OL_COMPONENT_LIST_ACTIONS_EDIT"] = "Redaguoti";
-$MESS["OL_COMPONENT_LIST_ACTIONS_REMOVE"] = "Pašalinti kanalą";
-?>

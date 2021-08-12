@@ -20,7 +20,20 @@ use Bitrix\Main\Type\DateTime;
  * </ul>
  *
  * @package Bitrix\Disk
- **/
+ *
+ * DO NOT WRITE ANYTHING BELOW THIS
+ *
+ * <<< ORMENTITYANNOTATION
+ * @method static EO_Version_Query query()
+ * @method static EO_Version_Result getByPrimary($primary, array $parameters = array())
+ * @method static EO_Version_Result getById($id)
+ * @method static EO_Version_Result getList(array $parameters = array())
+ * @method static EO_Version_Entity getEntity()
+ * @method static \Bitrix\Disk\Internals\EO_Version createObject($setDefaultValues = true)
+ * @method static \Bitrix\Disk\Internals\EO_Version_Collection createCollection()
+ * @method static \Bitrix\Disk\Internals\EO_Version wakeUpObject($row)
+ * @method static \Bitrix\Disk\Internals\EO_Version_Collection wakeUpCollection($rows)
+ */
 
 final class VersionTable extends DataManager
 {
@@ -45,6 +58,13 @@ final class VersionTable extends DataManager
 				'data_type' => 'Bitrix\Disk\Internals\FileTable',
 				'reference' => array(
 					'=this.OBJECT_ID' => 'ref.ID'
+				),
+			),
+			'ATTACHED_OBJECT' => array(
+				'data_type' => AttachedObjectTable::class,
+				'reference' => array(
+					'=this.OBJECT_ID' => 'ref.OBJECT_ID',
+					'=this.ID' => 'ref.VERSION_ID'
 				),
 			),
 			'SIZE' => array(

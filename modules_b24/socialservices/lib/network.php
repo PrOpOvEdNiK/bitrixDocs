@@ -70,12 +70,22 @@ class Network
 			}
 		}
 
-		global $USER;
-		if(Loader::includeModule('replica'))
+		if(Loader::includeModule('socialservices'))
 		{
-			if(is_object($USER) && $USER->GetID() > 0 && \Bitrix\Replica\Client\User::getGuid($USER->GetID()) === false)
+			if(\CSocServAuthManager::GetAuthorizedServiceId() !== \CSocServBitrix24Net::ID)
 			{
-				return false;
+				if(Loader::includeModule('replica'))
+				{
+					global $USER;
+					if(is_object($USER) && $USER->GetID() > 0 && \Bitrix\Replica\Client\User::getGuid($USER->GetID()) === false)
+					{
+						return false;
+					}
+				}
+				else
+				{
+					return false;
+				}
 			}
 		}
 		else
@@ -135,7 +145,7 @@ class Network
 		}
 
 		$search = trim($search);
-		if (strlen($search) < 3)
+		if (mb_strlen($search) < 3)
 		{
 			$this->errorCollection[] = new Error(Loc::getMessage('B24NET_SEARCH_STRING_TO_SHORT'), self::ERROR_SEARCH_STRING_TO_SHORT);
 			return null;
@@ -403,7 +413,7 @@ class Network
 		$searchArray = Array();
 		foreach ($networkIds as $networkId)
 		{
-			$searchArray[] = substr($networkId, 0, 1).intval(substr($networkId, 1))."|%";
+			$searchArray[] = mb_substr($networkId, 0, 1).intval(mb_substr($networkId, 1))."|%";
 		}
 
 		$result = \Bitrix\Main\UserTable::getList(Array(

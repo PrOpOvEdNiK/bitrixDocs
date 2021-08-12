@@ -155,6 +155,16 @@ class ItemAttributes
 		return $this->setAttribute('data-title', htmlspecialcharsbx($title));
 	}
 
+	public function setTypeClass(string $class)
+	{
+		return $this->setAttribute('data-viewer-type-class', htmlspecialcharsbx($class));
+	}
+
+	public function getTypeClass()
+	{
+		return $this->getAttribute('data-viewer-type-class');
+	}
+
 	/**
 	 * @param $id
 	 *
@@ -407,7 +417,7 @@ class ItemAttributes
 	protected function convertKeyToDataSet($key)
 	{
 		$key = str_replace('data-', '', $key);
-		$key = str_replace('-', ' ', strtolower($key));
+		$key = str_replace('-', ' ', mb_strtolower($key));
 
 		return lcfirst(str_replace(' ', '', ucwords($key)));
 	}

@@ -1,8 +1,12 @@
-<?
+<?php
 
+use Bitrix\Crm\EntityAddress;
+use Bitrix\Crm\EntityAddressType;
+use Bitrix\Crm\EntityRequisite;
 use Bitrix\Crm\RequisiteAddress;
 
 IncludeModuleLangFile(__FILE__);
+
 class CCrmPaySystem
 {
 	const DEFAULT_HANDLER_GROUP = 'PS_OTHER';
@@ -13,7 +17,8 @@ class CCrmPaySystem
 	private static $arActFiles = array();
 	private static $arCrmCompatibleActs = array(
 		'bill', 'billua', 'billen', 'billde', 'billla', 'billkz', 'billby', 'billbr', 'billfr',
-		'paypal', 'yandexinvoice', 'yandex', 'yandexcheckout', 'invoicedocument'
+		'paypal', 'yandexinvoice', 'yandex', 'yandexcheckout', 'invoicedocument', 'bepaid', 'roboxchange',
+		'sberbankonline', 'uapay', 'alfabank', 'wooppay'
 	);
 	private static $paySystems = null;
 	private static $defBuyerParamsMap = null;
@@ -69,7 +74,7 @@ class CCrmPaySystem
 				unset($code['INPUT']);
 			}
 
-			if (isset($code['DEFAULT']))
+			if (isset($code['DEFAULT']) && $code['TYPE'] !== 'SELECT')
 			{
 				$type = null;
 				$code['VALUE'] = $code['DEFAULT']['PROVIDER_VALUE'];
@@ -1161,15 +1166,15 @@ class CCrmPaySystem
 				$title = htmlspecialcharsbx($arOrderProps["NAME"]);
 				$code = htmlspecialcharsbx($arOrderProps["CODE"]);
 
-				$idx = strlen($arOrderProps["CODE"])>0 ? $code : $arOrderProps["ID"];
+				$idx = $arOrderProps["CODE"] <> '' ? $code : $arOrderProps["ID"];
 				$arProps[$arOrderProps["PERSON_TYPE_ID"]][$idx] = $title;
 
 				if ($arOrderProps["TYPE"] == "LOCATION")
 				{
-					$idx = strlen($code)>0 ? $code."_COUNTRY" : $arOrderProps["ID"]."_COUNTRY";
+					$idx = $code <> '' ? $code."_COUNTRY" : $arOrderProps["ID"]."_COUNTRY";
 					$arProps[$arOrderProps["PERSON_TYPE_ID"]][$idx] = $title." (".GetMessage("CRM_PS_JCOUNTRY").")";
 
-					$idx = strlen($code)>0 ? $code."_CITY" : $arOrderProps["ID"]."_CITY";
+					$idx = $code <> '' ? $code."_CITY" : $arOrderProps["ID"]."_CITY";
 					$arProps[$arOrderProps["PERSON_TYPE_ID"]][$idx] = $title." (".GetMessage("CRM_PS_JCITY").")";
 				}
 			}
@@ -1317,7 +1322,7 @@ class CCrmPaySystem
 			{
 				$arProps = self::getOrderPropsList($persTypeId);
 
-				$entity = strpos($actionFileName, 'quote_') !== false ? 'quote' : 'bill';
+				$entity = mb_strpos($actionFileName, 'quote_') !== false ? 'quote' : 'bill';
 				if( is_array($userFields) && isset($userFields[$entity]))
 					$arProps = array_merge($arProps, $userFields[$entity]);
 			}
@@ -1390,17 +1395,16 @@ class CCrmPaySystem
 		return $res;
 	}
 
-	public static function getPersonTypeIDs()
+	public static function getDefaultSiteId(): string
 	{
-		if (!CModule::IncludeModule('sale'))
-			return array();
 
-		static $arPTIDs = array();
+		$siteId = '';
 
-		if(!empty($arPTIDs))
-			return $arPTIDs;
+		if (defined('SITE_ID'))
+		{
+			$siteId = SITE_ID;
+		}
 
-		$siteId = SITE_ID;
 		if (defined("ADMIN_SECTION"))
 		{
 			$siteIterator = Bitrix\Main\SiteTable::getList(array(
@@ -1412,6 +1416,28 @@ class CCrmPaySystem
 				$siteId = $defaultSite['LID'];
 			}
 			unset($defaultSite, $siteIterator);
+		}
+
+		return $siteId;
+	}
+
+	public static function getPersonTypeIDs(?string $siteId = null)
+	{
+		if (!CModule::IncludeModule('sale'))
+		{
+			return array();
+		}
+
+		static $arPTIDs = array();
+
+		if ($siteId === null)
+		{
+			$siteId = static::getDefaultSiteId();
+		}
+
+		if (!empty($arPTIDs[$siteId]))
+		{
+			return $arPTIDs[$siteId];
 		}
 
 		$dbRes = \Bitrix\Crm\Invoice\PersonType::getList([
@@ -1426,16 +1452,20 @@ class CCrmPaySystem
 			]
 		]);
 
-		while($arPT = $dbRes->fetch())
+		while ($arPT = $dbRes->fetch())
 		{
-			if($arPT['CODE'] == 'CRM_COMPANY')
-				$arPTIDs['COMPANY'] = $arPT['ID'];
+			if ($arPT['CODE'] === 'CRM_COMPANY')
+			{
+				$arPTIDs[$siteId]['COMPANY'] = $arPT['ID'];
+			}
 
-			if($arPT['CODE'] == 'CRM_CONTACT')
-				$arPTIDs['CONTACT'] = $arPT['ID'];
+			if ($arPT['CODE'] === 'CRM_CONTACT')
+			{
+				$arPTIDs[$siteId]['CONTACT'] = $arPT['ID'];
+			}
 		}
 
-		return $arPTIDs;
+		return $arPTIDs[$siteId];
 	}
 
 	public static function getPersonTypesList($getEmpty = false)
@@ -1498,7 +1528,9 @@ class CCrmPaySystem
 			if ($path !== false)
 				$actFile = $path;
 		}
-		$data = \Bitrix\Sale\PaySystem\Manager::getHandlerDescription($actFile);
+
+		$psMode = func_num_args() > 1 ? func_get_arg(1) : null;
+		$data = \Bitrix\Sale\PaySystem\Manager::getHandlerDescription($actFile, $psMode);
 
 		return self::convertNewToOld($data);
 	}
@@ -1524,17 +1556,17 @@ class CCrmPaySystem
 				{
 					$curPsLocalization = 'ru';
 				}
-				else if (count($matches) === 3 && strlen($matches[2]) > 1)
+				else if (count($matches) === 3 && mb_strlen($matches[2]) > 1)
 				{
-					$curPsLocalization = substr($matches[2], 0, 2);
+					$curPsLocalization = mb_substr($matches[2], 0, 2);
 				}
 			}
 			else if (preg_match('/^(quote)(_\w+)*$/i'.BX_UTF_PCRE_MODIFIER, $psaCode, $matches))
 			{
 				$psType = $matches[1];
-				if (count($matches) === 3 && strlen($matches[2]) > 2)
+				if (count($matches) === 3 && mb_strlen($matches[2]) > 2)
 				{
-					$curPsLocalization = substr($matches[2], 1, 2);
+					$curPsLocalization = mb_substr($matches[2], 1, 2);
 				}
 			}
 			if (!empty($curPsLocalization)
@@ -1582,7 +1614,7 @@ class CCrmPaySystem
 							),
 							'COMPANY_ADR' => array(
 								'TYPE' => 'REQUISITE',
-								'VALUE' => 'RQ_ADDR_'.\Bitrix\Crm\EntityAddress::Registered.'|'.$countryId
+								'VALUE' => 'RQ_ADDR_'.EntityAddressType::Registered.'|'.$countryId
 							),
 							'PHONE' => array(
 								'TYPE' => 'REQUISITE',
@@ -1602,7 +1634,7 @@ class CCrmPaySystem
 							),
 							'ADDRESS' => array(
 								'TYPE' => 'REQUISITE',
-								'VALUE' => 'RQ_ADDR_'.\Bitrix\Crm\EntityAddress::Primary.'|'.$countryId
+								'VALUE' => 'RQ_ADDR_'.EntityAddressType::Primary.'|'.$countryId
 							)
 						)
 					);
@@ -1643,7 +1675,7 @@ class CCrmPaySystem
 				$psTypes = array($psType);
 			foreach ($psTypes as $type)
 			{
-				if (is_string($personTypeCode) && strlen($personTypeCode) > 0)
+				if (is_string($personTypeCode) && $personTypeCode <> '')
 				{
 					foreach (CCrmPaySystem::getDefaultBuyerParams('CRM_'.$personTypeCode, $type, $countryId)
 								as $paramName => $paramValue)
@@ -1786,9 +1818,9 @@ class CCrmPaySystem
 		while($arPaySys = $dbPaySystems->Fetch())
 		{
 			$params = $arPaySys['PSA_PARAMS'];
-			$params = unserialize($arPaySys['PSA_PARAMS']);
+			$params = unserialize($arPaySys['PSA_PARAMS'], ['allowed_classes' => false]);
 
-			if(strlen(trim($params['SELLER_NAME']['VALUE'])) > 0)
+			if(trim($params['SELLER_NAME']['VALUE']) <> '')
 			{
 				$result = true;
 				break;
@@ -1824,28 +1856,23 @@ class CCrmPaySystem
 		$result = array();
 
 		$preset = new \Bitrix\Crm\EntityPreset();
-		$requisite = new \Bitrix\Crm\EntityRequisite();
+		$requisite = new EntityRequisite();
 		$allowedCountries = $requisite->getAllowedRqFieldCountries();
 
-		// address types
-		$addressTypeList = array();
-		$addressTitleList = array();
-		foreach(Bitrix\Crm\RequisiteAddress::getClientTypeInfos() as $typeInfo)
-		{
-			$addressTypeList[] = $typeInfo['id'];
-			$addressTitleList[$typeInfo['id']] = $typeInfo['name'];
-		}
-
+		$addressTypesByCountry = [];
+		$addressTitleList = EntityAddressType::getDescriptions(EntityAddressType::getAllIDs());
 
 		// rq fields
 		$rqFields = array();
 		$tmpFields = $requisite->getRqFields();
 		foreach ($tmpFields as $fieldName)
 		{
-			if ($fieldName === \Bitrix\Crm\EntityRequisite::ADDRESS)
+			if ($fieldName === EntityRequisite::ADDRESS)
 			{
-				foreach ($addressTypeList as $addressType)
+				foreach (EntityAddressType::getAllIDs() as $addressType)
+				{
 					$rqFields[$fieldName.'_'.$addressType] = true;
+				}
 			}
 			else
 			{
@@ -1861,10 +1888,21 @@ class CCrmPaySystem
 			{
 				foreach ($fieldCountryIds as $countryId)
 				{
-					if ($fieldName === \Bitrix\Crm\EntityRequisite::ADDRESS)
+					if ($fieldName === EntityRequisite::ADDRESS)
 					{
-						foreach ($addressTypeList as $addressType)
+						if (!isset($addressTypesByCountry[$countryId]))
+						{
+							$addressTypesByCountry[$countryId] = EntityAddressType::getIdsByZonesOrValues(
+								[
+									EntityAddress::getZoneId(),
+									EntityRequisite::getAddressZoneByCountry($countryId)
+								]
+							);
+						}
+						foreach ($addressTypesByCountry[$countryId] as $addressType)
+						{
 							$rqFieldsByCountry[$countryId][$fieldName.'_'.$addressType] = true;
+						}
 					}
 					else
 					{
@@ -1875,19 +1913,7 @@ class CCrmPaySystem
 		}
 
 		// allowed fields
-		$fieldsAllowed = array();
-		foreach (array_merge(array_keys($rqFields), $requisite->getUserFields()) as $fieldName)
-		{
-			if ($fieldName === \Bitrix\Crm\EntityRequisite::ADDRESS)
-			{
-				foreach ($addressTypeList as $addressType)
-					$fieldsAllowed[$fieldName.'_'.$addressType] = true;
-			}
-			else
-			{
-				$fieldsAllowed[$fieldName] = true;
-			}
-		}
+		$fieldsAllowed = array_merge($rqFields, array_fill_keys($requisite->getUserFields(), true));
 
 		// used fields
 		$usedCountries = array();
@@ -1928,10 +1954,21 @@ class CCrmPaySystem
 		{
 			foreach ($fieldList as $fieldName)
 			{
-				if ($fieldName === \Bitrix\Crm\EntityRequisite::ADDRESS)
+				if ($fieldName === EntityRequisite::ADDRESS)
 				{
-					foreach ($addressTypeList as $addressType)
+					if (!isset($addressTypesByCountry[$countryId]))
+					{
+						$addressTypesByCountry[$countryId] = EntityAddressType::getIdsByZonesOrValues(
+							[
+								EntityAddress::getZoneId(),
+								EntityRequisite::getAddressZoneByCountry($countryId)
+							]
+						);
+					}
+					foreach ($addressTypesByCountry[$countryId] as $addressType)
+					{
 						$activeFieldsByCountry[$countryId][$fieldName.'_'.$addressType] = true;
+					}
 				}
 				else
 				{
@@ -1946,8 +1983,8 @@ class CCrmPaySystem
 			'RQ_COMPANY_NAME' => true,
 			'RQ_INN' => true,
 			'RQ_KPP' => true,
-			'RQ_ADDR_'.\Bitrix\Crm\EntityAddress::Primary => true,
-			'RQ_ADDR_'.\Bitrix\Crm\EntityAddress::Registered => true,
+			'RQ_ADDR_'.EntityAddressType::Primary => true,
+			'RQ_ADDR_'.EntityAddressType::Registered => true,
 			'RQ_EMAIL' => true,
 			'RQ_PHONE' => true,
 			'RQ_FAX' => true,
@@ -1972,7 +2009,7 @@ class CCrmPaySystem
 			$countryTitleList[$k] = $v;
 
 		$result[] = array('id' => '', 'title' => GetMessage('CRM_PS_SELECT_NONE'));
-		$addressPrefix = \Bitrix\Crm\EntityRequisite::ADDRESS;
+		$addressPrefix = EntityRequisite::ADDRESS;
 		$isUTFMode = \Bitrix\Crm\EntityPreset::isUTFMode();
 		foreach ($countrySort as $countryId)
 		{
@@ -2198,11 +2235,11 @@ class CCrmPaySystem
 	 * @param \Bitrix\Main\Event $event
 	 * @return array
 	 */
-	public function getHandlerDescriptionEx(\Bitrix\Main\Event $event)
+	public static function getHandlerDescriptionEx(\Bitrix\Main\Event $event)
 	{
 		$parameters = $event->getParameters();
 
-		if (strpos($parameters['handler'], 'bill') !== false || strpos($parameters['handler'], 'quote_') !== false)
+		if (mb_strpos($parameters['handler'], 'bill') !== false || mb_strpos($parameters['handler'], 'quote_') !== false)
 		{
 			return array(
 				'USER_COLUMNS' => array(
@@ -2219,5 +2256,3 @@ class CCrmPaySystem
 		return array();
 	}
 }
-
-?>

@@ -1,4 +1,8 @@
 <?
+
+use Bitrix\Calendar\Util;
+use Bitrix\Main\Web\HttpClient;
+
 define("DAV_CALDAV_DEBUG", false);
 
 if (!class_exists("CDavGroupdavClientCalendar"))
@@ -39,7 +43,7 @@ if (!class_exists("CDavGroupdavClientCalendar"))
 			if (is_null($xmlDoc))
 				return null;
 
-			$arCalendars = array();
+			$arCalendars = [];
 			$calendarHomeSet = null;
 			$currentUserPrincipal = null;
 			$principalUrl = null;
@@ -163,7 +167,7 @@ if (!class_exists("CDavGroupdavClientCalendar"))
 			return $getctag;
 		}
 
-		public function GetCalendarItemsList($path = '/', $arHrefs = null, $calendarData = false, $arFilter = array())
+		public function GetCalendarItemsList($path = '/', $arHrefs = null, $calendarData = false, $arFilter = [])
 		{
 			$this->ClearErrors();
 
@@ -172,7 +176,7 @@ if (!class_exists("CDavGroupdavClientCalendar"))
 			if (!is_array($arHrefs))
 				$arHrefs = array($arHrefs);
 
-			$arHrefsNew = array();
+			$arHrefsNew = [];
 			foreach ($arHrefs as $value)
 			{
 				if (!empty($value))
@@ -187,7 +191,7 @@ if (!class_exists("CDavGroupdavClientCalendar"))
 			if ($calendarData && (count($arHrefsNew) > 0))
 				$arProperties[] = array("calendar-data", "urn:ietf:params:xml:ns:caldav");
 
-			$arFilterNew = array();
+			$arFilterNew = [];
 			if (array_key_exists("start", $arFilter))
 				$arFilterNew = array("time-range" => array("start" => ConvertDateTime($arFilter["start"], "YYYYMMDD\THHMISS\Z")));
 
@@ -216,7 +220,7 @@ if (!class_exists("CDavGroupdavClientCalendar"))
 			if (is_null($xmlDoc))
 				return null;
 
-			$arItems = array();
+			$arItems = [];
 
 			$arResponse = $xmlDoc->GetPath("/*/response");
 			foreach ($arResponse as $response)
@@ -250,7 +254,7 @@ if (!class_exists("CDavGroupdavClientCalendar"))
 									$arItem["calendar-data"] = $this->ConvertICalToArray($arEvents[0], $cal);
 									if(count($arEvents) > 1)
 									{
-										$arItem["calendar-data-ex"] = array();
+										$arItem["calendar-data-ex"] = [];
 										for($i = 1; $i <= count($arEvents) - 1; $i++)
 										{
 											$arItem["calendar-data-ex"][] = $this->ConvertICalToArray($arEvents[$i], $cal);
@@ -345,9 +349,9 @@ if (!class_exists("CDavGroupdavClientCalendar"))
 					if (isset($rrule["BYDAY"]))
 					{
 						$ar = explode(",", $rrule["BYDAY"]);
-						$ar1 = array();
+						$ar1 = [];
 						foreach ($ar as $v)
-							$ar1[] = $arWeekDayMap[strtoupper($v)];
+							$ar1[] = $arWeekDayMap[mb_strtoupper($v)];
 						$arFields["PROPERTY_PERIOD_ADDITIONAL"] = implode(",", $ar1);
 					}
 					else
@@ -385,7 +389,7 @@ if (!class_exists("CDavGroupdavClientCalendar"))
 			$exDatesVal = $event->GetProperties("EXDATE");
 			if (count($exDatesVal) > 0)
 			{
-				$arFields["EXDATE"] = array();
+				$arFields["EXDATE"] = [];
 				foreach ($exDatesVal as $val)
 				{
 					$arFields["EXDATE"][] = CDavICalendarTimeZone::GetFormattedServerDate($val->Value());
@@ -395,12 +399,12 @@ if (!class_exists("CDavGroupdavClientCalendar"))
 			return $arFields;
 		}
 
-		public function PutCalendarItem($path = '/', $siteId = null, $arData = array())
+		public function PutCalendarItem($path = '/', $siteId = null, $arData = [])
 		{
 			if (!array_key_exists("DAV_XML_ID", $arData))
 				$arData["DAV_XML_ID"] = self::GenerateNewCalendarItemName();
 
-			if (substr($path, -strlen("/".$arData["DAV_XML_ID"].".ics")) != "/".$arData["DAV_XML_ID"].".ics")
+			if (mb_substr($path, -mb_strlen("/".$arData["DAV_XML_ID"].".ics")) != "/".$arData["DAV_XML_ID"].".ics")
 			{
 				$path = rtrim($path, "/");
 				$path .= "/".$arData["DAV_XML_ID"].".ics";
@@ -463,7 +467,7 @@ if (!class_exists("CDavGroupdavClientCalendar"))
 			else
 				$iCalEvent["TRANSP"] = 'OPAQUE';
 
-			if (isset($event["LOCATION"]) && is_array($event["LOCATION"]) && isset($event["LOCATION"]["NEW"]) && strlen($event["LOCATION"]["NEW"]) > 0)
+			if (isset($event["LOCATION"]) && is_array($event["LOCATION"]) && isset($event["LOCATION"]["NEW"]) && $event["LOCATION"]["NEW"] <> '')
 				$iCalEvent["LOCATION"] = $event["LOCATION"]["NEW"];
 
 			if (isset($event["IMPORTANCE"]))
@@ -476,10 +480,10 @@ if (!class_exists("CDavGroupdavClientCalendar"))
 					$iCalEvent["PRIORITY"] = 5;
 			}
 
-			if (isset($event["DESCRIPTION"]) && strlen($event["DESCRIPTION"]) > 0)
+			if (isset($event["DESCRIPTION"]) && $event["DESCRIPTION"] <> '')
 				$iCalEvent["DESCRIPTION"] = $event["DESCRIPTION"];
 
-			if (isset($event["PROPERTY_REMIND_SETTINGS"]) && strlen($event["PROPERTY_REMIND_SETTINGS"]) > 0)
+			if (isset($event["PROPERTY_REMIND_SETTINGS"]) && $event["PROPERTY_REMIND_SETTINGS"] <> '')
 			{
 				$arPeriodMapTmp = array("min" => "M", "hour" => "H", "day" => "D");
 				$ar = explode("_", $event["PROPERTY_REMIND_SETTINGS"]);
@@ -519,7 +523,7 @@ if (!class_exists("CDavGroupdavClientCalendar"))
 				}
 				else
 				{
-					$val .= ";UNTIL=".date("Ymd\\THis\\Z", $event['DATE_TO_TS_UTC'] + intVal(date("Z")));
+					$val .= ";UNTIL=".date("Ymd\\THis\\Z", $event['DATE_TO_TS_UTC'] + intval(date("Z")));
 				}
 
 				$iCalEvent["RRULE"] = $val;
@@ -532,7 +536,7 @@ if (!class_exists("CDavGroupdavClientCalendar"))
 			{
 				$event["EXDATE"] = explode(';', $event["EXDATE"]);
 
-				$exdate = array();
+				$exdate = [];
 				foreach ($event["EXDATE"] as $date)
 				{
 					if ($event["DT_SKIP_TIME"] == 'Y')
@@ -603,7 +607,7 @@ if (!class_exists("CDavGroupdavClientCalendar"))
 			$index = 0;
 			$bShouldClearCache = false;
 
-			$paramEntityId = intval($paramEntityId);
+			$paramEntityId = (int)$paramEntityId;
 			$arConnectionsFilter = array('ACCOUNT_TYPE' => array('caldav', 'caldav_google_oauth'));
 			if (!is_null($paramEntityType) && ($paramEntityId > 0))
 			{
@@ -611,21 +615,38 @@ if (!class_exists("CDavGroupdavClientCalendar"))
 				$arConnectionsFilter["ENTITY_ID"] = $paramEntityId;
 			}
 
+			$syncInfo = [];
 			$dbConnections = CDavConnection::GetList(
-				array("SYNCHRONIZED" => "ASC"),
+				["SYNCHRONIZED" => "ASC"],
 				$arConnectionsFilter,
 				false,
 				false,
-				array('ID', 'ENTITY_TYPE', 'ENTITY_ID', 'ACCOUNT_TYPE', 'SERVER_SCHEME', 'SERVER_HOST', 'SERVER_PORT', 'SERVER_USERNAME', 'SERVER_PASSWORD', 'SERVER_PATH', 'SYNCHRONIZED')
+				[
+					'ID',
+					'ENTITY_TYPE',
+					'ENTITY_ID',
+					'ACCOUNT_TYPE',
+					'SERVER_SCHEME',
+					'SERVER_HOST',
+					'SERVER_PORT',
+					'SERVER_USERNAME',
+					'SERVER_PASSWORD',
+					'SERVER_PATH',
+					'SYNCHRONIZED',
+				]
 			);
 			while ($arConnection = $dbConnections->Fetch())
 			{
 				$index++;
 				if ($index > $maxNumber)
+				{
 					break;
+				}
 
 				if (DAV_CALDAV_DEBUG)
+				{
 					CDav::WriteToLog("Connection [".$arConnection["ID"]."] ".$arConnection["ENTITY_TYPE"]."/".$arConnection["ENTITY_ID"], "SYNCC");
+				}
 
 				CDavConnection::SetLastResult($arConnection["ID"], "[0]");
 
@@ -635,10 +656,10 @@ if (!class_exists("CDavGroupdavClientCalendar"))
 					$arProxy = CDav::GetProxySettings();
 					$client->SetProxy($arProxy["PROXY_SCHEME"], $arProxy["PROXY_HOST"], $arProxy["PROXY_PORT"], $arProxy["PROXY_USERNAME"], $arProxy["PROXY_PASSWORD"]);
 				}
-				if ($arConnection['ACCOUNT_TYPE'] == 'caldav_google_oauth')
+				if ($arConnection['ACCOUNT_TYPE'] === 'caldav_google_oauth')
+				{
 					$client->setGoogleCalendarOAuth($arConnection['ENTITY_ID']);
-
-				//$client->Debug();
+				}
 
 				if (!$client->CheckWebdavServer($arConnection["SERVER_PATH"]))
 				{
@@ -646,26 +667,46 @@ if (!class_exists("CDavGroupdavClientCalendar"))
 					$arErrors = $client->GetErrors();
 					foreach ($arErrors as $arError)
 					{
-						if (strlen($t) > 0)
+						if ($t !== '')
+						{
 							$t .= ', ';
+						}
 						$t .= '['.$arError[0].'] '.$arError[1];
 					}
 
-					CDavConnection::SetLastResult($arConnection["ID"], ((strlen($t) > 0) ? $t : "[404] Not Found"));
+					CDavConnection::SetLastResult($arConnection["ID"], (($t !== '') ? $t : "[404] Not Found"));
+					$connectionType = CCalendarSync::isYandex($arConnection['SERVER_HOST']) ? 'yandex' : 'caldav';
+					$connectionName = $connectionType.$arConnection['ID'];
+					$connectionStatus = CCalendarSync::isConnectionSuccess($t);
+					Util::addPullEvent('refresh_sync_status', $arConnection['ENTITY_ID'], [
+						'syncInfo' => [
+							$connectionName => [
+								'syncTimestamp' => time() - CTimeZone::GetOffset((int)$arConnection['ENTITY_ID']),
+								'status' => $connectionStatus,
+								'type' => $connectionType,
+								'connected' => true,
+							],
+						],
+						'requestUid' => Util::getRequestUid(),
+					]);
+
 					if (DAV_CALDAV_DEBUG)
-						CDav::WriteToLog("ERROR: ".$t, "SYNCC");
+					{
+						CDav::WriteToLog("ERROR: " . $t, "SYNCC");
+					}
+
 					continue;
 				}
 
 				$arCalendarsList = $client->GetCalendarList($arConnection["SERVER_PATH"]);
 
-				if (count($arCalendarsList) <= 0)
+				if (!is_array($arCalendarsList) || empty($arCalendarsList))
 				{
 					CDavConnection::SetLastResult($arConnection["ID"], "[204] No Content");
 					continue;
 				}
 
-				$arUserCalendars = array();
+				$arUserCalendars = [];
 				foreach ($arCalendarsList as $value)
 				{
 					$arUserCalendars[] = array(
@@ -688,10 +729,10 @@ if (!class_exists("CDavGroupdavClientCalendar"))
 
 					if(!empty($arCalendarItemsList) && is_array($arCalendarItemsList))
 					{
-						$arUserCalendarItems = array();
+						$arUserCalendarItems = [];
 						foreach ($arCalendarItemsList as $value)
 						{
-							if (strpos($value["getcontenttype"], "text/calendar") !== false
+							if (mb_strpos($value["getcontenttype"], "text/calendar") !== false
 								&& isset($value["getetag"]))
 							{
 								$arUserCalendarItems[] = array(
@@ -702,8 +743,8 @@ if (!class_exists("CDavGroupdavClientCalendar"))
 						}
 
 						$arUserCalendarItems = CCalendar::SyncCalendarItems("caldav", $userCalendar["CALENDAR_ID"], $arUserCalendarItems);
-						$arHrefs = array();
-						$arIdMap = array();
+						$arHrefs = [];
+						$arIdMap = [];
 						foreach ($arUserCalendarItems as $value)
 						{
 							$h = $client->GetRequestEventPath($userCalendar["XML_ID"], $value["XML_ID"]);
@@ -741,7 +782,7 @@ if (!class_exists("CDavGroupdavClientCalendar"))
 								"ORGANIZER" => $value["calendar-data"]["ORGANIZER"]
 							);
 
-							if (isset($value["calendar-data"]["PROPERTY_PERIOD_TYPE"]) && $value["calendar-data"]["PROPERTY_PERIOD_TYPE"] != "NONE")
+							if (isset($value["calendar-data"]["PROPERTY_PERIOD_TYPE"]) && $value["calendar-data"]["PROPERTY_PERIOD_TYPE"] !== "NONE")
 							{
 								$arModifyEventArray["PROPERTY_PERIOD_TYPE"] = $value["calendar-data"]["PROPERTY_PERIOD_TYPE"];
 								$arModifyEventArray["PROPERTY_PERIOD_COUNT"] = $value["calendar-data"]["PROPERTY_PERIOD_COUNT"];
@@ -766,10 +807,27 @@ if (!class_exists("CDavGroupdavClientCalendar"))
 				}
 
 				if (DAV_CALDAV_DEBUG)
-					CDav::WriteToLog("Sync ".intval($tmpNumCals)." calendars, ".intval($tmpNumItems)." items", "SYNCC");
+				{
+					CDav::WriteToLog("Sync ".(int)$tmpNumCals." calendars, ".(int)$tmpNumItems." items", "SYNCC");
+				}
 
 				CDavConnection::SetLastResult($arConnection["ID"], "[200] OK");
+				$connectionType = CCalendarSync::isYandex($arConnection['SERVER_HOST']) ? 'yandex' : 'caldav';
+				$connectionName = $connectionType.$arConnection['ID'];
+				Util::addPullEvent('refresh_sync_status', $arConnection['ENTITY_ID'], [
+					'syncInfo' => [
+						$connectionName => [
+							'syncTimestamp' => time() - CTimeZone::GetOffset((int)$arConnection['ENTITY_ID']),
+							'status' => true,
+							'type' => $connectionType,
+							'connected' => true,
+						],
+					],
+					'requestUid' => Util::getRequestUid(),
+				]);
 			}
+
+
 
 			if ($bShouldClearCache)
 				CCalendar::SyncClearCache();
@@ -925,6 +983,7 @@ if (!class_exists("CDavGroupdavClientCalendar"))
 			}
 
 			$client = new CDavGroupdavClientCalendar($scheme, $host, $port, $username, $password);
+			$client->SetPrivateIp(false);
 			if (CDav::UseProxy())
 			{
 				$arProxy = CDav::GetProxySettings();
@@ -934,6 +993,55 @@ if (!class_exists("CDavGroupdavClientCalendar"))
 				$client->setGoogleCalendarOAuth($oauth['id']);
 
 			return $client->CheckWebdavServer($path);
+		}
+
+		public static function CheckCaldavServer($url, $host, $userName, $userPassword)
+		{
+			$options = [];
+			if (CDav::UseProxy())
+			{
+				$arProxy = CDav::GetProxySettings();
+				$options = [
+					"proxyHost" => $arProxy["PROXY_SCHEME"],
+					"proxyPort" => $arProxy["PROXY_PORT"],
+					"proxyUser" => $arProxy["PROXY_USERNAME"],
+					"proxyPassword" => $arProxy["PROXY_PASSWORD"],
+				];
+			}
+
+			$client = new HttpClient($options);
+			$client->setPrivateIp(true);
+			$client->setHeader("User-Agent", "Bitrix CalDAV/CardDAV/GroupDAV client");
+			$client->setHeader("Connection", "Keep-Alive");
+			$client->setHeader("Host", $host);
+
+			for ($i = 0; $i < 3; $i++)
+			{
+				$client->query(HttpClient::HTTP_OPTIONS, $url);
+
+				if ($client->getStatus() == 401)
+				{
+					$client->setHeader('Authorization', 'Basic ' . base64_encode($userName.":".$userPassword));
+					continue;
+				}
+
+				break;
+			}
+
+			$headers = $client->getHeaders();
+			if (!empty($headers['dav']))
+			{
+				$davPart = explode(",", $headers['dav']);
+				foreach ($davPart as $part)
+				{
+					if (trim($part)."!" == "1!")
+					{
+						return true;
+					}
+				}
+			}
+
+			return false;
 		}
 
 		public function GetRequestEventPath($calendarXmlId = '', $itemXmlId = '')

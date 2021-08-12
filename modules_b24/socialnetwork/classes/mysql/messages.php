@@ -1,4 +1,5 @@
-<?
+<?php
+
 require_once($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/socialnetwork/classes/general/messages.php");
 
 class CSocNetMessages extends CAllSocNetMessages
@@ -6,7 +7,7 @@ class CSocNetMessages extends CAllSocNetMessages
 	/***************************************/
 	/********  DATA MODIFICATION  **********/
 	/***************************************/
-	function Add($arFields)
+	public static function Add($arFields)
 	{
 		global $DB;
 
@@ -40,14 +41,14 @@ class CSocNetMessages extends CAllSocNetMessages
 		\Bitrix\Socialnetwork\Util::processEqualityFieldsToInsert($arFields1, $arInsert);
 
 		$ID = false;
-		if (strlen($arInsert[0]) > 0)
+		if ($arInsert[0] <> '')
 		{
 			$strSql =
 				"INSERT INTO b_sonet_messages(".$arInsert[0].") ".
 				"VALUES(".$arInsert[1].")";
 			$DB->Query($strSql, False, "File: ".__FILE__."<br>Line: ".__LINE__);
 
-			$ID = IntVal($DB->LastID());
+			$ID = intval($DB->LastID());
 
 			$events = GetModuleEvents("socialnetwork", "OnSocNetMessagesAdd");
 			while ($arEvent = $events->Fetch())
@@ -61,14 +62,14 @@ class CSocNetMessages extends CAllSocNetMessages
 		return $ID;
 	}
 
-	function Update($ID, $arFields)
+	public static function Update($ID, $arFields)
 	{
 		global $DB;
 
 		if (!CSocNetGroup::__ValidateID($ID))
 			return false;
 
-		$ID = IntVal($ID);
+		$ID = intval($ID);
 
 		$arFields1 = \Bitrix\Socialnetwork\Util::getEqualityFields($arFields);
 
@@ -83,7 +84,7 @@ class CSocNetMessages extends CAllSocNetMessages
 		$strUpdate = $DB->PrepareUpdate("b_sonet_messages", $arFields);
 		\Bitrix\Socialnetwork\Util::processEqualityFieldsToUpdate($arFields1, $strUpdate);
 
-		if (strlen($strUpdate) > 0)
+		if ($strUpdate <> '')
 		{
 			$strSql =
 				"UPDATE b_sonet_messages SET ".
@@ -176,9 +177,9 @@ class CSocNetMessages extends CAllSocNetMessages
 				"SELECT ".$arSqls["SELECT"]." ".
 				"FROM b_sonet_messages M ".
 				"	".$arSqls["FROM"]." ";
-			if (strlen($arSqls["WHERE"]) > 0)
+			if ($arSqls["WHERE"] <> '')
 				$strSql .= "WHERE ".$arSqls["WHERE"]." ";
-			if (strlen($arSqls["GROUPBY"]) > 0)
+			if ($arSqls["GROUPBY"] <> '')
 				$strSql .= "GROUP BY ".$arSqls["GROUPBY"]." ";
 
 			//echo "!1!=".htmlspecialcharsbx($strSql)."<br>";
@@ -195,29 +196,29 @@ class CSocNetMessages extends CAllSocNetMessages
 			"SELECT ".$arSqls["SELECT"]." ".
 			"FROM b_sonet_messages M ".
 			"	".$arSqls["FROM"]." ";
-		if (strlen($arSqls["WHERE"]) > 0)
+		if ($arSqls["WHERE"] <> '')
 			$strSql .= "WHERE ".$arSqls["WHERE"]." ";
-		if (strlen($arSqls["GROUPBY"]) > 0)
+		if ($arSqls["GROUPBY"] <> '')
 			$strSql .= "GROUP BY ".$arSqls["GROUPBY"]." ";
-		if (strlen($arSqls["ORDERBY"]) > 0)
+		if ($arSqls["ORDERBY"] <> '')
 			$strSql .= "ORDER BY ".$arSqls["ORDERBY"]." ";
 
-		if (is_array($arNavStartParams) && IntVal($arNavStartParams["nTopCount"]) <= 0)
+		if (is_array($arNavStartParams) && intval($arNavStartParams["nTopCount"]) <= 0)
 		{
 			$strSql_tmp =
 				"SELECT COUNT('x') as CNT ".
 				"FROM b_sonet_messages M ".
 				"	".$arSqls["FROM"]." ";
-			if (strlen($arSqls["WHERE"]) > 0)
+			if ($arSqls["WHERE"] <> '')
 				$strSql_tmp .= "WHERE ".$arSqls["WHERE"]." ";
-			if (strlen($arSqls["GROUPBY"]) > 0)
+			if ($arSqls["GROUPBY"] <> '')
 				$strSql_tmp .= "GROUP BY ".$arSqls["GROUPBY"]." ";
 
 			//echo "!2.1!=".htmlspecialcharsbx($strSql_tmp)."<br>";
 
 			$dbRes = $DB->Query($strSql_tmp, false, "File: ".__FILE__."<br>Line: ".__LINE__);
 			$cnt = 0;
-			if (strlen($arSqls["GROUPBY"]) <= 0)
+			if ($arSqls["GROUPBY"] == '')
 			{
 				if ($arRes = $dbRes->Fetch())
 					$cnt = $arRes["CNT"];
@@ -236,8 +237,8 @@ class CSocNetMessages extends CAllSocNetMessages
 		}
 		else
 		{
-			if (is_array($arNavStartParams) && IntVal($arNavStartParams["nTopCount"]) > 0)
-				$strSql .= "LIMIT ".IntVal($arNavStartParams["nTopCount"]);
+			if (is_array($arNavStartParams) && intval($arNavStartParams["nTopCount"]) > 0)
+				$strSql .= "LIMIT ".intval($arNavStartParams["nTopCount"]);
 
 			//echo "!3!=".htmlspecialcharsbx($strSql)."<br>";
 
@@ -247,14 +248,14 @@ class CSocNetMessages extends CAllSocNetMessages
 		return $dbRes;
 	}
 
-	function GetChatLastDate($currentUserID, $userID)
+	public static function GetChatLastDate($currentUserID, $userID)
 	{
 		global $DB;
 
-		$currentUserID = IntVal($currentUserID);
+		$currentUserID = intval($currentUserID);
 		if ($currentUserID <= 0)
 			return false;
-		$userID = IntVal($userID);
+		$userID = intval($userID);
 		if ($userID <= 0)
 			return false;
 
@@ -278,26 +279,26 @@ class CSocNetMessages extends CAllSocNetMessages
 			$date = $arResult["DDD"];
 
 		$date = Trim($date);
-		if (StrLen($date) <= 0)
+		if ($date == '')
 			$date = date("Y-m-d 00:00:00");
 		
 		return $date;
 	}
 
-	function GetMessagesForChat($currentUserID, $userID, $date = false, $arNavStartParams = false, $replyMessId=false)
+	public static function GetMessagesForChat($currentUserID, $userID, $date = false, $arNavStartParams = false, $replyMessId=false)
 	{
 		global $DB;
 
-		$currentUserID = IntVal($currentUserID);
+		$currentUserID = intval($currentUserID);
 		if ($currentUserID <= 0)
 			return false;
 
-		$userID = IntVal($userID);
+		$userID = intval($userID);
 
 		if ($date !== false)
 		{
 			$date = Trim($date);
-			if (StrLen($date) <= 0)
+			if ($date == '')
 				return false;
 
 			if (!preg_match("#\d\d\d\d-\d\d-\d\d \d\d:\d\d:\d\d#i", $date))
@@ -340,7 +341,7 @@ class CSocNetMessages extends CAllSocNetMessages
 			(($replyMessId > 0) ? " AND MESSAGE_TYPE = 'P' AND ID >= '".$replyMessId."' " : "").
 			"ORDER BY DATE_CREATE ".(($date !== false) ? "ASC" : "DESC")." ";
 
-		if (is_array($arNavStartParams) && IntVal($arNavStartParams["nTopCount"]) <= 0)
+		if (is_array($arNavStartParams) && intval($arNavStartParams["nTopCount"]) <= 0)
 		{
 			$strSql_tmp =
 				"SELECT COUNT(M.ID) as CNT ".
@@ -366,8 +367,8 @@ class CSocNetMessages extends CAllSocNetMessages
 		}
 		else
 		{
-			if (is_array($arNavStartParams) && IntVal($arNavStartParams["nTopCount"]) > 0)
-				$strSql .= "LIMIT ".IntVal($arNavStartParams["nTopCount"]);
+			if (is_array($arNavStartParams) && intval($arNavStartParams["nTopCount"]) > 0)
+				$strSql .= "LIMIT ".intval($arNavStartParams["nTopCount"]);
 
 			$dbRes = $DB->Query($strSql, false, "File: ".__FILE__."<br>Line: ".__LINE__);
 		}
@@ -375,11 +376,11 @@ class CSocNetMessages extends CAllSocNetMessages
 		return $dbRes;
 	}
 
-	function GetMessagesUsers($userID, $arNavStartParams = false, $online_interval = 120)
+	public static function GetMessagesUsers($userID, $arNavStartParams = false, $online_interval = 120)
 	{
 		global $DB;
 
-		$userID = IntVal($userID);
+		$userID = intval($userID);
 		if ($userID <= 0)
 			return false;
 
@@ -403,7 +404,7 @@ class CSocNetMessages extends CAllSocNetMessages
 			"GROUP BY U.ID, U.NAME, U.LAST_NAME, U.SECOND_NAME, U.PERSONAL_PHOTO, U.PERSONAL_GENDER ".
 			"ORDER BY UNREAD DESC, MAX_DATE DESC ";
 
-		if (is_array($arNavStartParams) && IntVal($arNavStartParams["nTopCount"]) <= 0)
+		if (is_array($arNavStartParams) && intval($arNavStartParams["nTopCount"]) <= 0)
 		{
 			$strSql_tmp =
 				"SELECT DISTINCT FROM_USER_ID ".
@@ -432,8 +433,8 @@ class CSocNetMessages extends CAllSocNetMessages
 		}
 		else
 		{
-			if (is_array($arNavStartParams) && IntVal($arNavStartParams["nTopCount"]) > 0)
-				$strSql .= "LIMIT ".IntVal($arNavStartParams["nTopCount"]);
+			if (is_array($arNavStartParams) && intval($arNavStartParams["nTopCount"]) > 0)
+				$strSql .= "LIMIT ".intval($arNavStartParams["nTopCount"]);
 
 			$dbRes = $DB->Query($strSql, false, "File: ".__FILE__."<br>Line: ".__LINE__);
 		}
@@ -441,7 +442,7 @@ class CSocNetMessages extends CAllSocNetMessages
 		return $dbRes;
 	}
 
-	function Now()
+	public static function Now()
 	{
 		global $DB;
 
@@ -453,4 +454,3 @@ class CSocNetMessages extends CAllSocNetMessages
 			return date("Y-m-d H:i:s");
 	}
 }
-?>

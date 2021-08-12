@@ -1,3 +1,0 @@
-<?
-$MESS["Forum"] = "#GUESTS# convidados";
-?>

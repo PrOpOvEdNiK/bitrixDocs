@@ -7,12 +7,12 @@
  */
 namespace Bitrix\Sender;
 
+use Bitrix\Main;
 use Bitrix\Main\DB\Exception;
 use Bitrix\Main\Type;
-
+use Bitrix\Sender\Dispatch\MethodSchedule;
 use Bitrix\Sender\Entity;
 use Bitrix\Sender\Internals\Model;
-use Bitrix\Sender\Dispatch\MethodSchedule;
 
 class MailingManager
 {
@@ -62,11 +62,34 @@ class MailingManager
 		(new Runtime\ReiteratedJob())->actualize();
 	}
 
+	protected static function checkOnBeforeChainSend($letterId)
+	{
+		$event = new Main\Event('sender', 'onBeforeChainSend', ['LETTER_ID' => $letterId]);
+		$event->send();
+		foreach ($event->getResults() as $eventResult)
+		{
+			if (
+				$eventResult->getType() === Main\EventResult::ERROR
+				|| $eventResult->getParameters()
+				&& isset($eventResult->getParameters()['ALLOW_SEND'])
+				&& $eventResult->getParameters()['ALLOW_SEND'] === false
+			)
+			{
+				return false;
+			}
+		}
+
+		return true;
+	}
 	/**
 	 * Send letter.
 	 *
 	 * @param integer $letterId Letter ID.
+	 *
 	 * @return string
+	 * @throws \Bitrix\Main\ArgumentException
+	 * @throws \Bitrix\Main\ObjectPropertyException
+	 * @throws \Bitrix\Main\SystemException
 	 */
 	public static function chainSend($letterId)
 	{
@@ -81,11 +104,17 @@ class MailingManager
 				$letter = Model\LetterTable::getRowById($letterId);
 			}
 		}
-		if(!$letter || $letter['STATUS'] !== Model\LetterTable::STATUS_SEND)
+		if(!$letter || !in_array($letter['STATUS'], [
+			Model\LetterTable::STATUS_SEND
+			]))
 		{
 			return "";
 		}
 
+		if(!static::checkOnBeforeChainSend($letterId))
+		{
+			return Runtime\SenderJob::getAgentName($letterId);
+		}
 
 		$postingSendStatus = '';
 		if(!empty($letter['POSTING_ID']))
@@ -107,7 +136,20 @@ class MailingManager
 
 		if(!empty(static::$error) || $postingSendStatus === PostingManager::SEND_RESULT_CONTINUE)
 		{
-			return static::getAgentName($letterId);
+			return Runtime\SenderJob::getAgentName($letterId);
+		}
+
+
+		if ($postingSendStatus === PostingManager::SEND_RESULT_WAIT)
+		{
+			Model\LetterTable::update($letterId, array('STATUS' => Model\LetterTable::STATUS_WAIT));
+			return "";
+		}
+
+
+		if ($postingSendStatus === PostingManager::SEND_RESULT_WAITING_RECIPIENT)
+		{
+			return Runtime\SenderJob::getAgentName($letterId);
 		}
 
 		if ($letter['REITERATE'] !== 'Y')
@@ -159,7 +201,10 @@ class MailingManager
 	}
 
 	/**
+	 *
 	 * @throws \Bitrix\Main\ArgumentException
+	 * @throws \Bitrix\Main\ObjectPropertyException
+	 * @throws \Bitrix\Main\SystemException
 	 */
 	public static function checkSend()
 	{
@@ -169,11 +214,15 @@ class MailingManager
 		$mailingChainDb = MailingChainTable::getList(array(
 			'select' => array('ID'),
 			'filter' => array(
-				'=STATUS' => array(MailingChainTable::STATUS_SEND, MailingChainTable::STATUS_PLAN),
+				'=STATUS' => array(
+					MailingChainTable::STATUS_SEND,
+					MailingChainTable::STATUS_PLAN,
+					),
 				'=MAILING.ACTIVE' => 'Y',
 				'<=AUTO_SEND_TIME' => new Type\DateTime(),
 			)
 		));
+
 		while ($mailingChain = $mailingChainDb->fetch())
 		{
 			static::chainSend($mailingChain['ID']);
@@ -206,7 +255,7 @@ class MailingManager
 		$chainDb = MailingChainTable::getList(array(
 			'select' => array(
 				'ID', 'LAST_EXECUTED', 'POSTING_ID',
-				'DAYS_OF_MONTH', 'DAYS_OF_WEEK', 'TIMES_OF_DAY'
+				'MONTHS_OF_YEAR', 'DAYS_OF_MONTH', 'DAYS_OF_WEEK', 'TIMES_OF_DAY'
 			),
 			'filter' => array(
 				'=REITERATE' => 'Y',
@@ -230,7 +279,8 @@ class MailingManager
 				$dateTodayPhp,
 				$arMailingChain["DAYS_OF_MONTH"],
 				$arMailingChain["DAYS_OF_WEEK"],
-				$arMailingChain["TIMES_OF_DAY"]
+				$arMailingChain["TIMES_OF_DAY"],
+				$arMailingChain["MONTHS_OF_YEAR"]
 			);
 
 			if($timeOfExecute)
@@ -262,7 +312,6 @@ class MailingManager
 					$arUpdateMailChain['AUTO_SEND_TIME'] = Type\DateTime::createFromPhp($timeOfExecute);
 				}
 
-
 				Model\LetterTable::update($arMailingChain['ID'], $arUpdateMailChain);
 			}
 		}
@@ -273,25 +322,35 @@ class MailingManager
 
 	/**
 	 * @param \DateTime $date
-	 * @param $daysOfMonth
-	 * @param $dayOfWeek
-	 * @param $timesOfDay
+	 * @param string|null $daysOfMonth
+	 * @param string|null $dayOfWeek
+	 * @param string|null $timesOfDay
+	 * @param string|null $monthsOfYear
 	 * @return \DateTime|null
 	 */
-	protected static function getDateExecute(\DateTime $date, $daysOfMonth, $dayOfWeek, $timesOfDay)
+	protected static function getDateExecute(
+		\DateTime $date,
+		?string $daysOfMonth = '',
+		?string $dayOfWeek = '',
+		?string $timesOfDay = '',
+		?string $monthsOfYear = ''
+	)
 	{
 		$timeOfExecute = null;
 
+		$months = MethodSchedule::parseMonthsOfYear($monthsOfYear);
 		$arDay = MethodSchedule::parseDaysOfMonth($daysOfMonth);
 		$arWeek = MethodSchedule::parseDaysOfWeek($dayOfWeek);
 		$arTime = MethodSchedule::parseTimesOfDay($timesOfDay);
+
 		if(!$arTime)
 			$arTime = array(0,0);
 
 		$day = $date->format('j');
 		$week = $date->format('N');
+		$month = $date->format('n');
 
-		if( (!$arDay || in_array($day, $arDay)) && (!$arWeek || in_array($week, $arWeek)) )
+		if( (!$arDay || in_array($day, $arDay)) && (!$arWeek || in_array($week, $arWeek)) && (!$months || in_array($month, $months)) )
 			$timeOfExecute = $date->setTime($arTime[0], $arTime[1]);
 
 		return $timeOfExecute;

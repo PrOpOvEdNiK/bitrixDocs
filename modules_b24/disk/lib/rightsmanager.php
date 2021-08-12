@@ -14,6 +14,7 @@ use Bitrix\Disk\Internals\SimpleRightTable;
 use Bitrix\Main\Application;
 use Bitrix\Main\Entity\ExpressionField;
 use Bitrix\Main\Entity\Query;
+use Bitrix\Main\ORM\Query\Filter\ConditionTree;
 use Bitrix\Main\SystemException;
 use Bitrix\Main\Type\Collection;
 
@@ -301,6 +302,20 @@ class RightsManager implements IErrorable
 		return $this->set($object, array_merge($this->getSpecificRights($object), $rights));
 	}
 
+	public function hasSimpleRight(int $userId, int $objectId): bool
+	{
+		$sql = "
+			SELECT 'x' FROM b_disk_simple_right simple_right
+			INNER JOIN b_user_access uaccess ON uaccess.ACCESS_CODE = simple_right.ACCESS_CODE AND uaccess.USER_ID = {$userId}
+			WHERE (simple_right.OBJECT_ID = {$objectId})
+			LIMIT 1
+		";
+
+		$connection = Application::getConnection();
+
+		return (bool)$connection->query($sql)->getSelectedRowsCount();
+	}
+
 	public function revokeByAccessCodes(BaseObject $object, array $accessCodes)
 	{
 		if (empty($accessCodes))
@@ -410,7 +425,9 @@ class RightsManager implements IErrorable
 			$filter['DOMAIN'] = $domain;
 		}
 
-		return RightTable::deleteBatch($filter);
+		RightTable::deleteBatch($filter);
+
+		return true;
 	}
 
 	public function generateDomain($domain, $id)
@@ -425,7 +442,7 @@ class RightsManager implements IErrorable
 
 	public function getIdBySharingDomain($domain)
 	{
-		return substr($domain, strlen(self::DOMAIN_SHARING . '-'));
+		return mb_substr($domain, mb_strlen(self::DOMAIN_SHARING.'-'));
 	}
 
 	public function getBizProcDomain($id)
@@ -466,7 +483,7 @@ class RightsManager implements IErrorable
 	{
 		if(!isset($this->operationsByTask[$taskId]))
 		{
-			/** @noinspection PhpDynamicAsStaticMethodCallInspection */
+
 			$this->operationsByTask[$taskId] = \CTask::getOperations($taskId, true);
 		}
 		return $this->operationsByTask[$taskId];
@@ -488,7 +505,7 @@ class RightsManager implements IErrorable
 		$refClass = new \ReflectionClass($this);
 		foreach($refClass->getConstants() as $name => $value)
 		{
-			if(substr($name, 0, 3) === 'OP_')
+			if(mb_substr($name, 0, 3) === 'OP_')
 			{
 				$operations[$value] = $value;
 			}
@@ -582,6 +599,7 @@ class RightsManager implements IErrorable
 			$this->appendChildRightsForConnectedChildren($parentId, $userId, $restrictIds, $rightsByObjectId);
 		}
 		$this->appendChildCrRightsForChildren($parentId, $userId, $restrictIds, $rightsByObjectId);
+		$this->appendChildAuRightsForChildren($parentId, $userId, $restrictIds, $rightsByObjectId);
 
 		$operations = [];
 		foreach ($rightsByObjectId as $objectId => $rights)
@@ -709,6 +727,54 @@ class RightsManager implements IErrorable
 			{
 				$rightsByObjectId[$row['O_REAL_OBJECT_ID']][] = array(
 					'ACCESS_CODE' => 'CR',
+					'NAME' => $row['NAME'],
+					'TASK_ID' => $row['TASK_ID'],
+					'DOMAIN' => $row['DOMAIN'],
+					'NEGATIVE' => $row['NEGATIVE'],
+					'REAL_OBJECT_ID' => $row['O_REAL_OBJECT_ID'],
+					'OBJECT_ID' => $row['O_OBJECT_ID'],
+				);
+			}
+		}
+	}
+
+	private function appendChildAuRightsForChildren($parentId, $userId, array $restrictIds, &$rightsByObjectId)
+	{
+		$restrictById = '';
+		$restrictIds = array_filter(array_map('intval', $restrictIds));
+		if ($restrictIds)
+		{
+			$restrictById = ' AND o.ID IN (' . implode(',', $restrictIds) . ')';
+		}
+
+		$query = Application::getConnection()->query("
+			SELECT op.NAME, r.TASK_ID, r.DOMAIN, r.NEGATIVE, o.REAL_OBJECT_ID O_REAL_OBJECT_ID, o.ID O_OBJECT_ID
+			FROM b_disk_right r
+				INNER JOIN b_disk_object_path p ON p.PARENT_ID = r.OBJECT_ID
+				INNER JOIN b_disk_object o ON p.OBJECT_ID = o.ID
+				INNER JOIN b_task_operation task_op ON r.TASK_ID = task_op.TASK_ID
+				INNER JOIN b_operation op ON task_op.OPERATION_ID = op.ID
+
+			WHERE o.PARENT_ID = {$parentId} AND r.ACCESS_CODE = 'AU' {$restrictById}
+		"
+		);
+
+		while ($row = $query->fetch())
+		{
+			$rightsByObjectId[$row['O_OBJECT_ID']][] = array(
+				'ACCESS_CODE' => 'AU',
+				'NAME' => $row['NAME'],
+				'TASK_ID' => $row['TASK_ID'],
+				'DOMAIN' => $row['DOMAIN'],
+				'NEGATIVE' => $row['NEGATIVE'],
+				'REAL_OBJECT_ID' => $row['O_REAL_OBJECT_ID'],
+				'OBJECT_ID' => $row['O_OBJECT_ID'],
+			);
+
+			if ($row['O_REAL_OBJECT_ID'] != $row['O_OBJECT_ID'])
+			{
+				$rightsByObjectId[$row['O_REAL_OBJECT_ID']][] = array(
+					'ACCESS_CODE' => 'AU',
 					'NAME' => $row['NAME'],
 					'TASK_ID' => $row['TASK_ID'],
 					'DOMAIN' => $row['DOMAIN'],
@@ -1079,7 +1145,15 @@ class RightsManager implements IErrorable
 		$parameters['runtime'][] = new ExpressionField('RIGHTS_CHECK',
 			'CASE WHEN ' . $securityContext->getSqlExpressionForList('%1$s', '%2$s') . ' THEN 1 ELSE 0 END', $specificColumns, array('data_type' => 'boolean',)
 		);
-		$parameters['filter']['=RIGHTS_CHECK'] = true;
+
+		if ($parameters['filter'] instanceof ConditionTree)
+		{
+			$parameters['filter']->addCondition(Query::filter()->where('RIGHTS_CHECK', true));
+		}
+		else
+		{
+			$parameters['filter']['=RIGHTS_CHECK'] = true;
+		}
 
 		return $parameters;
 	}

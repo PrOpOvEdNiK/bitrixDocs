@@ -1,4 +1,4 @@
-<?
+<?php
 interface IXMPPFactoryHandler
 {
 	public function ReceiveMessage($senderJId, array $arMessage, CXMPPClient $senderClient);
@@ -25,4 +25,3 @@ abstract class CXMPPFactoryHandler
 		$this->nameTemplate = CXMPPUtility::GetNameFormat();
 	}
 }
-?>

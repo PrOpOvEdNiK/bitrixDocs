@@ -2,24 +2,25 @@
 
 namespace Bitrix\DocumentGenerator\Body;
 
+use Bitrix\DocumentGenerator\Value;
 use Bitrix\Main\Error;
 use Bitrix\Main\IO\File;
 use Bitrix\Main\Result;
 use Bitrix\Main\Security\Random;
 
-final class Docx extends ZipDocument
+class Docx extends ZipDocument
 {
-	const PATH_DOCUMENT = 'word/document.xml';
-	const PATH_NUMBERING = 'word/numbering.xml';
-	const PATH_CONTENT_TYPES = '[Content_Types].xml';
+	protected const PATH_DOCUMENT = 'word/document.xml';
+	protected const PATH_NUMBERING = 'word/numbering.xml';
+	protected const PATH_CONTENT_TYPES = '[Content_Types].xml';
 
-	const REL_TYPE_IMAGE = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/image';
-	const REL_TYPE_FOOTER = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/footer';
-	const REL_TYPE_HEADER = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/header';
-	const REL_TYPE_NUMBERING = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/numbering';
+	protected const REL_TYPE_IMAGE = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/image';
+	protected const REL_TYPE_FOOTER = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/footer';
+	protected const REL_TYPE_HEADER = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/header';
+	protected const REL_TYPE_NUMBERING = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/numbering';
 
-	const ABSTRACT_ORDERED_NUMBERING_ID = '553';
-	const ABSTRACT_UNORDERED_NUMBERING_ID = '554';
+	public const ABSTRACT_ORDERED_NUMBERING_ID = '553';
+	public const ABSTRACT_UNORDERED_NUMBERING_ID = '554';
 
 	/** @var \DOMDocument */
 	protected $contentTypesDocument;
@@ -29,7 +30,7 @@ final class Docx extends ZipDocument
 	/**
 	 * @return string
 	 */
-	public function getFileExtension()
+	public function getFileExtension(): string
 	{
 		return 'docx';
 	}
@@ -37,7 +38,7 @@ final class Docx extends ZipDocument
 	/**
 	 * @return string
 	 */
-	public function getFileMimeType()
+	public function getFileMimeType(): string
 	{
 		return 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
 	}
@@ -45,7 +46,7 @@ final class Docx extends ZipDocument
 	/**
 	 * @return bool
 	 */
-	public function isFileProcessable()
+	public function isFileProcessable(): bool
 	{
 		if(parent::isFileProcessable())
 		{
@@ -58,7 +59,7 @@ final class Docx extends ZipDocument
 	/**
 	 * @inheritdoc
 	 */
-	public function process()
+	public function process(): Result
 	{
 		$result = new Result();
 
@@ -96,7 +97,7 @@ final class Docx extends ZipDocument
 	/**
 	 * @inheritdoc
 	 */
-	public function getPlaceholders()
+	public function getPlaceholders(): array
 	{
 		$placeholders = [];
 
@@ -117,7 +118,7 @@ final class Docx extends ZipDocument
 	/**
 	 * Normalizes content of the document, removing unnecessary tags between {}
 	 */
-	public function normalizeContent()
+	public function normalizeContent(): void
 	{
 		if($this->open() === true)
 		{
@@ -134,11 +135,20 @@ final class Docx extends ZipDocument
 		}
 	}
 
-	protected function fillInnerDocuments()
+	/**
+	 * @return DocxXml
+	 */
+	protected function getXmlClassName(): string
 	{
+		return DocxXml::class;
+	}
+
+	protected function fillInnerDocuments(): void
+	{
+		$xmlClassName = $this->getXmlClassName();
 		$this->innerDocuments[static::PATH_DOCUMENT] = [
 			'relationships' => $this->parseRelationships(static::PATH_DOCUMENT),
-			'document' => (new DocxXml($this->zip->getFromName(static::PATH_DOCUMENT)))->setValues($this->values)->setFields($this->fields),
+			'document' => (new $xmlClassName($this->zip->getFromName(static::PATH_DOCUMENT)))->setValues($this->values)->setFields($this->fields),
 		];
 		if(isset($this->innerDocuments[static::PATH_DOCUMENT]['relationships']['data'][static::REL_TYPE_FOOTER]))
 		{
@@ -147,7 +157,7 @@ final class Docx extends ZipDocument
 				$documentPath = 'word/'.$relationship['target'];
 				$this->innerDocuments[$documentPath] = [
 					'relationships' => $this->parseRelationships($documentPath),
-					'document' => (new DocxXml($this->zip->getFromName($documentPath)))->setValues($this->values)->setFields($this->fields),
+					'document' => (new $xmlClassName($this->zip->getFromName($documentPath)))->setValues($this->values)->setFields($this->fields),
 				];
 			}
 		}
@@ -158,7 +168,7 @@ final class Docx extends ZipDocument
 				$documentPath = 'word/'.$relationship['target'];
 				$this->innerDocuments[$documentPath] = [
 					'relationships' => $this->parseRelationships($documentPath),
-					'document' => (new DocxXml($this->zip->getFromName($documentPath)))->setValues($this->values)->setFields($this->fields),
+					'document' => (new $xmlClassName($this->zip->getFromName($documentPath)))->setValues($this->values)->setFields($this->fields),
 				];
 			}
 		}
@@ -179,9 +189,10 @@ final class Docx extends ZipDocument
 	 * @param string $documentPath
 	 * @return string
 	 */
-	protected function getRelationshipPath($documentPath)
+	protected function getRelationshipPath(string $documentPath): string
 	{
-		$documentPath = substr($documentPath, 5);
+		$documentPath = mb_substr($documentPath, 5);
+
 		return 'word/_rels/'.$documentPath.'.rels';
 	}
 
@@ -190,7 +201,7 @@ final class Docx extends ZipDocument
 	 * @param string $documentPath
 	 * @return array
 	 */
-	protected function parseRelationships($documentPath)
+	protected function parseRelationships(string $documentPath): array
 	{
 		$relationshipPath = $this->getRelationshipPath($documentPath);
 		$relationshipsContent = $this->zip->getFromName($relationshipPath);
@@ -228,13 +239,11 @@ final class Docx extends ZipDocument
 			}
 		}
 
-		$result = [
+		return [
 			'data' => $relationshipsData,
 			'document' => $relationshipsDocument,
 			'path' => $relationshipPath,
 		];
-
-		return $result;
 	}
 
 	/**
@@ -242,13 +251,14 @@ final class Docx extends ZipDocument
 	 * @param array $imageData
 	 * @throws \Bitrix\Main\IO\FileNotFoundException
 	 */
-	protected function replaceImages(array $relationshipsData, array $imageData = [])
+	protected function replaceImages(array $relationshipsData, array $imageData = []): void
 	{
+		$isDocumentChanged = false;
 		$relData = $relationshipsData['data'];
 		/** @var \DOMDocument $document */
 		$document = $relationshipsData['document'];
 		$relFilesToDelete = $nodesToDelete = [];
-		foreach($imageData as $placeholder => $data)
+		foreach($imageData as $fieldName => $data)
 		{
 			if(!isset($data['innerIDs']))
 			{
@@ -276,8 +286,8 @@ final class Docx extends ZipDocument
 						$document->importNode($newNode);
 						$originalNode->parentNode->insertBefore($newNode, $originalNode);
 						$this->importImage($image, $newNode, $imageID);
-						$this->addContentToZip($document->saveXML(), $relationshipsData['path']);
-						$this->excludedPlaceholders[] = $placeholder;
+						$isDocumentChanged = true;
+						$this->excludedPlaceholders[] = $fieldName;
 					}
 				}
 				if($originalImageID)
@@ -289,9 +299,21 @@ final class Docx extends ZipDocument
 					$nodesToDelete[] = $originalNode;
 				}
 			}
-			elseif(isset($this->values[$placeholder]) && !empty($this->values[$placeholder]))
+			elseif(isset($this->values[$fieldName]) && !empty(trim($this->values[$fieldName])))
 			{
-				$image = $this->getImage($this->values[$placeholder]);
+				$image = $this->getImage($this->values[$fieldName]);
+				if(!$image && $this->isArrayValue($this->values[$fieldName], $fieldName))
+				{
+					$placeholder = $data['placeholder'] ?? '';
+					$modifier = static::getModifierFromPlaceholder($placeholder);
+					$modifierData = Value::parseModifier($modifier);
+					$index = (int) $modifierData[static::ARRAY_INDEX_MODIFIER];
+					$value = $this->values[$fieldName];
+					$valueNameParts = explode('.', $value);
+					$name = implode('.', array_slice($valueNameParts, 2));
+					$arrayProvider = $this->values[$valueNameParts[0]];
+					$image = $this->getImage($this->printArrayValueByIndex($arrayProvider, $fieldName, $name, $index, $modifier));
+				}
 				if($image && $image->isExists() && $image->isReadable())
 				{
 					$originalImageID = $originalNode = false;
@@ -311,8 +333,8 @@ final class Docx extends ZipDocument
 						$document->importNode($newNode);
 						$originalNode->parentNode->insertBefore($newNode, $originalNode);
 						$this->importImage($image, $newNode, $imageID);
-						$this->addContentToZip($document->saveXML(), $relationshipsData['path']);
-						$this->excludedPlaceholders[] = $placeholder;
+						$isDocumentChanged = true;
+						$this->excludedPlaceholders[] = $fieldName;
 					}
 					if($originalImageID)
 					{
@@ -330,12 +352,22 @@ final class Docx extends ZipDocument
 				{
 					$relFilesToDelete[] = 'word/'.$data[static::REL_TYPE_IMAGE][$imageID]['target'];
 				}
+				$originalImageID = $data['originalId'][$imageID];
+				if(isset($relData[static::REL_TYPE_IMAGE][$originalImageID]))
+				{
+					$nodesToDelete[] = $relData[static::REL_TYPE_IMAGE][$originalImageID]['node'];
+				}
 			}
 		}
 		$nodesToDelete = $this->getUniqueObjects($nodesToDelete);
 		foreach($nodesToDelete as $node)
 		{
 			$node->parentNode->removeChild($node);
+			$isDocumentChanged = true;
+		}
+		if($isDocumentChanged)
+		{
+			$this->addContentToZip($document->saveXML(), $relationshipsData['path']);
 		}
 		foreach($relFilesToDelete as $path)
 		{
@@ -345,13 +377,13 @@ final class Docx extends ZipDocument
 
 	/**
 	 * @param string $path
-	 * @return File|false
+	 * @return File|null
 	 */
-	protected function getImage($path)
+	protected function getImage($path): ?File
 	{
 		if(!is_string($path) || empty($path))
 		{
-			return false;
+			return null;
 		}
 		$localPath = false;
 		$fileArray = \CFile::MakeFileArray($path);
@@ -361,10 +393,14 @@ final class Docx extends ZipDocument
 		}
 		if($localPath)
 		{
-			return new File($localPath);
+			$file = new File($localPath);
+			if($this->getMimeType($file))
+			{
+				return $file;
+			}
 		}
 
-		return false;
+		return null;
 	}
 
 	/**
@@ -372,9 +408,11 @@ final class Docx extends ZipDocument
 	 * @param \DOMElement $relationshipNode
 	 * @param string $newId
 	 */
-	protected function importImage(File $image, \DOMElement $relationshipNode, $newId = '')
+	protected function importImage(File $image, \DOMElement $relationshipNode, string $newId = ''): void
 	{
-		$newName = Random::getString(15).'.'.$image->getExtension();
+		$mimeType = $this->getMimeType($image);
+		$extension = $image->getExtension() ?? $this->getPrintableMimeTypes()[$mimeType];
+		$newName = Random::getString(15).'.'.$extension;
 		$this->zip->addFile($image->getPhysicalPath(), 'word/media/'.$newName);
 		$relationshipNode->removeAttribute('Target');
 		$relationshipNode->setAttribute('Target', 'media/'.$newName);
@@ -383,6 +421,45 @@ final class Docx extends ZipDocument
 			$relationshipNode->removeAttribute('Id');
 			$relationshipNode->setAttribute('Id', $newId);
 		}
+
+		$this->addRecordToContentTypes([
+			'path' => '/word/media/' . $newName,
+			'type' => $mimeType,
+		]);
+	}
+
+	protected function getPrintableMimeTypes(): array
+	{
+		return [
+			'image/jpeg' => 'jpeg',
+			'image/png'  => 'png',
+			'image/bmp'  => 'bmp',
+			'image/gif'  => 'gif',
+			'application/pdf' => 'pdf',
+		];
+	}
+
+	protected function getMimeType(File $file): ?string
+	{
+		$types = $this->getPrintableMimeTypes();
+
+		$mimeType = $file->getContentType();
+		if(isset($types[$mimeType]))
+		{
+			return $mimeType;
+		}
+
+		$extension = $file->getExtension();
+		if(!empty($extension))
+		{
+			$types = array_flip($types);
+			if(isset($types[$extension]))
+			{
+				return $types[$extension];
+			}
+		}
+
+		return null;
 	}
 
 	/**
@@ -392,7 +469,7 @@ final class Docx extends ZipDocument
 	 *
 	 * @param array $numberingIds
 	 */
-	protected function addNumberings(array $numberingIds)
+	protected function addNumberings(array $numberingIds): void
 	{
 		if(empty($numberingIds))
 		{
@@ -419,21 +496,10 @@ final class Docx extends ZipDocument
 				$relationshipsNode
 			);
 			$this->addContentToZip($relationshipsDocument->saveXML(), $this->innerDocuments[static::PATH_DOCUMENT]['relationships']['path']);
-			if(!$this->contentTypesDocument)
-			{
-				return;
-			}
-			$typesNode = $this->contentTypesDocument->getElementsByTagName('Types')->item(0);
-			if(!$typesNode)
-			{
-				return;
-			}
-			DocxXml::appendXmlToNode(
-				'<Override PartName="/word/numbering.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.numbering+xml"/>',
-				$this->contentTypesDocument,
-				$typesNode
-			);
-			$this->addContentToZip($this->contentTypesDocument->saveXML(), static::PATH_CONTENT_TYPES);
+			$this->addRecordToContentTypes([
+				'path' => '/word/numbering.xml',
+				'type' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.numbering+xml',
+			]);
 		}
 
 		if(!$this->numbering['document'])
@@ -535,7 +601,7 @@ final class Docx extends ZipDocument
 	/**
 	 * @return string
 	 */
-	protected function getEmptyNumberingXmlContent()
+	protected function getEmptyNumberingXmlContent(): string
 	{
 		return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'.
 			'<w:numbering xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:v="urn:schemas-microsoft-com:vml">'.
@@ -546,7 +612,7 @@ final class Docx extends ZipDocument
 	 * @param $abstractNumberId
 	 * @return string
 	 */
-	protected function getAbstractOrderedNumberingDescription($abstractNumberId = null)
+	protected function getAbstractOrderedNumberingDescription(string $abstractNumberId = null): string
 	{
 		if(!$abstractNumberId)
 		{
@@ -573,7 +639,7 @@ final class Docx extends ZipDocument
 	 * @param $abstractNumberId
 	 * @return string
 	 */
-	protected function getAbstractUnorderedNumberingDescription($abstractNumberId = null)
+	protected function getAbstractUnorderedNumberingDescription(string $abstractNumberId = null): string
 	{
 		if(!$abstractNumberId)
 		{
@@ -594,5 +660,23 @@ final class Docx extends ZipDocument
             '</w:pPr>'.
          '</w:lvl>'.
         '</w:abstractNum>';
+	}
+
+	protected function addRecordToContentTypes(array $attributes): void
+	{
+		if($this->contentTypesDocument)
+		{
+			$typesNode = $this->contentTypesDocument->getElementsByTagName('Types')->item(0);
+			if(!$typesNode)
+			{
+				return;
+			}
+			DocxXml::appendXmlToNode(
+				'<Override PartName="' . $attributes['path'] . '" ContentType="' . $attributes['type'] . '"/>',
+				$this->contentTypesDocument,
+				$typesNode
+			);
+			$this->addContentToZip($this->contentTypesDocument->saveXML(), static::PATH_CONTENT_TYPES);
+		}
 	}
 }

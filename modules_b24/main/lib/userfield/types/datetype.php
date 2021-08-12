@@ -8,6 +8,8 @@ use Bitrix\Main;
 use Bitrix\Main\Type;
 use CLang;
 use CDatabase;
+use Bitrix\Main\Text\HtmlFilter;
+use Bitrix\Main\Context;
 
 Loc::loadMessages(__FILE__);
 
@@ -106,15 +108,16 @@ class DateType extends BaseType
 	public static function checkFields(array $userField, $value): array
 	{
 		$msg = [];
-		if(is_string($value) && $value !== '' && !CheckDateTime($value, FORMAT_DATE))
+		if(is_string($value) && $value !== '' && !Type\Date::isCorrect($value))
 		{
 			$msg[] = [
 				'id' => $userField['FIELD_NAME'],
 				'text' => Loc::getMessage('USER_TYPE_D_ERROR',
 					[
-						'#FIELD_NAME#' => (
-						$userField['EDIT_FORM_LABEL'] <> '' ?
-							$userField['EDIT_FORM_LABEL'] : $userField['FIELD_NAME']
+						'#FIELD_NAME#' => HtmlFilter::encode(
+							$userField['EDIT_FORM_LABEL'] !== ''
+								? $userField['EDIT_FORM_LABEL']
+								: $userField['FIELD_NAME']
 						),
 					]
 				),
@@ -166,7 +169,7 @@ class DateType extends BaseType
 	 */
 	public static function onBeforeSave(?array $userField, $value)
 	{
-		if($value !== '' && !($value instanceof Type\Date))
+		if($value != '' && !($value instanceof Type\Date))
 		{
 			// try both site's format - short and full
 			try
@@ -190,5 +193,56 @@ class DateType extends BaseType
 	{
 		global $DB;
 		return $DB->DateToCharFunction($fieldName, static::FORMAT_TYPE_SHORT);
+	}
+
+	/**
+	 * @param array $userFiled
+	 */
+	public static function getDefaultValue(array $userField, array $additionalParameters = [])
+	{
+		$userField['ENTITY_VALUE_ID'] = 0;
+		$value = static::getFieldValue($userField, $additionalParameters);
+		return ($userField['MULTIPLE'] === 'Y' ? [$value] : $value);
+	}
+
+	/**
+	 * @param array $userField
+	 * @param array $additionalParameters
+	 */
+	public static function getFieldValue(array $userField, array $additionalParameters = [])
+	{
+		if(!$additionalParameters['bVarsFromForm'])
+		{
+			if(
+				isset($userField['ENTITY_VALUE_ID'])
+				&& $userField['ENTITY_VALUE_ID'] <= 0
+			)
+			{
+				if($userField['SETTINGS']['DEFAULT_VALUE']['TYPE'] === self::TYPE_NOW)
+				{
+					$value = \ConvertTimeStamp(time(), self::FORMAT_TYPE_SHORT);
+				}
+				else
+				{
+					$value = \CDatabase::formatDate(
+						$userField['SETTINGS']['DEFAULT_VALUE']['VALUE'],
+						'YYYY-MM-DD',
+						\CLang::getDateFormat(self::FORMAT_TYPE_SHORT)
+					);
+				}
+			} else {
+				$value = $userField['VALUE'];
+			}
+		}
+		elseif(isset($additionalParameters['VALUE']))
+		{
+			$value = $additionalParameters['VALUE'];
+		}
+		else
+		{
+			$value = Context::getCurrent()->getRequest()->get($userField['FIELD_NAME']);
+		}
+
+		return $value;
 	}
 }

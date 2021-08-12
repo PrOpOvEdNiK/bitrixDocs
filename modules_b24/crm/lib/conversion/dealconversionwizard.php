@@ -1,9 +1,11 @@
 <?php
+
 namespace Bitrix\Crm\Conversion;
-use Bitrix\Main;
 
 class DealConversionWizard extends EntityConversionWizard
 {
+	public const QUERY_PARAM_SRC_ID = 'conv_deal_id';
+
 	/**
 	 * @param int $entityID Entity ID.
 	 * @param DealConversionConfig|null $config Configuration parameters.
@@ -107,7 +109,7 @@ class DealConversionWizard extends EntityConversionWizard
 							false,
 							$options
 						),
-						array('conv_deal_id' => $converter->getEntityID())
+						array(static::QUERY_PARAM_SRC_ID => $converter->getEntityID())
 					);
 				}
 			}
@@ -142,7 +144,7 @@ class DealConversionWizard extends EntityConversionWizard
 				$fields[$k] = $v;
 				continue;
 			}
-			elseif(strpos($k, 'UF_CRM') === 0)
+			elseif(mb_strpos($k, 'UF_CRM') === 0)
 			{
 				$userField = isset($userFields[$k]) ? $userFields[$k] : null;
 				if(is_array($userField))

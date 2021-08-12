@@ -12,6 +12,7 @@ use Bitrix\Intranet;
 use Bitrix\Landing;
 use Bitrix\Crm\Communication;
 use Bitrix\Crm\Integration\Bitrix24\Product;
+use Bitrix\Crm\Integration;
 
 /**
  * Class Provider
@@ -63,6 +64,12 @@ class Provider
 				'CONFIGURABLE' => false,
 			],
 			[
+				'CODE' => Channel\Base::CrmShop,
+				'ICON_CLASS' => 'ui-icon crm-tracking-ui-tile-crm-shop',
+				'CONFIGURED' => true,
+				'CONFIGURABLE' => true,
+			],
+			[
 				'CODE' => Channel\Base::Site,
 				'ICON_CLASS' => 'ui-icon ui-icon-service-site',
 				'CONFIGURABLE' => true,
@@ -112,7 +119,7 @@ class Provider
 		{
 			foreach ($items as $itemId => $item)
 			{
-				if ($itemId === 'calltracking')
+				if (in_array($itemId, ['calltracking', 'crm_shop', 'baseconnector']))
 				{
 					continue;
 				}
@@ -158,6 +165,11 @@ class Provider
 
 		foreach ($adsSources as $index => $item)
 		{
+			if (!empty($item['SHOW_ONLY_EXISTS']))
+			{
+				continue;
+			}
+
 			$list[] = $item + [
 				'ID' => null,
 				'UTM_SOURCE' => null,
@@ -184,6 +196,7 @@ class Provider
 				'ICON_CLASS' => 'ui-icon ui-icon-service-google-ads',
 				'ICON_COLOR' => '#3889db',
 				'CONFIGURABLE' => true,
+				'ADVERTISABLE' => true,
 				'HAS_PATH_TO_LIST' => true,
 				'REF_DOMAIN' => [
 					/*
@@ -192,22 +205,26 @@ class Provider
 					'www.g.cn',
 					*/
 				],
+				'UTM_CONTENT' => 'cid|{campaignid}|gid|{adgroupid}|kwid|{targetid}',
 			],
 			[
 				'CODE' => 'fb',
 				'ICON_CLASS' => 'ui-icon ui-icon-service-fb',
 				'ICON_COLOR' => '#38659f',
 				'CONFIGURABLE' => true,
+				'ADVERTISABLE' => true,
 				'HAS_PATH_TO_LIST' => true,
 				'REF_DOMAIN' => Settings::isSocialRefDomainUsed()
 					? ['www.facebook.com', 'facebook.com']
 					: [],
+				'UTM_CONTENT' => 'cid|{{campaign.id}}|gid|{{adset.id}}|kwid|{{ad.id}}',
 			],
 			[
 				'CODE' => 'instagram',
 				'ICON_CLASS' => 'ui-icon ui-icon-service-instagram',
 				'ICON_COLOR' => '#d56c9a',
 				'CONFIGURABLE' => true,
+				'ADVERTISABLE' => true,
 				'HAS_PATH_TO_LIST' => true,
 				'REF_DOMAIN' => Settings::isSocialRefDomainUsed()
 					? ['www.instagram.com', 'instagram.com']
@@ -222,6 +239,7 @@ class Provider
 				'ICON_CLASS' => 'ui-icon ui-icon-service-vk',
 				'ICON_COLOR' => '#3871ba',
 				'CONFIGURABLE' => true,
+				'ADVERTISABLE' => true,
 				'HAS_PATH_TO_LIST' => true,
 				'REF_DOMAIN' => Settings::isSocialRefDomainUsed()
 					? ['www.vk.com', 'vk.com']
@@ -232,6 +250,7 @@ class Provider
 				'ICON_CLASS' => 'ui-icon ui-icon-service-ya-direct',
 				'ICON_COLOR' => '#ffce00',
 				'CONFIGURABLE' => true,
+				'ADVERTISABLE' => true,
 				'HAS_PATH_TO_LIST' => true,
 				'REF_DOMAIN' => [
 					/*
@@ -239,6 +258,14 @@ class Provider
 					['regexp' => 'yandex\.[A-Za-z]{2,6}'],
 					*/
 				],
+			];
+			$list[] = [
+				'CODE' => '1c',
+				'ICON_CLASS' => 'ui-icon ui-icon-service-1c',
+				'ICON_COLOR' => '#fade39',
+				'CONFIGURABLE' => true,
+				'HAS_PATH_TO_LIST' => true,
+				'SHOW_ONLY_EXISTS' => true,
 			];
 		}
 
@@ -252,6 +279,20 @@ class Provider
 			'CONFIGURABLE' => false,
 			'HAS_PATH_TO_LIST' => true,
 		];
+
+		if (Integration\Sender\Utm::canUse())
+		{
+			$list[] = [
+				'CODE' => Source\Base::Sender,
+				'ICON_CLASS' => 'ui-icon ui-icon-service-campaign',
+				'ICON_COLOR' => '#2ebef0',
+				'CONFIGURED' => true,
+				'CONFIGURABLE' => false,
+				'SAVEABLE' => true,
+				'HAS_PATH_TO_LIST' => true,
+				'UTM_SOURCE' => Integration\Sender\Utm::getUtmSources()
+			];
+		}
 
 		foreach ($list as $index => $item)
 		{
@@ -297,6 +338,11 @@ class Provider
 			return false;
 		}
 
+		if (Internals\SourceExpensesTable::getRow(['cache' => ['ttl' => 600]]))
+		{
+			return true;
+		}
+
 		foreach (self::getActualAdSources() as $source)
 		{
 			$ad = new Analytics\Ad($source);
@@ -340,6 +386,8 @@ class Provider
 		$adsSources = self::getStaticSources();
 		$adsSources = array_combine(array_column($adsSources, 'CODE'), $adsSources);
 		$sourceFields = Internals\SourceFieldTable::getSourceFields();
+		$sourceFieldsDefaults = Internals\SourceFieldTable::getSourceFieldsDefaults();
+
 
 		$list = Internals\SourceTable::getList([
 			'select' => ['ID', 'CODE', 'NAME', 'ICON_COLOR', 'AD_CLIENT_ID', 'AD_ACCOUNT_ID'],
@@ -352,6 +400,7 @@ class Provider
 			if ($item['CODE'] && isset($adsSources[$item['CODE']]))
 			{
 				$item = ['NAME' => $item['NAME']] + $adsSources[$item['CODE']] + $item;
+				$adsSources[$item['CODE']]['SAVED'] = true;
 			}
 
 			if (!$item['CODE'])
@@ -360,10 +409,7 @@ class Provider
 				$item['ICON_COLOR'] = $item['ICON_COLOR'] ?: '#55d0e0';
 			}
 
-			if (isset($sourceFields[$item['ID']]))
-			{
-				$item = $item + $sourceFields[$item['ID']];
-			}
+			$item = $item + ($sourceFields[$item['ID']] ?? $sourceFieldsDefaults);
 
 			$list[$index] = $item + [
 				'DESCRIPTION' => Source\Base::getDescriptionByCode($item['CODE'], $item['NAME']),
@@ -377,12 +423,30 @@ class Provider
 
 		foreach ($adsSources as $sourceCode => $source)
 		{
-			if (!$source['CONFIGURED'] || $source['CONFIGURABLE'])
+			if (!$source['CONFIGURED'] || $source['CONFIGURABLE'] || !empty($source['SAVED']))
 			{
 				continue;
 			}
 
 			$list[] = $source;
+		}
+
+		foreach ($list as $index => $source)
+		{
+			if (!empty($source['ID']) || empty($source['SAVEABLE']))
+			{
+				continue;
+			}
+
+			$saveResult = Internals\SourceTable::add([
+				'CODE' => $source['CODE'],
+				'NAME' => $source['NAME'],
+			]);
+			if ($saveResult->isSuccess())
+			{
+				$source['ID'] = $saveResult->getId();
+			}
+			$list[$index] = $source;
 		}
 
 		usort($list, [__CLASS__, 'sortSourcesByCode']);
@@ -469,20 +533,22 @@ class Provider
 		}
 
 		$filter = [
-			'=ACTIVE' => 'Y'
+			'=ACTIVE' => 'Y',
 		];
 		if (is_bool($isStore))
 		{
 			$filter['=TYPE'] = $isStore ?  'STORE' : 'PAGE';
 		}
 
+		Landing\Rights::setGlobalOff();
 		$list = Landing\Site::getList([
 			'select' => [
-				'ID', 'TITLE', 'DOMAIN_NAME' => 'DOMAIN.DOMAIN',
+				'ID', 'TITLE', 'TYPE', 'TPL_CODE', 'DOMAIN_NAME' => 'DOMAIN.DOMAIN',
 				'DOMAIN_PROTOCOL' => 'DOMAIN.PROTOCOL'
 			],
 			'filter' => $filter
 		])->fetchAll();
+		Landing\Rights::setGlobalOn();
 
 		$list = array_filter(
 			$list,
@@ -492,6 +558,23 @@ class Provider
 			}
 		);
 		sort($list);
+		$list = array_map(
+			function ($item)
+			{
+				$code = Channel\Base::Site24;
+				if ($item['TYPE'] === 'STORE')
+				{
+					$code =  $item['TPL_CODE'] === 'store_v3'
+						? $code = Channel\Base::CrmShop
+						: $code = Channel\Base::Shop24
+					;
+				}
+
+				$item['CODE'] = $code;
+				return $item;
+			},
+			$list
+		);
 
 		$disabledList = array_column(Internals\SiteB24Table::getList()->fetchAll(), 'LANDING_SITE_ID');
 		foreach ($list as $index => $site)
@@ -509,15 +592,15 @@ class Provider
 	 */
 	public static function getReadyB24SiteDomains()
 	{
-		return array_keys(self::getReadyB24SiteIds());
+		return array_keys(self::getReadyB24Sites());
 	}
 
 	/**
-	 * Get ready b24 site domains.
+	 * Get ready b24 sites.
 	 *
 	 * @return array
 	 */
-	public static function getReadyB24SiteIds()
+	public static function getReadyB24Sites()
 	{
 		$result = [];
 		foreach (self::getB24Sites() as $site)
@@ -527,10 +610,24 @@ class Provider
 				continue;
 			}
 
-			$host = strtolower(trim($site['DOMAIN_NAME']));
-			$result[$host] = $site['ID'];
+			$host = mb_strtolower(trim($site['DOMAIN_NAME']));
+			$result[$host] = $site;
 		}
 
 		return $result;
+	}
+
+	/**
+	 * Get ready b24 site domains.
+	 *
+	 * @return array
+	 */
+	public static function getReadyB24SiteIds()
+	{
+		$result = self::getReadyB24Sites();
+		return array_combine(
+			array_keys($result),
+			array_column($result, 'ID')
+		);
 	}
 }

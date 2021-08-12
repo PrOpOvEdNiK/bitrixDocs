@@ -269,7 +269,7 @@ abstract class Disk extends \Bitrix\Tasks\Integration
 			{
 				if((string) $attachmentId != '')
 				{
-					if(strpos($attachmentId, FileUserType::NEW_FILE_PREFIX) === 0)
+					if(mb_strpos($attachmentId, FileUserType::NEW_FILE_PREFIX) === 0)
 					{
 						$unattached[$attachmentId] = $attachmentId;
 					}
@@ -412,6 +412,11 @@ abstract class Disk extends \Bitrix\Tasks\Integration
 				'ENTITY_TYPE' => 'tasks_task_template_checklist', // should match entity type from user fields: TASKS_TASK_TEMPLATE_CHECKLIST
 				'MODULE_ID' => 'tasks',
 				'CLASS' => Disk\Connector\CheckList\Template::className(),
+			],
+			'SCRUM_ITEM' => [
+				'ENTITY_TYPE' => 'tasks_scrum_item',
+				'MODULE_ID' => 'tasks',
+				'CLASS' => Disk\Connector\ScrumItem::className(),
 			],
 		]);
 	}

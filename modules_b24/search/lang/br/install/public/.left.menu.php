@@ -1,4 +1,0 @@
-<?
-$MESS["SEARCH_INSTALL_PUBLIC_MENU_MAP"] = "Mapa do site fazer";
-$MESS["SEARCH_INSTALL_PUBLIC_MENU_SEARCH"] = "Pesquisar";
-?>

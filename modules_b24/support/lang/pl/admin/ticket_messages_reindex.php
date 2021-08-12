@@ -1,3 +1,0 @@
-<?
-$MESS["SUP_SEARCH_NDX_PROGRESS_BAR"] = "Gotowe #LAST_ID# z #MAX_ID#<br>#PROGRESS_BAR#";
-?>

@@ -1,3 +1,0 @@
-<?
-$MESS["CRM_AUTOMATION_TRIGGER_ORDER_CANCELED_NAME"] = "Замовлення скасоване";
-?>

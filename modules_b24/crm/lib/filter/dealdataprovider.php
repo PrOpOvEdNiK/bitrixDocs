@@ -2,19 +2,17 @@
 namespace Bitrix\Crm\Filter;
 
 use Bitrix\Main;
-use Bitrix\Main\Config\Option;
 use Bitrix\Main\Localization\Loc;
-
 use Bitrix\Crm;
-use Bitrix\Crm\EntityAddress;
 use Bitrix\Crm\Category\DealCategory;
 use Bitrix\Crm\Counter\EntityCounterType;
 use Bitrix\Crm\PhaseSemantics;
-use Bitrix\Report\VisualConstructor\Helper\Analytic;
+use Bitrix\Sale;
+use Bitrix\Main\Loader;
 
 Loc::loadMessages(__FILE__);
 
-class DealDataProvider extends EntityDataProvider
+class DealDataProvider extends Main\Filter\EntityDataProvider
 {
 	/** @var DealSettings|null */
 	protected $settings = null;
@@ -137,6 +135,26 @@ class DealDataProvider extends EntityDataProvider
 			);
 		}
 
+		$result['ORDER_STAGE'] = $this->createField(
+			'ORDER_STAGE',
+			array('type' => 'list', 'default' => false, 'partial' => true)
+		);
+
+		$result['DELIVERY_STAGE'] = $this->createField(
+			'DELIVERY_STAGE',
+			array('type' => 'list', 'default' => false, 'partial' => true)
+		);
+
+		$result['PAYMENT_STAGE'] = $this->createField(
+			'PAYMENT_STAGE',
+			array('type' => 'list', 'default' => false, 'partial' => true)
+		);
+
+		$result['PAYMENT_PAID'] = $this->createField(
+			'PAYMENT_PAID',
+			array('type' => 'date')
+		);
+
 		$result['BEGINDATE'] = $this->createField(
 			'BEGINDATE',
 			array('type' => 'date')
@@ -212,7 +230,10 @@ class DealDataProvider extends EntityDataProvider
 		{
 			$result['PRODUCT_ROW_PRODUCT_ID'] = $this->createField(
 				'PRODUCT_ROW_PRODUCT_ID',
-				array('type' => 'dest_selector', 'partial' => true)
+				[
+					'type' => 'entity_selector',
+					'partial' => true,
+				]
 			);
 
 			$result['ORIGINATOR_ID'] = $this->createField(
@@ -291,6 +312,11 @@ class DealDataProvider extends EntityDataProvider
 			array('type' => 'list', 'default' => true, 'partial' => true)
 		);
 
+		$result['ORDER_SOURCE'] = $this->createField(
+			'ORDER_SOURCE',
+			array('type' => 'list', 'default' => true, 'partial' => true)
+		);
+
 		return $result;
 	}
 
@@ -341,6 +367,27 @@ class DealDataProvider extends EntityDataProvider
 			return array(
 				'params' => array('multiple' => 'Y'),
 				'items' => DealCategory::getStageList(max($categoryID, 0))
+			);
+		}
+		elseif($fieldID === 'ORDER_STAGE')
+		{
+			return array(
+				'params' => array('multiple' => 'Y'),
+				'items' => Crm\Order\OrderStage::getList()
+			);
+		}
+		elseif($fieldID === 'DELIVERY_STAGE')
+		{
+			return array(
+				'params' => array('multiple' => 'Y'),
+				'items' => Crm\Order\DeliveryStage::getList()
+			);
+		}
+		elseif($fieldID === 'PAYMENT_STAGE')
+		{
+			return array(
+				'params' => ['multiple' => 'Y'],
+				'items' => Crm\Order\PaymentStage::getList()
 			);
 		}
 		elseif($fieldID === 'STAGE_SEMANTIC_ID' || $fieldID === 'STAGE_SEMANTIC_ID_FROM_HISTORY')
@@ -458,24 +505,27 @@ class DealDataProvider extends EntityDataProvider
 		}
 		elseif($fieldID === 'PRODUCT_ROW_PRODUCT_ID')
 		{
-			return array(
-				'params' => array(
-					'apiVersion' => 3,
-					'context' => 'CRM_DEAL_FILTER_PRODUCT_ID',
-					'contextCode' => 'CRM',
-					'useClientDatabase' => 'N',
-					'enableAll' => 'N',
-					'enableDepartments' => 'N',
-					'enableUsers' => 'N',
-					'enableSonetgroups' => 'N',
-					'allowEmailInvitation' => 'N',
-					'allowSearchEmailUsers' => 'N',
-					'departmentSelectDisable' => 'Y',
-					'enableCrm' => 'Y',
-					'enableCrmProducts' => 'Y',
-					'convertJson' => 'Y'
-				)
-			);
+			return [
+				'params' => [
+					'multiple' => 'N',
+					'dialogOptions' => [
+						'height' => 200,
+						'context' => 'catalog-products',
+						'entities' => [
+							Loader::includeModule('iblock')
+							&& Loader::includeModule('catalog')
+								? [
+									'id' => 'product',
+									'options' => [
+										'iblockId' => \Bitrix\Crm\Product\Catalog::getDefaultId(),
+										'basePriceId' => \Bitrix\Crm\Product\Price::getBaseId(),
+									],
+								]
+								: [],
+						],
+					],
+				],
+			];
 		}
 		elseif(Crm\Tracking\UI\Filter::hasField($fieldID))
 		{
@@ -495,6 +545,25 @@ class DealDataProvider extends EntityDataProvider
 				'items' => \CCrmStatus::GetStatusList('SOURCE')
 			);
 		}
+		elseif($fieldID === 'ORDER_SOURCE')
+		{
+			$orderSourceItems = [];
+			$tradingPlatformIterator = Sale\TradingPlatform\Manager::getList([
+				'select' => ['ID', 'NAME'],
+			]);
+			while ($tradingPlatformData = $tradingPlatformIterator->fetch())
+			{
+				$orderSourceItems[$tradingPlatformData['ID']]
+					= "{$tradingPlatformData['NAME']} [{$tradingPlatformData['ID']}]"
+				;
+			}
+
+			return array(
+				'params' => ['multiple' => 'Y'],
+				'items' => $orderSourceItems,
+			);
+		}
+
 		return null;
 	}
 

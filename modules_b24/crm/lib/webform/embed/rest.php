@@ -12,6 +12,7 @@ use Bitrix\Main;
 use Bitrix\Rest\RestException;
 use Bitrix\Crm\WebForm;
 use Bitrix\Crm\UI\Webpack;
+use Bitrix\Crm\SiteButton\Guest;
 
 /**
  * Class Rest
@@ -143,10 +144,29 @@ class Rest
 			self::printErrors($result->getErrors());
 		}
 
+
+		$gid = $result->getResultEntity()->getTrace()->getGid();
+		if (!$gid)
+		{
+			$gid = Guest::register([
+				'ENTITIES' => array_map(
+					function (array $item)
+					{
+						return [
+							'ENTITY_TYPE_ID' => \CCrmOwnerType::resolveID($item['ENTITY_TYPE']),
+							'ENTITY_ID' => $item['ENTITY_ID'],
+						];
+					},
+					$result->getResultEntity()->getResultEntities()
+				)
+			]);
+		}
+
 		return [
 			'resultId' => $result->getId(),
 			'pay' => $form->isPayable(),
 			'message' => $form->getSuccessText(),
+			'gid' => $gid,
 			'redirect' => [
 				'url' => $result->getUrl(),
 				'delay' => $form->getRedirectDelay(),
@@ -165,6 +185,7 @@ class Rest
 	{
 		$formId = empty($query['id']) ? null : (int) $query['id'];
 		$securityCode = empty($query['sec']) ? null : $query['sec'];
+		$loaderOnly = !empty($query['loaderOnly']);
 
 		if (!WebForm\Manager::isEmbeddingAvailable())
 		{
@@ -195,10 +216,12 @@ class Rest
 		$scripts = WebForm\Script::getListContext($form->get(), []);
 
 		return [
-			'config' => (new Config($form))->toArray(),
+			'config' => $loaderOnly ? null : (new Config($form))->toArray(),
 			'loader' => [
 				'form' => [
 					'inline' => $scripts['INLINE']['text'],
+					'click' => $scripts['CLICK']['text'],
+					'auto' => $scripts['AUTO']['text'],
 				],
 				'app' => [
 					'link' => $appPack->getEmbeddedFileUrl(),

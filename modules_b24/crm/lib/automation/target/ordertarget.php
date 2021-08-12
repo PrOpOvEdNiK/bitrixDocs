@@ -1,6 +1,7 @@
 <?php
 namespace Bitrix\Crm\Automation\Target;
 
+use Bitrix\Bizproc\Automation\Engine\ConditionGroup;
 use Bitrix\Crm\PhaseSemantics;
 use Bitrix\Crm\Order;
 use Bitrix\Main\Localization\Loc;

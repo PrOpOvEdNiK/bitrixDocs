@@ -1,3 +1,0 @@
-<?
-$MESS["CRM_REQUISITE_LIST_ROW_COUNT"] = "Suma: #ROW_COUNT#";
-?>

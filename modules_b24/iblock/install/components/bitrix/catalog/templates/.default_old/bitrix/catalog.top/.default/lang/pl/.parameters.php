@@ -1,4 +1,0 @@
-<?
-$MESS["CPT_BCT_TPL_VIEW_MODE_SECTION"] = "Lista";
-$MESS["CP_BCT_TPL_MESS_BTN_DETAIL_DEFAULT"] = "Szczegóły";
-?>

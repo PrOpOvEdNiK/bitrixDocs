@@ -50,19 +50,6 @@ class Form
 			}
 		}
 
-		$timeZoneItems = array();
-		if(\CTimeZone::Enabled())
-		{
-			$timeZoneList = \CTimeZone::GetZones();
-			foreach ($timeZoneList as $value => $name)
-			{
-				$timeZoneItems[] = array(
-					"NAME" => $name,
-					"VALUE" => $value
-				);
-			}
-		}
-
 		$personalCountryItems = array(
 			array(
 				"NAME" => Loc::getMessage("INTRANET_USER_PROFILE_FIELD_EMPTY"),
@@ -78,28 +65,28 @@ class Form
 			);
 		}
 
-		$personalBirthdayFormat = "j F Y";
+		$culture = \Bitrix\Main\Context::getCurrent()->getCulture();
+		$personalBirthdayFormat = $culture->getLongDateFormat();
+		$dateTimeFormat = $culture->getLongDateFormat().' '.$culture->getShortTimeFormat();
+
 		if (ModuleManager::isModuleInstalled('bitrix24'))
 		{
-			if ($user["PERSONAL_GENDER"] === "F")
+			if (\Bitrix\Main\Config\Option::get("intranet", "show_year_for_female", "N") === "N")
 			{
-				if (\Bitrix\Main\Config\Option::get("intranet", "show_year_for_female", "N") === "N")
-				{
-					$personalBirthdayFormat = "j F";
-				}
+				$personalBirthdayFormat = $culture->getDayMonthFormat();
 			}
 		}
 		elseif (isset($componentParams['SHOW_YEAR']))
 		{
 			if (
-				$componentParams['SHOW_YEAR'] == 'N'
+				$componentParams['SHOW_YEAR'] === 'N'
 				|| (
-					$componentParams['SHOW_YEAR'] == 'M'
-					&& $user["PERSONAL_GENDER"] != "M"
+					$componentParams['SHOW_YEAR'] === 'M'
+					&& $user["PERSONAL_GENDER"] !== "M"
 				)
 			)
 			{
-				$personalBirthdayFormat = "j F";
+				$personalBirthdayFormat = $culture->getDayMonthFormat();
 			}
 		}
 
@@ -109,18 +96,21 @@ class Form
 				"name" => "NAME",
 				"type" => "text",
 				"editable" => true,
+				"showAlways" => true
 			),
 			array(
 				"title" => Loc::getMessage("INTRANET_USER_PROFILE_FIELD_LAST_NAME"),
 				"name" => "LAST_NAME",
 				"type" => "text",
 				"editable" => true,
+				"showAlways" => true
 			),
 			array(
 				"title" => Loc::getMessage("INTRANET_USER_PROFILE_FIELD_SECOND_NAME"),
 				"name" => "SECOND_NAME",
 				"type" => "text",
-				"editable" => true
+				"editable" => true,
+				"showAlways" => true
 			),
 			array(
 				"title" => Loc::getMessage("INTRANET_USER_PROFILE_FIELD_EMAIL"),
@@ -208,7 +198,22 @@ class Form
 				"editable" => true
 			),
 			*/
-			array(
+		);
+
+		if(\CTimeZone::Enabled())
+		{
+			$timeZoneItems = array();
+
+			$timeZoneList = \CTimeZone::GetZones();
+			foreach ($timeZoneList as $value => $name)
+			{
+				$timeZoneItems[] = array(
+					"NAME" => $name,
+					"VALUE" => $value
+				);
+			}
+
+			$fields[] = array(
 				"title" => Loc::getMessage("INTRANET_USER_PROFILE_FIELD_TIME_ZONE"),
 				"name" => "TIME_ZONE",
 				"type" => "timezone",
@@ -222,8 +227,9 @@ class Form
 				),
 				"visibilityPolicy" => "edit",
 				"editable" => true
-			),
-		);
+			);
+		}
+
 
 		if (!$isExtranetUser)
 		{
@@ -243,14 +249,22 @@ class Form
 			"title" => Loc::getMessage("INTRANET_USER_PROFILE_FIELD_DATE_REGISTER"),
 			"name" => "DATE_REGISTER",
 			"type" => "datetime",
-			"editable" => false
+			"editable" => false,
+			"data" =>  array(
+				"enableTime" => true,
+				"dateViewFormat" => $dateTimeFormat
+			)
 		);
 
 		$fields[] = array(
 			"title" => Loc::getMessage("INTRANET_USER_PROFILE_FIELD_LAST_ACTIVITY_DATE"),
 			"name" => "LAST_ACTIVITY_DATE",
 			"type" => "datetime",
-			"editable" => false
+			"editable" => false,
+			"data" =>  array(
+				"enableTime" => true,
+				"dateViewFormat" => $dateTimeFormat
+			)
 		);
 
 		if (!ModuleManager::isModuleInstalled("bitrix24"))
@@ -346,6 +360,12 @@ class Form
 				"data" => [
 					"lineCount" => 3
 				]
+			);
+			$fields[] = array(
+				"title" => Loc::getMessage("INTRANET_USER_PROFILE_FIELD_WORK_PROFILE"),
+				"name" => "WORK_PROFILE",
+				"type" => "text",
+				"editable" => true
 			);
 		}
 
@@ -599,6 +619,8 @@ class Form
 				array('name' => 'PERSONAL_CITY'),
 				array('name' => 'UF_EMPLOYMENT_DATE'),
 				array('name' => 'UF_SKYPE'),
+				array('name' => 'UF_SKYPE_LINK'),
+				array('name' => 'UF_ZOOM'),
 				array('name' => 'TIME_ZONE'),
 			);
 		}
@@ -649,6 +671,8 @@ class Form
 			"PERSONAL_CITY" => $result["User"]["PERSONAL_CITY"],
 			"EMAIL" => $result["User"]["EMAIL"],
 			"UF_SKYPE" => $result["User"]["UF_SKYPE"],
+			"UF_SKYPE_LINK" => $result["User"]["UF_SKYPE_LINK"],
+			"UF_ZOOM" => $result["User"]["UF_ZOOM"],
 			"TIME_ZONE" => [
 				"timeZone" => $result["User"]["TIME_ZONE"],
 				"autoTimeZone" => $result["User"]["AUTO_TIME_ZONE"]
@@ -664,9 +688,11 @@ class Form
 			'WORK_COUNTRY' => $result["User"]["WORK_COUNTRY"],
 			'WORK_COMPANY' => $result["User"]["WORK_COMPANY"],
 			'WORK_DEPARTMENT' => $result["User"]["WORK_DEPARTMENT"],
+			'WORK_PROFILE' => $result["User"]["WORK_PROFILE"],
 			'PERSONAL_PROFESSION' => $result["User"]["PERSONAL_PROFESSION"],
 			'DATE_REGISTER' => $result["User"]["DATE_REGISTER"],
 			'WORK_NOTES' => $result["User"]["WORK_NOTES"],
+			'LAST_ACTIVITY_DATE' => $result["User"]["LAST_ACTIVITY_DATE"],
 		];
 
 		$userFields = $this->getUserFields();
@@ -782,7 +808,7 @@ class Form
 		{
 
 			$fieldData = [
-				"NAME" => (strlen($field["title"]) > 0 ? $field["title"] : $field["name"]),
+				"NAME" => ($field["title"] <> '' ? $field["title"] : $field["name"]),
 				"VALUE" => $field["name"],
 			];
 

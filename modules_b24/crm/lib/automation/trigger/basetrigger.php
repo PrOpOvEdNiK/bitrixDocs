@@ -3,6 +3,8 @@ namespace Bitrix\Crm\Automation\Trigger;
 
 use Bitrix\Crm\Automation\Factory;
 use Bitrix\Crm\EntityManageFacility;
+use Bitrix\Crm\Service\Container;
+use Bitrix\Crm\Service\DynamicTypesMap;
 use Bitrix\Crm\Settings\LeadSettings;
 use Bitrix\Main;
 
@@ -21,13 +23,38 @@ class BaseTrigger extends \Bitrix\Bizproc\Automation\Trigger\BaseTrigger
 	 */
 	public static function isSupported($entityTypeId)
 	{
-		$supported = [\CCrmOwnerType::Lead, \CCrmOwnerType::Deal, \CCrmOwnerType::Order, \CCrmOwnerType::Invoice];
+		$supported = [
+			\CCrmOwnerType::Lead,
+			\CCrmOwnerType::Deal,
+			\CCrmOwnerType::Order,
+			\CCrmOwnerType::Invoice,
+			\CCrmOwnerType::Quote,
+		];
+
+		if (\CCrmOwnerType::isPossibleDynamicTypeId($entityTypeId))
+		{
+			$factory = Container::getInstance()->getFactory($entityTypeId);
+
+			return
+				static::areDynamicTypesSupported()
+				&& !is_null($factory)
+				&& $factory->isAutomationEnabled()
+				&& $factory->isStagesEnabled()
+			;
+		}
+
 		return in_array($entityTypeId, $supported, true);
+	}
+
+	protected static function areDynamicTypesSupported(): bool
+	{
+		return true;
 	}
 
 	public static function execute(array $bindings, array $inputData = null)
 	{
 		$triggersSent = false;
+		$triggersApplied = false;
 		$clientBindings = array();
 
 		$result = new Main\Result();
@@ -50,6 +77,11 @@ class BaseTrigger extends \Bitrix\Bizproc\Automation\Trigger\BaseTrigger
 					continue;
 				}
 
+				if (!Factory::isAutomationRunnable($entityTypeId))
+				{
+					continue;
+				}
+
 				$automationTarget = Factory::getTarget($entityTypeId, $entityId);
 
 				$trigger = new static();
@@ -57,7 +89,7 @@ class BaseTrigger extends \Bitrix\Bizproc\Automation\Trigger\BaseTrigger
 				if ($inputData !== null)
 					$trigger->setInputData($inputData);
 
-				$trigger->send();
+				$triggersApplied = $trigger->send();
 				$triggersSent = true;
 			}
 		}
@@ -85,8 +117,13 @@ class BaseTrigger extends \Bitrix\Bizproc\Automation\Trigger\BaseTrigger
 					$documents[] = [\CCrmOwnerType::Order, $orderId];
 				}
 
-				foreach ($documents as list($docTypeId, $docId))
+				foreach ($documents as [$docTypeId, $docId])
 				{
+					if (!Factory::isAutomationRunnable($docTypeId))
+					{
+						continue;
+					}
+
 					$automationTarget = Factory::getTarget($docTypeId, $docId);
 
 					$trigger = new static();
@@ -94,13 +131,13 @@ class BaseTrigger extends \Bitrix\Bizproc\Automation\Trigger\BaseTrigger
 					if ($inputData !== null)
 						$trigger->setInputData($inputData);
 
-					$trigger->send();
+					$triggersApplied = $trigger->send();
 					$triggersSent = true;
 				}
 			}
 		}
 
-		$result->setData(array('triggersSent' => $triggersSent));
+		$result->setData(['triggersSent' => $triggersSent, 'triggersApplied' => $triggersApplied]);
 		return $result;
 	}
 
@@ -145,6 +182,11 @@ class BaseTrigger extends \Bitrix\Bizproc\Automation\Trigger\BaseTrigger
 
 		/** @var \Bitrix\Crm\Automation\Target\BaseTarget $target */
 		$target = $this->getTarget();
+
+		if (is_callable([$this, 'getReturnValues']))
+		{
+			$trigger['RETURN'] = $this->getReturnValues();
+		}
 
 		$target->setAppliedTrigger($trigger);
 		$result = $target->setEntityStatus($statusId);

@@ -3,6 +3,7 @@
 namespace Bitrix\Main\UserField\Types;
 
 use Bitrix\Main\Localization\Loc;
+use Bitrix\Main\Text\HtmlFilter;
 use CUserTypeManager;
 
 Loc::loadMessages(__FILE__);
@@ -53,7 +54,7 @@ class DoubleType extends BaseType
 			'MIN_VALUE' => $min,
 			'MAX_VALUE' => $max,
 			'DEFAULT_VALUE' => (
-			strlen($userField['SETTINGS']['DEFAULT_VALUE']) > 0 ?
+			$userField['SETTINGS']['DEFAULT_VALUE'] <> '' ?
 				(double)$userField['SETTINGS']['DEFAULT_VALUE'] : ''
 			)
 		];
@@ -85,36 +86,55 @@ class DoubleType extends BaseType
 
 		$value = str_replace([',', ' '], ['.', ''], $value);
 
+		$fieldName = HtmlFilter::encode(
+			$userField['EDIT_FORM_LABEL'] <> ''
+				? $userField['EDIT_FORM_LABEL'] : $userField['FIELD_NAME']
+		);
+
 		if(
-			strlen($value) > 0 &&
-			$userField['SETTINGS']['MIN_VALUE'] != 0 &&
-			(double)$value < $userField['SETTINGS']['MIN_VALUE']
+			mb_strlen($value)
+			&& $userField['SETTINGS']['MIN_VALUE'] != 0
+			&& (double)$value < $userField['SETTINGS']['MIN_VALUE']
 		)
 		{
 			$msg[] = [
 				'id' => $userField['FIELD_NAME'],
-				'text' => GetMessage(
+				'text' => Loc::getMessage(
 					'USER_TYPE_DOUBLE_MIN_VALUE_ERROR',
 					[
-						'#FIELD_NAME#' => $userField['EDIT_FORM_LABEL'],
+						'#FIELD_NAME#' => $fieldName,
 						'#MIN_VALUE#' => $userField['SETTINGS']['MIN_VALUE']
 					]
 				)
 			];
 		}
 		if(
-			strlen($value) > 0 &&
-			$userField['SETTINGS']['MAX_VALUE'] <> 0 &&
-			(double)$value > $userField['SETTINGS']['MAX_VALUE']
+			mb_strlen($value)
+			&& $userField['SETTINGS']['MAX_VALUE'] != 0
+			&& (double)$value > $userField['SETTINGS']['MAX_VALUE']
 		)
 		{
 			$msg[] = [
 				'id' => $userField['FIELD_NAME'],
-				'text' => GetMessage(
+				'text' => Loc::getMessage(
 					'USER_TYPE_DOUBLE_MAX_VALUE_ERROR',
 					[
-						'#FIELD_NAME#' => $userField['EDIT_FORM_LABEL'],
+						'#FIELD_NAME#' => $fieldName,
 						'#MAX_VALUE#' => $userField['SETTINGS']['MAX_VALUE']
+					]
+				),
+			];
+		}
+		if(
+			$value != ''
+			&& !preg_match('/^[-+]?\d*[.,]?\d+?$/', $value)
+		)
+		{
+			$msg[] = [
+				'id' => $userField['FIELD_NAME'],
+				'text' => Loc::getMessage('USER_TYPE_DOUBLE_TYPE_ERROR',
+					[
+						'#FIELD_NAME#' => $fieldName
 					]
 				),
 			];
@@ -147,11 +167,10 @@ class DoubleType extends BaseType
 	public static function onBeforeSave(array $userField, $value)
 	{
 		$value = str_replace([',', ' '], ['.', ''], $value);
-		if(strlen($value))
+		if($value <> '')
 		{
-			return round((double)$value, $userField['SETTINGS']['PRECISION']);
+			return (string) round((double)$value, $userField['SETTINGS']['PRECISION']);
 		}
 		return null;
 	}
-
 }

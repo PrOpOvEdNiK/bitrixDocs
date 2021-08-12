@@ -1,3 +1,0 @@
-<?
-$MESS["SCALE_ACTION_EVENT_LOG_TYPE_ACTION"] = "Działanie";
-?>

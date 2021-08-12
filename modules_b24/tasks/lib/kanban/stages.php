@@ -8,6 +8,7 @@ use Bitrix\Tasks\Internals\TaskTable as Task;
 use Bitrix\Tasks\MemberTable;
 use Bitrix\Tasks\ProjectsTable;
 use Bitrix\Main\ORM\Fields\ArrayField;
+use Bitrix\Tasks\Scrum\Service\KanbanService;
 
 Loc::loadMessages(__FILE__);
 
@@ -61,6 +62,7 @@ class StagesTable extends Entity\DataManager
 	const WORK_MODE_USER = 'U';
 	const WORK_MODE_TIMELINE = 'P';
 	const WORK_MODE_SPRINT = 'S';
+	const WORK_MODE_ACTIVE_SPRINT = 'A';
 
 	/**
 	 * Returns DB table name for entity.
@@ -123,7 +125,8 @@ class StagesTable extends Entity\DataManager
 		return  $mode == self::WORK_MODE_GROUP ||
 				$mode == self::WORK_MODE_USER ||
 				$mode == self::WORK_MODE_TIMELINE ||
-				$mode == self::WORK_MODE_SPRINT;
+				$mode == self::WORK_MODE_SPRINT ||
+				$mode == self::WORK_MODE_ACTIVE_SPRINT;
 	}
 
 	/**
@@ -258,7 +261,7 @@ class StagesTable extends Entity\DataManager
 			),
 			'order' => array(
 				'SORT' => 'ASC'
-			)
+			),
 		));
 		while ($row = $res->fetch())
 		{
@@ -389,6 +392,11 @@ class StagesTable extends Entity\DataManager
 				{
 					$source = SprintTable::getStages($entityId);
 				}
+				else if ($entityType == self::WORK_MODE_ACTIVE_SPRINT)
+				{
+					$kanbanService = new KanbanService();
+					$source = $kanbanService->generateKanbanStages($entityId);
+				}
 				else
 				{
 					return [];
@@ -511,23 +519,31 @@ class StagesTable extends Entity\DataManager
 		$sort = 100;
 		foreach ($stages as $i => $stage)
 		{
-			if (
-				$stage['TITLE'] ||
-				$stage['SYSTEM_TYPE'] == self::SYS_TYPE_NEW
-			)
+			if ($entityType == self::WORK_MODE_ACTIVE_SPRINT)
 			{
-				$stage['SYSTEM_TYPE'] = '';
+				$systemType = $stage['SYSTEM_TYPE'];
 			}
+			else
+			{
+				if (
+					$stage['TITLE'] ||
+					$stage['SYSTEM_TYPE'] == self::SYS_TYPE_NEW
+				)
+				{
+					$stage['SYSTEM_TYPE'] = '';
+				}
+				$systemType = ($sort == 100 ? self::SYS_TYPE_NEW : $stage['SYSTEM_TYPE']);
+			}
+
 			$fields = array(
 				'TITLE' => $stage['TITLE'],
 				'COLOR' => $stage['COLOR'],
 				'ENTITY_ID' => $stage['ENTITY_ID'],
 				'ENTITY_TYPE' => $entityType,
 				'SORT' => $sort,
-				'SYSTEM_TYPE' => $sort == 100
-								? self::SYS_TYPE_NEW
-								: $stage['SYSTEM_TYPE']
+				'SYSTEM_TYPE' => $systemType
 			);
+
 			$sort += 100;
 			if ($i > 0)
 			{
@@ -646,7 +662,8 @@ class StagesTable extends Entity\DataManager
 		// if personal - search in another table
 		if (
 			self::getWorkMode() == self::WORK_MODE_USER ||
-			self::getWorkMode() == self::WORK_MODE_SPRINT
+			self::getWorkMode() == self::WORK_MODE_SPRINT ||
+			self::getWorkMode() == self::WORK_MODE_ACTIVE_SPRINT
 		)
 		{
 			$sql .= "
@@ -701,7 +718,8 @@ class StagesTable extends Entity\DataManager
 			(
 				$entityType == self::WORK_MODE_USER ||
 				$entityType == self::WORK_MODE_GROUP ||
-				$entityType == self::WORK_MODE_SPRINT
+				$entityType == self::WORK_MODE_SPRINT ||
+				$entityType == self::WORK_MODE_ACTIVE_SPRINT
 			)
 		)
 		{
@@ -775,7 +793,7 @@ class StagesTable extends Entity\DataManager
 	 * @param boolean $refreshGroup Refresh sorting in group.
 	 * @return void
 	 */
-	public static function pinInStage($taskId, $users = array(), $refreshGroup = false)
+	public static function pinInStage($taskId, $users = [], $refreshGroup = false)
 	{
 		if (!is_array($users))
 		{
@@ -785,16 +803,7 @@ class StagesTable extends Entity\DataManager
 
 		// get additional data
 		$currentUsers = array();
-		$res = \CTasks::getList(array(
-				//
-			), array(
-				'ID' => $taskId,
-				'CHECK_PERMISSIONS' => 'N'
-			), array(
-				'ID', 'GROUP_ID', 'STAGE_ID',
-				'RESPONSIBLE_ID', 'CREATED_BY'
-			)
-		);
+		$res = Task::getById($taskId);
 		if (($task = $res->fetch()))
 		{
 			$currentUsers[] = $task['RESPONSIBLE_ID'];
@@ -865,7 +874,11 @@ class StagesTable extends Entity\DataManager
 							)
 						)->fetch())
 						{
-							TaskStageTable::add($fields);
+							try
+							{
+								TaskStageTable::add($fields);
+							}
+							catch (\Exception $e){}
 						}
 					}
 				}
@@ -975,13 +988,13 @@ class StagesTable extends Entity\DataManager
 				$res = \CTasks::getList(
 					$sort,
 					$filter,
-					array('ID'),
-					array(
-						'NAV_PARAMS' => array(
+					['ID'],
+					[
+						'NAV_PARAMS' => [
 							'nTopCount' => 1
-						),
+						],
 						'USER_ID' => $userId
-					)
+					]
 				);
 				if ($row = $res->fetch())
 				{
@@ -1119,11 +1132,13 @@ class StagesTable extends Entity\DataManager
 		{
 			parent::delete($row['ID']);
 		}
+
+		//tmp
 		$res = SprintTable::getList([
 			'filter' => [
 				'GROUP_ID' => $groupId
 			]
-]		);
+		]		);
 		while ($row = $res->fetch())
 		{
 			SprintTable::delete($row['ID']);

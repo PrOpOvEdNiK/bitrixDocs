@@ -12,6 +12,22 @@ use Bitrix\Timeman\Model\User\UserTable;
 use Bitrix\Timeman\Model\Worktime\EventLog\WorktimeEventTable;
 use Bitrix\Timeman\Service\DependencyManager;
 
+/**
+ * Class WorktimeRecordTable
+ *
+ * DO NOT WRITE ANYTHING BELOW THIS
+ *
+ * <<< ORMENTITYANNOTATION
+ * @method static EO_WorktimeRecord_Query query()
+ * @method static EO_WorktimeRecord_Result getByPrimary($primary, array $parameters = array())
+ * @method static EO_WorktimeRecord_Result getById($id)
+ * @method static EO_WorktimeRecord_Result getList(array $parameters = array())
+ * @method static EO_WorktimeRecord_Entity getEntity()
+ * @method static \Bitrix\Timeman\Model\Worktime\Record\WorktimeRecord createObject($setDefaultValues = true)
+ * @method static \Bitrix\Timeman\Model\Worktime\Record\WorktimeRecordCollection createCollection()
+ * @method static \Bitrix\Timeman\Model\Worktime\Record\WorktimeRecord wakeUpObject($row)
+ * @method static \Bitrix\Timeman\Model\Worktime\Record\WorktimeRecordCollection wakeUpCollection($rows)
+ */
 class WorktimeRecordTable extends Main\ORM\Data\DataManager
 {
 	private static $writeCompatibleFields = true;
@@ -102,6 +118,9 @@ class WorktimeRecordTable extends Main\ORM\Data\DataManager
 			(new Fields\IntegerField('MODIFIED_BY'))
 				->configureDefaultValue(0)
 			,
+			(new Fields\IntegerField('APPROVED_BY'))
+				->configureDefaultValue(0)
+			,
 			(new Fields\BooleanField('ACTIVE'))
 				->configureValues('N', 'Y')
 				->configureDefaultValue('Y')
@@ -168,18 +187,13 @@ class WorktimeRecordTable extends Main\ORM\Data\DataManager
 		];
 	}
 
-	public static function setWriteCompatibleFields($value)
-	{
-		static::$writeCompatibleFields = (bool)$value;
-	}
-
 	public static function convertFieldsCompatible($fields)
 	{
-		if (isset($fields['PAUSED']))
+		if (array_key_exists('PAUSED', $fields))
 		{
 			$fields['PAUSED'] = $fields['PAUSED'] === true ? 'Y' : 'N';
 		}
-		if (static::issetKey('ACTIVE', $fields))
+		if (array_key_exists('ACTIVE', $fields))
 		{
 			$fields['ACTIVE'] = $fields['ACTIVE'] === true ? 'Y' : 'N';
 		}
@@ -262,22 +276,10 @@ class WorktimeRecordTable extends Main\ORM\Data\DataManager
 
 	public static function fillFieldsForCompatibility($data)
 	{
-		$data['MODIFIED_BY'] = UserHelper::getCurrentUserId();
-		$wakeUpData = [
-			'CURRENT_STATUS' => $data['CURRENT_STATUS'],
-			'APPROVED' => $data['APPROVED'],
-			'ID' => $data['ID'] ?: 1
-		];
-		$record = WorktimeRecord::wakeUpRecord($wakeUpData);
-		if (array_key_exists('CURRENT_STATUS', $data))
+		if (!array_key_exists('MODIFIED_BY', $data))
 		{
-			$data['PAUSED'] = $record->isPaused();
+			$data['MODIFIED_BY'] = UserHelper::getCurrentUserId();
 		}
-		if (array_key_exists('APPROVED', $data))
-		{
-			$data['ACTIVE'] = $record->isApproved();
-		}
-
 		return $data;
 	}
 

@@ -1,4 +1,0 @@
-<?
-$MESS["IBLOCK_PROP_FILEMAN_VIEW"] = "گشتن...";
-$MESS["IBLOCK_PROP_FILEMAN_DESCRIPTION_LABEL"] = "توضیحات";
-?>

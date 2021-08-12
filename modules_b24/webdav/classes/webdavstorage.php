@@ -43,7 +43,7 @@ class CWebDavStorageCore extends CWebDavAbstractStorage
 
 	public function isCorrectName($name, &$msg)
 	{
-		if(substr($name, 0, 1) == '.')
+		if(mb_substr($name, 0, 1) == '.')
 		{
 			$msg = 'File/Directory name should not start with "."';
 			return false;
@@ -149,13 +149,13 @@ class CWebDavStorageCore extends CWebDavAbstractStorage
 		while(!$className::sCheckUniqueName($key['IBLOCK_ID'], $targetDirectoryId, '', $newName, $res))
 		{
 			$count++;
-			if(strstr($mainPartName, '.', true))
+			if(mb_strstr($mainPartName, '.', true))
 			{
-				$newName = strstr($mainPartName, '.', true) . " ({$count})" . strstr($mainPartName, '.');
+				$newName = mb_strstr($mainPartName, '.', true)." ({$count})".mb_strstr($mainPartName, '.');
 			}
 			else
 			{
-				$newName = $mainPartName . " ({$count})";
+				$newName = $mainPartName." ({$count})";
 			}
 		}
 
@@ -997,7 +997,7 @@ class CWebDavStorageCore extends CWebDavAbstractStorage
 
 				$result['path'] =
 					'/' .
-					trim(implode($this->getPathArrayForSection($section['ID']), '/'), '/') .
+					trim(implode('/', $this->getPathArrayForSection($section['ID'])), '/') .
 					'/'
 				;
 			}
@@ -1076,7 +1076,7 @@ class CWebDavStorageCore extends CWebDavAbstractStorage
 
 				$result['path'] =
 					'/' .
-					trim(implode($this->getPathArrayForSection($file['IBLOCK_SECTION_ID']), '/'), '/') .
+					trim(implode('/', $this->getPathArrayForSection($file['IBLOCK_SECTION_ID'])), '/') .
 					'/' .
 					$file['NAME']
 				;
@@ -1155,7 +1155,7 @@ class CWebDavStorageCore extends CWebDavAbstractStorage
 	{
 		//return true;
 		//maybe throw expection?
-		$action = strtolower($action);
+		$action = mb_strtolower($action);
 		if($action == 'create')
 		{
 			return $this->init()

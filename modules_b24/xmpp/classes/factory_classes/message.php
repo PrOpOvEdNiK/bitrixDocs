@@ -1,4 +1,4 @@
-<?
+<?php
 $className = "CXMPPReceiveMessage";
 $classVersion = 2;
 
@@ -15,7 +15,7 @@ if (!class_exists("CXMPPReceiveMessage"))
 
 		private function htmlspecialcharsback($str)
 		{
-			if (strlen($str) > 0)
+			if ($str <> '')
 			{
 				$str = str_replace("&lt;", "<", $str);
 				$str = str_replace("&gt;", ">", $str);
@@ -30,7 +30,7 @@ if (!class_exists("CXMPPReceiveMessage"))
 		{
 			if (!$senderClient->IsAuthenticated())
 				return false;
-			if (strlen($senderJId) <= 0)
+			if ($senderJId == '')
 				return false;
 
 			if (!array_key_exists("message", $arMessage) || !array_key_exists(".", $arMessage["message"]))
@@ -52,13 +52,13 @@ if (!class_exists("CXMPPReceiveMessage"))
 			$recipientJId = "";
 			if (array_key_exists("to", $arMessage["message"]["."]))
 				$recipientJId = $arMessage["message"]["."]["to"];
-			if (strlen($recipientJId) <= 0)
+			if ($recipientJId == '')
 				return CXMPPUtility::GetErrorArray($senderJId, "message", "modify", "bad-request", "", $mid, "", $senderClient->GetClientDomain());
 
 			$body = "";
 			if (array_key_exists("body", $arMessage["message"]))
 				$body = $arMessage["message"]["body"]["#"];
-			if (strlen($body) <= 0)
+			if ($body == '')
 				return true;
 			//$body = CXMPPReceiveMessage::htmlspecialcharsback($body);
 			//$body = html_entity_decode($body);
@@ -97,6 +97,11 @@ if (!class_exists("CXMPPReceiveMessage"))
 				CSocNetMessages::Add($arMessageFields);
 			}
 
+			if (CModule::IncludeModule("pull"))
+			{
+				\Bitrix\Pull\Event::send();
+			}
+
 			return true;
 		}
 
@@ -122,7 +127,7 @@ if (!class_exists("CXMPPReceiveMessage"))
 			$recipientJId = "";
 			if (array_key_exists("to", $arMessage["message"]["."]))
 				$recipientJId = $arMessage["message"]["."]["to"];
-			if (strlen($recipientJId) <= 0)
+			if ($recipientJId == '')
 				return CXMPPUtility::GetServerErrorArray("bad-request");
 
 			$server = CXMPPServer::GetServer();
@@ -138,4 +143,3 @@ if (!class_exists("CXMPPReceiveMessage"))
 		}
 	}
 }
-?>

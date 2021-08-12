@@ -39,6 +39,12 @@ class CVoxImplantIncoming
 	 */
 	public static function GetConfig($params)
 	{
+		if (!VI\Limits::canCall())
+		{
+			return [
+				'error' => ['code' => 'PAID_PLAN_REQUIRED']
+			];
+		}
 		$result = CVoxImplantConfig::GetConfigBySearchId($params['PHONE_NUMBER']);
 
 		if(!$result['ID'])
@@ -53,7 +59,7 @@ class CVoxImplantIncoming
 		}
 		$result = CVoxImplantIncoming::RegisterCall($result, $params);
 
-		$isNumberInBlacklist = CVoxImplantIncoming::IsNumberInBlackList($params["CALLER_ID"]);
+		$isNumberInBlacklist = CVoxImplantIncoming::IsNumberInBlackList($params["CALLER_ID"], $result['NUMBER_COUNTRY_CODE']);
 		$isBlacklistAutoEnable = Bitrix\Main\Config\Option::get("voximplant", "blacklist_auto", "N") == "Y";
 
 		if ($result["WORKTIME_SKIP_CALL"] == "Y" && !$isNumberInBlacklist && $isBlacklistAutoEnable)
@@ -119,15 +125,15 @@ class CVoxImplantIncoming
 			);
 
 			$callName = $params['CALLER_ID'];
-			if (isset($params['CRM']['CONTACT']['NAME']) && strlen($params['CRM']['CONTACT']['NAME']) > 0)
+			if (isset($params['CRM']['CONTACT']['NAME']) && $params['CRM']['CONTACT']['NAME'] <> '')
 			{
 				$callName = $params['CRM']['CONTACT']['NAME'];
 			}
-			if (isset($params['CRM']['COMPANY']) && strlen($params['CRM']['COMPANY']) > 0)
+			if (isset($params['CRM']['COMPANY']) && $params['CRM']['COMPANY'] <> '')
 			{
 				$callName .= ' ('.$params['CRM']['COMPANY'].')';
 			}
-			else if (isset($params['CRM']['CONTACT']['POST']) && strlen($params['CRM']['CONTACT']['POST']) > 0)
+			else if (isset($params['CRM']['CONTACT']['POST']) && $params['CRM']['CONTACT']['POST'] <> '')
 			{
 				$callName .= ' ('.$params['CRM']['CONTACT']['POST'].')';
 			}
@@ -446,12 +452,22 @@ class CVoxImplantIncoming
 		return $config;
 	}
 
-	public static function IsNumberInBlackList($number)
+	public static function IsNumberInBlackList($number, $countryCode = null)
 	{
+		$numberE164 = \Bitrix\Main\PhoneNumber\Parser::getInstance()
+			->parse($number, $countryCode)
+			->format(\Bitrix\Main\PhoneNumber\Format::E164);
+
+		$numberStripped = CVoxImplantPhone::stripLetters($number);
 		$dbBlacklist = VI\BlacklistTable::getList(
-			array(
-				"filter" => array("PHONE_NUMBER" => $number)
-			)
+			[
+				"select" => ["ID"],
+				"filter" => [
+					"LOGIC" => "OR",
+					"=NUMBER_E164" => $numberE164,
+					"=NUMBER_STRIPPED" => $numberStripped
+				]
+			]
 		);
 		if ($dbBlacklist->fetch())
 		{
@@ -483,7 +499,7 @@ class CVoxImplantIncoming
 			$callsCount++;
 			if ($callsCount >= $blackListCount)
 			{
-				$number = substr($number, 0, 20);
+				$number = mb_substr($number, 0, 20);
 				VI\BlacklistTable::add(array(
 					"PHONE_NUMBER" => $number
 				));
@@ -536,9 +552,62 @@ class CVoxImplantIncoming
 		return $result;
 	}
 
+	public static function getByInternalPhoneNumber(string $phoneNumber, $checkTimeman = false)
+	{
+		$query = \Bitrix\Voximplant\Model\UserTable::query();
+		$query
+			->addSelect(new Bitrix\Main\ORM\Fields\ExpressionField('ENTITY_TYPE', '"user"'))
+			->addSelect('ID', 'ENTITY_ID')
+			->addSelect('IS_ONLINE')
+			->addSelect('IS_BUSY')
+			->addSelect('UF_VI_PHONE')
+			->where('UF_PHONE_INNER', $phoneNumber)
+			->where('ACTIVE', 'Y')
+		;
+
+		$query2 = VI\Model\QueueTable::query();
+		$query2
+			->addSelect(new Bitrix\Main\ORM\Fields\ExpressionField('ENTITY_TYPE', '"queue"'))
+			->addSelect('ID', 'ENTITY_ID')
+			->addSelect(new Bitrix\Main\ORM\Fields\ExpressionField('IS_ONLINE', '"Y"'))
+			->addSelect(new Bitrix\Main\ORM\Fields\ExpressionField('IS_BUSY', '"N"'))
+			->addSelect(new Bitrix\Main\ORM\Fields\ExpressionField('UF_VI_PHONE', '"N"'))
+			->where('PHONE_NUMBER', $phoneNumber)
+		;
+		$query->unionAll($query2);
+
+		$row = $query->fetch();
+		if (!$row)
+		{
+			return null;
+		}
+
+		$result = [
+			'ENTITY_TYPE' => $row['ENTITY_TYPE'],
+			'ENTITY_ID' => (int)$row['ENTITY_ID']
+		];
+
+		if ($row['ENTITY_TYPE'] === 'user')
+		{
+			$skipByTimeman = false;
+			if ($checkTimeman)
+			{
+				$skipByTimeman = !CVoxImplantUser::GetActiveStatusByTimeman($row['ENTITY_ID']);
+			}
+
+			$result['USER_DATA'] = [
+				'USER_HAVE_PHONE' => $row['UF_VI_PHONE'] === 'Y' ? 'Y' : 'N',
+				'USER_HAVE_MOBILE' => CVoxImplantUser::hasMobile($row['ENTITY_ID']) ? 'Y' : 'N',
+				'ONLINE' => $row['IS_ONLINE'],
+				'BUSY' => $row['IS_BUSY'],
+				'AVAILABLE' => (!$skipByTimeman && ($row['IS_BUSY'] !== 'Y') && ($row['IS_ONLINE'] === 'Y' || $row['UF_VI_PHONE'] === 'Y' || $row['USER_HAVE_MOBILE'] === 'Y')) ? 'Y' : 'N',
+			];
+		}
+		return $result;
+	}
+
 	public static function getUserByDirectCode($directCode, $checkTimeman = false)
 	{
-		$directCode = (int)$directCode;
 		$userData = \Bitrix\Voximplant\Model\UserTable::getList(Array(
 			'select' => Array('ID', 'IS_ONLINE', 'IS_BUSY', 'UF_VI_PHONE', 'ACTIVE'),
 			'filter' => Array('=UF_PHONE_INNER' => $directCode, '=ACTIVE' => 'Y'),
@@ -635,32 +704,35 @@ class CVoxImplantIncoming
 		$hourAgo->add('-1 hour');
 		$userId = (int)$userId;
 
-		$row = VI\Model\CallTable::getRow(array(
-			'select' => array(
+		$row = VI\Model\CallTable::getRow([
+			'select' => [
 				'CALL_ID'
-			),
-			'filter' => array(
+			],
+			'filter' => [
 				'>DATE_CREATE' => $hourAgo,
 				'=STATUS' => VI\Model\CallTable::STATUS_WAITING,
-				array(
+				[
 					'LOGIC' => 'OR',
-					array(
+					[
 						'=QUEUE.ALLOW_INTERCEPT' => 'Y',
 						'=QUEUE.\Bitrix\Voximplant\Model\QueueUserTable:QUEUE.USER_ID' => $userId
-					),
-					array('@USER_ID' => new \Bitrix\Main\DB\SqlExpression("
-						SELECT 
-							QU.USER_ID 
-						FROM 
-							b_voximplant_queue_user QU
-							JOIN b_voximplant_queue Q ON Q.ID = QU.QUEUE_ID
-						WHERE
-							Q.ALLOW_INTERCEPT='Y'
-							AND EXISTS(SELECT 'X' FROM b_voximplant_queue_user QU2 WHERE QU2.QUEUE_ID = Q.ID AND QU2.USER_ID = $userId)
-					"))
-				)
-			),
-		));
+					],
+					[
+						'INCOMING' => CVoxImplantMain::CALL_INCOMING,
+						'@USER_ID' => new \Bitrix\Main\DB\SqlExpression("
+							SELECT 
+								QU.USER_ID 
+							FROM 
+								b_voximplant_queue_user QU
+								JOIN b_voximplant_queue Q ON Q.ID = QU.QUEUE_ID
+							WHERE
+								Q.ALLOW_INTERCEPT='Y'
+								AND EXISTS(SELECT 'X' FROM b_voximplant_queue_user QU2 WHERE QU2.QUEUE_ID = Q.ID AND QU2.USER_ID = $userId)
+						")
+					]
+				]
+			],
+		]);
 
 		return $row ? $row['CALL_ID'] : false;
 	}

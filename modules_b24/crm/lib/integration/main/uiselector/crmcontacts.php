@@ -13,7 +13,7 @@ class CrmContacts extends CrmEntity
 		return (
 			is_array($options)
 			&& isset($options['prefixType'])
-			&& strtolower($options['prefixType']) == 'short'
+			&& mb_strtolower($options['prefixType']) == 'short'
 				? self::PREFIX_SHORT
 				: self::PREFIX_FULL
 		);
@@ -158,7 +158,7 @@ class CrmContacts extends CrmEntity
 		}
 		if(!empty($lastItems[$entityType.'_MULTI']))
 		{
-			$result["ITEMS_LAST"] = array_merge($result["ITEMS_LAST"], array_map(function($code) use ($prefix) { $res = preg_replace_callback('/^'.self::PREFIX_FULL.'(\d+)(.+)$/', function($matches) use ($prefix) {return $prefix.$matches[1].strtolower($matches[2]); }, $code); return $res;}, array_values($lastItems[$entityType.'_MULTI'])));
+			$result["ITEMS_LAST"] = array_merge($result["ITEMS_LAST"], array_map(function($code) use ($prefix) { $res = preg_replace_callback('/^'.self::PREFIX_FULL.'(\d+)(.+)$/', function($matches) use ($prefix) {return $prefix.$matches[1].mb_strtolower($matches[2]); }, $code); return $res;}, array_values($lastItems[$entityType.'_MULTI'])));
 			foreach ($lastItems[$entityType.'_MULTI'] as $value)
 			{
 				$lastEntitiesIdList[] = preg_replace('/^'.self::PREFIX_FULL.'(\d+)(:([A-F0-9]{8}))$/', '$1', $value);
@@ -344,21 +344,48 @@ class CrmContacts extends CrmEntity
 		$resultItems = [];
 
 		if (
-			strlen($search) > 0
+			$search <> ''
 			&& (
 				empty($entityOptions['enableSearch'])
 				|| $entityOptions['enableSearch'] != 'N'
 			)
 		)
 		{
+			$filter = false;
+
 			$searchParts = preg_split ('/[\s]+/', $search, 2, PREG_SPLIT_NO_EMPTY);
 			if(count($searchParts) < 2)
 			{
-				$filter = [
-					'SEARCH_CONTENT' => $search,
-					'%FULL_NAME' => $search,
-					'__ENABLE_SEARCH_CONTENT_PHONE_DETECTION' => false
-				];
+				if (check_email($search, true))
+				{
+					$entityIdList = [];
+					$res = \CCrmFieldMulti::getList(
+						[],
+						[
+							'ENTITY_ID' => \CCrmOwnerType::ContactName,
+							'TYPE_ID' => \CCrmFieldMulti::EMAIL,
+							'VALUE' => $search
+						]
+					);
+					while($multiFields = $res->fetch())
+					{
+						$entityIdList[] = $multiFields['ELEMENT_ID'];
+					}
+					if (!empty($entityIdList))
+					{
+						$filter = [
+							'@ID' => $entityIdList,
+						];
+					}
+				}
+				else
+				{
+					$filter = [
+						'SEARCH_CONTENT' => $search,
+						'%FULL_NAME' => $search,
+						'__ENABLE_SEARCH_CONTENT_PHONE_DETECTION' => false
+					];
+				}
 			}
 			else
 			{
@@ -373,6 +400,11 @@ class CrmContacts extends CrmEntity
 						'%FULL_NAME' => $searchParts[$i]
 					];
 				}
+			}
+
+			if ($filter === false)
+			{
+				return $result;
 			}
 
 			if (

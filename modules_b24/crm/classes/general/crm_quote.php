@@ -2,6 +2,10 @@
 IncludeModuleLangFile(__FILE__);
 
 use Bitrix\Crm;
+use Bitrix\Crm\CompanyAddress;
+use Bitrix\Crm\ContactAddress;
+use Bitrix\Crm\EntityAddressType;
+use Bitrix\Crm\Format\AddressFormatter;
 use Bitrix\Crm\UtmTable;
 use Bitrix\Crm\Tracking;
 use Bitrix\Crm\Integration\StorageManager;
@@ -25,10 +29,46 @@ class CAllCrmQuote
 	public $LAST_ERROR = '';
 	public $cPerms = null;
 	protected $bCheckPermission = true;
+	protected $lastErrors;
 
 	const TABLE_ALIAS = 'Q';
 	const OWNER_TYPE = self::TABLE_ALIAS;
 	private static $FIELD_INFOS = null;
+
+	/**
+	 * Returns true if this class should invoke Service\Operation instead old API.
+	 * For a start it will return false by default. Please use this period to test your customization on compatibility with new API.
+	 * Later it will return true by default.
+	 * In several months this class will be declared as deprecated and old code will be deleted completely.
+	 *
+	 * @return bool
+	 * @throws \Bitrix\Main\ArgumentNullException
+	 * @throws \Bitrix\Main\ArgumentOutOfRangeException
+	 */
+	public function isUseOperation(): bool
+	{
+		return Crm\Settings\QuoteSettings::getCurrent()->isFactoryEnabled();
+	}
+
+	protected function prepareOperation(Crm\Service\Operation $operation, ?array $options = []): Crm\Service\Operation
+	{
+		if (!$this->bCheckPermission)
+		{
+			$operation->disableCheckAccess();
+		}
+		$disableUserFieldsCheck = $options['DISABLE_USER_FIELD_CHECK'] ?? false;
+		if ($disableUserFieldsCheck === true)
+		{
+			$operation->disableCheckFields();
+		}
+		$disableRequiredUserFieldsCheck = $options['DISABLE_REQUIRED_USER_FIELD_CHECK'] ?? false;
+		if ($disableRequiredUserFieldsCheck === true)
+		{
+			$operation->disableCheckRequiredUserFields();
+		}
+
+		return $operation;
+	}
 
 	public function __construct($bCheckPermission = true)
 	{
@@ -38,6 +78,40 @@ class CAllCrmQuote
 
 	public function Add(&$arFields, $bUpdateSearch = true, $options = array())
 	{
+		$this->lastErrors = null;
+		if($this->isUseOperation())
+		{
+			$factory = Crm\Service\Container::getInstance()->getFactory(\CCrmOwnerType::Quote);
+			if(!$factory)
+			{
+				throw new Error('No factory for quote');
+			}
+			$item = $factory->createItem();
+			$item->setFromCompatibleData($arFields);
+
+			if(is_array($options) && isset($options['CURRENT_USER']))
+			{
+				Crm\Service\Container::getInstance()->getContext()->setUserId($options['CURRENT_USER']);
+			}
+
+			$operation = $this->prepareOperation($factory->getAddOperation($item), $options);
+
+			$result = $operation->launch();
+			if($result->isSuccess())
+			{
+				$arFields = $item->getCompatibleData();
+
+				return $item->getId();
+			}
+
+			$this->lastErrors = $result->getErrorCollection();
+
+			$this->LAST_ERROR = implode(', ', $result->getErrorMessages());
+			$arFields['RESULT_MESSAGE'] = &$this->LAST_ERROR;
+
+			return false;
+		}
+
 		global $DB;
 
 		if(!is_array($options))
@@ -154,31 +228,7 @@ class CAllCrmQuote
 			$sEntityPerm = $userPerms->GetPermType('QUOTE', $sPermission, $arEntityAttr);
 			$this->PrepareEntityAttrs($arEntityAttr, $sEntityPerm);
 
-			// Calculation of Account Data
-			$accData = CCrmAccountingHelper::PrepareAccountingData(
-				array(
-					'CURRENCY_ID' => isset($arFields['CURRENCY_ID']) ? $arFields['CURRENCY_ID'] : null,
-					'SUM' => isset($arFields['OPPORTUNITY']) ? $arFields['OPPORTUNITY'] : null,
-					'EXCH_RATE' => isset($arFields['EXCH_RATE']) ? $arFields['EXCH_RATE'] : null
-				)
-			);
-
-			if(is_array($accData))
-			{
-				$arFields['ACCOUNT_CURRENCY_ID'] = $accData['ACCOUNT_CURRENCY_ID'];
-				$arFields['OPPORTUNITY_ACCOUNT'] = $accData['ACCOUNT_SUM'];
-			}
-
-			$accData = CCrmAccountingHelper::PrepareAccountingData(
-				array(
-					'CURRENCY_ID' => isset($arFields['CURRENCY_ID']) ? $arFields['CURRENCY_ID'] : null,
-					'SUM' => isset($arFields['TAX_VALUE']) ? $arFields['TAX_VALUE'] : null,
-					'EXCH_RATE' => isset($arFields['EXCH_RATE']) ? $arFields['EXCH_RATE'] : null
-				)
-			);
-
-			if(is_array($accData))
-				$arFields['TAX_VALUE_ACCOUNT'] = $accData['ACCOUNT_SUM'];
+			$arFields = array_merge($arFields, \CCrmAccountingHelper::calculateAccountingData($arFields, [], true));
 
 			$arFields['CLOSED'] = self::GetStatusSemantics($arFields['STATUS_ID']) === 'process' ? 'N' : 'Y';
 
@@ -341,7 +391,7 @@ class CAllCrmQuote
 
 		/*if (($ID == false || isset($arFields['TITLE'])) && empty($arFields['TITLE']))
 			$this->LAST_ERROR .= GetMessage('CRM_ERROR_FIELD_IS_MISSING', array('%FIELD_NAME%' => GetMessage('CRM_QUOTE_FIELD_TITLE')))."<br />\n";*/
-		if (isset($arFields['TITLE']) && strlen($arFields['TITLE']) > 255)
+		if (isset($arFields['TITLE']) && mb_strlen($arFields['TITLE']) > 255)
 		{
 			$this->LAST_ERROR .= GetMessage('CRM_ERROR_FIELD_INCORRECT', array('%FIELD_NAME%' => GetMessage('CRM_QUOTE_FIELD_TITLE')))."<br />\n";
 		}
@@ -352,7 +402,7 @@ class CAllCrmQuote
 			{
 				$this->LAST_ERROR .= GetMessage('CRM_ERROR_FIELD_IS_MISSING', array('%FIELD_NAME%' => GetMessage('CRM_QUOTE_FIELD_QUOTE_NUMBER')))."<br />\n";
 			}
-			else*/ if (strlen($arFields['QUOTE_NUMBER']) > 100)
+			else*/ if (mb_strlen($arFields['QUOTE_NUMBER']) > 100)
 			{
 				$this->LAST_ERROR .= GetMessage('CRM_ERROR_FIELD_INCORRECT', array('%FIELD_NAME%' => GetMessage('CRM_QUOTE_FIELD_QUOTE_NUMBER')))."<br />\n";
 			}
@@ -380,7 +430,7 @@ class CAllCrmQuote
 		{
 			$arFields['OPPORTUNITY'] = str_replace(array(',', ' '), array('.', ''), $arFields['OPPORTUNITY']);
 			//HACK: MSSQL returns '.00' for zero value
-			if(strpos($arFields['OPPORTUNITY'], '.') === 0)
+			if(mb_strpos($arFields['OPPORTUNITY'], '.') === 0)
 			{
 				$arFields['OPPORTUNITY'] = '0'.$arFields['OPPORTUNITY'];
 			}
@@ -401,7 +451,7 @@ class CAllCrmQuote
 
 		foreach (self::$clientFields as $fieldName)
 		{
-			if (isset($arFields[$fieldName]) && strlen($arFields[$fieldName]) > 255)
+			if (isset($arFields[$fieldName]) && mb_strlen($arFields[$fieldName]) > 255)
 				$this->LAST_ERROR .= GetMessage('CRM_ERROR_FIELD_INCORRECT', array('%FIELD_NAME%' => GetMessage('CRM_QUOTE_FIELD_'.$fieldName.($fieldName === 'MYCOMPANY_ID' ? '1' : ''))))."<br />\n";
 		}
 		unset($fieldName);
@@ -443,7 +493,7 @@ class CAllCrmQuote
 			}
 		}
 
-		if (strlen($this->LAST_ERROR) > 0)
+		if ($this->LAST_ERROR <> '')
 			return false;
 
 		return true;
@@ -522,6 +572,38 @@ class CAllCrmQuote
 
 	public function Update($ID, &$arFields, $bCompare = true, $bUpdateSearch = true, $options = array())
 	{
+		$this->lastErrors = null;
+		if($this->isUseOperation())
+		{
+			$factory = Crm\Service\Container::getInstance()->getFactory(\CCrmOwnerType::Quote);
+			if(!$factory)
+			{
+				throw new Error('No factory for quote');
+			}
+			$item = $factory->getItem($ID);
+			if(!$item)
+			{
+				return false;
+			}
+			$item->setFromCompatibleData($arFields);
+
+			$operation = $this->prepareOperation($factory->getUpdateOperation($item), $options);
+
+			$result = $operation->launch();
+			if($result->isSuccess())
+			{
+				$arFields = $item->getCompatibleData();
+
+				return true;
+			}
+
+			$this->lastErrors = $result->getErrorCollection();
+			$this->LAST_ERROR = implode(', ', $result->getErrorMessages());
+			$arFields['RESULT_MESSAGE'] = &$this->LAST_ERROR;
+
+			return false;
+		}
+
 		global $DB;
 
 		$this->LAST_ERROR = '';
@@ -733,31 +815,7 @@ class CAllCrmQuote
 				}
 			}
 
-			// Calculation of Account Data
-			$accData = CCrmAccountingHelper::PrepareAccountingData(
-				array(
-					'CURRENCY_ID' => isset($arFields['CURRENCY_ID']) ? $arFields['CURRENCY_ID'] : (isset($arRow['CURRENCY_ID']) ? $arRow['CURRENCY_ID'] : null),
-					'SUM' => isset($arFields['OPPORTUNITY']) ? $arFields['OPPORTUNITY'] : (isset($arRow['OPPORTUNITY']) ? $arRow['OPPORTUNITY'] : null),
-					'EXCH_RATE' => isset($arFields['EXCH_RATE']) ? $arFields['EXCH_RATE'] : (isset($arRow['EXCH_RATE']) ? $arRow['EXCH_RATE'] : null)
-				)
-			);
-
-			if(is_array($accData))
-			{
-				$arFields['ACCOUNT_CURRENCY_ID'] = $accData['ACCOUNT_CURRENCY_ID'];
-				$arFields['OPPORTUNITY_ACCOUNT'] = $accData['ACCOUNT_SUM'];
-			}
-
-			$accData = CCrmAccountingHelper::PrepareAccountingData(
-				array(
-					'CURRENCY_ID' => isset($arFields['CURRENCY_ID']) ? $arFields['CURRENCY_ID'] : (isset($arRow['CURRENCY_ID']) ? $arRow['CURRENCY_ID'] : null),
-					'SUM' => isset($arFields['TAX_VALUE']) ? $arFields['TAX_VALUE'] : (isset($arRow['TAX_VALUE']) ? $arRow['TAX_VALUE'] : null),
-					'EXCH_RATE' => isset($arFields['EXCH_RATE']) ? $arFields['EXCH_RATE'] : (isset($arRow['EXCH_RATE']) ? $arRow['EXCH_RATE'] : null)
-				)
-			);
-
-			if(is_array($accData))
-				$arFields['TAX_VALUE_ACCOUNT'] = $accData['ACCOUNT_SUM'];
+			$arFields = array_merge($arFields, \CCrmAccountingHelper::calculateAccountingData($arFields, $arRow, true));
 
 			if(isset($arFields['STATUS_ID']))
 			{
@@ -803,7 +861,7 @@ class CAllCrmQuote
 			unset($arFields['ID']);
 			$sUpdate = $DB->PrepareUpdate('b_crm_quote', $arFields);
 
-			if (strlen($sUpdate) > 0)
+			if ($sUpdate <> '')
 			{
 				$clobFieldNames = array('COMMENTS', 'CONTENT', 'STORAGE_ELEMENT_IDS');
 				$arBinds = array();
@@ -906,6 +964,37 @@ class CAllCrmQuote
 
 	public function Delete($ID, $options = array())
 	{
+		$this->lastErrors = null;
+		if($this->isUseOperation())
+		{
+			$factory = Crm\Service\Container::getInstance()->getFactory(\CCrmOwnerType::Quote);
+			if(!$factory)
+			{
+				throw new Error('No factory for quote');
+			}
+			$item = $factory->getItem($ID);
+			if(!$item)
+			{
+				return false;
+			}
+
+			if(is_array($options) && isset($options['CURRENT_USER']))
+			{
+				Crm\Service\Container::getInstance()->getContext()->setUserId($options['CURRENT_USER']);
+			}
+
+			$operation = $this->prepareOperation($factory->getDeleteOperation($item), $options);
+
+			$result = $operation->launch();
+
+			if (!$result->isSuccess())
+			{
+				$this->lastErrors = $result->getErrorCollection();
+			}
+
+			return $result->isSuccess();
+		}
+
 		global $DB, $APPLICATION;
 
 		$ID = (int)$ID;
@@ -1046,15 +1135,15 @@ class CAllCrmQuote
 				$maxLastID = 0;
 				$strSql = '';
 
-				switch(strtolower($DB->type))
+				switch($DB->type)
 				{
-					case "mysql":
+					case "MYSQL":
 						$strSql = "SELECT ID, QUOTE_NUMBER FROM b_crm_quote WHERE QUOTE_NUMBER IS NOT NULL ORDER BY ID DESC LIMIT 1";
 						break;
-					case "oracle":
+					case "ORACLE":
 						$strSql = "SELECT ID, QUOTE_NUMBER FROM b_crm_quote WHERE QUOTE_NUMBER IS NOT NULL AND ROWNUM <= 1 ORDER BY ID DESC";
 						break;
-					case "mssql":
+					case "MSSQL":
 						$strSql = "SELECT TOP 1 ID, QUOTE_NUMBER FROM b_crm_quote WHERE QUOTE_NUMBER IS NOT NULL ORDER BY ID DESC";
 						break;
 				}
@@ -1062,7 +1151,7 @@ class CAllCrmQuote
 				$dbres = $DB->Query($strSql, true);
 				if ($arRes = $dbres->GetNext())
 				{
-					if (strlen($arRes["QUOTE_NUMBER"]) === strlen(intval($arRes["QUOTE_NUMBER"])))
+					if (mb_strlen($arRes["QUOTE_NUMBER"]) === mb_strlen(intval($arRes["QUOTE_NUMBER"])))
 						$maxLastID = intval($arRes["QUOTE_NUMBER"]);
 				}
 
@@ -1090,15 +1179,15 @@ class CAllCrmQuote
 					$userID = intval($arRes["ASSIGNED_BY_ID"]);
 					$strSql = '';
 
-					switch (strtolower($DB->type))
+					switch($DB->type)
 					{
-						case "mysql":
+						case "MYSQL":
 							$strSql = "SELECT MAX(CAST(SUBSTRING(QUOTE_NUMBER, LENGTH('".$userID."_') + 1) as UNSIGNED)) as NUM_ID FROM b_crm_quote WHERE QUOTE_NUMBER LIKE '".$userID."\_%'";
 							break;
-						case "oracle":
+						case "ORACLE":
 							$strSql = "SELECT MAX(CAST(SUBSTR(QUOTE_NUMBER, LENGTH('".$userID."_') + 1) as NUMBER)) as NUM_ID FROM b_crm_quote WHERE QUOTE_NUMBER LIKE '".$userID."_%'";
 							break;
-						case "mssql":
+						case "MSSQL":
 							$strSql = "SELECT MAX(CAST(SUBSTRING(QUOTE_NUMBER, LEN('".$userID."_') + 1, LEN(QUOTE_NUMBER)) as INT)) as NUM_ID FROM b_crm_quote WHERE QUOTE_NUMBER LIKE '".$userID."_%'";
 							break;
 					}
@@ -1136,15 +1225,15 @@ class CAllCrmQuote
 				}
 
 				$strSql = '';
-				switch (strtolower($DB->type))
+				switch($DB->type)
 				{
-					case "mysql":
+					case "MYSQL":
 						$strSql = "SELECT MAX(CAST(SUBSTRING(QUOTE_NUMBER, LENGTH('".$date." / ') + 1) as UNSIGNED)) as NUM_ID FROM b_crm_quote WHERE QUOTE_NUMBER LIKE '".$date." / %'";
 						break;
-					case "oracle":
+					case "ORACLE":
 						$strSql = "SELECT MAX(CAST(SUBSTR(QUOTE_NUMBER, LENGTH('".$date." / ') + 1) as NUMBER)) as NUM_ID FROM b_crm_quote WHERE QUOTE_NUMBER LIKE '".$date." / %'";
 						break;
-					case "mssql":
+					case "MSSQL":
 						$strSql = "SELECT MAX(CAST(SUBSTRING(QUOTE_NUMBER, LEN('".$date." / ') + 1, LEN(QUOTE_NUMBER)) as INT)) as NUM_ID FROM b_crm_quote WHERE QUOTE_NUMBER LIKE '".$date." / %'";
 						break;
 				}
@@ -1255,7 +1344,7 @@ class CAllCrmQuote
 					$resLastId = $DB->Query($sql, true);
 					if ($row = $resLastId->fetch())
 					{
-						if (strlen(strval($row['LAST_NUMBER'])) > 0)
+						if (strval($row['LAST_NUMBER']) <> '')
 						{
 							$maxLastId = $row['LAST_NUMBER'];
 							$maxLastIdIsSet = true;
@@ -1538,7 +1627,7 @@ class CAllCrmQuote
 			{
 				$arUser = Array();
 				$dbUsers = CUser::GetList(
-					($sort_by = 'last_name'), ($sort_dir = 'asc'),
+					'last_name', 'asc',
 					array('ID' => implode('|', array(intval($origAssignedById), intval($modifAssignedById)))),
 					array('FIELDS' => array('ID', 'NAME', 'SECOND_NAME', 'LAST_NAME', 'LOGIN', 'TITLE', 'EMAIL'))
 				);
@@ -1762,7 +1851,7 @@ class CAllCrmQuote
 
 		// Processing of the files
 		if (array_key_exists('STORAGE_TYPE_ID', $arFieldsModif)
-			&& array_key_exists('STORAGE_ELEMENT_IDS', $arFieldsModif) && strlen($arFieldsModif['STORAGE_ELEMENT_IDS']) > 0)
+			&& array_key_exists('STORAGE_ELEMENT_IDS', $arFieldsModif) && $arFieldsModif['STORAGE_ELEMENT_IDS'] <> '')
 		{
 			$newStorageTypeID = isset($arFieldsModif['STORAGE_TYPE_ID']) ? intval($arFieldsModif['STORAGE_TYPE_ID']) : CCrmQuoteStorageType::Undefined;
 			$oldStorageTypeID = isset($arFieldsOrig['STORAGE_TYPE_ID']) ? intval($arFieldsOrig['STORAGE_TYPE_ID']) : CCrmQuoteStorageType::Undefined;
@@ -2016,8 +2105,8 @@ class CAllCrmQuote
 			'MYCOMPANY_ID' => array('FIELD' => self::TABLE_ALIAS.'.MYCOMPANY_ID', 'TYPE' => 'int'),
 			'MYCOMPANY_TITLE' => array('FIELD' => 'MC.TITLE', 'TYPE' => 'string', 'FROM' => $myCompanyJoin),
 
-			'BEGINDATE' => array('FIELD' => self::TABLE_ALIAS.'.BEGINDATE', 'TYPE' => 'datetime'),
-			'CLOSEDATE' => array('FIELD' => self::TABLE_ALIAS.'.CLOSEDATE', 'TYPE' => 'datetime'),
+			'BEGINDATE' => array('FIELD' => self::TABLE_ALIAS.'.BEGINDATE', 'TYPE' => 'date'),
+			'CLOSEDATE' => array('FIELD' => self::TABLE_ALIAS.'.CLOSEDATE', 'TYPE' => 'date'),
 
 			'ASSIGNED_BY_ID' => array('FIELD' => self::TABLE_ALIAS.'.ASSIGNED_BY_ID', 'TYPE' => 'int'),
 			'ASSIGNED_BY_LOGIN' => array('FIELD' => 'U.LOGIN', 'TYPE' => 'string', 'FROM' => $assignedByJoin),
@@ -2236,7 +2325,7 @@ class CAllCrmQuote
 			return [];
 		}
 
-		$sortType = strtoupper($sortType) !== 'DESC' ? 'ASC' : 'DESC';
+		$sortType = mb_strtoupper($sortType) !== 'DESC' ? 'ASC' : 'DESC';
 
 		$permissionSql = '';
 		if (!CCrmPerms::IsAdmin())
@@ -2261,7 +2350,7 @@ class CAllCrmQuote
 
 		if ($permissionSql !== '')
 		{
-			$permissionSql = substr($permissionSql,7);
+			$permissionSql = mb_substr($permissionSql, 7);
 			$query->where('ID', 'in', new Bitrix\Main\DB\SqlExpression($permissionSql));
 		}
 
@@ -2371,48 +2460,7 @@ class CAllCrmQuote
 			$arStatus = CCrmStatus::GetStatus('QUOTE_STATUS');
 			if (empty($arStatus))
 			{
-				$CCrmStatus = new CCrmStatus('QUOTE_STATUS');
-				$arAdd = Array(
-					Array(
-						'NAME' => GetMessage('CRM_QUOTE_STATUS_DRAFT'),
-						'STATUS_ID' => 'DRAFT',
-						'SORT' => 10,
-						'SYSTEM' => 'Y'
-					),
-					Array(
-						'NAME' => GetMessage('CRM_QUOTE_STATUS_SENT'),
-						'STATUS_ID' => 'SENT',
-						'SORT' => 20,
-						'SYSTEM' => 'N'
-					),
-					Array(
-						'NAME' => GetMessage('CRM_QUOTE_STATUS_RECEIVED'),
-						'STATUS_ID' => 'RECEIVED',
-						'SORT' => 30,
-						'SYSTEM' => 'N'
-					),
-					Array(
-						'NAME' => GetMessage('CRM_QUOTE_STATUS_APPROVED'),
-						'STATUS_ID' => 'APPROVED',
-						'SORT' => 40,
-						'SYSTEM' => 'Y'
-					),
-					Array(
-						'NAME' => GetMessage('CRM_QUOTE_STATUS_UNANSWERED'),
-						'STATUS_ID' => 'UNANSWERED',
-						'SORT' => 50,
-						'SYSTEM' => 'N'
-					),
-					Array(
-						'NAME' => GetMessage('CRM_QUOTE_STATUS_DECLAINED'),
-						'STATUS_ID' => 'DECLAINED',
-						'SORT' => 60,
-						'SYSTEM' => 'Y'
-					)
-				);
-				foreach($arAdd as $ar)
-					$CCrmStatus->Add($ar);
-				$stackCacheManager->Clear('b_crm_status', 'QUOTE_STATUS');
+				CCrmStatus::InstallDefault('QUOTE_STATUS');
 			}
 			unset($arStatus);
 		}
@@ -2573,7 +2621,7 @@ class CAllCrmQuote
 		else
 		{
 			$params['CONVERSION_PERMITTED'] = false;
-			$params['CONVERSION_LOCK_SCRIPT'] = $restriction->preparePopupScript();
+			$params['CONVERSION_LOCK_SCRIPT'] = $restriction->prepareInfoHelperScript();
 		}
 	}
 
@@ -2651,7 +2699,7 @@ class CAllCrmQuote
 		}
 		else
 		{
-			$type = strtolower($type);
+			$type = mb_strtolower($type);
 		}
 
 		CPullWatch::AddToStack(
@@ -2771,9 +2819,11 @@ class CAllCrmQuote
 					}
 					elseif ($k === 'CLIENT_ADDR')
 					{
-						$v = Bitrix\Crm\Format\CompanyAddressFormatter::format(
-							$arCompany,
-							array('TYPE_ID' => \Bitrix\Crm\EntityAddress::Registered)
+						$v = AddressFormatter::getSingleInstance()->formatTextComma(
+							CompanyAddress::mapEntityFields(
+								$arCompany,
+								['TYPE_ID' => EntityAddressType::Registered]
+							)
 						);
 					}
 					elseif ($k === 'CLIENT_EMAIL')
@@ -2808,7 +2858,9 @@ class CAllCrmQuote
 					}
 					elseif ($k === 'CLIENT_ADDR')
 					{
-						$v = Bitrix\Crm\Format\ContactAddressFormatter::format($arContact);
+						$v = AddressFormatter::getSingleInstance()->formatTextComma(
+							ContactAddress::mapEntityFields($arContact)
+						);
 					}
 					elseif ($k === 'CLIENT_EMAIL')
 					{
@@ -2892,10 +2944,7 @@ class CAllCrmQuote
 					{
 						$valueKey = Bitrix\Crm\EntityRequisite::ADDRESS.'_'.$addrTypeId;
 						$requisiteValues[$valueKey] =
-							Bitrix\Crm\Format\EntityAddressFormatter::format(
-								$addrFields,
-								array('SEPARATOR' => Bitrix\Crm\Format\AddressSeparator::Comma)
-							);
+							AddressFormatter::getSingleInstance()->formatTextComma($addrFields);
 					}
 				}
 			}
@@ -2933,7 +2982,7 @@ class CAllCrmQuote
 			$requisiteToClientFieldsMap = array(
 				$personTypeCompany => array(
 					'RQ_COMPANY_NAME' => 'CLIENT_TITLE',
-					'RQ_ADDR_'.Bitrix\Crm\EntityAddress::Registered => 'CLIENT_ADDR',
+					'RQ_ADDR_'.EntityAddressType::Registered => 'CLIENT_ADDR',
 					'RQ_INN' => 'CLIENT_TP_ID',
 					'RQ_KPP' => 'CLIENT_TPA_ID',
 					'RQ_CONTACT' => 'CLIENT_CONTACT',
@@ -2944,7 +2993,7 @@ class CAllCrmQuote
 					'RQ_NAME' => 'CLIENT_TITLE',
 					'RQ_EMAIL' => 'CLIENT_EMAIL',
 					'RQ_PHONE' => 'CLIENT_PHONE',
-					'RQ_ADDR_'.Bitrix\Crm\EntityAddress::Primary => 'CLIENT_ADDR'
+					'RQ_ADDR_'.EntityAddressType::Primary => 'CLIENT_ADDR'
 				),
 			);
 
@@ -2984,7 +3033,7 @@ class CAllCrmQuote
 		foreach (self::$clientFields as $k)
 		{
 			$index = $bDualFields === true ? '~'.$k : $k;
-			if (isset($arQuote[$index]) && strlen(trim($arQuote[$index])) > 0)
+			if (isset($arQuote[$index]) && trim($arQuote[$index]) <> '')
 				$strClientInfo .= (($i++ > 0) ? ', ' : '').$arQuote[$index];
 		}
 
@@ -3086,9 +3135,9 @@ class CAllCrmQuote
 				$sBody .= GetMessage('CRM_QUOTE_SEARCH_FIELD_ASSIGNED_BY_INFO').": $responsibleInfo\n";
 		}
 
-		$sDetailURL = CComponentEngine::MakePathFromTemplate(COption::GetOptionString('crm', 'path_to_'.strtolower($sEntityType).'_show'),
+		$sDetailURL = CComponentEngine::MakePathFromTemplate(COption::GetOptionString('crm', 'path_to_'.mb_strtolower($sEntityType).'_show'),
 			array(
-				strtolower($sEntityType).'_id' => $arQuote['ID']
+				mb_strtolower($sEntityType).'_id' => $arQuote['ID']
 			)
 		);
 
@@ -3096,9 +3145,7 @@ class CAllCrmQuote
 
 		if (empty($arSite))
 		{
-			$by="sort";
-			$order="asc";
-			$rsSite = $site->GetList($by, $order);
+			$rsSite = $site->GetList();
 			while ($_arSite = $rsSite->Fetch())
 				$arSite[] = $_arSite['ID'];
 		}
@@ -3159,7 +3206,7 @@ class CAllCrmQuote
 			'SITE_ID' => $arSitePath,
 			'PERMISSIONS' => $arAttr,
 			'BODY' => $sBody,
-			'TAGS' => 'crm,'.strtolower($sEntityType).','.GetMessage('CRM_'.$sEntityType)
+			'TAGS' => 'crm,'.mb_strtolower($sEntityType).','.GetMessage('CRM_'.$sEntityType)
 		);
 
 		if ($bReindex)
@@ -3234,7 +3281,7 @@ class CAllCrmQuote
 		}
 		elseif(is_string($field) && $field !== '')
 		{
-			$result = unserialize($field);
+			$result = unserialize($field, ['allowed_classes' => false]);
 		}
 		else
 		{
@@ -3260,7 +3307,7 @@ class CAllCrmQuote
 	{
 		$storageTypeID = intval($storageTypeID);
 		$elementID = intval($elementID);
-		$action = strtoupper(strval($action));
+		$action = mb_strtoupper(strval($action));
 
 		$name = isset($arRow['SUBJECT']) ? strval($arRow['SUBJECT']) : '';
 		if($name === '')
@@ -3685,14 +3732,15 @@ class CAllCrmQuote
 						foreach ($requisite->getAddresses($requisiteId) as $addrTypeId => $addrFields)
 						{
 							$valueKey = Bitrix\Crm\EntityRequisite::ADDRESS.'_'.$addrTypeId.'|'.$presetCountryId;
-							$requisiteValues[$valueKey] =
-								Bitrix\Crm\Format\EntityAddressFormatter::prepareLines(
-									$addrFields,
-									array(
-										'SEPARATOR' => Bitrix\Crm\Format\AddressSeparator::NewLine,
-										'NL2BR' => false
-									)
-								);
+							$addressLines = explode(
+								"\n",
+								str_replace(
+									["\r\n", "\n", "\r"], "\n",
+									AddressFormatter::getSingleInstance()->formatTextMultiline($addrFields)
+								)
+							);
+							$requisiteValues[$valueKey] = is_array($addressLines) ? $addressLines : [];
+							unset($valueKey, $addressLines);
 						}
 					}
 				}
@@ -3846,7 +3894,7 @@ class CAllCrmQuote
 					$personTypeCompany => array(
 						'COMPANY_NAME' => 'RQ_COMPANY_NAME',
 						'COMPANY' => 'RQ_COMPANY_NAME',
-						'COMPANY_ADR' => 'RQ_ADDR_'.Bitrix\Crm\EntityAddress::Registered,
+						'COMPANY_ADR' => 'RQ_ADDR_'.EntityAddressType::Registered,
 						'INN' => 'RQ_INN',
 						'KPP' => 'RQ_KPP',
 						'CONTACT_PERSON' => 'RQ_CONTACT',
@@ -3857,7 +3905,7 @@ class CAllCrmQuote
 						'FIO' => 'RQ_NAME',
 						'EMAIL' => 'RQ_EMAIL',
 						'PHONE' => 'RQ_PHONE',
-						'ADDRESS' => 'RQ_ADDR_'.Bitrix\Crm\EntityAddress::Primary,
+						'ADDRESS' => 'RQ_ADDR_'.EntityAddressType::Primary,
 					),
 				);
 
@@ -3979,14 +4027,15 @@ class CAllCrmQuote
 						foreach ($requisite->getAddresses($mcRequisiteId) as $addrTypeId => $addrFields)
 						{
 							$valueKey = Bitrix\Crm\EntityRequisite::ADDRESS.'_'.$addrTypeId.'|'.$mcPresetCountryId;
-							$mcRequisiteValues[$valueKey] =
-								Bitrix\Crm\Format\EntityAddressFormatter::prepareLines(
-									$addrFields,
-									array(
-										'SEPARATOR' => Bitrix\Crm\Format\AddressSeparator::NewLine,
-										'NL2BR' => false
-									)
-								);
+							$addressLines = explode(
+								"\n",
+								str_replace(
+									["\r\n", "\n", "\r"], "\n",
+									AddressFormatter::getSingleInstance()->formatTextMultiline($addrFields)
+								)
+							);
+							$mcRequisiteValues[$valueKey] = is_array($addressLines) ? $addressLines : [];
+							unset($valueKey, $addressLines);
 						}
 					}
 				}
@@ -4266,7 +4315,7 @@ class CAllCrmQuote
 			}
 			elseif (preg_match('/(.*)_from$/i'.BX_UTF_PCRE_MODIFIER, $k, $arMatch))
 			{
-				if(strlen($v) > 0)
+				if($v <> '')
 				{
 					$arFilter['>='.$arMatch[1]] = $v;
 				}
@@ -4274,7 +4323,7 @@ class CAllCrmQuote
 			}
 			elseif (preg_match('/(.*)_to$/i'.BX_UTF_PCRE_MODIFIER, $k, $arMatch))
 			{
-				if(strlen($v) > 0)
+				if($v <> '')
 				{
 					if (($arMatch[1] == 'DATE_CREATE' || $arMatch[1] == 'DATE_MODIFY') && !preg_match('/\d{1,2}:\d{1,2}(:\d{1,2})?$/'.BX_UTF_PCRE_MODIFIER, $v))
 					{
@@ -4294,7 +4343,7 @@ class CAllCrmQuote
 				}
 				unset($arFilter[$k]);
 			}
-			elseif (strpos($k, 'UF_') !== 0 && $k != 'LOGIC' && preg_match('/^[^\=\%\?\>\<]{1}/', $k) === 1)
+			elseif (mb_strpos($k, 'UF_') !== 0 && $k != 'LOGIC' && preg_match('/^[^\=\%\?\>\<]{1}/', $k) === 1)
 			{
 				$arFilter['%'.$k] = $v;
 				unset($arFilter[$k]);
@@ -4384,8 +4433,8 @@ class CAllCrmQuote
 
 		$actionFilePath = $_SERVER['DOCUMENT_ROOT'].$actionFilePath;
 		$actionFilePath = str_replace('\\', '/', $actionFilePath);
-		while (substr($actionFilePath, strlen($actionFilePath) - 1, 1) == '/')
-			$actionFilePath = substr($actionFilePath, 0, strlen($actionFilePath) - 1);
+		while (mb_substr($actionFilePath, mb_strlen($actionFilePath) - 1, 1) == '/')
+			$actionFilePath = mb_substr($actionFilePath, 0, mb_strlen($actionFilePath) - 1);
 
 		if (!file_exists($actionFilePath))
 		{
@@ -4460,6 +4509,11 @@ class CAllCrmQuote
 		);
 
 		return (bool) $queryObject->fetch();
+	}
+
+	public function getLastErrors(): ?\Bitrix\Main\ErrorCollection
+	{
+		return $this->lastErrors;
 	}
 }
 

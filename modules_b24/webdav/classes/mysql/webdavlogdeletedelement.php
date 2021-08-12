@@ -11,7 +11,7 @@ class CWebDavLogDeletedElement extends CWebDavLogDeletedElementBase
 			list($prefix, $values) = static::prepareSqlInsert($item);
 			$query .= ($query? ', ' : ' ') . '(' . $values . ')';
 
-			if(strlen($query) > static::$maxLengthBatch)
+			if(mb_strlen($query) > static::$maxLengthBatch)
 			{
 				static::getDb()->query($prefix . $query);
 				$query = '';

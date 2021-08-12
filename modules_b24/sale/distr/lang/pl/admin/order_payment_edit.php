@@ -1,4 +1,0 @@
-<?
-$MESS["SOPE_PAYMENT_DELETE"] = "Usuń";
-$MESS["SOPE_PAYMENT_DELETE_TITLE"] = "Usuń";
-?>

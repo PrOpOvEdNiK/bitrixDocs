@@ -138,6 +138,8 @@ class ManagerCounters extends DataSource
 					$name = \CCrmOwnerType::ResolveName($res["OWNER_TYPE_ID"]);
 					$result[$res["AUTHOR_ID"]]["VALUE"][$name][0] -= $res["CNT"];
 					$result[$res["AUTHOR_ID"]]["TOTAL"][0] -= $res["CNT"];
+					$result[$res["AUTHOR_ID"]]["VALUE"][$name][0] = max(0, $result[$res["AUTHOR_ID"]]["VALUE"][$name][0]);
+					$result[$res["AUTHOR_ID"]]["TOTAL"][0] = max(0, $result[$res["AUTHOR_ID"]]["TOTAL"][0]);
 				}
 			}
 		}
@@ -232,7 +234,9 @@ HTML;
 						<div class="crm-start-channel-item-header" data-role="open-chanel">
 							<div class="crm-start-channel-open"></div>
 							<div class="crm-start-channel-title">
-								<div class="crm-start-channel-user-avatar" {$user["STYLE_USER_PHOTO"]}></div>
+								<div class="ui-icon ui-icon-common-user crm-start-channel-user-avatar">
+									<i {$user["STYLE_USER_PHOTO"]}></i>
+								</div>
 								<div class="crm-start-channel-username$class">{$user["USER"]}</div>
 								<div class="crm-start-channel-user-position">{$user["WORK_POSITION"]}</div>
 							</div>
@@ -290,7 +294,7 @@ HTML;
 		{
 			$videoUrl = GetMessageJS("CRM_MANAGER_CNTR_VIDEO", array("#VOLUME#" => "&volume=0"));
 		}
-		$icon = strpos(GetMessage("CRM_MANAGER_CNTR_VIDEO"), "#VOLUME#") === false ? "info" : "video";
+		$icon = mb_strpos(GetMessage("CRM_MANAGER_CNTR_VIDEO"), "#VOLUME#") === false ? "info" : "video";
 		$id = randString(10);
 		$title = GetMessage("CRM_MANAGER_CNTR_TITLE");
 		$innerHTML .= <<<HTML
@@ -703,7 +707,7 @@ HTML;
 					} while ($res = self::$personalCounterData['dbRes']->fetch());
 					if (!empty($userList))
 					{
-						$dbRes = \CUser::getList(($by = "ID"), ($order = "ASC"),
+						$dbRes = \CUser::getList("ID", "ASC",
 							array("ID" => implode("|", array_unique($userList))),
 							array("FIELDS" => array("ID", "NAME", "LAST_NAME", "SECOND_NAME", "LOGIN", "TITLE", "PERSONAL_PHOTO", "WORK_POSITION")));
 						while($u = $dbRes->fetch())

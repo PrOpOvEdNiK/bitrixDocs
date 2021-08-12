@@ -1,5 +1,0 @@
-<?
-$MESS["DISK_JS_FILE_DIALOG_OAUTH_NOTICE"] = "Para cargar un archivo desde un disco externo, <br/> please log in to your <a id=\"bx-js-disk-run-oauth-modal\" href=\"#\">#SERVICE#</a> cuenta.";
-$MESS["DISK_JS_FILE_DIALOG_OAUTH_NOTICE_DETAIL"] = "<p>El archivo se guardará en la carpeta cargada en Bitrix24.Drive. El archivo externo no se observó durante las actualizaciones adicionales.</p> <p>Una vez que su cuenta externa se añade a Bitrix24, será accesible por cualquier función que pueda utilizarlo.</p>";
-$MESS["DISK_JS_FILE_DIALOG_OAUTH_NOTICE_DETAIL_B24"] = "<p>El archivo se guardará en la carpeta cargada en Bitrix24.Drive. El archivo externo no se observó durante las actualizaciones adicionales.</p> <p>Una vez que su cuenta externa se añade a Bitrix24, será accesible por cualquier función que pueda utilizarlo.</p> <p>Utilice la página de Bitrix.Passport para desconectar los servicios externos.</p>";
-?>

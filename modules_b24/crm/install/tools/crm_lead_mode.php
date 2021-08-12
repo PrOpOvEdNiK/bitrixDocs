@@ -1,1 +1,0 @@
-<?require($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/crm/tools/lead_mode.php");?>

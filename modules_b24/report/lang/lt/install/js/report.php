@@ -1,6 +1,0 @@
-<?
-$MESS["REPORT_JS_STATUS_ACTION_SUCCESS"] = "Sėkmingai atlikta";
-$MESS["REPORT_JS_STATUS_ACTION_ERROR"] = "Įvyko klaida.";
-$MESS["REPORT_JS_SHARING_RIGHT_READ"] = "Skaityti";
-$MESS["REPORT_JS_SHARING_RIGHT_EDIT"] = "Redaguoti";
-?>

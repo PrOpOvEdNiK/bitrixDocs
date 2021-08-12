@@ -87,10 +87,10 @@ if (Loader::includeModule('recyclebin'))
 				{
 					$name = 'CTasks::RepeatTaskByTemplateId(' . $templateId . ');';
 
-					$nextTime = \CTasks::getNextTime(unserialize($template['REPLICATE_PARAMS']), $template); // localtime
+					$nextTime = \CTasks::getNextTime(unserialize($template['REPLICATE_PARAMS'], ['allowed_classes' => false]), $template); // localtime
 					if ($nextTime)
 					{
-						/** @noinspection PhpDynamicAsStaticMethodCallInspection */
+
 						\CAgent::AddAgent($name,'tasks','N',86400, $nextTime,'Y', $nextTime);
 					}
 				}

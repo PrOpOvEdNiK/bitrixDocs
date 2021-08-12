@@ -1,3 +1,0 @@
-<?
-$arLabels['de'] = 'Abteilungsleiter';
-?>

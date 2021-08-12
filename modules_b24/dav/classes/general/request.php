@@ -30,6 +30,7 @@ class CDavRequest
 			'iphone'            => 'iphone',		// Apple iPhone iCal
 			'davkit'            => 'davkit',		// Apple iCal
 			'mac os'            => 'davkit',		// Apple iCal (Mac Os X > 10.8)
+			'macos'            => 'davkit',         // Apple iCal (Mac Os > 11)
 			'mac_os_x'            => 'davkit',		// Apple iCal (Mac Os X > 10.8)
 			'mac+os+x'            => 'davkit',		// Apple iCal (Mac Os X > 10.10)
 			'dataaccess'        => 'dataaccess',	// Apple addressbook iPhone
@@ -50,16 +51,17 @@ class CDavRequest
 			'ios/10'            => 'dataaccess',    // iOS/10
 			'ios/11'            => 'dataaccess',    // iOS/11
 			'ios/12'            => 'dataaccess',    // iOS/12
-			'ios/13'            => 'dataaccess',    // iOS/12
+			'ios/13'            => 'dataaccess',    // iOS/13
+			'ios/14'            => 'dataaccess',    // iOS/14
 			'carddavbitrix24'   => 'dataaccess',
 			'caldavbitrix24'    => 'dataaccess',
 			'coredav'           => 'davkit',    //
 		);
 
-		$httpUserAgent = strtolower($this->arRequestParameters['HTTP_USER_AGENT']);
+		$httpUserAgent = mb_strtolower($this->arRequestParameters['HTTP_USER_AGENT']);
 		foreach ($arAgentsMap as $pattern => $name)
 		{
-			if (strpos($httpUserAgent, $pattern) !== false)
+			if (mb_strpos($httpUserAgent, $pattern) !== false)
 			{
 				$this->agent = $name;
 				break;
@@ -82,11 +84,11 @@ class CDavRequest
 
 		$p = $this->GetParameter("PATH_INFO");
 		if (!empty($p))
-			$uri = substr($uri, 0, -strlen($p));
+			$uri = mb_substr($uri, 0, -mb_strlen($p));
 
 		$pathInfo = empty($p) ? "/" : $p;
 
-if (substr($pathInfo, -strlen("/index.php")) == "/index.php") $pathInfo = substr($pathInfo, 0, -strlen("/index.php"));
+if (mb_substr($pathInfo, -mb_strlen("/index.php")) == "/index.php") $pathInfo = mb_substr($pathInfo, 0, -mb_strlen("/index.php"));
 
 		$this->baseUri = $uri;
 		$this->uri = str_replace("//", "/", $uri.$pathInfo);
@@ -143,7 +145,7 @@ if (substr($pathInfo, -strlen("/index.php")) == "/index.php") $pathInfo = substr
 	public function GetParameter($parameterName)
 	{
 		$parameterName = trim($parameterName);
-		if (strlen($parameterName) <= 0)
+		if ($parameterName == '')
 			throw new Exception("parameterName");
 
 		if (array_key_exists($parameterName, $this->arRequestParameters))
@@ -243,7 +245,7 @@ if (substr($pathInfo, -strlen("/index.php")) == "/index.php") $pathInfo = substr
 			if (in_array($key, array('HTTP_CONTENT_LENGTH', 'HTTP_CONTENT_TYPE')))
 				continue;
 
-			$this->arContentParameters[strtoupper(substr($key, 5))] = $val;
+			$this->arContentParameters[mb_strtoupper(mb_substr($key, 5))] = $val;
 		}
 
 		return $this->arContentParameters;

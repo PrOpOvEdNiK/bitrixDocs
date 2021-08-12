@@ -7,6 +7,7 @@ use Bitrix\Disk\File;
 use Bitrix\Disk\Uf\BlogPostCommentConnector;
 use Bitrix\Disk\Uf\BlogPostConnector;
 use Bitrix\Main\Application;
+use Bitrix\Main\UI\Viewer\Transformation\CallbackHandler;
 use Bitrix\Transformer\DocumentTransformer;
 use Bitrix\Transformer\FileTransformer;
 use Bitrix\Transformer\InterfaceCallback;
@@ -14,6 +15,9 @@ use Bitrix\Transformer\Command;
 use Bitrix\Main\Loader;
 use Bitrix\Transformer\VideoTransformer;
 
+/**
+ * @deprecated
+ */
 class TransformerManager implements InterfaceCallback
 {
 	const MODULE_ID = 'disk';
@@ -53,76 +57,21 @@ class TransformerManager implements InterfaceCallback
 		{
 			FileTransformer::clearInfoCache($params['fileId']);
 		}
-		if($status == Command::STATUS_ERROR && isset($params['id']))
-		{
-			Application::getInstance()->getTaggedCache()->clearByTag("disk_file_".$params['id']);
-			BlogPostConnector::clearCacheByObjectId($params['id']);
-			BlogPostCommentConnector::clearCacheByObjectId($params['id']);
-			return true;
-		}
 
-		if(!isset($params['id']) || !isset($params['fileId']) || !isset($result['files']))
+		if(!isset($params['id']) || !isset($params['fileId']))
 		{
 			return 'wrong parameters';
 		}
 
-		if($status != Command::STATUS_UPLOAD)
-		{
-			return 'wrong command status';
-		}
-
-		$previewId = $viewId = 0;
 		$file = File::getById($params['id']);
 		if(!$file)
 		{
 			return 'file '.$params['id'].' not found';
 		}
-		$view = $file->getView();
-		$previewFormat = $view->getPreviewExtension();
-		$viewFormat = $view->getViewExtension();
-		// there is no need to save preview and view for the file if it had been changed
-		if($file->getFileId() == $params['fileId'])
-		{
-			if(isset($result['files'][$previewFormat]))
-			{
-				$previewId = self::saveFile($result['files'][$previewFormat], $view->getPreviewMimeType());
-				if($previewId)
-				{
-					$file->changePreviewId($previewId);
-				}
-			}
-			if(isset($result['files'][$viewFormat]))
-			{
-				$viewId = self::saveFile($result['files'][$viewFormat], $view->getMimeType());
-				if($viewId)
-				{
-					$file->changeViewId($viewId);
-				}
-			}
-		}
-		// but we should save view for the version if it had not been joined
-		if($view->isSaveForVersion())
-		{
-			if(isset($result['files'][$viewFormat]) && \Bitrix\Main\IO\File::isFileExists($result['files'][$viewFormat]))
-			{
-				$versions = $file->getVersions(array('filter' => array('FILE_ID' => $params['fileId'])));
-				$version = array_pop($versions);
-				if($version)
-				{
-					if(!$viewId)
-					{
-						$viewId = self::saveFile($result['files'][$viewFormat], $view->getMimeType());
-					}
-					if($viewId)
-					{
-						$version->changeViewId($viewId);
-					}
-				}
-			}
-		}
 
+		$view = $file->getView();
 		if(
-			$view->isNeededLimitRightsOnTransformTime()
+			$view->isNeededLimitRightsOnTransformTime(false)
 			&& Loader::includeModule('socialnetwork')
 		)
 		{
@@ -137,7 +86,6 @@ class TransformerManager implements InterfaceCallback
 		}
 
 		static::clearCacheByFile($file);
-		static::addToStack($file, $viewId, $previewId);
 
 		return true;
 	}
@@ -199,9 +147,9 @@ class TransformerManager implements InterfaceCallback
 		}
 
 		$transformFormats = array($view->getPreviewExtension());
-		$transformParams = array('id' => $file->getId(), 'fileId' => $file->getFileId(), 'queue' => static::QUEUE_NAME);
+		$transformParams = array('id' => $file->getId(), 'fileId' => $file->getFileId(), 'queue' => \Bitrix\Main\UI\Viewer\Transformation\TransformerManager::QUEUE_NAME);
 		$viewExtension = $view->getViewExtension();
-		$fileExtension = strtolower($file->getExtension());
+		$fileExtension = mb_strtolower($file->getExtension());
 		if($view::isAlwaysTransformToViewFormat())
 		{
 			$transformFormats[] = $viewExtension;
@@ -214,7 +162,7 @@ class TransformerManager implements InterfaceCallback
 		$transformer = self::getTransformerByFormat($viewExtension);
 		if($transformer)
 		{
-			$result = $transformer->transform((int)$file->getFileId(), $transformFormats, self::MODULE_ID, self::className(), $transformParams);
+			$result = $transformer->transform((int)$file->getFileId(), $transformFormats, self::MODULE_ID, [self::className(), CallbackHandler::class], $transformParams);
 			return($result->isSuccess());
 		}
 

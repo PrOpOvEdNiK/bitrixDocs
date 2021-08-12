@@ -1,5 +1,0 @@
-<?
-$MESS["RATING_COMPONENT_CURRENT_POSITION"] = "Obecnie oceniane";
-$MESS["RATING_COMPONENT_PREVIOUS_POSITION"] = "Wcześniej oceniane:";
-$MESS["RATING_COMPONENT_PROGRESS"] = "edytuj:";
-?>

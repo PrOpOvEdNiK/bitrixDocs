@@ -1,9 +1,0 @@
-<?
-$MESS["EXTRANET_LEFT_MENU_BLOG"] = "Konwersacje";
-$MESS["EXTRANET_LEFT_MENU_CALENDAR"] = "Kalendarz";
-$MESS["EXTRANET_LEFT_MENU_DISK"] = "Mój Dysk";
-$MESS["EXTRANET_LEFT_MENU_GROUPS"] = "Grupy Robocze";
-$MESS["EXTRANET_LEFT_MENU_LIVE_FEED"] = "Tablica Aktywności";
-$MESS["EXTRANET_LEFT_MENU_PHOTO"] = "Zdjęcia";
-$MESS["EXTRANET_LEFT_MENU_TASKS"] = "Zadania";
-?>

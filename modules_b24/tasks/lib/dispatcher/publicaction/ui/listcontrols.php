@@ -12,10 +12,14 @@
 
 namespace Bitrix\Tasks\Dispatcher\PublicAction\Ui;
 
+use Bitrix\Main\Localization\Loc;
 use Bitrix\Tasks;
+use Bitrix\Tasks\Access\Role\RoleDictionary;
 use Bitrix\Tasks\Integration;
 use Bitrix\Tasks\Util\User;
 use Bitrix\Tasks\Manager;
+
+Loc::loadMessages(__FILE__);
 
 final class ListControls extends \Bitrix\Tasks\Dispatcher\RestrictedAction
 {
@@ -25,7 +29,7 @@ final class ListControls extends \Bitrix\Tasks\Dispatcher\RestrictedAction
 
 		if (!User::isAuthorized())
 		{
-			throw new Tasks\Exception("Authentication is required.");
+			throw new Tasks\Exception(Loc::getMessage('TASKS_LISTCONTROLS_AUTH_REQUIRED'));
 		}
 
 		$title = isset($data["title"]) ? trim($data["title"]) : "";
@@ -54,7 +58,7 @@ final class ListControls extends \Bitrix\Tasks\Dispatcher\RestrictedAction
 		$nameTemplate = isset($data["nameTemplate"]) ? trim($data["nameTemplate"]) : "";
 		$ganttMode = isset($data["ganttMode"]) && ($data["ganttMode"] === true || $data["ganttMode"] === "1");
 
-		if (strlen($nameTemplate) > 0)
+		if ($nameTemplate <> '')
 		{
 			preg_match_all(
 				"/(#NAME#)|(#NOBR#)|(#\\/NOBR#)|(#LAST_NAME#)|(#SECOND_NAME#)|(#NAME_SHORT#)|(#SECOND_NAME_SHORT#)|\\s|\\,/",
@@ -74,13 +78,13 @@ final class ListControls extends \Bitrix\Tasks\Dispatcher\RestrictedAction
 			"SE_RESPONSIBLE" => array(
 				$userEmail !== ""
 					? array(
-					"EMAIL" => $userEmail,
-					"NAME" => $userName,
-					"LAST_NAME" => $userLastName
-				)
+						"EMAIL" => $userEmail,
+						"NAME" => $userName,
+						"LAST_NAME" => $userLastName
+					)
 					: array(
-					"ID" => $responsibleId
-				)
+						"ID" => $responsibleId
+					)
 			),
 			"DEADLINE" => $deadline,
 			"SITE_ID" => $data["siteId"],
@@ -89,10 +93,23 @@ final class ListControls extends \Bitrix\Tasks\Dispatcher\RestrictedAction
 			"DESCRIPTION_IN_BBCODE" => "Y"
 		);
 
+		if (!$this->checkRights($fields))
+		{
+			throw new Tasks\Exception(Loc::getMessage('TASKS_LISTCONTROLS_ACCESS_DENIED'));
+		}
+
 		$taskData = Tasks\Manager\Task::add(User::getId(), $fields);
 		$taskItem = \CTaskItem::getInstance($taskData["DATA"]["ID"], User::getId());
 
-		$task = $taskItem->getData();
+		try
+		{
+			$task = $taskItem->getData();
+		}
+		catch (\TasksException $e)
+		{
+			throw new Tasks\Exception();
+		}
+
 		$task["GROUP_NAME"] = "";
 		if ($task["GROUP_ID"])
 		{
@@ -141,12 +158,26 @@ final class ListControls extends \Bitrix\Tasks\Dispatcher\RestrictedAction
 		return $result;
 	}
 
+	private function checkRights($fields)
+	{
+		$task = Tasks\Access\Model\TaskModel::createNew($fields['GROUP_ID']);
+		$task->setMembers([
+			RoleDictionary::ROLE_RESPONSIBLE => [
+					isset($fields['SE_RESPONSIBLE'][0]['ID'])
+					? $fields['SE_RESPONSIBLE'][0]['ID']
+					: $fields['SE_RESPONSIBLE'][0]['EMAIL']
+				]
+		]);
+
+		return (new Tasks\Access\TaskAccessController(User::getId()))->check(Tasks\Access\ActionDictionary::ACTION_TASK_SAVE, Tasks\Access\Model\TaskModel::createNew(), $task);
+	}
+
 	private function unserializeArray($key, $data)
 	{
 		$result = array();
 		if (isset($data[$key]) && checkSerializedData($data[$key]))
 		{
-			$result = unserialize($data[$key]);
+			$result = unserialize($data[$key], ['allowed_classes' => false]);
 			if (!is_array($result))
 			{
 				$result = array();
@@ -196,9 +227,23 @@ final class ListControls extends \Bitrix\Tasks\Dispatcher\RestrictedAction
 		return $jsonString;
 	}
 
-	public function toggleGroupByTasks()
+	public function toggleGroupByTasks($userId = null)
 	{
-		$userId = User::getId();
+		if (!User::isAuthorized())
+		{
+			throw new Tasks\Exception("Authentication is required.");
+		}
+
+		if (!is_null($userId))
+		{
+			$userId = (int) $userId;
+		}
+
+		if (!$userId)
+		{
+			$userId = User::getId();
+		}
+
 		$instance = \CTaskListState::getInstance($userId);
 		$state = $instance->getState();
 		$submodes = $state['SUBMODES'];
@@ -221,9 +266,23 @@ final class ListControls extends \Bitrix\Tasks\Dispatcher\RestrictedAction
 		return array('RESULT' => $groupBySubTasks);
 	}
 
-	public function toggleGroupByGroups()
+	public function toggleGroupByGroups($userId = null)
 	{
-		$userId = User::getId();
+		if (!User::isAuthorized())
+		{
+			throw new Tasks\Exception("Authentication is required.");
+		}
+
+		if (!is_null($userId))
+		{
+			$userId = (int) $userId;
+		}
+
+		if (!$userId)
+		{
+			$userId = User::getId();
+		}
+
 		$instance = \CTaskListState::getInstance($userId);
 		$state = $instance->getState();
 		$submodes = $state['SUBMODES'];

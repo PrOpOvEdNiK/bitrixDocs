@@ -1,5 +1,0 @@
-<?
-$MESS["DISK_BP"] = "Procesos de negocios";
-$MESS["DISK_FILE_VIEW_START_BIZPROC_GO_BACK_TEXT"] = "Volver";
-$MESS["DISK_FILE_VIEW_START_BIZPROC__GO_BACK_TITLE"] = "Volver";
-?>

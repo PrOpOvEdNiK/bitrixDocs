@@ -30,7 +30,7 @@ final class CWebDavTools
 		$userSettings = CUserOptions::GetOption('webdav', 'user_settings', array('service_edit_doc_default' => CWebDavLogOnlineEditBase::GOOGLE_SERVICE_NAME));
 		$service = $userSettings['service_edit_doc_default'];
 
-		$service = strtolower($service);
+		$service = mb_strtolower($service);
 		switch($service)
 		{
 			case 'g':
@@ -72,7 +72,7 @@ final class CWebDavTools
 
 	public static function getServiceEditName($service)
 	{
-		$service = strtolower($service);
+		$service = mb_strtolower($service);
 		switch($service)
 		{
 			case 'g':
@@ -423,7 +423,7 @@ final class CWebDavTools
 	public static function getUser($userId, $photo = false)
 	{
 		global $USER;
-		if (is_object($USER) && intVal($userId) == $USER->GetId() && !$photo)
+		if (is_object($USER) && intval($userId) == $USER->GetId() && !$photo)
 		{
 			$user = array(
 				'ID' => $USER->GetId(),
@@ -442,7 +442,7 @@ final class CWebDavTools
 
 	public static function getUserName($user)
 	{
-		if (!is_array($user) && intVal($user) > 0)
+		if (!is_array($user) && intval($user) > 0)
 			$user = self::getUser($user);
 
 		if(!$user || !is_array($user))
@@ -583,26 +583,26 @@ final class CWebDavTools
 		if(self::isMetaName($newName))
 		{
 			$count++;
-			if(strstr($mainPartName, '.', true))
+			if(mb_strstr($mainPartName, '.', true))
 			{
-				$newName = strstr($mainPartName, '.', true) . " ({$count})" . strstr($mainPartName, '.');
+				$newName = mb_strstr($mainPartName, '.', true)." ({$count})".mb_strstr($mainPartName, '.');
 			}
 			else
 			{
-				$newName = $mainPartName . " ({$count})";
+				$newName = $mainPartName." ({$count})";
 			}
 		}
 
 		while(!CWebDavIblock::sCheckUniqueName($iblockId, $sectionId, '', $newName, $res))
 		{
 			$count++;
-			if(strstr($mainPartName, '.', true))
+			if(mb_strstr($mainPartName, '.', true))
 			{
-				$newName = strstr($mainPartName, '.', true) . " ({$count})" . strstr($mainPartName, '.');
+				$newName = mb_strstr($mainPartName, '.', true)." ({$count})".mb_strstr($mainPartName, '.');
 			}
 			else
 			{
-				$newName = $mainPartName . " ({$count})";
+				$newName = $mainPartName." ({$count})";
 			}
 		}
 
@@ -630,11 +630,9 @@ final class CWebDavTools
 		{
 			return false;
 		}
-		$o = "ID";
-		$b = '';
 		$queryUser = CUser::GetList(
-			$o,
-			$b,
+			'id',
+			'asc',
 			array(
 				"ID_EQUAL_EXACT" => $userId,
 			),

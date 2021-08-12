@@ -8,6 +8,7 @@
 
 namespace Bitrix\Crm\SiteButton;
 
+use Bitrix\Main\Application;
 use Bitrix\Main\Context;
 use Bitrix\Main\Type\DateTime;
 use Bitrix\Main\Web\Json;
@@ -40,6 +41,7 @@ class Guest
 	public static function runController()
 	{
 		$request = Context::getCurrent()->getRequest();
+		$gid = $request->get('gid') ?: self::getCookieGuestId();
 		$action = $request->get('a');
 		$eventName = $request->get('e');
 		$data = $request->get('d');
@@ -62,29 +64,35 @@ class Guest
 		switch ($action)
 		{
 			case 'reg':
-				if (!self::getCookieGuestId())
+				if (!$gid)
 				{
 					$answerData['gid'] = self::register();
 				}
 				break;
 
 			case 'link':
-				$answerData['gid'] = self::link($request->get('gid'), $data);
+				$answerData['gid'] = self::link($gid, $data);
 				break;
 
 			case 'storeTrace':
 			case 'registerOrder':
 				if (!empty($data['trace']))
 				{
-					Tracking\Trace::create($data['trace'])->save();
+					Tracking\Trace::create($data['trace'])->useTraceDetecting(false)->save();
+					Application::getInstance()->addBackgroundJob(
+						function ()
+						{
+							Tracking\Internals\TraceTable::deleteUnusedTraces();
+						}
+					);
 				}
 				break;
 
 			case 'event':
-				if (self::checkEventName($eventName) && self::getCookieGuestId())
+				if (self::checkEventName($eventName) && $gid)
 				{
 					self::sendEvent($eventName, $data);
-					self::runAutomation($eventName);
+					self::runAutomation($eventName, $gid);
 				}
 		}
 
@@ -287,14 +295,13 @@ class Guest
 		EventManager::getInstance()->send($event);
 	}
 
-	public static function runAutomation($eventName)
+	private static function runAutomation($eventName, $gid)
 	{
 		if ($eventName != 'Return')
 		{
 			return;
 		}
 
-		$gid = self::getCookieGuestId();
 		$data = self::getByGuestId($gid, true);
 		$bindings = array();
 		foreach ($data['ENTITIES'] as $entity)

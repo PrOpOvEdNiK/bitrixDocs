@@ -1,3 +1,0 @@
-<?
-$MESS["DELIVERY_EXTRA_SERVICE_ENUM_ADD"] = "Dodaj";
-?>

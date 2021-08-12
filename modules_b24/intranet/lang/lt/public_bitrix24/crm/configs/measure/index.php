@@ -1,4 +1,0 @@
-<?
-$MESS["TITLE"] = "Matavimo vienetai
-";
-?>

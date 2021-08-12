@@ -13,6 +13,8 @@ use Bitrix\Main\NotImplementedException;
 use Bitrix\Main\ObjectException;
 use Bitrix\Main\ObjectPropertyException;
 use Bitrix\Main\SystemException;
+use Bitrix\Tasks\Access\ActionDictionary;
+use Bitrix\Tasks\Access\Model\ChecklistModel;
 use Bitrix\Tasks\CheckList\Internals\CheckList;
 use Bitrix\Tasks\CheckList\Internals\CheckListTree;
 use Bitrix\Tasks\Integration\Disk\Rest\Attachment;
@@ -160,7 +162,7 @@ abstract class CheckListFacade
 	 */
 	public static function getList(array $select = [], array $filter = [], array $order = [])
 	{
-		list($filteredSelect, $filteredFilter, $filteredOrder) = static::getFilteredFields($select, $filter, $order);
+		[$filteredSelect, $filteredFilter, $filteredOrder] = static::getFilteredFields($select, $filter, $order);
 
 		/** @var DataManager $checkListDataController */
 		$checkListDataController = static::getCheckListDataController();
@@ -175,12 +177,17 @@ abstract class CheckListFacade
 			Join::on('this.ID', 'ref.CHILD_ID')->where('ref.LEVEL', 1),
 			['join_type' => 'LEFT']
 		));
-		$query->registerRuntimeField('', new ReferenceField(
-			'IM',
-			static::getCheckListMemberDataController(),
-			Join::on('this.ID', 'ref.ITEM_ID'),
-			['join_type' => 'LEFT']
-		));
+
+		$checkListMemberDataController = static::getCheckListMemberDataController();
+		if ($checkListMemberDataController)
+		{
+			$query->registerRuntimeField('', new ReferenceField(
+				'IM',
+				$checkListMemberDataController,
+				Join::on('this.ID', 'ref.ITEM_ID'),
+				['join_type' => 'LEFT']
+			));
+		}
 
 		$res = $query->exec();
 
@@ -227,7 +234,7 @@ abstract class CheckListFacade
 	{
 		$addResult = new Result();
 
-		if (!static::isActionAllowed($entityId, null, $userId, self::ACTION_ADD))
+		if (!static::checkAccess($entityId, $userId, ActionDictionary::ACTION_CHECKLIST_ADD, $fields))
 		{
 			$code = 'ACTION_NOT_ALLOWED';
 			$addResult = static::addErrorToResult($addResult, $code, self::ACTION_ADD);
@@ -268,23 +275,23 @@ abstract class CheckListFacade
 	{
 		$updateResult = new Result();
 
-		if (!static::isActionAllowed($entityId, $checkList, $userId, self::ACTION_MODIFY))
-		{
-			$code = 'ACTION_NOT_ALLOWED';
+		$code = 'ACTION_NOT_ALLOWED';
 
-			if (array_key_exists('IS_COMPLETE', $fields) && count($fields) === 1)
+		if (
+			array_key_exists('IS_COMPLETE', $fields)
+			&& count($fields) === 1
+		)
+		{
+			if (!static::checkAccess($entityId, $userId, ActionDictionary::ACTION_CHECKLIST_TOGGLE, $checkList))
 			{
-				if (!static::isActionAllowed($entityId, $checkList, $userId, self::ACTION_TOGGLE))
-				{
-					$updateResult = static::addErrorToResult($updateResult, $code, self::ACTION_TOGGLE);
-					return $updateResult;
-				}
-			}
-			else
-			{
-				$updateResult = static::addErrorToResult($updateResult, $code, self::ACTION_MODIFY);
+				$updateResult = static::addErrorToResult($updateResult, $code, self::ACTION_TOGGLE);
 				return $updateResult;
 			}
+		}
+		else if (!static::checkAccess($entityId, $userId, ActionDictionary::ACTION_CHECKLIST_EDIT, $checkList))
+		{
+			$updateResult = static::addErrorToResult($updateResult, $code, self::ACTION_MODIFY);
+			return $updateResult;
 		}
 
 		$fieldsChecking = static::checkFieldsForUpdate($fields);
@@ -391,7 +398,7 @@ abstract class CheckListFacade
 
 		$deleteLeafResult = new Result();
 
-		if (!static::isActionAllowed($entityId, $checkList, $userId, self::ACTION_REMOVE))
+		if (!static::checkAccess($entityId, $userId, ActionDictionary::ACTION_CHECKLIST_EDIT, $checkList))
 		{
 			$code = 'ACTION_NOT_ALLOWED';
 			$deleteLeafResult = static::addErrorToResult($deleteLeafResult, $code, self::ACTION_REMOVE);
@@ -402,7 +409,10 @@ abstract class CheckListFacade
 
 		try
 		{
-			$USER_FIELD_MANAGER->Delete(static::$userFieldsEntityIdName, $id);
+			if (static::$userFieldsEntityIdName)
+			{
+				$USER_FIELD_MANAGER->Delete(static::$userFieldsEntityIdName, $id);
+			}
 		}
 		catch (Exception $exception)
 		{
@@ -412,14 +422,20 @@ abstract class CheckListFacade
 
 		/** @var DataManager $memberDataController */
 		$memberDataController = static::getCheckListMemberDataController();
-		$members = $memberDataController::getList(['select' => ['ID'], 'filter' => ['ITEM_ID' => $id]])->fetchAll();
-		foreach ($members as $member)
+		if ($memberDataController)
 		{
-			$memberDeleteResult = $memberDataController::delete($member['ID']);
-			if (!$memberDeleteResult->isSuccess())
+			$members = $memberDataController::getList([
+				'select' => ['ID'],
+				'filter' => ['ITEM_ID' => $id]
+			])->fetchAll();
+			foreach ($members as $member)
 			{
-				$deleteLeafResult = static::addErrorToResult($deleteLeafResult, 'MEMBER_DELETE_FAILED');
-				static::logError($memberDeleteResult->getErrorMessages()[0]);
+				$memberDeleteResult = $memberDataController::delete($member['ID']);
+				if (!$memberDeleteResult->isSuccess())
+				{
+					$deleteLeafResult = static::addErrorToResult($deleteLeafResult, 'MEMBER_DELETE_FAILED');
+					static::logError($memberDeleteResult->getErrorMessages()[0]);
+				}
 			}
 		}
 
@@ -503,17 +519,25 @@ abstract class CheckListFacade
 		$dataControllers = [
 			static::getCheckListDataController(),
 			static::getCheckListTreeDataController(),
-			static::getCheckListMemberDataController(),
 		];
+
+		$checkListMemberDataController = static::getCheckListMemberDataController();
+		if ($checkListMemberDataController)
+		{
+			$dataControllers[] = $checkListMemberDataController;
+		}
 
 		foreach ($dataControllers as $controller)
 		{
 			$controller::deleteByCheckListsIds($checkListsIds);
 		}
 
-		foreach ($checkLists as $id)
+		if (static::$userFieldsEntityIdName)
 		{
-			$USER_FIELD_MANAGER->Delete(static::$userFieldsEntityIdName, $id);
+			foreach ($checkLists as $id)
+			{
+				$USER_FIELD_MANAGER->Delete(static::$userFieldsEntityIdName, $id);
+			}
 		}
 	}
 
@@ -535,6 +559,8 @@ abstract class CheckListFacade
 	public static function merge($entityId, $userId, $newItems, $parameters = [])
 	{
 		$mergeResult = new Result();
+
+		static::doMergePreActions($entityId, $userId);
 
 		static::enableDeferredActionsMode();
 
@@ -614,7 +640,7 @@ abstract class CheckListFacade
 	{
 		$moveResult = new Result();
 
-		if (!static::isActionAllowed($entityId, $itemToMove, $userId, self::ACTION_REORDER))
+		if (!static::checkAccess($entityId, $userId, ActionDictionary::ACTION_CHECKLIST_EDIT, $itemToMove))
 		{
 			$code = 'ACTION_NOT_ALLOWED';
 			$moveResult = static::addErrorToResult($moveResult, $code, self::ACTION_REORDER);
@@ -720,7 +746,7 @@ abstract class CheckListFacade
 	{
 		$addMembersResult = new Result();
 
-		if (!static::isActionAllowed($entityId, $checkList, $userId, self::ACTION_MODIFY))
+		if (!static::checkAccess($entityId, $userId, ActionDictionary::ACTION_CHECKLIST_EDIT, $checkList))
 		{
 			$code = 'ACTION_NOT_ALLOWED';
 			$addMembersResult = static::addErrorToResult($addMembersResult, $code, self::ACTION_MODIFY);
@@ -767,7 +793,7 @@ abstract class CheckListFacade
 	{
 		$removeMembersResult = new Result();
 
-		if (!static::isActionAllowed($entityId, $checkList, $userId, self::ACTION_MODIFY))
+		if (!static::checkAccess($entityId, $userId, ActionDictionary::ACTION_CHECKLIST_EDIT, $checkList))
 		{
 			$code = 'ACTION_NOT_ALLOWED';
 			$removeMembersResult = static::addErrorToResult($removeMembersResult, $code, self::ACTION_MODIFY);
@@ -794,7 +820,7 @@ abstract class CheckListFacade
 	{
 		$addAttachmentResult = new Result();
 
-		if (!static::isActionAllowed($entityId, $checkList, $userId, self::ACTION_MODIFY))
+		if (!static::checkAccess($entityId, $userId, ActionDictionary::ACTION_CHECKLIST_EDIT, $checkList))
 		{
 			$code = 'ACTION_NOT_ALLOWED';
 			$addAttachmentResult = static::addErrorToResult($addAttachmentResult, $code, self::ACTION_MODIFY);
@@ -839,7 +865,7 @@ abstract class CheckListFacade
 	{
 		$addAttachmentsResult = new Result();
 
-		if (!static::isActionAllowed($entityId, $checkList, $userId, self::ACTION_MODIFY))
+		if (!static::checkAccess($entityId, $userId, ActionDictionary::ACTION_CHECKLIST_EDIT, $checkList))
 		{
 			$code = 'ACTION_NOT_ALLOWED';
 			$addAttachmentsResult = static::addErrorToResult($addAttachmentsResult, $code, self::ACTION_MODIFY);
@@ -871,7 +897,7 @@ abstract class CheckListFacade
 	{
 		$removeAttachmentsResult = new Result();
 
-		if (!static::isActionAllowed($entityId, $checkList, $userId, self::ACTION_MODIFY))
+		if (!static::checkAccess($entityId, $userId, ActionDictionary::ACTION_CHECKLIST_EDIT, $checkList))
 		{
 			$code = 'ACTION_NOT_ALLOWED';
 			$removeAttachmentsResult = static::addErrorToResult($removeAttachmentsResult, $code, self::ACTION_MODIFY);
@@ -884,6 +910,14 @@ abstract class CheckListFacade
 		return $removeAttachmentsResult;
 	}
 
+	public static function checkAccess($entityId, $userId, $action, $params = null)
+	{
+		$accessController = static::getAccessControllerClass();
+		return $accessController::can($userId, $action, $entityId, $params);
+	}
+
+	abstract protected static function getAccessControllerClass(): string;
+
 	/**
 	 * Checks if action is allowed for user and entity.
 	 *
@@ -895,26 +929,18 @@ abstract class CheckListFacade
 	 */
 	public static function isActionAllowed($entityId, $checkList, $userId, $actionId)
 	{
-		$userId = (int)$userId;
-		$actionId = (int)$actionId;
+		$action = ActionDictionary::ACTION_CHECKLIST_EDIT;
 
-		if (array_key_exists($actionId, static::ACTIONS['COMMON']))
+		if ($actionId == self::ACTION_ADD)
 		{
-			if (!isset(static::$commonAccessActions[$entityId][$userId][$actionId]))
-			{
-				static::fillCommonAccessActions($entityId, $userId);
-			}
-
-			return (static::$commonAccessActions[$entityId][$userId][$actionId] ?: false);
+			$action = ActionDictionary::ACTION_CHECKLIST_ADD;
+		}
+		elseif ($actionId == self::ACTION_TOGGLE)
+		{
+			$action = ActionDictionary::ACTION_CHECKLIST_TOGGLE;
 		}
 
-		$checkListId = $checkList->getFields()['ID'];
-		if (!isset(static::$itemAccessActions[$entityId][$userId][$checkListId][$actionId]))
-		{
-			static::fillItemAccessActions($entityId, $checkList, $userId);
-		}
-
-		return (static::$itemAccessActions[$entityId][$userId][$checkListId][$actionId] ?: false);
+		return static::checkAccess($entityId, $userId, $action, $checkList);
 	}
 
 	/**
@@ -1339,24 +1365,20 @@ abstract class CheckListFacade
 	 * @param array $items
 	 * @return mixed
 	 */
-	protected static function fillActionsForItems($entityId, $userId, $items)
+	public static function fillActionsForItems($entityId, $userId, $items)
 	{
 		if (empty($items))
 		{
 			return $items;
 		}
 
-		/** @var CheckListFacade $facade */
-		$facade = static::class;
-
 		$items = array_map(
-			static function($item) use ($entityId, $userId, $facade)
+			static function($item) use ($entityId, $userId)
 			{
-				$checkList = new CheckList(0, $userId, $facade, $item);
 				$item['ACTION'] = [
-					'MODIFY' => static::isActionAllowed($entityId, $checkList, $userId, self::ACTION_MODIFY),
-					'REMOVE' => static::isActionAllowed($entityId, $checkList, $userId, self::ACTION_REMOVE),
-					'TOGGLE' => static::isActionAllowed($entityId, $checkList, $userId, self::ACTION_TOGGLE),
+					'MODIFY' => static::checkAccess($entityId, $userId, ActionDictionary::ACTION_CHECKLIST_EDIT, $item),
+					'REMOVE' => static::checkAccess($entityId, $userId, ActionDictionary::ACTION_CHECKLIST_EDIT, $item),
+					'TOGGLE' => static::checkAccess($entityId, $userId, ActionDictionary::ACTION_CHECKLIST_TOGGLE, $item),
 				];
 
 				return $item;
@@ -1445,6 +1467,18 @@ abstract class CheckListFacade
 	 * @param array $data
 	 */
 	public static function doDeletePostActions($entityId, $userId, $data = [])
+	{
+
+	}
+
+	/**
+	 * Does some actions before merging checklists.
+	 *
+	 * @param int $entityId
+	 * @param int $userId
+	 * @param array $data
+	 */
+	public static function doMergePreActions($entityId, $userId, $data = [])
 	{
 
 	}

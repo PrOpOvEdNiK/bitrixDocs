@@ -4,7 +4,7 @@
  * @package bitrix
  * @subpackage tasks
  * @copyright 2001-2013 Bitrix
- * 
+ *
  * @deprecated
  */
 
@@ -20,7 +20,7 @@ class CTaskReminders
 {
 	const REMINDER_TRANSPORT_JABBER = "J";
 	const REMINDER_TRANSPORT_EMAIL = "E";
-	
+
 	const REMINDER_TYPE_DEADLINE = "D";
 	const REMINDER_TYPE_COMMON = "A";
 
@@ -56,7 +56,7 @@ class CTaskReminders
 		}
 		else
 		{
-			/** @noinspection PhpDynamicAsStaticMethodCallInspection */
+
 			$r = CUser::GetByID($arFields["USER_ID"]);
 			if (!$r->Fetch())
 			{
@@ -162,7 +162,7 @@ class CTaskReminders
 			$key = $res["FIELD"];
 			$cOperationType = $res["OPERATION"];
 
-			$key = strtoupper($key);
+			$key = mb_strtoupper($key);
 
 			switch ($key)
 			{
@@ -202,8 +202,8 @@ class CTaskReminders
 
 		foreach ($arOrder as $by => $order)
 		{
-			$by = strtolower($by);
-			$order = strtolower($order);
+			$by = mb_strtolower($by);
+			$order = mb_strtolower($order);
 			if ($order != "asc")
 				$order = "desc";
 
@@ -277,9 +277,9 @@ class CTaskReminders
 	}
 
 
-	function SendAgent()
+	public static function SendAgent()
 	{
-		/** @noinspection PhpDynamicAsStaticMethodCallInspection */
+
 		$arFilter = array(
 			// although DateTime created with 'new', here we get user time, because toString() always returns time in user offset
 			"<=REMIND_DATE" => ((string) new \Bitrix\Main\Type\DateTime())
@@ -309,8 +309,15 @@ class CTaskReminders
 						$userTo = $arReminder["USER_ID"];
 
 						// need to check access
-						$task = new CTaskItem($arReminder["TASK_ID"], $userTo);
-						if(!$task->checkCanRead()) // no access at this moment, drop reminder
+						try
+						{
+							$task = new CTaskItem($arReminder["TASK_ID"], $userTo);
+							if(!$task->checkCanRead()) // no access at this moment, drop reminder
+							{
+								$userTo = false;
+							}
+						}
+						catch (CTaskAssertException $e)
 						{
 							$userTo = false;
 						}
@@ -318,7 +325,7 @@ class CTaskReminders
 
 					if(intval($userTo))
 					{
-						/** @noinspection PhpDynamicAsStaticMethodCallInspection */
+
 						$rsUser = CUser::GetByID($userTo);
 						if ($arUser = $rsUser->Fetch())
 						{
@@ -346,7 +353,7 @@ class CTaskReminders
 
 							if (
 								$arReminder["TRANSPORT"] == self::REMINDER_TRANSPORT_EMAIL
-								|| !CModule::IncludeModule("socialnetwork") 
+								|| !CModule::IncludeModule("socialnetwork")
 								|| !CTaskReminders::__SendJabberReminder($arUser["ID"], $arTask)
 							)
 							{
@@ -365,41 +372,40 @@ class CTaskReminders
 	}
 
 
-	private function __SendJabberReminder($USER_ID, $arTask)
+	private static function __SendJabberReminder($USER_ID, $arTask)
 	{
-		if (IsModuleInstalled("im") && CModule::IncludeModule("im"))
+		if (!IsModuleInstalled('im') || !CModule::IncludeModule('im'))
 		{
-			$reminderMessage = str_replace(
-				array(
-					"#TASK_TITLE#"
-				), 
-				array(
-					$arTask["TITLE"]
-				), 
-				GetMessage("TASKS_REMINDER")
-			);
-
-			return CTaskNotifications::sendMessageEx($arTask['ID'], $arTask["CREATED_BY"], array($USER_ID), array(
-				'INSTANT' => $reminderMessage,
-				'EMAIL' => $reminderMessage,
-				'PUSH' => $reminderMessage
-			), array(
-				'NOTIFY_EVENT' => 'reminder',
-			));
+			return false;
 		}
 
-		return false;
+		$reminderMessage = str_replace(['#TASK_TITLE#'], [$arTask['TITLE']], GetMessage('TASKS_REMINDER'));
+
+		return CTaskNotifications::sendMessageEx(
+			$arTask['ID'],
+			$arTask['CREATED_BY'],
+			[$USER_ID],
+			[
+				'INSTANT' => $reminderMessage,
+				'EMAIL' => $reminderMessage,
+				'PUSH' => $reminderMessage,
+			],
+			[
+				'NOTIFY_EVENT' => 'reminder',
+				'EXCLUDE_USERS_WITH_MUTE' => 'N',
+			]
+		);
 	}
 
 
-	private function __SendEmailReminder($USER_EMAIL, $arTask)
+	private static function __SendEmailReminder($USER_EMAIL, $arTask)
 	{
 		$arEventFields = array(
 			"PATH_TO_TASK" => $arTask["PATH_TO_TASK"],
 			"TASK_TITLE" => $arTask["TITLE"],
 			"EMAIL_TO" => $USER_EMAIL,
 		);
-		/** @noinspection PhpDynamicAsStaticMethodCallInspection */
+
 		CEvent::Send("TASK_REMINDER", $arTask["SITE_ID"], $arEventFields, "N");
 	}
 }

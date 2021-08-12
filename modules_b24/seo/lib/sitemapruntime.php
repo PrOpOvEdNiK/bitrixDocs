@@ -124,12 +124,12 @@ class SitemapRuntime
 //		normalize slashes
 		$fileName = Path::normalize($fileName);
 //		divide directory and path tp correctly add prefix
-		$lastSlashPosition = strrpos($fileName, "/");
+		$lastSlashPosition = mb_strrpos($fileName, "/");
 		$fileDirectory = '';
 		if ($lastSlashPosition !== false)
 		{
-			$fileDirectory = substr($fileName, 0, $lastSlashPosition + 1);
-			$fileName = substr($fileName, $lastSlashPosition + 1);
+			$fileDirectory = mb_substr($fileName, 0, $lastSlashPosition + 1);
+			$fileName = mb_substr($fileName, $lastSlashPosition + 1);
 		}
 		
 		parent::__construct($fileDirectory . $this->getPrefix() . $fileName, $arSettings);
@@ -201,8 +201,9 @@ class SitemapRuntime
 				$this->reInit($filename);
 			
 			$this->putSitemapContent($this->originalFile);
+			$e = [];
 			$this->appendEntry(array(
-				'XML_LOC' => $this->settings['PROTOCOL'] . '://' . \CBXPunycode::toASCII($this->settings['DOMAIN'], $e = NULL) . $url,
+				'XML_LOC' => $this->settings['PROTOCOL'] . '://' . \CBXPunycode::toASCII($this->settings['DOMAIN'], $e) . $url,
 				'XML_LASTMOD' => date('c', $modifiedDate - \CTimeZone::getOffset()),
 			));
 		}

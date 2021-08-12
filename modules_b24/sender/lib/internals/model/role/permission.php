@@ -5,11 +5,25 @@ namespace Bitrix\Sender\Internals\Model\Role;
 use Bitrix\Main\Application;
 use Bitrix\Main\ArgumentException;
 use Bitrix\Main\Entity;
+use Bitrix\Sender\Access\Role\Role;
 
 /**
  * Class PermissionTable
  *
  * @package Bitrix\Sender\Internals\Model\Role
+ *
+ * DO NOT WRITE ANYTHING BELOW THIS
+ *
+ * <<< ORMENTITYANNOTATION
+ * @method static EO_Permission_Query query()
+ * @method static EO_Permission_Result getByPrimary($primary, array $parameters = array())
+ * @method static EO_Permission_Result getById($id)
+ * @method static EO_Permission_Result getList(array $parameters = array())
+ * @method static EO_Permission_Entity getEntity()
+ * @method static \Bitrix\Sender\Internals\Model\Role\EO_Permission createObject($setDefaultValues = true)
+ * @method static \Bitrix\Sender\Internals\Model\Role\EO_Permission_Collection createCollection()
+ * @method static \Bitrix\Sender\Internals\Model\Role\EO_Permission wakeUpObject($row)
+ * @method static \Bitrix\Sender\Internals\Model\Role\EO_Permission_Collection wakeUpCollection($rows)
  */
 class PermissionTable extends Entity\DataManager
 {
@@ -54,8 +68,7 @@ class PermissionTable extends Entity\DataManager
 				array('join_type' => 'INNER')
 			),
 			'ROLE' => new Entity\ReferenceField(
-				'ROLE',
-				'Bitrix\Sender\Internals\Model\Role\Role',
+				'ROLE', 'Bitrix\Sender\Access\Role\Role',
 				array('=this.ROLE_ID' => 'ref.ID'),
 				array('join_type' => 'INNER')
 			),

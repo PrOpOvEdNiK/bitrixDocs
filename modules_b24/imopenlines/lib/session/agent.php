@@ -91,7 +91,7 @@ class Agent
 				break;
 			//the agent in the cloud-bitrix24
 			case self::TYPE_AGENT_B24:
-				$time = 180;
+				$time = 50;
 				break;
 			//agent on cron
 			case self::TYPE_AGENT_CRON:
@@ -424,6 +424,42 @@ class Agent
 		{
 			return $emptyResultReturn;
 		}
+	}
+
+	/**
+	 * @return string
+	 * @throws \Bitrix\Main\ArgumentException
+	 * @throws \Bitrix\Main\ArgumentNullException
+	 * @throws \Bitrix\Main\ArgumentOutOfRangeException
+	 * @throws \Bitrix\Main\LoaderException
+	 * @throws \Bitrix\Main\ObjectException
+	 * @throws \Bitrix\Main\ObjectPropertyException
+	 * @throws \Bitrix\Main\SystemException
+	 */
+	public static function sendAutomaticMessage()
+	{
+		Debug::addAgent('start ' . __METHOD__);
+
+		$result = '\Bitrix\ImOpenLines\Session\Agent::sendAutomaticMessage();';
+
+		if(
+			!self::isCronCall() &&
+			self::isExecModeAgent() ||
+			self::isCronCall() &&
+			self::isExecModeCron()
+		)
+		{
+			ExecLog::setExecFunction(__METHOD__);
+
+			if(AutomaticAction\Messages::isActualMessagesForSend())
+			{
+				AutomaticAction\Messages::sendMessages(self::getTimeOutTransferToNextInQueue());
+			}
+		}
+
+		Debug::addAgent('stop ' . __METHOD__);
+
+		return $result;
 	}
 
 	/**

@@ -1,22 +1,19 @@
-<?php
+<?php declare(strict_types = 1);
+
 namespace Bitrix\Translate\IO;
 
-use Bitrix\Main\Text\BinaryString;
 use Bitrix\Main;
 use Bitrix\Translate;
 
-/**
- * @method static generateTemporalFile()
- */
 class CsvFile
 	extends Translate\IO\File
 {
 	// fields type with delimiter,
-	const FIELDS_TYPE_FIXED_WIDTH = 'F';
+	public const FIELDS_TYPE_FIXED_WIDTH = 'F';
 	// fields type fixed width
-	const FIELDS_TYPE_WITH_DELIMITER = 'R';
+	public const FIELDS_TYPE_WITH_DELIMITER = 'R';
 
-	const ERROR_32K_FIELD_LENGTH = '32k_field_length';
+	public const ERROR_32K_FIELD_LENGTH = '32k_field_length';
 
 	/**
 	 * fields type
@@ -25,10 +22,10 @@ class CsvFile
 	protected $fieldsType = self::FIELDS_TYPE_WITH_DELIMITER;
 
 	// field delimiter
-	const DELIMITER_TAB = "\t";
-	const DELIMITER_ZPT = ',';
-	const DELIMITER_SPS = ' ';
-	const DELIMITER_TZP = ';';
+	public const DELIMITER_TAB = "\t";
+	public const DELIMITER_ZPT = ',';
+	public const DELIMITER_SPS = ' ';
+	public const DELIMITER_TZP = ';';
 
 	/**
 	 * field delimiter
@@ -37,7 +34,7 @@ class CsvFile
 	protected $fieldDelimiter = self::DELIMITER_TZP;
 
 	// UTF-8 Byte-Order Mark
-	const BOM_TYPE_UTF8 = "\xEF\xBB\xBF";
+	public const BOM_TYPE_UTF8 = "\xEF\xBB\xBF";
 
 	/**
 	 * UTF Byte-Order Mark.
@@ -51,8 +48,8 @@ class CsvFile
 	 */
 	protected $hasBom = false;
 
-	const LINE_DELIMITER_WIN = "\r\n";
-	const LINE_DELIMITER_UNIX = "\r";
+	public const LINE_DELIMITER_WIN = "\r\n";
+	public const LINE_DELIMITER_UNIX = "\r";
 
 	/**
 	 * line delimiter
@@ -64,7 +61,7 @@ class CsvFile
 	 * array of delimiters positions in fixed width case
 	 * @var array
 	 */
-	protected $widthMap = array();
+	protected $widthMap = [];
 
 	/**
 	 * The first row is columns titles.
@@ -91,63 +88,11 @@ class CsvFile
 
 
 	/**
-	 * Read file.
-	 *
-	 * @param int $length Amount bytes to read.
-	 *
-	 * @return string
-	 */
-	public function read($length)
-	{
-		if (feof($this->filePointer))
-		{
-			return '';
-		}
-
-		return fread($this->filePointer, $length);
-	}
-
-	/**
-	 * Write file.
-	 *
-	 * @param string $content Data to write.
-	 *
-	 * @return bool|int
-	 */
-	public function write($content)
-	{
-		if (!is_resource($this->filePointer))
-		{
-			return false;
-		}
-
-		return fwrite($this->filePointer, $content);
-	}
-
-	/**
-	 * Closes the file.
-	 *
-	 * @return void
-	 */
-	public function close()
-	{
-		if (!is_resource($this->filePointer))
-		{
-			@fflush($this->filePointer);
-		}
-
-		parent::close();
-
-		@clearstatcache(true, $this->getPhysicalPath());
-	}
-
-	/**
 	 * Opens file for reading.
-	 *
 	 *
 	 * @return bool
 	 */
-	public function openLoad()
+	public function openLoad(): bool
 	{
 		if ($this->isExists())
 		{
@@ -168,13 +113,13 @@ class CsvFile
 	 *
 	 * @return bool
 	 */
-	public function openWrite($mode = Main\IO\FileStreamOpenMode::WRITE)
+	public function openWrite(string $mode = Main\IO\FileStreamOpenMode::WRITE): bool 
 	{
 		$this->open($mode);
 
 		if (is_resource($this->filePointer))
 		{
-			if ($mode == Main\IO\FileStreamOpenMode::WRITE)
+			if ($mode === Main\IO\FileStreamOpenMode::WRITE)
 			{
 				$this->fileSize = 0;
 				if ($this->hasBom)
@@ -199,7 +144,7 @@ class CsvFile
 	 * @param string $mark BOM mark.
 	 * @return self
 	 */
-	public function setUtf8Bom($mark = self::BOM_TYPE_UTF8)
+	public function setUtf8Bom(string $mark = self::BOM_TYPE_UTF8): self
 	{
 		$this->bomMark = $mark;
 
@@ -211,7 +156,7 @@ class CsvFile
 	 *
 	 * @return bool
 	 */
-	public function hasUtf8Bom()
+	public function hasUtf8Bom(): bool
 	{
 		return $this->hasBom;
 	}
@@ -223,7 +168,7 @@ class CsvFile
 	 *
 	 * @return self
 	 */
-	public function prefaceWithUtf8Bom($exists = true)
+	public function prefaceWithUtf8Bom(bool $exists = true): self
 	{
 		$this->hasBom = $exists;
 
@@ -231,13 +176,23 @@ class CsvFile
 	}
 
 	/**
+	 * Measures byte length of the string.
+	 * @param string $data
+	 * @return int
+	 */
+	protected function getStringByteLength(string $data): int
+	{
+		return mb_strlen($data, '8bit');
+	}
+
+	/**
 	 * Check UTF-8 Byte-Order Mark
 	 * @return bool
 	 */
-	public function checkUtf8Bom()
+	public function checkUtf8Bom(): bool
 	{
 		$this->seek(0);
-		$bom = $this->read(BinaryString::getLength($this->bomMark));
+		$bom = $this->read($this->getStringByteLength($this->bomMark));
 		if($bom === $this->bomMark)
 		{
 			$this->hasBom = true;
@@ -245,7 +200,7 @@ class CsvFile
 
 		if ($this->hasBom)
 		{
-			$this->seek(BinaryString::getLength($this->bomMark));
+			$this->seek($this->getStringByteLength($this->bomMark));
 		}
 		else
 		{
@@ -261,10 +216,10 @@ class CsvFile
 	 * @param string $fieldsType Type.
 	 * @return self
 	 */
-	public function setFieldsType($fieldsType = self::FIELDS_TYPE_WITH_DELIMITER)
+	public function setFieldsType(string $fieldsType = self::FIELDS_TYPE_WITH_DELIMITER): self
 	{
 		$this->fieldsType =
-			($fieldsType == self::FIELDS_TYPE_FIXED_WIDTH ? self::FIELDS_TYPE_FIXED_WIDTH : self::FIELDS_TYPE_WITH_DELIMITER);
+			($fieldsType === self::FIELDS_TYPE_FIXED_WIDTH ? self::FIELDS_TYPE_FIXED_WIDTH : self::FIELDS_TYPE_WITH_DELIMITER);
 
 		return $this;
 	}
@@ -276,9 +231,9 @@ class CsvFile
 	 *
 	 * @return self
 	 */
-	public function setFieldDelimiter($fieldDelimiter = self::DELIMITER_TZP)
+	public function setFieldDelimiter(string $fieldDelimiter = self::DELIMITER_TZP): self
 	{
-		$this->fieldDelimiter = (strlen($fieldDelimiter) > 1 ? substr($fieldDelimiter, 0, 1) : $fieldDelimiter);
+		$this->fieldDelimiter = (mb_strlen($fieldDelimiter) > 1? mb_substr($fieldDelimiter, 0, 1) : $fieldDelimiter);
 
 		return $this;
 	}
@@ -290,7 +245,7 @@ class CsvFile
 	 *
 	 * @return self
 	 */
-	public function setRowDelimiter($rowDelimiter = self::LINE_DELIMITER_WIN)
+	public function setRowDelimiter(string $rowDelimiter = self::LINE_DELIMITER_WIN): self
 	{
 		$this->rowDelimiter = $rowDelimiter;
 
@@ -303,7 +258,7 @@ class CsvFile
 	 * @param bool $firstHeader Flag.
 	 * @return self
 	 */
-	public function setFirstHeader($firstHeader = false)
+	public function setFirstHeader(bool $firstHeader = false): self
 	{
 		$this->firstHeader = $firstHeader;
 
@@ -315,7 +270,7 @@ class CsvFile
 	 *
 	 * @return bool
 	 */
-	public function getFirstHeader()
+	public function getFirstHeader(): bool 
 	{
 		return $this->firstHeader;
 	}
@@ -326,9 +281,9 @@ class CsvFile
 	 * @param int[] $mapFields Fields widths.
 	 * @return self
 	 */
-	public function setWidthMap($mapFields)
+	public function setWidthMap(array $mapFields): self
 	{
-		$this->widthMap = array();
+		$this->widthMap = [];
 		for ($i = 0, $n = count($mapFields); $i < $n; $i++)
 		{
 			$this->widthMap[$i] = (int)$mapFields[$i];
@@ -340,17 +295,17 @@ class CsvFile
 	/**
 	 * Fetches data row as delimited columns.
 	 *
-	 * @return array|bool
+	 * @return array|null
 	 */
-	protected function fetchDelimiter()
+	protected function fetchDelimiter(): ?array
 	{
 		$isInside = false;
 		$str = '';
-		$result = array();
+		$result = [];
 		while ($this->currentPosition <= $this->fileSize)
 		{
 			$ch = $this->buffer[$this->bufferPosition];
-			if ($ch == "\r" || $ch == "\n")
+			if ($ch === "\r" || $ch === "\n")
 			{
 				if (!$isInside)
 				{
@@ -358,7 +313,7 @@ class CsvFile
 					{
 						$this->incrementCurrentPosition();
 						$ch = $this->buffer[$this->bufferPosition];
-						if ($ch != "\r" && $ch != "\n")
+						if ($ch !== "\r" && $ch !== "\n")
 						{
 							break;
 						}
@@ -366,16 +321,17 @@ class CsvFile
 					if ($this->firstHeader)
 					{
 						$this->firstHeader = false;
-						$result = array();
+						$result = [];
 						$str = '';
 						continue;
 					}
 
 					$result[] = $str;
+
 					return $result;
 				}
 			}
-			elseif ($ch == "\"")
+			elseif ($ch === "\"")
 			{
 				if (!$isInside)
 				{
@@ -385,13 +341,13 @@ class CsvFile
 				}
 
 				$this->incrementCurrentPosition();
-				if ($this->buffer[$this->bufferPosition] != "\"")
+				if ($this->buffer[$this->bufferPosition] !== "\"")
 				{
 					$isInside = false;
 					continue;
 				}
 			}
-			elseif ($ch == $this->fieldDelimiter)
+			elseif ($ch === $this->fieldDelimiter)
 			{
 				if (!$isInside)
 				{
@@ -408,21 +364,21 @@ class CsvFile
 			if ($this->bufferPosition >= $this->bufferSize)
 			{
 				$this->buffer = $this->read(1024 * 1024);
-				$this->bufferSize = BinaryString::getLength($this->buffer);
+				$this->bufferSize = $this->getStringByteLength($this->buffer);
 				$this->bufferPosition = 0;
 			}
 
 			$str .= $ch;
 		}
 
-		if ($str <> '')
+		if ($str !== '')
 		{
 			$result[] = $str;
 		}
 
-		if(empty($result))
+		if ($result === [])
 		{
-			return false;
+			$result = null;
 		}
 
 		return $result;
@@ -431,25 +387,25 @@ class CsvFile
 	/**
 	 * Fetches data row as fixed width columns.
 	 *
-	 * @return array|bool
+	 * @return array|null
 	 */
-	protected function fetchWidth()
+	protected function fetchWidth(): ?array
 	{
 		$str = '';
 		$ind = 1;
 		$jnd = 0;
-		$result = array();
+		$result = [];
 
 		while ($this->currentPosition <= $this->fileSize)
 		{
 			$ch = $this->buffer[$this->bufferPosition];
-			if ($ch == "\r" || $ch == "\n")
+			if ($ch === "\r" || $ch === "\n")
 			{
 				while ($this->currentPosition <= $this->fileSize)
 				{
 					$this->incrementCurrentPosition();
 					$ch = $this->buffer[$this->bufferPosition];
-					if ($ch != "\r" && $ch != "\n")
+					if ($ch !== "\r" && $ch !== "\n")
 					{
 						break;
 					}
@@ -457,16 +413,17 @@ class CsvFile
 				if ($this->firstHeader)
 				{
 					$this->firstHeader = false;
-					$result = array();
+					$result = [];
 					$ind = 1;
 					$str = '';
 					continue;
 				}
 
 				$result[] = $str;
+
 				return $result;
 			}
-			if ($ind == $this->widthMap[$jnd])
+			if ($ind === $this->widthMap[$jnd])
 			{
 				$result[] = $str. $ch;
 				$str = '';
@@ -482,7 +439,7 @@ class CsvFile
 			if($this->bufferPosition >= $this->bufferSize)
 			{
 				$this->buffer = $this->read( 1024 * 1024);
-				$this->bufferSize = BinaryString::getLength($this->buffer);
+				$this->bufferSize = $this->getStringByteLength($this->buffer);
 				$this->bufferPosition = 0;
 			}
 
@@ -490,14 +447,14 @@ class CsvFile
 			$str .= $ch;
 		}
 
-		if ($str <> '')
+		if ($str !== '')
 		{
 			$result[] = $str;
 		}
 
-		if(empty($result))
+		if ($result === [])
 		{
-			return false;
+			$result = null;
 		}
 
 		return $result;
@@ -506,15 +463,15 @@ class CsvFile
 	/**
 	 * Fetch data row.
 	 *
-	 * @return array|bool
+	 * @return array|null
 	 */
-	public function fetch()
+	public function fetch(): ?array
 	{
-		if ($this->fieldsType == self::FIELDS_TYPE_WITH_DELIMITER)
+		if ($this->fieldsType === self::FIELDS_TYPE_WITH_DELIMITER)
 		{
-			if ($this->fieldDelimiter == '')
+			if ($this->fieldDelimiter === '')
 			{
-				return false;
+				return null;
 			}
 
 			return $this->fetchDelimiter();
@@ -522,7 +479,7 @@ class CsvFile
 
 		if (empty($this->widthMap))
 		{
-			return false;
+			return null;
 		}
 
 		return $this->fetchWidth();
@@ -533,14 +490,14 @@ class CsvFile
 	 *
 	 * @return void
 	 */
-	protected function incrementCurrentPosition()
+	protected function incrementCurrentPosition(): void
 	{
 		$this->currentPosition ++;
 		$this->bufferPosition ++;
 		if ($this->bufferPosition >= $this->bufferSize)
 		{
 			$this->buffer = $this->read( 1024 * 1024);
-			$this->bufferSize = BinaryString::getLength($this->buffer);
+			$this->bufferSize = $this->getStringByteLength($this->buffer);
 			$this->bufferPosition = 0;
 		}
 	}
@@ -550,7 +507,7 @@ class CsvFile
 	 *
 	 * @return void
 	 */
-	public function moveFirst()
+	public function moveFirst(): void
 	{
 		$this->setPos(0);
 	}
@@ -560,7 +517,7 @@ class CsvFile
 	 *
 	 * @return int
 	 */
-	public function getPos()
+	public function getPos(): int
 	{
 		return $this->currentPosition;
 	}
@@ -572,9 +529,8 @@ class CsvFile
 	 *
 	 * @return void
 	 */
-	public function setPos($position = 0)
+	public function setPos(int $position = 0): void
 	{
-		$position = intval($position);
 		if ($position <= $this->fileSize)
 		{
 			$this->currentPosition = $position;
@@ -593,7 +549,7 @@ class CsvFile
 
 		$this->buffer = $this->read(1024 * 1024);
 
-		$this->bufferSize = BinaryString::getLength($this->buffer);
+		$this->bufferSize = $this->getStringByteLength($this->buffer);
 		$this->bufferPosition = 0;
 	}
 
@@ -604,7 +560,7 @@ class CsvFile
 	 * 
 	 * @return bool
 	 */
-	public function put(array $fields)
+	public function put(array $fields): bool
 	{
 		$length = false;
 		$throw32KWarning = false;
@@ -622,22 +578,26 @@ class CsvFile
 				//$pos3 = $pos2 || strpos($fields[$i], "\n");
 				//$pos4 = $pos3 || strpos($fields[$i], "\r");
 				//if ($pos1 !== false || $pos2 !== false || $pos3 !== false || $pos4 !== false)
-				if (preg_match("#[\"\n\r]+#".BX_UTF_PCRE_MODIFIER, $fields[$i]))
+				if ($fields[$i] === null)
+				{
+					$fields[$i] = '';
+				}
+				elseif (preg_match("#[\"\n\r]+#".BX_UTF_PCRE_MODIFIER, $fields[$i]))
 				{
 					$fields[$i] = str_replace("\"", "\"\"", $fields[$i]);
-					$fields[$i] = str_replace("\\", "\\\\", $fields[$i]);
+					//$fields[$i] = str_replace("\\", "\\\\", $fields[$i]);
 				}
 				$content .= "\"";
 				$content .= $fields[$i];
 				$content .= "\"";
 
 				// ms excel las limitation with total number of characters that a cell can contain 32767 characters
-				if ($throw32KWarning !== true && strlen($fields[$i]) > 32767)
+				if ($throw32KWarning !== true && $this->getStringByteLength($fields[$i]) > 32767)
 				{
 					$throw32KWarning = true;
 				}
 			}
-			if ($content <> '')
+			if ($content !== '')
 			{
 				$content .= $this->rowDelimiter;
 

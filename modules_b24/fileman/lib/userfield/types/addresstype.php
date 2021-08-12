@@ -6,6 +6,8 @@ use Bitrix\Bitrix24\RestrictionCounter;
 use Bitrix\Main\ArgumentNullException;
 use Bitrix\Main\ArgumentOutOfRangeException;
 use Bitrix\Main\Config\Option;
+use Bitrix\Main\IO\Directory;
+use Bitrix\Main\IO\File;
 use Bitrix\Main\Loader;
 use Bitrix\Main\LoaderException;
 use Bitrix\Main\Localization\Loc;
@@ -50,7 +52,7 @@ class AddressType extends BaseType
 			$apiKey = null;
 			$key = Option::get('bitrix24', 'google_map_api_key', '');
 			$keyHost = Option::get('bitrix24', 'google_map_api_key_host', '');
-			if($keyHost === BX24_HOST_NAME)
+			if(defined('BX24_HOST_NAME') && $keyHost === BX24_HOST_NAME)
 			{
 				$apiKey = $key;
 			}
@@ -59,6 +61,12 @@ class AddressType extends BaseType
 		return $apiKey;
 	}
 
+	/**
+	 * @return string
+	 * @throws ArgumentNullException
+	 * @throws ArgumentOutOfRangeException
+	 * @throws LoaderException
+	 */
 	public static function getApiKeyHint(): string
 	{
 		$hint = '';
@@ -86,9 +94,9 @@ class AddressType extends BaseType
 				}
 
 				if(
-					!file_exists($_SERVER['DOCUMENT_ROOT'] . $settingsPath)
+					!File::isFileExists($_SERVER['DOCUMENT_ROOT'] . $settingsPath)
 					||
-					!is_dir($_SERVER['DOCUMENT_ROOT'] . $settingsPath)
+					!Directory::isDirectoryExists($_SERVER['DOCUMENT_ROOT'] . $settingsPath)
 				)
 				{
 					$settingsPath = SITE_DIR . 'settings/configs/';
@@ -106,6 +114,7 @@ class AddressType extends BaseType
 
 	/**
 	 * @return array|null
+	 * @throws LoaderException
 	 */
 	public static function getTrialHint(): ?array
 	{
@@ -202,7 +211,7 @@ class AddressType extends BaseType
 			&&
 			static::checkRestriction()
 			&&
-			strpos($value, '|') >= 0
+			mb_strpos($value, '|') >= 0
 		)
 		{
 			if($userField['MULTIPLE'] === 'Y')
@@ -230,10 +239,10 @@ class AddressType extends BaseType
 	public static function parseValue(?string $value):array
 	{
 		$coords = '';
-		if(strpos($value, '|') !== false)
+		if(mb_strpos($value, '|') !== false)
 		{
 			list($value, $coords) = explode('|', $value);
-			if($coords !== '' && strpos($coords, ';') !== false)
+			if($coords !== '' && mb_strpos($coords, ';') !== false)
 			{
 				$coords = explode(';', $coords);
 			}
@@ -245,10 +254,6 @@ class AddressType extends BaseType
 
 		return [$value, $coords];
 	}
-
-
-
-
 
 	/**
 	 * @param null|array $userField
@@ -264,12 +269,7 @@ class AddressType extends BaseType
 		];
 	}
 
-
 	/**
-	 * This function should return a representation of the field value for the search.
-	 * It is called from the OnSearchIndex method of the object $ USER_FIELD_MANAGER,
-	 * which is also called the update function of the entity search index.
-	 * For multiple values, the VALUE field is an array.
 	 * @param array $userField
 	 * @return string|null
 	 */
@@ -286,93 +286,4 @@ class AddressType extends BaseType
 
 		return $result;
 	}
-
-	//<editor-fold desc="Events and methods..."  defaultstate="collapsed">
-	/**
-	 * You can register the onBeforeGetPublicView event handler
-	 * and customize the display by manipulating the metadata of a custom property.
-	 * \Bitrix\Main\EventManager::getInstance()->addEventHandler(
-	 * 'main',
-	 * 'onBeforeGetPublicView',
-	 * array('CUserTypeString', 'onBeforeGetPublicView')
-	 * );
-	 * You can do the same for editing:
-	 * onBeforeGetPublicEdit (EDIT_COMPONENT_NAME è EDIT_COMPONENT_TEMPLATE)
-	 */
-	/*
-		public static function onBeforeGetPublicView($event)
-		{
-			$params = $event->getParameters();
-			$arUserField = &$params[0];
-			$arAdditionalParameters = &$params[1];
-			if ($arUserField['USER_TYPE_ID'] == 'string')
-			{
-				$arUserField['VIEW_COMPONENT_NAME'] = 'my:system.field.view';
-				$arUserField['VIEW_COMPONENT_TEMPLATE'] = 'string';
-			}
-		}
-	*/
-
-	/**
-	 * You can register the onGetPublicView event handler
-	 * and display the property as you need.
-	 * \Bitrix\Main\EventManager::getInstance()->addEventHandler(
-	 * 'main',
-	 * 'onGetPublicView',
-	 * array('CUserTypeString', 'onGetPublicView')
-	 * );
-	 * You can do the same for editing: onGetPublicEdit
-	 */
-	/*
-		public static function onGetPublicView($event)
-		{
-			$params = $event->getParameters();
-			$arUserField = $params[0];
-			$arAdditionalParameters = $params[1];
-			if ($arUserField['USER_TYPE_ID'] == 'string')
-			{
-				$html = 'demo string';
-				return new \Bitrix\Main\EventResult(\Bitrix\Main\EventResult::SUCCESS, $html);
-			}
-		}
-	*/
-
-	/**
-	 * You can register the onAfterGetPublicView event handler
-	 * and modify the html before displaying it.
-	 * \Bitrix\Main\EventManager::getInstance()->addEventHandler(
-	 * 'main',
-	 * 'onAfterGetPublicView',
-	 * array('CUserTypeString', 'onAfterGetPublicView')
-	 * );
-	 * You can do the same for editing: onAfterGetPublicEdit
-	 */
-	/*
-		public static function onAfterGetPublicView($event)
-		{
-			$params = $event->getParameters();
-			$arUserField = $params[0];
-			$arAdditionalParameters = $params[1];
-			$html = &$params[2];
-			if ($arUserField['USER_TYPE_ID'] == 'string')
-			{
-				$html .= '!';
-			}
-		}
-	*/
-
-	/**
-	 * This function is called before storing the values in the database.
-	 * Called from the Update method of the $ USER_FIELD_MANAGER object.
-	 * For multiple values, the function is called several times.
-	 * @param array $arUserField
-	 * @param $value
-	 * @return string
-	 */
-	/*	static function OnBeforeSave($arUserField, $value)
-	{
-		if(strlen($value)>0)
-			return ''.round(doubleval($value), $arUserField['SETTINGS']['PRECISION']);
-	}*/
-	//</editor-fold>
 }

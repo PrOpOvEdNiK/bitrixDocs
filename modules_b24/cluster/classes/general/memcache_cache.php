@@ -1,24 +1,14 @@
 <?php
 
-class CPHPCacheMemcacheCluster
-{
-	/** @var Memcache $obMemcache */
-	private static $obMemcache;
-	private static $baseDirVersion = array();
-	private static $arOtherGroups = array();
-	var $bQueue = null;
-	var $sid;
-	//cache stats
-	var $written = false;
-	var $read = false;
-	// unfortunately is not available for memcache...
+use Bitrix\Main\Application;
+use Bitrix\Main\Data\MemcacheConnection;
 
+class CPHPCacheMemcacheCluster extends \Bitrix\Main\Data\CacheEngineMemcache
+{
+	private $bQueue = null;
 	/** @var array|false $arList */
 	private static $arList = false;
-
-	protected $useLock = true;
-	protected $ttlMultiplier = 2;
-	protected static $locks = array();
+	private static $arOtherGroups = array();
 
 	public static function LoadConfig()
 	{
@@ -50,43 +40,44 @@ class CPHPCacheMemcacheCluster
 		return self::$arList;
 	}
 
-	function __construct()
+	function __construct($options = [])
 	{
-		if (!is_object(self::$obMemcache))
+		if (!is_object(self::$memcache))
 		{
-			self::$obMemcache = new Memcache;
-			$arServerList = CPHPCacheMemcacheCluster::LoadConfig();
+			$connectionPool = Application::getInstance()->getConnectionPool();
 
-			if (count($arServerList) == 1)
+			$servers = [];
+			foreach (CPHPCacheMemcacheCluster::LoadConfig() as $arServer)
 			{
-				$arServer = array_pop($arServerList);
-				self::$obMemcache->connect(
-					$arServer["HOST"]
-					, $arServer["PORT"]
-				);
+				$servers[] = [
+					'host' => $arServer['HOST'],
+					'port' => $arServer['PORT'],
+					'weight' => ($arServer['WEIGHT'] > 0? $arServer['WEIGHT']: 1),
+				];
 			}
-			else
-			{
-				foreach ($arServerList as $arServer)
-				{
-					self::$obMemcache->addServer(
-						$arServer["HOST"]
-						, $arServer["PORT"]
-						, true //persistent
-						, ($arServer["WEIGHT"] > 0? $arServer["WEIGHT"]: 1)
-						, 1 //timeout
-					);
-				}
-			}
+			$connectionPool->setConnectionParameters(self::SESSION_MEMCACHE_CONNECTION, [
+				'className' => MemcacheConnection::class,
+				'servers' => $servers,
+			]);
+
+			/** @var MemcacheConnection $memcacheConnection */
+			$memcacheConnection = $connectionPool->getConnection(self::SESSION_MEMCACHE_CONNECTION);
+			self::$memcache = $memcacheConnection->getResource();
 		}
 
 		if (defined("BX_CACHE_SID"))
-			$this->sid = BX_MEMCACHE_CLUSTER.BX_CACHE_SID;
+		{
+			$this->sid = BX_MEMCACHE_CLUSTER . BX_CACHE_SID;
+		}
 		else
+		{
 			$this->sid = BX_MEMCACHE_CLUSTER;
+		}
 
 		if (defined("BX_CLUSTER_GROUP"))
+		{
 			$this->bQueue = true;
+		}
 
 		$cacheConfig = \Bitrix\Main\Config\Configuration::getValue("cache");
 		if ($cacheConfig && is_array($cacheConfig))
@@ -110,6 +101,11 @@ class CPHPCacheMemcacheCluster
 			}
 		}
 
+		if (!empty($options) && isset($options['actual_data']))
+		{
+			$this->useLock = !((bool) $options['actual_data']);
+		}
+
 		$this->sid .= ($this->useLock? 2: 3);
 
 		if (!$this->useLock)
@@ -129,67 +125,9 @@ class CPHPCacheMemcacheCluster
 		$this->clean($param1, $param2, $param3);
 	}
 
-	protected function lock($baseDir, $initDir, $key, $TTL)
+	function clean($baseDir, $initDir = false, $filename = false)
 	{
-		if (
-			isset(self::$locks[$baseDir])
-			&& isset(self::$locks[$baseDir][$initDir])
-			&& isset(self::$locks[$baseDir][$initDir][$key])
-		)
-		{
-			return true;
-		}
-		elseif (self::$obMemcache->add($key, 1, 0, intval($TTL)))
-		{
-			self::$locks[$baseDir][$initDir][$key] = true;
-			return true;
-		}
-
-		return false;
-	}
-
-	protected function unlock($baseDir, $initDir = false, $key = false, $TTL = 0)
-	{
-		if ($key !== false)
-		{
-			if ($TTL > 0)
-			{
-				self::$obMemcache->set($key."~", 1, 0, time() + intval($TTL));
-			}
-			else
-			{
-				self::$obMemcache->replace($key."~", "", 0, 1);
-			}
-
-			unset(self::$locks[$baseDir][$initDir][$key]);
-		}
-		elseif ($initDir !== false)
-		{
-			if (isset(self::$locks[$baseDir][$initDir]))
-			{
-				foreach (self::$locks[$baseDir][$initDir] as $subKey)
-				{
-					$this->unlock($baseDir, $initDir, $subKey, $TTL);
-				}
-				unset(self::$locks[$baseDir][$initDir]);
-			}
-		}
-		elseif ($baseDir !== false)
-		{
-			if (isset(self::$locks[$baseDir]))
-			{
-				foreach (self::$locks[$baseDir] as $subInitDir)
-				{
-					$this->unlock($baseDir, $subInitDir, false, $TTL);
-				}
-			}
-		}
-	}
-
-	function clean($basedir, $initdir = false, $filename = false)
-	{
-		$key = false;
-		if (is_object(self::$obMemcache))
+		if (is_object(self::$memcache))
 		{
 			if (
 				$this->bQueue
@@ -199,150 +137,11 @@ class CPHPCacheMemcacheCluster
 			{
 				foreach (self::$arOtherGroups as $group_id => $tmp)
 				{
-					CClusterQueue::Add($group_id, 'CPHPCacheMemcacheCluster', $basedir, $initdir, $filename);
+					CClusterQueue::Add($group_id, 'CPHPCacheMemcacheCluster', $baseDir, $initDir, $filename);
 				}
 			}
 
-			if (strlen($filename))
-			{
-				if (!isset(self::$baseDirVersion[$basedir]))
-					self::$baseDirVersion[$basedir] = self::$obMemcache->get($this->sid.$basedir);
-
-				if (self::$baseDirVersion[$basedir] === false || self::$baseDirVersion[$basedir] === '')
-					return;
-
-				if ($initdir !== false)
-				{
-					$initdir_version = self::$obMemcache->get(self::$baseDirVersion[$basedir]."|".$initdir);
-					if ($initdir_version === false || $initdir_version === '')
-						return true;
-				}
-				else
-				{
-					$initdir_version = "";
-				}
-
-				$key = self::$baseDirVersion[$basedir]."|".$initdir_version."|".$filename;
-				self::$obMemcache->replace($key, "", 0, 1);
-			}
-			else
-			{
-				if (strlen($initdir))
-				{
-					if (!isset(self::$baseDirVersion[$basedir]))
-						self::$baseDirVersion[$basedir] = self::$obMemcache->get($this->sid.$basedir);
-
-					if (self::$baseDirVersion[$basedir] === false || self::$baseDirVersion[$basedir] === '')
-						return;
-
-					self::$obMemcache->replace(self::$baseDirVersion[$basedir]."|".$initdir, "", 0, 1);
-				}
-				else
-				{
-					if (isset(self::$baseDirVersion[$basedir]))
-						unset(self::$baseDirVersion[$basedir]);
-
-					self::$obMemcache->replace($this->sid.$basedir, "", 0, 1);
-				}
-			}
-			$this->unlock($basedir, $initdir, $key."~");
+			parent::clean($baseDir, $initDir, $filename);
 		}
-	}
-
-	function read(&$arAllVars, $basedir, $initdir, $filename, $TTL)
-	{
-		if (!isset(self::$baseDirVersion[$basedir]))
-			self::$baseDirVersion[$basedir] = self::$obMemcache->get($this->sid.$basedir);
-
-		if (self::$baseDirVersion[$basedir] === false || self::$baseDirVersion[$basedir] === '')
-			return false;
-
-		if ($initdir !== false)
-		{
-			$initdir_version = self::$obMemcache->get(self::$baseDirVersion[$basedir]."|".$initdir);
-			if ($initdir_version === false || $initdir_version === '')
-				return false;
-		}
-		else
-		{
-			$initdir_version = "";
-		}
-
-		$key = self::$baseDirVersion[$basedir]."|".$initdir_version."|".$filename;
-
-		if ($this->useLock)
-		{
-			$cachedData = self::$obMemcache->get($key);
-			if (!is_array($cachedData))
-			{
-				return false;
-			}
-
-			if ($cachedData["datecreate"] < (time() - $TTL)) //has expired
-			{
-				if ($this->lock($basedir, $initdir, $key."~", $TTL))
-				{
-					return false;
-				}
-			}
-
-			$arAllVars = $cachedData["content"];
-		}
-		else
-		{
-			$arAllVars = self::$obMemcache->get($key);
-		}
-
-		if ($arAllVars === false || $arAllVars === '')
-		{
-			return false;
-		}
-
-		return true;
-	}
-
-	function write($arAllVars, $basedir, $initdir, $filename, $TTL)
-	{
-		if (!isset(self::$baseDirVersion[$basedir]))
-			self::$baseDirVersion[$basedir] = self::$obMemcache->get($this->sid.$basedir);
-
-		if (self::$baseDirVersion[$basedir] === false || self::$baseDirVersion[$basedir] === '')
-		{
-			self::$baseDirVersion[$basedir] = $this->sid.md5(mt_rand());
-			self::$obMemcache->set($this->sid.$basedir, self::$baseDirVersion[$basedir]);
-		}
-
-		if ($initdir !== false)
-		{
-			$initdir_version = self::$obMemcache->get(self::$baseDirVersion[$basedir]."|".$initdir);
-			if ($initdir_version === false || $initdir_version === '')
-			{
-				$initdir_version = md5(mt_rand());
-				self::$obMemcache->set(self::$baseDirVersion[$basedir]."|".$initdir, $initdir_version);
-			}
-		}
-		else
-		{
-			$initdir_version = "";
-		}
-
-		$key = self::$baseDirVersion[$basedir]."|".$initdir_version."|".$filename;
-		$time = time();
-		$exp = $this->ttlMultiplier > 0? $time + intval($TTL) * $this->ttlMultiplier: 0;
-
-		if ($this->useLock)
-		{
-			self::$obMemcache->set($key, array("datecreate" => $time, "content" => $arAllVars), 0, $exp);
-			$this->unlock($basedir, $initdir, $key."~", $TTL);
-		}
-		else
-		{
-			self::$obMemcache->set($key, $arAllVars, 0, $exp);
-		}
-	}
-
-	function IsCacheExpired($path)
-	{
-		return false;
 	}
 }

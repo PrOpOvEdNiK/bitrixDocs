@@ -1,4 +1,5 @@
-<?
+<?php
+
 IncludeModuleLangFile(__FILE__);
 
 class CAllSaleOrderUserProps
@@ -37,7 +38,7 @@ class CAllSaleOrderUserProps
 	 *
 	 * @return bool|int
 	 */
-	static function DoSaveUserProfile($userId, $profileId, $profileName, $personTypeId, $orderProps, &$arErrors)
+	public static function DoSaveUserProfile($userId, $profileId, $profileName, $personTypeId, $orderProps, &$arErrors)
 	{
 		$profileId = intval($profileId);
 
@@ -64,7 +65,7 @@ class CAllSaleOrderUserProps
 			}
 
 			//if (strlen($profileName) > 0 && $profileName != $arProfile["NAME"])
-			if (strlen($profileName) > 0)
+			if ($profileName <> '')
 			{
 				$arFields = array("NAME" => $profileName, "USER_ID" => $userId);
 				CSaleOrderUserProps::Update($profileId, $arFields);
@@ -146,7 +147,7 @@ class CAllSaleOrderUserProps
 			{
 				if ($profileId <= 0)
 				{
-					if (strlen($profileName) <= 0)
+					if ($profileName == '')
 						$profileName = GetMessage("SOA_PROFILE")." ".Date("Y-m-d");
 
 					$arFields = array(
@@ -155,6 +156,11 @@ class CAllSaleOrderUserProps
 						"PERSON_TYPE_ID" => $personTypeId
 					);
 					$profileId = CSaleOrderUserProps::Add($arFields);
+					if (!$profileId)
+					{
+						$arErrors[] = array("CODE" => "PROFILE_CREATE_ERROR", "TEXT" => GetMessage('SKGOUP_PROFILE_CREATE_ERROR'));
+						return false;
+					}
 				}
 
 				if (array_key_exists($arOrderProperty["ID"], $arIDs))
@@ -236,11 +242,11 @@ class CAllSaleOrderUserProps
 		return $arResult;
 	}
 
-	function GetByID($ID)
+	public static function GetByID($ID)
 	{
 		global $DB;
 
-		$ID = IntVal($ID);
+		$ID = intval($ID);
 		$strSql =
 			"SELECT * ".
 			"FROM b_sale_user_props ".
@@ -254,11 +260,11 @@ class CAllSaleOrderUserProps
 		return False;
 	}
 
-	function CheckFields($ACTION, &$arFields, $ID = 0)
+	public static function CheckFields($ACTION, &$arFields, $ID = 0)
 	{
 		global $DB, $USER;
 
-		if ((is_set($arFields, "PERSON_TYPE_ID") || $ACTION=="ADD") && IntVal($arFields["PERSON_TYPE_ID"])<=0)
+		if ((is_set($arFields, "PERSON_TYPE_ID") || $ACTION=="ADD") && intval($arFields["PERSON_TYPE_ID"])<=0)
 		{
 			$GLOBALS["APPLICATION"]->ThrowException(GetMessage("SKGOUP_EMPTY_PERS_TYPE"), "ERROR_NO_PERSON_TYPE_ID");
 			return false;
@@ -271,9 +277,9 @@ class CAllSaleOrderUserProps
 		}
 
 		if (!is_set($arFields, "USER_ID"))
-			$arFields["USER_ID"] = IntVal($USER->GetID());
+			$arFields["USER_ID"] = intval($USER->GetID());
 
-		if ((is_set($arFields, "USER_ID") || $ACTION=="ADD") && IntVal($arFields["USER_ID"]) <= 0)
+		if ((is_set($arFields, "USER_ID") || $ACTION=="ADD") && intval($arFields["USER_ID"]) <= 0)
 		{
 			$GLOBALS["APPLICATION"]->ThrowException(GetMessage("SKGOUP_NO_USER_ID"), "ERROR_NO_PERSON_TYPE_ID");
 			return false;
@@ -282,11 +288,11 @@ class CAllSaleOrderUserProps
 		return True;
 	}
 
-	function Update($ID, $arFields)
+	public static function Update($ID, $arFields)
 	{
 		global $DB;
 
-		$ID = IntVal($ID);
+		$ID = intval($ID);
 		if (!CSaleOrderUserProps::CheckFields("UPDATE", $arFields))
 			return false;
 
@@ -302,10 +308,10 @@ class CAllSaleOrderUserProps
 		return $ID;
 	}
 
-	function ClearEmpty()
+	public static function ClearEmpty()
 	{
 		global $DB;
-		$strSql = 
+		$strSql =
 			"SELECT UP.ID ".
 			"FROM b_sale_user_props UP ".
 			"	LEFT JOIN b_sale_user_props_value UPV ON (UP.ID = UPV.USER_PROPS_ID) ".
@@ -317,23 +323,22 @@ class CAllSaleOrderUserProps
 		}
 	}
 
-	function Delete($ID)
+	public static function Delete($ID)
 	{
 		global $DB;
-		$ID = IntVal($ID);
+		$ID = intval($ID);
 		$DB->Query("DELETE FROM b_sale_user_props_value WHERE USER_PROPS_ID = ".$ID."", true);
 		return $DB->Query("DELETE FROM b_sale_user_props WHERE ID = ".$ID."", true);
 	}
 
-	function OnUserDelete($ID)
+	public static function OnUserDelete($ID)
 	{
-		$ID = IntVal($ID);
+		$ID = intval($ID);
 		$db_res = CSaleOrderUserProps::GetList(($b="ID"), ($o="ASC"), Array("USER_ID"=>$ID));
 		while ($ar_res = $db_res->Fetch())
 		{
-			CSaleOrderUserProps::Delete(IntVal($ar_res["ID"]));
+			CSaleOrderUserProps::Delete(intval($ar_res["ID"]));
 		}
 		return True;
 	}
 }
-?>

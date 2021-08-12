@@ -36,7 +36,7 @@ class ActivityStatusStatistics extends DataSource
 			throw new Main\ObjectNotFoundException("The 'filter' is not found in params.");
 		}
 
-		$group = isset($params['group']) ? strtoupper($params['group']) : '';
+		$group = isset($params['group'])? mb_strtoupper($params['group']) : '';
 		if($group !== '' && $group !== self::GROUP_BY_USER && $group !== self::GROUP_BY_DATE && $group !== self::GROUP_BY_STATUS)
 		{
 			$group = '';
@@ -190,7 +190,6 @@ class ActivityStatusStatistics extends DataSource
 		}
 		elseif($group === self::GROUP_BY_USER)
 		{
-			$userIDs = array();
 			while($ary = $dbResult->fetch())
 			{
 				if($useAlias && isset($ary[$nameAlias]))
@@ -198,23 +197,9 @@ class ActivityStatusStatistics extends DataSource
 					$ary[$name] = $ary[$nameAlias];
 					unset($ary[$nameAlias]);
 				}
-
-				$userID = $ary['RESPONSIBLE_ID'] = (int)$ary['RESPONSIBLE_ID'];
-				if($userID > 0 && !isset($userIDs[$userID]))
-				{
-					$userIDs[$userID] = true;
-				}
 				$result[] = $ary;
 			}
-			$userNames = self::prepareUserNames(array_keys($userIDs));
-			foreach($result as &$item)
-			{
-				$userID = $item['RESPONSIBLE_ID'];
-				$item['USER_ID'] = $userID;
-				$item['USER'] = isset($userNames[$userID]) ? $userNames[$userID] : "[{$userID}]";
-				unset($item['RESPONSIBLE_ID']);
-			}
-			unset($item);
+			self::parseUserInfo($result, ['RESPONSIBLE_ID' => 'USER']);
 		}
 		else
 		{
@@ -302,7 +287,7 @@ class ActivityStatusStatistics extends DataSource
 	 */
 	public function initializeDemoData(array $data, array $params)
 	{
-		$group = isset($params['group']) ? strtoupper($params['group']) : '';
+		$group = isset($params['group'])? mb_strtoupper($params['group']) : '';
 		if($group === self::GROUP_BY_STATUS)
 		{
 			$streams = StatisticsStatus::getDescriptions();

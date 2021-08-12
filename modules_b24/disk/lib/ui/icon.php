@@ -45,12 +45,12 @@ final class Icon
 		elseif($object instanceof File)
 		{
 			$class = 'bx-disk-file-icon';
-			$ext = strtolower($object->getExtension());
+			$ext = mb_strtolower($object->getExtension());
 			if(isset(self::$possibleIconClasses[$ext]))
 			{
 				$class .= ' ' . self::$possibleIconClasses[$ext];
 			}
-			/** @noinspection PhpDynamicAsStaticMethodCallInspection */
+
 			elseif(TypeFile::isImage($object))
 			{
 				$class .= ' ' . self::$possibleIconClasses['img'];

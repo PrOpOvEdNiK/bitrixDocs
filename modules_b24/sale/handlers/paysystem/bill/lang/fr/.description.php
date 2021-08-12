@@ -98,9 +98,9 @@ $MESS["SALE_HPS_BILL_PHONE_SUPPLI_DESC"] = "Numéro de téléphone du revendeur"
 $MESS["SALE_HPS_BILL_PRINT"] = "Timbre";
 $MESS["SALE_HPS_BILL_PRINT_DESC"] = "Image du timbre du fournisseur (taille d'affichage recommandée :  150x150)";
 $MESS["SALE_HPS_BILL_SIGN_SHOW"] = "Afficher les signatures";
-$MESS["SALE_HPS_BILL_SUPPLI"] = "Revendeur";
+$MESS["SALE_HPS_BILL_SUPPLI"] = "Vendeur";
 $MESS["SALE_HPS_BILL_SUPPLI_DESC"] = "Nom du payeur ou du revendeur";
-$MESS["SALE_HPS_BILL_TITLE"] = "Facture (russe)";
+$MESS["SALE_HPS_BILL_TITLE"] = "Facture (Russe)";
 $MESS["SALE_HPS_BILL_TOTAL_SHOW"] = "Afficher le résumé";
 $MESS["SALE_HPS_BILL_USER_COLUMN"] = "Champs personnalisés";
 ?>

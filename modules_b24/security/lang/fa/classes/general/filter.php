@@ -1,3 +1,0 @@
-<?
-$MESS["SECURITY_FILTER_FORM_VARDATA"] = "داده";
-?>

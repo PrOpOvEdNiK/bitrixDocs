@@ -1,4 +1,0 @@
-<?
-$MESS["CRM_ACT_EMAIL_RCPT"] = "To";
-$MESS["CRM_ACT_EMAIL_HISTORY_MORE"] = "Show more";
-?>

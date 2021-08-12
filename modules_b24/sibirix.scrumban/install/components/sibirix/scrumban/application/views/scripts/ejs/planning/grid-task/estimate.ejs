@@ -1,8 +1,0 @@
-<script type="text/ejs" id="tplGridEst">
-    <div class="grid-est-wrapper<%= estimate ? '' : ' empty-placeholder' %>">
-        <div class="editBlock task-est jsGridEst"><%= (estimate ? Date.toPlanFormat(estimate) : "") %></div>
-    </div>
-    <% if (status) { %>
-    <div class="task-row-status"><%== window.SCRUMBAN.taskStatus[status].title %></div>
-    <% } %>
-</script>

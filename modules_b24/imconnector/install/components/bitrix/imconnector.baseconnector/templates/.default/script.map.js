@@ -1,1 +1,0 @@
-{"version":3,"sources":["script.js"],"names":["window","BX","ready","bindDelegate","document","body","className","addPreloader","tag"],"mappings":"CAAC,SAAUA,GACVC,GAAGC,MAAM,WACRD,GAAGE,aACFC,SAASC,KACT,SACCC,UAAW,yBACZC,cAEDN,GAAGE,aACFC,SAASC,KACT,UACCG,IAAK,QACND,iBAZF,CAeEP","file":""}

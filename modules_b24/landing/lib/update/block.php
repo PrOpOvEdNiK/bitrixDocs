@@ -31,7 +31,7 @@ class Block extends \Bitrix\Main\Update\Stepper
 		{
 			$codes = [$codes];
 		}
-		
+
 		$res = UpdateBlock::getList([
 			'select' => [
 				'ID', 'CODE'
@@ -48,7 +48,7 @@ class Block extends \Bitrix\Main\Update\Stepper
 			]);
 			$codes = array_diff($codes, [$row['CODE']]);
 		}
-		
+
 		if (!empty($codes))
 		{
 			foreach ($codes as $code)
@@ -62,7 +62,7 @@ class Block extends \Bitrix\Main\Update\Stepper
 
 		// reg stepper
 		\Bitrix\Main\Update\Stepper::bindClass(
-			'\Bitrix\Landing\Update\Block', 'landing', 300
+			'Bitrix\Landing\Update\Block', 'landing', 600
 		);
 	}
 
@@ -77,7 +77,7 @@ class Block extends \Bitrix\Main\Update\Stepper
 		{
 			$codes = [$codes];
 		}
-		
+
 		$res = UpdateBlock::getList([
 			'select' => [
 				'ID'
@@ -105,7 +105,7 @@ class Block extends \Bitrix\Main\Update\Stepper
 		{
 			$classes = [$classes];
 		}
-		
+
 		$classesUnique = array_unique($classes);
 		// all nodes have equal classes
 		if (count($classesUnique) === 1)
@@ -145,14 +145,14 @@ class Block extends \Bitrix\Main\Update\Stepper
 				$classesSorted
 			);
 		}
-		
+
 		// add and remove classes
 		foreach ($result as $pos => $class)
 		{
 			if ($addClasses || $removeClasses)
 			{
 				$classList = explode(' ', $class['classList']);
-		
+
 				if ($addClasses)
 				{
 					$classList = array_merge($classList, $addClasses);
@@ -164,16 +164,16 @@ class Block extends \Bitrix\Main\Update\Stepper
 				$result[$pos]['classList'] = implode(' ', array_unique($classList));
 			}
 		}
-		
+
 		return $result;
 	}
 
 	/**
 	 * Execute one step.
 	 * @param array $filter Filter for step.
-	 * @param int $count Updated count.
+	 * @param int &$count Updated count.
 	 * @param int $limit Select limit.
-	 * @param array Additional params.
+	 * @param array $params Additional params.
 	 * @return int Last updated id.
 	 */
 	public static function executeStep(array $filter, &$count = 0, $limit = 0, array $params = [])
@@ -240,7 +240,7 @@ class Block extends \Bitrix\Main\Update\Stepper
 							$addClasses = explode(' ', trim($params[$selector]['new_class']));
 						}
 					}
-					
+
 					$removeClasses = [];
 					if (isset($params[$selector]['remove_class']))
 					{
@@ -260,13 +260,13 @@ class Block extends \Bitrix\Main\Update\Stepper
 							$removeClasses = explode(' ', trim($params[$selector]['remove_class']));
 						}
 					}
-					
+
 					// change wrapper to valid selector
 					if ($selector == '#wrapper')
 					{
 						$selector = '#' . $block->getAnchor($block->getId());
 					}
-					
+
 					foreach (self::prepareClassesToSet($classes, $addClasses, $removeClasses) as $class)
 					{
 						$block->setClasses(array(
@@ -280,8 +280,23 @@ class Block extends \Bitrix\Main\Update\Stepper
 			// update nodes
 			if ($export['nodes'])
 			{
+				foreach ($export['nodes'] as $selector => $node)
+				{
+					if (isset($params[$selector]['update_video_to_lazyload']))
+					{
+						$export['nodes'][$selector] = self::updateVideoToLazyload($node);
+					}
+				}
+
 				$block->updateNodes(
 					$export['nodes']
+				);
+			}
+			// update menu
+			if ($export['menu'])
+			{
+				$block->updateNodes(
+					$export['menu']
 				);
 			}
 			// update attrs
@@ -333,27 +348,27 @@ class Block extends \Bitrix\Main\Update\Stepper
 
 		// gets common quantity
 		$res = BlockTable::getList([
-				'select' => [
-					new \Bitrix\Main\Entity\ExpressionField(
-						'CNT', 'COUNT(*)'
-					)
-				],
-				'filter' => [
-					'=CODE' => $rowUpdate['CODE']
-				]
+			'select' => [
+				new \Bitrix\Main\Entity\ExpressionField(
+					'CNT', 'COUNT(*)'
+				)
+			],
+			'filter' => [
+				'=CODE' => $rowUpdate['CODE'],
+				'!=DESIGNED' => 'Y',
 			]
-		);
-		if ($row = $res->fetch())
-		{
-			$result['count'] = $row['CNT'];
-		}
-		else
+		]);
+
+		// skip blocks that not exists
+		$row = $res->fetch();
+		if(!$row || (int) $row['CNT'] === 0)
 		{
 			UpdateBlock::delete(
 				$rowUpdate['ID']
 			);
 			return $this->execute($result);
 		}
+		$result['count'] = $row['CNT'];
 
 		// gets finished count
 		$res = BlockTable::getList([
@@ -364,7 +379,8 @@ class Block extends \Bitrix\Main\Update\Stepper
 			],
 			'filter' => [
 				'<=ID' => $rowUpdate['LAST_BLOCK_ID'],
-				'=CODE' => $rowUpdate['CODE']
+				'=CODE' => $rowUpdate['CODE'],
+				'!=DESIGNED' => 'Y',
 			]
 			]
 		);
@@ -376,7 +392,8 @@ class Block extends \Bitrix\Main\Update\Stepper
 		// gets block group for update
 		$lastId = $this::executeStep([
 				'>ID' => $rowUpdate['LAST_BLOCK_ID'],
-				'=CODE' => $rowUpdate['CODE']
+				'=CODE' => $rowUpdate['CODE'],
+				'!=DESIGNED' => 'Y',
 			],
 		 	$count,
 		 	$this::STEPPER_COUNT,
@@ -400,5 +417,29 @@ class Block extends \Bitrix\Main\Update\Stepper
 			UpdateBlock::delete($rowUpdate['ID']);
 			return true;//for check next item in UpdateBlock
 		}
+	}
+
+	protected static function updateVideoToLazyload($nodes)
+	{
+		foreach($nodes as $key => $node)
+		{
+			if($node['src'])
+			{
+				// youtube
+				if (strpos($node['src'], 'www.youtube.com') !== false)
+				{
+					if ($node['source'])
+					{
+						$pattern = "#(youtube\\.com|youtu\\.be|youtube\\-nocookie\\.com)\\/(watch\\?(.*&)?v=|v\\/|u\\/|embed\\/?)?(videoseries\\?list=(.*)|[\\w-]{11}|\\?listType=(.*)&list=(.*))(.*)#";
+						if(preg_match($pattern, $node['source'], $matches))
+						{
+							$nodes[$key]['preview'] = "//img.youtube.com/vi/{$matches[4]}/sddefault.jpg";
+						}
+					}
+				}
+			}
+		}
+
+		return $nodes;
 	}
 }

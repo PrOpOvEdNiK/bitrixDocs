@@ -50,6 +50,14 @@ class RegularCustomers extends Deal
 
 	public function prepare()
 	{
+		$filterParameters = $this->getFilterParameters();;
+		$categoryId = $filterParameters['CATEGORY_ID']['value'] ?: 0;
+		$userPermission = \CCrmPerms::GetCurrentUserPermissions();
+		if (!\CCrmDeal::CheckReadPermission(0, $userPermission, $categoryId))
+		{
+			return false;
+		}
+
 		$query = $this->prepareQuery();
 
 		return Application::getConnection()->query($query)->fetchAll();
@@ -189,7 +197,7 @@ class RegularCustomers extends Deal
 					'companiesUrl' => $this->getTargetUrl('/crm/company/analytics/list/', ['OWNER_TYPE' => \CCrmOwnerType::CompanyName, 'DEALS_from' => $min, 'DEALS_to' => $max]),
 					'countClients' => $fields['countContact'] + $fields['countCompany'],
 					'totalAmountFormatted' => $totalAmountFormatted,
-					'earningsPercent' => round(($totalAmount / $totalEarnings) * 100, 2)
+					'earningsPercent' => $totalEarnings > 0 ? round(($totalAmount / $totalEarnings) * 100, 2) : 0
 				]
 				//"label" => $fields['countTotal']
 			];
@@ -273,7 +281,10 @@ class RegularCustomers extends Deal
 		else
 		{
 			$query->where(Query::expr()->count('ID'), '>=', $minDeals);
-			$query->where(Query::expr()->count('ID'), '<=', $maxDeals);
+			if ($maxDeals > 0)
+			{
+				$query->where(Query::expr()->count('ID'), '<=', $maxDeals);
+			}
 		}
 
 		$this->addToQueryFilterCase($query, $filterParameters);

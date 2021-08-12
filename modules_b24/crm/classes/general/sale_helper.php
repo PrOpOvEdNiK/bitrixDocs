@@ -11,7 +11,16 @@ use Bitrix\Main\SystemException;
 
 class CCrmSaleHelper
 {
+	public const CROUP_PREFIX = 'CRM_SHOP_';
+	public const GROUP_CRM_ADMIN = 'ADMIN';
+	public const GROUP_CRM_MANAGER = 'MANAGER';
+
 	private static $userIdsWithShopAccess = [];
+
+	public static function getGroupCode(string $code): string
+	{
+		return self::CROUP_PREFIX.$code;
+	}
 
 	public static function Calculate($productRows, $currencyID, $personTypeID, $enableSaleDiscount = false, $siteId = SITE_ID, $arOptions = array())
 	{
@@ -321,13 +330,13 @@ class CCrmSaleHelper
 		return $locationPropertyId;
 	}
 
-	public static function getShopGroupIdByType($type)
+	public static function getShopGroupIdByType($type): ?int
 	{
 		$groupId = null;
-		$queryObject = CGroup::getList($by = "ID", $order = "ASC", array("STRING_ID" => "CRM_SHOP_".strtoupper($type)));
+		$queryObject = CGroup::getList("ID", "ASC", array("STRING_ID" => "CRM_SHOP_".mb_strtoupper($type)));
 		if ($group = $queryObject->fetch())
 		{
-			$groupId = $group["ID"];
+			$groupId = (int)$group["ID"];
 		}
 		return $groupId;
 	}
@@ -367,9 +376,6 @@ class CCrmSaleHelper
 			return self::getCacheAccess($userId, $role);
 		}
 
-		$isCrmAccess = self::isCrmAccess($USER, $role);
-		$isDbAccess = self::isDbAccess($userId, $role);
-
 		if (!isModuleInstalled("bitrix24"))
 		{
 			if ($USER->isAdmin())
@@ -380,45 +386,52 @@ class CCrmSaleHelper
 					self::addDbAccessAddingAgent($userId);
 				}
 				self::addToCacheAccess($userId, $role, true);
+
 				return true;
 			}
 			else
 			{
+				$isDbAccess = self::isDbAccess($userId, $role);
 				self::addToCacheAccess($userId, $role, $isDbAccess);
+
 				return $isDbAccess;
 			}
 		}
 
+		$isCrmAccess = self::isCrmAccess($USER, $role);
+
 		if (!$isCrmAccess)
 		{
 			self::addToCacheAccess($userId, $role, false);
+
 			return false;
 		}
 
-		if ($isCrmAccess && $isDbAccess)
+		$isDbAccess = self::isDbAccess($userId, $role);
+
+		if ($isDbAccess)
 		{
 			self::addToCacheAccess($userId, $role, true);
+
 			return true;
 		}
-
-		if ($isCrmAccess && !$isDbAccess)
+		else
 		{
 			$shopRole = self::getShopRole($userId);
 			if ($shopRole)
 			{
 				self::addDbAccessAddingAgent($userId);
 				self::addToCacheAccess($userId, $role, true);
+
 				return true;
 			}
 			else
 			{
 				self::addToCacheAccess($userId, $role, false);
+
 				return false;
 			}
 		}
-
-		self::addToCacheAccess($userId, $role, false);
-		return false;
 	}
 
 	private static function addToCacheAccess(int $userId, string $role, bool $access): void
@@ -567,7 +580,12 @@ class CCrmSaleHelper
 		$groupId = self::getShopGroupIdByType($shopRole);
 		if ($groupId)
 		{
-			CUser::appendUserGroup($userId, [$groupId]);
+			$queryObject = CUser::getByID($userId);
+			$user = $queryObject->fetch();
+			if ($user && $user['EXTERNAL_AUTH_ID'] !== '__controller')
+			{
+				CUser::appendUserGroup($userId, [$groupId]);
+			}
 		}
 	}
 
@@ -600,6 +618,11 @@ class CCrmSaleHelper
 	}
 
 	public static function updateShopAccess()
+	{
+		self::startAgentToAddShopAccess();
+	}
+
+	public static function updateShopAccessByAgent()
 	{
 		$userIds = self::getListUserIdFromCrmRoles(true);
 
@@ -653,7 +676,7 @@ class CCrmSaleHelper
 		foreach ($groupsData as $groupData)
 		{
 			$groupId = $groupObject->add($groupData);
-			if (strlen($groupObject->LAST_ERROR) <= 0 && $groupId)
+			if ($groupObject->LAST_ERROR == '' && $groupId)
 			{
 				foreach($groupData["BASE_RIGHTS"] as $moduleId => $letter)
 				{
@@ -816,7 +839,7 @@ class CCrmSaleHelper
 			self::getShopGroupIdByType("manager")
 		];
 
-		$queryObject = CUser::getList($by = "ID", $order = "asc",
+		$queryObject = CUser::getList("ID", "asc",
 			["GROUPS_ID" => $shopGroupIds], ["SELECT" => ["ID"]]);
 		while ($user = $queryObject->fetch())
 		{
@@ -1160,7 +1183,7 @@ class CCrmSaleHelper
 			);
 			while ($data = $dbRes->Fetch())
 			{
-				$params = unserialize($data['SR_PARAMS']);
+				$params = unserialize($data['SR_PARAMS'], ['allowed_classes' => false]);
 				foreach ($params['PERSON_TYPE_ID'] as $key => $id)
 				{
 					if (isset($map[$id]))
@@ -1196,5 +1219,47 @@ class CCrmSaleHelper
 				\ConvertTimeStamp(time() + \CTimeZone::GetOffset() + 3, "FULL")
 			);
 		}
+	}
+
+	private static function startAgentToAddShopAccess(): void
+	{
+		$moduleId = "crm";
+		$agentName = "CCrmSaleHelper::updateShopAccessByAgent();";
+		$agent = \CAgent::getList([], [
+			"MODULE_ID" => $moduleId,
+			"NAME" => $agentName
+		])->fetch();
+		if (!$agent)
+		{
+			CAgent::addAgent(
+				$agentName,
+				$moduleId,
+				"N",
+				10,
+				"",
+				"Y",
+				\ConvertTimeStamp(time() + \CTimeZone::GetOffset() + 3, "FULL")
+			);
+		}
+	}
+
+	/**
+	 * @return bool
+	 */
+	public static function isWithOrdersMode(): bool
+	{
+		return Option::get('crm', 'enable_order_deal_create', 'N') === 'N';
+	}
+
+	/**
+	 * @param bool $withOrders
+	 */
+	public static function setOrdersMode(bool $withOrders): void
+	{
+		Option::set(
+			'crm',
+			'enable_order_deal_create',
+			$withOrders ? 'N' : 'Y'
+		);
 	}
 }

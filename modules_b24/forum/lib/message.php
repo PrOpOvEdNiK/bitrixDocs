@@ -126,8 +126,13 @@ class MessageTable extends Main\Entity\DataManager
 
 			(new TextField("HTML")),
 			(new TextField("MAIL_HEADER")),
+			(new IntegerField("SERVICE_TYPE")),
+			(new TextField("SERVICE_DATA")),
 
-			(new Reference("TOPIC", TopicTable::class, Join::on("this.TOPIC_ID", "ref.ID")))
+			(new Reference("TOPIC", TopicTable::class, Join::on("this.TOPIC_ID", "ref.ID"))),
+			(new Reference("FORUM_USER", UserTable::class, Join::on("this.AUTHOR_ID", "ref.USER_ID"))),
+			(new Reference("FORUM_USER_TOPIC", UserTopicTable::class, Join::on("this.TOPIC_ID", "ref.TOPIC_ID"))),
+			(new Reference("USER", \Bitrix\Main\UserTable::class, Join::on("this.AUTHOR_ID", "ref.ID")))
 		);
 	}
 
@@ -259,7 +264,7 @@ class MessageTable extends Main\Entity\DataManager
 				if (!empty($res[$key]))
 				{
 					$res[$key] = \CFilterUnquotableWords::Filter($res[$key]);
-					if (strlen($res[$key]) <= 0)
+					if ($res[$key] == '')
 					{
 						$res[$key] = "*";
 					}
@@ -397,7 +402,7 @@ class MessageTable extends Main\Entity\DataManager
 				if (!empty($res[$key]))
 				{
 					$res[$key] = \CFilterUnquotableWords::Filter($res[$key]);
-					if (strlen($res[$key]) <= 0 )
+					if ($res[$key] == '' )
 					{
 						$res[$key] = "*";
 					}
@@ -716,6 +721,15 @@ class Message extends Internals\Entity
 			"GUEST_ID" => $_SESSION["SESS_GUEST_ID"]
 		];
 
+		if (isset($fields['SERVICE_TYPE']))
+		{
+			$data['SERVICE_TYPE'] = $fields['SERVICE_TYPE'];
+		}
+		if (isset($fields['SERVICE_DATA']))
+		{
+			$data['SERVICE_DATA'] = $fields['SERVICE_DATA'];
+		}
+
 		if ($realIp = \Bitrix\Main\Service\GeoIp\Manager::getRealIp())
 		{
 			$data["AUTHOR_IP"] = $realIp;
@@ -731,10 +745,11 @@ class Message extends Internals\Entity
 			$data += array_intersect_key($fields, $USER_FIELD_MANAGER->getUserFields(MessageTable::getUfId()));
 		}
 
-		$additionalFields = ["SOURCE_ID", "PARAM1", "PARAM2", "XML_ID"];
+		$temporaryFields = ["AUX", "AUX_DATA"];
+		$additionalFields = array_merge(["SOURCE_ID", "PARAM1", "PARAM2", "XML_ID"], $temporaryFields);
 		foreach ($additionalFields as $key)
 		{
-			if (array_key_exists($key, 	$fields))
+			if (array_key_exists($key, $fields))
 			{
 				$data[$key] = $fields[$key];
 			}
@@ -765,7 +780,18 @@ class Message extends Internals\Entity
 			$data["UPLOAD_DIR"] = $strUploadDir;
 		}
 
-		$dbResult = MessageTable::add($data);
+		foreach ($temporaryFields as $field)
+		{
+			unset($data[$field]);
+		}
+
+		$authContext = new \Bitrix\Main\Authentication\Context();
+		$authContext->setUserId($fields['AUTHOR_ID']);
+
+		$dbResult = MessageTable::add([
+			"fields" => $data,
+			"auth_context" => $authContext
+		]);
 
 		if (!$dbResult->isSuccess())
 		{

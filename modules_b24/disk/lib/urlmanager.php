@@ -44,7 +44,8 @@ class UrlManager implements IErrorable
 		$component = $engine->getComponent();
 		if(!$component)
 		{
-			list($pageId, $variables) = each($pageCandidates);
+			$pageId = key($pageCandidates);
+			$variables = current($pageCandidates);
 
 			return $pageId;
 		}
@@ -53,7 +54,7 @@ class UrlManager implements IErrorable
 
 		foreach ($pageCandidates as $pageId => $variablesTmp)
 		{
-			if(isset($variablesTmp["PATH"]) && is_string($variablesTmp["PATH"]) && strlen($variablesTmp["PATH"]) > 0)
+			if(isset($variablesTmp["PATH"]) && is_string($variablesTmp["PATH"]) && $variablesTmp["PATH"] <> '')
 			{
 				$variables = array_merge($variablesTmp, $this->resolvePathToFolder($storage, $variablesTmp["PATH"]));
 				if(empty($variables['FOLDER_ID']))
@@ -62,7 +63,7 @@ class UrlManager implements IErrorable
 				}
 				return $pageId;
 			}
-			elseif(isset($variablesTmp["FILE_PATH"]) && is_string($variablesTmp["FILE_PATH"]) && strlen($variablesTmp["FILE_PATH"]) > 0)
+			elseif(isset($variablesTmp["FILE_PATH"]) && is_string($variablesTmp["FILE_PATH"]) && $variablesTmp["FILE_PATH"] <> '')
 			{
 				$variables = array_merge($variablesTmp, $this->resolvePathToFile($storage, $variablesTmp["FILE_PATH"]));
 				if(empty($variables['FILE_ID']))
@@ -71,7 +72,7 @@ class UrlManager implements IErrorable
 				}
 				return $pageId;
 			}
-			elseif(isset($variablesTmp["TRASH_PATH"]) && is_string($variablesTmp["TRASH_PATH"]) && strlen($variablesTmp["TRASH_PATH"]) > 0)
+			elseif(isset($variablesTmp["TRASH_PATH"]) && is_string($variablesTmp["TRASH_PATH"]) && $variablesTmp["TRASH_PATH"] <> '')
 			{
 				$variables = array_merge($variablesTmp, $this->resolvePathToTrashFolder($storage, $variablesTmp["TRASH_PATH"]));
 				if(empty($variables['FOLDER_ID']))
@@ -80,7 +81,7 @@ class UrlManager implements IErrorable
 				}
 				return $pageId;
 			}
-			elseif(isset($variablesTmp["TRASH_FILE_PATH"]) && is_string($variablesTmp["TRASH_FILE_PATH"]) && strlen($variablesTmp["TRASH_FILE_PATH"]) > 0)
+			elseif(isset($variablesTmp["TRASH_FILE_PATH"]) && is_string($variablesTmp["TRASH_FILE_PATH"]) && $variablesTmp["TRASH_FILE_PATH"] <> '')
 			{
 				$variables = array_merge($variablesTmp, $this->resolvePathToTrashFile($storage, $variablesTmp["TRASH_FILE_PATH"]));
 				if(empty($variables['FILE_ID']))
@@ -91,7 +92,9 @@ class UrlManager implements IErrorable
 			}
 		}
 
-		list($pageId, $variables) = each($pageCandidates);
+		$pageId = key($pageCandidates);
+		$variables = current($pageCandidates);
+
 		return $pageId;
 	}
 
@@ -107,7 +110,8 @@ class UrlManager implements IErrorable
 		$component = $engine->getComponent();
 		if(!$component)
 		{
-			list($pageId, $variables) = each($pageCandidates);
+			$pageId = key($pageCandidates);
+			$variables = current($pageCandidates);
 
 			return $pageId;
 		}
@@ -115,7 +119,7 @@ class UrlManager implements IErrorable
 		$storage = null;
 		foreach ($pageCandidates as $pageId => $variablesTmp)
 		{
-			if(isset($variablesTmp["PATH"]) && is_string($variablesTmp["PATH"]) && strlen($variablesTmp["PATH"]) > 0)
+			if(isset($variablesTmp["PATH"]) && is_string($variablesTmp["PATH"]) && $variablesTmp["PATH"] <> '')
 			{
 				$storage = $this->getStorageByVariables($variablesTmp);
 				if(!$storage)
@@ -129,7 +133,7 @@ class UrlManager implements IErrorable
 				}
 				return $pageId;
 			}
-			elseif(isset($variablesTmp["FILE_PATH"]) && is_string($variablesTmp["FILE_PATH"]) && strlen($variablesTmp["FILE_PATH"]) > 0)
+			elseif(isset($variablesTmp["FILE_PATH"]) && is_string($variablesTmp["FILE_PATH"]) && $variablesTmp["FILE_PATH"] <> '')
 			{
 				$storage = $this->getStorageByVariables($variablesTmp);
 				if(!$storage)
@@ -143,7 +147,7 @@ class UrlManager implements IErrorable
 				}
 				return $pageId;
 			}
-			elseif(isset($variablesTmp["TRASH_PATH"]) && is_string($variablesTmp["TRASH_PATH"]) && strlen($variablesTmp["TRASH_PATH"]) > 0)
+			elseif(isset($variablesTmp["TRASH_PATH"]) && is_string($variablesTmp["TRASH_PATH"]) && $variablesTmp["TRASH_PATH"] <> '')
 			{
 				$storage = $this->getStorageByVariables($variablesTmp);
 				if(!$storage)
@@ -157,7 +161,7 @@ class UrlManager implements IErrorable
 				}
 				return $pageId;
 			}
-			elseif(isset($variablesTmp["TRASH_FILE_PATH"]) && is_string($variablesTmp["TRASH_FILE_PATH"]) && strlen($variablesTmp["TRASH_FILE_PATH"]) > 0)
+			elseif(isset($variablesTmp["TRASH_FILE_PATH"]) && is_string($variablesTmp["TRASH_FILE_PATH"]) && $variablesTmp["TRASH_FILE_PATH"] <> '')
 			{
 				$storage = $this->getStorageByVariables($variablesTmp);
 				if(!$storage)
@@ -173,7 +177,9 @@ class UrlManager implements IErrorable
 			}
 		}
 
-		list($pageId, $variables) = each($pageCandidates);
+		$pageId = key($pageCandidates);
+		$variables = current($pageCandidates);
+
 		return $pageId;
 	}
 
@@ -229,7 +235,7 @@ class UrlManager implements IErrorable
 		static $rewriteCondition = null;
 		if($rewriteCondition === null)
 		{
-			/** @noinspection PhpDynamicAsStaticMethodCallInspection */
+
 			$extLinksAccessPoints = \CUrlRewriter::getList(array('ID' => 'bitrix:disk.external.link'));
 			if(empty($extLinksAccessPoints))
 			{
@@ -285,7 +291,7 @@ class UrlManager implements IErrorable
 		}
 
 		$port = Context::getCurrent()->getServer()->getServerPort();
-		if($port <> 80 && $port <> 443 && $port > 0 && strpos($host, ':') === false)
+		if($port <> 80 && $port <> 443 && $port > 0 && mb_strpos($host, ':') === false)
 		{
 			$host .= ':'.$port;
 		}
@@ -673,9 +679,9 @@ class UrlManager implements IErrorable
 		}
 		$params['ts'] = $file->getUpdateTime()->getTimestamp();
 		$filename = $file->getView()->getPreviewName();
-		if(strlen($filename) > 80)
+		if(mb_strlen($filename) > 80)
 		{
-			$filename = substr($filename, 0, 37).'...'.substr($filename, -37);
+			$filename = mb_substr($filename, 0, 37).'...'.mb_substr($filename, -37);
 		}
 		return $this->getUrlDownloadController('showPreview', array_merge($params, array('fileId' => $file->getId(), 'filename' => $filename)), $absolute);
 	}
@@ -703,9 +709,9 @@ class UrlManager implements IErrorable
 	public function getUrlForShowViewHtml(File $file, array $params = array(), $absolute = false)
 	{
 		$params['filename'] = $file->getView()->getName();
-		if(strlen($params['filename']) > 80)
+		if(mb_strlen($params['filename']) > 80)
 		{
-			$params['filename'] = substr($params['filename'], 0, 37).'...'.substr($params['filename'], -37);
+			$params['filename'] = mb_substr($params['filename'], 0, 37).'...'.mb_substr($params['filename'], -37);
 		}
 		$preview = $this->getUrlForShowPreview($file);
 		if($file->getView() instanceof Video)
@@ -828,7 +834,7 @@ class UrlManager implements IErrorable
 		static $rewriteCondition = null;
 		if($rewriteCondition === null)
 		{
-			/** @noinspection PhpDynamicAsStaticMethodCallInspection */
+
 			$accessPoints = \CUrlRewriter::getList(array('ID' => 'bitrix:disk.services'));
 			if(empty($accessPoints))
 			{
@@ -1030,7 +1036,7 @@ class UrlManager implements IErrorable
 			$uri = strtr($rewriteCondition, $replaceNamedPattern);
 
 			$patternDelimiter = $uri[0];
-			$uri = trim(substr($uri, 1, strrpos($uri, $patternDelimiter)-1), '^$');
+			$uri = trim(mb_substr($uri, 1, mb_strrpos($uri, $patternDelimiter) - 1), '^$');
 
 			return strtr($uri, array('\?' => '?')) . '&' . http_build_query($paramsUri);
 		}

@@ -10,11 +10,9 @@ namespace Bitrix\Sender;
 use Bitrix\Main\Entity;
 use Bitrix\Main\Localization\Loc;
 use Bitrix\Main\Type as MainType;
-
-use Bitrix\Sender\Posting\Builder as PostingBuilder;
 use Bitrix\Sender\Integration;
 use Bitrix\Sender\Internals\Model;
-
+use Bitrix\Sender\Posting\Builder as PostingBuilder;
 
 Loc::loadMessages(__FILE__);
 
@@ -25,6 +23,7 @@ class PostingTable extends Entity\DataManager
 	const STATUS_SENT = 'S';
 	const STATUS_SENT_WITH_ERRORS = 'E';
 	const STATUS_ABORT = 'A';
+	const STATUS_WAIT = 'W';
 
 	/**
 	 * @return string
@@ -223,18 +222,16 @@ class PostingTable extends Entity\DataManager
 		}
 	}
 
-
 	/**
 	 * @param $postingId
 	 * @param bool $checkDuplicate
+	 * @param bool $prepareFields
+	 *
 	 * @return bool
-	 * @throws \Bitrix\Main\ArgumentException
 	 */
 	public static function initGroupRecipients($postingId, $checkDuplicate = true)
 	{
-		PostingBuilder::create()->run($postingId, $checkDuplicate);
-
-		return true;
+		return PostingBuilder::create()->run($postingId, $checkDuplicate);
 	}
 
 	/**
@@ -532,6 +529,22 @@ class PostingUnsubTable extends Entity\DataManager
 	}
 }
 
+/**
+ * Class PostingRecipientTable
+ *
+ * DO NOT WRITE ANYTHING BELOW THIS
+ *
+ * <<< ORMENTITYANNOTATION
+ * @method static EO_PostingRecipient_Query query()
+ * @method static EO_PostingRecipient_Result getByPrimary($primary, array $parameters = array())
+ * @method static EO_PostingRecipient_Result getById($id)
+ * @method static EO_PostingRecipient_Result getList(array $parameters = array())
+ * @method static EO_PostingRecipient_Entity getEntity()
+ * @method static \Bitrix\Sender\EO_PostingRecipient createObject($setDefaultValues = true)
+ * @method static \Bitrix\Sender\EO_PostingRecipient_Collection createCollection()
+ * @method static \Bitrix\Sender\EO_PostingRecipient wakeUpObject($row)
+ * @method static \Bitrix\Sender\EO_PostingRecipient_Collection wakeUpCollection($rows)
+ */
 class PostingRecipientTable extends Entity\DataManager
 {
 	const SEND_RESULT_NONE = 'Y';
@@ -682,7 +695,7 @@ class PostingRecipientTable extends Entity\DataManager
 		);
 	}
 
-	public static function hasUnprocessed($postingId)
+	public static function hasUnprocessed($postingId, $threadId = null)
 	{
 		return (static::getCount(['=POSTING_ID' => $postingId, '=STATUS' => self::SEND_RESULT_NONE]) > 0);
 	}

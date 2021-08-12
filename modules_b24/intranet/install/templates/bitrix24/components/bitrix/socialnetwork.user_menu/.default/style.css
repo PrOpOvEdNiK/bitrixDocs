@@ -1,7 +1,0 @@
-.effective_counter .main-buttons-item-counter {
-    background: #4fc3f7 !important;
-}
-
-.effective_counter .main-buttons-item-counter:after {
-    content: '%';
-}

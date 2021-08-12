@@ -1,4 +1,0 @@
-<?
-$MESS["DISK_BREADCRUMBS_ERROR_COULD_NOT_FIND_FOLDER"] = "Dossier introuvable.";
-$MESS["DISK_BREADCRUMBS_TRASHCAN_NAME"] = "Corbeille";
-?>

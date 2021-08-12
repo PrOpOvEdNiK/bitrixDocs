@@ -2,6 +2,7 @@
 namespace Bitrix\Crm\Integrity;
 use Bitrix\Crm\EntityRequisite;
 use Bitrix\Main;
+use Bitrix\Main\NotImplementedException;
 
 class DuplicateIndexBuilder
 {
@@ -87,7 +88,7 @@ class DuplicateIndexBuilder
 	}
 	public function remove()
 	{
-		Entity\DuplicateIndexTable::deleteByFilter(
+		$this->deleteDuplicateIndexByFilter(
 			array(
 				'TYPE_ID' => $this->typeID,
 				'ENTITY_TYPE_ID' => $this->getEntityTypeID(),
@@ -123,7 +124,7 @@ class DuplicateIndexBuilder
 		$quantity = $criterion->getActualCount($this->getEntityTypeID(), $entityID, $this->getUserID(), $this->isPermissionCheckEnabled(), 100);
 		if($quantity === 0)
 		{
-			Entity\DuplicateIndexTable::deleteByFilter(
+			$this->deleteDuplicateIndexByFilter(
 				array(
 					'USER_ID' => $this->getUserID(),
 					'ENTITY_TYPE_ID' => $this->getEntityTypeID(),
@@ -162,7 +163,7 @@ class DuplicateIndexBuilder
 		$quantity = $criterion->getActualCount($entityTypeID, $actualRootEntityID, $userID, $enablePermissionCheck, 100);
 		if($quantity === 0)
 		{
-			Entity\DuplicateIndexTable::deleteByFilter(
+			$this->deleteDuplicateIndexByFilter(
 				array(
 					'USER_ID' => $this->getUserID(),
 					'ENTITY_TYPE_ID' => $this->getEntityTypeID(),
@@ -178,23 +179,18 @@ class DuplicateIndexBuilder
 			return;
 		}
 
-		$dataSource = $this->getDataSource();
-		$result = $dataSource->getList(0, 100);
+		// if $entityID == ROOT_ENTITY_ID,
+		// reassign ROOT_ENTITY_ID or remove record from index because $entityID was deleted:
+		$this->buildDuplicateByMatchHash($matchHash);
+	}
 
-		$item = $result->getItem($matchHash);
+	public function buildDuplicateByMatchHash($matchHash): ?Duplicate
+	{
+		$item = $this->getDataSource()->getDuplicateByMatchHash($matchHash);
+
 		if(!$item)
 		{
-			return;
-		}
-
-		$rankings = $item->getAllRankings();
-		DuplicateEntityRanking::initializeBulk($rankings,
-			array('CHECK_PERMISSIONS' => $enablePermissionCheck, 'USER_ID' => $userID)
-		);
-		$rootEntityInfo = array();
-		if(!$this->tryResolveRootEntity($item, $matchHash, $rootEntityInfo))
-		{
-			Entity\DuplicateIndexTable::deleteByFilter(
+			$this->deleteDuplicateIndexByFilter(
 				array(
 					'USER_ID' => $this->getUserID(),
 					'ENTITY_TYPE_ID' => $this->getEntityTypeID(),
@@ -202,14 +198,34 @@ class DuplicateIndexBuilder
 					'MATCH_HASH' => $matchHash
 				)
 			);
-			return;
+			return null;
+		}
+
+		$rankings = $item->getAllRankings();
+		DuplicateEntityRanking::initializeBulk($rankings,
+			array('CHECK_PERMISSIONS' => $this->isPermissionCheckEnabled(), 'USER_ID' => $this->getUserID())
+		);
+		$rootEntityInfo = array();
+		if(!$this->tryResolveRootEntity($item, $matchHash, $rootEntityInfo))
+		{
+			$this->deleteDuplicateIndexByFilter(
+				array(
+					'USER_ID' => $this->getUserID(),
+					'ENTITY_TYPE_ID' => $this->getEntityTypeID(),
+					'TYPE_ID' => $this->typeID,
+					'MATCH_HASH' => $matchHash
+				)
+			);
+			return null;
 		}
 
 		$rootEntityID = $rootEntityInfo['ENTITY_ID'];
 		$item->setRootEntityID($rootEntityID);
 		$sortParams = $this->prepareSortParams(array($rootEntityID));
 		$data = $this->prepareTableData($matchHash, $item, $sortParams, true);
-		Entity\DuplicateIndexTable::upsert($data);
+		$this->saveDuplicateIndexItem($data);
+
+		return $item;
 	}
 
 	public static function getExistedTypes($entityTypeID, $userID, $scope = null)
@@ -285,7 +301,7 @@ class DuplicateIndexBuilder
 			throw new Main\ArgumentException("Must be greater than zero", 'entityID');
 		}
 
-		Entity\DuplicateIndexTable::markAsJunk($entityTypeID, $entityID);
+		static::markDuplicateIndexAsJunk($entityTypeID, $entityID);
 	}
 
 	public static function setStatusID($userID, $entityTypeID, $typeID, $matchHash, $scope, $statusID)
@@ -312,10 +328,23 @@ class DuplicateIndexBuilder
 		{
 			throw new Main\ArgumentException("Is not defined or invalid", 'typeID');
 		}
+		$matchHash = (string)$matchHash;
+		$scope = (string)$scope;
+		$statusID = (int)$statusID;
 
+		static::doSetStatusId($userID, $entityTypeID, $typeID, $matchHash, $scope, $statusID);
+	}
+	protected static function doSetStatusId(
+		int $userID,
+		int $entityTypeID,
+		int $typeID,
+		string $matchHash,
+		string $scope,
+		int	$statusID
+	)
+	{
 		Entity\DuplicateIndexTable::setStatusID($userID, $entityTypeID, $typeID, $matchHash, $scope, $statusID);
 	}
-
 	protected static function getTypeScopeMap($entityTypeID)
 	{
 		if (!\CCrmOwnerType::isDefined($entityTypeID))
@@ -372,16 +401,25 @@ class DuplicateIndexBuilder
 		foreach($items as $matchHash => $item)
 		{
 			$enableOverwrite = $item->getOption('enableOverwrite', true);
-			if(!$enableOverwrite
-				&& Entity\DuplicateIndexTable::exists($this->getPrimaryKey($matchHash)))
+			if(
+				!$enableOverwrite
+				&& $this->duplicateIndexExists($this->getPrimaryKey($matchHash)))
 			{
+				if ($this->params->limitByDirtyIndexItems())
+				{
+					$this->markAsNotDirty($this->getPrimaryKey($matchHash));
+				}
 				continue;
 			}
 
 			$data = $this->prepareTableData($matchHash, $item, $sortParams, true);
 			$data['STATUS_ID'] = DuplicateStatus::PENDING;
-			Entity\DuplicateIndexTable::upsert($data);
+			$this->saveDuplicateIndexItem($data);
 			$effectiveItemCount++;
+		}
+		if ($this->params->limitByDirtyIndexItems())
+		{
+			$this->processInvalidDirtyItems($result->getInvalidItems());
 		}
 
 		$processedItemCount = $result->getProcessedItemCount();
@@ -652,5 +690,31 @@ class DuplicateIndexBuilder
 		}
 
 		return $data;
+	}
+	protected function deleteDuplicateIndexByFilter(array $filter)
+	{
+		Entity\DuplicateIndexTable::deleteByFilter($filter);
+	}
+	protected function saveDuplicateIndexItem(array $fields)
+	{
+		Entity\DuplicateIndexTable::upsert($fields);
+	}
+	protected function duplicateIndexExists($primary)
+	{
+		return Entity\DuplicateIndexTable::exists($primary);
+	}
+	protected static function markDuplicateIndexAsJunk($entityTypeID, $entityID)
+	{
+		Entity\DuplicateIndexTable::markAsJunk($entityTypeID, $entityID);
+	}
+
+	protected function processInvalidDirtyItems(array $invalidHashes)
+	{
+		// do nothing. Used only in AutomaticDuplicateIndexBuilder
+	}
+
+	protected function markAsNotDirty($primary)
+	{
+		throw new NotImplementedException('This duplicate index can not be dirty');
 	}
 }

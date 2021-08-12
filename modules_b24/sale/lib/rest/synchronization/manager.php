@@ -78,7 +78,7 @@ class Manager
 		$result = new Result();
 
 		$siteId='';
-		$r = \CSite::GetList($by,$order);
+		$r = \CSite::GetList();
 		while ($row = $r->fetch())
 			if($row['ID']==$this->getDefaultSiteId())
 				$siteId=$row['ID'];
@@ -251,12 +251,12 @@ class Manager
 
 	public function getTradePlatformsXmlId($siteId)
 	{
-		$r = unserialize(Option::get("sale", "config_external_trade_platforms_xml_id"));
+		$r = unserialize(Option::get("sale", "config_external_trade_platforms_xml_id"), ['allowed_classes' => false]);
 		return $r[$siteId];
 	}
 	public function setTradePlatformsXmlId($siteId, $code)
 	{
-		$r = unserialize(Option::get("sale", "config_external_trade_platforms_xml_id"));
+		$r = unserialize(Option::get("sale", "config_external_trade_platforms_xml_id"), ['allowed_classes' => false]);
 
 		$r[$siteId] = $code;
 		Option::set("sale", "config_external_trade_platforms_xml_id", serialize($r));

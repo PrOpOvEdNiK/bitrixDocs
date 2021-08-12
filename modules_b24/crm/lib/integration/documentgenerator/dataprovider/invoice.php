@@ -7,7 +7,7 @@ use Bitrix\Crm\InvoiceTable;
 use Bitrix\DocumentGenerator\Nameable;
 use Bitrix\Main\Localization\Loc;
 
-class Invoice extends ProductsDataProvider implements Nameable
+class Invoice extends ProductsDataProvider
 {
 	protected $order;
 	protected $payment;
@@ -104,11 +104,6 @@ class Invoice extends ProductsDataProvider implements Nameable
 		return \CCrmOwnerType::Invoice;
 	}
 
-	protected function getCrmProductOwnerType()
-	{
-		return 'I';
-	}
-
 	protected function getPersonTypeID()
 	{
 		return \CCrmInvoice::ResolvePersonTypeID($this->getValue('UF_MYCOMPANY_ID'), $this->getValue('UF_CONTACT_ID'));
@@ -129,6 +124,7 @@ class Invoice extends ProductsDataProvider implements Nameable
 		foreach($productRows as $product)
 		{
 			$result[] = [
+				'ID' => $product['ID'],
 				'OWNER_ID' => $this->source,
 				'OWNER_TYPE' => $this->getCrmProductOwnerType(),
 				'PRODUCT_ID' => isset($product['PRODUCT_ID']) ? $product['PRODUCT_ID'] : 0,
@@ -236,5 +232,10 @@ class Invoice extends ProductsDataProvider implements Nameable
 				'UF_QUOTE_ID',
 			],
 		]);
+	}
+
+	protected function getStatusEntityId(): ?string
+	{
+		return 'INVOICE_STATUS';
 	}
 }

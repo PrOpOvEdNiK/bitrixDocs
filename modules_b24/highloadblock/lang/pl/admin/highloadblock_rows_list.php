@@ -1,6 +1,0 @@
-<?
-$MESS["HLBLOCK_ADMIN_DELETE_ROW_CONFIRM"] = "Usunąć rekord?";
-$MESS["HLBLOCK_ADMIN_ROWS_ADD_NEW_BUTTON"] = "Dodaj rekord";
-$MESS["HLBLOCK_ADMIN_ROWS_EDIT_ENTITY"] = "Edytuj blok informacji";
-$MESS["HLBLOCK_ADMIN_ROWS_RETURN_TO_LIST_BUTTON"] = "Powrót do listy";
-?>

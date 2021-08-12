@@ -5,6 +5,7 @@ namespace Bitrix\Disk;
 use Bitrix\Disk\Bitrix24Disk\SubscriberManager;
 use Bitrix\Disk\Document\DocumentHandlersManager;
 use Bitrix\Disk\Internals\DeletedLogManager;
+use Bitrix\Disk\Internals\DeletionNotifyManager;
 use Bitrix\Disk\Internals\Error\Error;
 use Bitrix\Disk\Internals\Error\ErrorCollection;
 use Bitrix\Disk\Internals\Error\IErrorable;
@@ -13,6 +14,7 @@ use Bitrix\Disk\Security\FakeSecurityContext;
 use Bitrix\Disk\Uf\UserFieldManager;
 use Bitrix\Main\ArgumentException;
 use Bitrix\Main\Data\Cache;
+use Bitrix\Main\DI\ServiceLocator;
 use Bitrix\Main\Loader;
 use Bitrix\Main\ModuleManager;
 use Bitrix\Main\SystemException;
@@ -21,35 +23,14 @@ final class Driver implements IErrorable
 {
 	const INTERNAL_MODULE_ID = 'disk';
 
-	/** @var  RightsManager */
-	protected $rightsManager;
-	/** @var  UrlManager */
-	protected $urlManager;
-	/** @var  UserFieldManager */
-	protected $ufManager;
-	/** @var  IndexManager */
-	protected $indexManager;
-	/** @var  RecentlyUsedManager */
-	protected $recentlyUsedManager;
-	/** @var  DocumentHandlersManager */
-	protected $documentHandlersManager;
-	/** @var  Rest\RestManager */
-	protected $restManager;
-	/** @var  SubscriberManager */
-	protected $subscriberManager;
-	/** @var  DeletedLogManager */
-	protected $deletedLogManager;
 	/** @var  ErrorCollection */
 	protected $errorCollection;
-	/** @var ExternalLinkAccessControl */
-	protected $externalLinkAccessControl;
 	/** @var  Driver */
 	private static $instance;
 
 	private function __construct()
 	{
 		$this->errorCollection = new ErrorCollection;
-		$this->subscriberManager = new SubscriberManager;
 	}
 
 	private function __clone()
@@ -249,7 +230,7 @@ final class Driver implements IErrorable
 		if($group)
 		{
 			$group = $group->fetch();
-			$data['NAME'] = substr($group['NAME'], 0, 100);
+			$data['NAME'] = mb_substr($group['NAME'], 0, 100);
 		}
 
 		$data['USE_INTERNAL_RIGHTS'] = 1;
@@ -415,12 +396,7 @@ final class Driver implements IErrorable
 	 */
 	public function getRightsManager()
 	{
-		if($this->rightsManager === null)
-		{
-			$this->rightsManager = new RightsManager;
-		}
-
-		return $this->rightsManager;
+		return ServiceLocator::getInstance()->get('disk.rightsManager');
 	}
 
 	/**
@@ -430,12 +406,7 @@ final class Driver implements IErrorable
 	 */
 	public function getUrlManager()
 	{
-		if($this->urlManager === null)
-		{
-			$this->urlManager = new UrlManager;
-		}
-
-		return $this->urlManager;
+		return ServiceLocator::getInstance()->get('disk.urlManager');
 	}
 
 	/**
@@ -447,12 +418,7 @@ final class Driver implements IErrorable
 	 */
 	public function getUserFieldManager()
 	{
-		if($this->ufManager === null)
-		{
-			$this->ufManager = new UserFieldManager();
-		}
-
-		return $this->ufManager;
+		return ServiceLocator::getInstance()->get('disk.ufManager');
 	}
 
 	/**
@@ -463,12 +429,7 @@ final class Driver implements IErrorable
 	 */
 	public function getIndexManager()
 	{
-		if($this->indexManager === null)
-		{
-			$this->indexManager = new IndexManager();
-		}
-
-		return $this->indexManager;
+		return ServiceLocator::getInstance()->get('disk.indexManager');
 	}
 
 	/**
@@ -478,12 +439,7 @@ final class Driver implements IErrorable
 	 */
 	public function getRecentlyUsedManager()
 	{
-		if($this->recentlyUsedManager === null)
-		{
-			$this->recentlyUsedManager = new RecentlyUsedManager;
-		}
-
-		return $this->recentlyUsedManager;
+		return ServiceLocator::getInstance()->get('disk.recentlyUsedManager');
 	}
 
 	/**
@@ -493,13 +449,7 @@ final class Driver implements IErrorable
 	 */
 	public function getDocumentHandlersManager()
 	{
-		if($this->documentHandlersManager === null)
-		{
-			global $USER;
-			$this->documentHandlersManager = new DocumentHandlersManager($USER);
-		}
-
-		return $this->documentHandlersManager;
+		return ServiceLocator::getInstance()->get('disk.documentHandlersManager');
 	}
 
 	/**
@@ -509,7 +459,7 @@ final class Driver implements IErrorable
 	 */
 	public function getSubscriberManager()
 	{
-		return $this->subscriberManager;
+		return ServiceLocator::getInstance()->get('disk.subscriberManager');
 	}
 
 	/**
@@ -519,12 +469,12 @@ final class Driver implements IErrorable
 	 */
 	public function getDeletedLogManager()
 	{
-		if($this->deletedLogManager === null)
-		{
-			$this->deletedLogManager = new DeletedLogManager();
-		}
+		return ServiceLocator::getInstance()->get('disk.deletedLogManager');
+	}
 
-		return $this->deletedLogManager;
+	public function getDeletionNotifyManager(): DeletionNotifyManager
+	{
+		return ServiceLocator::getInstance()->get('disk.deletionNotifyManager');
 	}
 
 	/**
@@ -534,29 +484,16 @@ final class Driver implements IErrorable
 	 */
 	public function getRestManager()
 	{
-		if($this->restManager === null)
-		{
-			$this->restManager = new Rest\RestManager();
-		}
-
-		return $this->restManager;
+		return ServiceLocator::getInstance()->get('disk.restManager');
 	}
 
 	/**
-	 * Returns ExternalLinkAccessControl.
-	 *
-	 * @return ExternalLinkAccessControl
+	 * @return TrackedObjectManager
 	 */
-	public function getExternalLinkAccessControl()
+	public function getTrackedObjectManager()
 	{
-		if($this->externalLinkAccessControl === null)
-		{
-			$this->externalLinkAccessControl = new ExternalLinkAccessControl();
-		}
-
-		return $this->externalLinkAccessControl;
+		return ServiceLocator::getInstance()->get('disk.trackedObjectManager');
 	}
-
 	/**
 	 * Getting array of errors.
 	 * @return Error[]
@@ -654,7 +591,7 @@ final class Driver implements IErrorable
 	 */
 	public function collectSubscribers(BaseObject $object)
 	{
-		return $this->subscriberManager->collectSubscribers($object);
+		return $this->getSubscriberManager()->collectSubscribers($object);
 	}
 
 	/**
@@ -730,14 +667,16 @@ final class Driver implements IErrorable
 			$userIds = array($userIds);
 		}
 
-		\Bitrix\Pull\Event::add(array_unique($userIds), $message);
+		$userIds = array_filter(array_unique($userIds));
+
+		\Bitrix\Pull\Event::add($userIds, $message);
 	}
 
 	private function checkRequiredInputParams(array $inputParams, array $required)
 	{
 		foreach ($required as $item)
 		{
-			if(!isset($inputParams[$item]) || (!$inputParams[$item] && !(is_string($inputParams[$item]) && strlen($inputParams[$item]))))
+			if(!isset($inputParams[$item]) || (!$inputParams[$item] && !(is_string($inputParams[$item]) && mb_strlen($inputParams[$item]))))
 			{
 				throw new ArgumentException("Required params: { {$item} }");
 			}

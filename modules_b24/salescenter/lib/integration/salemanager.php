@@ -14,7 +14,9 @@ use Bitrix\Main;
 use Bitrix\Crm;
 use Bitrix\Sale\Payment;
 use Bitrix\Main\Loader;
-use Bitrix\Sale\PaymentCollection;
+use Bitrix\SalesCenter;
+use Bitrix\Salescenter\Analytics;
+use Bitrix\Salescenter\SaleshubItem;
 
 class SaleManager extends Base
 {
@@ -69,6 +71,20 @@ class SaleManager extends Base
 	}
 
 	/**
+	 * @param $dealId
+	 * @return string
+	 */
+	public function getDealLink($dealId): string
+	{
+		return \CComponentEngine::MakePathFromTemplate(
+			Option::get('crm', 'path_to_deal_details'),
+			[
+				'deal_id' => $dealId,
+			]
+		);
+	}
+
+	/**
 	 * @param $orderId
 	 * @return string
 	 */
@@ -77,31 +93,40 @@ class SaleManager extends Base
 		return '/saleshub/orders/order/?orderId='.$orderId;
 	}
 
+	/**
+	 * @param $paymentId
+	 * @return string
+	 */
+	public function getPaymentLink($paymentId): string
+	{
+		return \CComponentEngine::MakePathFromTemplate(
+			Option::get('crm', 'path_to_order_payment_details'),
+			[
+				'payment_id' => $paymentId,
+			]
+		);
+	}
+
 	// region event handlers
 	/**
 	 * @param Event $event
-	 *
-	 * @return EventResult
+	 * @return EventResult|void
 	 */
-	public static function onSalePayOrder(Event $event)
+	public static function onPaymentPaid(Event $event)
 	{
 		$parameters = $event->getParameters();
 
-		/** @var Sale\Order $order */
-		$order = $parameters['ENTITY'];
-		if (!$order instanceof Sale\Order)
+		/** @var Crm\Order\Payment $payment */
+		$payment = $parameters['ENTITY'];
+		if (!$payment instanceof Crm\Order\Payment)
 		{
-			return new EventResult(EventResult::ERROR,null,'sale');
+			return;
 		}
 
-		if ($order->isPaid())
+		$result = ImOpenLinesManager::getInstance()->sendPaymentPayNotify($payment);
+		if (!$result->isSuccess())
 		{
-			$result = ImOpenLinesManager::getInstance()->sendOrderPayNotify($order);
-			if (!$result->isSuccess())
-			{
-				return new EventResult(EventResult::ERROR,null,'sale');
-			}
-
+			return new EventResult(EventResult::ERROR,null,'sale');
 		}
 
 		return new EventResult( EventResult::SUCCESS, null, 'sale');
@@ -113,25 +138,51 @@ class SaleManager extends Base
 	 */
 	public static function onSalePsServiceProcessRequestBeforePaid(Event $event)
 	{
-		$result = new EventResult( EventResult::SUCCESS, null, 'sale');
+		$result = new EventResult(EventResult::SUCCESS, null, 'sale');
 
 		try
 		{
-			$status = $event->getParameter('status');
 			/** @var Payment $payment */
 			$payment = $event->getParameter('payment');
-			$paySystem = $payment->getPaySystem();
-			$type = $paySystem->getField('ACTION_FILE');
-			if($type === 'yandexcheckout')
-			{
-				$type = $paySystem->getField('PS_MODE');
-			}
+			$order = $payment->getOrder();
 
-			static::getInstance()->addAnalyticsLabelToFile('salescenterPayment', $type, $status);
+			$constructor = new Analytics\LabelConstructor();
+
+			AddEventToStatFile('salescenter', 'salescenterPayment', $payment->getId(), $constructor->getPaySystemTag($payment), 'pay_system');
+			AddEventToStatFile('salescenter', 'salescenterPayment', $payment->getId(), $payment->getSum(), 'amount');
+			AddEventToStatFile('salescenter', 'salescenterPayment', $payment->getId(), $payment->getField('CURRENCY'), 'currency');
+			AddEventToStatFile('salescenter', 'salescenterPayment', $payment->getId(), $constructor->getContextLabel($order), 'context');
+
+			if ($order instanceof Crm\Order\Order)
+			{
+				AddEventToStatFile('salescenter', 'salescenterPayment', $payment->getId(), $constructor->getChannelLabel($order), 'channel');
+				AddEventToStatFile('salescenter', 'salescenterPayment', $payment->getId(), $constructor->getChannelNameLabel($order), 'channel_name');
+			}
 		}
 		finally
 		{
 			return $result;
+		}
+	}
+
+	/**
+	 * @param Event $event
+	 * @throws Main\ArgumentException
+	 * @throws Main\ArgumentNullException
+	 * @throws Main\ArgumentTypeException
+	 * @throws Main\ObjectPropertyException
+	 * @throws Main\SystemException
+	 */
+	public static function OnSaleOrderSaved(Event $event)
+	{
+		/** @var Crm\Order\Order $order */
+		$order = $event->getParameter('ENTITY');
+
+		if ($order->isNew())
+		{
+			$constructor = new Analytics\LabelConstructor();
+
+			AddEventToStatFile('salescenter', 'orderCreate', $order->getId(), $constructor->getContextLabel($order), 'context');
 		}
 	}
 
@@ -169,7 +220,7 @@ class SaleManager extends Base
 			return $result;
 		}
 
-		$check = \Bitrix\Sale\Cashbox\CheckManager::getObjectById($checkId);
+		$check = Sale\Cashbox\CheckManager::getObjectById($checkId);
 		if(!$check)
 		{
 			return $result;
@@ -181,8 +232,14 @@ class SaleManager extends Base
 			return $result;
 		}
 
+		$paymentId = (int)$check->getField('PAYMENT_ID');
+		if ($paymentId <= 0)
+		{
+			return $result;
+		}
+
 		$registry = Sale\Registry::getInstance(Sale\Registry::REGISTRY_TYPE_ORDER);
-		/** @var Sale\Order $orderClass */
+		/** @var Crm\Order\Order $orderClass */
 		$orderClass = $registry->getOrderClassName();
 
 		$order = $orderClass::load($orderId);
@@ -191,7 +248,11 @@ class SaleManager extends Base
 			return $result;
 		}
 
-		ImOpenLinesManager::getInstance()->sendOrderCheckNotifyError($checkId, $order, $message);
+		$payment = $order->getPaymentCollection()->getItemById($paymentId);
+		if ($payment instanceof Crm\Order\Payment)
+		{
+			ImOpenLinesManager::getInstance()->sendPaymentCheckNotifyError($checkId, $payment, $message);
+		}
 
 		return $result;
 	}
@@ -210,197 +271,12 @@ class SaleManager extends Base
 		{
 			return $result;
 		}
+
 		$payment = $event->getParameter('PAYMENT');
-		if($payment && $payment instanceof Payment)
-		{
-			$paymentCollection = $payment->getCollection();
-			if($paymentCollection && $paymentCollection instanceof PaymentCollection)
-			{
-				$order = $paymentCollection->getOrder();
-				if($order instanceof Sale\Order)
-				{
-					ImOpenLinesManager::getInstance()->sendOrderCheckNotify($checkId, $order);
-
-					$bindings = [
-						[
-							'ENTITY_TYPE_ID' => \CCrmOwnerType::Order,
-							'ENTITY_ID' => $order->getId()
-						]
-					];
-
-					if ($order->getDealBinding())
-					{
-						$bindings[] = [
-							'ENTITY_TYPE_ID' => \CCrmOwnerType::Deal,
-							'ENTITY_ID' => $order->getDealBinding()->getDealId()
-						];
-					}
-
-					Crm\Timeline\OrderCheckController::getInstance()->onSendCheckToIm(
-						$checkId,
-						[
-							'ORDER_FIELDS' => $order->getFieldValues(),
-							'SETTINGS' => ['SENDED' => 'Y'],
-							'BINDINGS' => $bindings
-						]
-					);
-				}
-			}
-		}
+		ImOpenLinesManager::getInstance()->sendPaymentCheckNotify($checkId, $payment);
 
 		return $result;
 	}
-
-	/**
-	 * @param $event
-	 * @throws Main\ArgumentException
-	 * @throws Main\ArgumentOutOfRangeException
-	 * @throws Main\ArgumentTypeException
-	 * @throws Main\NotImplementedException
-	 * @throws Main\SystemException
-	 */
-	public static function OnSaleOrderEntitySaved(Event $event)
-	{
-		/** @var Crm\Order\Order $order */
-		$order = $event->getParameter('ENTITY');
-
-		if (!($order instanceof Crm\Order\Order))
-		{
-			return;
-		}
-
-		$dealBinding = $order->getDealBinding();
-		if (!$dealBinding && $order->isNew())
-		{
-			$dealId = static::createCrmDeal($order);
-
-			if ($dealId)
-			{
-				$dealBinding = $order->createDealBinding();
-				if ($dealBinding)
-				{
-					$dealBinding->setField('DEAL_ID', $dealId);
-					$dealBinding->markCrmDealAsNew();
-				}
-			}
-		}
-	}
-
-	/**
-	 * @return int|null
-	 * @throws Main\ArgumentException
-	 * @throws Main\ArgumentTypeException
-	 * @throws Main\SystemException
-	 */
-	protected static function createCrmDeal(Crm\Order\Order $order)
-	{
-		$selector = static::getActualEntitySelector($order);
-
-		$facility = new Crm\EntityManageFacility($selector);
-		$facility->setDirection(Crm\EntityManageFacility::DIRECTION_OUTGOING);
-
-		$fields = static::getDealFieldsOnCreate($order);
-		return (int)$facility->registerDeal($fields);
-	}
-
-	/**
-	 * @return Crm\Integrity\ActualEntitySelector
-	 * @throws Main\ArgumentException
-	 * @throws Main\ArgumentTypeException
-	 * @throws Main\SystemException
-	 */
-	public static function getActualEntitySelector(Crm\Order\Order $order)
-	{
-		$selector = new Crm\Integrity\ActualEntitySelector();
-
-		$contactCompanyCollection = $order->getContactCompanyCollection();
-
-		foreach($contactCompanyCollection as $item)
-		{
-			$selector->setEntity($item->getEntityType(), $item->getField('ENTITY_ID'));
-		}
-
-		$selector->setEntity(\CCrmOwnerType::Order, $order->getId());
-
-		return $selector;
-	}
-
-	/**
-	 * @return array
-	 * @throws Main\ArgumentException
-	 * @throws Main\ArgumentTypeException
-	 * @throws Main\SystemException
-	 */
-	protected static function getDealFieldsOnCreate(Crm\Order\Order $order) : array
-	{
-		$contactIds = [];
-
-		$companyId = null;
-		$contactId = null;
-
-		$company = $order->getContactCompanyCollection()->getPrimaryCompany();
-		if ($company)
-		{
-			$companyId = $company->getField('ENTITY_ID');
-		}
-
-		foreach ($order->getContactCompanyCollection()->getContacts() as $contact)
-		{
-			if ($contact->isPrimary())
-			{
-				$contactId = $contact->getField('ENTITY_ID');
-			}
-
-			$contactIds[] = $contact->getField('ENTITY_ID');
-		}
-
-		return [
-			'OPPORTUNITY' => $order->getPrice(),
-			'CURRENCY_ID' => $order->getCurrency(),
-			'ASSIGNED_BY_ID' => $order->getField('RESPONSIBLE_ID'),
-			'CREATED_BY_ID' => $order->getField('RESPONSIBLE_ID'),
-			'CONTACT_IDS' => $contactIds,
-			'CONTACT_ID' => $contactId,
-			'COMPANY_ID' => $companyId,
-		];
-	}
-
-	private function addAnalyticsLabelToFile($action, $tag, $label)
-	{
-		if(!function_exists('AddEventToStatFile'))
-		{
-			function AddEventToStatFile($module, $action, $tag, $label)
-			{
-				static $search = array("\t", "\n", "\r");
-				static $replace = " ";
-				if (defined('ANALYTICS_FILENAME') && is_writable(ANALYTICS_FILENAME))
-				{
-					$content =
-						date('Y-m-d H:i:s')
-						."\t".str_replace($search, $replace, $_SERVER["HTTP_HOST"])
-						."\t".str_replace($search, $replace, $module)
-						."\t".str_replace($search, $replace, $action)
-						."\t".str_replace($search, $replace, $tag)
-						."\t".str_replace($search, $replace, $label)
-						."\n";
-					$fp = @fopen(ANALYTICS_FILENAME, "ab");
-					if ($fp)
-					{
-						if (flock($fp, LOCK_EX))
-						{
-							@fwrite($fp, $content);
-							@fflush($fp);
-							@flock($fp, LOCK_UN);
-							@fclose($fp);
-						}
-					}
-				}
-			}
-		}
-
-		AddEventToStatFile('salescenter', $action, $tag, $label);
-	}
-	//endregion
 
 	/**
 	 * @param Sale\Order $order
@@ -444,6 +320,27 @@ class SaleManager extends Base
 	}
 
 	/**
+	 * @param Payment $payment
+	 * @return string
+	 */
+	public function getPaymentPayStatus(Sale\Payment $payment)
+	{
+		if ($payment->isPaid())
+		{
+			$status = Loc::getMessage('SALESCENTER_SALEMANAGER_SYSTEM_ORDER_PAID_TEXT', [
+				'#PAYSYSTEM#' => $payment->getPaymentSystemName(),
+				'#DATE#' => FormatDate('j F', $payment->getField('DATE_PAID')),
+			]);
+		}
+		else
+		{
+			$status = Loc::getMessage('SALESCENTER_SALEMANAGER_SYSTEM_ORDER_NOT_PAID_TEXT');
+		}
+
+		return $status;
+	}
+
+	/**
 	 * @param Sale\Order $order
 	 * @return bool|mixed|null|string|string[]
 	 */
@@ -472,6 +369,15 @@ class SaleManager extends Base
 	}
 
 	/**
+	 * @param Payment $payment
+	 * @return bool|mixed|null|string|string[]
+	 */
+	public function getPaymentFormattedPrice(Sale\Payment $payment)
+	{
+		return SaleFormatCurrency($payment->getSum(), $payment->getField('CURRENCY'));
+	}
+
+	/**
 	 * @param Sale\Order $order
 	 * @return string
 	 */
@@ -481,59 +387,97 @@ class SaleManager extends Base
 	}
 
 	/**
-	 * @return array
+	 * @param Payment $payment
+	 * @return string
 	 */
-	public function getPaySystemFilter()
+	public function getPaymentFormattedInsertDate(Sale\Payment $payment)
 	{
-		$paySystemHandlerList = [
-			'cash',
-			'paypal',
-			'sberbankonline',
-			'qiwi',
-			'webmoney',
-			'liqpay',
-			'uapay',
-		];
-
-		$yandexPaySystemHandler = [
-			'yandexcheckout'
-		];
-
-		$yandexPaySystemMode = [
-			'bank_card',
-			'sberbank',
-			'sberbank_sms',
-			'alfabank',
-			'yandex_money',
-			'webmoney',
-			'qiwi'
-		];
-
-		return [
-			'ACTIVE' => 'Y',
-			[
-				'LOGIC' => 'OR',
-				[
-					'=ACTION_FILE' => $paySystemHandlerList,
-				],
-				[
-					'=ACTION_FILE' => $yandexPaySystemHandler,
-					'=PS_MODE' => $yandexPaySystemMode,
-				]
-			],
-
-		];
+		return FormatDate('j F', $payment->getField('DATE_BILL'));
 	}
 
 	/**
 	 * @return array
 	 */
-	public function getCashboxHandlers()
+	public function getPaySystemFilter()
 	{
 		return [
-			'\Bitrix\Sale\Cashbox\CashboxAtolFarmV4',
-			'\Bitrix\Sale\Cashbox\CashboxOrangeData',
+			'ACTIVE' => 'Y',
+			'!=ACTION_FILE' => [
+				'inner',
+			],
 		];
+	}
+
+	/**
+	 * @param array $additionalFilter
+	 * @param int $limit
+	 * @return array
+	 * @throws Main\ArgumentException
+	 */
+	public function getPaySystemList(array $additionalFilter = [], $limit = 0) : array
+	{
+		$filter = [
+			'=ENTITY_REGISTRY_TYPE' => Sale\Registry::REGISTRY_TYPE_ORDER,
+			'=ACTIVE' => 'Y',
+		];
+		if ($additionalFilter)
+		{
+			$filter = array_merge($filter, $additionalFilter);
+		}
+		$params = [
+			'select' => ['ID', 'NAME', 'ACTION_FILE', 'PS_MODE', 'SORT'],
+			'filter' => $filter,
+			'order' => ['ID' => 'DESC'],
+		];
+
+		if ($limit > 0)
+		{
+			$params['limit'] = (int)$limit;
+		}
+
+		$dbRes = Sale\PaySystem\Manager::getList($params);
+
+		$result = [];
+		while ($item = $dbRes->fetch())
+		{
+			$result[$item['ID']] = $item;
+		}
+
+		return $result;
+	}
+
+	/**
+	 * @return array
+	 */
+	public static function getCashboxHandlers()
+	{
+		$result = [];
+		$zone = '';
+		$isCloud = Main\Loader::includeModule("bitrix24");
+		if ($isCloud)
+		{
+			$zone = \CBitrix24::getLicensePrefix();
+		}
+		elseif (Main\Loader::includeModule('intranet'))
+		{
+			$zone = \CIntranetUtils::getPortalZone();
+		}
+		if ($zone === 'ru')
+		{
+			$result = array_merge($result, [
+				'\Bitrix\Sale\Cashbox\CashboxAtolFarmV4',
+				'\Bitrix\Sale\Cashbox\CashboxOrangeData',
+				'\Bitrix\Sale\Cashbox\CashboxBusinessRu',
+			]);
+		}
+		if ($zone === 'ua' || ($zone === 'ru' && !$isCloud))
+		{
+			$result[] ='\Bitrix\Sale\Cashbox\CashboxCheckbox';
+		}
+
+		$result[] = '\Bitrix\Sale\Cashbox\CashboxRest';
+
+		return $result;
 	}
 
 	/**
@@ -543,7 +487,7 @@ class SaleManager extends Base
 	public function getCashboxFilter($activeOnly = true)
 	{
 		$filter = [
-			'=HANDLER' => $this->getCashboxHandlers(),
+			'=HANDLER' => static::getCashboxHandlers(),
 		];
 
 		if($activeOnly)
@@ -552,6 +496,43 @@ class SaleManager extends Base
 		}
 
 		return $filter;
+	}
+
+	/**
+	 * @param int $limit
+	 * @return array
+	 * @throws Main\ArgumentException
+	 * @throws Main\ObjectPropertyException
+	 * @throws Main\SystemException
+	 */
+	public function getCashboxList($limit = 0) : array
+	{
+		$params = [
+			'select' => ['ID', 'NAME', 'HANDLER', 'SETTINGS'],
+			'filter' => $this->getCashboxFilter(true),
+			'order' => ['ID' => 'DESC']
+		];
+
+		if ($limit > 0)
+		{
+			$params['limit'] = $limit;
+		}
+
+		$dbRes = Sale\Cashbox\Manager::getList($params);
+
+		$result = [];
+
+		while ($item = $dbRes->fetch())
+		{
+			if (isset($item['SETTINGS']['REST']['REST_CODE']))
+			{
+				$item['REST_CODE'] = $item['SETTINGS']['REST']['REST_CODE'];
+				unset($item['SETTINGS']);
+			}
+			$result[$item['ID']] = $item;
+		}
+
+		return $result;
 	}
 
 	/**
@@ -634,27 +615,25 @@ class SaleManager extends Base
 	 */
 	protected function isCheckPublicUrlAvailable(Sale\Order $order)
 	{
-		$firstIteration = true;
-		$result = [];
+		$documents = Sale\Cashbox\CheckManager::collateDocuments($this->getOrderEntities($order));
+		$document = current($documents);
 
-		foreach($this->getOrderEntities($order) as $entity)
+		if ($document)
 		{
-			$cashboxList = \Bitrix\Sale\Cashbox\Manager::getListWithRestrictions($entity);
-			if ($firstIteration)
+			$check = Sale\Cashbox\CheckManager::createByType($document['TYPE']);
+			if ($check)
 			{
-				$result = $cashboxList;
-				$firstIteration = false;
-				continue;
-			}
+				$check->setEntities($document['ENTITIES']);
+				$check->setRelatedEntities($document['RELATED_ENTITIES']);
 
-			$result = array_intersect_assoc($result, $cashboxList);
-		}
-
-		foreach($result as $cashbox)
-		{
-			if(!empty($cashbox['OFD']))
-			{
-				return true;
+				$result = Sale\Cashbox\Manager::getAvailableCashboxList($check);
+				foreach($result as $cashbox)
+				{
+					if(!empty($cashbox['OFD']))
+					{
+						return true;
+					}
+				}
 			}
 		}
 
@@ -690,5 +669,150 @@ class SaleManager extends Base
 	protected function getAdminEmail()
 	{
 		return Option::get('main', 'email_from');
+	}
+
+	/**
+	 * @param array $paySystem
+	 * @return bool
+	 * @throws Main\ArgumentNullException
+	 * @throws Main\ArgumentOutOfRangeException
+	 * @throws Main\LoaderException
+	 */
+	public function isApplePayPayment(array $paySystem): bool
+	{
+		if (!Loader::includeModule("sale"))
+		{
+			return false;
+		}
+
+		[$className] = Sale\PaySystem\Manager::includeHandler('adyen');
+
+		if (isset($paySystem['ACTION_FILE'])
+			&& $paySystem['ACTION_FILE'] === Sale\PaySystem\Manager::getFolderFromClassName($className)
+		)
+		{
+			if (isset($paySystem['PS_MODE'])
+				&& $paySystem['PS_MODE'] === $className::PAYMENT_METHOD_APPLE_PAY
+			)
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * @return array
+	 * @throws Main\ArgumentException
+	 * @throws Main\SystemException
+	 */
+	public static function getSaleshubPaySystemItems(): array
+	{
+		$cacheTTL = 86400;
+		$cacheId = "salescenter_paysystem_items";
+		$cachePath = "/salescenter/saleshubpaysystemitems/";
+		$cache = Main\Application::getInstance()->getCache();
+		if($cache->initCache($cacheTTL, $cacheId, $cachePath))
+		{
+			$result = $cache->getVars();
+		}
+		else
+		{
+			$result = [];
+			$paysystemItems = SalesCenter\SaleshubItem::getPaysystemItems();
+			foreach ($paysystemItems as $paysystemItem)
+			{
+				$values = [
+					'sort' => $paysystemItem['SORT'],
+					'main' => $paysystemItem['MAIN'] ? true : false,
+					'recommendation' => $paysystemItem['RECOMMENDATION'] ? true : false,
+					'slider' => $paysystemItem['SLIDER'] ? true : false,
+				];
+
+				if ($sliderSort = (int)$paysystemItem['SLIDER_SORT'])
+				{
+					$values['sliderSort'] = $sliderSort;
+				}
+
+				if ($psMode = $paysystemItem['PS_MODE'])
+				{
+					$result[$paysystemItem['HANDLER']]['psMode'][$psMode] = $values;
+				}
+				else
+				{
+					$result[$paysystemItem['HANDLER']] = $values;
+				}
+			}
+
+			if($result)
+			{
+				$cache->startDataCache();
+				$cache->endDataCache($result);
+			}
+		}
+
+		return $result;
+	}
+
+	/**
+	 * @return array
+	 */
+	public static function getSaleshubSmsProviderItems(): array
+	{
+		$cacheTTL = 86400;
+		$cacheId = "salescenter_smsprovider_items";
+		$cachePath = "/salescenter/saleshubsmsprovideritems/";
+		$cache = Main\Application::getInstance()->getCache();
+		if($cache->initCache($cacheTTL, $cacheId, $cachePath))
+		{
+			$result = $cache->getVars();
+		}
+		else
+		{
+			$result = [];
+			$smsProviderItems = SaleshubItem::getSmsProviderItems();
+			foreach ($smsProviderItems as $providerItem)
+			{
+				$providerId = $providerItem['PROVIDER'];
+
+				$values = [
+					'recommendation' => $providerItem['RECOMMENDATION'] === 'Y',
+					'sort' => $providerItem['SORT'],
+					'main' => $providerItem['MAIN'] === 'Y',
+				];
+
+				$result[$providerId] = $values;
+			}
+
+			if($result)
+			{
+				$cache->startDataCache();
+				$cache->endDataCache($result);
+			}
+		}
+
+		return $result;
+	}
+
+	public function getEmptyDeliveryServiceId()
+	{
+		if (!$this->isEnabled())
+		{
+			return 0;
+		}
+
+		return Sale\Delivery\Services\EmptyDeliveryService::getEmptyDeliveryServiceId();
+	}
+
+	public function isAvailableCorrection()
+	{
+		if ($this->isEnabled())
+		{
+			return Sale\Cashbox\CheckManager::isAvailableCorrection();
+		}
+
+		return false;
+
 	}
 }

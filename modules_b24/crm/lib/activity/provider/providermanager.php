@@ -24,17 +24,25 @@ class ProviderManager
 				CallList::getId()        => CallList::className(),
 				Email::getId()           => Email::className(),
 				Sms::getId()             => Sms::className(),
+				Notification::getId()    => Notification::className(),
 				OpenLine::getId()        => OpenLine::className(),
 				WebForm::getId()         => WebForm::className(),
 				Livefeed::getId()        => Livefeed::className(),
 				ExternalChannel::getId() => ExternalChannel::className(),
 				Request::getId()         => Request::className(),
-				RestApp::getId()         => RestApp::className()
+				RestApp::getId()         => RestApp::className(),
+				Delivery::getId()        => Delivery::className(),
+				CallTracker::getId()    => CallTracker::class
 			);
 
 			if(Visit::isAvailable())
 			{
 				self::$providers[Visit::getId()] = Visit::className();
+			}
+
+			if (Zoom::isAvailable())
+			{
+				self::$providers[Zoom::getId()] = Zoom::className();
 			}
 
 			foreach(GetModuleEvents('crm', 'OnGetActivityProviders', true) as $event)

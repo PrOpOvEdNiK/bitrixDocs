@@ -1,7 +1,0 @@
-<?
-$MESS["LEARNING_BACK"] = "بازگشت";
-$MESS["LEARNING_ADMIN_TAB1"] = "دوره";
-$MESS["LEARNING_NEXT_STEP"] = "بعدی";
-$MESS["LEARNING_ADMIN_TAB3"] = "نتیجه";
-$MESS["LEARNING_NEXT_STEP_F"] = "شروع";
-?>

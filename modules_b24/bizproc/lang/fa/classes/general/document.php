@@ -1,7 +1,0 @@
-<?
-$MESS["BPCGDOC_ADD"] = "افزودن";
-$MESS["BPCGDOC_AUTO_EXECUTE_DELETE"] = "حذف";
-$MESS["BPCGDOC_AUTO_EXECUTE_NONE"] = "خیر";
-$MESS["BPCGDOC_NO"] = "خیر";
-$MESS["BPCGDOC_YES"] = "بله";
-?>

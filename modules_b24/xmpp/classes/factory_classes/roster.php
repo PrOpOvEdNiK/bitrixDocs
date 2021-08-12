@@ -1,4 +1,4 @@
-<?
+<?php
 $className = "CXMPPReceiveIQRoster";
 $classVersion = 2;
 
@@ -32,7 +32,7 @@ if (!class_exists("CXMPPReceiveIQRoster"))
 		{
 			if (!$senderClient->IsAuthenticated())
 				return false;
-			if (strlen($senderJId) <= 0)
+			if ($senderJId == '')
 				return false;
 
 			if (!array_key_exists("iq", $arMessage))
@@ -73,7 +73,7 @@ if (!class_exists("CXMPPReceiveIQRoster"))
 						$arDepCache = array();
 						$arDepCacheValue = array();
 
-						$dbUsers = CUser::GetList($b = "LAST_NAME", $o = "asc", array("ACTIVE" => "Y", "!UF_DEPARTMENT"=>false), array('SELECT' => array('UF_*')));
+						$dbUsers = CUser::GetList("LAST_NAME", "asc", array("ACTIVE" => "Y", "!UF_DEPARTMENT"=>false), array('SELECT' => array('UF_*')));
 						while ($arUser = $dbUsers->Fetch())
 						{
 							$arT = array(
@@ -100,13 +100,13 @@ if (!class_exists("CXMPPReceiveIQRoster"))
 										{
 											if ($senderClient->IsSubGroupsSupported())
 											{
-												if (strlen($arDepCacheValue[$arSect['ID']]) > 0)
+												if ($arDepCacheValue[$arSect['ID']] <> '')
 													$arDepCacheValue[$arSect['ID']] .= "/";
 												$arDepCacheValue[$arSect['ID']] .= htmlspecialcharsbx($arSect1['NAME']);
 											}
 											else
 											{
-												if (strlen($arDepCacheValue[$arSect['ID']]) > 0)
+												if ($arDepCacheValue[$arSect['ID']] <> '')
 													$arDepCacheValue[$arSect['ID']] = "/".$arDepCacheValue[$arSect['ID']];
 												$arDepCacheValue[$arSect['ID']] = htmlspecialcharsbx($arSect1['NAME']).$arDepCacheValue[$arSect['ID']];
 											}
@@ -116,7 +116,7 @@ if (!class_exists("CXMPPReceiveIQRoster"))
 
 								foreach ($arUser['UF_DEPARTMENT'] as $key => $sect)
 								{
-									if (strlen($arDepCacheValue[$sect]) > 0)
+									if ($arDepCacheValue[$sect] <> '')
 									{
 										$arT["group"][] = array("#" => $arDepCacheValue[$sect]);
 										if (!is_array($GLOBALS["BX_JHGDHGFJKDFSDG67"]))
@@ -223,4 +223,3 @@ if (!class_exists("CXMPPReceiveIQRoster"))
 		}
 	}
 }
-?>

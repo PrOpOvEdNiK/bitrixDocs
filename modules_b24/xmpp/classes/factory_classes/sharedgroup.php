@@ -1,4 +1,4 @@
-<?
+<?php
 $className = "CXMPPSharedGroupIQ";
 $classVersion = 2;
 
@@ -17,7 +17,7 @@ if (!class_exists("CXMPPSharedGroupIQ"))
 		{
 			if (!$senderClient->IsAuthenticated())
 				return false;
-			if (strlen($senderJId) <= 0)
+			if ($senderJId == '')
 				return false;
 
 			if (!array_key_exists("iq", $arMessage))
@@ -47,4 +47,3 @@ if (!class_exists("CXMPPSharedGroupIQ"))
 		}
 	}
 }
-?>

@@ -82,7 +82,7 @@ class ImportCsv
 
 		foreach (self::$enabledLanguages as $languageId)
 		{
-			self::$sourceEncoding[$languageId] = strtolower(Main\Localization\Translation::getSourceEncoding($languageId));
+			self::$sourceEncoding[$languageId] = mb_strtolower(Main\Localization\Translation::getSourceEncoding($languageId));
 		}
 
 		parent::__construct($name, $controller, $config);
@@ -250,9 +250,8 @@ class ImportCsv
 					}
 
 					$langIndex = $this->columnList[$languageId];
-					if (!isset($csvRow[$langIndex]) || empty($csvRow[$langIndex]))
+					if (!isset($csvRow[$langIndex]) || (empty($csvRow[$langIndex]) && $csvRow[$langIndex] !== '0'))
 					{
-						//$rowErrors[] = Loc::getMessage('TR_IMPORT_ERROR_ROW_LANG_ABSENT', ['#LANG#' => $languageId]);
 						continue;
 					}
 
@@ -262,14 +261,7 @@ class ImportCsv
 
 					if (!empty($this->encodingIn) && $this->encodingIn !== $encodingOut)
 					{
-						$errorMessage = '';
-						$phrase = Main\Text\Encoding::convertEncoding($phrase, $this->encodingIn, $encodingOut, $errorMessage);
-
-						if (!$phrase && !empty($errorMessage))
-						{
-							$rowErrors[] = $errorMessage;
-							continue;
-						}
+						$phrase = Main\Text\Encoding::convertEncoding($phrase, $this->encodingIn, $encodingOut);
 					}
 
 					$checked = true;
@@ -316,7 +308,7 @@ class ImportCsv
 				}
 			}
 
-			if ($csvRow === false)
+			if ($csvRow === null)
 			{
 				$hasFinishedReading = true;
 			}
@@ -356,9 +348,21 @@ class ImportCsv
 					$langFile->setLangId($languageId);
 					$langFile->setOperatingEncoding(self::$sourceEncoding[$languageId]);
 
-					if (!$langFile->load() && $langFile->hasErrors())
+					if (!$langFile->loadTokens())
 					{
-						$this->addErrors($langFile->getErrors());
+						if (!$langFile->load() && $langFile->hasErrors())
+						{
+							foreach ($langFile->getErrors() as $error)
+							{
+								if ($error->getCode() !== 'EMPTY_CONTENT')
+								{
+									$this->addError($error);
+								}
+							}
+						}
+					}
+					if (count($this->getErrors()) > 0)
+					{
 						continue;
 					}
 
@@ -371,7 +375,7 @@ class ImportCsv
 						{
 							// import only new messages
 							case Translate\Controller\Import\Csv::METHOD_ADD_ONLY:
-								if (!isset($langFile[$key]) || empty($langFile[$key]))
+								if (!isset($langFile[$key]) || (empty($langFile[$key]) && $langFile[$key] !== '0'))
 								{
 									$langFile[$key] = $phrase;
 									$hasDataToUpdate = true;

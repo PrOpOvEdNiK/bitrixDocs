@@ -1,5 +1,0 @@
-<?
-$MESS["SALESCENTER_ADD_ORDER"] = "New order";
-$MESS["SALESCENTER_ORDER_SENT_NOTIFICATION"] = "Order ##ORDER_ID# has been sent";
-$MESS["SALESCENTER_SEND_ORDER"] = "Send to chat";
-?>

@@ -2,6 +2,7 @@
 
 namespace Bitrix\Tasks\Internals;
 
+use Bitrix\Main;
 use Bitrix\Main\Config\Option;
 use Bitrix\Main\Entity;
 use Bitrix\Main\Entity\Query;
@@ -10,7 +11,7 @@ use Bitrix\Main\Localization\Loc;
 use Bitrix\Main\ORM\Query\Join;
 use Bitrix\Main\UI\Filter;
 
-use Bitrix\Tasks\Item\Task;
+use Bitrix\Tasks\Internals\Counter\Deadline;
 use Bitrix\Tasks\Internals\Counter\EffectiveTable;
 use Bitrix\Tasks\Internals\Task\MemberTable;
 use Bitrix\Tasks\Update\EfficiencyRecount;
@@ -91,7 +92,7 @@ class Effective
 	 */
 	public static function getEfficiencyFromUserCounter($userId)
 	{
-		$code = Counter::getPrefix() . Counter\Name::EFFECTIVE;
+		$code = Counter\CounterDictionary::getCounterId(Counter\CounterDictionary::COUNTER_EFFECTIVE);
 
 		return \CUserCounter::getValue($userId, $code, '**');
 	}
@@ -105,7 +106,7 @@ class Effective
 	 */
 	public static function setEfficiencyToUserCounter($userId, $efficiency)
 	{
-		$code = Counter::getPrefix() . Counter\Name::EFFECTIVE;
+		$code = Counter\CounterDictionary::getCounterId(Counter\CounterDictionary::COUNTER_EFFECTIVE);
 
 		return \CUserCounter::Set($userId, $code, $efficiency, '**', '', false);
 	}
@@ -113,10 +114,10 @@ class Effective
 	/**
 	 * Returns time of first added efficiency record or false if it doesn't exist.
 	 *
-	 * @return bool|\Bitrix\Main\Type\DateTime
-	 * @throws \Bitrix\Main\ArgumentException
-	 * @throws \Bitrix\Main\ObjectPropertyException
-	 * @throws \Bitrix\Main\SystemException
+	 * @return bool|Main\Type\DateTime
+	 * @throws Main\ArgumentException
+	 * @throws Main\ObjectPropertyException
+	 * @throws Main\SystemException
 	 */
 	public static function getFirstRecordTime()
 	{
@@ -133,7 +134,7 @@ class Effective
 	 * Returns dates of current month borders (current month is used as default for now)
 	 *
 	 * @return array
-	 * @throws \Bitrix\Main\ObjectException
+	 * @throws Main\ObjectException
 	 */
 	public static function getDatesRange()
 	{
@@ -193,7 +194,7 @@ class Effective
 				$result['GROUP_ID'] = $fieldValues['GROUP_ID'];
 			}
 		}
-		catch (\Bitrix\Main\ObjectException $e)
+		catch (Main\ObjectException $e)
 		{
 			return $baseResult;
 		}
@@ -208,9 +209,9 @@ class Effective
 	 * @param null $userId
 	 * @param null $groupId
 	 * @return array
-	 * @throws \Bitrix\Main\ArgumentException
-	 * @throws \Bitrix\Main\ObjectPropertyException
-	 * @throws \Bitrix\Main\SystemException
+	 * @throws Main\ArgumentException
+	 * @throws Main\ObjectPropertyException
+	 * @throws Main\SystemException
 	 */
 	public static function checkActiveViolations($taskId = null, $userId = null, $groupId = null)
 	{
@@ -233,27 +234,33 @@ class Effective
 	}
 
 	/**
-	 * Modifies user efficiency. Also recounts efficiency user counter after modification.
+	 * Modifies user efficiency. Also recounts efficiency user counter after modification if needed.
 	 *
-	 * @param $userId
-	 * @param $userType
-	 * @param Task $task
+	 * @param int $userId
+	 * @param string $userType
+	 * @param array $taskData
 	 * @param int $groupId
-	 * @param null $isViolation
+	 * @param bool|null $isViolation
+	 * @param bool $recountEfficiency
 	 * @return bool
-	 * @throws \Exception
+	 * @throws Main\ArgumentException
+	 * @throws Main\ObjectException
+	 * @throws Main\ObjectPropertyException
+	 * @throws Main\SystemException
 	 */
-	public static function modify($userId, $userType, Task $task, $groupId = 0, $isViolation = null): bool
+	public static function modify(
+		int $userId,
+		string $userType,
+		array $taskData,
+		int $groupId = 0,
+		bool $isViolation = null,
+		bool $recountEfficiency = true
+	): bool
 	{
-		$userId = (int)$userId;
-		$groupId = (int)$groupId;
+		$deadline = $taskData['DEADLINE'];
+		$createdBy = $taskData['CREATED_BY'];
 
-		$title = $task['TITLE'];
-		$deadline = $task['DEADLINE'];
-		$createdBy = (int)$task['CREATED_BY'];
-		$responsibleId = (int)$task['RESPONSIBLE_ID'];
-
-		if (!$userId || !$responsibleId || !$createdBy || ($userType === 'R' && $responsibleId === $createdBy))
+		if (!$userId || !$createdBy || $userId === $createdBy)
 		{
 			return false;
 		}
@@ -269,13 +276,16 @@ class Effective
 			'USER_TYPE' => $userType,
 			'GROUP_ID' => $groupId,
 			'EFFECTIVE' => static::getEfficiencyForNow($userId, $groupId),
-			'TASK_ID' => $task->getId(),
-			'TASK_TITLE' => $title,
+			'TASK_ID' => $taskData['ID'],
+			'TASK_TITLE' => $taskData['TITLE'],
 			'TASK_DEADLINE' => $deadline,
-			'IS_VIOLATION'=> ($isViolation? 'Y' : 'N')
+			'IS_VIOLATION'=> ($isViolation ? 'Y' : 'N'),
 		]);
 
-		static::recountEfficiencyUserCounter($userId);
+		if ($recountEfficiency)
+		{
+			static::recountEfficiencyUserCounter($userId);
+		}
 
 		return true;
 	}
@@ -284,9 +294,9 @@ class Effective
 	 * Recounts efficiency user counter
 	 *
 	 * @param $userId
-	 * @throws \Bitrix\Main\ArgumentException
-	 * @throws \Bitrix\Main\ObjectPropertyException
-	 * @throws \Bitrix\Main\SystemException
+	 * @throws Main\ArgumentException
+	 * @throws Main\ObjectPropertyException
+	 * @throws Main\SystemException
 	 */
 	public static function recountEfficiencyUserCounter($userId)
 	{
@@ -318,7 +328,7 @@ class Effective
 	/**
 	 * Starts efficiency recount
 	 *
-	 * @throws \Bitrix\Main\ArgumentOutOfRangeException
+	 * @throws Main\ArgumentOutOfRangeException
 	 */
 	public static function runEfficiencyRecount()
 	{
@@ -333,7 +343,7 @@ class Effective
 	 * @param int $userId
 	 * @param string $userType
 	 * @return bool
-	 * @throws \Bitrix\Main\Db\SqlQueryException
+	 * @throws Main\Db\SqlQueryException
 	 */
 	public static function repair($taskId, $userId = 0, $userType = 'R')
 	{
@@ -357,7 +367,7 @@ class Effective
 	/**
 	 * @param $deadline
 	 * @return bool
-	 * @throws \Bitrix\Main\ObjectException
+	 * @throws Main\ObjectException
 	 */
 	private static function isViolation($deadline)
 	{
@@ -376,8 +386,8 @@ class Effective
 	 * @param string $date
 	 * @return string
 	 * @throws \Exception
-	 * @throws \Bitrix\Main\Db\SqlQueryException
-	 * @throws \Bitrix\Main\ObjectException
+	 * @throws Main\Db\SqlQueryException
+	 * @throws Main\ObjectException
 	 */
 	public static function agent($date = '')
 	{
@@ -431,9 +441,9 @@ class Effective
 	 * @param int $groupId
 	 * @param string $groupBy
 	 * @return array
-	 * @throws \Bitrix\Main\ArgumentException
-	 * @throws \Bitrix\Main\ObjectPropertyException
-	 * @throws \Bitrix\Main\SystemException
+	 * @throws Main\ArgumentException
+	 * @throws Main\ObjectPropertyException
+	 * @throws Main\SystemException
 	 */
 	public static function getEfficiencyForGraph(DateTime $timeFrom = null, Datetime $timeTo = null, $userId = 0, $groupId = 0, $groupBy = 'DATE')
 	{
@@ -473,11 +483,11 @@ class Effective
 	 * @param $userId
 	 * @param int $groupId
 	 * @return float|int
-	 * @throws \Bitrix\Main\ArgumentException
-	 * @throws \Bitrix\Main\ObjectPropertyException
-	 * @throws \Bitrix\Main\SystemException
+	 * @throws Main\ArgumentException
+	 * @throws Main\ObjectPropertyException
+	 * @throws Main\SystemException
 	 */
-	private static function getEfficiencyForNow($userId, $groupId = 0)
+	public static function getEfficiencyForNow($userId, $groupId = 0)
 	{
 		$efficiency = 100;
 		$expiredTasksCount = static::getExpiredTasksCountForNow($userId, $groupId);
@@ -495,9 +505,9 @@ class Effective
 	 * @param $userId
 	 * @param int $groupId
 	 * @return mixed
-	 * @throws \Bitrix\Main\ArgumentException
-	 * @throws \Bitrix\Main\ObjectPropertyException
-	 * @throws \Bitrix\Main\SystemException
+	 * @throws Main\ArgumentException
+	 * @throws Main\ObjectPropertyException
+	 * @throws Main\SystemException
 	 */
 	private static function getExpiredTasksCountForNow($userId, $groupId = 0)
 	{
@@ -529,8 +539,7 @@ class Effective
 					)
 			)
 			->where('CLOSED_DATE', NULL)
-			->where('DEADLINE', '<', Counter::getExpiredTime())
-			->where('ZOMBIE', 'N')
+			->where('DEADLINE', '<', Deadline::getExpiredTime())
 			->where('STATUS', '<', \CTasks::STATE_SUPPOSEDLY_COMPLETED)
 			->where(($groupId? Query::filter()->where('GROUP_ID', $groupId) : []));
 
@@ -543,16 +552,16 @@ class Effective
 	 * @param $userId
 	 * @param int $groupId
 	 * @return mixed
-	 * @throws \Bitrix\Main\ArgumentException
-	 * @throws \Bitrix\Main\ObjectPropertyException
-	 * @throws \Bitrix\Main\SystemException
+	 * @throws Main\ArgumentException
+	 * @throws Main\ObjectPropertyException
+	 * @throws Main\SystemException
 	 */
 	private static function getInProgressTasksCountForNow($userId, $groupId = 0)
 	{
 		$expressions = [
 			'COUNT' => new Entity\ExpressionField('COUNT', 'COUNT(%s)', 'ID'),
 			'DATE' => new Entity\ExpressionField('DATE', 'DATE(%s)', 'CLOSED_DATE'),
-			'NOW' => new \Bitrix\Main\DB\SqlExpression('DATE(NOW())')
+			'NOW' => new Main\DB\SqlExpression('DATE(NOW())')
 		];
 
 		$query = new Query(TaskTable::getEntity());
@@ -582,7 +591,6 @@ class Effective
 							->where('RESPONSIBLE_ID', '<>', $userId)
 					)
 			)
-			->where('ZOMBIE', 'N')
 			->where(
 				Query::filter()
 					->logic('or')
@@ -611,10 +619,10 @@ class Effective
 	 * @param DateTime|null $dateTo
 	 * @param int $userId
 	 * @param int $groupId
-	 * @return float|int
-	 * @throws \Bitrix\Main\ArgumentException
-	 * @throws \Bitrix\Main\ObjectPropertyException
-	 * @throws \Bitrix\Main\SystemException
+	 * @return int
+	 * @throws Main\ArgumentException
+	 * @throws Main\ObjectPropertyException
+	 * @throws Main\SystemException
 	 */
 	public static function getAverageEfficiency(DateTime $dateFrom = null, DateTime $dateTo = null, $userId = 0, $groupId = 0)
 	{
@@ -671,9 +679,9 @@ class Effective
 	 * @param int $userId
 	 * @param int $groupId
 	 * @return array
-	 * @throws \Bitrix\Main\ArgumentException
-	 * @throws \Bitrix\Main\ObjectPropertyException
-	 * @throws \Bitrix\Main\SystemException
+	 * @throws Main\ArgumentException
+	 * @throws Main\ObjectPropertyException
+	 * @throws Main\SystemException
 	 */
 	public static function getCountersByRange(DateTime $dateFrom, DateTime $dateTo, $userId = 0, $groupId = 0)
 	{
@@ -693,9 +701,9 @@ class Effective
 	 * @param $userId
 	 * @param $groupId
 	 * @return mixed
-	 * @throws \Bitrix\Main\ArgumentException
-	 * @throws \Bitrix\Main\ObjectPropertyException
-	 * @throws \Bitrix\Main\SystemException
+	 * @throws Main\ArgumentException
+	 * @throws Main\ObjectPropertyException
+	 * @throws Main\SystemException
 	 */
 	private static function getViolationsCount(DateTime $dateFrom, DateTime $dateTo, $userId, $groupId)
 	{
@@ -736,9 +744,9 @@ class Effective
 	 * @param $userId
 	 * @param $groupId
 	 * @return mixed
-	 * @throws \Bitrix\Main\ArgumentException
-	 * @throws \Bitrix\Main\ObjectPropertyException
-	 * @throws \Bitrix\Main\SystemException
+	 * @throws Main\ArgumentException
+	 * @throws Main\ObjectPropertyException
+	 * @throws Main\SystemException
 	 */
 	private static function getInProgressCount(DateTime $dateFrom, DateTime $dateTo, $userId, $groupId)
 	{
@@ -802,9 +810,9 @@ class Effective
 	 * @param $userId
 	 * @param $groupId
 	 * @return mixed
-	 * @throws \Bitrix\Main\ArgumentException
-	 * @throws \Bitrix\Main\ObjectPropertyException
-	 * @throws \Bitrix\Main\SystemException
+	 * @throws Main\ArgumentException
+	 * @throws Main\ObjectPropertyException
+	 * @throws Main\SystemException
 	 */
 	private static function getCompletedCount(DateTime $dateFrom, DateTime $dateTo, $userId, $groupId)
 	{
@@ -853,5 +861,156 @@ class Effective
 		$count = $query->exec()->fetch();
 
 		return $count['COUNT'];
+	}
+
+	public static function getAverageEfficiencyForGroups(
+		DateTime $dateFrom = null,
+		DateTime $dateTo = null,
+		int $userId = 0,
+		array $groupIds = []
+	): array
+	{
+		if (!$dateFrom || !$dateTo)
+		{
+			$datesRange = static::getDatesRange();
+
+			$dateFrom = $datesRange['FROM'];
+			$dateTo = $datesRange['TO'];
+		}
+
+		$violations = static::getViolationsCountForGroups($dateFrom, $dateTo, $userId, $groupIds);
+		$inProgress = static::getInProgressCountForGroups($dateFrom, $dateTo, $userId, $groupIds);
+
+		$efficiencies = array_fill_keys($groupIds, 100);
+		foreach ($efficiencies as $groupId => $efficiency)
+		{
+			if ($inProgress[$groupId] > 0)
+			{
+				$efficiencies[$groupId] = (int)round(100 - ($violations[$groupId] / $inProgress[$groupId]) * 100);
+			}
+			elseif ($violations[$groupId] > 0)
+			{
+				$efficiencies[$groupId] = 0;
+			}
+
+			if ($efficiencies[$groupId] < 0)
+			{
+				$efficiencies[$groupId] = 0;
+			}
+		}
+
+		return $efficiencies;
+	}
+
+	private static function getViolationsCountForGroups(
+		DateTime $dateFrom,
+		DateTime $dateTo,
+		int $userId,
+		array $groupIds
+	): array
+	{
+		$query = new Query(EffectiveTable::getEntity());
+		$query->setSelect([
+			'GROUP_ID',
+			new Entity\ExpressionField('COUNT', 'COUNT(%s)', 'TASK_ID'),
+		]);
+		$query->registerRuntimeField('T', new Entity\ReferenceField(
+			'T',
+			TaskTable::getEntity(),
+			Join::on('this.TASK_ID', 'ref.ID'),
+			['join_type' => 'inner']
+		));
+		$query
+			->where(($userId? Query::filter()->where('USER_ID', $userId) : []))
+			->where((!empty($groupIds) ? Query::filter()->whereIn('GROUP_ID', $groupIds) : []))
+			->where('IS_VIOLATION', 'Y')
+			->where('T.RESPONSIBLE_ID', '>', 0)
+			->where(
+				Query::filter()
+					->where('DATETIME', '<=', $dateTo)
+					->where(
+						Query::filter()
+							->logic('or')
+							->where('DATETIME', '>=', $dateFrom)
+							->where('DATETIME_REPAIR', NULL)
+							->where('DATETIME_REPAIR', '>=', $dateFrom)
+					)
+			);
+
+		$count = array_fill_keys($groupIds, 0);
+		$res = $query->exec();
+		while ($item = $res->fetch())
+		{
+			$count[$item['GROUP_ID']] = (int)$item['COUNT'];
+		}
+
+		return $count;
+	}
+
+	private static function getInProgressCountForGroups(
+		DateTime $dateFrom,
+		DateTime $dateTo,
+		int $userId,
+		array $groupIds
+	): array
+	{
+		$query = new Query(TaskTable::getEntity());
+		$query->setSelect([
+			'GROUP_ID',
+			new Entity\ExpressionField('COUNT', 'COUNT(%s)', 'ID'),
+		]);
+
+		if ($userId > 0)
+		{
+			$query
+				->registerRuntimeField('TM', new Entity\ReferenceField(
+					'TM',
+					MemberTable::getEntity(),
+					Join::on('this.ID', 'ref.TASK_ID')
+						->where('ref.USER_ID', $userId)
+						->whereIn('ref.TYPE', ['R', 'A']),
+					['join_type' => 'inner']
+				))
+				->where(
+					Query::filter()
+						->logic('or')
+						->where(
+							Query::filter()
+								->where('TM.TYPE', 'R')
+								->whereColumn('CREATED_BY', '<>', 'RESPONSIBLE_ID')
+						)
+						->where(
+							Query::filter()
+								->where('TM.TYPE', 'A')
+								->where('CREATED_BY', '<>', $userId)
+								->where('RESPONSIBLE_ID', '<>', $userId)
+						)
+				);
+		}
+		else
+		{
+			$query->whereColumn('CREATED_BY', '<>', 'RESPONSIBLE_ID');
+		}
+
+		$query
+			->where('CREATED_DATE', '<=', $dateTo)
+			->where(
+				Query::filter()
+					->logic('or')
+					->where('CLOSED_DATE', '>=', $dateFrom)
+					->where('CLOSED_DATE', NULL)
+			)
+			->where('ZOMBIE', 'N')
+			->where('STATUS', '<>', \CTasks::STATE_DEFERRED)
+			->where((!empty($groupIds) ? Query::filter()->whereIn('GROUP_ID', $groupIds) : []));
+
+		$count = array_fill_keys($groupIds, 0);
+		$res = $query->exec();
+		while ($item = $res->fetch())
+		{
+			$count[$item['GROUP_ID']] = (int)$item['COUNT'];
+		}
+
+		return $count;
 	}
 }

@@ -12,29 +12,23 @@ class CCrmBizProc
 	public $arParams = array();
 	public $LAST_ERROR = '';
 
-	public function __construct($ENTITY_TYPE = 'LEAD')
+	public function __construct($entityType = 'LEAD')
 	{
 		global $USER;
-		$this->sEntityType = strtoupper($ENTITY_TYPE);
-		switch($this->sEntityType)
+
+		$this->sEntityType = mb_strtoupper($entityType);
+		$this->sDocument = CCrmBizProcHelper::ResolveDocumentName(CCrmOwnerType::ResolveID($this->sEntityType));
+
+		if ($this->sDocument === '')
 		{
-			case 'DEAL':
-				$this->sDocument = 'CCrmDocumentDeal';
-				break;
-			case 'CONTACT':
-				$this->sDocument = 'CCrmDocumentContact';
-				break;
-			case 'COMPANY':
-				$this->sDocument = 'CCrmDocumentCompany';
-				break;
-			case 'LEAD':
-			default:
-				$this->sDocument = 'CCrmDocumentLead';
-				$this->sEntityType = 'LEAD';
-				break;
+			$this->sEntityType = CCrmOwnerType::LeadName;
+			$this->sDocument = CCrmBizProcHelper::ResolveDocumentId(CCrmOwnerType::Lead);
 		}
+		
 		if (is_object($USER))
+		{
 			$this->arCurrentUserGroups = $USER->GetUserGroupArray();
+		}
 	}
 
 	public function SetParams(array $params)
@@ -77,7 +71,7 @@ class CCrmBizProc
 		$bresult = true;
 		foreach ($this->arDocumentStates as $arDocumentState)
 		{
-			if (strlen($arDocumentState['ID']) <= 0)
+			if ($arDocumentState['ID'] == '')
 			{
 				$arErrorsTmp = array();
 
@@ -109,9 +103,9 @@ class CCrmBizProc
 					$bpTemplateId = intval($_REQUEST['bizproc_template_id_'.$i]);
 					$bpEvent = trim($_REQUEST['bizproc_event_'.$i]);
 
-					if (strlen($bpEvent) > 0)
+					if ($bpEvent <> '')
 					{
-						if (strlen($bpId) > 0)
+						if ($bpId <> '')
 						{
 							if (!array_key_exists($bpId, $this->arDocumentStates))
 								continue;
@@ -259,13 +253,13 @@ class CCrmBizProc
 		$arBizProcParametersValues = array();
 		foreach ($this->arDocumentStates as $arDocumentState)
 		{
-			if (strlen($arDocumentState['ID']) <= 0)
+			if ($arDocumentState['ID'] == '')
 			{
 				if ($bAutoExec)
 				{
 					foreach ($arDocumentState['TEMPLATE_PARAMETERS'] as $parameterKey => $arParam)
 					{
-						if ($arParam['Required'] && !isset($_REQUEST['bizproc'.$arDocumentState['TEMPLATE_ID'].'_'.$parameterKey]) && strlen($arParam['Default']) > 0)
+						if ($arParam['Required'] && !isset($_REQUEST['bizproc'.$arDocumentState['TEMPLATE_ID'].'_'.$parameterKey]) && $arParam['Default'] <> '')
 							$_REQUEST['bizproc'.$arDocumentState['TEMPLATE_ID'].'_'.$parameterKey] = $arParam['Default'];
 					}
 				}

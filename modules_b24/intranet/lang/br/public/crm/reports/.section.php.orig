@@ -1,4 +1,0 @@
-<?
-$MESS["CRM_SECTION"] = "Relatórios ";
-$MESS["CRM_SECTION_REPORT"] = "Relatórios";
-?>

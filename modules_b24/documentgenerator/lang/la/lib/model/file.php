@@ -1,5 +1,0 @@
-<?
-$MESS["DOCUMENTGENERATOR_MODEL_FILE_CLASS_VALIDATION"] = "Clase #CLASSNAME# no hereda de #PARENT#";
-$MESS["DOCUMENTGENERATOR_MODEL_FILE_DOCUMENT_EXISTS"] = "Este archivo tiene documentos adjuntos";
-$MESS["DOCUMENTGENERATOR_MODEL_FILE_TEMPLATE_EXISTS"] = "Este archivo tiene plantillas adjuntas";
-?>

@@ -40,8 +40,8 @@ if (!function_exists("__webdav_is_dav_headers"))
 				return true;
 			}
 		}
-		if (strpos($_SERVER['HTTP_USER_AGENT'], "Microsoft Office") !== false &&
-			strpos($_SERVER['HTTP_USER_AGENT'], "Outlook") === false
+		if (mb_strpos($_SERVER['HTTP_USER_AGENT'], "Microsoft Office") !== false &&
+			mb_strpos($_SERVER['HTTP_USER_AGENT'], "Outlook") === false
 		)
 		{
 			return true;
@@ -52,15 +52,15 @@ if (!function_exists("__webdav_is_dav_headers"))
 $bNeedInclude = true;
 if ($_SERVER["REQUEST_METHOD"] == "HEAD")
 {
-	$res = strtolower($_SERVER["HTTP_USER_AGENT"]);
-	if (strpos($res, "microsoft") === false &&
-		strlen($_SERVER["REAL_FILE_PATH"]) <= 0 && substr($_SERVER['REQUEST_URI'], -1, 1) == '/')
+	$res = mb_strtolower($_SERVER["HTTP_USER_AGENT"]);
+	if (mb_strpos($res, "microsoft") === false &&
+		$_SERVER["REAL_FILE_PATH"] == '' && mb_substr($_SERVER['REQUEST_URI'], -1, 1) == '/')
 	{
 		$bNeedInclude = false;
 		$res = CUrlRewriter::GetList(Array("QUERY" => $_SERVER['REQUEST_URI']));
 		foreach($res as $res_detail)
 		{
-			if (strpos($res_detail["ID"], "webdav") !== false || strpos($res_detail["ID"], "socialnetwork") !== false)
+			if (mb_strpos($res_detail["ID"], "webdav") !== false || mb_strpos($res_detail["ID"], "socialnetwork") !== false)
 			{
 				$bNeedInclude = true;
 				break;

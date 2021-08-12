@@ -12,7 +12,7 @@ class User extends \CBPRuntimeService
 	{
 		$departments = [];
 		$result = \CUser::getList(
-			($by='id'), ($order='asc'),
+			'id', 'asc',
 			['ID_EQUAL_EXACT' => $userId],
 			['FIELDS' => ['ID'], 'SELECT' => ['UF_DEPARTMENT']]
 		);
@@ -30,6 +30,30 @@ class User extends \CBPRuntimeService
 		}
 
 		return $departments;
+	}
+
+	public function getUserInfo(int $userId): ?array
+	{
+		$dbUsers = \CUser::GetList(
+			'id', 'asc',
+			['ID_EQUAL_EXACT' => $userId],
+			[
+				'FIELDS' => ['ID', 'EMAIL'],
+				'SELECT' => [
+					'EMAIL',
+					'UF_SKYPE',
+					'UF_TWITTER',
+					'UF_FACEBOOK',
+					'UF_LINKEDIN',
+					'UF_XING',
+					'UF_WEB_SITES',
+					'UF_PHONE_INNER',
+				]
+			]
+		);
+
+		$info = is_object($dbUsers) ? $dbUsers->fetch() : null;
+		return is_array($info) ? $info : null;
 	}
 
 	public function getUserDepartmentChains(int $userId): array

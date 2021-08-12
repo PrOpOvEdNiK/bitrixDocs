@@ -1,18 +1,22 @@
 <?php
-
 namespace Bitrix\Tasks\Rest\Controllers;
 
-use Bitrix\Main\Engine\ActionFilter\CloseSession;
-use Bitrix\Main\Engine\AutoWire\ExactParameter;
-use Bitrix\Main\Engine\CurrentUser;
-use Bitrix\Main\Engine\Response;
+use Bitrix\Main;
+use Bitrix\Main\Engine;
 use Bitrix\Main\Error;
+use Bitrix\Main\Loader;
 use Bitrix\Main\UI\PageNavigation;
+use Bitrix\Main\UserTable;
+use Bitrix\Pull\MobileCounter;
 use Bitrix\Tasks\AnalyticLogger;
+use Bitrix\Tasks\Comments\Task\CommentPoster;
 use Bitrix\Tasks\Exception;
+use Bitrix\Tasks\Helper\Filter;
 use Bitrix\Tasks\Integration\SocialNetwork;
+use Bitrix\Tasks\Internals\Counter;
 use Bitrix\Tasks\Internals\SearchIndex;
-use Bitrix\Tasks\Internals\Task\SearchIndexTable;
+use Bitrix\Tasks\Scrum\Service\TaskService;
+use Bitrix\Tasks\Internals\UserOption;
 use Bitrix\Tasks\Manager;
 use Bitrix\Tasks\UI;
 use Bitrix\Tasks\Util;
@@ -20,26 +24,37 @@ use Bitrix\Tasks\Util\Restriction\Bitrix24Restriction\Limit\TaskLimit;
 use Bitrix\Tasks\Util\Type\DateTime;
 use TasksException;
 
+/**
+ * Class Task
+ *
+ * @package Bitrix\Tasks\Rest\Controllers
+ */
 final class Task extends Base
 {
-	public function configureActions()
+	/**
+	 * @return array[]
+	 */
+	public function configureActions(): array
 	{
 		return [
 			'search' => [
 				'class' => Action\SearchAction::class,
-				'+prefilters' => [new CloseSession()]
-			]
+				'+prefilters' => [new Engine\ActionFilter\CloseSession()],
+			],
 		];
 	}
 
+	/**
+	 * @return Engine\AutoWire\ExactParameter|Engine\AutoWire\Parameter|null
+	 */
 	public function getPrimaryAutoWiredParameter()
 	{
-		return new ExactParameter(
-			\CTaskItem::class, 'task', function ($className, $id) {
-			$userId = CurrentUser::get()->getId();
-
-			return new $className($id, $userId);
-		}
+		return new Engine\AutoWire\ExactParameter(
+			\CTaskItem::class,
+			'task',
+			static function ($className, $id) {
+				return new $className($id, Engine\CurrentUser::get()->getId());
+			}
 		);
 	}
 
@@ -48,73 +63,102 @@ final class Task extends Base
 	 *
 	 * @return array
 	 */
-	public function getFieldsAction()
+	public function getFieldsAction(): array
 	{
 		return ['fields' => \CTasks::getFieldsInfo()];
 	}
 
 	/**
-	 * Create new task
+	 * Return access data to task for current user
 	 *
-	 * @param array $fields See in tasks.api.task.fields
+	 * @param \CTaskItem $task
+	 * @param array $users
 	 * @param array $params
-	 *
-	 * @return array
-	 * @throws TasksException
-	 * @throws \CTaskAssertException
-	 * @throws \Exception
+	 * @return array[]
 	 */
-	public function addAction(array $fields, array $params = []): array
+	public function getAccessAction(\CTaskItem $task, array $users = [], array $params = []): array
 	{
-		$fields = $this->formatDateFieldsForInput($fields);
-		$task = \CTaskItem::add($fields, $this->getCurrentUser()->getId(), $params);
-
-        if ($params['PLATFORM'] === 'mobile')
+		if (empty($users))
 		{
-			AnalyticLogger::logToFile('addTask');
+			$users[] = $this->getCurrentUser()->getId();
 		}
 
-		return $this->getAction($task);
+		$returnAsString = !array_key_exists('AS_STRING', $params) || $params['AS_STRING'] !== 'N';
+
+		$list = [];
+		foreach ($users as $userId)
+		{
+			try
+			{
+				$list[$userId] = $this->translateAllowedActionNames(
+					\CTaskItem::getAllowedActionsArray($userId, $task->getData(false), $returnAsString)
+				);
+			}
+			catch (TasksException $e)
+			{
+
+			}
+		}
+
+		return ['allowedActions' => $list];
 	}
 
-	private function formatUserInfo(&$row)
+	/**
+	 * @param $can
+	 * @return array
+	 */
+	private function translateAllowedActionNames($can): array
 	{
-		if (array_key_exists('CREATED_BY', $row))
+		$newCan = [];
+
+		if (is_array($can))
 		{
-			try
+			foreach ($can as $act => $flag)
 			{
-				$row['CREATOR'] = self::getUserInfo($row['CREATED_BY']);
+				$newCan[str_replace('ACTION_', '', $act)] = $flag;
 			}
-			catch (\Exception $e)
+
+			$withDropFrom = [
+				'CHANGE_DIRECTOR' => 'EDIT.ORIGINATOR',
+				'CHECKLIST_REORDER_ITEMS' => 'CHECKLIST.REORDER',
+				'ELAPSED_TIME_ADD' => 'ELAPSEDTIME.ADD',
+				'START_TIME_TRACKING' => 'DAYPLAN.TIMER.TOGGLE',
+			];
+			foreach ($withDropFrom as $from => $to)
 			{
-				$row['CREATOR']['ID'] = $row['CREATED_BY'];
+				$this->replaceKey($newCan, $from, $to);
+			}
+
+			$withoutDropFrom = [
+				'CHANGE_DEADLINE' => 'EDIT.PLAN',
+				'CHECKLIST_ADD_ITEMS' => 'CHECKLIST.ADD',
+				'ADD_FAVORITE' => 'FAVORITE.ADD',
+				'DELETE_FAVORITE' => 'FAVORITE.DELETE',
+			];
+			foreach ($withoutDropFrom as $from => $to)
+			{
+				// todo: when mobile stops using this fields, remove the last argument here
+				$this->replaceKey($newCan, $from, $to, false);
 			}
 		}
 
-		if (array_key_exists('RESPONSIBLE_ID', $row))
-		{
-			try
-			{
-				$row['RESPONSIBLE'] = self::getUserInfo($row['RESPONSIBLE_ID']);
-			}
-			catch (\Exception $e)
-			{
-				$row['RESPONSIBLE']['ID'] = $row['RESPONSIBLE_ID'];
-			}
-		}
+		return $newCan;
 	}
 
-	private function formatGroupInfo(&$row)
+	/**
+	 * @param array $data
+	 * @param string $from
+	 * @param string $to
+	 * @param bool $dropFrom
+	 */
+	private function replaceKey(array &$data, string $from, string $to, bool $dropFrom = true): void
 	{
-		if (array_key_exists('GROUP_ID', $row))
+		if (array_key_exists($from, $data))
 		{
-			try
+			$data[$to] = $data[$from];
+			if ($dropFrom)
 			{
-				$row['GROUP'] = self::getGroupInfo($row['GROUP_ID']);
-			}
-			catch (\Exception $e)
-			{
-				$row['GROUP']['ID'] = $row['GROUP_ID'];
+				unset($data[$from]);
 			}
 		}
 	}
@@ -126,17 +170,27 @@ final class Task extends Base
 	 * @param array $select
 	 * @param array $params
 	 *
-	 * @return array|null
+	 * @return array
+	 * @throws Main\ArgumentException
+	 * @throws Main\ObjectPropertyException
+	 * @throws Main\SystemException
 	 */
-	public function getAction(\CTaskItem $task, array $select = [], array $params = [])
+	public function getAction(\CTaskItem $task, array $select = [], array $params = []): array
 	{
-	    if(!empty($select))
-        {
-            $select[] = 'FAVORITE';
-        }
+		if (!empty($select))
+		{
+			$select[] = 'FAVORITE';
+		}
 
 		$params['select'] = $this->prepareSelect($select);
-		$row = $task->getData(false, $params);
+		try
+		{
+			$row = $task->getData(false, $params);
+		}
+		catch (TasksException $e)
+		{
+			return [];
+		}
 
 		if (array_key_exists('STATUS', $row))
 		{
@@ -144,9 +198,18 @@ final class Task extends Base
 			unset($row['REAL_STATUS']);
 		}
 
-		$this->formatGroupInfo($row);
-		$this->formatUserInfo($row);
+		$row = $this->fillGroupInfo([$row])[0];
+		$row = $this->fillUserInfo([$row])[0];
 		$this->formatDateFieldsForOutput($row);
+
+		if (in_array('NEW_COMMENTS_COUNT', $params['select'], true))
+		{
+			$taskId = $task->getId();
+			$userId = $this->getCurrentUser()->getId();
+
+			$newComments = Counter::getInstance((int)$userId)->getCommentsCount([$taskId]);
+			$row['NEW_COMMENTS_COUNT'] = $newComments[$taskId];
+		}
 
 		$action = $this->getAccessAction($task);
 		$row['action'] = $action['allowedActions'][$this->getCurrentUser()->getId()];
@@ -159,12 +222,18 @@ final class Task extends Base
 		return ['task' => $this->convertKeysToCamelCase($row)];
 	}
 
-	private function prepareSelect(array $select)
+	/**
+	 * @param array $select
+	 * @return array
+	 */
+	private function prepareSelect(array $select): array
 	{
-		$select = !empty($select) && !in_array('*', $select) ? $select : array_keys(\CTasks::getFieldsInfo());
-		$select = array_intersect($select, array_keys(\CTasks::getFieldsInfo()));
+		$validKeys = array_keys(\CTasks::getFieldsInfo($this->isUfExist($select)));
 
-		if (in_array('STATUS', $select)) // [1]
+		$select = (!empty($select) && !in_array('*', $select, true) ? $select : $validKeys);
+		$select = array_intersect($select, $validKeys);
+
+		if (in_array('STATUS', $select, true))
 		{
 			$select[] = 'REAL_STATUS';
 		}
@@ -173,22 +242,137 @@ final class Task extends Base
 	}
 
 	/**
-	 * Returns fields of type datetime for task entity
+	 * @param array $rows
 	 *
 	 * @return array
+	 * @throws Main\ArgumentException
+	 * @throws Main\ObjectPropertyException
+	 * @throws Main\SystemException
 	 */
-	private function getDateFields():array
+	private function fillUserInfo(array $rows): array
+	{
+		static $users = [];
+
+		$userIds = [];
+		foreach ($rows as $row)
+		{
+			if (array_key_exists('CREATED_BY', $row) && !$users[$row['CREATED_BY']])
+			{
+				$userIds[] = (int)$row['CREATED_BY'];
+			}
+			if (array_key_exists('RESPONSIBLE_ID', $row) && !$users[$row['RESPONSIBLE_ID']])
+			{
+				$userIds[] = (int)$row['RESPONSIBLE_ID'];
+			}
+		}
+		$userIds = array_unique($userIds);
+
+		$userResult = UserTable::getList([
+			'select' => ['ID', 'NAME', 'LAST_NAME', 'SECOND_NAME', 'LOGIN', 'PERSONAL_PHOTO'],
+			'filter' => ['ID' => $userIds],
+		]);
+		while ($user = $userResult->fetch())
+		{
+			$userId = $user['ID'];
+			$userName = \CUser::FormatName(
+				'#NOBR##LAST_NAME# #NAME##/NOBR#',
+				[
+					'LOGIN' => $user['LOGIN'],
+					'NAME' => $user['NAME'],
+					'LAST_NAME' => $user['LAST_NAME'],
+					'SECOND_NAME' => $user['SECOND_NAME'],
+				],
+				true,
+				false
+			);
+			$replaceList = ['user_id' => $userId];
+			$link = \CComponentEngine::makePathFromTemplate('/company/personal/user/#user_id#/', $replaceList);
+
+			$users[$userId] = [
+				'ID' => $userId,
+				'NAME' => $userName,
+				'LINK' => $link,
+				'ICON' => UI\Avatar::getPerson($user['PERSONAL_PHOTO']),
+			];
+		}
+
+		foreach ($rows as $id => $row)
+		{
+			if (array_key_exists('CREATED_BY', $row) && array_key_exists($row['CREATED_BY'], $users))
+			{
+				$rows[$id]['CREATOR'] = $users[$row['CREATED_BY']];
+			}
+			if (array_key_exists('RESPONSIBLE_ID', $row) && array_key_exists($row['RESPONSIBLE_ID'], $users))
+			{
+				$rows[$id]['RESPONSIBLE'] = $users[$row['RESPONSIBLE_ID']];
+			}
+		}
+
+		return $rows;
+	}
+
+	/**
+	 * @param array $rows
+	 *
+	 * @return array
+	 * @throws Main\ArgumentException
+	 * @throws Main\ObjectPropertyException
+	 * @throws Main\SystemException
+	 */
+	private function fillGroupInfo(array $rows): array
+	{
+		static $groups = [];
+
+		$groupIds = [];
+		foreach ($rows as $id => $row)
+		{
+			if (array_key_exists('GROUP_ID', $row) && !$groups[$row['GROUP_ID']])
+			{
+				$groupIds[] = (int)$row['GROUP_ID'];
+			}
+			$rows[$id]['GROUP'] = [];
+		}
+		$groupIds = array_unique($groupIds);
+
+		$groupsData = SocialNetwork\Group::getData($groupIds, ['IMAGE_ID']);
+		$groupsData = array_map(
+			static function ($group) {
+				return [
+					'ID' => $group['ID'],
+					'NAME' => $group['NAME'],
+					'IMAGE' => (is_array($file = \CFile::GetFileArray($group['IMAGE_ID'])) ? $file['SRC'] : ''),
+				];
+			},
+			$groupsData
+		);
+		foreach ($groupsData as $id => $data)
+		{
+			$groups[$id] = $data;
+		}
+
+		foreach ($rows as $id => $row)
+		{
+			if (array_key_exists('GROUP_ID', $row) && array_key_exists($row['GROUP_ID'], $groups))
+			{
+				$rows[$id]['GROUP'] = $groups[$row['GROUP_ID']];
+			}
+		}
+
+		return $rows;
+	}
+
+	/**
+	 * Returns fields of type datetime for task entity
+	 *
+	 * @param bool $getUf
+	 * @return array
+	 */
+	private function getDateFields($getUf = true): array
 	{
 		return array_filter(
-			\CTasks::getFieldsInfo(),
-			static function ($item)
-			{
-				if ($item['type'] === 'datetime')
-				{
-					return $item;
-				}
-
-				return null;
+			\CTasks::getFieldsInfo($getUf),
+			static function ($item) {
+				return ($item['type'] === 'datetime' ? $item : null);
 			}
 		);
 	}
@@ -201,7 +385,9 @@ final class Task extends Base
 	 */
 	private function formatDateFieldsForInput(array $fields): array
 	{
-		foreach ($this->getDateFields() as $fieldName => $fieldData)
+		$getUf = $this->isUfExist(array_keys($fields));
+
+		foreach ($this->getDateFields($getUf) as $fieldName => $fieldData)
 		{
 			$date = $fields[$fieldName];
 			if ($date)
@@ -222,7 +408,7 @@ final class Task extends Base
 	 * Prepares date fields for output in ISO-8610 format
 	 *
 	 * @param $row
-	 * @throws \Exception
+	 * @throws Main\ObjectException
 	 */
 	private function formatDateFieldsForOutput(&$row): void
 	{
@@ -230,92 +416,62 @@ final class Task extends Base
 
 		if (!$dateFields)
 		{
-			$dateFields = $this->getDateFields();
+			$dateFields = $this->getDateFields($this->isUfExist(array_keys($row)));
 		}
 
 		$localOffset = (new \DateTime())->getOffset();
 		$userOffset =  \CTimeZone::GetOffset(null, true);
 		$offset = $localOffset + $userOffset;
+		$newOffset = ($offset > 0 ? '+' : '').UI::formatTimeAmount($offset, 'HH:MI');
 
 		foreach ($dateFields as $fieldName => $fieldData)
 		{
-			if ($row[$fieldName])
+			if ($field = $row[$fieldName])
 			{
-				$date = new DateTime($row[$fieldName]);
-				if ($date)
+				if (is_array($field))
 				{
-					$newOffset = ($offset > 0 ? '+' : '').UI::formatTimeAmount($offset, 'HH:MI');
-					$row[$fieldName] = substr($date->format('c'), 0, -6).$newOffset;
+					foreach ($field as $key => $value)
+					{
+						if ($date = new DateTime($value))
+						{
+							$row[$fieldName][$key] = mb_substr($date->format('c'), 0, -6).$newOffset;
+						}
+					}
+				}
+				else if ($date = new DateTime($field))
+				{
+					$row[$fieldName] = mb_substr($date->format('c'), 0, -6).$newOffset;
 				}
 			}
 		}
 	}
 
 	/**
-	 * Return access data to task for current user
+	 * Create new task
 	 *
-	 * @param \CTaskItem $task
-	 * @param array $users
+	 * @param array $fields See in tasks.api.task.fields
 	 * @param array $params
 	 *
 	 * @return array
+	 * @throws Main\ArgumentException
+	 * @throws Main\ObjectPropertyException
+	 * @throws Main\SystemException
+	 * @throws TasksException
+	 * @throws \CTaskAssertException
 	 */
-	public function getAccessAction(\CTaskItem $task, array $users = array(), array $params = array())
+	public function addAction(array $fields, array $params = []): array
 	{
-		if (empty($users))
+		$fields = $this->filterFields($fields);
+		$fields = $this->formatDateFieldsForInput($fields);
+
+		$task = \CTaskItem::add($fields, $this->getCurrentUser()->getId(), $params);
+
+		if ($params['PLATFORM'] === 'mobile')
 		{
-			$users[] = $this->getCurrentUser()->getId();
+			AnalyticLogger::logToFile('addTask');
 		}
 
-		$returnAsString = !array_key_exists('AS_STRING', $params) ||
-                            (array_key_exists('AS_STRING', $params) && $params['AS_STRING'] != 'N');
-
-		$list = [];
-		foreach ($users as $userId)
-		{
-			$list[$userId] = static::translateAllowedActionNames(
-				\CTaskItem::getAllowedActionsArray($userId, $task->getData(false), $returnAsString)
-			);
-		}
-
-		return ['allowedActions' => $list];
-	}
-
-	private static function translateAllowedActionNames($can)
-	{
-		$newCan = array();
-		if (is_array($can))
-		{
-			foreach ($can as $act => $flag)
-			{
-				$newCan[str_replace('ACTION_', '', $act)] = $flag;
-			}
-
-			static::replaceKey($newCan, 'CHANGE_DIRECTOR', 'EDIT.ORIGINATOR');
-			static::replaceKey($newCan, 'CHECKLIST_REORDER_ITEMS', 'CHECKLIST.REORDER');
-			static::replaceKey($newCan, 'ELAPSED_TIME_ADD', 'ELAPSEDTIME.ADD');
-			static::replaceKey($newCan, 'START_TIME_TRACKING', 'DAYPLAN.TIMER.TOGGLE');
-
-			// todo: when mobile stops using this fields, remove the third argument here
-			static::replaceKey($newCan, 'CHANGE_DEADLINE', 'EDIT.PLAN', false); // used in mobile already
-			static::replaceKey($newCan, 'CHECKLIST_ADD_ITEMS', 'CHECKLIST.ADD', false); // used in mobile already
-			static::replaceKey($newCan, 'ADD_FAVORITE', 'FAVORITE.ADD', false); // used in mobile already
-			static::replaceKey($newCan, 'DELETE_FAVORITE', 'FAVORITE.DELETE', false); // used in mobile already
-		}
-
-		return $newCan;
-	}
-
-	private static function replaceKey(array &$data, $from, $to, $dropFrom = true)
-	{
-		if (array_key_exists($from, $data))
-		{
-			$data[$to] = $data[$from];
-			if ($dropFrom)
-			{
-				unset($data[$from]);
-			}
-		}
+		return $this->getAction($task);
 	}
 
 	/**
@@ -326,15 +482,43 @@ final class Task extends Base
 	 * @param array $params
 	 *
 	 * @return array
+	 * @throws Main\ArgumentException
+	 * @throws Main\LoaderException
+	 * @throws Main\ObjectPropertyException
+	 * @throws Main\SystemException
 	 */
-	public function updateAction(\CTaskItem $task, array $fields, array $params = array())
+	public function updateAction(\CTaskItem $task, array $fields, array $params = []): array
 	{
+		$fields = $this->filterFields($fields);
 		$fields = $this->formatDateFieldsForInput($fields);
 
 		$task->update($fields, $params);
-		\Bitrix\Pull\MobileCounter::send($this->getCurrentUser()->getId());
+
+		if (Loader::includeModule('pull'))
+		{
+			MobileCounter::send($this->getCurrentUser()->getId());
+		}
 
 		return $this->getAction($task);
+	}
+
+	/**
+	 * @param array $fields
+	 * @return array
+	 */
+	private function filterFields(array $fields): array
+	{
+		$fieldNames = array_keys($fields);
+		foreach ($fieldNames as $field)
+		{
+			if (mb_strpos($field, '~') === 0)
+			{
+				$fields[str_replace('~', '', $field)] = $fields[$field];
+				unset($fields[$field]);
+			}
+		}
+
+		return $fields;
 	}
 
 	/**
@@ -342,291 +526,480 @@ final class Task extends Base
 	 *
 	 * @param \CTaskItem $task
 	 * @param array $params
-	 *
 	 * @return array
 	 * @throws TasksException
 	 */
-	public function deleteAction(\CTaskItem $task, array $params = array())
+	public function deleteAction(\CTaskItem $task, array $params = []): array
 	{
 		$task->delete($params);
-
 		return ['task' => true];
 	}
 
 	/**
 	 * Get list all task
 	 *
+	 * @param PageNavigation $pageNavigation
 	 * @param array $filter
 	 * @param array $select
 	 * @param array $group
 	 * @param array $order
 	 * @param array $params
-	 * @param PageNavigation $pageNavigation
-	 *
-	 * @return Response\DataType\Page
-	 * @throws \Bitrix\Main\LoaderException
+	 * @return Engine\Response\DataType\Page
+	 * @throws Main\ArgumentException
+	 * @throws Main\ArgumentNullException
+	 * @throws Main\ArgumentOutOfRangeException
+	 * @throws Main\LoaderException
+	 * @throws Main\ObjectException
+	 * @throws Main\SystemException
 	 */
-	public function listAction(PageNavigation $pageNavigation, array $filter = array(), array $select = array(),
-							   array $group = array(), array $order = array(), array $params = array())
+	public function listAction(
+		PageNavigation $pageNavigation,
+		array $filter = [],
+		array $select = [],
+		array $group = [],
+		array $order = [],
+		array $params = []
+	): ?Engine\Response\DataType\Page
 	{
-		$filter = $this->getFilter($filter);
-
-		if(!$this->checkOrderKeys($order))
+		if (!$this->checkOrderKeys($order))
         {
             $this->addError(new Error(GetMessage('TASKS_FAILED_WRONG_ORDER_FIELD')));
             return null;
         }
 
-		$params['USE_MINIMAL_SELECT_LEGACY'] = 'N'; // VERY VERY BAD HACK! DONT REPEAT IT !
-
-		if (!isset($params['RETURN_ACCESS']))
-		{
-			$params['RETURN_ACCESS'] = 'N'; // VERY VERY BAD HACK! DONT REPEAT IT !
-		}
-
-		$dateFields = array_filter(
-			\CTasks::getFieldsInfo(),
-			function ($item) {// [2]
-				if ($item['type'] == 'datetime')
-				{
-					return $item;
-				}
-
-				return null;
-			}
-		);
+		$filter = $this->getFilter($filter);
+		$getUf = $this->isUfExist($select) || $this->isUfExist(array_keys($filter));
+		$dateFields = $this->getDateFields($getUf);
 
 		foreach ($filter as $fieldName => $fieldData)
 		{
 			preg_match('#(\w+)#', $fieldName, $m);
 
-			if (array_key_exists($m[1], $dateFields))
+			if (array_key_exists($m[1], $dateFields) && $filter[$fieldName])
 			{
-				if ($filter[$fieldName])
-				{
-					$filter[$fieldName] = DateTime::createFromTimestamp(strtotime($filter[$fieldName]));
-				}
+				$filter[$fieldName] = DateTime::createFromTimestamp(strtotime($filter[$fieldName]));
 			}
 		}
 
-		$getListParams = [
-			'limit'  => $pageNavigation->getLimit(),
-			'offset' => $pageNavigation->getOffset(),
-			'page'   => $pageNavigation->getCurrentPage(),
+		if (isset($params['SIFT_THROUGH_FILTER']))
+		{
+			$isSprintKanban = ($params['SIFT_THROUGH_FILTER']['sprintKanban'] === 'Y');
 
-			'select'       => $this->prepareSelect($select),
-			'legacyFilter' => !empty($filter) ? $filter : [],
-			'order'        => !empty($order) ? $order : [],
-			'group'        => !empty($group) ? $group : [],
+			/** @var Filter $filterInstance */
+			if ($isSprintKanban)
+			{
+				$taskService = new TaskService($params['SIFT_THROUGH_FILTER']['userId']);
+				$filterInstance = $taskService->getFilterInstance(
+					$params['SIFT_THROUGH_FILTER']['groupId'],
+					$params['SIFT_THROUGH_FILTER']['isCompletedSprint'] === 'Y'
+				);
+			}
+			else
+			{
+				$filterInstance = Filter::getInstance(
+					$params['SIFT_THROUGH_FILTER']['userId'],
+					$params['SIFT_THROUGH_FILTER']['groupId']
+				);
+			}
+			$filter = array_merge($filter, $filterInstance->process());
+			unset($filter['ONLY_ROOT_TASKS']);
+		}
+		$navParams = [
+			'nPageSize' => $pageNavigation->getLimit(),
+			'iNumPageSize' => $pageNavigation->getOffset(),
+			'iNumPage' => $pageNavigation->getCurrentPage(),
+		];
+		$key = (isset($params['COUNT_TOTAL']) && $params['COUNT_TOTAL'] === 'N' ? 'getPlusOne' : 'getTotalCount');
+		$navParams[$key] = true;
+
+		$getListParams = [
+			'select' => $this->prepareSelect($select),
+			'legacyFilter' => ($filter ?: []),
+			'order' => ($order ?: []),
+			'group' => ($group ?: []),
+			'NAV_PARAMS' => $navParams,
 		];
 
 		$params['PUBLIC_MODE'] = 'Y'; // VERY VERY BAD HACK! DONT REPEAT IT !
+		$params['USE_MINIMAL_SELECT_LEGACY'] = 'N'; // VERY VERY BAD HACK! DONT REPEAT IT !
+		$params['RETURN_ACCESS'] = ($params['RETURN_ACCESS'] ?? 'N'); // VERY VERY BAD HACK! DONT REPEAT IT !
+
 		$result = Manager\Task::getList($this->getCurrentUser()->getId(), $getListParams, $params);
+		$tasks = array_values($result['DATA']);
+		$tasks = $this->fillGroupInfo($tasks);
+		$tasks = $this->fillUserInfo($tasks);
 
-		$list = array_values($result['DATA']);
-
-		$needReturnUserInfo = array_key_exists('RETURN_USER_INFO', $params) && $params['RETURN_USER_INFO'] != 'N';
-
-		foreach ($list as &
-				 $row)
+		foreach ($tasks as &$task)
 		{
-			if (array_key_exists('STATUS', $row))
+			if (array_key_exists('STATUS', $task))
 			{
-				$row['SUB_STATUS'] = $row['STATUS'];
-				$row['STATUS'] = $row['REAL_STATUS'];
-				unset($row['REAL_STATUS']);
+				$task['SUB_STATUS'] = $task['STATUS'];
+				$task['STATUS'] = $task['REAL_STATUS'];
+				unset($task['REAL_STATUS']);
 			}
 
-			$this->formatGroupInfo($row);
-			$this->formatUserInfo($row);
-			$this->formatDateFieldsForOutput($row);
+			$this->formatDateFieldsForOutput($task);
+			$task = $this->convertKeysToCamelCase($task);
 
-			$row = $this->convertKeysToCamelCase($row);
-
-			if (\Bitrix\Main\Loader::includeModule('pull') && isset($params['SEND_PULL']) && $params['SEND_PULL'] !='N')
+			if (
+				isset($params['SEND_PULL'])
+				&& $params['SEND_PULL'] !== 'N'
+				&& Loader::includeModule('pull')
+			)
 			{
-				$users = array_unique(array_merge([$row['CREATED_BY']], [$row['RESPONSIBLE_ID']]));
+				$users = array_unique(array_merge([$task['CREATED_BY']], [$task['RESPONSIBLE_ID']]));
 				foreach ($users as $userId)
 				{
-					\CPullWatch::Add($userId, 'TASK_'.$row['ID']);
+					\CPullWatch::Add($userId, 'TASK_'.$task['ID']);
 				}
 			}
 		}
-		unset($row);
+		unset($task);
 
-		return new Response\DataType\Page(
-			'tasks', $list, function () use ($getListParams, $params, $result) {
-			$obj = $result['AUX']['OBJ_RES'];
-
-			return $obj->nSelectedCount;
-		}
+		return new Engine\Response\DataType\Page(
+			'tasks',
+			$tasks,
+			static function() use ($result) {
+				return $result['AUX']['OBJ_RES']->nSelectedCount;
+			}
 		);
 
 	}
 
-	private function checkOrderKeys($order)
+	/**
+	 * @param $order
+	 * @return bool
+	 */
+	private function checkOrderKeys($order): bool
     {
         $orderKeys = array_keys(array_change_key_case($order, CASE_UPPER));
         $availableKeys = \CTasks::getAvailableOrderFields();
 
-        if(array_diff($orderKeys, $availableKeys))
-        {
-            return false;
-        }
-
-        return true;
+        return empty(array_diff($orderKeys, $availableKeys));
     }
 
 	/**
 	 * Parses source filter.
 	 *
 	 * @param array $filter
-	 * @return mixed
-	 * @throws \Bitrix\Main\ArgumentException
-	 * @throws \Bitrix\Main\ArgumentNullException
-	 * @throws \Bitrix\Main\ArgumentOutOfRangeException
-	 * @throws \Bitrix\Main\SystemException
+	 * @return array
+	 * @throws Main\ArgumentException
+	 * @throws Main\ArgumentNullException
+	 * @throws Main\ArgumentOutOfRangeException
+	 * @throws Main\SystemException
 	 */
-	private function getFilter($filter)
+	private function getFilter(array $filter): array
 	{
 		$filter = (is_array($filter) && !empty($filter) ? $filter : []);
 		$userId = ($filter['MEMBER'] ?? $this->getCurrentUser()->getId());
 		$roleId = (array_key_exists('ROLE', $filter) ? $filter['ROLE'] : '');
 
-		if (!empty($filter))
+		return $this->processFilter($filter, $userId, $roleId);
+	}
+
+	/**
+	 * @param array $filter
+	 * @param int $userId
+	 * @param string $roleId
+	 * @return array
+	 * @throws Main\ArgumentException
+	 * @throws Main\ArgumentNullException
+	 * @throws Main\ArgumentOutOfRangeException
+	 * @throws Main\SystemException
+	 */
+	private function processFilter(array $filter, int $userId, string $roleId): array
+	{
+		$filter = $this->processFilterSearchIndex($filter);
+		$filter = $this->processFilterStatus($filter);
+		$filter = $this->processFilterWithoutDeadline($filter, $userId, $roleId);
+		$filter = $this->processFilterNotViewed($filter, $userId, $roleId);
+		$filter = $this->processFilterRoleId($filter, $userId, $roleId);
+
+		return $filter;
+	}
+
+	/**
+	 * @param array $filter
+	 * @return array
+	 * @throws Main\ArgumentException
+	 * @throws Main\ArgumentNullException
+	 * @throws Main\ArgumentOutOfRangeException
+	 * @throws Main\SystemException
+	 */
+	private function processFilterSearchIndex(array $filter): array
+	{
+		if (!array_key_exists('SEARCH_INDEX', $filter))
 		{
-			if (array_key_exists('SEARCH_INDEX', $filter))
-			{
-				$operator = (($isFullTextIndexEnabled = SearchIndexTable::isFullTextIndexEnabled())? '*' : '*%');
-				$searchValue = SearchIndex::prepareStringToSearch($filter['SEARCH_INDEX'], $isFullTextIndexEnabled);
-
-				$filter['::SUBFILTER-FULL_SEARCH_INDEX'][$operator . 'FULL_SEARCH_INDEX'] = $searchValue;
-			}
-
-			if (array_key_exists('WO_DEADLINE', $filter) && $filter['WO_DEADLINE'] === 'Y')
-			{
-				switch ($roleId)
-				{
-					case 'R':
-						$filter['!CREATED_BY'] = $userId;
-						break;
-
-					case 'O':
-						$filter['!RESPONSIBLE_ID'] = $userId;
-						break;
-
-					default:
-						if (array_key_exists('GROUP_ID', $filter))
-						{
-							$filter['!REFERENCE:RESPONSIBLE_ID'] = 'CREATED_BY';
-						}
-						else
-						{
-							$filter['::SUBFILTER-OR'] = [
-								'::LOGIC' => 'OR',
-								'::SUBFILTER-R' => [
-									'!CREATED_BY' => $userId,
-									'RESPONSIBLE_ID' => $userId,
-								],
-								'::SUBFILTER-O' => [
-									'CREATED_BY' => $userId,
-									'!RESPONSIBLE_ID' => $userId,
-								],
-							];
-						}
-						break;
-				}
-
-				$filter['DEADLINE'] = '';
-			}
-
-			if (array_key_exists('NOT_VIEWED', $filter) && $filter['NOT_VIEWED'] === 'Y')
-			{
-				$filter['VIEWED'] = 0;
-				$filter['VIEWED_BY'] = $userId;
-				$filter['!CREATED_BY'] = $userId;
-
-				switch ($roleId)
-				{
-					default:
-					case '': // view all
-						$filter['::SUBFILTER-OR-NW'] = [
-							'::LOGIC' => 'OR',
-							'::SUBFILTER-R' => [
-								'RESPONSIBLE_ID' => $userId,
-							],
-							'::SUBFILTER-A' => [
-								'=ACCOMPLICE' => $userId,
-							],
-						];
-						break;
-
-					case 'A':
-						$filter['::SUBFILTER-R'] = [
-							'=ACCOMPLICE' => $userId,
-						];
-						break;
-
-					case 'U':
-						$filter['::SUBFILTER-R'] = [
-							'=AUDITOR' => $userId,
-						];
-						break;
-				}
-			}
-
-			if (array_key_exists('STATUS', $filter))
-			{
-				$filter['REAL_STATUS'] = $filter['STATUS']; // hack for darkness times
-				unset($filter['STATUS']);
-			}
+			return $filter;
 		}
 
-		if ($roleId)
+		$searchValue = SearchIndex::prepareStringToSearch($filter['SEARCH_INDEX']);
+		if ($searchValue !== '')
 		{
-			switch ($roleId)
-			{
-				default:
-					if (array_key_exists('GROUP_ID', $filter))
-					{
-						$filter['MEMBER'] = $userId;
-					}
-
-					$filter['::SUBFILTER-OR-ORIGIN'] = [
-						'::LOGIC' => 'OR',
-						'::SUBFILTER-1' => [
-							'REAL_STATUS' => $filter['REAL_STATUS'],
-						],
-						'::SUBFILTER-2' => [
-							'=CREATED_BY' => $userId,
-							'REAL_STATUS' => \CTasks::STATE_SUPPOSEDLY_COMPLETED,
-						],
-					];
-					unset($filter['REAL_STATUS']);
-					break;
-
-				case 'R':
-					$filter['=RESPONSIBLE_ID'] = $userId;
-					break;
-
-				case 'A':
-					$filter['=ACCOMPLICE'] = $userId;
-					break;
-
-				case 'U':
-					$filter['=AUDITOR'] = $userId;
-					break;
-
-				case 'O':
-					$filter['=CREATED_BY'] = $userId;
-					$filter['!REFERENCE:RESPONSIBLE_ID'] = 'CREATED_BY';
-					break;
-			}
-
-			unset($filter['ROLE']);
+			$filter['::SUBFILTER-FULL_SEARCH_INDEX']['*FULL_SEARCH_INDEX'] = $searchValue;
 		}
 
 		return $filter;
+	}
+
+	/**
+	 * @param array $filter
+	 * @return array
+	 */
+	private function processFilterStatus(array $filter): array
+	{
+		if (!array_key_exists('STATUS', $filter))
+		{
+			return $filter;
+		}
+
+		$filter['REAL_STATUS'] = $filter['STATUS'];
+		unset($filter['STATUS']);
+
+		return $filter;
+	}
+
+	/**
+	 * @param array $filter
+	 * @param int $userId
+	 * @param string $roleId
+	 * @return array
+	 */
+	private function processFilterWithoutDeadline(array $filter, int $userId, string $roleId): array
+	{
+		if (!array_key_exists('WO_DEADLINE', $filter) || $filter['WO_DEADLINE'] !== 'Y')
+		{
+			return $filter;
+		}
+
+		switch ($roleId)
+		{
+			case 'R':
+				$filter['!CREATED_BY'] = $userId;
+				break;
+
+			case 'O':
+				$filter['!RESPONSIBLE_ID'] = $userId;
+				break;
+
+			default:
+				if (array_key_exists('GROUP_ID', $filter))
+				{
+					$filter['!REFERENCE:RESPONSIBLE_ID'] = 'CREATED_BY';
+				}
+				else
+				{
+					$filter['::SUBFILTER-OR'] = [
+						'::LOGIC' => 'OR',
+						'::SUBFILTER-R' => [
+							'!CREATED_BY' => $userId,
+							'RESPONSIBLE_ID' => $userId,
+						],
+						'::SUBFILTER-O' => [
+							'CREATED_BY' => $userId,
+							'!RESPONSIBLE_ID' => $userId,
+						],
+					];
+				}
+				break;
+		}
+		$filter['DEADLINE'] = '';
+
+		return $filter;
+	}
+
+	/**
+	 * @param array $filter
+	 * @param int $userId
+	 * @param string $roleId
+	 * @return array
+	 */
+	private function processFilterNotViewed(array $filter, int $userId, string $roleId): array
+	{
+		if (!array_key_exists('NOT_VIEWED', $filter) || $filter['NOT_VIEWED'] !== 'Y')
+		{
+			return $filter;
+		}
+
+		$filter['VIEWED'] = 0;
+		$filter['VIEWED_BY'] = $userId;
+		$filter['!CREATED_BY'] = $userId;
+
+		switch ($roleId)
+		{
+			case 'A':
+				$filter['::SUBFILTER-R'] = ['=ACCOMPLICE' => $userId];
+				break;
+
+			case 'U':
+				$filter['::SUBFILTER-R'] = ['=AUDITOR' => $userId];
+				break;
+
+			default:
+			case '': // view all
+				$filter['::SUBFILTER-OR-NW'] = [
+					'::LOGIC' => 'OR',
+					'::SUBFILTER-R' => ['RESPONSIBLE_ID' => $userId],
+					'::SUBFILTER-A' => ['=ACCOMPLICE' => $userId],
+				];
+				break;
+		}
+
+		return $filter;
+	}
+
+	/**
+	 * @param array $filter
+	 * @param int $userId
+	 * @param string $roleId
+	 * @return array
+	 */
+	private function processFilterRoleId(array $filter, int $userId, string $roleId): array
+	{
+		if (!$roleId)
+		{
+			return $filter;
+		}
+
+		switch ($roleId)
+		{
+			case 'R':
+				$filter['=RESPONSIBLE_ID'] = $userId;
+				break;
+
+			case 'A':
+				$filter['=ACCOMPLICE'] = $userId;
+				break;
+
+			case 'U':
+				$filter['=AUDITOR'] = $userId;
+				break;
+
+			case 'O':
+				$filter['=CREATED_BY'] = $userId;
+				$filter['!REFERENCE:RESPONSIBLE_ID'] = 'CREATED_BY';
+				break;
+
+			default:
+				if (array_key_exists('GROUP_ID', $filter))
+				{
+					$filter['MEMBER'] = $userId;
+				}
+				$filter['::SUBFILTER-OR-ORIGIN'] = [
+					'::LOGIC' => 'OR',
+					'::SUBFILTER-1' => [
+						'REAL_STATUS' => $filter['REAL_STATUS'],
+					],
+					'::SUBFILTER-2' => [
+						'=CREATED_BY' => $userId,
+						'REAL_STATUS' => \CTasks::STATE_SUPPOSEDLY_COMPLETED,
+					],
+				];
+				unset($filter['REAL_STATUS']);
+				break;
+		}
+		unset($filter['ROLE']);
+
+		return $filter;
+	}
+
+	/**
+	 * @param array $fields
+	 * @return bool
+	 */
+	private function isUfExist(array $fields): bool
+	{
+		foreach ($fields as $field)
+		{
+			if (mb_strpos($field, 'UF_') === 0)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * @param \CTaskItem $task
+	 * @return array|null
+	 * @throws Main\ArgumentException
+	 * @throws Main\ObjectPropertyException
+	 * @throws Main\SystemException
+	 */
+	public function muteAction(\CTaskItem $task): ?array
+	{
+		UserOption::add($task->getId(), $this->getCurrentUser()->getId(), UserOption\Option::MUTED);
+		return $this->getAction($task);
+	}
+
+	/**
+	 * @param \CTaskItem $task
+	 * @return array|null
+	 * @throws Main\ArgumentException
+	 * @throws Main\ObjectPropertyException
+	 * @throws Main\SystemException
+	 */
+	public function unmuteAction(\CTaskItem $task): ?array
+	{
+		UserOption::delete($task->getId(), $this->getCurrentUser()->getId(), UserOption\Option::MUTED);
+		return $this->getAction($task);
+	}
+
+	/**
+	 * @param \CTaskItem $task
+	 * @return array|null
+	 * @throws Main\ArgumentException
+	 * @throws Main\ObjectPropertyException
+	 * @throws Main\SystemException
+	 */
+	public function pinAction(\CTaskItem $task): ?array
+	{
+		UserOption::add($task->getId(), $this->getCurrentUser()->getId(), UserOption\Option::PINNED);
+		return $this->getAction($task);
+	}
+
+	/**
+	 * @param \CTaskItem $task
+	 * @return array|null
+	 * @throws Main\ArgumentException
+	 * @throws Main\ObjectPropertyException
+	 * @throws Main\SystemException
+	 */
+	public function unpinAction(\CTaskItem $task): ?array
+	{
+		UserOption::delete($task->getId(), $this->getCurrentUser()->getId(), UserOption\Option::PINNED);
+		return $this->getAction($task);
+	}
+
+	/**
+	 * @param \CTaskItem $task
+	 * @return bool
+	 */
+	public function pingAction(\CTaskItem $task): bool
+	{
+		if ($taskData = $task->getData(false))
+		{
+			return $this->pingStatusAction($taskData);
+		}
+
+		return false;
+	}
+
+	/**
+	 * @param array $taskData
+	 * @return bool
+	 */
+	private function pingStatusAction(array $taskData): bool
+	{
+		$taskId = (int)$taskData['ID'];
+		$userId = $this->getCurrentUser()->getId();
+
+		$commentPoster = CommentPoster::getInstance($taskId, $userId);
+		$commentPoster && $commentPoster->postCommentsOnTaskStatusPinged($taskData);
+
+		\CTaskNotifications::sendPingStatusMessage($taskData, $userId);
+
+		return true;
 	}
 
 	/**
@@ -635,13 +1008,23 @@ final class Task extends Base
 	 * @param \CTaskItem $task
 	 * @param $userId
 	 * @param array $params
-	 *
 	 * @return array
+	 * @throws Main\ArgumentException
+	 * @throws Main\ObjectPropertyException
+	 * @throws Main\SystemException
 	 * @throws TasksException
 	 */
-	public function delegateAction(\CTaskItem $task, $userId, array $params = array())
+	public function delegateAction(\CTaskItem $task, $userId, array $params = []): ?array
 	{
-		$task->delegate($userId, $params);
+		try
+		{
+			$task->delegate($userId, $params);
+		}
+		catch (TasksException $e)
+		{
+			$this->errorCollection->add([new Error($e->getMessage())]);
+			return null;
+		}
 
 		if ($params['PLATFORM'] === 'mobile')
 		{
@@ -656,19 +1039,26 @@ final class Task extends Base
 	 *
 	 * @param \CTaskItem $task
 	 * @param array $params
-	 *
-	 * @return array
+	 * @return array|null
+	 * @throws Main\ArgumentException
+	 * @throws Main\ObjectPropertyException
+	 * @throws Main\SystemException
 	 * @throws TasksException
 	 */
-	public function startAction(\CTaskItem $task, array $params = array())
+	public function startAction(\CTaskItem $task, array $params = []): ?array
 	{
-		$row = $task->getData(true);
-		if ($row['ALLOW_TIME_TRACKING'] === 'Y')
+		try
 		{
-			if (!$this->startTimer($task, true))
-			{
-				return null;
-			}
+			$row = $task->getData(true);
+		}
+		catch (TasksException $e)
+		{
+			return null;
+		}
+
+		if ($row['ALLOW_TIME_TRACKING'] === 'Y' && !$this->startTimer($task, true))
+		{
+			return null;
 		}
 
 		$task->startExecution($params);
@@ -681,58 +1071,44 @@ final class Task extends Base
 	 *
 	 * @param \CTaskItem $task
 	 * @param bool $stopPrevious
-	 *
 	 * @return bool|null
 	 * @throws TasksException
 	 */
-	private function startTimer(\CTaskItem $task, $stopPrevious = false)
+	private function startTimer(\CTaskItem $task, $stopPrevious = false): ?bool
 	{
-		$timer = \CTaskTimerManager::getInstance($this->getCurrentUser()->getId());
-		$lastTimer = $timer->getLastTimer();
-		if (!$stopPrevious &&
-			$lastTimer['TASK_ID'] &&
-			$lastTimer['TIMER_STARTED_AT'] > 0 &&
-			intval($lastTimer['TASK_ID']) &&
-			$lastTimer['TASK_ID'] != $task->getId())
-		{
-			$additional = array();
+		$userId = $this->getCurrentUser()->getId();
 
-			// use direct query here, avoiding cached CTaskItem::getData(), because $lastTimer['TASK_ID'] unlikely will be in cache
-			list($tasks, $res) = \CTaskItem::fetchList(
-				$this->getCurrentUser()->getId(),
-				array(),
-				array('ID' => intval($lastTimer['TASK_ID'])),
-				array(),
-				array('ID', 'TITLE')
-			);
-			if (is_array($tasks))
+		$timer = \CTaskTimerManager::getInstance($userId);
+		$lastTimer = $timer->getLastTimer();
+		$lastTimerTaskId = (int)$lastTimer['TASK_ID'];
+
+		if (
+			!$stopPrevious
+			&& $lastTimerTaskId
+			&& $lastTimer['TIMER_STARTED_AT'] > 0
+			&& $lastTimerTaskId !== (int)$task->getId()
+		)
+		{
+			// use direct query here, avoiding cached CTaskItem::getData(), because $lastTimerTaskId unlikely will be in cache
+			[$tasks,] = \CTaskItem::fetchList($userId, [], ['ID' => $lastTimerTaskId], [], ['ID', 'TITLE']);
+			if (is_array($tasks) && !empty($tasks))
 			{
-				$_task = array_shift($tasks);
-				if ($_task)
+				$task = array_shift($tasks);
+				if ($task)
 				{
-					$data = $_task->getData(false);
-					if (intval($data['ID']))
-					{
-						$additional['TASK'] = array(
-							'ID'    => $data['ID'],
-							'TITLE' => $data['TITLE']
-						);
-					}
+					$data = $task->getData(false);
+					$replace = ['ID' => $data['ID'], 'TITLE' => $data['TITLE']];
+
+					$this->addError(new Error(GetMessage('TASKS_OTHER_TASK_ON_TIMER', $replace)));
 				}
 			}
 
-			$this->addError(
-				new Error(GetMessage('TASKS_OTHER_TASK_ON_TIMER', ['ID' => $data['ID'], 'TITLE' => $data['TITLE']]))
-			);
-
 			return null;
 		}
-		else
+
+		if ($timer->start($task->getId()) === false)
 		{
-			if ($timer->start($task->getId()) === false)
-			{
-				$this->addError(new Error(GetMessage('TASKS_FAILED_START_TASK_TIMER')));
-			}
+			$this->addError(new Error(GetMessage('TASKS_FAILED_START_TASK_TIMER')));
 		}
 
 		return true;
@@ -743,19 +1119,26 @@ final class Task extends Base
 	 *
 	 * @param \CTaskItem $task
 	 * @param array $params
-	 *
-	 * @return array
+	 * @return array|null
+	 * @throws Main\ArgumentException
+	 * @throws Main\ObjectPropertyException
+	 * @throws Main\SystemException
 	 * @throws TasksException
 	 */
-	public function pauseAction(\CTaskItem $task, array $params = array())
+	public function pauseAction(\CTaskItem $task, array $params = []): ?array
 	{
-		$row = $task->getData(true);
-		if ($row['ALLOW_TIME_TRACKING'] === 'Y')
+		try
 		{
-			if (!$this->stopTimer($task))
-			{
-				return null;
-			}
+			$row = $task->getData(true);
+		}
+		catch (TasksException $e)
+		{
+			return null;
+		}
+
+		if ($row['ALLOW_TIME_TRACKING'] === 'Y' && !$this->stopTimer($task))
+		{
+			return null;
 		}
 
 		$task->pauseExecution($params);
@@ -767,37 +1150,41 @@ final class Task extends Base
 	 * Stop an execution timer for a specified task
 	 *
 	 * @param \CTaskItem $task
-	 *
 	 * @return bool|null
 	 */
-	private function stopTimer(\CTaskItem $task)
+	private function stopTimer(\CTaskItem $task): ?bool
 	{
 		$timer = \CTaskTimerManager::getInstance($this->getCurrentUser()->getId());
 		if ($timer->stop($task->getId()) === false)
 		{
 			$this->addError(new Error(GetMessage('TASKS_FAILED_STOP_TASK_TIMER')));
-
 			return null;
 		}
-
 		return true;
 	}
-
-
-	// internal functions
 
 	/**
 	 * Complete task
 	 *
 	 * @param \CTaskItem $task
 	 * @param array $params
-	 *
 	 * @return array
+	 * @throws Main\ArgumentException
+	 * @throws Main\ObjectPropertyException
+	 * @throws Main\SystemException
 	 * @throws TasksException
 	 */
-	public function completeAction(\CTaskItem $task, array $params = array())
+	public function completeAction(\CTaskItem $task, array $params = []): ?array
 	{
-		$task->complete($params);
+		try
+		{
+			$task->complete($params);
+		}
+		catch (TasksException $e)
+		{
+			$this->errorCollection->add([new Error($e->getMessage())]);
+			return null;
+		}
 
 		return $this->getAction($task);
 	}
@@ -807,13 +1194,23 @@ final class Task extends Base
 	 *
 	 * @param \CTaskItem $task
 	 * @param array $params
-	 *
 	 * @return array
+	 * @throws Main\ArgumentException
+	 * @throws Main\ObjectPropertyException
+	 * @throws Main\SystemException
 	 * @throws TasksException
 	 */
-	public function deferAction(\CTaskItem $task, array $params = array())
+	public function deferAction(\CTaskItem $task, array $params = []): ?array
 	{
-		$task->defer($params);
+		try
+		{
+			$task->defer($params);
+		}
+		catch (TasksException $e)
+		{
+			$this->errorCollection->add([new Error($e->getMessage())]);
+			return null;
+		}
 
 		return $this->getAction($task);
 	}
@@ -823,13 +1220,23 @@ final class Task extends Base
 	 *
 	 * @param \CTaskItem $task
 	 * @param array $params
-	 *
 	 * @return array
+	 * @throws Main\ArgumentException
+	 * @throws Main\ObjectPropertyException
+	 * @throws Main\SystemException
 	 * @throws TasksException
 	 */
-	public function renewAction(\CTaskItem $task, array $params = array())
+	public function renewAction(\CTaskItem $task, array $params = []): ?array
 	{
-		$task->renew($params);
+		try
+		{
+			$task->renew($params);
+		}
+		catch (TasksException $e)
+		{
+			$this->errorCollection->add([new Error($e->getMessage())]);
+			return null;
+		}
 
 		return $this->getAction($task);
 	}
@@ -839,13 +1246,23 @@ final class Task extends Base
 	 *
 	 * @param \CTaskItem $task
 	 * @param array $params
-	 *
 	 * @return array
+	 * @throws Main\ArgumentException
+	 * @throws Main\ObjectPropertyException
+	 * @throws Main\SystemException
 	 * @throws TasksException
 	 */
-	public function approveAction(\CTaskItem $task, array $params = array())
+	public function approveAction(\CTaskItem $task, array $params = []): ?array
 	{
-		$task->approve($params);
+		try
+		{
+			$task->approve($params);
+		}
+		catch (TasksException $e)
+		{
+			$this->errorCollection->add([new Error($e->getMessage())]);
+			return null;
+		}
 
 		return $this->getAction($task);
 	}
@@ -855,13 +1272,73 @@ final class Task extends Base
 	 *
 	 * @param \CTaskItem $task
 	 * @param array $params
-	 *
 	 * @return array
+	 * @throws Main\ArgumentException
+	 * @throws Main\ObjectPropertyException
+	 * @throws Main\SystemException
 	 * @throws TasksException
 	 */
-	public function disapproveAction(\CTaskItem $task, array $params = array())
+	public function disapproveAction(\CTaskItem $task, array $params = []): ?array
 	{
-		$task->disapprove($params);
+		try
+		{
+			$task->disapprove($params);
+		}
+		catch (TasksException $e)
+		{
+			$this->errorCollection->add([new Error($e->getMessage())]);
+			return null;
+		}
+
+		return $this->getAction($task);
+	}
+
+	/**
+	 * Become an auditor of a specified task
+	 *
+	 * @param \CTaskItem $task
+	 * @return array
+	 * @throws Main\ArgumentException
+	 * @throws Main\ObjectPropertyException
+	 * @throws Main\SystemException
+	 * @throws TasksException
+	 */
+	public function startWatchAction(\CTaskItem $task): ?array
+	{
+		try
+		{
+			$task->startWatch();
+		}
+		catch (TasksException $e)
+		{
+			$this->errorCollection->add([new Error($e->getMessage())]);
+			return null;
+		}
+
+		return $this->getAction($task);
+	}
+
+	/**
+	 * Stop being an auditor of a specified task
+	 *
+	 * @param \CTaskItem $task
+	 * @return array
+	 * @throws Main\ArgumentException
+	 * @throws Main\ObjectPropertyException
+	 * @throws Main\SystemException
+	 * @throws TasksException
+	 */
+	public function stopWatchAction(\CTaskItem $task): ?array
+	{
+		try
+		{
+			$task->stopWatch();
+		}
+		catch (TasksException $e)
+		{
+			$this->errorCollection->add([new Error($e->getMessage())]);
+			return null;
+		}
 
 		return $this->getAction($task);
 	}
@@ -870,15 +1347,26 @@ final class Task extends Base
 	 * @param \CTaskItem $task
 	 * @param array $auditorsIds
 	 * @return array
+	 * @throws Main\ArgumentException
+	 * @throws Main\ObjectPropertyException
+	 * @throws Main\SystemException
 	 */
-	public function addAuditorsAction(\CTaskItem $task, array $auditorsIds = [])
+	public function addAuditorsAction(\CTaskItem $task, array $auditorsIds = []): array
 	{
 		if (empty($auditorsIds))
 		{
 			return $this->getAction($task);
 		}
 
-		$taskData = $task->getData(false);
+		try
+		{
+			$taskData = $task->getData(false);
+		}
+		catch (TasksException $e)
+		{
+			return $this->getAction($task);
+		}
+
 		$auditors = array_merge($taskData['AUDITORS'], $auditorsIds);
 		$task->update(['AUDITORS' => $auditors]);
 
@@ -889,15 +1377,26 @@ final class Task extends Base
 	 * @param \CTaskItem $task
 	 * @param array $accomplicesIds
 	 * @return array
+	 * @throws Main\ArgumentException
+	 * @throws Main\ObjectPropertyException
+	 * @throws Main\SystemException
 	 */
-	public function addAccomplicesAction(\CTaskItem $task, array $accomplicesIds = [])
+	public function addAccomplicesAction(\CTaskItem $task, array $accomplicesIds = []): array
 	{
 		if (empty($accomplicesIds))
 		{
 			return $this->getAction($task);
 		}
 
-		$taskData = $task->getData(false);
+		try
+		{
+			$taskData = $task->getData(false);
+		}
+		catch (TasksException $e)
+		{
+			return $this->getAction($task);
+		}
+
 		$accomplices = array_merge($taskData['ACCOMPLICES'], $accomplicesIds);
 		$task->update(['ACCOMPLICES' => $accomplices]);
 
@@ -905,111 +1404,10 @@ final class Task extends Base
 	}
 
 	/**
-	 * Become an auditor of a specified task
-	 *
-	 * @param \CTaskItem $task
-	 *
-	 * @return array
-	 * @throws TasksException
+	 * @param \Exception $exception
+	 * @return Error
 	 */
-	public function startWatchAction(\CTaskItem $task)
-	{
-		$task->startWatch();
-
-		return $this->getAction($task);
-	}
-
-	/**
-	 * Stop being an auditor of a specified task
-	 *
-	 * @param \CTaskItem $task
-	 *
-	 * @return array
-	 * @throws TasksException
-	 */
-	public function stopWatchAction(\CTaskItem $task)
-	{
-		$task->stopWatch();
-
-		return $this->getAction($task);
-	}
-
-	private static function getGroupInfo($groupId)
-    {
-        static $groups = [];
-
-        if($groupId) {
-            if (!$groups[$groupId]) {
-                $group = SocialNetwork\Group::getData([$groupId]);
-                $group = $group[$groupId];
-
-                $groups[$groupId] = [
-                    'ID' => $groupId,
-                    'NAME' => $group['NAME']
-                ];
-            }
-        }
-        else
-        {
-            $groups[$groupId] = [];
-        }
-
-        return $groups[$groupId];
-    }
-
-	/**
-	 * @param $userId
-	 *
-	 * @return mixed|null
-	 */
-	private static function getUserInfo($userId)
-	{
-		static $users = array();
-
-		if (!$userId)
-		{
-			return null;
-		}
-
-		if (!$users[$userId])
-		{
-			// prepare link to profile
-			$replaceList = array('user_id' => $userId);
-			$link = \CComponentEngine::makePathFromTemplate('/company/personal/user/#user_id#/', $replaceList);
-
-			$userFields = \Bitrix\Main\UserTable::getRowById($userId);
-			if (!$userFields)
-			{
-				return null;
-			}
-
-			// format name
-			$userName = \CUser::FormatName(
-				'#NOBR##LAST_NAME# #NAME##/NOBR#',
-				array(
-					'LOGIN'       => $userFields['LOGIN'],
-					'NAME'        => $userFields['NAME'],
-					'LAST_NAME'   => $userFields['LAST_NAME'],
-					'SECOND_NAME' => $userFields['SECOND_NAME']
-				),
-				true,
-				false
-			);
-
-
-			$users[$userId] = array(
-				'ID'   => $userId,
-				'NAME' => $userName,
-				'LINK' => $link,
-				'ICON' => UI\Avatar::getPerson($userFields['PERSONAL_PHOTO'])
-			);
-		}
-
-		return $users[$userId];
-	}
-
-
-	protected function buildErrorFromException(\Exception $exception)
+	protected function buildErrorFromException(\Exception $exception): Error
 	{
 		if (!($exception instanceof Exception))
 		{
@@ -1018,16 +1416,10 @@ final class Task extends Base
 
 		if (Util::is_serialized($exception->getMessage()))
 		{
-			$message = unserialize($exception->getMessage());
-
+			$message = unserialize($exception->getMessage(), ['allowed_classes' => false]);
 			return new Error($message[0]['text'], $exception->getCode(), [$message[0]]);
 		}
 
 		return new Error($exception->getMessage(), $exception->getCode());
 	}
 }
-
-/**
- * [1] for compatible with future php api
- * [2] for compatible with rest standarts
- */

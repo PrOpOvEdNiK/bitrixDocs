@@ -16,7 +16,7 @@ class CWizardSolPanelIntranet
 		{
 			if($_REQUEST['add_new_site_sol']=='sol' && check_bitrix_sessid())
 			{
-				$dbrSites = CSite::GetList($by, $ord);
+				$dbrSites = CSite::GetList();
 				$arSitesID = Array();
 				$arSitesPath = Array();
 				$siteCnt = 0;
@@ -25,8 +25,8 @@ class CWizardSolPanelIntranet
 					if($arSite["ACTIVE"]=="Y")
 						$siteCnt++;
 
-					$arSitesID[] = strtolower($arSite["ID"]);
-					$arSitesPath[] = strtolower($arSite["PATH"]);
+					$arSitesID[] = mb_strtolower($arSite["ID"]);
+					$arSitesPath[] = mb_strtolower($arSite["PATH"]);
 				}
 
 				$newSiteID = "";
@@ -98,7 +98,7 @@ class CWizardSolPanelIntranet
 
 
 			$arSites = array();
-			$dbrSites = CSite::GetList($by, $ord, Array("ACTIVE"=>"Y"));
+			$dbrSites = CSite::GetList('', '', Array("ACTIVE"=>"Y"));
 			while($arSite = $dbrSites->GetNext())
 			{
 		 		$arSites[] = Array(

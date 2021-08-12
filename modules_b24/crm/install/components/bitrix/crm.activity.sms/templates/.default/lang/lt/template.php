@@ -1,9 +1,0 @@
-<?
-$MESS["CRM_ACTIVITY_SMS_SENDER_ROBOT"] = "Pranešimas buvo išsiųstas SMS roboto";
-$MESS["CRM_ACTIVITY_SMS_PHONE_NUMBER"] = "Siųsti į numerį";
-$MESS["CRM_ACTIVITY_SMS_DESCRIPTION"] = "Pranešimo tekstas";
-$MESS["CRM_ACTIVITY_SMS_MESSAGE_STATUS"] = "Pranešimo statusas";
-$MESS["CRM_ACTIVITY_SMS_RECIPIENT_NAME"] = "Gavėjas";
-$MESS["CRM_ACTIVITY_SMS_RECIPIENT_CLIENT"] = "klientas";
-$MESS["CRM_ACTIVITY_SMS_RECIPIENT_USER"] = "darbuotojas";
-?>

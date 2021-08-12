@@ -1,0 +1,13 @@
+<comment>Usage:</comment>
+  descriptor:åèae [options] [--] \<argument_åèae>
+  descriptor:åèae -o|--option_name \<argument_name>
+  descriptor:åèae \<argument_name>
+
+<comment>Arguments:</comment>
+  <info>argument_åèae</info>   
+
+<comment>Options:</comment>
+  <info>-o, --option_åèae</info>  
+
+<comment>Help:</comment>
+  command åèae help

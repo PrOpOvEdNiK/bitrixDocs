@@ -7,6 +7,9 @@ use Bitrix\Disk\TypeFile;
 use Bitrix\Main\ArgumentNullException;
 use Bitrix\Main\UI\Extension;
 
+/**
+ * @deprecated
+ */
 class Video extends Base
 {
 	// should be equal to \Bitrix\Transformer\VideoTransformer::MAX_FILESIZE
@@ -47,7 +50,7 @@ class Video extends Base
 	 */
 	public static function isTransformationAllowedInOptions()
 	{
-		return Configuration::allowVideoTransformation();
+		return true;
 	}
 
 	/**
@@ -325,9 +328,10 @@ class Video extends Base
 	/**
 	 * Returns true if attached object with this file should have limited rights while transform in progress.
 	 *
+	 * @param bool $isCheckLastTransformationStatus
 	 * @return bool
 	 */
-	public function isNeededLimitRightsOnTransformTime()
+	public function isNeededLimitRightsOnTransformTime(bool $isCheckLastTransformationStatus = true): bool
 	{
 		if($this->id > 0)
 		{
@@ -340,12 +344,12 @@ class Video extends Base
 			),
 			self::getAlternativeExtensions()
 		);
-		if(in_array(strtolower($this->fileExtension), $mp4Formats))
+		if(in_array(mb_strtolower($this->fileExtension), $mp4Formats))
 		{
 			return false;
 		}
 
-		if($this->isLastTransformationFailed())
+		if($isCheckLastTransformationStatus && $this->isLastTransformationFailed())
 		{
 			return false;
 		}

@@ -22,7 +22,7 @@ class CWebDavBase
 	const MIME_GROUP_IMAGE = 'IMAGE';
 
 	var $base_url;
-	var $base_url_full; 
+	var $base_url_full;
 
 	var $_path;
 	var $multipart_separator = false;
@@ -30,7 +30,7 @@ class CWebDavBase
 	var $uri = '';
 	var $http_method;
 	var $http_user_agent = "undefined";
-	
+
 	var $allow = array(
 		"POST"		=> array("rights" => "U", "min_rights" => "U"),
 		"OPTIONS"	=> array("rights" => "A", "min_rights" => "A"),
@@ -47,27 +47,27 @@ class CWebDavBase
 		"UNLOCK"	=> array("rights" => "U", "min_rights" => "U"),
 	);
 	static $methods = array(
-		"POST", "OPTIONS", "PROPFIND", "GET", "PUT", "MKCOL", "DELETE", 
+		"POST", "OPTIONS", "PROPFIND", "GET", "PUT", "MKCOL", "DELETE",
 		"UNDELETE", "MOVE", "PROPPATCH", "HEAD", "LOCK", "UNLOCK",
 	);
 	static $levels = array(1, 2);
 
 	var $arParams = array();
-	
-	var $Type = "undefined"; 
+
+	var $Type = "undefined";
 
 	var $arRootSection = false;
 
 	var $permission = "D";
-	
+
 	var $workflow = false;
-	
+
 	var $wfParams = array();
-	
+
 	var $CACHE = array();
-	
+
 	var $USER = array();
-	
+
 	var $meta_names = array();
 	var $meta_state = null;
 	var $events_enabled = true;
@@ -79,23 +79,31 @@ class CWebDavBase
 
 	protected static $foldersMetaData = null;
 
-	function OnBeforeProlog()
+	public static function OnBeforeProlog()
 	{
 		global $USER, $APPLICATION;
-		
+
+		if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS')
+		{
+			if (preg_match("/Livechat-Auth-Id/i", $_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS']))
+			{
+				return;
+			}
+		}
+
 		if (isset($_SERVER["PHP_AUTH_USER"]) &&
 			(!defined("NOT_CHECK_PERMISSIONS") || NOT_CHECK_PERMISSIONS!==true) &&
 			(CWebDavBase::IsDavHeaders("check_all") ||
 			!$USER->IsAuthorized()))
 		{
-			if (strlen($_SERVER["PHP_AUTH_USER"]) > 0 and
-				strlen($_SERVER["PHP_AUTH_PW"]) > 0)
+			if ($_SERVER["PHP_AUTH_USER"] <> '' and
+				$_SERVER["PHP_AUTH_PW"] <> '')
 			{
-				if (strpos($_SERVER["PHP_AUTH_USER"], $_SERVER['HTTP_HOST']."\\") === 0)
+				if (mb_strpos($_SERVER["PHP_AUTH_USER"], $_SERVER['HTTP_HOST']."\\") === 0)
 				{
 					$_SERVER["PHP_AUTH_USER"] = str_replace($_SERVER['HTTP_HOST']."\\", "", $_SERVER["PHP_AUTH_USER"]);
 				}
-				elseif (strpos($_SERVER["PHP_AUTH_USER"], $_SERVER['SERVER_NAME']."\\") === 0)
+				elseif (mb_strpos($_SERVER["PHP_AUTH_USER"], $_SERVER['SERVER_NAME']."\\") === 0)
 				{
 					$_SERVER["PHP_AUTH_USER"] = str_replace($_SERVER['SERVER_NAME']."\\", "", $_SERVER["PHP_AUTH_USER"]);
 				}
@@ -108,11 +116,11 @@ class CWebDavBase
 			($_SERVER['REQUEST_METHOD']=='OPTIONS' || $_SERVER['REQUEST_METHOD']=='PROPFIND') &&
 			(
 				(
-					strlen($_SERVER["REAL_FILE_PATH"])<=0 &&
-					substr($_SERVER['REQUEST_URI'], -1, 1)=='/'
+					$_SERVER["REAL_FILE_PATH"] == '' &&
+					mb_substr($_SERVER['REQUEST_URI'], -1, 1) == '/'
 				) || (
-					strpos($_SERVER['REQUEST_URI'], 'personal')!==false &&
-					strlen($_SERVER["REAL_FILE_PATH"])<=0 &&
+					mb_strpos($_SERVER['REQUEST_URI'], 'personal') !== false &&
+					$_SERVER["REAL_FILE_PATH"] == '' &&
 					!file_exists($_SERVER['DOCUMENT_ROOT'].$_SERVER['REQUEST_URI'])
 				) // windows scans all the path up to the root, fails if 404, and we have it in /company/personal/...
 			)
@@ -123,7 +131,7 @@ class CWebDavBase
 			$file_path = "";
 			foreach($res as $res_detail)
 			{
-				if(strpos($res_detail["ID"], "webdav")!==false || strpos($res_detail["ID"], "socialnetwork")!==false)
+				if(mb_strpos($res_detail["ID"], "webdav") !== false || mb_strpos($res_detail["ID"], "socialnetwork") !== false)
 				{
 					$good_res = (!$USER->IsAuthorized()/* && $APPLICATION->GetFileAccessPermission(Array(SITE_ID, $res_detail["PATH"]), Array(2)) < "R"*/);
 					break;
@@ -133,7 +141,7 @@ class CWebDavBase
 			if($good_res)
 			{
 				header("MS-Author-Via: DAV");
-				if ( ( strpos($_SERVER['HTTP_USER_AGENT'], "Microsoft-WebDAV-MiniRedir") !== false ) && // for office 2007, windows xp
+				if ( (mb_strpos($_SERVER['HTTP_USER_AGENT'], "Microsoft-WebDAV-MiniRedir") !== false ) && // for office 2007, windows xp
 					($_SERVER['REQUEST_METHOD'] == "OPTIONS") ) {
 						CWebDavBase::base_OPTIONS();
 						die();
@@ -197,7 +205,7 @@ echo '<?xml version="1.0" encoding="utf-8" ?>
 				$file_path = "";
 				foreach($res as $res_detail)
 				{
-					if(strpos($res_detail["ID"], "webdav")!==false || strpos($res_detail["ID"], "socialnetwork")!==false)
+					if(mb_strpos($res_detail["ID"], "webdav") !== false || mb_strpos($res_detail["ID"], "socialnetwork") !== false)
 					{
 						$good_res = (!$USER->IsAuthorized()/* && $APPLICATION->GetFileAccessPermission(Array(SITE_ID, $res_detail["PATH"]), Array(2)) < "R"*/);
 						break;
@@ -218,19 +226,19 @@ echo '<?xml version="1.0" encoding="utf-8" ?>
 		$result = "";
 
 		if (getenv("HTTP_CLIENT_IP")
-			&& strtolower(getenv("HTTP_CLIENT_IP")) !== "unknown")
+			&& mb_strtolower(getenv("HTTP_CLIENT_IP")) !== "unknown")
 				$result = getenv("HTTP_CLIENT_IP");
 
 		elseif (getenv("HTTP_X_FORWARDED_FOR")
-			&& strtolower(getenv("HTTP_X_FORWARDED_FOR")) !==  "unknown")
+			&& mb_strtolower(getenv("HTTP_X_FORWARDED_FOR")) !== "unknown")
 			$result = getenv("HTTP_X_FORWARDED_FOR");
 
 		elseif (getenv("REMOTE_ADDR"
-			&& strtolower(getenv("REMOTE_ADDR")) !==  "unknown"))
+			&& mb_strtolower(getenv("REMOTE_ADDR")) !== "unknown"))
 			$result = getenv("REMOTE_ADDR");
 
 		elseif (!empty($_SERVER['REMOTE_ADDR'])
-			&& strtolower($_SERVER['REMOTE_ADDR']) !==  "unknown")
+			&& mb_strtolower($_SERVER['REMOTE_ADDR']) !== "unknown")
 			$result = $_SERVER['REMOTE_ADDR'];
 
 		return $result;
@@ -240,35 +248,35 @@ echo '<?xml version="1.0" encoding="utf-8" ?>
 	{
 		if ($str === "")
 			$str = $_SERVER['REQUEST_URI'];
-		$page_encoded = (str_replace(array("%25", "%2F", "%3D", "%26", "%3F", "%3A"), 
+		$page_encoded = (str_replace(array("%25", "%2F", "%3D", "%26", "%3F", "%3A"),
 			array("%", "/", "=", "&", "?", ":"), urlencode($str)));
 		return $page_encoded;
 	}
 
-	function CWebDavBase($base_url = "")
+	public function __construct($base_url = "")
 	{
 		$this->http_method = $_SERVER['REQUEST_METHOD'];
-		$this->http_user_agent = "undefined"; 
-		$ua = strtolower($_SERVER["HTTP_USER_AGENT"]); 
-		if (strpos($ua, "opera") === false && (strpos($ua, "msie") !== false) || strpos($_SERVER['HTTP_USER_AGENT'], 'Trident/7.0; rv:11.0') !== false )
+		$this->http_user_agent = "undefined";
+		$ua = mb_strtolower($_SERVER["HTTP_USER_AGENT"]);
+		if (mb_strpos($ua, "opera") === false && (mb_strpos($ua, "msie") !== false) || mb_strpos($_SERVER['HTTP_USER_AGENT'], 'Trident/7.0; rv:11.0') !== false )
 			$this->http_user_agent = "ie";
 
 		$this->meta_names = $this->getFoldersMetaData();
 
-		$this->SetBaseUrl($base_url);		
-		
+		$this->SetBaseUrl($base_url);
+
 		$page = $_SERVER['REQUEST_URI'];
 
 		if ($arParsedUrl = parse_url(CWebDavBase::get_request_url()))
 			$page = $arParsedUrl['path'];
 
 		$this->uri = ($GLOBALS["APPLICATION"]->IsHTTPS() ? 'https' : 'http').'://'.$_SERVER['HTTP_HOST'].$page;
-		
+
 		$path = $this->GetCurrentPath($page);
-		$path = (empty($path) || $path == "index.php" ? "/" : $path); 
-		$this->SetPath($path); 
-		$this->USER["GROUPS"] = $GLOBALS["USER"]->GetUserGroupArray(); 
-		$this->CACHE["PATHS"] = (is_array($this->CACHE["PATHS"]) ? $this->CACHE["PATHS"] : array()); 
+		$path = (empty($path) || $path == "index.php" ? "/" : $path);
+		$this->SetPath($path);
+		$this->USER["GROUPS"] = $GLOBALS["USER"]->GetUserGroupArray();
+		$this->CACHE["PATHS"] = (is_array($this->CACHE["PATHS"]) ? $this->CACHE["PATHS"] : array());
 		if (COption::GetOptionString("webdav", "webdav_log", "N") == "Y")
 		{
 			$this->events = new CWebDavEventLog;
@@ -291,7 +299,7 @@ echo '<?xml version="1.0" encoding="utf-8" ?>
 
 		if ($savedValues === null)
 		{
-			$savedValues = @unserialize(COption::GetOptionString($MODULE,$PARAM,''));
+			$savedValues = @unserialize(COption::GetOptionString($MODULE,$PARAM,''), ['allowed_classes' => false]);
 			if (!is_array($savedValues))
 				$savedValues = array();
 		}
@@ -321,10 +329,10 @@ echo '<?xml version="1.0" encoding="utf-8" ?>
 		return $result;
 	}
 
-	public function SetAuthHeader()
+	public static function SetAuthHeader()
 	{
 		$digest = true;
-		if (strpos($_SERVER['HTTP_USER_AGENT'], "Microsoft-WebDAV-MiniRedir") !== false)
+		if (mb_strpos($_SERVER['HTTP_USER_AGENT'], "Microsoft-WebDAV-MiniRedir") !== false)
 		{
 			if (preg_match("/([^\/]*)\/(\d+).(\d+).(\d+)/", $_SERVER['HTTP_USER_AGENT'], $matches) > 0) // Redir/5.1.2600
 			{
@@ -335,10 +343,10 @@ echo '<?xml version="1.0" encoding="utf-8" ?>
 			}
 		}
 		elseif (
-			(strpos($_SERVER['HTTP_USER_AGENT'], "Microsoft Data Access Internet Publishing Provider") !== false)
+			(mb_strpos($_SERVER['HTTP_USER_AGENT'], "Microsoft Data Access Internet Publishing Provider") !== false)
 			|| (
 				(self::GetWindowsVersion() === 5)
-				&& (strpos($_SERVER['HTTP_USER_AGENT'], "Microsoft Office Protocol Discovery") !== false)
+				&& (mb_strpos($_SERVER['HTTP_USER_AGENT'], "Microsoft Office Protocol Discovery") !== false)
 			)
 		)
 		{
@@ -414,8 +422,8 @@ echo '<?xml version="1.0" encoding="utf-8" ?>
 		if ($hideSystemFiles === null)
 			$hideSystemFiles = (COption::GetOptionString("webdav", "hide_system_files", "Y") == "Y");
 
-		if ((strpos($_SERVER['HTTP_USER_AGENT'], "WebDAVFS/1") !== false) &&
-			(strpos($_SERVER['HTTP_USER_AGENT'], "Darwin/") !== false) &&
+		if ((mb_strpos($_SERVER['HTTP_USER_AGENT'], "WebDAVFS/1") !== false) &&
+			(mb_strpos($_SERVER['HTTP_USER_AGENT'], "Darwin/") !== false) &&
 			($strict === false)
 		) // mac os x 10.7
 			$hideSystemFiles = false;
@@ -428,21 +436,21 @@ echo '<?xml version="1.0" encoding="utf-8" ?>
 
 	function SetPath($path)
 	{
-		$this->_path = (substr($path, -9, 9) === "index.php" ? substr($path, 0, strlen($path) - 9) : $path);
+		$this->_path = (mb_substr($path, -9, 9) === "index.php"? mb_substr($path, 0, mb_strlen($path) - 9) : $path);
 
 		if (
 			defined('BX_UTF')
 			&& isset($_SERVER['SERVER_SOFTWARE'])
-			&& (strpos($_SERVER['SERVER_SOFTWARE'], 'IIS') !== false)
+			&& (mb_strpos($_SERVER['SERVER_SOFTWARE'], 'IIS') !== false)
 			&& ! CUtil::DetectUTF8($_SERVER["REQUEST_URI"])
 		)
 		{
 			$charset = 'windows-1251';
 			if (
 				defined('BX_DEFAULT_CHARSET')
-				&& ( strlen('BX_DEFAULT_CHARSET')>0 )
+				&& ( 'BX_DEFAULT_CHARSET' <> '' )
 			)
-				$charset = BX_DEFAULT_CHARSET; 
+				$charset = BX_DEFAULT_CHARSET;
 
 			$this->_path = CharsetConverter::ConvertCharset($this->_path, $charset, "utf-8");
 		}
@@ -488,7 +496,7 @@ echo '<?xml version="1.0" encoding="utf-8" ?>
 		}
 	}
 
-	static function base_OPTIONS()
+	public static function base_OPTIONS()
 	{
 		CWebDavBase::SetStatus('200 OK');
 
@@ -529,7 +537,7 @@ echo '<?xml version="1.0" encoding="utf-8" ?>
 		{
 			$this->SetStatus($result);
 			header('Content-length: 0');
-			header('Connection: close');		
+			header('Connection: close');
 			return;
 		}
 
@@ -785,7 +793,7 @@ echo '<?xml version="1.0" encoding="utf-8" ?>
 		{
 			$download = array_key_exists("force_download", $_REQUEST);
 		}
-		
+
 		$status = null;
 		if (!headers_sent())
 		{
@@ -794,16 +802,16 @@ echo '<?xml version="1.0" encoding="utf-8" ?>
 			{
 				$fullPath = $options["logica_full_path"];
 			}
-			if($this->Type == "iblock" && isset($this->arParams["fullpath"]) && strlen($this->arParams["fullpath"]) > 0)
+			if($this->Type == "iblock" && isset($this->arParams["fullpath"]) && $this->arParams["fullpath"] <> '')
 			{
 					$fullPath = $this->arParams["fullpath"];
 			}
-			elseif($this->Type == "folder" && strlen($this->real_path_full) > 0)
+			elseif($this->Type == "folder" && $this->real_path_full <> '')
 			{
 					$fullPath = $this->real_path_full;
 			}
 
-			if(strlen($fullPath) > 0)
+			if($fullPath <> '')
 			{
 				$arT = self::GetMimeAndGroup($fullPath);
 				$options['mimetype'] = $arT["mime"];
@@ -821,7 +829,7 @@ echo '<?xml version="1.0" encoding="utf-8" ?>
 			if (
 				(
 					$GLOBALS["APPLICATION"]->IsHTTPS()
-					&& substr($options['mimetype'], 0, 11) == "application"
+					&& mb_substr($options['mimetype'], 0, 11) == "application"
 				)
 				|| $this->http_user_agent == "ie"
 			)
@@ -856,7 +864,7 @@ echo '<?xml version="1.0" encoding="utf-8" ?>
 			self::set_header('Content-type: ' . $options['mimetype']);
 			self::set_header('Content-Disposition: filename="'.$name.'"', true);
 			self::set_header('ETag: "' . $this->_get_etag() . '"');
-			if(array_key_exists("cache_time", $options) && $options["cache_time"] > 0 && substr($options['mimetype'], 0, 6) == "image/")
+			if(array_key_exists("cache_time", $options) && $options["cache_time"] > 0 && mb_substr($options['mimetype'], 0, 6) == "image/")
 			{
 				//Handle ETag
 				if(isset($_SERVER['HTTP_IF_NONE_MATCH']) && $this->_check_etag($_SERVER['HTTP_IF_NONE_MATCH']))
@@ -883,8 +891,8 @@ echo '<?xml version="1.0" encoding="utf-8" ?>
 			if (isset($_SERVER['HTTP_IF_NONE_MATCH']) &&				// for correct save action in MS Office 2010
 				$this->_check_etag($_SERVER['HTTP_IF_NONE_MATCH']) &&
 				(
-					strpos($_SERVER['HTTP_USER_AGENT'], 'Microsoft') !== false &&
-					strpos($userNavigator['platform'], 'Win') !== false
+					mb_strpos($_SERVER['HTTP_USER_AGENT'], 'Microsoft') !== false &&
+					mb_strpos($userNavigator['platform'], 'Win') !== false
 					)
 			)
 			{
@@ -894,7 +902,7 @@ echo '<?xml version="1.0" encoding="utf-8" ?>
 
 			if (!$download)
 			{
-				if(strlen($fullPath) > 0)
+				if($fullPath <> '')
 				{
 					$download = !self::CanViewFile($fullPath, false);
 				}
@@ -1012,9 +1020,9 @@ echo '<?xml version="1.0" encoding="utf-8" ?>
 			$arPath = explode("/", $this->_udecode($options['path']));
 			foreach ($this->meta_names as $sMetaType => $arMetaProps)
 			{
-				if ($arPath[1] == $arMetaProps["alias"] && 
-					isset($arMetaProps["disable"]) && 
-					strpos($arMetaProps["disable"], 'PUT') !== false
+				if ($arPath[1] == $arMetaProps["alias"] &&
+					isset($arMetaProps["disable"]) &&
+					mb_strpos($arMetaProps["disable"], 'PUT') !== false
 				)
 				{
 					$this->ThrowAccessDenied();
@@ -1137,7 +1145,7 @@ echo '<?xml version="1.0" encoding="utf-8" ?>
 
 		self::set_header('Content-length: 0');
 		self::set_header('Location: ' . $this->base_url_full.$this->_path);
-		
+
 		$this->SetStatus($stat);
 	}
 
@@ -1172,30 +1180,30 @@ echo '<?xml version="1.0" encoding="utf-8" ?>
 			'overwrite' => (isset($_SERVER['HTTP_OVERWRITE']) ? ($_SERVER['HTTP_OVERWRITE'] == 'T') : true));
 
 		$pu = parse_url(CWebDavBase::get_request_url($_SERVER['HTTP_DESTINATION']));
-		if (intVal($pu['port']) == 80 && strpos($_SERVER["HTTP_HOST"], ":80") === false)
+		if (intval($pu['port']) == 80 && mb_strpos($_SERVER["HTTP_HOST"], ":80") === false)
 		{
 			$_SERVER['HTTP_DESTINATION'] = str_replace($pu['host'].":".$pu['port'], $pu['host'], $_SERVER['HTTP_DESTINATION']);
 			$pu = parse_url(CWebDavBase::get_request_url($_SERVER['HTTP_DESTINATION']));
 		}
 		$pu['host_name'] = $pu['host'].(!empty($pu['port']) ? ":".$pu['port'] : "");
-		if (strToLower($pu['host_name']) == strToLower($_SERVER["HTTP_HOST"]) || strToLower($pu['host_name']) == strToLower($_SERVER['SERVER_NAME']))
+		if (mb_strtolower($pu['host_name']) == mb_strtolower($_SERVER["HTTP_HOST"]) || mb_strtolower($pu['host_name']) == mb_strtolower($_SERVER['SERVER_NAME']))
 		{
 			$options['dest_url'] = $this->GetCurrentPath(urldecode($pu['path']));
 			$stat = $this->MOVE($options);
 		}
-		else 
+		else
 		{
 			$stat = $this->ThrowError("412 precondition failed", "WEBDAV_MOVE_PRECONDITION", '', __FILE__.' '.__LINE__);
 		}
-		
+
 		$this->SetStatus($stat);
 		self::set_header('Content-length: 0');
-		if (substr($stat, 0, 1) == '2')
+		if (mb_substr($stat, 0, 1) == '2')
 		{
 			self::set_header('Location: ' . $this->base_url_full.$this->GetCurrentPath($pu['path']));
 		}
 	}
-	
+
 	function base_COPY()
 	{
 		$options = array(
@@ -1203,25 +1211,25 @@ echo '<?xml version="1.0" encoding="utf-8" ?>
 			'depth' => (isset($_SERVER['HTTP_DEPTH']) ? $_SERVER['HTTP_DEPTH'] : 'infinity'),
 			'overwrite' => (isset($_SERVER['HTTP_OVERWRITE']) ? ($_SERVER['HTTP_OVERWRITE'] == 'T') : true));
 		$pu = parse_url(CWebDavBase::get_request_url($_SERVER['HTTP_DESTINATION']));
-		if (intVal($pu['port']) == 80 && strpos($_SERVER["HTTP_HOST"], ":80") === false)
+		if (intval($pu['port']) == 80 && mb_strpos($_SERVER["HTTP_HOST"], ":80") === false)
 		{
 			$_SERVER['HTTP_DESTINATION'] = str_replace($pu['host'].":".$pu['port'], $pu['host'], $_SERVER['HTTP_DESTINATION']);
 			$pu = parse_url(CWebDavBase::get_request_url($_SERVER['HTTP_DESTINATION']));
 		}
 		$pu['host_name'] = $pu['host'].(!empty($pu['port']) ? ":".$pu['port'] : "");
-		if (strToLower($pu['host_name']) == strToLower($_SERVER["HTTP_HOST"]) || strToLower($pu['host_name']) == strToLower($_SERVER['SERVER_NAME']))
+		if (mb_strtolower($pu['host_name']) == mb_strtolower($_SERVER["HTTP_HOST"]) || mb_strtolower($pu['host_name']) == mb_strtolower($_SERVER['SERVER_NAME']))
 		{
 			$options['dest_url'] = $this->GetCurrentPath($pu['path']);
 			$stat = $this->COPY($options);
 		}
-		else 
+		else
 		{
 			$stat = $this->ThrowError("412 precondition failed", "WEBDAV_COPY_PRECONDITION", '', __FILE__.' '.__LINE__);
 		}
-		
+
 		$this->SetStatus($stat);
 		self::set_header('Content-length: 0');
-		if (substr($stat, 0, 1) == '2')
+		if (mb_substr($stat, 0, 1) == '2')
 		{
 			self::set_header('Location: ' . $this->base_url_full.$pu['path']);
 		}
@@ -1245,15 +1253,15 @@ echo '<?xml version="1.0" encoding="utf-8" ?>
 		}
 	}
 
-	function SetStatus($status)
+	public static function SetStatus($status)
 	{
-		$bCgi = (stristr(php_sapi_name(), "cgi") !== false);
+		$bCgi = (mb_stristr(php_sapi_name(), "cgi") !== false);
 		$bFastCgi = ($bCgi && (array_key_exists('FCGI_ROLE', $_SERVER) || array_key_exists('FCGI_ROLE', $_ENV)));
-		if (defined("BITRIX_FORCE_STATUS")): 
+		if (defined("BITRIX_FORCE_STATUS")):
 			self::set_header("Status: ".$status);
-		elseif ($bCgi && !$bFastCgi): 
+		elseif ($bCgi && !$bFastCgi):
 			self::set_header("Status: ".$status);
-		else: 
+		else:
 			self::set_header($_SERVER["SERVER_PROTOCOL"]." ".$status);
 		endif;
 
@@ -1264,7 +1272,7 @@ echo '<?xml version="1.0" encoding="utf-8" ?>
 	{
 		$url = rtrim(str_replace("//", "/", "/".$url), '/');
 		$this->base_url = $url;
-		
+
 		$url = str_replace("//", "/", $_SERVER['HTTP_HOST'].$url);
 		$this->base_url_full = ($GLOBALS["APPLICATION"]->IsHTTPS() ? 'https' : 'http').'://'.$url;
 	}
@@ -1290,15 +1298,15 @@ echo '<?xml version="1.0" encoding="utf-8" ?>
 
 	function _slashify($path)
 	{
-		if ($path[strlen($path)-1] != '/')
+		if ($path[mb_strlen($path) - 1] != '/')
 			$path = $path . '/';
 		return $path;
 	}
 
 	function _unslashify($path)
 	{
-		if ($path[strlen($path)-1] == '/')
-			$path = substr($path, 0, strlen($path)-1);
+		if ($path[mb_strlen($path) - 1] == '/')
+			$path = mb_substr($path, 0, mb_strlen($path) - 1);
 		return $path;
 	}
 
@@ -1330,7 +1338,7 @@ echo '<?xml version="1.0" encoding="utf-8" ?>
 	{
 		global $APPLICATION;
 		$res = $text;
-		if (strtolower($this->_prop_encoding) != 'utf-8')
+		if (mb_strtolower($this->_prop_encoding) != 'utf-8')
 			$res = $APPLICATION->ConvertCharset($text, SITE_CHARSET, 'UTF-8');
 		return $res;
 	}
@@ -1345,7 +1353,7 @@ echo '<?xml version="1.0" encoding="utf-8" ?>
 
 				foreach (explode(",", $matches[1]) as $range)
 				{
-					list($start, $end) = explode("-", $range);
+					[$start, $end] = explode("-", $range);
 					$options["ranges"][] = ($start==="")
 						? array("last"=>$end)
 						: array("start"=>$start, "end"=>$end);
@@ -1382,7 +1390,7 @@ echo '<?xml version="1.0" encoding="utf-8" ?>
 	{
 		$arMimes = self::getMimeTypeExtensionList();
 		$arMimes = array_flip($arMimes);
-		$mimeType = strtolower($mimeType);
+		$mimeType = mb_strtolower($mimeType);
 		if(!empty($arMimes[$mimeType]))
 		{
 			return $arMimes[$mimeType];
@@ -1429,7 +1437,7 @@ echo '<?xml version="1.0" encoding="utf-8" ?>
 	{
 		$arMimes = self::getMimeTypeExtensionList();
 
-		$ext = strtolower(strrchr($fspath, '.'));
+		$ext = mb_strtolower(strrchr($fspath, '.'));
 		if (array_key_exists($ext, $arMimes))
 		{
 			$mime_type = $arMimes[$ext];
@@ -1458,7 +1466,7 @@ echo '<?xml version="1.0" encoding="utf-8" ?>
 				$state = true;
 				foreach ($conditions as $condition)
 				{
-					if (!strncmp($condition, '<opaquelocktoken:', strlen('<opaquelocktoken')))
+					if (!strncmp($condition, '<opaquelocktoken:', mb_strlen('<opaquelocktoken')))
 					{
 						if (!preg_match('/^<opaquelocktoken:[[:xdigit:]]{8}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{12}>$/' . BX_UTF_PCRE_MODIFIER, $condition))
 						{
@@ -1487,7 +1495,7 @@ echo '<?xml version="1.0" encoding="utf-8" ?>
 	function _if_header_parser($str)
 	{
 		$pos  = 0;
-		$len  = strlen($str);
+		$len = mb_strlen($str);
 		$uris = array();
 
 		while ($pos < $len)
@@ -1557,27 +1565,27 @@ echo '<?xml version="1.0" encoding="utf-8" ?>
 
 	function _if_header_lexer($string, &$pos)
 	{
-		while (preg_match('/^\s+$/', substr($string, $pos, 1)))
+		while (preg_match('/^\s+$/', mb_substr($string, $pos, 1)))
 		{
 			++$pos;
 		}
 
-		if (strlen($string) <= $pos)
+		if (mb_strlen($string) <= $pos)
 		{
 			return false;
 		}
 
-		$c = substr($string, $pos++, 1); 
+		$c = mb_substr($string, $pos++, 1);
 
 		switch ($c)
 		{
 			case '<':
-				$pos2 = strpos($string, '>', $pos);
-				$uri  = substr($string, $pos, $pos2 - $pos);
+				$pos2 = mb_strpos($string, '>', $pos);
+				$uri = mb_substr($string, $pos, $pos2 - $pos);
 				$pos  = $pos2 + 1;
 				return array('URI', $uri);
 			case '[':
-				if (substr($string, $pos, 1) == 'W')
+				if (mb_substr($string, $pos, 1) == 'W')
 				{
 					$type = 'ETAG_WEAK';
 					$pos += 2;
@@ -1586,8 +1594,8 @@ echo '<?xml version="1.0" encoding="utf-8" ?>
 				{
 					$type = 'ETAG_STRONG';
 				}
-				$pos2 = strpos($string, ']', $pos);
-				$etag = substr($string, $pos + 1, $pos2 - $pos - 2);
+				$pos2 = mb_strpos($string, ']', $pos);
+				$etag = mb_substr($string, $pos + 1, $pos2 - $pos - 2);
 				$pos  = $pos2 + 1;
 				return array($type, $etag);
 			case 'N':
@@ -1626,7 +1634,7 @@ echo '<?xml version="1.0" encoding="utf-8" ?>
 				return;
 			}
 
-			$options["locktoken"] = substr($_SERVER['HTTP_IF'], 2, -2);
+			$options["locktoken"] = mb_substr($_SERVER['HTTP_IF'], 2, -2);
 			$options["update"]	  = $options["locktoken"];
 
 			$options['owner']	  = "unknown";
@@ -1669,7 +1677,7 @@ echo '<?xml version="1.0" encoding="utf-8" ?>
 		}
 		$this->SetStatus($http_stat);
 
-		if (substr($http_stat, 0 , 1) == '2')
+		if (mb_substr($http_stat, 0, 1) == '2')
 		{
 			if ($options['timeout'])
 			{
@@ -1716,7 +1724,7 @@ echo '<?xml version="1.0" encoding="utf-8" ?>
 				$this->arParams['element_array']['ID'].
 				$this->arParams['element_array']['NAME'].
 				$this->arParams['element_array']['TIMESTAMP_X']);
-		} 
+		}
 		return $utag;
 	}
 
@@ -1734,16 +1742,16 @@ echo '<?xml version="1.0" encoding="utf-8" ?>
 
 		$uuid = md5(microtime().getmypid());
 
-		$uuid{12} = '4';
-		$n = 8 + (ord($uuid{16}) & 3);
+		$uuid[12] = '4';
+		$n = 8 + (ord($uuid[16]) & 3);
 		$hex = '0123456789abcdef';
-		$uuid{16} = substr($hex, $n, 1);
+		$uuid[16] = mb_substr($hex, $n, 1);
 
-		return substr($uuid,  0, 8).'-'.
-			substr($uuid,  8, 4).'-'.
-			substr($uuid, 12, 4).'-'.
-			substr($uuid, 16, 4).'-'.
-			substr($uuid, 20);
+		return mb_substr($uuid, 0, 8).'-'.
+			mb_substr($uuid, 8, 4).'-'.
+			mb_substr($uuid, 12, 4).'-'.
+			mb_substr($uuid, 16, 4).'-'.
+			mb_substr($uuid, 20);
 	}
 
 	function _new_locktoken()
@@ -1759,7 +1767,7 @@ echo '<?xml version="1.0" encoding="utf-8" ?>
 
 			if (is_array($lock) && count($lock))
 			{
-				if (!isset($_SERVER['HTTP_IF']) || (strpos($_SERVER['HTTP_IF'], $lock['token']) === false))
+				if (!isset($_SERVER['HTTP_IF']) || (mb_strpos($_SERVER['HTTP_IF'], $lock['token']) === false))
 				{
 					if (  (!$exclusive_only || ($lock['scope'] !== 'shared'))  &&
 						($lock['owner'] !== $GLOBALS["USER"]->GetLogin())  )
@@ -1771,10 +1779,10 @@ echo '<?xml version="1.0" encoding="utf-8" ?>
 		}
 		return true;
 	}
-	
+
 	function _get_lock_prop()
 	{
-		return CWebDavBase::_mkprop("supportedlock", 
+		return CWebDavBase::_mkprop("supportedlock",
 					"<D:lockentry>
 						<D:lockscope><D:exclusive/></D:lockscope>
 						<D:locktype><D:write/></D:locktype>
@@ -1784,8 +1792,8 @@ echo '<?xml version="1.0" encoding="utf-8" ?>
 						<D:locktype><D:write/></D:locktype>
 					</D:lockentry>");
 	}
-	
-	function _udecode($t)
+
+	public static function _udecode($t)
 	{
 		global $APPLICATION;
 		$t = rawurldecode($t); //urldecode($t);
@@ -1798,15 +1806,15 @@ echo '<?xml version="1.0" encoding="utf-8" ?>
 		}
 		return $t;
 	}
-	
-	function _uencode($t, $params = array("utf8" => "Y", "convert" => "allowed"))
+
+	public static function _uencode($t, $params = array("utf8" => "Y", "convert" => "allowed"))
 	{
 		global $APPLICATION, $WEBDAV;
-		
+
 		$params = (is_array($params) ? $params : array($params));
 		$params["utf8"] = ($params["utf8"] == "N" ? "N" : "Y");
 		$params["convert"] = (in_array($params["convert"], array("allowed", "full")) ? $params["convert"] : "allowed");
-		
+
 		if ($params["convert"] == "allowed")
 		{
 			foreach ($WEBDAV["ALLOWED_SYMBOLS"] as $symbol)
@@ -1814,7 +1822,7 @@ echo '<?xml version="1.0" encoding="utf-8" ?>
 				$t = str_replace($symbol, urlencode($symbol), $t);
 			}
 		}
-		else 
+		else
 		{
 			if ($params["utf8"] == "Y" && SITE_CHARSET != "UTF-8")
 			{
@@ -1834,10 +1842,10 @@ echo '<?xml version="1.0" encoding="utf-8" ?>
 	{
 
 		$token = trim($_SERVER['HTTP_LOCK_TOKEN']);
-		if (substr($token, 0, 1) == "<")
-			$token = substr($token, 1);
-		if (substr($token, (strLen($token) - 1), 1) == ">")
-			$token = substr($token, 0, -1);
+		if (mb_substr($token, 0, 1) == "<")
+			$token = mb_substr($token, 1);
+		if (mb_substr($token, (mb_strlen($token) - 1), 1) == ">")
+			$token = mb_substr($token, 0, -1);
 
 		$options = array(
 			'path' => $this->_path,
@@ -1892,7 +1900,7 @@ echo '<?xml version="1.0" encoding="utf-8" ?>
 
 	function strlen(&$str)
 	{
-		return (function_exists('mb_strlen') ? mb_strlen($str, 'latin1') : strlen($str));
+		return (function_exists('mb_strlen')? mb_strlen($str, 'latin1') : mb_strlen($str));
 	}
 
 	function ThrowError($status, $code, $message='', $line=0)
@@ -1922,7 +1930,7 @@ echo '<?xml version="1.0" encoding="utf-8" ?>
 	function CheckRights($method = "", $strong = false, $returnCodeError = false)
 	{
 		if (is_array($method)) return; // TODO: from components - fixit
-		if (strlen($method) <= 0)
+		if ($method == '')
 			$method = $this->http_method;
 
 		$result = true; $errorCode = "";
@@ -1941,7 +1949,7 @@ echo '<?xml version="1.0" encoding="utf-8" ?>
 
 	function CheckName($name)
 	{
-		if (in_array(strtolower($name), array(".ds_store", ".trashes")))
+		if (in_array(mb_strtolower($name), array(".ds_store", ".trashes")))
 		{
 			return false;
 		}
@@ -1953,7 +1961,7 @@ echo '<?xml version="1.0" encoding="utf-8" ?>
 		return true;
 	}
 
-	function CorrectName($name = "", $replace = "_")
+	public static function CorrectName($name = "", $replace = "_")
 	{
 		$name = trim($name);
 		if(empty($name))
@@ -1961,16 +1969,16 @@ echo '<?xml version="1.0" encoding="utf-8" ?>
 			return $name;
 		}
 		$pr = 0;
-		while(substr($name, 0, 1) == ".")
+		while(mb_substr($name, 0, 1) == ".")
 		{
 			$pr++;
-			$name = substr($name, 1);
+			$name = mb_substr($name, 1);
 		}
 		$po = 0;
-		while(substr($name, -1) == ".")
+		while(mb_substr($name, -1) == ".")
 		{
 			$po++;
-			$name = substr($name, 0, -1);
+			$name = mb_substr($name, 0, -1);
 		}
 		$name = str_repeat("_", $pr) . $name . str_repeat("_", $po);
 		return preg_replace($GLOBALS["WEBDAV"]["FORBIDDEN_SYMBOLS_PATTERN"], $replace, $name);
@@ -1979,11 +1987,11 @@ echo '<?xml version="1.0" encoding="utf-8" ?>
 	function GetCurrentPath($page)
 	{
 		$page = str_replace("//", "/", "/".$this->_udecode($page));
-		$res = CUtil::ConvertToLangCharset(substr($page, strlen($this->base_url)));
+		$res = CUtil::ConvertToLangCharset(mb_substr($page, mb_strlen($this->base_url)));
 		return $res;
 	}
 
-	function IsDavHeaders($params = "empty")
+	public static function IsDavHeaders($params = "empty")
 	{
 		static $result = array();
 
@@ -1993,7 +2001,7 @@ echo '<?xml version="1.0" encoding="utf-8" ?>
 		return $result[$params];
 	}
 
-	function _isDavHeaders($params = "empty")
+	public static function _isDavHeaders($params = "empty")
 	{
 		$aDavHeaders = array(
 			"DAV",
@@ -2040,8 +2048,8 @@ echo '<?xml version="1.0" encoding="utf-8" ?>
 			}
 		}
 
-		if (strpos($_SERVER["HTTP_USER_AGENT"], "Microsoft Office") !== false &&
-			strpos($_SERVER['HTTP_USER_AGENT'], "Outlook") === false)
+		if (mb_strpos($_SERVER["HTTP_USER_AGENT"], "Microsoft Office") !== false &&
+			mb_strpos($_SERVER['HTTP_USER_AGENT'], "Outlook") === false)
 		{
 			return true;
 		}
@@ -2125,9 +2133,9 @@ echo '<?xml version="1.0" encoding="utf-8" ?>
 	static function ConvertPathToRelative($filePath, $fullPath)
 	{
 		$res = $filePath;
-		if(strpos($res, $fullPath) === 0)
+		if(mb_strpos($res, $fullPath) === 0)
 		{
-			$res = substr($res, strlen($fullPath));
+			$res = mb_substr($res, mb_strlen($fullPath));
 		}
 		return $res;
 	}
@@ -2206,7 +2214,7 @@ echo '<?xml version="1.0" encoding="utf-8" ?>
 	static function GetMimeAndGroup($fullPath)
 	{
 		$arM = self::GetMimeArray();
-		$fExtQ = strtolower(GetFileExtension($fullPath));
+		$fExtQ = mb_strtolower(GetFileExtension($fullPath));
 
 		if(array_key_exists($fExtQ, $arM))
 		{
@@ -2214,7 +2222,7 @@ echo '<?xml version="1.0" encoding="utf-8" ?>
 			{
 				$arF = CFile::MakeFileArray($fullPath);
 				$res = CFile::CheckImageFile($arF);
-				if(strlen($res) <= 0)
+				if($res == '')
 				{
 					return $arM[$fExtQ];
 				}
@@ -2264,8 +2272,8 @@ echo '<?xml version="1.0" encoding="utf-8" ?>
 				if ($match[3] == '5.0') $clientOS = "Windows 2000";
 				elseif ($match[3] == '5.1') $clientOS = "Windows XP";
 				elseif ($match[3] == '5.2') $clientOS = "Windows 2003";
-				elseif ($match[3] == '6.0' && strpos($client, 'SLCC1') !== false) $clientOS = "Windows Vista";
-				elseif ($match[3] == '6.0' && strpos($client, 'SLCC2') !== false) $clientOS = "Windows 2008";
+				elseif ($match[3] == '6.0' && mb_strpos($client, 'SLCC1') !== false) $clientOS = "Windows Vista";
+				elseif ($match[3] == '6.0' && mb_strpos($client, 'SLCC2') !== false) $clientOS = "Windows 2008";
 				elseif ($match[3] == '6.0') $clientOS = "Windows Vista"; // may be 2008
 				elseif ($match[3] == '6.1') $clientOS = "Windows 7";
 				elseif ($match[3] == '6.2') $clientOS = "Windows 8";
@@ -2277,12 +2285,12 @@ echo '<?xml version="1.0" encoding="utf-8" ?>
 		elseif(!!preg_match("/mac/i", $client) || !!preg_match("/darwin/i", $client))
 		{
 			$clientOS = "Mac";
-		}		
+		}
 		return $clientOS;
 	}
-	
+
 	function SendFileFromStream($stream, $mimetype, $sizeO = 0, $ranges=array())
-	{		
+	{
 		if((count($ranges) == 0) || (0!==fseek($stream, 0, SEEK_SET)))
 		{
 			if ($sizeO > 0)
@@ -2298,15 +2306,15 @@ echo '<?xml version="1.0" encoding="utf-8" ?>
 			}
 			return;
 		}
-		
+
 		$multipart = (count($ranges) > 1);
-		
+
 		if($multipart)
 		{
 			$this->_multipart_byterange_header();
 		}
 		$to = 0;
-		
+
 		foreach($ranges as $range)
 		{
 			$isStart = isset($range['start']);
@@ -2320,9 +2328,9 @@ echo '<?xml version="1.0" encoding="utf-8" ?>
 				$from = $sizeO - $range['last']-1;
 				$to = $sizeO -1;
 			}
-											
+
 			fseek($stream, $from, SEEK_SET);
-			
+
 			$size = $to - $from + 1;
 			if($multipart)
 			{
@@ -2336,14 +2344,14 @@ echo '<?xml version="1.0" encoding="utf-8" ?>
 					$this->ThrowError("416 Requested range not satisfiable", 'WEBDAV_RANGES_ERROR', '', __FILE__.' '.__LINE__);
 					return;
 				}
-				
+
 				if($isStart)
 				{
 					$this->SetStatus('206 partial');
 					self::set_header('Content-range: ' . $from . '-' . $to . '/'. $sizeO);
 				}
 				self::set_header('Content-length: '.$size);
-				
+
 				while (@ob_end_clean());
 			}
 
@@ -2442,7 +2450,7 @@ class __CWebdavRequestParser
 	var $_array;
 	var $namespaces = array();
 
-	function __CWebdavRequestParser()
+	public function __construct()
 	{
 	}
 
@@ -2453,7 +2461,7 @@ class __CWebdavRequestParser
 		{
 			$this->success = false;
 			return false;
-		}	
+		}
 
 		$xml = '';
 		while ($this->success && !feof($f_in))
@@ -2490,7 +2498,7 @@ class __CWebdavRequestParser
 		{
 			foreach ($root['@'] as $n => $v)
 			{
-				if(strpos($n, 'xmlns:') !== false)
+				if(mb_strpos($n, 'xmlns:') !== false)
 				{
 					$this->namespaces[str_replace('xmlns:', '', $n)] = $v;
 				}
@@ -2502,13 +2510,13 @@ class __CWebdavRequestParser
 class __CParsePropfind extends __CWebdavRequestParser
 {
 
-	function __CParsePropfind()
+	public function __construct()
 	{
 	}
 
 	function LoadFromStr($strXML)
 	{
-		if (strlen($strXML) <= 0)
+		if ($strXML == '')
 		{
 			$this->props = 'all';
 			return true;
@@ -2545,17 +2553,17 @@ class __CParsePropfind extends __CWebdavRequestParser
 				$this->parse_ns($node);
 			}
 
-			if (strpos($name, ':') !== false)
+			if (mb_strpos($name, ':') !== false)
 			{
 				foreach ($this->namespaces as $nscode => $ns)
 				{
-					if (strpos($name, $nscode.':') !== false)
+					if (mb_strpos($name, $nscode.':') !== false)
 					{
 						$name = str_replace($nscode.':', '', $name);
 						break;
 					}
 				}
-				if (strlen($ns) <= 0)
+				if ($ns == '')
 				{
 					$this->success = false;
 					return ;
@@ -2602,7 +2610,7 @@ class __CParseProppatch extends __CWebdavRequestParser
 	var $mode;
 	var $current;
 
-	function __CParseProppatch()
+	public function __construct()
 	{
 	}
 
@@ -2621,17 +2629,17 @@ class __CParseProppatch extends __CWebdavRequestParser
 			{
 				$this->parse_ns($node);
 			}
-			if (strpos($name, ':') !== false)
+			if (mb_strpos($name, ':') !== false)
 			{
 				foreach ($this->namespaces as $nscode => $ns)
 				{
-					if (strpos($name, $nscode.':') !== false)
+					if (mb_strpos($name, $nscode.':') !== false)
 					{
 						$name = str_replace($nscode.':', '', $name);
 						break;
 					}
 				}
-				if (strlen($ns) <= 0)
+				if ($ns == '')
 				{
 					$this->success = false;
 					return ;
@@ -2676,7 +2684,7 @@ class __CParseLockinfo extends __CWebdavRequestParser
 	var $owner = '';
 	var $collect_owner = false;
 
-	function __CParseLockinfo()
+	public function __construct()
 	{
 	}
 
@@ -2696,17 +2704,17 @@ class __CParseLockinfo extends __CWebdavRequestParser
 				$this->parse_ns($node);
 			}
 
-			if (strpos($name, ':') !== false)
+			if (mb_strpos($name, ':') !== false)
 			{
 				foreach ($this->namespaces as $nscode => $ns)
 				{
-					if (strpos($name, $nscode.':') !== false)
+					if (mb_strpos($name, $nscode.':') !== false)
 					{
 						$name = str_replace($nscode.':', '', $name);
 						break;
 					}
 				}
-				if (strlen($ns) <= 0)
+				if ($ns == '')
 				{
 					$this->success = false;
 					return ;
@@ -2725,14 +2733,14 @@ class __CParseLockinfo extends __CWebdavRequestParser
 				case 'owner':
 					if (is_array($node[0]["#"]) && array_key_exists("D:href", $node[0]["#"]))
 						$node = $node[0]["#"]["D:href"];
-					$slashPos = strpos($node[0]['#'], '\\');
+					$slashPos = mb_strpos($node[0]['#'], '\\');
 					if ($slashPos === false)
-					{ 
-						$this->owner = $node[0]['#'];
-					} 
-					else 
 					{
-						$this->owner = substr($node[0]['#'], $slashPos+1);
+						$this->owner = $node[0]['#'];
+					}
+					else
+					{
+						$this->owner = mb_substr($node[0]['#'], $slashPos + 1);
 					}
 
 					break;

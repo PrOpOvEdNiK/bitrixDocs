@@ -46,7 +46,7 @@ class Invoice extends Sale\Order
 	{
 		$id = (int)$this->getField('ID');
 		$accountNumber = $this->getField('ACCOUNT_NUMBER');
-		if (is_string($accountNumber) && strlen($accountNumber) > 0 || is_numeric($accountNumber))
+		if (is_string($accountNumber) && $accountNumber <> '' || is_numeric($accountNumber))
 		{
 			$res = static::getList(
 				[
@@ -120,7 +120,7 @@ class Invoice extends Sale\Order
 	protected function setAccountNumber()
 	{
 		$accountNumber = $this->getField('ACCOUNT_NUMBER');
-		if (!((is_string($accountNumber) && strlen($accountNumber) > 0) || is_numeric($accountNumber)))
+		if (!((is_string($accountNumber) && $accountNumber <> '') || is_numeric($accountNumber)))
 		{
 			parent::setAccountNumber();
 		}
@@ -209,14 +209,18 @@ class Invoice extends Sale\Order
 				Sale\Registry::ENTITY_TAX => '\Bitrix\Crm\Invoice\Tax',
 				Sale\Registry::ENTITY_DISCOUNT => '\Bitrix\Crm\Invoice\Discount',
 				Sale\Registry::ENTITY_PROPERTY => 'Bitrix\Crm\Invoice\Property',
+				Sale\Registry::ENTITY_SHIPMENT_PROPERTY => '\Bitrix\Crm\Invoice\ShipmentProperty',
 				Sale\Registry::ENTITY_PROPERTY_VALUE => '\Bitrix\Crm\Invoice\PropertyValue',
+				Sale\Registry::ENTITY_SHIPMENT_PROPERTY_VALUE => '\Bitrix\Crm\Invoice\ShipmentPropertyValue',
 				Sale\Registry::ENTITY_PROPERTY_VALUE_COLLECTION => '\Bitrix\Crm\Invoice\PropertyValueCollection',
+				Sale\Registry::ENTITY_SHIPMENT_PROPERTY_VALUE_COLLECTION => '\Bitrix\Crm\Invoice\ShipmentPropertyValueCollection',
 				Sale\Registry::ENTITY_BASKET => '\Bitrix\Crm\Invoice\Basket',
 				Sale\Registry::ENTITY_BASKET_ITEM => '\Bitrix\Crm\Invoice\BasketItem',
 				Sale\Registry::ENTITY_BASKET_PROPERTIES_COLLECTION => '\Bitrix\Crm\Invoice\BasketPropertiesCollection',
 				Sale\Registry::ENTITY_BASKET_PROPERTY_ITEM => '\Bitrix\Crm\Invoice\BasketPropertyItem',
 				Sale\Registry::ENTITY_PAYMENT => '\Bitrix\Crm\Invoice\Payment',
 				Sale\Registry::ENTITY_PAYMENT_COLLECTION => '\Bitrix\Crm\Invoice\PaymentCollection',
+				Sale\Registry::ENTITY_PAYABLE_ITEM_COLLECTION => '\Bitrix\Crm\Invoice\PayableItemCollection',
 				Sale\Registry::ENTITY_SHIPMENT => '\Bitrix\Crm\Invoice\Shipment',
 				Sale\Registry::ENTITY_SHIPMENT_COLLECTION => '\Bitrix\Crm\Invoice\ShipmentCollection',
 				Sale\Registry::ENTITY_SHIPMENT_ITEM => '\Bitrix\Crm\Invoice\ShipmentItem',

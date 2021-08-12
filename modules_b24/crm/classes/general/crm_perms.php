@@ -3,6 +3,8 @@
 IncludeModuleLangFile(__FILE__);
 
 use Bitrix\Crm\Category\DealCategory;
+use Bitrix\Crm\Service\Container;
+
 class CCrmPerms
 {
 	const PERM_NONE = BX_CRM_PERM_NONE;
@@ -179,16 +181,16 @@ class CCrmPerms
 
 		$obRes = CAccess::GetUserCodes($iUserID);
 		while($arCode = $obRes->Fetch())
-			if (strpos($arCode['ACCESS_CODE'], 'DR') !== 0)
-				$arResult[$iUserID][strtoupper($arCode['PROVIDER_ID'])][] = $arCode['ACCESS_CODE'];
+			if (mb_strpos($arCode['ACCESS_CODE'], 'DR') !== 0)
+				$arResult[$iUserID][mb_strtoupper($arCode['PROVIDER_ID'])][] = $arCode['ACCESS_CODE'];
 
 		if (!empty($arResult[$iUserID]['INTRANET']) && Bitrix\Main\Loader::includeModule('intranet'))
 		{
 			foreach ($arResult[$iUserID]['INTRANET'] as $iDepartment)
 			{
-				if(substr($iDepartment, 0, 1) === 'D')
+				if(mb_substr($iDepartment, 0, 1) === 'D')
 				{
-					$arTree = CIntranetUtils::GetDeparmentsTree(substr($iDepartment, 1), true);
+					$arTree = CIntranetUtils::GetDeparmentsTree(mb_substr($iDepartment, 1), true);
 					foreach ($arTree as $iSubDepartment)
 					{
 						$arResult[$iUserID]['SUBINTRANET'][] = 'D'.$iSubDepartment;
@@ -210,7 +212,7 @@ class CCrmPerms
 			//HACK: Removing intranet subordination relations, otherwise staff will get access to boss's entities
 			foreach($arUserAttrs['INTRANET'] as $code)
 			{
-				if(strpos($code, 'IU') !== 0)
+				if(mb_strpos($code, 'IU') !== 0)
 				{
 					$result['INTRANET'][] = $code;
 				}
@@ -238,7 +240,7 @@ class CCrmPerms
 	public function HavePerm($permEntity, $permAttr, $permType = 'READ')
 	{
 		// HACK: only for product and currency support
-		$permType = strtoupper($permType);
+		$permType = mb_strtoupper($permType);
 		if ($permEntity == 'CONFIG' && $permAttr == self::PERM_CONFIG && $permType == 'READ')
 		{
 			return true;
@@ -331,7 +333,7 @@ class CCrmPerms
 			$sSql = 'SELECT RELATION FROM b_crm_role_relation WHERE RELATION LIKE \'G%\' AND ROLE_ID IN ('.implode(',', $arRole).')';
 			$res = $DB->Query($sSql, false, 'FILE: '.__FILE__.'<br /> LINE: '.__LINE__);
 			while($row = $res->Fetch())
-				$arResult[] = substr($row['RELATION'], 1);
+				$arResult[] = mb_substr($row['RELATION'], 1);
 		}
 		return $arResult;
 	}
@@ -360,12 +362,46 @@ class CCrmPerms
 			$userPermissions = self::GetCurrentUserPermissions();
 		}
 
-		return (CCrmLead::IsAccessEnabled($userPermissions)
+		$result = (
+			CCrmLead::IsAccessEnabled($userPermissions)
 			|| CCrmContact::IsAccessEnabled($userPermissions)
 			|| CCrmCompany::IsAccessEnabled($userPermissions)
 			|| CCrmDeal::IsAccessEnabled($userPermissions)
 			|| CCrmQuote::IsAccessEnabled($userPermissions)
-			|| CCrmInvoice::IsAccessEnabled($userPermissions));
+			|| CCrmInvoice::IsAccessEnabled($userPermissions)
+		);
+
+		if (!$result)
+		{
+			$dynamicTypesMap = Container::getInstance()->getDynamicTypesMap();
+			// avoiding exceptions as this method has usages across the product.
+			try
+			{
+				$dynamicTypesMap->load([
+					'isLoadStages' => false,
+					'isLoadCategories' => false,
+				]);
+			}
+			catch (Exception $exception)
+			{
+			}
+			catch (Error $error)
+			{
+			}
+			foreach ($dynamicTypesMap->getTypes() as $type)
+			{
+				if (
+					Container::getInstance()->getUserPermissions($userPermissions->GetUserID())
+						->canReadType($type->getEntityTypeId())
+				)
+				{
+					$result = true;
+					break;
+				}
+			}
+		}
+
+		return $result;
 	}
 
 	public function CheckEnityAccess($permEntity, $permType, $arEntityAttr)
@@ -470,7 +506,7 @@ class CCrmPerms
 						foreach ($arAttr['INTRANET'] as $iDepartment)
 						{
 							//HACK: SKIP IU code it is not required for this method
-							if(strlen($iDepartment) > 0 && substr($iDepartment, 0, 2) === 'IU')
+							if($iDepartment <> '' && mb_substr($iDepartment, 0, 2) === 'IU')
 							{
 								continue;
 							}
@@ -485,7 +521,7 @@ class CCrmPerms
 					{
 						foreach ($arAttr['SUBINTRANET'] as $iDepartment)
 						{
-							if(strlen($iDepartment) > 0 && substr($iDepartment, 0, 2) === 'IU')
+							if($iDepartment <> '' && mb_substr($iDepartment, 0, 2) === 'IU')
 							{
 								continue;
 							}
@@ -524,6 +560,25 @@ class CCrmPerms
 						DealCategory::convertFromPermissionEntityType($permEntity)
 					);
 				}
+				else
+				{
+					// it's a very big crutch
+					$entityTypeId = \CCrmOwnerType::ResolveID($entityTypeName);
+					if (\CCrmOwnerType::isPossibleDynamicTypeId($entityTypeId))
+					{
+						$factory = Container::getInstance()->getFactory($entityTypeId);
+						if ($factory && $factory->isStagesSupported())
+						{
+							[, , $categoryId] = explode('_', $permEntity);
+							$categoryId = (int)mb_substr($categoryId, 1);
+							$stages = $factory->getStages($categoryId);
+							foreach ($stages->getAll() as $stage)
+							{
+								$arStatus[$stage->getStatusId()] = $stage->collectValues();
+							}
+						}
+					}
+				}
 
 				foreach ($arStatus as $fieldValue => $sTitle)
 				{
@@ -559,7 +614,7 @@ class CCrmPerms
 						{
 							foreach ($arAttr['INTRANET'] as $iDepartment)
 							{
-								if(strlen($iDepartment) > 2 && substr($iDepartment, 0, 2) === 'IU')
+								if(mb_strlen($iDepartment) > 2 && mb_substr($iDepartment, 0, 2) === 'IU')
 								{
 									continue;
 								}
@@ -574,7 +629,7 @@ class CCrmPerms
 						{
 							foreach ($arAttr['SUBINTRANET'] as $iDepartment)
 							{
-								if(strlen($iDepartment) > 2 && substr($iDepartment, 0, 2) === 'IU')
+								if(mb_strlen($iDepartment) > 2 && mb_substr($iDepartment, 0, 2) === 'IU')
 								{
 									continue;
 								}
@@ -723,7 +778,7 @@ class CCrmPerms
 			if(is_array($rawQueryParam) && isset($rawQueryParam['TOP']) && $rawQueryParam['TOP'] > 0)
 			{
 				$order = isset($rawQueryParam['SORT_TYPE'])
-					&& strtoupper($rawQueryParam['SORT_TYPE']) === 'DESC'
+					&& mb_strtoupper($rawQueryParam['SORT_TYPE']) === 'DESC'
 					? 'DESC' : 'ASC';;
 
 				$querySql = \Bitrix\Main\Application::getConnection()->getSqlHelper()->getTopSql(
@@ -815,6 +870,14 @@ class CCrmPerms
 			{
 				$scopeRegex = '/^QUOTE_ID[0-9A-Z\:\_\-]+$/i';
 				break;
+			}
+		}
+		if ($scopeRegex === '')
+		{
+			$entityName = static::ResolveEntityTypeName($permEntity);
+			if (\CCrmOwnerType::isPossibleDynamicTypeId(\CCrmOwnerType::ResolveID($entityName)))
+			{
+				$scopeRegex = '/^STAGE_ID[0-9A-Z\:\_\-]+$/i';
 			}
 		}
 
@@ -1092,7 +1155,7 @@ class CCrmPerms
 			if(is_array($arOptions['RAW_QUERY']) && isset($arOptions['RAW_QUERY']['TOP']) && $arOptions['RAW_QUERY']['TOP'] > 0)
 			{
 				$order = isset($arOptions['RAW_QUERY']['SORT_TYPE'])
-					&& strtoupper($arOptions['RAW_QUERY']['SORT_TYPE']) === 'DESC'
+					&& mb_strtoupper($arOptions['RAW_QUERY']['SORT_TYPE']) === 'DESC'
 					? 'DESC' : 'ASC';;
 
 				$subQuerySql = \Bitrix\Main\Application::getConnection()->getSqlHelper()->getTopSql(
@@ -1125,7 +1188,7 @@ class CCrmPerms
 	{
 		global $DB;
 
-		$entityType = strtoupper($entityType);
+		$entityType = mb_strtoupper($entityType);
 		$entityID = intval($entityID);
 
 		$entityType = $DB->ForSql($entityType);
@@ -1150,7 +1213,7 @@ class CCrmPerms
 		}
 
 		$arResult = array();
-		$entityPrefix = strtoupper($permEntity);
+		$entityPrefix = mb_strtoupper($permEntity);
 		$missedEntityIDs = array();
 		foreach($effectiveEntityIDs as $entityID)
 		{
@@ -1197,7 +1260,7 @@ class CCrmPerms
 	{
 		global $DB;
 		$entityID = intval($entityID);
-		$entityType = strtoupper($entityType);
+		$entityType = mb_strtoupper($entityType);
 
 		if(!is_array($arAttrs))
 		{
@@ -1236,7 +1299,9 @@ class CCrmPerms
 			$entityID = (int)$entityID;
 		}
 
-		if($entityType !== CCrmOwnerType::DealName)
+		$entityTypeId = \CCrmOwnerType::ResolveID($entityType);
+		$factory = Container::getInstance()->getFactory($entityTypeId);
+		if (!$factory || !$factory->isCategoriesSupported())
 		{
 			return $entityType;
 		}
@@ -1246,12 +1311,28 @@ class CCrmPerms
 
 		if($categoryID < 0 && $entityID > 0)
 		{
-			$categoryID = CCrmDeal::GetCategoryID($entityID);
+			if ($factory instanceof \Bitrix\Crm\Service\Factory\Deal)
+			{
+				//todo temporary decision while Deal Factory does not support work with items.
+				$categoryID = CCrmDeal::GetCategoryID($entityID);
+			}
+			else
+			{
+				$items = $factory->getItems([
+					'select' => [\Bitrix\Crm\Item::FIELD_NAME_CATEGORY_ID],
+					'filter' => [
+						'=ID' => $entityID
+					],
+					'limit' => 1,
+				]);
+				if (isset($items[0]))
+				{
+					$categoryID = $items[0]->getCategoryId();
+				}
+			}
 		}
 
-		return $categoryID >= 0
-			? DealCategory::convertToPermissionEntityType($categoryID)
-			: $entityType;
+		return \Bitrix\Crm\Service\UserPermissions::getPermissionEntityType($entityTypeId, $categoryID);
 	}
 
 	public static function HasPermissionEntityType($permissionEntityType)
@@ -1272,6 +1353,8 @@ class CCrmPerms
 			return CCrmOwnerType::DealName;
 		}
 
-		return $permissionEntityType;
+		return \Bitrix\Crm\Service\UserPermissions::getEntityNameByPermissionEntityType($permissionEntityType)
+			?? $permissionEntityType
+		;
 	}
 }

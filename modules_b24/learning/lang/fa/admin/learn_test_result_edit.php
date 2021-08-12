@@ -1,6 +1,0 @@
-<?
-$MESS["LEARNING_ADMIN_ANSWER"] = "پاسخ";
-$MESS["LEARNING_ADMIN_TAB1"] = "پاسخ";
-$MESS["LEARNING_ADMIN_QUESTION"] = "سوال";
-$MESS["LEARNING_ADMIN_POINT"] = "امتیاز";
-?>

@@ -1,9 +1,0 @@
-<?
-$MESS["USER_TYPE_CRM_DESCRIPTION"] = "Unir a elementos del CRM";
-$MESS["USER_TYPE_CRM_ENTITY_TYPE"] = "Entidad disponible";
-$MESS["USER_TYPE_CRM_ENTITY_TYPE_COMPANY"] = "Compañía";
-$MESS["USER_TYPE_CRM_ENTITY_TYPE_CONTACT"] = "Contacto";
-$MESS["USER_TYPE_CRM_ENTITY_TYPE_DEAL"] = "Negociación";
-$MESS["USER_TYPE_CRM_ENTITY_TYPE_LEAD"] = "Prospecto";
-$MESS["USER_TYPE_CRM_ENTITY_TYPE_ORDER"] = "Pedido";
-?>

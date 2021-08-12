@@ -3,6 +3,9 @@ IncludeModuleLangFile(__FILE__);
 
 include_once($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/bizproc/classes/general/runtimeservice.php");
 
+use Bitrix\Main;
+use Bitrix\Bizproc;
+
 class CBPAllTaskService
 	extends CBPRuntimeService
 {
@@ -101,7 +104,7 @@ class CBPAllTaskService
 	{
 		global $DB;
 
-		if (strlen($workflowId) <= 0)
+		if ($workflowId == '')
 			throw new Exception('workflowId');
 
 		$users = array();
@@ -228,7 +231,7 @@ class CBPAllTaskService
 		global $DB;
 
 		$workflowId = trim($workflowId);
-		if (strlen($workflowId) <= 0)
+		if ($workflowId == '')
 			throw new Exception("workflowId");
 
 		$dbRes = $DB->Query(
@@ -398,28 +401,28 @@ class CBPAllTaskService
 		if (is_set($arFields, "WORKFLOW_ID") || $addMode)
 		{
 			$arFields["WORKFLOW_ID"] = trim($arFields["WORKFLOW_ID"]);
-			if (strlen($arFields["WORKFLOW_ID"]) <= 0)
+			if ($arFields["WORKFLOW_ID"] == '')
 				throw new Exception("WORKFLOW_ID");
 		}
 
 		if (is_set($arFields, "ACTIVITY") || $addMode)
 		{
 			$arFields["ACTIVITY"] = trim($arFields["ACTIVITY"]);
-			if (strlen($arFields["ACTIVITY"]) <= 0)
+			if ($arFields["ACTIVITY"] == '')
 				throw new Exception("ACTIVITY");
 		}
 
 		if (is_set($arFields, "ACTIVITY_NAME") || $addMode)
 		{
 			$arFields["ACTIVITY_NAME"] = trim($arFields["ACTIVITY_NAME"]);
-			if (strlen($arFields["ACTIVITY_NAME"]) <= 0)
+			if ($arFields["ACTIVITY_NAME"] == '')
 				throw new Exception("ACTIVITY_NAME");
 		}
 
 		if (is_set($arFields, "NAME") || $addMode)
 		{
 			$arFields["NAME"] = trim($arFields["NAME"]);
-			if (strlen($arFields["NAME"]) <= 0)
+			if ($arFields["NAME"] == '')
 				throw new Exception("NAME");
 
 			$arFields["NAME"] = htmlspecialcharsback($arFields["NAME"]);
@@ -675,9 +678,9 @@ class CBPAllTaskService
 				"SELECT ".$arSqls["SELECT"]." ".
 				"FROM b_bp_task T ".
 				"	".$arSqls["FROM"]." ";
-			if (strlen($arSqls["WHERE"]) > 0)
+			if ($arSqls["WHERE"] <> '')
 				$strSql .= "WHERE ".$arSqls["WHERE"]." ";
-			if (strlen($arSqls["GROUPBY"]) > 0)
+			if ($arSqls["GROUPBY"] <> '')
 				$strSql .= "GROUP BY ".$arSqls["GROUPBY"]." ";
 
 			$dbRes = $DB->Query($strSql, false, "File: ".__FILE__."<br>Line: ".__LINE__);
@@ -691,27 +694,27 @@ class CBPAllTaskService
 			"SELECT ".$arSqls["SELECT"]." ".
 			"FROM b_bp_task T ".
 			"	".$arSqls["FROM"]." ";
-		if (strlen($arSqls["WHERE"]) > 0)
+		if ($arSqls["WHERE"] <> '')
 			$strSql .= "WHERE ".$arSqls["WHERE"]." ";
-		if (strlen($arSqls["GROUPBY"]) > 0)
+		if ($arSqls["GROUPBY"] <> '')
 			$strSql .= "GROUP BY ".$arSqls["GROUPBY"]." ";
-		if (strlen($arSqls["ORDERBY"]) > 0)
+		if ($arSqls["ORDERBY"] <> '')
 			$strSql .= "ORDER BY ".$arSqls["ORDERBY"]." ";
 
-		if (is_array($arNavStartParams) && IntVal($arNavStartParams["nTopCount"]) <= 0)
+		if (is_array($arNavStartParams) && intval($arNavStartParams["nTopCount"]) <= 0)
 		{
 			$strSql_tmp =
 				"SELECT COUNT('x') as CNT ".
 				"FROM b_bp_task T ".
 				"	".$arSqls["FROM"]." ";
-			if (strlen($arSqls["WHERE"]) > 0)
+			if ($arSqls["WHERE"] <> '')
 				$strSql_tmp .= "WHERE ".$arSqls["WHERE"]." ";
-			if (strlen($arSqls["GROUPBY"]) > 0)
+			if ($arSqls["GROUPBY"] <> '')
 				$strSql_tmp .= "GROUP BY ".$arSqls["GROUPBY"]." ";
 
 			$dbRes = $DB->Query($strSql_tmp, false, "File: ".__FILE__."<br>Line: ".__LINE__);
 			$cnt = 0;
-			if (strlen($arSqls["GROUPBY"]) <= 0)
+			if ($arSqls["GROUPBY"] == '')
 			{
 				if ($arRes = $dbRes->Fetch())
 					$cnt = $arRes["CNT"];
@@ -726,7 +729,7 @@ class CBPAllTaskService
 		}
 		else
 		{
-			if (is_array($arNavStartParams) && IntVal($arNavStartParams["nTopCount"]) > 0)
+			if (is_array($arNavStartParams) && intval($arNavStartParams["nTopCount"]) > 0)
 				$strSql .= "LIMIT ".intval($arNavStartParams["nTopCount"]);
 			$dbRes = $DB->Query($strSql, false, "File: ".__FILE__."<br>Line: ".__LINE__);
 		}
@@ -738,10 +741,15 @@ class CBPAllTaskService
 
 class CBPTaskResult extends CDBResult
 {
-	public function __construct($res)
-	{
-		parent::CDBResult($res);
-	}
+	private static $classesList = [
+		Bizproc\BaseType\Value\Date::class,
+		Bizproc\BaseType\Value\DateTime::class,
+		Main\Type\Date::class,
+		Main\Type\DateTime::class,
+		\DateTime::class,
+		\DateTimeZone::class,
+		Main\Web\Uri::class
+	];
 
 	function Fetch()
 	{
@@ -749,8 +757,10 @@ class CBPTaskResult extends CDBResult
 
 		if ($res)
 		{
-			if (strlen($res["PARAMETERS"]) > 0)
-				$res["PARAMETERS"] = unserialize($res["PARAMETERS"]);
+			if ($res["PARAMETERS"] <> '')
+			{
+				$res["PARAMETERS"] = unserialize($res["PARAMETERS"], ['allowed_classes' => self::$classesList]);
+			}
 		}
 
 		return $res;
@@ -762,7 +772,7 @@ class CBPTaskResult extends CDBResult
 
 		if ($res)
 		{
-			if (strlen($res["DESCRIPTION"]) > 0)
+			if ($res["DESCRIPTION"] <> '')
 				$res["DESCRIPTION"] = $this->ConvertBBCode($res["DESCRIPTION"]);
 		}
 
@@ -814,11 +824,11 @@ class CBPTaskResult extends CDBResult
 		if (is_array($url))
 			$url = $url[1];
 		$url = trim($url);
-		if (strlen($url) <= 0)
+		if ($url == '')
 			return "";
 
 		$extension = preg_replace("/^.*\.(\S+)$/".BX_UTF_PCRE_MODIFIER, "\\1", $url);
-		$extension = strtolower($extension);
+		$extension = mb_strtolower($extension);
 		$extension = preg_quote($extension, "/");
 
 		$bErrorIMG = False;
@@ -877,7 +887,7 @@ class CBPTaskResult extends CDBResult
 				array("&", "java script&#58; "),
 				$url
 			);
-			if (substr($url, 0, 1) != "/" && !preg_match("/^(http|news|https|ftp|aim|mailto)\:\/\//i".BX_UTF_PCRE_MODIFIER, $url))
+			if (mb_substr($url, 0, 1) != "/" && !preg_match("/^(http|news|https|ftp|aim|mailto)\:\/\//i".BX_UTF_PCRE_MODIFIER, $url))
 				$url = 'http://'.$url;
 			if (!preg_match("/^((http|https|news|ftp|aim):\/\/[-_:.a-z0-9@]+)*([^\"\'])+$/i".BX_UTF_PCRE_MODIFIER, $url))
 				return $text." (".$url.")".$end;

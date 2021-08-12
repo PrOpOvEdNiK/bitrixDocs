@@ -3,6 +3,8 @@
 namespace Bitrix\Crm\Rest;
 use Bitrix\Crm;
 use Bitrix\Crm\Activity\Provider;
+use Bitrix\Crm\EntityRequisite;
+use Bitrix\Crm\EntityBankDetail;
 use Bitrix\Disk\File;
 use Bitrix\Faceid\FaceTable;
 use Bitrix\Main\ArgumentException;
@@ -569,7 +571,7 @@ class CCrmExternalChannelImportAgent extends \CCrmExternalChannelRestProxy
 				else
 					$result->addError(new Error("Field COMPANY_ORIGIN_ID is empty", 34006));
 			}
-			if(is_set($externalFields, 'EXTERNAL_URL') && strlen($externalFields['EXTERNAL_URL'])>0)
+			if(is_set($externalFields, 'EXTERNAL_URL') && $externalFields['EXTERNAL_URL'] <> '')
 			{
 				$r = $this->prepareUserField(self::getNameUserFieldExternalUrl());
 				$resUF = $r->getData();
@@ -610,7 +612,7 @@ class CCrmExternalChannelImportAgent extends \CCrmExternalChannelRestProxy
 			$ufFields['USER_TYPE_ID'] = 'url';
 			$ufFields['FIELD_NAME'] = $ufName;
 
-			$langDbResult = \CLanguage::GetList($by = '', $order = '');
+			$langDbResult = \CLanguage::GetList();
 			while($lang = $langDbResult->Fetch())
 			{
 				$lid = $lang['LID'];
@@ -1218,10 +1220,11 @@ class CCrmExternalChannelImportRequisite extends CCrmExternalChannelImportAgent
 	{
 		$result = array();
 
+		$requisite = new EntityRequisite();
 		$fieldsInfo = array_flip(
 			array_merge(
 				array('NAME', 'XML_ID'),
-				\Bitrix\Crm\EntityRequisite::getRqFields()
+                $requisite->getRqFields()
 			)
 		);
 
@@ -1492,10 +1495,11 @@ class CCrmExternalChannelImportBank extends CCrmExternalChannelImportRequisite
 	{
 		$result = array();
 
+        $bankDetail = new EntityBankDetail();
 		$fieldsInfo = array_flip(
 			array_merge(
 				array('NAME', 'XML_ID'),
-				\Bitrix\Crm\EntityBankDetail::getRqFields(),
+                $bankDetail->getRqFields(),
 				array('COMMENTS')
 			)
 		);
@@ -1724,9 +1728,15 @@ class CCrmExternalChannelImportAddress extends CCrmExternalChannelImportRequisit
 	{
 		$result = array();
 
-		foreach(\Bitrix\Crm\RequisiteAddress::getClientTypeInfos() as $typeInfo)
+		$addressTypes = Crm\EntityAddressType::getDescriptions(
+			Crm\EntityAddressType::getAvailableIds()
+		);
+		foreach($addressTypes as $addressTypeId => $addressTypeTitle)
 		{
-			$result[$typeInfo['id']] = $typeInfo;
+			$result[$addressTypeId] = [
+				'id' => $addressTypeId,
+				'name' => $addressTypeTitle
+			];
 		}
 
 		return $result;

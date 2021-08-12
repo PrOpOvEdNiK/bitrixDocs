@@ -1,18 +1,44 @@
-<?
+<?php
+
 namespace Bitrix\Socialnetwork\Controller;
 
 use Bitrix\Main\Config\Option;
 use Bitrix\Main\Loader;
 use Bitrix\Main\Error;
 use Bitrix\Socialnetwork\ComponentHelper;
+use Bitrix\Socialnetwork\Helper\ServiceComment;
+use Bitrix\Main\Engine\ActionFilter;
+use Bitrix\Socialnetwork\CommentAux;
 
 class Livefeed extends \Bitrix\Main\Engine\Controller
 {
+	public function configureActions()
+	{
+		$configureActions = parent::configureActions();
+		$configureActions['getNextPage'] = [
+			'-prefilters' => [
+				ActionFilter\Authentication::class,
+			]
+		];
+		$configureActions['refresh'] = [
+			'-prefilters' => [
+				ActionFilter\Authentication::class,
+			]
+		];
+		$configureActions['mobileLogError'] = [
+			'-prefilters' => [
+				ActionFilter\Authentication::class,
+			]
+		];
+
+		return $configureActions;
+	}
+
 	public function deleteEntryAction($logId = 0)
 	{
 		global $APPLICATION;
 
-		$logId = intval($logId);
+		$logId = (int)$logId;
 		if ($logId <= 0)
 		{
 			$this->addError(new Error('No Log Id', 'SONET_CONTROLLER_LIVEFEED_NO_LOG_ID'));
@@ -38,9 +64,9 @@ class Livefeed extends \Bitrix\Main\Engine\Controller
 
 	public function getRawEntryDataAction(array $params = [])
 	{
-		$entityType = (isset($params['entityType']) && strlen($params['entityType']) > 0 ? preg_replace("/[^a-z0-9_]/i", '', $params['entityType']) : false);
-		$entityId = (isset($params['entityId']) && intval($params['entityId']) > 0 ? intval($params['entityId']) : false);
-		$logId = (isset($params['logId']) && intval($params['logId']) > 0 ? intval($params['logId']) : false);
+		$entityType = (isset($params['entityType']) && $params['entityType'] <> '' ? preg_replace("/[^a-z0-9_]/i", '', $params['entityType']) : false);
+		$entityId = (isset($params['entityId']) && (int)$params['entityId'] > 0 ? (int)$params['entityId'] : false);
+		$logId = (isset($params['logId']) && (int)$params['logId'] > 0 ? (int)$params['logId'] : false);
 		$additionalParams = (isset($params['additionalParams']) && is_array($params['additionalParams']) ? $params['additionalParams'] : []);
 
 		if (!Loader::includeModule('socialnetwork'))
@@ -49,12 +75,12 @@ class Livefeed extends \Bitrix\Main\Engine\Controller
 			return null;
 		}
 
-		$provider = \Bitrix\Socialnetwork\Livefeed\Provider::init(array(
+		$provider = \Bitrix\Socialnetwork\Livefeed\Provider::init([
 			'ENTITY_TYPE' => $entityType,
 			'ENTITY_ID' => $entityId,
 			'LOG_ID' => $logId,
 			'CLONE_DISK_OBJECTS' => true
-		));
+		]);
 
 		if (!$provider)
 		{
@@ -79,7 +105,7 @@ class Livefeed extends \Bitrix\Main\Engine\Controller
 
 		if (
 			isset($additionalParams['getSonetGroupAvailable'])
-			&& $additionalParams['getSonetGroupAvailable'] == 'Y'
+			&& $additionalParams['getSonetGroupAvailable'] === 'Y'
 		)
 		{
 			$feature = $operation = false;
@@ -98,82 +124,119 @@ class Livefeed extends \Bitrix\Main\Engine\Controller
 
 		if (
 			isset($additionalParams['getLivefeedUrl'])
-			&& $additionalParams['getLivefeedUrl'] == 'Y'
+			&& $additionalParams['getLivefeedUrl'] === 'Y'
 		)
 		{
 			$result['LIVEFEED_URL'] = $provider->getLiveFeedUrl();
 			if (
 				isset($additionalParams['absoluteUrl'])
-				&& $additionalParams['absoluteUrl'] == 'Y'
+				&& $additionalParams['absoluteUrl'] === 'Y'
 			)
 			{
 				$serverName = Option::get('main', 'server_name', $_SERVER['SERVER_NAME']);
 				$res = \CSite::getById(SITE_ID);
 				if (
 					($siteFields = $res->fetch())
-					&& strlen($siteFields['SERVER_NAME']) > 0
+					&& $siteFields['SERVER_NAME'] <> ''
 				)
 				{
 					$serverName = $siteFields['SERVER_NAME'];
 				}
 
-				$protocol = (\CMain::IsHTTPS() ? "https" : "http");
-				$result['LIVEFEED_URL'] = $protocol."://".$serverName.$result['LIVEFEED_URL'];
+				$protocol = (\Bitrix\Main\Context::getCurrent()->getRequest()->isHttps() ? 'https' : 'http');
+				$result['LIVEFEED_URL'] = $protocol . '://' . $serverName . $result['LIVEFEED_URL'];
 			}
 		}
 
-		if ($provider->getType() == \Bitrix\Socialnetwork\Livefeed\Provider::TYPE_COMMENT)
-		{
-			$result['SUFFIX'] = $provider->getSuffix();
-		}
+		$result['SUFFIX'] = $provider->getSuffix();
 
 		if (($logId = $provider->getLogId()))
 		{
 			$result['LOG_ID'] = $logId;
 		}
 
-		$result = array_filter($result, function($key) use($returnFields) {
+		$result = array_filter($result, function ($key) use ($returnFields) {
 			return in_array($key, $returnFields);
 		}, ARRAY_FILTER_USE_KEY);
 
 		return $result;
 	}
 
-	public function createTaskCommentAction(array $params = [])
+	public function createEntityCommentAction(array $params = []): void
 	{
-		$postEntityType = (isset($params['postEntityType']) && strlen($params['postEntityType']) > 0 ? preg_replace('/[^a-z0-9_]/i', '', $params['postEntityType']) : false);
-		$entityType = (isset($params['entityType']) && strlen($params['entityType']) > 0 ? preg_replace("/[^a-z0-9_]/i", '', $params['entityType']) : false);
-		$entityId = (isset($params['entityId']) && intval($params['entityId']) > 0 ? intval($params['entityId']) : false);
-		$taskId = (isset($params['taskId']) && intval($params['taskId']) > 0 ? intval($params['taskId']) : false);
-		$logId = (isset($params['logId']) && intval($params['logId']) > 0 ? intval($params['logId']) : false);
+		$postEntityType = (isset($params['postEntityType']) && $params['postEntityType'] <> '' ? preg_replace('/[^a-z0-9_]/i', '', $params['postEntityType']) : false);
+		$sourceEntityType = (isset($params['sourceEntityType']) && $params['sourceEntityType'] <> '' ? preg_replace('/[^a-z0-9_]/i', '', $params['sourceEntityType']) : false);
+		$sourceEntityId = (int)($params['sourceEntityId'] ?? 0);
+		$sourceEntityData = (array)($params['sourceEntityData'] ?? []);
+		$entityType = (isset($params['entityType']) && $params['entityType'] <> '' ? preg_replace('/[^a-z0-9_]/i', '', $params['entityType']) : false);
+		$entityId = (int)($params['entityId'] ?? 0);
+		$logId = (int)($params['logId'] ?? 0);
 
 		if (
-			$entityType
-			&& $entityId
-			&& $taskId
+			!$sourceEntityType
+			|| $sourceEntityId <= 0
+			|| !$entityType
+			|| $entityId <= 0
 		)
 		{
-			if (in_array($entityType, [ 'BLOG_POST', 'BLOG_COMMENT' ]))
-			{
-				ComponentHelper::processBlogCreateTask([
-					'TASK_ID' => $taskId,
-					'SOURCE_ENTITY_TYPE' => $entityType,
-					'SOURCE_ENTITY_ID' => $entityId,
-					'LIVE' => 'Y'
-				]);
-			}
-			else
-			{
-				ComponentHelper::processLogEntryCreateTask([
-					'LOG_ID' => $logId,
-					'TASK_ID' => $taskId,
-					'POST_ENTITY_TYPE' => $postEntityType,
-					'SOURCE_ENTITY_TYPE' => $entityType,
-					'SOURCE_ENTITY_ID' => $entityId,
-					'LIVE' => 'Y'
-				]);
-			}
+			return;
 		}
+
+		if (in_array($sourceEntityType, [ CommentAux\CreateEntity::SOURCE_TYPE_BLOG_POST, CommentAux\CreateEntity::SOURCE_TYPE_BLOG_COMMENT ]))
+		{
+			ServiceComment::processBlogCreateEntity([
+				'ENTITY_TYPE' => $entityType,
+				'ENTITY_ID' => $entityId,
+				'SOURCE_ENTITY_TYPE' => $sourceEntityType,
+				'SOURCE_ENTITY_ID' => $sourceEntityId,
+				'SOURCE_ENTITY_DATA' => $sourceEntityData,
+				'LIVE' => 'Y',
+			]);
+		}
+		else
+		{
+			ServiceComment::processLogEntryCreateEntity([
+				'LOG_ID' => $logId,
+				'ENTITY_TYPE' => $entityType,
+				'ENTITY_ID' => $entityId,
+				'POST_ENTITY_TYPE' => $postEntityType,
+				'SOURCE_ENTITY_TYPE' => $sourceEntityType,
+				'SOURCE_ENTITY_ID' => $sourceEntityId,
+				'SOURCE_ENTITY_DATA' => $sourceEntityData,
+				'LIVE' => 'Y'
+			]);
+		}
+	}
+
+	/**
+	 * @deprecated use socialnetwork.api.livefeed.createEntityComment
+	 * @param array $params
+	 */
+	public function createTaskCommentAction(array $params = []): void
+	{
+		$postEntityType = (isset($params['postEntityType']) && $params['postEntityType'] <> '' ? preg_replace('/[^a-z0-9_]/i', '', $params['postEntityType']) : false);
+		$sourceEntityType = (isset($params['entityType']) && $params['entityType'] <> '' ? preg_replace("/[^a-z0-9_]/i", '', $params['entityType']) : false);
+		$sourceEntityId = (isset($params['entityId']) && (int)$params['entityId'] > 0 ? (int)$params['entityId'] : false);
+		$taskId = (isset($params['taskId']) && (int)$params['taskId'] > 0 ? (int)$params['taskId'] : false);
+		$logId = (isset($params['logId']) && (int)$params['logId'] > 0 ? (int)$params['logId'] : false);
+
+		if (
+			!$sourceEntityType
+			|| !$sourceEntityId
+			|| !$taskId
+		)
+		{
+			return;
+		}
+
+		$this->createEntityCommentAction([
+			'postEntityType' => $postEntityType,
+			'sourceEntityType' => $sourceEntityType,
+			'sourceEntityId' => $sourceEntityId,
+			'entityType' => CommentAux\CreateEntity::ENTITY_TYPE_TASK,
+			'entityId' => $taskId,
+			'logId' => $logId,
+		]);
 	}
 
 	public function changeFavoritesAction($logId, $value)
@@ -185,7 +248,7 @@ class Livefeed extends \Bitrix\Main\Engine\Controller
 			'newValue' => false
 		];
 
-		$logId = intval($logId);
+		$logId = (int)$logId;
 		if ($logId <= 0)
 		{
 			$this->addError(new Error('No Log Id', 'SONET_CONTROLLER_LIVEFEED_NO_LOG_ID'));
@@ -205,17 +268,17 @@ class Livefeed extends \Bitrix\Main\Engine\Controller
 
 		if ($res = \CSocNetLogFavorites::change($currentUserId, $logId))
 		{
-			if ($res == "Y")
+			if ($res === 'Y')
 			{
-				ComponentHelper::userLogSubscribe(array(
+				ComponentHelper::userLogSubscribe([
 					'logId' => $logId,
 					'userId' => $currentUserId,
-					'typeList' => array(
+					'typeList' => [
 						'FOLLOW',
-						'COUNTER_COMMENT_PUSH'
-					),
-					'followDate' => $logFields["LOG_UPDATE"]
-				));
+						'COUNTER_COMMENT_PUSH',
+					],
+					'followDate' => $logFields['LOG_UPDATE'],
+				]);
 			}
 			$result['success'] = true;
 			$result['newValue'] = $res;
@@ -235,13 +298,13 @@ class Livefeed extends \Bitrix\Main\Engine\Controller
 			'success' => false
 		];
 
-		$logId = intval($logId);
+		$logId = (int)$logId;
 		if ($logId <= 0)
 		{
 			return $result;
 		}
 
-		$logId = intval($logId);
+		$logId = (int)$logId;
 		if ($logId <= 0)
 		{
 			$this->addError(new Error('No Log Id', 'SONET_CONTROLLER_LIVEFEED_NO_LOG_ID'));
@@ -256,13 +319,13 @@ class Livefeed extends \Bitrix\Main\Engine\Controller
 
 		$currentUserId = $this->getCurrentUser()->getId();
 		$result['success'] = (
-			$value == "Y"
+			$value === 'Y'
 				? ComponentHelper::userLogSubscribe([
 					'logId' => $logId,
 					'userId' => $currentUserId,
 					'typeList' => [ 'FOLLOW', 'COUNTER_COMMENT_PUSH' ]
 				])
-				: \CSocNetLogFollow::set($currentUserId, "L".$logId, "N")
+				: \CSocNetLogFollow::set($currentUserId, 'L' . $logId, 'N')
 		);
 
 		return $result;
@@ -277,7 +340,7 @@ class Livefeed extends \Bitrix\Main\Engine\Controller
 		}
 
 		return [
-			'success' => \CSocNetLogFollow::set($this->getCurrentUser()->getId(), "**", ($value == "Y" ? "Y" : "N"))
+			'success' => \CSocNetLogFollow::set($this->getCurrentUser()->getId(), '**', ($value === 'Y' ? 'Y' : 'N'))
 		];
 	}
 
@@ -293,15 +356,29 @@ class Livefeed extends \Bitrix\Main\Engine\Controller
 			return null;
 		}
 
-		\Bitrix\Socialnetwork\LogViewTable::set($this->getCurrentUser()->getId(), 'tasks', ($value == "Y" ? "N" : "Y"));
+		\Bitrix\Socialnetwork\LogViewTable::set($this->getCurrentUser()->getId(), 'tasks', ($value === 'Y' ? 'N' : 'Y'));
 		$result['success'] = true;
+
+		return $result;
+	}
+
+	public function readNoTasksNotificationAction()
+	{
+		$result = [
+			'success' => false
+		];
+
+		if (\CUserOptions::setOption('socialnetwork', '~log_notasks_notification_read', 'Y'))
+		{
+			$result['success'] = true;
+		}
 
 		return $result;
 	}
 
 	public function mobileLogErrorAction($message, $url, $lineNumber)
 	{
-		if (!\Bitrix\Main\ModuleManager::isModuleInstalled("bitrix24"))
+		if (!\Bitrix\Main\ModuleManager::isModuleInstalled('bitrix24'))
 		{
 			AddMessage2Log("Mobile Livefeed javascript error:\nMessage: ".$message."\nURL: ".$url."\nLine number: ".$lineNumber."\nUser ID: ".$this->getCurrentUser()->getId());
 		}
@@ -313,7 +390,7 @@ class Livefeed extends \Bitrix\Main\Engine\Controller
 
 	public function mobileGetDetailAction($logId)
 	{
-		$logId = intval($logId);
+		$logId = (int)$logId;
 		if ($logId <= 0)
 		{
 			$this->addError(new Error('No Log Id', 'SONET_CONTROLLER_LIVEFEED_NO_LOG_ID'));
@@ -324,7 +401,121 @@ class Livefeed extends \Bitrix\Main\Engine\Controller
 			'LOG_ID' => $logId,
 			'SITE_TEMPLATE_ID' => 'mobile_app',
 			'TARGET' => 'postContent',
+			'PATH_TO_USER' => SITE_DIR.'mobile/users/?user_id=#user_id#'
 		]);
 	}
-}
 
+	public static function isAdmin()
+	{
+		global $USER;
+
+		return (
+			$USER->isAdmin()
+			|| (
+				Loader::includeModule('bitrix24')
+				&& \CBitrix24::isPortalAdmin($USER->getId())
+			)
+		);
+	}
+
+	private function getComponentReturnWhiteList()
+	{
+		return [ 'LAST_TS', 'LAST_ID', 'EMPTY', 'FORCE_PAGE_REFRESH' ];
+	}
+
+	public function getNextPageAction(array $params = [])
+	{
+		$componentParameters = $this->getUnsignedParameters();
+		if (!is_array($componentParameters))
+		{
+			$componentParameters = [];
+		}
+
+		$requestParameters = [
+			'TARGET' => 'page',
+			'PAGE_NUMBER' => (isset($params['PAGE_NUMBER']) && (int)$params['PAGE_NUMBER'] >= 1 ? (int)$params['PAGE_NUMBER'] : 1),
+			'LAST_LOG_TIMESTAMP' => (isset($params['LAST_LOG_TIMESTAMP']) && (int)$params['LAST_LOG_TIMESTAMP'] > 0 ? (int)$params['LAST_LOG_TIMESTAMP'] : 0),
+			'PREV_PAGE_LOG_ID' => (isset($params['PREV_PAGE_LOG_ID']) ? $params['PREV_PAGE_LOG_ID'] : ''),
+			'useBXMainFilter' =>  (isset($params['useBXMainFilter']) ? $params['useBXMainFilter'] : 'N'),
+			'siteTemplateId' =>  (isset($params['siteTemplateId']) ? $params['siteTemplateId'] : 'bitrix24'),
+			'preset_filter_top_id' =>  (isset($params['preset_filter_top_id']) ? $params['preset_filter_top_id'] : ''),
+			'preset_filter_id' =>  (isset($params['preset_filter_id']) ? $params['preset_filter_id'] : '')
+		];
+
+		$componentResponse = new \Bitrix\Main\Engine\Response\Component('bitrix:socialnetwork.log.ex', '', array_merge($componentParameters, $requestParameters), [], $this->getComponentReturnWhiteList());
+
+		return $componentResponse;
+	}
+
+	public function refreshAction(array $params = [])
+	{
+		$componentParameters = $this->getUnsignedParameters();
+		if (!is_array($componentParameters))
+		{
+			$componentParameters = [];
+		}
+
+		$requestParameters = [
+			'TARGET' => 'page',
+			'PAGE_NUMBER' => 1,
+			'RELOAD' => 'Y',
+			'useBXMainFilter' => ($params['useBXMainFilter'] ?? 'N'),
+			'siteTemplateId' => ($params['siteTemplateId'] ?? 'bitrix24'),
+			'assetsCheckSum' => ($params['assetsCheckSum'] ?? '')
+		];
+
+		$componentResponse = new \Bitrix\Main\Engine\Response\Component('bitrix:socialnetwork.log.ex', '', array_merge($componentParameters, $requestParameters), [], $this->getComponentReturnWhiteList());
+
+		return $componentResponse;
+	}
+
+	public function mobileCreateNotificationLinkAction($tag): string
+	{
+		$params = explode("|", $tag);
+		if (empty($params[1]) || empty($params[2]) || !Loader::includeModule('socialnetwork'))
+		{
+			return '';
+		}
+
+		$liveFeedEntity = \Bitrix\SocialNetwork\Livefeed\Provider::init([
+			'ENTITY_TYPE' => \Bitrix\Socialnetwork\Livefeed\Provider::DATA_ENTITY_TYPE_FORUM_POST,
+			'ENTITY_ID' => $params[2]
+		]);
+
+		$suffix = $liveFeedEntity->getSuffix();
+		if ($suffix === 'TASK')
+		{
+			$res = \Bitrix\Socialnetwork\LogTable::getList(array(
+				'filter' => array(
+					'ID' => $liveFeedEntity->getLogId()
+				),
+				'select' => [ 'ENTITY_ID', 'EVENT_ID', 'SOURCE_ID' ]
+			));
+			if ($logEntryFields = $res->fetch())
+			{
+				if ($logEntryFields['EVENT_ID'] === 'crm_activity_add')
+				{
+					if (
+						Loader::includeModule('crm')
+						&& ($activityFields = \CCrmActivity::getById($logEntryFields['ENTITY_ID'], false))
+						&& $activityFields['TYPE_ID'] == \CCrmActivityType::Task
+					)
+					{
+						$taskId = (int)$activityFields['ASSOCIATED_ENTITY_ID'];
+					}
+				}
+				else
+				{
+					$taskId = (int)$logEntryFields['SOURCE_ID'];
+				}
+
+				if (isset($taskId) && $taskId > 0 && Loader::includeModule('mobile'))
+				{
+					return \CMobileHelper::getParamsToCreateTaskLink($taskId);
+				}
+			}
+		}
+
+		return SITE_DIR . "mobile/log/?ACTION=CONVERT&ENTITY_TYPE_ID=FORUM_POST&ENTITY_ID=" . $params[2];
+	}
+}

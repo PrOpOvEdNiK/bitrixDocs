@@ -1,7 +1,0 @@
-<?
-$MESS["BX_MESSENGER_TEXTAREA_PLACEHOLDER"] = "Enter message...";
-$MESS["BX_MESSENGER_TEXTAREA_BUTTON_SEND"] = "Send message";
-$MESS["BX_MESSENGER_TEXTAREA_FILE"] = "Send file";
-$MESS["BX_MESSENGER_TEXTAREA_SMILE"] = "Select emoticon";
-$MESS["BX_MESSENGER_TEXTAREA_GIPHY"] = "Browse GIF images";
-?>

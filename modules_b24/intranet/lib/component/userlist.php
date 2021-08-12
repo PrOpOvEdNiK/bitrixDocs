@@ -93,12 +93,12 @@ class UserList extends \CBitrixComponent implements \Bitrix\Main\Engine\Contract
 			if (
 				!empty($departmentsData[$departmentId])
 				&& isset($departmentsData[$departmentId]['NAME'])
-				&& strlen($departmentsData[$departmentId]['NAME']) > 0
+				&& $departmentsData[$departmentId]['NAME'] <> ''
 			)
 			{
 				$departmentName = ($exportMode ? $departmentsData[$departmentId]['NAME'] : htmlspecialcharsbx($departmentsData[$departmentId]['NAME']));
 				$departmentNameList[] = (
-					strlen($path) > 0
+					$path <> ''
 					&& !$exportMode
 						? '<a href="'.htmlspecialcharsbx(str_replace('#ID#', $departmentId, $path)).'">'.$departmentName.'</a>'
 						: $departmentName
@@ -141,8 +141,8 @@ class UserList extends \CBitrixComponent implements \Bitrix\Main\Engine\Contract
 
 		if (
 			!$exportMode
-			&& strlen($result) > 0
-			&& strlen($path) > 0
+			&& $result <> ''
+			&& $path <> ''
 		)
 		{
 			$result = '<a href="'.htmlspecialcharsbx(str_replace(['#ID#', '#USER_ID#'], $userFields['ID'], $path)).'">'.$result.'</a>';
@@ -170,15 +170,33 @@ class UserList extends \CBitrixComponent implements \Bitrix\Main\Engine\Contract
 
 	public static function getPhotoValue(array $params = [])
 	{
-		$result = '<div class="intranet-user-list-userpic"></div>';
+		$result = '<div class="intranet-user-list-userpic ui-icon ui-icon-common-user"><i></i></div>';
 
 		$userFields = (isset($params['FIELDS']) ? $params['FIELDS'] : []);
 //		$path = (isset($params['PATH']) ? $params['PATH'] : '');
 
-		if (
-			empty($userFields)
-			|| empty($userFields['PERSONAL_PHOTO'])
-		)
+		if (empty($userFields))
+		{
+			return $result;
+		}
+
+		if (empty($userFields['PERSONAL_PHOTO']))
+		{
+			switch($userFields['PERSONAL_GENDER'])
+			{
+				case 'M':
+					$suffix = 'male';
+					break;
+				case 'F':
+					$suffix = 'female';
+					break;
+				default:
+					$suffix = 'unknown';
+			}
+			$userFields['PERSONAL_PHOTO'] = Option::get('socialnetwork', 'default_user_picture_'.$suffix, false, SITE_ID);
+		}
+
+		if (empty($userFields['PERSONAL_PHOTO']))
 		{
 			return $result;
 		}
@@ -196,7 +214,7 @@ class UserList extends \CBitrixComponent implements \Bitrix\Main\Engine\Contract
 				false
 			);
 
-			$result = '<div class="intranet-user-list-userpic" style="background-image: url(\''.$fileResized['src'].'\'); background-size: cover"></div>';
+			$result = '<div class="intranet-user-list-userpic ui-icon ui-icon-common-user"><i style="background-image: url(\''.\CHTTP::urnEncode($fileResized['src']).'\'); background-size: cover"></i></div>';
 		}
 
 		return $result;
@@ -216,11 +234,11 @@ class UserList extends \CBitrixComponent implements \Bitrix\Main\Engine\Contract
 			$constantAllowed = [];
 			$constantAllowed['MESSAGE'] = (
 				ModuleManager::isModuleInstalled('im')
-				&& \CBXFeatures::IsFeatureEnabled("WebMessenger")
+				&& \CBXFeatures::isFeatureEnabled("WebMessenger")
 			);
 			$constantAllowed['TASK'] = (
 				SITE_TEMPLATE_ID == 'bitrix24'
-				&& \CBXFeatures::IsFeatureEnabled("Tasks")
+				&& \CBXFeatures::isFeatureEnabled("Tasks")
 			);
 			$constantAllowed['INVITE'] = (
 				(
@@ -234,6 +252,12 @@ class UserList extends \CBitrixComponent implements \Bitrix\Main\Engine\Contract
 			);
 			$constantAllowed['EDIT_ALL'] = $USER->canDoOperation('edit_all_users');
 			$constantAllowed['EDIT_SUBORDINATE'] = $USER->canDoOperation('edit_subordinate_users');
+
+			if (Loader::includeModule('bitrix24') && \Bitrix\Bitrix24\Integrator::isIntegrator($USER->GetID()))
+			{
+				$constantAllowed['EDIT_ALL'] = false;
+				$constantAllowed['EDIT_SUBORDINATE'] = false;
+			}
 		}
 
 		$result = [
@@ -329,7 +353,7 @@ class UserList extends \CBitrixComponent implements \Bitrix\Main\Engine\Contract
 
 		if (
 			$userId <= 0
-			|| !in_array($action, ['restore', 'delete', 'deactivate'])
+			|| !in_array($action, ['restore', 'delete', 'deactivate', 'deactivateInvited'])
 			|| !Loader::includeModule('socialnetwork')
 		)
 		{
@@ -378,6 +402,7 @@ class UserList extends \CBitrixComponent implements \Bitrix\Main\Engine\Contract
 					break;
 				case 'restore':
 				case 'deactivate':
+				case 'deactivateInvited':
 					if (
 						$action === "setActivity"
 						&& Loader::includeModule("bitrix24")
@@ -449,20 +474,26 @@ class UserList extends \CBitrixComponent implements \Bitrix\Main\Engine\Contract
 			'PERSONAL_WWW',
 			'PERSONAL_BIRTHDAY',
 			'PERSONAL_GENDER',
-			'PERSONAL_FAX',
 			'PERSONAL_MOBILE',
-			'PERSONAL_STREET',
-			'PERSONAL_MAILBOX',
 			'PERSONAL_CITY',
-			'PERSONAL_STATE',
-			'PERSONAL_ZIP',
-			'PERSONAL_COUNTRY',
-			'PERSONAL_NOTES',
 			'WORK_POSITION',
 			'WORK_PHONE',
-			'WORK_FAX',
-			'TAGS'
+			'TIME_ZONE'
 		];
+
+		if (!ModuleManager::isModuleInstalled('bitrix24'))
+		{
+			$result = array_merge($result, [
+				'PERSONAL_FAX',
+				'PERSONAL_STREET',
+				'PERSONAL_MAILBOX',
+				'PERSONAL_STATE',
+				'PERSONAL_ZIP',
+				'PERSONAL_COUNTRY',
+				'PERSONAL_NOTES',
+				'WORK_FAX'
+			]);
+		}
 
 		$profileWhiteList = UserProfile::getWhiteListOption();
 		if (!empty($profileWhiteList))
@@ -501,7 +532,7 @@ class UserList extends \CBitrixComponent implements \Bitrix\Main\Engine\Contract
 		$val = Option::get('intranet', 'user_list_user_property_available', false, SITE_ID);
 		if (!empty($val))
 		{
-			$val = unserialize($val);
+			$val = unserialize($val, ["allowed_classes" => false]);
 			if (
 				is_array($val)
 				&& !empty($val)
@@ -545,31 +576,7 @@ class UserList extends \CBitrixComponent implements \Bitrix\Main\Engine\Contract
 
 	protected static function checkIntegratorActionRestriction(array $params = [])
 	{
-		global $USER;
-		static $currentIntegrator = null;
-
-		$result = false;
-		$userId = (!empty($params['userId']) ? intval($params['userId']) : 0);
-
-		if ($userId <= 0)
-		{
-			return $result;
-		}
-
-		if ($currentIntegrator === null)
-		{
-			$currentIntegrator = (
-				Loader::includeModule('bitrix24')
-				&& Integrator::isIntegrator($USER->getId())
-			);
-		}
-
-		return !(
-			$currentIntegrator
-			&& Loader::includeModule('bitrix24')
-			&& \CBitrix24::isPortalAdmin($userId)
-			&& !Integrator::isIntegrator($userId)
-		);
+		return \Bitrix\Intranet\Util::checkIntegratorActionRestriction($params);
 	}
 }
 ?>

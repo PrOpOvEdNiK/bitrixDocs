@@ -93,8 +93,8 @@ class CWebDavLogDeletedElementBase
 			$sqlOrder = array();
 			foreach ($order as $by => $ord)
 			{
-				$by = strtoupper($by);
-				$sqlOrder[] = $by . ' ' . (strtoupper($ord) == 'DESC' ? 'DESC' : 'ASC');
+				$by = mb_strtoupper($by);
+				$sqlOrder[] = $by . ' ' . (mb_strtoupper($ord) == 'DESC' ? 'DESC' : 'ASC');
 			}
 			unset($by);
 			$sqlOrder = ' ORDER BY ' . implode(', ', $sqlOrder);

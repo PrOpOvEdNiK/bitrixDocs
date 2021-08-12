@@ -1,22 +1,27 @@
 <?php
 namespace Bitrix\Intranet;
 
-
+use Bitrix\ImOpenLines\Common;
+use Bitrix\ImOpenlines\Security\Helper;
+use Bitrix\ImOpenlines\Security\Permissions;
 use Bitrix\Main\Application;
-use \Bitrix\Main\Error;
-use \Bitrix\Main\Loader;
-use \Bitrix\Main\Result;
+use Bitrix\Main\Error;
+use Bitrix\Main\Loader;
+use Bitrix\Main\Result;
 use Bitrix\Main\UI\Extension;
-use \Bitrix\Main\Web\Uri;
-use \Bitrix\Main\Localization\Loc;
-use \Bitrix\Main\Config\Option;
+use Bitrix\Main\Web\Json;
+use Bitrix\Main\Web\Uri;
+use Bitrix\Main\Localization\Loc;
+use Bitrix\Main\Config\Option;
 use Bitrix\Voximplant\Limits;
 
 Loc::loadMessages(__FILE__);
 
 class ContactCenter
 {
-	const CC_MODULE_NOT_LOADED = 1;
+	public const CC_MODULE_NOT_LOADED = 1;
+
+	protected const LANDING_CRM_SHOP_CODE = 'store_v3';
 
 	private $cisCheck;
 	private $modules = array(
@@ -58,7 +63,7 @@ class ContactCenter
 			$methodName = $module . "GetItems";
 			if (method_exists($this, $methodName) && Loader::includeModule($module))
 			{
-				$result = call_user_func_array(array($this, $methodName), $filter);
+				$result = call_user_func_array(array($this, $methodName), array_values($filter));
 				if ($result instanceof Result)
 				{
 					$itemsList[$module] = $result->getData();
@@ -196,16 +201,24 @@ class ContactCenter
 					if(Limits::canRentMultiple() && $permissions->canModifyLines())
 					{
 						Extension::load(["voximplant.numberrent"]);
+						$canManageTelephony = (
+							!method_exists(\Bitrix\Voximplant\Limits::class,"canManageTelephony")
+							|| Limits::canManageTelephony()
+						);
 						$itemsList["voximplant_rent5"] = array(
 							"NAME" => Loc::getMessage("CONTACT_CENTER_RENT_5_NUMBERS"),
-							"ONCLICK" => "BX.Voximplant.NumberRent.create({packetSize: 5}).show();",
+							$canManageTelephony ?
+								"BX.Voximplant.NumberRent.create({packetSize: 5}).show();"
+								: "BX.Voximplant.openLimitSlider('limit_contact_center_telephony_number_rent');",
 							"SELECTED" => \CVoxImplantPhone::hasRentedNumberPacket(5),
 							"LOGO_CLASS" => "ui-icon ui-icon-package-numbers-five"
 
 						);
 						$itemsList["voximplant_rent10"] = array(
 							"NAME" => Loc::getMessage("CONTACT_CENTER_RENT_10_NUMBERS"),
-							"ONCLICK" => "BX.Voximplant.NumberRent.create({packetSize: 10}).show();",
+							"ONCLICK" => $canManageTelephony ?
+								"BX.Voximplant.NumberRent.create({packetSize: 10}).show();"
+								: "BX.Voximplant.openLimitSlider('limit_contact_center_telephony_number_rent');",
 							"SELECTED" => \CVoxImplantPhone::hasRentedNumberPacket(10),
 							"LOGO_CLASS" => "ui-icon ui-icon-package-numbers-ten"
 						);
@@ -240,38 +253,38 @@ class ContactCenter
 
 		if (!Loader::includeModule($module))
 		{
-			$result->addError(new Error(Loc::getMessage("CONTACT_CENTER_ERROR_MODULE_NOT_LOADED", array("#MODULE_ID" => $module)), self::CC_MODULE_NOT_LOADED));
+			return $result->addError(new Error(Loc::getMessage("CONTACT_CENTER_ERROR_MODULE_NOT_LOADED", array("#MODULE_ID" => $module)), self::CC_MODULE_NOT_LOADED));
 		}
-		else
+
+		if (\Bitrix\Crm\Tracking\Manager::isAccessible())
 		{
-			if (\Bitrix\Crm\Tracking\Manager::isAccessible())
-			{
-				$itemsList["calltracking"] = $this->getCallTrackingFormListItem();
-			}
+			$itemsList["calltracking"] = $this->getCallTrackingFormListItem();
+		}
 
-			$itemsList["widget"] = $this->getButtonListItem($filter);
-			$itemsList["form"] = $this->getFormListItem($filter);
+		$itemsList = array_merge($itemsList, $this->getCrmShopListItems());
 
-			if (Loader::includeModule("voximplant") && !empty(\Bitrix\Crm\WebForm\Callback::getPhoneNumbers()))
-			{
-				$itemsList["call"] = $this->getCallFormListItem($filter);
-			}
+		$itemsList["widget"] = $this->getButtonListItem($filter);
+		$itemsList["form"] = $this->getFormListItem($filter);
 
-			if (\Bitrix\Crm\Ads\AdsForm::canUse())
-			{
-				$itemsList = array_merge($itemsList, $this->getAdsFormListItems($filter));
-			}
+		if (Loader::includeModule("voximplant") && !empty(\Bitrix\Crm\WebForm\Callback::getPhoneNumbers()))
+		{
+			$itemsList["call"] = $this->getCallFormListItem($filter);
+		}
 
-			if (isset($filter["ACTIVE"]))
+		if (\Bitrix\Crm\Ads\AdsForm::canUse())
+		{
+			$itemsList = array_merge($itemsList, $this->getAdsFormListItems($filter));
+		}
+
+		if (isset($filter["ACTIVE"]))
+		{
+			foreach ($itemsList as $key => $item)
 			{
-				foreach ($itemsList as $key => $item)
+				$isAddItemToList = $this->isAddItemToList($filter["ACTIVE"], $item["SELECTED"]);
+
+				if (!$isAddItemToList)
 				{
-					$isAddItemToList = $this->isAddItemToList($filter["ACTIVE"], $item["SELECTED"]);
-
-					if (!$isAddItemToList)
-					{
-						unset($itemsList[$key]);
-					}
+					unset($itemsList[$key]);
 				}
 			}
 		}
@@ -308,10 +321,11 @@ class ContactCenter
 			//For whole list of botframework instances use getListConnector()
 			$connectors = \Bitrix\ImConnector\Connector::getListConnectorMenu(true);
 			$statusList = \Bitrix\ImConnector\Status::getInstanceAll();
-			$linkTemplate = \Bitrix\ImOpenLines\Common::getPublicFolder() . "connector/";
+			$linkTemplate = Common::getPublicFolder() . "connector/";
 			$codeMap = \Bitrix\ImConnector\Connector::getIconClassMap();
 			$cisOnlyConnectors = array("vkgroup", "vkgrouporder", "yandex");
 			$cisCheck = $this->cisCheck() && $filter["CHECK_REGION"] !== "N";
+			$configList = $this->getImopenlinesConfigList();
 
 			foreach ($connectors as $code => $connector)
 			{
@@ -322,6 +336,7 @@ class ContactCenter
 
 				$selected = false;
 				$selectedOrder = false;
+				$connectionInfoHelperLimit = false;
 
 				if (!empty($statusList[$code]))
 				{
@@ -350,29 +365,55 @@ class ContactCenter
 					}
 				}
 
+				//Hack for apple business chat
+				if(
+					$code === 'imessage' &&
+					$selected === false &&
+					\Bitrix\ImConnector\Limit::canUseIMessage() !== true
+				)
+				{
+					$connectionInfoHelperLimit = \Bitrix\ImConnector\Limit::INFO_HELPER_LIMIT_CONNECTOR_IMESSAGE;
+				}
+
 				$isAddItemToList = $this->isAddItemToList($filter["ACTIVE"], $selected);
 
 				if ($isAddItemToList)
 				{
 					$itemsList[$code] = array(
 						"NAME" => $connector["name"],
-						"LINK" => !empty($connector["link"]) ? $connector["link"] : \CUtil::JSEscape( $linkTemplate . "?ID=" . $code),
 						"SELECTED" => $selected,
+						"CONNECTION_INFO_HELPER_LIMIT" => $connectionInfoHelperLimit,
 						"LOGO_CLASS" => "ui-icon ui-icon-service-" . $codeMap[$code]
 					);
 
-					if ($code == "vkgroup")
+					$link = \CUtil::JSEscape( $linkTemplate . "?ID=" . $code);
+					if (empty($connector["link"]))
+					{
+						$itemsList[$code]["LINK"] = $link;
+					}
+					else
+					{
+						$itemsList[$code]["LIST"] =  $this->getConnectorListItem($code, $configList, $statusList);
+						if (empty($itemsList[$code]["LIST"]))
+						{
+							$itemsList[$code]["LINK"] = $link;
+						}
+					}
+
+					if ($code === "vkgroup")
 					{
 						$isAddItemToList = $this->isAddItemToList($filter["ACTIVE"], $selectedOrder);
 
+						//Hack for vkgroup order
 						if ($isAddItemToList)
 						{
-							$uri = new Uri($itemsList["vkgroup"]["LINK"]);
+							$uri = new Uri($link);
 							$uri->addParams(array("group_orders" => "Y"));
 							$itemsList["vkgrouporder"] = array(
 								"NAME" => Loc::getMessage("CONTACT_CENTER_IMOPENLINES_VK_ORDER"),
 								"LINK" => \CUtil::JSEscape($uri->getUri()),
 								"SELECTED" => $selectedOrder,
+								"CONNECTION_INFO_HELPER_LIMIT" => false,
 								"LOGO_CLASS" => "ui-icon ui-icon-service-" . $codeMap["vkgrouporder"]
 							);
 						}
@@ -382,6 +423,62 @@ class ContactCenter
 		}
 
 		$result->setData($itemsList);
+
+		return $result;
+	}
+
+	private function getImopenlinesConfigList(): array
+	{
+		if (!Loader::includeModule("imopenlines"))
+		{
+			return [];
+		}
+		$userPermissions = Permissions::createWithCurrentUser();
+
+		$allowedUserIds = Helper::getAllowedUserIds(
+			Helper::getCurrentUserId(),
+			$userPermissions->getPermission(Permissions::ENTITY_CONNECTORS, Permissions::ACTION_MODIFY)
+		);
+
+		$limit = null;
+		if (is_array($allowedUserIds))
+		{
+			$limit = array();
+			$orm = \Bitrix\ImOpenlines\Model\QueueTable::getList(Array(
+				'filter' => Array(
+					'=USER_ID' => $allowedUserIds
+				)
+			));
+			while ($row = $orm->fetch())
+			{
+				$limit[$row['CONFIG_ID']] = $row['CONFIG_ID'];
+			}
+		}
+
+		$configManager = new \Bitrix\ImOpenLines\Config();
+		$result = $configManager->getList([
+			'select' => [
+				'ID',
+				'NAME' => 'LINE_NAME',
+				'IS_ACTIVE' => 'ACTIVE',
+				'MODIFY_USER_ID'
+			],
+			'filter' => ['=TEMPORARY' => 'N'],
+			'order' => ['LINE_NAME']
+		]);
+		foreach ($result as $id => $config)
+		{
+			if (!is_null($limit))
+			{
+				if (!isset($limit[$config['ID']]) && !in_array($config['MODIFY_USER_ID'], $allowedUserIds, true))
+				{
+					unset($result[$id]);
+					continue;
+				}
+			}
+
+			$result[$id] = $config;
+		}
 
 		return $result;
 	}
@@ -409,9 +506,17 @@ class ContactCenter
 		}
 		else
 		{
-			$itemsList = array(
+			$itemsList = [];
+
+			$marketplaceApps = $this->getMarketplaceAppsByTag(['contact_center', 'partners', static::getZone()]);
+			if (!empty($marketplaceApps['ITEMS']))
+			{
+				$itemsList = $this->prepareMarketplaceApps($marketplaceApps);
+			}
+
+			$itemsList = array_merge($itemsList, array(
 				'ccplacement' => array(
-					"NAME" => Loc::getMessage("CONTACT_CENTER_REST_CC_PLACEMENT"),
+					"NAME" => Loc::getMessage("CONTACT_CENTER_REST_CC_PLACEMENT_2"),
 					"LOGO_CLASS" => "ui-icon ui-icon-service-rest-contact-center",
 					"SELECTED" => false
 				),
@@ -425,7 +530,7 @@ class ContactCenter
 					"LOGO_CLASS" => "ui-icon ui-icon-service-telephonybot",
 					"SELECTED" => false
 				)
-			);
+			));
 
 			$dynamicItems = $this->getDynamicItems();
 
@@ -462,7 +567,7 @@ class ContactCenter
 				$app = $appList[$placement["APP_ID"]];
 				$selected = ($app["ACTIVE"] == \Bitrix\Rest\AppTable::ACTIVE);
 				$itemsList[$app["CODE"]] = array (
-					"NAME" => (strlen($placement["TITLE"]) > 0) ? $placement["TITLE"] : $placement["APP_NAME"],
+					"NAME" => ($placement["TITLE"] <> '') ? $placement["TITLE"] : $placement["APP_NAME"],
 					"LINK" =>  \CUtil::JSEscape(SITE_DIR . "marketplace/app/" . $app["ID"] . "/"),
 					"SELECTED" => $selected,
 					"PLACEMENT_ID" => $placement["ID"],
@@ -478,6 +583,36 @@ class ContactCenter
 	}
 
 	/**
+	 * Return true if portal is cloud.
+	 *
+	 * @return bool
+	 */
+	public static function isCloud()
+	{
+		return Loader::includeModule('bitrix24');
+	}
+
+	/**
+	 * Return true if region is Russian.
+	 *
+	 * @return bool
+	 */
+	public static function isRegionRussian()
+	{
+		return in_array(self::getZone(), ['ru', 'kz', 'by']);
+	}
+
+	private static function getZone()
+	{
+		if (self::isCloud())
+		{
+			return \CBitrix24::getPortalZone();
+		}
+
+		return \CIntranetUtils::getPortalZone();
+	}
+
+	/**
 	 * Return items from sale module
 	 *
 	 * @param array $filter
@@ -487,15 +622,19 @@ class ContactCenter
 	{
 		$result = new Result();
 
-		$result->setData(array(
-			'sale' => array(
-				"NAME" => Loc::getMessage("CONTACT_CENTER_REST_ESHOP"),
-				"LOGO_CLASS" => "ui-icon ui-icon-service-import",
-				"SELECTED" => (\Bitrix\Rest\AppTable::getRow(['filter'=>[
-					'ACTIVE' => 'Y',
-					'CODE' => 'bitrix.eshop']]))
-			)
-		));
+		$data = static::isRegionRussian() ?
+			array(
+				'sale' => array(
+					"NAME" => Loc::getMessage("CONTACT_CENTER_REST_ESHOP"),
+					"LOGO_CLASS" => "ui-icon ui-icon-service-import",
+					"SELECTED" => (\Bitrix\Rest\AppTable::getRow(['filter'=>[
+						'ACTIVE' => 'Y',
+						'CODE' => 'bitrix.eshop']])),
+					"ONCLICK" => "BX.SidePanel.Instance.open('/marketplace/detail/bitrix.eshop/')"
+				)
+			):array();
+
+		$result->setData($data);
 
 		return $result;
 	}
@@ -571,6 +710,177 @@ class ContactCenter
 		}
 
 		return $result;
+	}
+
+	private function getMarketplaceAppsByTag(array $tag, bool $page = false, bool $pageSize = false)
+	{
+		$cacheTtl = 43200;
+		$cacheId = md5(serialize([$tag, $page, $pageSize]));
+		$cachePath = '/intranet/contact_center/tag/';
+		$cache = Application::getInstance()->getCache();
+		if($cache->initCache($cacheTtl, $cacheId, $cachePath))
+		{
+			$marketplaceApps = $cache->getVars();
+		}
+		else
+		{
+			$marketplaceApps = \Bitrix\Rest\Marketplace\Client::getByTag($tag, $page, $pageSize);
+			if(!empty($marketplaceApps['ITEMS']))
+			{
+				$cache->startDataCache();
+				$cache->endDataCache($marketplaceApps);
+			}
+		}
+
+		return $marketplaceApps;
+	}
+
+	private function prepareMarketplaceApps(array $marketplaceApps): array
+	{
+		$result = [];
+
+		$installedMarketplaceApps = $this->getInstalledMarketplaceApps();
+		foreach ($marketplaceApps['ITEMS'] as $marketplaceApp)
+		{
+			$onclick = "BX.SidePanel.Instance.open('/marketplace/detail/{$marketplaceApp['CODE']}/')";
+			if (isset($installedMarketplaceApps[$marketplaceApp['CODE']]))
+			{
+				$applicationId = $installedMarketplaceApps[$marketplaceApp['CODE']]['ID'];
+				$appCode = $installedMarketplaceApps[$marketplaceApp['CODE']]['CODE'];
+				$onclick = "new BX.ContactCenter.MarketplaceApp('{$applicationId}', '{$appCode}')";
+			}
+
+			$title = $marketplaceApp['NAME'];
+			if (mb_strlen($title) > 50)
+			{
+				$title = mb_substr($title, 0, 50).'...';
+			}
+
+			$img = $marketplaceApp['ICON_PRIORITY'] ?: $marketplaceApp['ICON'];
+			$img = str_replace(' ', '%20', $img);
+
+			$result[$marketplaceApp['CODE']] = [
+				"NAME" => $title,
+				"LOGO_CLASS" => 'ui-icon intranet-contact-marketplace-app',
+				"IMAGE" => $img,
+				"ONCLICK" => $onclick,
+				"SELECTED" => isset($installedMarketplaceApps[$marketplaceApp['CODE']]),
+				"MARKETPLACE_APP" => true,
+			];
+		}
+
+		\Bitrix\Main\Type\Collection::sortByColumn($result, ['SELECTED' => SORT_DESC]);
+
+		return $result;
+	}
+
+	private function getInstalledMarketplaceApps(): array
+	{
+		static $marketplaceInstalledApps = [];
+		if(!empty($marketplaceInstalledApps))
+		{
+			return $marketplaceInstalledApps;
+		}
+
+		$appIterator = \Bitrix\Rest\AppTable::getList([
+			'select' => ['ID', 'CODE'],
+			'filter' => [
+				'=ACTIVE' => 'Y',
+			]
+		]);
+		while ($row = $appIterator->fetch())
+		{
+			$marketplaceInstalledApps[$row['CODE']] = $row;
+		}
+
+		return $marketplaceInstalledApps;
+	}
+
+	private function getConnectorListItem(string $connectorCode, array $configList, array $statusList): array
+	{
+		if (!Loader::includeModule("imconnector") || !Loader::includeModule("imopenlines"))
+		{
+			return [];
+		}
+
+		$connectorCode = htmlspecialcharsbx(\CUtil::JSescape($connectorCode));
+
+		$openLineSliderPath = Common::getPublicFolder() . "connector/?ID={$connectorCode}&LINE=#LINE#&action-line=create";
+		$infoConnectors = \Bitrix\ImConnector\InfoConnectors::getInfoConnectorsList();
+
+		if (count($configList) > 0)
+		{
+			foreach ($configList as &$configItem)
+			{
+				//getting status if connector is connected for the open line
+				$status = $statusList[$connectorCode][$configItem["ID"]];
+				if (!empty($status) && ($status instanceof \Bitrix\ImConnector\Status) && $status->isStatus())
+				{
+					$configItem["STATUS"] = 1;
+				}
+				else
+				{
+					$configItem["STATUS"] = 0;
+				}
+
+				//getting connected channel name
+				$channelInfo = $infoConnectors[$configItem["ID"]];
+				try
+				{
+					$channelData = JSON::decode($channelInfo['DATA']);
+					$channelName = trim($channelData[$connectorCode]['name']);
+				}
+				catch (\Exception $exception)
+				{
+					$channelName = '';
+				}
+
+				$configItem["NAME"] = htmlspecialcharsbx($configItem["NAME"]);
+				if (!empty($channelName))
+				{
+					$channelName = htmlspecialcharsbx($channelName);
+					$configItem["NAME"] .= " ({$channelName})";
+				}
+				elseif ($configItem["STATUS"] === 1)
+				{
+					$connectedMessage = Loc::getMessage("CONTACT_CENTER_IMOPENLINES_CONNECTED_CONNECTOR");
+					$configItem["NAME"] .= " ({$connectedMessage})";
+				}
+
+				$itemPath = str_replace('#LINE#', $configItem["ID"], $openLineSliderPath);
+				$configItem["ONCLICK"] = "BX.SidePanel.Instance.open('".$itemPath."', {width: 700})";
+
+			}
+			unset($configItem);
+
+			//configured open lines are higher than not configured
+			usort($configList, static function($first, $second){
+				return ($second['STATUS'] - $first['STATUS']);
+			});
+
+			//delimiter between configured open lines and not configured
+			foreach ($configList as $key => $configItem)
+			{
+				if ($configItem['STATUS'] === 0)
+				{
+					$configList[$key]['DELIMITER_BEFORE'] = true;
+					break;
+				}
+			}
+
+			$userPermissions = Permissions::createWithCurrentUser();
+			if ($userPermissions->canPerform(Permissions::ENTITY_LINES, Permissions::ACTION_MODIFY))
+			{
+				$configList[] = [
+					"NAME" => Loc::getMessage("CONTACT_CENTER_IMOPENLINES_CREATE_OPEN_LINE"),
+					"ID" => 0,
+					'DELIMITER_BEFORE' => true,
+					"ONCLICK" => "new BX.Imopenlines.CreateLine({path:'{$openLineSliderPath}'});",
+				];
+			}
+		}
+
+		return $configList;
 	}
 
 	/**
@@ -817,12 +1127,12 @@ class ContactCenter
 				}
 
 				$linkedFormsIds = \Bitrix\Crm\Ads\AdsForm::getLinkedForms($type);
-				$name = (Loc::getMessage("CONTACT_CENTER_ADS_FORM_" . strtoupper($type)) ? : \Bitrix\Crm\Ads\AdsForm::getServiceTypeName($type));
+				$name = (Loc::getMessage("CONTACT_CENTER_ADS_FORM_".mb_strtoupper($type)) ? : \Bitrix\Crm\Ads\AdsForm::getServiceTypeName($type));
 
 				if ($filter["IS_LOAD_INNER_ITEMS"] !== "N")
 				{
 					$linkedItems = array();
-					$shortName = (Loc::getMessage("CONTACT_CENTER_ADS_FORM_SHORTNAME_" . strtoupper($type)) ? : \Bitrix\Crm\Ads\AdsForm::getServiceTypeName($type));
+					$shortName = (Loc::getMessage("CONTACT_CENTER_ADS_FORM_SHORTNAME_".mb_strtoupper($type)) ? : \Bitrix\Crm\Ads\AdsForm::getServiceTypeName($type));
 					$notLinkedItems = $list;
 
 					foreach ($linkedFormsIds as $id)
@@ -930,6 +1240,103 @@ class ContactCenter
 		return \Bitrix\Crm\WebForm\Manager::getEditUrl($formId);
 	}
 
+	private function getCrmShopSiteInfo(): ?array
+	{
+		\Bitrix\Landing\Rights::setGlobalOff();
+		$site = \Bitrix\Landing\Site::getList([
+			'select' => ['ID', 'ACTIVE',],
+			'filter' => [
+				'=TPL_CODE' => static::LANDING_CRM_SHOP_CODE,
+			],
+			'order' => [
+				'ID' => 'desc'
+			],
+			'limit' => 1,
+		])->fetch();
+		\Bitrix\Landing\Rights::setGlobalOn();
+
+		return is_array($site) ? $site : null;
+	}
+
+	private function getCrmShopListItems(): array
+	{
+		$items = [];
+
+		if (!Loader::includeModule('landing'))
+		{
+			return $items;
+		}
+
+		$shopItem = [
+			"NAME" => Loc::getMessage("CONTACT_CENTER_CRM_SHOP_ITEM"),
+			"LOGO_CLASS" => "ui-icon intranet-contact-center-crm-shop-item intranet-contact-center-crm-shop-item-color",
+			"COLOR_CLASS" => "intranet-contact-center-crm-shop-item-color",
+			"IS_NEW" => true,
+		];
+		$site = $this->getCrmShopSiteInfo();
+		if ($site !== null)
+		{
+			$sitePublicUrl = null;
+			if ($site['ACTIVE'] !== 'N')
+			{
+				$sitePublicUrl = \Bitrix\Landing\Site::getPublicUrl($site['ID']);
+			}
+			$shopItem["SELECTED"] = true;
+			$shopItem["LIST"] = [];
+			$dealsUrl = \CComponentEngine::makePathFromTemplate('#SITE_DIR#crm/deal/?redirect_to');
+			if ($dealsUrl)
+			{
+				$shopItem["LIST"][] = [
+					"ONCLICK" => "window.open('".\CUtil::JSEscape($dealsUrl)."', '_blank');",
+					"NAME" => Loc::getMessage('CONTACT_CENTER_CRM_SHOP_ITEM_DEALS'),
+				];
+			}
+			if (Loader::includeModule('salescenter'))
+			{
+				$paySystemPath = \CComponentEngine::makeComponentPath('bitrix:salescenter.paysystem.panel');
+				$paySystemPath = getLocalPath('components'.$paySystemPath.'/slider.php');
+				$paySystemPath = new \Bitrix\Main\Web\Uri($paySystemPath);
+				$paySystemPath->addParams([
+					'analyticsLabel' => 'contactCenterClickPaymentTile',
+					'type' => 'main',
+					'mode' => 'main'
+				]);
+				$shopItem["LIST"][] = [
+					"ONCLICK" => "BX.SidePanel.Instance.open('".\CUtil::JSEscape($paySystemPath->getUri())."');",
+					"NAME" => Loc::getMessage('CONTACT_CENTER_CRM_SHOP_ITEM_PAYSYSTEMS'),
+				];
+			}
+
+			$shopItem['LIST'][] = [
+				'NAME' => Loc::getMessage('CONTACT_CENTER_CRM_SHOP_ITEM_GO_TO_SITE'),
+				'ONCLICK' => $site['ACTIVE'] === 'Y' ? "window.open('".\CUtil::JSEscape($sitePublicUrl)."', '_blank');" : null,
+				'DISABLED' => $site['ACTIVE'] !== 'Y',
+			];
+
+			$shopItem["LIST"][] = [
+				"NAME" => Loc::getMessage('CONTACT_CENTER_CRM_SHOP_ITEM_HELP'),
+				"ONCLICK" => "top.BX.Helper.show('redirect=detail&code=13651476')",
+				"DELIMITER_BEFORE" => true,
+			];
+		}
+		else
+		{
+			$shopItem["SELECTED"] = false;
+			$shopItem["SIDEPANEL_PARAMS"] = [
+				'allowChangeHistory' => false,
+				'width' => 1200,
+				'data' => [
+					'rightBoundary' => 0,
+				],
+			];
+			$shopItem["LINK"] = '/shop/stores/site/edit/0/?super=Y';
+		}
+
+		$items['crm_shop'] = $shopItem;
+
+		return $items;
+	}
+
 	/**
 	 * Return formatted sitebutton item url with params
 	 *
@@ -1015,9 +1422,9 @@ class ContactCenter
 
 		foreach ($modules as $module)
 		{
-			if (in_array(strtolower($module), $this->modules))
+			if (in_array(mb_strtolower($module), $this->modules))
 			{
-				$result[] = strtolower($module);
+				$result[] = mb_strtolower($module);
 			}
 		}
 

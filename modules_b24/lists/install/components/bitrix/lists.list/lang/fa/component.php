@@ -1,8 +1,0 @@
-<?
-$MESS["CC_BLL_ELEMENT_ACTION_MENU_EDIT"] = "ویرایش";
-$MESS["CC_BLL_ELEMENT_ACTION_MENU_DELETE"] = "حذف";
-$MESS["CC_BLL_ELEMENT_ACTION_MENU_VIEW"] = "مشاهده";
-$MESS["CC_BLL_SECTION"] = "بخش";
-$MESS["CC_BLL_UPPER_LEVEL"] = "بالاترین سطح";
-$MESS["CC_BLL_COLUMN_SECTION"] = "بخشها";
-?>

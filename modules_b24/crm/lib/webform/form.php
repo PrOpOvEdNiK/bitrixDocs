@@ -7,6 +7,7 @@
  */
 namespace Bitrix\Crm\WebForm;
 
+use Bitrix\Crm\WebForm\Internals\LandingTable;
 use Bitrix\Main;
 use Bitrix\Main\Context;
 use Bitrix\Main\Localization\Loc;
@@ -14,6 +15,7 @@ use Bitrix\Main\Config\Option;
 use Bitrix\SalesCenter;
 use Bitrix\Crm\UI\Webpack;
 use Bitrix\Crm\SiteButton;
+use Bitrix\Crm\Service\Container;
 
 Loc::loadMessages(__FILE__);
 
@@ -37,11 +39,14 @@ class Form
 			'VIEWS' => [],
 			'DESIGN' => [],
 		),
-		'DEPENDENCIES' => array()
+		'DEP_GROUPS' => array(),
+		'DEPENDENCIES' => array(),
+		'AGREEMENTS' => array(),
 	);
 	protected $params = array();
 	protected $errors = array();
 	protected $isEmbeddedAvailableChanged = false;
+	protected $forceBuild = false;
 
 	public function __construct($id = null, array $params = null)
 	{
@@ -81,6 +86,18 @@ class Form
 	public function merge($params)
 	{
 		$oldData = $this->get();
+
+		if (isset($params['AGREEMENTS']))
+		{
+			$agreements = [];
+			foreach ($params['AGREEMENTS'] as $agreement)
+			{
+				$agreementId = (int) ($agreement['ID'] ?? $agreement['AGREEMENT_ID']);
+				$agreements[$agreementId] = $agreement;
+			}
+			$params['AGREEMENTS'] = array_values($agreements);
+		}
+
 		$params['FORM_SETTINGS'] = isset($params['FORM_SETTINGS']) ? $params['FORM_SETTINGS'] : [];
 		$params['FORM_SETTINGS'] = $params['FORM_SETTINGS'] + $oldData['FORM_SETTINGS'];
 		$this->set($params + $oldData);
@@ -263,6 +280,47 @@ class Form
 		$this->params['DEPENDENCIES'] = Internals\FieldDependenceTable::getList(array(
 			'filter' => array('=FORM_ID' => $id)
 		))->fetchAll();
+		$this->params['DEP_GROUPS'] = Internals\FieldDepGroupTable::getList([
+			'select' => ['ID', 'TYPE_ID'],
+			'filter' => ['=FORM_ID' => $id]
+		])->fetchAll();
+		if ($this->params['DEPENDENCIES'] && !$this->params['DEP_GROUPS'])
+		{
+			$this->params['DEP_GROUPS'][] = [
+				'ID' => 0,
+				'TYPE_ID' => Internals\FieldDepGroupTable::TYPE_DEF,
+			];
+		}
+
+		$this->params['AGREEMENTS'] = Internals\AgreementTable::getList([
+			'select' => ['AGREEMENT_ID', 'CHECKED', 'REQUIRED'],
+			'filter' => ['=FORM_ID' => $id]
+		])->fetchAll();
+		if ($this->params['AGREEMENT_ID'])
+		{
+			$this->params['AGREEMENTS'] = array_merge(
+				[[
+					'AGREEMENT_ID' => $this->params['AGREEMENT_ID'],
+					'CHECKED' => $this->params['LICENCE_BUTTON_IS_CHECKED'] === 'Y' ? 'Y' : 'N',
+					'REQUIRED' => 'Y',
+				]],
+				$this->params['AGREEMENTS']
+			);
+		}
+		elseif (!empty($this->params['AGREEMENTS']))
+		{
+			$this->params['AGREEMENT_ID'] = $this->params['AGREEMENTS'][0]['AGREEMENT_ID'];
+			$this->params['LICENCE_BUTTON_IS_CHECKED'] = $this->params['AGREEMENTS'][0]['CHECKED'];
+		}
+
+		$responsibleQueue = new ResponsibleQueue($id);
+		$responsibles = $responsibleQueue->getList();
+		if ($this->params['ASSIGNED_BY_ID'])
+		{
+			$responsibles[] = $this->params['ASSIGNED_BY_ID'];
+		}
+		$this->params['ASSIGNED_BY_ID'] = array_unique($responsibles);
+		$this->params['ASSIGNED_WORK_TIME'] = $responsibleQueue->isWorkTimeCheckEnabled() ? 'Y' : 'N';
 
 		return true;
 	}
@@ -271,13 +329,55 @@ class Form
 	{
 		$this->errors = array();
 		$result = $this->params;
-
-		$scripts = $result['SCRIPTS'];
 		unset($result['SCRIPTS']);
+
+		$agreements = [];
+		foreach ($result['AGREEMENTS'] ?? [] as $agreement)
+		{
+			$agreementId = $agreement['ID'] ?? $agreement['AGREEMENT_ID'] ?? null;
+			if (!$agreementId || in_array($agreementId, array_column($agreements, 'AGREEMENT_ID')))
+			{
+				continue;
+			}
+
+			$agreements[] = [
+				'AGREEMENT_ID' => $agreementId,
+				'CHECKED' => $agreement['CHECKED'] === 'Y' ? 'Y' : 'N',
+				'REQUIRED' => $agreement['REQUIRED'] === 'Y' ? 'Y' : 'N',
+			];
+		}
+		unset($result['AGREEMENTS']);
+		if ($result['AGREEMENT_ID'])
+		{
+			if (!in_array($result['AGREEMENT_ID'], array_column($agreements, 'AGREEMENT_ID')))
+			{
+				$agreements[] = [
+					'AGREEMENT_ID' => $result['AGREEMENT_ID'],
+					'CHECKED' => $result['LICENCE_BUTTON_IS_CHECKED'] === 'Y' ? 'Y' : 'N',
+					'REQUIRED' => 'Y',
+				];
+			}
+			elseif (isset($result['LICENCE_BUTTON_IS_CHECKED']))
+			{
+				foreach ($agreements as $index => $agreement)
+				{
+					if ($agreement['AGREEMENT_ID'] != $result['AGREEMENT_ID'])
+					{
+						continue;
+					}
+
+					$agreements[$index]['CHECKED'] = $result['LICENCE_BUTTON_IS_CHECKED'] === 'Y' ? 'Y' : 'N';
+				}
+			}
+		}
+		$result['AGREEMENT_ID'] = null;
 
 		$fields = $result['FIELDS'];
 		unset($result['FIELDS']);
 
+
+		$depGroups = $result['DEP_GROUPS'];
+		unset($result['DEP_GROUPS']);
 		$dependencies = $result['DEPENDENCIES'];
 		unset($result['DEPENDENCIES']);
 
@@ -286,18 +386,26 @@ class Form
 
 		$assignedById = $result['ASSIGNED_BY_ID'];
 		$assignedWorkTime = $result['ASSIGNED_WORK_TIME'];
-		unset($result['ASSIGNED_BY_ID']);
+		$result['ASSIGNED_BY_ID'] = null;
 		unset($result['ASSIGNED_WORK_TIME']);
 
 		// captcha
-		$captchaKey = isset($result['CAPTCHA_KEY']) ? $result['CAPTCHA_KEY'] : null;
-		$captchaSecret = isset($result['CAPTCHA_SECRET']) ? $result['CAPTCHA_SECRET'] : null;
-		if ($captchaKey !== null && $captchaSecret !== null)
+		$captchaKey = $result['CAPTCHA_KEY'] ?? '';
+		$captchaSecret = $result['CAPTCHA_SECRET'] ?? '';
+		$captchaVersion = $result['CAPTCHA_VERSION'] ?? '';
+		if ($captchaKey <> '' && $captchaSecret <> '')
 		{
-			ReCaptcha::setKey($captchaKey, $captchaSecret);
+			if ($captchaKey !== ReCaptcha::getKey($captchaVersion) && $captchaSecret !== ReCaptcha::getSecret($captchaVersion))
+			{
+				$this->forceBuild = true;
+				ReCaptcha::setKey($captchaKey, $captchaSecret, $captchaVersion);
+			}
 		}
 		unset($result['CAPTCHA_KEY']);
 		unset($result['CAPTCHA_SECRET']);
+		unset($result['CAPTCHA_VERSION']);
+
+		$result['ENTITY_SCHEME'] = (string) $result['ENTITY_SCHEME'];
 
 		if($onlyCheck)
 		{
@@ -309,8 +417,10 @@ class Form
 			// captcha
 			if($result['USE_CAPTCHA'] == 'Y')
 			{
-				$hasCaptchaKey = ((strlen(ReCaptcha::getKey()) > 0) ? 1 : 0) + ((strlen(ReCaptcha::getSecret()) > 0) ? 1 : 0);
-				$hasCaptchaDefaultKey = strlen(ReCaptcha::getDefaultKey()) > 0 && strlen(ReCaptcha::getDefaultSecret()) > 0;
+				$hasCaptchaKey = ((ReCaptcha::getKey($captchaVersion) <> '') ? 1 : 0) +
+					((ReCaptcha::getSecret($captchaVersion) <> '') ? 1 : 0)
+				;
+				$hasCaptchaDefaultKey = ReCaptcha::getDefaultKey($captchaVersion) <> '' && ReCaptcha::getDefaultSecret($captchaVersion) <> '';
 				if ($hasCaptchaKey == 1 || ($hasCaptchaKey == 0 && !$hasCaptchaDefaultKey))
 				{
 					$this->errors[] = Loc::getMessage('CRM_WEBFORM_FORM_ERROR_CAPTCHA_KEY');
@@ -351,9 +461,24 @@ class Form
 				$fieldCodeList[] = $field['CODE'];
 			}
 
+			foreach($depGroups as $depGroup)
+			{
+				$depGroup['FORM_ID'] = (int) $this->id;
+
+				if(!in_array($depGroup['IF_FIELD_CODE'], array_keys(Internals\FieldDepGroupTable::getDepGroupTypes())))
+				{
+					continue;
+				}
+
+				$depGroupResult = new Main\Entity\Result;
+				Internals\FieldDepGroupTable::checkFields($depGroupResult, null, $depGroup);
+				$this->prepareResult('DEP_GROUPS', $depGroupResult);
+			}
+
 			foreach($dependencies as $dependency)
 			{
 				$dependency['FORM_ID'] = (int) $this->id;
+				$dependency['GROUP_ID'] = (int) ($dependency['GROUP_ID'] ?? 0);
 
 				if(!in_array($dependency['IF_FIELD_CODE'], $fieldCodeList))
 				{
@@ -369,6 +494,14 @@ class Form
 				$this->prepareResult('DEPENDENCIES', $dependencyResult);
 			}
 
+			foreach($agreements as $agreement)
+			{
+				$agreement['FORM_ID'] = (int) $this->id;
+				$agreementResult = new Main\Entity\Result;
+				Internals\AgreementTable::checkFields($agreementResult, null, $agreement);
+				$this->prepareResult('AGREEMENTS', $agreementResult);
+			}
+
 			return;
 		}
 
@@ -381,12 +514,14 @@ class Form
 		{
 			unset($result['ID']);
 			$formResult = Internals\FormTable::update($this->id, $result);
+			$isAdded = false;
 		}
 		else
 		{
 			$result['DATE_CREATE'] = new Main\Type\DateTime();
 			$formResult = Internals\FormTable::add($result);
 			$this->id = $formResult->getId();
+			$isAdded = true;
 		}
 
 		if(!$formResult->isSuccess())
@@ -461,7 +596,42 @@ class Form
 			$fieldCodeList[] = $fieldCode['CODE'];
 		}
 
-		$fieldDepDb = Internals\FieldDependenceTable::getList(array('filter' => array('=FORM_ID' => $this->id)));
+		$fieldDepGroupDb = Internals\FieldDepGroupTable::getList(['select' => ['ID'], 'filter' => ['=FORM_ID' => $this->id]]);
+		while($fieldDepGroup = $fieldDepGroupDb->fetch())
+		{
+			Internals\FieldDepGroupTable::delete($fieldDepGroup['ID']);
+		}
+
+		$depGroupMap = [];
+		foreach($depGroups as $depGroup)
+		{
+			$depGroupId = $depGroup['ID'];
+			$depGroup['FORM_ID'] = $this->id;
+			unset($depGroup['ID']);
+			$depGroupResult = Internals\FieldDepGroupTable::add($depGroup);
+			$this->prepareResult('DEP_GROUPS', $depGroupResult);
+			$depGroupMap[$depGroupId] = $depGroupResult->getId();
+		}
+		foreach($dependencies as $depIndex => $dependency)
+		{
+			$dependency['GROUP_ID'] = !empty($dependency['GROUP_ID']) ? $dependency['GROUP_ID'] : 0;
+			$dependency['FORM_ID'] = $this->id;
+			if (isset($depGroupMap[$dependency['GROUP_ID']]))
+			{
+				$dependency['GROUP_ID'] = $depGroupMap[$dependency['GROUP_ID']];
+			}
+			elseif (count($depGroupMap) === 1)
+			{
+				$dependency['GROUP_ID'] = current($depGroupMap);
+			}
+			else
+			{
+				$dependency['GROUP_ID'] = 0;
+			}
+			$dependencies[$depIndex] = $dependency;
+		}
+
+		$fieldDepDb = Internals\FieldDependenceTable::getList(['select' => ['ID'], 'filter' => ['=FORM_ID' => $this->id]]);
 		while($fieldDep = $fieldDepDb->fetch())
 		{
 			Internals\FieldDependenceTable::delete($fieldDep['ID']);
@@ -483,19 +653,46 @@ class Form
 			$this->prepareResult('DEPENDENCIES', $dependencyResult);
 		}
 
+		$agreementDb = Internals\AgreementTable::getList(['select' => ['ID'], 'filter' => ['=FORM_ID' => $this->id]]);
+		while($agreement = $agreementDb->fetch())
+		{
+			Internals\AgreementTable::delete($agreement['ID']);
+		}
+		foreach($agreements as $agreement)
+		{
+			$agreement['FORM_ID'] = $this->id;
+			$agreementResult = Internals\AgreementTable::add($agreement);
+			$this->prepareResult('AGREEMENTS', $agreementResult);
+		}
+
 		$this->buildScript();
+		if ($isAdded)
+		{
+			LandingTable::createLanding($this->id, $result['NAME']);
+		}
 	}
 
 	public function buildScript()
 	{
-		Webpack\Form::instance($this->id)->build();
+		$result = Webpack\Form::instance($this->id)->build();
 		if (Manager::isEmbeddingAvailable() && $this->isEmbeddingAvailable()
 			&& ($this->isEmbeddingEnabled() || $this->isEmbeddedAvailableChanged))
 		{
 			SiteButton\Manager::updateScriptCacheWithForm($this->getId());
 		}
 
+		$app = Webpack\Form\App::instance();
+		if ($this->forceBuild || !$app->isBuilt(new Main\Type\Date()))
+		{
+			if ($app->build())
+			{
+				Webpack\Form::addCheckResourcesAgent();
+			}
+		}
+
+		$this->forceBuild = false;
 		self::cleanCacheByTag($this->id);
+		return $result;
 	}
 
 	public function getErrors()
@@ -631,6 +828,11 @@ class Form
 		return $this->params['BUTTON_CAPTION'] ? $this->params['BUTTON_CAPTION'] : Loc::getMessage('CRM_WEBFORM_FORM_BUTTON_CAPTION_DEFAULT');
 	}
 
+	public function getLandingUrl()
+	{
+		return Internals\LandingTable::getLandingPublicUrl($this->getId());
+	}
+
 	public function getAgreementUrl()
 	{
 		return Script::getAgreementUrl($this->get());
@@ -722,21 +924,21 @@ class Form
 		$fieldList = array();
 		foreach($fields as $field)
 		{
-
+			$preparedField = [
+				'id' => $field['ID'],
+				'type' => $field['TYPE'],
+				'name' => $field['CODE'],
+			];
 			if($field['TYPE'] == 'section')
 			{
-				$preparedField = array(
-					'type' => $field['TYPE'],
-					'name' => $field['CODE'],
+				$preparedField += array(
 					'caption' => $field['CAPTION'],
 				);
 			}
 			else
 			{
-				$preparedField = array(
-					'type' => $field['TYPE'],
+				$preparedField += array(
 					'type_original' => $field['TYPE_ORIGINAL'],
-					'name' => $field['CODE'], // 'uf_field_' . $field['ID'],
 					'entity_name' => $field['ENTITY_NAME'],
 					'entity_field_name' => $field['ENTITY_FIELD_NAME'],
 					'caption' => $field['CAPTION'] ? $field['CAPTION'] : $field['ENTITY_FIELD_CAPTION'],
@@ -765,6 +967,12 @@ class Form
 						{
 							$discount = 0;
 						}
+
+						if (empty($item['ID']))
+						{
+							continue;
+						}
+
 						$preparedItem = array(
 							'title' => $item['VALUE'],
 							'value' => $item['ID'],
@@ -797,7 +1005,7 @@ class Form
 
 	public function getExternalAnalyticsData()
 	{
-		$data = Helper::getExternalAnalyticsData($this->params['CAPTION']);
+		$data = Helper::getExternalAnalyticsData($this->params['CAPTION'] ?: '#' . $this->getId(), $this->getId());
 		$steps = array();
 
 		$steps[] = array(
@@ -861,13 +1069,7 @@ class Form
 	 */
 	public function getRedirectDelay()
 	{
-		$delay = Form::REDIRECT_DELAY;
-		if (!empty($this->params['FORM_SETTINGS']['REDIRECT_DELAY']))
-		{
-			$delay = (int) $this->params['FORM_SETTINGS']['REDIRECT_DELAY'];
-		}
-
-		return $delay;
+		return (int) ($this->params['FORM_SETTINGS']['REDIRECT_DELAY'] ?? Form::REDIRECT_DELAY);
 	}
 
 	/**
@@ -919,13 +1121,26 @@ class Form
 		}
 
 		// copy field dependencies
-		$fieldDepDb = Internals\FieldDependenceTable::getList(array(
+		$fieldDepGroupMap = [];
+		$fieldDepGroups = Internals\FieldDepGroupTable::getList(array(
 			'filter' => array('=FORM_ID' => $formId)
 		));
-		while($fieldDep = $fieldDepDb->fetch())
+		foreach ($fieldDepGroups as $fieldDepGroup)
+		{
+			$fieldDepGroupId = $fieldDepGroup['ID'];
+			unset($fieldDepGroup['ID']);
+			$fieldDepGroup['FORM_ID'] = $newFormId;
+			$fieldDepGroupMap[$fieldDepGroupId] = Internals\FieldDepGroupTable::add($fieldDepGroup)->getId() ?: 0;
+		}
+
+		$fieldDeps = Internals\FieldDependenceTable::getList(array(
+			'filter' => array('=FORM_ID' => $formId)
+		));
+		while($fieldDep = $fieldDeps->fetch())
 		{
 			unset($fieldDep['ID']);
 			$fieldDep['FORM_ID'] = $newFormId;
+			$fieldDep['GROUP_ID'] = $fieldDepGroupMap[$fieldDep['GROUP_ID']] ?? 0;
 			Internals\FieldDependenceTable::add($fieldDep);
 		}
 
@@ -937,6 +1152,28 @@ class Form
 		{
 			$presetField['FORM_ID'] = $newFormId;
 			Internals\PresetFieldTable::add($presetField);
+		}
+
+		// copy agreements
+		$agreements = Internals\AgreementTable::getList(array(
+			'filter' => array('=FORM_ID' => $formId)
+		));
+		while($agreement = $agreements->fetch())
+		{
+			unset($agreement['ID']);
+			$agreement['FORM_ID'] = $newFormId;
+			Internals\AgreementTable::add($agreement);
+		}
+
+		// copy assigned by
+		$queue = Internals\QueueTable::getList(array(
+			'filter' => array('=FORM_ID' => $formId)
+		));
+		while($queueRow = $queue->fetch())
+		{
+			unset($queueRow['ID']);
+			$queueRow['FORM_ID'] = $newFormId;
+			Internals\QueueTable::add($queueRow);
 		}
 
 
@@ -1075,6 +1312,8 @@ class Form
 				$isHidden = $dep['do']['action'] == 'hide';
 			}
 
+
+			$isHidden = true;
 			if($field['type'] == 'section')
 			{
 				foreach($sectionFields[$field['name']] as $sectionFieldName)
@@ -1292,7 +1531,8 @@ class Form
 					$resultRedirectUrl = null;
 					if ($resultEntity->getOrderId())
 					{
-						$resultRedirectUrl = SalesCenter\Payment::getUrl($resultEntity->getOrderId());
+						$urlInfo = SalesCenter\Integration\LandingManager::getInstance()->getUrlInfoByOrderId($resultEntity->getOrderId());
+						$resultRedirectUrl = $urlInfo['url'] ?? null;
 					}
 					elseif($resultEntity->getInvoiceId())
 					{
@@ -1356,22 +1596,11 @@ class Form
 
 	public function isEmbeddingEnabled()
 	{
-		return (
-			!empty($this->params['FORM_SETTINGS']['EMBEDDING_ENABLED'])
-			&& $this->params['FORM_SETTINGS']['EMBEDDING_ENABLED'] === 'Y'
-		);
+		return true;
 	}
 
 	public function isEmbeddingAvailable()
 	{
-		foreach ($this->getFields() as $field)
-		{
-			if ($field['TYPE'] === Internals\FieldTable::TYPE_ENUM_RESOURCEBOOKING)
-			{
-				return false;
-			}
-		}
-
 		return true;
 	}
 
@@ -1403,9 +1632,21 @@ class Form
 			{
 				foreach($entityList as $entityName => $entityCaption)
 				{
+
 					if(!in_array($entityName, $entitySchemes[$formEntityScheme]['ENTITIES']))
 					{
 						unset($entityList[$entityName]);
+						continue;
+					}
+
+					$entityTypeId = \CCrmOwnerType::resolveID($entityName);
+					if ($entityTypeId && \CCrmOwnerType::isPossibleDynamicTypeId($entityTypeId))
+					{
+						$result['ENTITY'][] = array(
+							'ENTITY_NAME' => $entityName,
+							'ENTITY_CAPTION' => \CCrmOwnerType::GetDescription($entityTypeId),
+							'VALUE' => false,
+						);
 					}
 				}
 			}
@@ -1473,7 +1714,7 @@ class Form
 		return \CBitrix24::IsLicensePaid();
 	}
 
-	protected static function getMaxActivatedFormLimit()
+	public static function getMaxActivatedFormLimit()
 	{
 		return intval(Option::get('crm', '~crm_webform_max_activated', 99999));
 	}
@@ -1527,7 +1768,7 @@ class Form
 	public static function onBitrix24LicenseChange(\Bitrix\Main\Event $event)
 	{
 		preg_match("/(project|tf|team)$/is", $event->getParameter(0), $matches);
-		$licenseType = strtolower($matches[0]);
+		$licenseType = mb_strtolower($matches[0]);
 		if ($licenseType)
 		{
 			$maxActivated = null;

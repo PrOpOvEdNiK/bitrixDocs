@@ -1,5 +1,0 @@
-<?
-$MESS["TASKS_TTDP_TEMPLATESELECTOR_NO_TEMPLATE"] = "Создать по шаблону";
-$MESS["TASKS_TTDP_TEMPLATESELECTOR_CREATE_HINT"] = "Создать задачу по шаблону";
-$MESS["TASKS_TTDP_TEMPLATESELECTOR_TO_LIST"] = "Список всех шаблонов";
-$MESS["TASKS_TTDP_TEMPLATESELECTOR_EMPTY"] = "Нет шаблонов";

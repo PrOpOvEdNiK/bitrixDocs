@@ -1,18 +1,23 @@
 <?php
 namespace Bitrix\Crm\Category;
+use Bitrix\Crm\Attribute\FieldAttributeManager;
+use Bitrix\Crm\Color\PhaseColorScheme;
 use Bitrix\Main;
 use Bitrix\Main\Type\Date;
 use Bitrix\Main\Entity\Query;
 use Bitrix\Crm\Restriction\RestrictionManager;
 use Bitrix\Crm\Category\Entity\DealCategoryTable;
 use Bitrix\Crm\DealTable;
-use Bitrix\Crm\Color\DealStageColorScheme;
 use Bitrix\Crm\Entry\AddException;
 use Bitrix\Crm\Entry\UpdateException;
 use Bitrix\Crm\Entry\DeleteException;
+use Bitrix\Crm\RolePermission;
 
 class DealCategory
 {
+	public const
+		MARKETPLACE_CRM_ORIGINATOR = 'marketplace_crm_originator';
+
 	/** @var bool */
 	private static $langIncluded = false;
 	private static $stageList = array();
@@ -402,7 +407,7 @@ class DealCategory
 				}
 				else
 				{
-					$effectiveSort[$fieldID] = strcasecmp($order, 'DESC') ? SORT_DESC : SORT_ASC;
+					$effectiveSort[$fieldID] = strcasecmp($order, 'DESC') === 0 ? SORT_DESC : SORT_ASC;
 				}
 			}
 			if(!empty($effectiveSort))
@@ -481,6 +486,16 @@ class DealCategory
 		$limit = RestrictionManager::getDealCategoryLimit();
 		$data['IS_LOCKED'] = ($limit > 0 && $limit <= self::getCount()) ? 'Y' : 'N';
 
+		if (isset($fields['ORIGIN_ID']))
+		{
+			$data['ORIGIN_ID'] = $fields['ORIGIN_ID'];
+		}
+
+		if (isset($fields['ORIGINATOR_ID']))
+		{
+			$data['ORIGINATOR_ID'] = $fields['ORIGINATOR_ID'];
+		}
+
 		/** @var Main\Entity\AddResult $result */
 		$result = null;
 		try
@@ -495,6 +510,11 @@ class DealCategory
 		if(!$result->isSuccess())
 		{
 			throw new AddException(\CCrmOwnerType::DealCategory, $result->getErrorMessages());
+		}
+
+		if(self::$all !== null)
+		{
+			self::$all = null;
 		}
 
 		$ID = $result->getId();
@@ -522,11 +542,6 @@ class DealCategory
 			$role->Update($roleID, $fields);
 		}
 		//endregion
-
-		if(self::$all !== null)
-		{
-			self::$all = null;
-		}
 
 		return $ID;
 	}
@@ -624,7 +639,6 @@ class DealCategory
 		unset(self::$existMap[$ID]);
 		self::eraseStages($ID);
 		self::erasePermissions($ID);
-		self::removeColorScheme($ID);
 
 		if(self::$all !== null)
 		{
@@ -683,13 +697,17 @@ class DealCategory
 
 			if($ID > 0)
 			{
+				$prefix = self::prepareStageNamespaceID($ID);
 				$typeID = self::convertToStatusEntityID($ID);
 				$entityTypes[$typeID] =
 					array(
 						'ID' => $typeID,
 						'NAME' => GetMessage('CRM_DEAL_CATEGORY_STATUS_ENTITY', array('#CATEGORY#' => $name)),
 						'PARENT_ID' => 'DEAL_STAGE',
-						'SEMANTIC_INFO' => \CCrmStatus::GetDealStageSemanticInfo(self::prepareStageNamespaceID($ID))
+						'SEMANTIC_INFO' => \CCrmStatus::GetDealStageSemanticInfo($prefix),
+						'PREFIX' => $prefix,
+						'FIELD_ATTRIBUTE_SCOPE' => FieldAttributeManager::getEntityScopeByCategory($ID),
+						'ENTITY_TYPE_ID' => \CCrmOwnerType::Deal,
 					);
 			}
 			elseif($enableDefault)
@@ -698,7 +716,9 @@ class DealCategory
 					array(
 						'ID' => 'DEAL_STAGE',
 						'NAME' => GetMessage('CRM_DEAL_CATEGORY_STATUS_ENTITY', array('#CATEGORY#' => $name)),
-						'SEMANTIC_INFO' => \CCrmStatus::GetDealStageSemanticInfo()
+						'SEMANTIC_INFO' => \CCrmStatus::GetDealStageSemanticInfo(),
+						'FIELD_ATTRIBUTE_SCOPE' => FieldAttributeManager::getEntityScopeByCategory(),
+						'ENTITY_TYPE_ID' => \CCrmOwnerType::Deal,
 					);
 			}
 		}
@@ -760,7 +780,9 @@ class DealCategory
 	{
 		\CCrmStatus::BulkCreate(
 			self::convertToStatusEntityID($ID),
-			\CCrmStatus::GetDefaultDealStages(self::prepareStageNamespaceID($ID))
+			self::normalizeStatusIds(
+				\CCrmStatus::GetDefaultDealStages(self::prepareStageNamespaceID($ID))
+			)
 		);
 	}
 
@@ -789,7 +811,7 @@ class DealCategory
 	public static function hasStageNamespaceID($stageID, $ID)
 	{
 		$nid = self::prepareStageNamespaceID($ID);
-		return $nid !== '' && strpos($stageID, "{$nid}:") === 0;
+		return $nid !== '' && mb_strpos($stageID, "{$nid}:") === 0;
 	}
 
 	/**
@@ -838,7 +860,7 @@ class DealCategory
 		$connection = Main\Application::getConnection();
 		$entityID = $connection->getSqlHelper()->forSql($entityID);
 		//Offset for namespace (for example "C15:")
-		$offset = strlen($ID) + 3;
+		$offset = mb_strlen($ID) + 3;
 		if($connection instanceof Main\DB\MysqlCommonConnection)
 		{
 			$sql = "SELECT SUBSTRING(STATUS_ID, {$offset}) AS MAX_STATUS_ID FROM b_crm_status WHERE ENTITY_ID = '{$entityID}' AND CAST(SUBSTRING(STATUS_ID, {$offset}) AS UNSIGNED) > 0 ORDER BY CAST(SUBSTRING(STATUS_ID, {$offset}) AS UNSIGNED) DESC LIMIT 1";
@@ -893,10 +915,16 @@ class DealCategory
 
 		if($ID <= 0)
 		{
-			return \CCrmStatus::GetStatus('DEAL_STAGE');
+			$infos = \CCrmStatus::GetStatus('DEAL_STAGE');
+		}
+		else
+		{
+			$infos = \CCrmStatus::GetStatus(self::convertToStatusEntityID($ID));
 		}
 
-		return \CCrmStatus::GetStatus(self::convertToStatusEntityID($ID));
+		$infos = PhaseColorScheme::fillDefaultColors($infos);
+
+		return $infos;
 	}
 
 	/**
@@ -1034,21 +1062,12 @@ class DealCategory
 	}
 
 	/**
-	 * Remove color scheme that is belong to specified deal category entry.
+	 * @deprecated
 	 * @param int $ID Deal category entry ID (must be greater than 0).
 	 * @return void
 	 */
 	public static function removeColorScheme($ID)
 	{
-		if(!is_int($ID))
-		{
-			$ID = (int)$ID;
-		}
-
-		if($ID > 0)
-		{
-			DealStageColorScheme::removeByCategory($ID);
-		}
 	}
 
 	/**
@@ -1175,6 +1194,45 @@ class DealCategory
 		}
 
 		return $userPermissions->HavePerm('CONFIG', BX_CRM_PERM_CONFIG, 'WRITE');
+	}
+
+	public static function getPermissionById(int $id)
+	{
+		$permissionEntity = DealCategory::convertToPermissionEntityType($id);
+		return RolePermission::getByEntityId($permissionEntity);
+	}
+
+	/**
+	 * Sets permission for all roles
+	 * @param int $id
+	 * @param string $permission
+	 * @return Main\Result
+	 */
+	public static function setPermissionById(int $id, string $permission)
+	{
+		$permissionEntity = DealCategory::convertToPermissionEntityType($id);
+		$permission = in_array($permission, [BX_CRM_PERM_ALL, BX_CRM_PERM_SELF]) ? $permission : BX_CRM_PERM_NONE;
+		$permissionSet = \CCrmRole::GetDefaultPermissionSet();
+		foreach ($permissionSet as &$res)
+		{
+			$res["-"] = $permission;
+		}
+		unset($res);
+		return RolePermission::setByEntityIdForAllNotAdminRoles($permissionEntity, $permissionSet);
+	}
+
+	/**
+	 * Copies category permissions from one to another
+	 * @param int $id
+	 * @param int $donorId
+	 * @return Main\Result
+	 */
+	public static function copyPermissionById(int $id, int $donorId)
+	{
+		$permissionEntity = DealCategory::convertToPermissionEntityType($id);
+		$donorPermissionEntity = DealCategory::convertToPermissionEntityType($donorId);
+		$permissionSet = RolePermission::getByEntityId($donorPermissionEntity);
+		return RolePermission::setByEntityId($permissionEntity, $permissionSet);
 	}
 
 	/**
@@ -1369,5 +1427,19 @@ class DealCategory
 		{
 			self::$langIncluded = IncludeModuleLangFile(__FILE__);
 		}
+	}
+
+	public static function normalizeStatusIds(array $stages)
+	{
+		$maxStatusLength = 21; // @see \CCrmStatus::validateStatusId for details
+		foreach ($stages as $i => $stage)
+		{
+			if (isset($stage['STATUS_ID']) && mb_strlen($stage['STATUS_ID']) > $maxStatusLength)
+			{
+				$stages[$i]['STATUS_ID'] = mb_substr($stage['STATUS_ID'], 0, $maxStatusLength);
+			}
+		}
+
+		return $stages;
 	}
 }

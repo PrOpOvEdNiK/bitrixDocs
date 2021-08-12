@@ -1,4 +1,5 @@
-<?
+<?php
+
 require_once($_SERVER['DOCUMENT_ROOT'].'/bitrix/modules/intranet/classes/general/sharepoint.php');
 
 class CIntranetSharepoint extends CAllIntranetSharepoint
@@ -37,9 +38,9 @@ class CIntranetSharepoint extends CAllIntranetSharepoint
 				"FROM b_intranet_sharepoint S, b_iblock I ".
 				"	".$arSqls["FROM"]." ".
 				"WHERE S.IBLOCK_ID = I.ID ";
-			if (strlen($arSqls["WHERE"]) > 0)
+			if ($arSqls["WHERE"] <> '')
 				$strSql .= "AND ".$arSqls["WHERE"]." ";
-			if (strlen($arSqls["GROUPBY"]) > 0)
+			if ($arSqls["GROUPBY"] <> '')
 				$strSql .= "GROUP BY ".$arSqls["GROUPBY"]." ";
 
 			$dbRes = $DB->Query($strSql, false, "File: ".__FILE__."<br>Line: ".__LINE__);
@@ -54,28 +55,28 @@ class CIntranetSharepoint extends CAllIntranetSharepoint
 			"FROM b_intranet_sharepoint S, b_iblock I ".
 			"	".$arSqls["FROM"]." ".
 			"WHERE S.IBLOCK_ID = I.ID ";
-		if (strlen($arSqls["WHERE"]) > 0)
+		if ($arSqls["WHERE"] <> '')
 			$strSql .= "AND ".$arSqls["WHERE"]." ";
-		if (strlen($arSqls["GROUPBY"]) > 0)
+		if ($arSqls["GROUPBY"] <> '')
 			$strSql .= "GROUP BY ".$arSqls["GROUPBY"]." ";
-		if (strlen($arSqls["ORDERBY"]) > 0)
+		if ($arSqls["ORDERBY"] <> '')
 			$strSql .= "ORDER BY ".$arSqls["ORDERBY"]." ";
 
-		if (is_array($arNavStartParams) && IntVal($arNavStartParams["nTopCount"])<=0)
+		if (is_array($arNavStartParams) && intval($arNavStartParams["nTopCount"])<=0)
 		{
 			$strSql_tmp =
 				"SELECT COUNT('x') as CNT ".
 				"FROM b_intranet_sharepoint S, b_iblock I ".
 				"	".$arSqls["FROM"]." ".
 				"WHERE S.IBLOCK_ID = I.ID ";
-			if (strlen($arSqls["WHERE"]) > 0)
+			if ($arSqls["WHERE"] <> '')
 				$strSql_tmp .= "AND ".$arSqls["WHERE"]." ";
-			if (strlen($arSqls["GROUPBY"]) > 0)
+			if ($arSqls["GROUPBY"] <> '')
 				$strSql_tmp .= "GROUP BY ".$arSqls["GROUPBY"]." ";
 
 			$dbRes = $DB->Query($strSql_tmp, false, "File: ".__FILE__."<br>Line: ".__LINE__);
 			$cnt = 0;
-			if (strlen($arSqls["GROUPBY"]) <= 0)
+			if ($arSqls["GROUPBY"] == '')
 			{
 				if ($arRes = $dbRes->Fetch())
 					$cnt = $arRes["CNT"];
@@ -90,7 +91,7 @@ class CIntranetSharepoint extends CAllIntranetSharepoint
 		}
 		else
 		{
-			if (is_array($arNavStartParams) && IntVal($arNavStartParams["nTopCount"])>0)
+			if (is_array($arNavStartParams) && intval($arNavStartParams["nTopCount"])>0)
 				$strSql .= "LIMIT ".$arNavStartParams["nTopCount"];
 
 			$dbRes = $DB->Query($strSql, false, "File: ".__FILE__."<br>Line: ".__LINE__);
@@ -112,4 +113,3 @@ ORDER BY SYNC_DATE
 LIMIT 0,'.intval($limit);
 	}
 }
-?>

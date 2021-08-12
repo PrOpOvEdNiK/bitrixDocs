@@ -1,5 +1,0 @@
-<?
-$MESS["CRM_ACTIVITY_PVDR_CUST_ACTION_BUTTON"] = "Nuosava veikla";
-$MESS["CRM_ACTIVITY_PVDR_CUST_ACTION_BUTTON_TITLE"] = "Sukurti pasirinktinį veiksmą";
-$MESS["CRM_ACTIVITY_PVDR_CUST_SUBJECT_LABEL"] = "Tema";
-?>

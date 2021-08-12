@@ -84,6 +84,19 @@ class EntityValidator
 		{
 			return !empty($value);
 		}
-		return strlen($this->entityFields[$fieldName]) > 0;
+		return $this->entityFields[$fieldName] <> '';
+	}
+
+	protected function innerCheckAnyFieldPresence(array $fieldNames)
+	{
+		foreach ($fieldNames as $fieldName)
+		{
+			if ($this->innerCheckFieldPresence($fieldName))
+			{
+				return true;
+			}
+		}
+
+		return false;
 	}
 }

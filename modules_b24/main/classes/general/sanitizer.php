@@ -143,7 +143,7 @@
 
 			foreach($arTags as $tagName => $arAttrs)
 			{
-				$tagName = strtolower($tagName);
+				$tagName = mb_strtolower($tagName);
 				$arAttrs = array_change_key_case($arAttrs, CASE_LOWER);
 				$this->arHtmlTags[$tagName] = $arAttrs;
 				$counter++;
@@ -176,7 +176,7 @@
 
 			foreach ($this->arHtmlTags as $tagName => $arAttrs)
 				foreach ($arTagNames as $delTagName)
-					if(strtolower($delTagName) != $tagName)
+					if(mb_strtolower($delTagName) != $tagName)
 						$arTmp[$tagName] = $arAttrs;
 					else
 						$counter++;
@@ -414,7 +414,7 @@
 				return false;
 			}
 
-			$attr = strtolower($arAttr[1]);
+			$attr = mb_strtolower($arAttr[1]);
 			$attrValue = $this->Decode($arAttr[3]);
 
 			switch ($attr)
@@ -446,7 +446,7 @@
 
 				case 'style':
 					$attrValue = str_replace('&quot;', '',  $attrValue);
-					$valid = !preg_match("#(behavior|expression|position|javascript)#i".BX_UTF_PCRE_MODIFIER, $attrValue) && !preg_match("#[^\\/\\w\\s)(!%,:\\.;\\-\\#\\']#i".BX_UTF_PCRE_MODIFIER, $attrValue)
+					$valid = !preg_match("#(behavior|expression|javascript)#i".BX_UTF_PCRE_MODIFIER, $attrValue) && !preg_match("#[^\\/\\w\\s)(!%,:\\.;\\-\\#\\']#i".BX_UTF_PCRE_MODIFIER, $attrValue)
 							? true : false;
 					break;
 
@@ -465,7 +465,7 @@
 					}
 					else
 					{
-						$valid = !preg_match("#[^\\s\\w" . $this->localAlph . "\\-\\#\\.;]#i" . BX_UTF_PCRE_MODIFIER, $attrValue)
+						$valid = !preg_match("#[^\\s\\w" . $this->localAlph . "\\-\\#\\.\/;]#i" . BX_UTF_PCRE_MODIFIER, $attrValue)
 								? true : false;
 					}
 					break;
@@ -574,7 +574,7 @@
 
 			foreach($arData as $i => $chunk)
 			{
-				$isTag = $i % 2 || (substr($chunk, 0, 1) == '<' && substr($chunk, -1) == '>');
+				$isTag = $i % 2 || (mb_substr($chunk, 0, 1) == '<' && mb_substr($chunk, -1) == '>');
 
 				if ($isTag)
 				{
@@ -624,14 +624,23 @@
 					}
 
 					if ($this->bHtmlSpecChars)
-						$seg[$i]['value'] = htmlspecialchars($seg[$i]['value'], ENT_QUOTES, LANG_CHARSET, $this->bDoubleEncode);
+					{
+						$entQuotes =$openTagsStack[0] !== 'style' ? ENT_QUOTES : ENT_NOQUOTES;
+
+						$seg[$i]['value'] = htmlspecialchars(
+							$seg[$i]['value'],
+							$entQuotes,
+							LANG_CHARSET,
+							$this->bDoubleEncode
+						);
+					}
 				}
 				elseif($seg[$i]['segType'] == 'tag')
 				{
 					//find tag type (open/close), tag name, attributies
 					preg_match('#^<\s*(/)?\s*([a-z0-9]+)(.*?)>$#si'.BX_UTF_PCRE_MODIFIER, $seg[$i]['value'], $matches);
 					$seg[$i]['tagType'] = ( $matches[1] ? 'close' : 'open' );
-					$seg[$i]['tagName'] = strtolower($matches[2]);
+					$seg[$i]['tagName'] = mb_strtolower($matches[2]);
 
 					if(($seg[$i]['tagName']=='code') && ($seg[$i]['tagType']=='close'))
 						$isCode = false;
@@ -738,41 +747,15 @@
 									continue;
 							}
 
-							//find attributies an erase unallowed
-							preg_match_all('#([a-z0-9_-]+)\s*=\s*([\'\"])\s*(.*?)\s*\2#is'.BX_UTF_PCRE_MODIFIER, $matches[3], $arTagAttrs, PREG_SET_ORDER);
-							$attr = array();
-							foreach($arTagAttrs as $arTagAttr)
+							$seg[$i]['attr'] = $this->processAttributes(
+								(string)$matches[3], //attributes string
+								(string)$seg[$i]['tagName']
+							);
+
+							if($seg[$i]['tagName'] === 'code')
 							{
-								$currTag = $seg[$i]['tagName'];
-								$attrOne = strtolower($arTagAttr[1]);
-								$attrAllowed = in_array(
-									$attrOne,
-									$this->arHtmlTags[$seg[$i]['tagName']]
-								);
-								if (
-									!$attrAllowed &&
-									array_key_exists($attrOne, $this->additionalAttrs)
-								)
-								{
-									$attrAllowed = true === call_user_func_array(
-										$this->additionalAttrs[$attrOne]['tag'],
-										array($currTag)
-									);
-								}
-								if ($attrAllowed)
-								{
-									$arTagAttr[3] = str_replace('"', "'", $arTagAttr[3]); //We will wrap attribute by "
-
-									if($this->IsValidAttr($arTagAttr))
-									{
-										$attr[$attrOne] = $this->encodeAttributeValue($arTagAttr);
-									}
-								}
-							}
-
-							$seg[$i]['attr'] = $attr;
-							if($seg[$i]['tagName'] == 'code')
 								$isCode = true;
+							}
 
 							//if tag need close tag add it to stack opened tags
 							if(!in_array($seg[$i]['tagName'], $this->arNoClose)) //!count($this->arHtmlTags[$seg[$i]['tagName']]) || fix: </br>
@@ -844,7 +827,7 @@
 
 			foreach($seg as $segt)
 			{
-				if($segt['action'] != self::ACTION_DEL && !$flagDeleteContent)
+				if(($segt['action'] ?? '') != self::ACTION_DEL && !$flagDeleteContent)
 				{
 					if($segt['segType'] == 'text')
 					{
@@ -884,6 +867,51 @@
 			}
 
 			return $filteredHTML;
+		}
+
+		protected function extractAttributes(string $attrData): array
+		{
+			$result = [];
+
+			preg_match_all(
+				'#([a-z0-9_-]+)\s*=\s*([\'\"]?)(?:\s*)(.*?)(?:\s*)\2(\s|$|(?:\/\s*$))+#is'.BX_UTF_PCRE_MODIFIER,
+				$attrData,
+				$result,
+				PREG_SET_ORDER
+			);
+
+			return $result;
+		}
+
+		protected function processAttributes(string $attrData, string $currTag): array
+		{
+			$attr = [];
+			$arTagAttrs = $this->extractAttributes($attrData);
+
+			foreach($arTagAttrs as $arTagAttr)
+			{
+				// Attribute name
+				$arTagAttr[1] = mb_strtolower($arTagAttr[1]);
+				$attrAllowed = in_array($arTagAttr[1], $this->arHtmlTags[$currTag], true);
+
+				if (!$attrAllowed && array_key_exists($arTagAttr[1], $this->additionalAttrs))
+				{
+					$attrAllowed = true === call_user_func($this->additionalAttrs[$arTagAttr[1]]['tag'], $currTag);
+				}
+
+				if ($attrAllowed)
+				{
+					// Attribute value. Wrap attribute by "
+					$arTagAttr[3] = str_replace('"', "'", $arTagAttr[3]);
+
+					if($this->IsValidAttr($arTagAttr))
+					{
+						$attr[$arTagAttr[1]] = $this->encodeAttributeValue($arTagAttr);
+					}
+				}
+			}
+
+			return $attr;
 		}
 
 		/**

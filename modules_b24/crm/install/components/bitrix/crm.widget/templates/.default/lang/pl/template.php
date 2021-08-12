@@ -1,3 +1,0 @@
-<?
-$MESS["CRM_WGT_RATING_LEGEND_PREFIX"] = "Wynik";
-?>

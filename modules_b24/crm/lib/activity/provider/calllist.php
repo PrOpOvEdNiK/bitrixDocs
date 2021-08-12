@@ -96,7 +96,7 @@ class CallList extends Base
 			$buttons[] = array(
 				'TEXT' => Loc::getMessage('CRM_ACTIVITY_PROVIDER_CALL_LIST_TITLE'),
 				'TITLE' => Loc::getMessage('CRM_ACTIVITY_PROVIDER_CALL_LIST_TITLE'),
-				'ONCLICK' => "B24.licenseInfoPopup.show('call-list-limit-popup', '".\CUtil::JSEscape(\Bitrix\Crm\CallList\CallList::getLicensePopupHeader())."', '".\CUtil::JSEscape(\Bitrix\Crm\CallList\CallList::getLicensePopupContent())."');",
+				'ONCLICK' => \Bitrix\Crm\Restriction\RestrictionManager::getCallListRestriction()->prepareInfoHelperScript(),
 				'ICON' => "btn-new"
 			);
 			return 1;
@@ -252,7 +252,7 @@ class CallList extends Base
 		);
 	}
 
-	public static function onAfterAdd($activityFields)
+	public static function onAfterAdd($activityFields, array $params = null)
 	{
 		if($activityFields['AUTHOR_ID'] !== $activityFields['RESPONSIBLE_ID'])
 			static::notify($activityFields);

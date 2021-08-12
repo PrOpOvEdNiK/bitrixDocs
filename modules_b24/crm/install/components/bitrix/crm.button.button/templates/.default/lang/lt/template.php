@@ -1,5 +1,0 @@
-<?
-$MESS["CRM_BUTTON_BUTTON_WEBFORM_NAME"] = "Forma";
-$MESS["CRM_BUTTON_BUTTON_OPENLINE_NAME"] = "Pasikalbėjimai";
-$MESS["CRM_BUTTON_BUTTON_CALLBACK_NAME"] = "Perskambinti";
-?>

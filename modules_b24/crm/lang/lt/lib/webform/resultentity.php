@@ -1,9 +1,0 @@
-<?
-$MESS["CRM_WEBFORM_RESULT_ENTITY_DC_NONE"] = "Leisti dublikatus";
-$MESS["CRM_WEBFORM_RESULT_ENTITY_DC_REPLACE"] = "Pakeisti ";
-$MESS["CRM_WEBFORM_RESULT_ENTITY_DC_MERGE"] = "Susijungti";
-$MESS["CRM_WEBFORM_RESULT_ENTITY_ACTIVITY_SUBJECT"] = "Užpildyti CRM formą #";
-$MESS["CRM_WEBFORM_RESULT_ENTITY_ACTIVITY_RESPONSIBLE_IM_NOTIFY"] = "Veiksmas \"#title#\" buvo priskirtas Jums";
-$MESS["CRM_WEBFORM_RESULT_ENTITY_NOTIFY_SUBJECT"] = "Pateikta CRM forma \"%title%\"";
-$MESS["CRM_WEBFORM_RESULT_ENTITY_NOTIFY_SUBJECT_CALL"] = "Prašoma atgalinio ryšio iš \"%phone%\"";
-?>

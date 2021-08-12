@@ -18,7 +18,7 @@ function _ShowStringPropertyField($name, $property_fields, $values, $bInitDef = 
 	if ($MULTIPLE_CNT <= 0 || $MULTIPLE_CNT > 30)
 		$MULTIPLE_CNT = 5;
 
-	$bInitDef = $bInitDef && (strlen($property_fields["DEFAULT_VALUE"]) > 0);
+	$bInitDef = $bInitDef && ($property_fields["DEFAULT_VALUE"] <> '');
 
 	$cnt = ($property_fields["MULTIPLE"] == "Y"? $MULTIPLE_CNT + ($bInitDef? 1: 0) : 1);
 
@@ -97,7 +97,7 @@ function _ShowStringPropertyField($name, $property_fields, $values, $bInitDef = 
 	if ($property_fields["MULTIPLE"] == "Y")
 	{
 		echo '<tr><td><input type="button" value="'.GetMessage("IBLOCK_AT_PROP_ADD").'" onClick="BX.IBlock.Tools.addNewRow(\'tb'.md5($name).'\')"></td></tr>';
-		echo "<script type=\"text/javascript\">BX.addCustomEvent('onAutoSaveRestore', function(ob, data) {for (var i in data){if (i.substring(0,".(strlen($name)+1).")=='".CUtil::JSEscape($name)."['){BX.IBlock.Tools.addNewRow('tb".md5($name)."')}}})</script>";
+		echo "<script type=\"text/javascript\">BX.addCustomEvent('onAutoSaveRestore', function(ob, data) {for (var i in data){if (i.substring(0,".(mb_strlen($name) + 1).")=='".CUtil::JSEscape($name)."['){BX.IBlock.Tools.addNewRow('tb".md5($name)."')}}})</script>";
 	}
 
 	echo "</table>";
@@ -135,6 +135,7 @@ function _ShowGroupPropertyField($name, $property_fields, $values, $bVarsFromFor
 		$res .= '>'.str_repeat(" . ", $ar["DEPTH_LEVEL"]-1).$ar["NAME"].'</option>';
 	}
 
+	echo '<input type="hidden" name="'.$name.'[]" value="">';
 	echo '<select name="'.$name.'[]" size="'.$property_fields["MULTIPLE_CNT"].'" '.($property_fields["MULTIPLE"]=="Y"?"multiple":"").'>';
 	echo '<option value=""'.(!$bWas?' selected':'').'>'.GetMessage("IBLOCK_AT_NOT_SET").'</option>';
 	echo $res;
@@ -397,6 +398,7 @@ function _ShowListPropertyField($name, $property_fields, $values, $bInitDef = fa
 	{
 		$cnt = 0;
 		$wSel = false;
+		$res_tmp = '';
 		while($ar_enum = $prop_enums->Fetch())
 		{
 			$cnt++;
@@ -422,10 +424,10 @@ function _ShowListPropertyField($name, $property_fields, $values, $bInitDef = fa
 
 		if($cnt==1)
 			$res = $res_tmp;
-		elseif($multiple!="Y")
+		elseif($multiple!="Y" && $property_fields['IS_REQUIRED'] != 'Y')
 			$res = '<input type="radio" name="'.$name.'[]" value=""'.(!$wSel?" checked":"").' id="'.$uniq.'"><label for="'.$uniq.'">'.htmlspecialcharsex(($def_text ? $def_text : GetMessage("IBLOCK_AT_PROP_NO") )).'</label><br>'.$res;
 
-		if($multiple=="Y" || $cnt==1)
+		if($multiple=="Y" || $cnt==1 || $property_fields['IS_REQUIRED'] == 'Y')
 			$res = '<input type="hidden" name="'.$name.'" value="">'.$res;
 	}
 	else //list property as list
@@ -524,8 +526,8 @@ function _ShowUserPropertyField($name, $property_fields, $values, $bInitDef = fa
 					$html .= '&nbsp;';
 				$html .= '</td></tr>';
 
-				if(substr($key, -1, 1)=='n' && $max_val < intval(substr($key, 1)))
-					$max_val = intval(substr($key, 1));
+				if(mb_substr($key, -1, 1) == 'n' && $max_val < intval(mb_substr($key, 1)))
+					$max_val = intval(mb_substr($key, 1));
 				if($property_fields["MULTIPLE"] != "Y")
 				{
 					$bVarsFromForm = true;
@@ -540,7 +542,7 @@ function _ShowUserPropertyField($name, $property_fields, $values, $bInitDef = fa
 		|| ($bVarsFromForm && !$bMultiple && count($values) == 0) //Was not displayed
 	)
 	{
-		$bDefaultValue = is_array($property_fields["DEFAULT_VALUE"]) || strlen($property_fields["DEFAULT_VALUE"]);
+		$bDefaultValue = is_array($property_fields["DEFAULT_VALUE"]) || mb_strlen($property_fields["DEFAULT_VALUE"]);
 
 		if($property_fields["MULTIPLE"]=="Y")
 		{
@@ -604,26 +606,57 @@ function _ShowUserPropertyField($name, $property_fields, $values, $bInitDef = fa
 	echo $html;
 }
 
-function _ShowPropertyField($name, $property_fields, $values, $bInitDef = false, $bVarsFromForm = false, $max_file_size_show = 50000, $form_name = "form_element", $bCopy = false)
+function _ShowPropertyField(
+	$name,
+	$property_fields,
+	$values,
+	$bInitDef = false,
+	$bVarsFromForm = false,
+	$max_file_size_show = 50000,
+	$form_name = "form_element",
+	$bCopy = false
+)
 {
 	$type = $property_fields["PROPERTY_TYPE"];
-	if($property_fields["USER_TYPE"]!="")
-		_ShowUserPropertyField($name, $property_fields, $values, $bInitDef, $bVarsFromForm, $max_file_size_show, $form_name, $bCopy);
-	elseif($type=="L") //list property
-		_ShowListPropertyField($name, $property_fields, $values, $bInitDef);
-	elseif($type=="F") //file property
-		_ShowFilePropertyField($name, $property_fields, $values, $max_file_size_show, $bVarsFromForm);
-	elseif($type=="G") //section link
+	$userType = (string)$property_fields["USER_TYPE"] ?? '';
+	$foundUserType = false;
+	if ($userType !== '')
 	{
-		if(function_exists("_ShowGroupPropertyField_custom"))
-			_ShowGroupPropertyField_custom($name, $property_fields, $values, $bVarsFromForm);
-		else
-			_ShowGroupPropertyField($name, $property_fields, $values, $bVarsFromForm);
+		$userTypeDescription = CIBlockProperty::GetUserType($userType);
+		if (!empty($userTypeDescription))
+		{
+			$foundUserType = true;
+			_ShowUserPropertyField($name, $property_fields, $values, $bInitDef, $bVarsFromForm, $max_file_size_show, $form_name, $bCopy);
+		}
 	}
-	elseif($type=="E") //element link
-		_ShowElementPropertyField($name, $property_fields, $values, $bVarsFromForm);
-	else
-		_ShowStringPropertyField($name, $property_fields, $values, $bInitDef, $bVarsFromForm);
+	if (!$foundUserType)
+	{
+		switch ($type)
+		{
+			case Iblock\PropertyTable::TYPE_LIST:
+				_ShowListPropertyField($name, $property_fields, $values, $bInitDef);
+				break;
+			case Iblock\PropertyTable::TYPE_FILE:
+				_ShowFilePropertyField($name, $property_fields, $values, $max_file_size_show, $bVarsFromForm);
+				break;
+			case Iblock\PropertyTable::TYPE_SECTION:
+				if (function_exists("_ShowGroupPropertyField_custom"))
+				{
+					_ShowGroupPropertyField_custom($name, $property_fields, $values, $bVarsFromForm);
+				}
+				else
+				{
+					_ShowGroupPropertyField($name, $property_fields, $values, $bVarsFromForm);
+				}
+				break;
+			case Iblock\PropertyTable::TYPE_ELEMENT:
+				_ShowElementPropertyField($name, $property_fields, $values, $bVarsFromForm);
+				break;
+			default:
+				_ShowStringPropertyField($name, $property_fields, $values, $bInitDef, $bVarsFromForm);
+				break;
+		}
+	}
 }
 
 function _ShowHiddenValue($name, $value)
@@ -647,7 +680,7 @@ class _CIBlockError
 {
 	var $err_type, $err_text, $err_level;
 
-	function _CIBlockError($err_level = false, $err_type = "", $err_text = "")
+	public function __construct($err_level = false, $err_type = "", $err_text = "")
 	{
 		$this->err_type = $err_type;
 		$this->err_text = preg_replace("#<br>$#i", "", $err_text);
@@ -1028,55 +1061,66 @@ class CEditorPopupControl
 	protected $width;
 	protected $height;
 	protected $initHtml = false;
+	/** @var bool  */
+	protected $filemanIncluded = null;
 
-	function __construct($width = 420, $height = 200)
+	public function __construct(int $width = 420, int $height = 200)
 	{
-		$this->width = intval($width);
-		$this->height = intval($height);
+		$this->width = $width;
+		$this->height = $height;
+		$this->filemanIncluded = Loader::includeModule('fileman');
 	}
 
-	function getControlHtml($name, $value, $maxLength = 255)
+	public function getEditorHtml(): string
 	{
 		$result = '';
-		if (!Loader::includeModule('fileman'))
-			return $result;
-
-		if (!$this->initHtml)
+		if (!$this->filemanIncluded || $this->initHtml)
 		{
-			$this->initHtml = true;
+			return $result;
+		}
+		$this->initHtml = true;
+		Main\Page\Asset::getInstance()->addJs('/bitrix/js/iblock/iblock_edit.js');
 
-			Main\Page\Asset::getInstance()->addJs('/bitrix/js/iblock/iblock_edit.js');
-
-			$result .= '<div id="popup_editor_start" style="display: none">';
-			ob_start();
-			$LHE = new CLightHTMLEditor;
-			$LHE->Show(array(
-				'height' => $height - 40,
-				'width' => '100%',
-				'content' => '',
-				'bResizable' => true,
-				'bUseFileDialogs' => false,
-				'bFloatingToolbar' => false,
-				'bArisingToolbar' => true,
-				'bAutoResize' => true,
-				'bSaveOnBlur' => true,
-				'bInitByJS' => true,
-				'jsObjName' => 'popup_editor',
-				'toolbarConfig' => array(
-					'Bold', 'Italic', 'Underline', 'Strike',
-					'CreateLink', 'DeleteLink',
-					'Source', 'BackColor', 'ForeColor',
-				),
-				'id' => 'popup_editor_id',
-			));
-			$result .= ob_get_contents();
-			ob_end_clean();
-			$result .= '</div>';
-			$result .= '<script>
+		$result .= '<div id="popup_editor_start" style="display: none">';
+		ob_start();
+		$LHE = new CLightHTMLEditor;
+		$LHE->Show(array(
+			'height' => $this->height - 40,
+			'width' => '100%',
+			'content' => '',
+			'bResizable' => true,
+			'bUseFileDialogs' => false,
+			'bFloatingToolbar' => false,
+			'bArisingToolbar' => true,
+			'bAutoResize' => true,
+			'bSaveOnBlur' => true,
+			'bInitByJS' => true,
+			'jsObjName' => 'popup_editor',
+			'toolbarConfig' => array(
+				'Bold', 'Italic', 'Underline', 'Strike',
+				'CreateLink', 'DeleteLink',
+				'Source', 'BackColor', 'ForeColor',
+			),
+			'id' => 'popup_editor_id',
+		));
+		$result .= ob_get_contents();
+		ob_end_clean();
+		$result .= '</div>';
+		$result .= '<script>
 				var popup_editor_dialog;
 				var popup_editor_manager = new JCPopupEditor('.$this->width.', '.$this->height.');
 			</script>';
-		}
+		return $result;
+	}
+
+	public function getControlHtml(string $name, string $value, $maxLength = 255): string
+	{
+		$result = '';
+		if (!$this->filemanIncluded)
+			return $result;
+
+		if (!$this->initHtml)
+			$result = $this->getEditorHtml();
 
 		$value = trim($value);
 		if ($value)

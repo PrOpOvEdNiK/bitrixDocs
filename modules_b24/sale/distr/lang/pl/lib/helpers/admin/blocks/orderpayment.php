@@ -1,3 +1,0 @@
-<?
-$MESS["SALE_ORDER_PAYMENT_DELETE"] = "Usuń";
-?>

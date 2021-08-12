@@ -1,3 +1,0 @@
-<?
-$MESS["DISK_BREADCRUMBS_TRASHCAN_NAME"] = "Kosz";
-?>

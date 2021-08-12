@@ -1,8 +1,0 @@
-<?
-$MESS["IMCONNECTOR_COMPONENT_SETTINGS_CONFIRM_DISABLE"] = "Ce canal de communication va être déconnecté, toutes vos préférences seront supprimées. Continuer ?";
-$MESS["IMCONNECTOR_COMPONENT_SETTINGS_CONFIRM_DISABLE_BUTTON_CANCEL"] = "Annuler";
-$MESS["IMCONNECTOR_COMPONENT_SETTINGS_CONFIRM_DISABLE_BUTTON_OK"] = "OK";
-$MESS["IMCONNECTOR_COMPONENT_SETTINGS_CONFIRM_DISABLE_TITLE"] = "Confirmer la déconnexion";
-$MESS["IMCONNECTOR_COMPONENT_SETTINGS_COPIED_TO_CLIPBOARD"] = "Copié dans le presse-papiers";
-$MESS["IMCONNECTOR_COMPONENT_SETTINGS_FAILED_TO_COPY"] = "Impossible de copier dans le presse-papiers";
-?>

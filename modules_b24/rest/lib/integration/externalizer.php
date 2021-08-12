@@ -4,6 +4,7 @@
 namespace Bitrix\Rest\Integration;
 
 
+use Bitrix\Main\Engine\Response\Converter;
 use Bitrix\Main\Engine\Response\DataType\Page;
 use Bitrix\Main\Type\Contract\Arrayable;
 use Bitrix\Sale\Result;
@@ -11,7 +12,7 @@ use Bitrix\Sale\Result;
 /**
  * Class Externalizer
  * @package Bitrix\Catalog\Rest
- * экстерналайзер для работы с именованными списками|ответами
+ * externalizer for working with named lists | answers
  */
 final class Externalizer extends ModificationFieldsBase
 	implements Arrayable
@@ -38,12 +39,12 @@ final class Externalizer extends ModificationFieldsBase
 
 		if($this->format & self::TO_CAMEL)
 		{
-			$data = $this->convertKeysToCamelCase([$id=>$data]);
+			$data = static::convertKeysToCamelCase([$id=>$data]);
 		}
 
 		if($this->format & self::SORTING_KEYS)
 		{
-			$data = $this->multiSortKeysArray($data);
+			$data = static::multiSortKeysArray($data);
 		}
 
 		return $r->setData(['data'=>$data]);
@@ -54,14 +55,14 @@ final class Externalizer extends ModificationFieldsBase
 		return $this->process()->getData()['data'];
 	}
 
-	protected function multiSortKeysArray(array $data)
+	static public function multiSortKeysArray(array $data)
 	{
 		ksort($data, SORT_NATURAL);
 
 		foreach ($data as $k=>&$item)
 		{
 			if(is_array($item))
-				$item = $this->multiSortKeysArray($item);
+				$item = static::multiSortKeysArray($item);
 		}
 
 		return $data;
@@ -70,7 +71,7 @@ final class Externalizer extends ModificationFieldsBase
 	/**
 	 * @param $data
 	 * @return array
-	 * экстерналайзер работает только с НЕ именнованым списком. id списка не передается
+	 * the externalizer works only with a NOT named list. list id is not supported
 	 */
 	private function externalize($fields)
 	{
@@ -101,24 +102,22 @@ final class Externalizer extends ModificationFieldsBase
 	/**
 	 * @param $data
 	 * @return int|null|string
-	 * обязательное именование (ключ в массиве) списка или результата в ответе
+	 * array key is required
 	 */
 	private function getIdList($data)
 	{
 		return key($data);
 	}
 
-	protected function convertKeysToCamelCase($fields)
+	static public function convertKeysToCamelCase($fields)
 	{
-		$controller = $this->getController();
-		$view = $this->getView($controller);
-
-		return $view->convertKeysToCamelCase($fields);
+		return Converter::toJson()
+			->process($fields);
 	}
 
 	public function getPage(Page $page)
 	{
-		$id = $this->convertKeysToCamelCase($page->getId());
+		$id = static::convertKeysToCamelCase($page->getId());
 		return new Page($id, $this->toArray()[$id], $page->getTotalCount());
 	}
 }

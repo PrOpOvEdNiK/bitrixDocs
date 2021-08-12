@@ -1,4 +1,4 @@
-<?
+<?php
 $className = "CXMPPReceiveIQBind";
 $classVersion = 2;
 
@@ -15,7 +15,7 @@ if (!class_exists("CXMPPReceiveIQBind"))
 
 		public function ReceiveMessage($senderJId, array $arMessage, CXMPPClient $senderClient)
 		{
-			if (strlen($senderJId) <= 0)
+			if ($senderJId == '')
 				return false;
 
 			if (!array_key_exists("iq", $arMessage) || !array_key_exists("bind", $arMessage["iq"])
@@ -29,7 +29,7 @@ if (!class_exists("CXMPPReceiveIQBind"))
 			if ($type == "set")
 			{
 				$resource = $arMessage["iq"]["bind"]["resource"]["#"];
-				if (strlen($resource) <= 0)
+				if ($resource == '')
 					$resource = "bx";
 
 				$senderClient->SetResource($resource);
@@ -71,4 +71,3 @@ if (!class_exists("CXMPPReceiveIQBind"))
 		}
 	}
 }
-?>

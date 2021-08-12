@@ -340,7 +340,7 @@ abstract class Controller implements IErrorable
 	protected function resolveAction()
 	{
 		$listOfActions = $this->normalizeListOfAction($this->listActions());
-		$action = strtolower($this->action);
+		$action = mb_strtolower($this->action);
 
 		if(!isset($listOfActions[$action]))
 		{
@@ -679,7 +679,7 @@ abstract class Controller implements IErrorable
 	{
 		foreach ($required as $item)
 		{
-			if(!isset($inputParams[$item]) || (!$inputParams[$item] && !(is_string($inputParams[$item]) && strlen($inputParams[$item]))))
+			if(!isset($inputParams[$item]) || (!$inputParams[$item] && !(is_string($inputParams[$item]) && mb_strlen($inputParams[$item]))))
 			{
 				$this->errorCollection->add(array(new Error(Loc::getMessage('DISK_CONTROLLER_ERROR_REQUIRED_PARAMETER', array('#PARAM#' => $item)), self::ERROR_REQUIRED_PARAMETER)));
 				return false;
@@ -769,7 +769,7 @@ abstract class Controller implements IErrorable
 				$this->sendJsonInvalidSignResponse('Invalid signature');
 			}
 
-			/** @noinspection PhpDynamicAsStaticMethodCallInspection */
+
 			$tmpFile = \CFile::resizeImageGet($fileData, array('width' => $width, 'height' => $height), ($this->request->getQuery('exact') === 'Y' ? BX_RESIZE_IMAGE_EXACT : BX_RESIZE_IMAGE_PROPORTIONAL), true, false, true);
 			$fileData['FILE_SIZE'] = $tmpFile['size'];
 			$fileData['SRC'] = $tmpFile['src'];

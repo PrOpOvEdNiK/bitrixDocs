@@ -1,4 +1,0 @@
-<?
-$MESS["CRM_ANALYTICS_LIMIT_MASK_TITLE"] = "Límites actuales";
-$MESS["CRM_ANALYTICS_LIMIT_UPDATE_LINK"] = "Actualizar";
-?>

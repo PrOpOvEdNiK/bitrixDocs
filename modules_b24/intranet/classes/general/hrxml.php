@@ -276,7 +276,7 @@ class CUserHRXMLImport
 			}
 
 			if (isset($data->IndicativePerson->GenderCode))
-				$tempUserData['PERSONAL_GENDER'] = substr((string) $data->IndicativePerson->GenderCode, 0, 1);
+				$tempUserData['PERSONAL_GENDER'] = mb_substr((string)$data->IndicativePerson->GenderCode, 0, 1);
 
 			if (isset($data->IndicativePerson->BirthDate))
 			{
@@ -360,14 +360,14 @@ class CUserHRXMLImport
 			else
 			{
 				$rsUser = CUser::GetList(
-					$by = "ID",
-					$order = "desc",
+					"ID",
+					"desc",
 					array('XML_ID' => $PersonID),
 					array('FIELDS' => array('ID', 'ACTIVE'), 'SELECT' => array('UF_DEPARTMENT', 'UF_WORK_BINDING'))
 				);
 				if ($arUser = $rsUser->fetch())
 				{
-					$arUser['UF_WORK_BINDING'] = unserialize($arUser['UF_WORK_BINDING']);
+					$arUser['UF_WORK_BINDING'] = unserialize($arUser['UF_WORK_BINDING'], ["allowed_classes" => false]);
 				}
 				else
 				{
@@ -623,8 +623,8 @@ class CUserHRXMLImport
 					$arHistoryPROP['POST'] = $arUserFields['WORK_POSITION'];
 
 				$rsUser = CUser::GetList(
-					$by = "ID",
-					$order = "desc",
+					"ID",
+					"desc",
 					array('XML_ID' => $arUserFields['XML_ID']),
 					array('FIELDS' => array('ID', 'ACTIVE'))
 				);
@@ -721,8 +721,8 @@ class CUserHRXMLImport
 
 				$arTimePROP = array();
 				$rsUser = CUser::GetList(
-					$by = "ID",
-					$order = "desc",
+					"ID",
+					"desc",
 					$arUserFields,
 					array('FIELDS' => array('ID'))
 				);
@@ -973,7 +973,7 @@ class CUserHRXMLImport
 		$company_name = COption::GetOptionString("main", "site_name", "");
 		if ($company_name == '')
 		{
-			$dbrs = CSite::GetList($o, $b, array("DEFAULT" => "Y"));
+			$dbrs = CSite::GetList('', '', array("DEFAULT" => "Y"));
 			if ($ars = $dbrs->Fetch())
 				$company_name = $ars["NAME"];
 		}
@@ -1013,8 +1013,8 @@ class CUserHRXMLImport
 
 function hr_SortIDArray($first, $second)
 {
-	$first = strlen($first);
-	$second = strlen($second);
+	$first = mb_strlen($first);
+	$second = mb_strlen($second);
 	if ($first > $second)
 		return 1;
 	if ($first < $second)
@@ -1068,10 +1068,10 @@ if (!class_exists('CArray2XML'))
 
 		private function StartElement($key, $value='')
 		{
-			if ($st=strpos($key, '>>'))
+			if ($st = mb_strpos($key, '>>'))
 			{
-				$data = ' '.substr($key, $st+2);
-				$key = substr($key, 0, $st);
+				$data = ' '.mb_substr($key, $st + 2);
+				$key = mb_substr($key, 0, $st);
 			}
 			else $data = '';
 			array_push($this->elementStack, $key);

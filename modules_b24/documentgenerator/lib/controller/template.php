@@ -405,7 +405,7 @@ class Template extends Base
 					}
 				}
 			}
-			if(isset($filter['NAME']) && strpos($template['NAME'], $filter['NAME']) === false)
+			if(isset($filter['NAME']) && mb_strpos($template['NAME'], $filter['NAME']) === false)
 			{
 				unset($templates[$key]);
 				continue;
@@ -430,7 +430,7 @@ class Template extends Base
 			$codes[] = $template['CODE'];
 			foreach($template['PROVIDERS'] as $key => $provider)
 			{
-				$provider = strtolower($provider);
+				$provider = mb_strtolower($provider);
 				if(isset($extendedProviders[$provider]))
 				{
 					unset($template['PROVIDERS'][$key]);
@@ -442,7 +442,7 @@ class Template extends Base
 				}
 				else
 				{
-					$template['PROVIDER_NAMES'][] = $providers[strtolower($provider)]['NAME'];
+					$template['PROVIDER_NAMES'][] = $providers[mb_strtolower($provider)]['NAME'];
 				}
 			}
 			$buffer[$template['CODE']] = $template;
@@ -538,14 +538,21 @@ class Template extends Base
 			TemplateProviderTable::deleteByTemplateId($templateId);
 			foreach($providers as $provider)
 			{
-				$result = TemplateProviderTable::add([
-					'TEMPLATE_ID' => $templateId,
-					'PROVIDER' => $provider,
-				]);
-				if(!$result->isSuccess())
+				if (
+					DataProviderManager::checkProviderName(
+						TemplateProviderTable::getClassNameFromFilterString($provider),
+						$templateData['MODULE_ID']
+					)
+				)
 				{
-					TemplateTable::delete($templateId, true);
-					return $result;
+					$providerResult = TemplateProviderTable::add([
+						'TEMPLATE_ID' => $templateId,
+						'PROVIDER' => $provider,
+					]);
+					if(!$providerResult->isSuccess())
+					{
+						$result->addErrors($providerResult->getErrors());
+					}
 				}
 			}
 		}
@@ -554,14 +561,13 @@ class Template extends Base
 			TemplateUserTable::delete($templateId);
 			foreach($users as $code)
 			{
-				$result = TemplateUserTable::add([
+				$userResult = TemplateUserTable::add([
 					'TEMPLATE_ID' => $templateId,
 					'ACCESS_CODE' => $code,
 				]);
-				if(!$result->isSuccess())
+				if(!$userResult->isSuccess())
 				{
-					TemplateTable::delete($templateId, true);
-					return $result;
+					$result->addErrors($userResult->getErrors());
 				}
 			}
 		}
@@ -701,7 +707,7 @@ class Template extends Base
 		$templates = TemplateTable::getList([
 			'select' => $select,
 			'filter' => $filter,
-			'order' => $order,
+			'order' => $order ?? [],
 			'offset' => $pageNavigation->getOffset(),
 			'limit' => $pageNavigation->getLimit(),
 		])->fetchAll();

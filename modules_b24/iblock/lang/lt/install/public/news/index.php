@@ -1,5 +1,0 @@
-<?
-$MESS['IBLOCK_INSTALL_PUBLIC_TITLE'] = 'Įmonės naujienos';
-$MESS['IBLOCK_INSTALL_PUBLIC_DETAIL_PAGER'] = 'Puslapis';
-$MESS['IBLOCK_INSTALL_PUBLIC_PAGER'] = 'Naujienos';
-?>

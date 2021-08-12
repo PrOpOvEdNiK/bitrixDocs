@@ -1,6 +1,0 @@
-<?
-$MESS["SONET_I_FEATURE_BLOG"] = "وبلاگ";
-$MESS["SONET_I_FEATURE_FORUM"] = "انجمن";
-$MESS["SONET_I_PHOTO_IBLOCK_TYPE_NAME"] = "گالری";
-$MESS["SONET_GROUP_SUBJECT_1"] = "تمایلات";
-?>

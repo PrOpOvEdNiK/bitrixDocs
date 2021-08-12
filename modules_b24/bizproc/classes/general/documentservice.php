@@ -10,6 +10,7 @@ class CBPDocumentService
 
 	private $arDocumentsCache = array();
 	private $documentTypesCache = array();
+	private $documentFieldsCache = array();
 	private $typesMapCache = array();
 
 	private $tzFlag;
@@ -53,6 +54,25 @@ class CBPDocumentService
 		}
 
 		return null;
+	}
+
+	public function getFieldValue($parameterDocumentId, $fieldId, $parameterDocumentType = null)
+	{
+		[$moduleId, $entity, $documentId] = CBPHelper::ParseDocumentId($parameterDocumentId);
+		$documentType = ($parameterDocumentType && is_array($parameterDocumentType)) ? $parameterDocumentType[2] : null;
+
+		if ($moduleId)
+		{
+			CModule::IncludeModule($moduleId);
+		}
+		if (class_exists($entity) && method_exists($entity, 'getFieldValue'))
+		{
+			return call_user_func_array([$entity, "getFieldValue"], [$documentId, $fieldId, $documentType]);
+		}
+
+		$document = $this->GetDocument($parameterDocumentId, $parameterDocumentType);
+
+		return $document[$fieldId] ?? null;
 	}
 
 	public function UpdateDocument($parameterDocumentId, $arFields, $modifiedBy = null)
@@ -239,7 +259,7 @@ class CBPDocumentService
 		return null;
 	}
 
-	public function normalizeDocumentId($parameterDocumentId)
+	public function normalizeDocumentId($parameterDocumentId, string $docType = null)
 	{
 		$normalized = $parameterDocumentId;
 		[$moduleId, $entity, $documentId] = CBPHelper::ParseDocumentId($parameterDocumentId);
@@ -251,7 +271,7 @@ class CBPDocumentService
 
 		if (class_exists($entity) && method_exists($entity, "normalizeDocumentId"))
 		{
-			$normalized = [$moduleId, $entity, call_user_func_array([$entity, "normalizeDocumentId"], [$documentId])];
+			$normalized = [$moduleId, $entity, call_user_func_array([$entity, "normalizeDocumentId"], [$documentId, $docType])];
 		}
 
 		return $normalized;
@@ -260,6 +280,12 @@ class CBPDocumentService
 	public function GetDocumentFields($parameterDocumentType, $importExportMode = false)
 	{
 		[$moduleId, $entity, $documentType] = CBPHelper::ParseDocumentId($parameterDocumentType);
+
+		$k = $moduleId."@".$entity."@".$documentType;
+		if (isset($this->documentFieldsCache[$k]))
+		{
+			return $this->documentFieldsCache[$k];
+		}
 
 		if ($moduleId)
 		{
@@ -291,7 +317,8 @@ class CBPDocumentService
 				}
 			}
 
-			return $fields;
+			$this->documentFieldsCache[$k] = $fields;
+			return $this->documentFieldsCache[$k];
 		}
 
 		return null;
@@ -322,7 +349,16 @@ class CBPDocumentService
 		}
 
 		if (class_exists($entity))
-			return call_user_func_array(array($entity, "AddDocumentField"), array($documentType, $arFields));
+		{
+			$result = call_user_func_array([$entity, 'AddDocumentField'], [$documentType, $arFields]);
+			if ($result)
+			{
+				$k = $moduleId."@".$entity."@".$documentType;
+				unset($this->documentFieldsCache[$k]);
+			}
+
+			return $result;
+		}
 
 		return false;
 	}
@@ -359,7 +395,7 @@ class CBPDocumentService
 		$documentFieldsString = "";
 		foreach ($arDocumentFields as $fieldKey => $arFieldValue)
 		{
-			if (strlen($documentFieldsString) > 0)
+			if ($documentFieldsString <> '')
 				$documentFieldsString .= ",";
 
 			$documentFieldsString .= "'".Cutil::JSEscape($fieldKey)."':{";
@@ -415,7 +451,7 @@ class CBPDocumentService
 		foreach ($arDocumentFieldTypes as $typeKey => $arTypeValue)
 		{
 			$ind++;
-			if (strlen($fieldTypesString) > 0)
+			if ($fieldTypesString <> '')
 				$fieldTypesString .= ",";
 
 			$fieldTypesString .= "'".CUtil::JSEscape($typeKey)."':{";
@@ -805,7 +841,7 @@ EOS;
 			);
 			foreach ($fieldName as $key => $val)
 			{
-				switch (strtoupper($key))
+				switch(mb_strtoupper($key))
 				{
 					case "FORM":
 					case "0":
@@ -886,7 +922,7 @@ EOS;
 			$arFieldName = array("Form" => null, "Field" => null);
 			foreach ($fieldName as $key => $val)
 			{
-				switch (strtoupper($key))
+				switch(mb_strtoupper($key))
 				{
 					case "FORM":
 					case "0":
@@ -990,7 +1026,7 @@ EOS;
 		foreach ($documentFieldTypes as $name => $field)
 		{
 			if (isset($field['typeClass']))
-				$result[strtolower($name)] = $field['typeClass'];
+				$result[mb_strtolower($name)] = $field['typeClass'];
 		}
 
 		$this->typesMapCache[$k] = $result;
@@ -1038,7 +1074,7 @@ EOS;
 	{
 		$typeClass = null;
 		$map = $this->getTypesMap($parameterDocumentType);
-		$type = strtolower($type);
+		$type = mb_strtolower($type);
 		if (isset($map[$type]))
 			$typeClass = $map[$type];
 
@@ -1271,7 +1307,7 @@ EOS;
 			$result = call_user_func_array(array($entity, "GetAllowableUserGroups"), array($documentType, $withExtended));
 			$result1 = array();
 			foreach ($result as $key => $value)
-				$result1[strtolower($key)] = $value;
+				$result1[mb_strtolower($key)] = $value;
 			return $result1;
 		}
 
@@ -1386,6 +1422,15 @@ EOS;
 	public function onWorkflowStatusChange($parameterDocumentId, $workflowId, $status, $rootActivity = null)
 	{
 		[$moduleId, $entity, $documentId] = CBPHelper::ParseDocumentId($parameterDocumentId);
+
+		if (
+			$rootActivity
+			&& $rootActivity->workflow->isNew()
+			&& $status === CBPWorkflowStatus::Running
+		)
+		{
+			$this->clearCache();
+		}
 
 		if ($moduleId)
 		{

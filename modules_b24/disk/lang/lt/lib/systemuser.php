@@ -1,4 +1,0 @@
-<?
-$MESS["DISK_SYSTEM_USER_NAME"] = " ";
-$MESS["DISK_SYSTEM_USER_LOGIN"] = " ";
-?>

@@ -1,9 +1,14 @@
 <?php
+
 use Bitrix\Main;
 use Bitrix\Main\Loader;
 use Bitrix\Main\Localization\Loc;
-use \Bitrix\Crm\Invoice\Invoice;
-use \Bitrix\Crm\Invoice\Compatible;
+use Bitrix\Crm\CompanyAddress;
+use Bitrix\Crm\ContactAddress;
+use Bitrix\Crm\EntityAddressType;
+use Bitrix\Crm\Format\AddressFormatter;
+use Bitrix\Crm\Invoice\Invoice;
+use Bitrix\Crm\Invoice\Compatible;
 use Bitrix\Iblock;
 use Bitrix\Catalog;
 
@@ -31,7 +36,7 @@ class CAllCrmInvoice
 	private static $INVOICE_PROPERTY_INFOS = null;
 	private static $INVOICE_PAY_SYSTEM_TYPES = null;
 	private static $arCurrentPermType = null;
-	private static $arinvoicePropertiesAllowed = null;
+	private static $arinvoicePropertiesAllowed = [];
 	private static $LIST_CALLBACK_PARAMS = null;
 
 	function __construct($bCheckPermission = true)
@@ -76,21 +81,21 @@ class CAllCrmInvoice
 
 		if ($ID !== false && isset($arFields['ACCOUNT_NUMBER']))
 		{
-			if (strlen($arFields['ACCOUNT_NUMBER']) <= 0)
+			if ($arFields['ACCOUNT_NUMBER'] == '')
 				$this->LAST_ERROR .= GetMessage('CRM_ERROR_FIELD_IS_MISSING', array('%FIELD_NAME%' => GetMessage('CRM_FIELD_ACCOUNT_NUMBER')))."<br />\n";
 		}
 
-		if (($ID == false || isset($arFields['ORDER_TOPIC'])) && strlen($arFields['ORDER_TOPIC']) <= 0)
+		if (($ID == false || isset($arFields['ORDER_TOPIC'])) && $arFields['ORDER_TOPIC'] == '')
 			$this->LAST_ERROR .= GetMessage('CRM_ERROR_FIELD_IS_MISSING', array('%FIELD_NAME%' => GetMessage('CRM_FIELD_ORDER_TOPIC')))."<br />\n";
 
-		if (!empty($arFields['ORDER_TOPIC']) && strlen($arFields['ORDER_TOPIC']) > 255)
+		if (!empty($arFields['ORDER_TOPIC']) && mb_strlen($arFields['ORDER_TOPIC']) > 255)
 			$this->LAST_ERROR .= GetMessage('CRM_ERROR_FIELD_INCORRECT', array('%FIELD_NAME%' => GetMessage('CRM_FIELD_ORDER_TOPIC')))."<br />\n";
 
-		if (!empty($arFields['COMMENTS']) && strlen($arFields['COMMENTS']) > 2000)
+		if (!empty($arFields['COMMENTS']) && mb_strlen($arFields['COMMENTS']) > 2000)
 			$this->LAST_ERROR .= GetMessage('CRM_ERROR_FIELD_INCORRECT', array('%FIELD_NAME%' => GetMessage('CRM_FIELD_COMMENTS')))
 				.' ('.GetMessage('CRM_FIELD_COMMENTS_INCORRECT_INFO').").<br />\n";
 
-		if (!empty($arFields['USER_DESCRIPTION']) && strlen($arFields['USER_DESCRIPTION']) > 2000)
+		if (!empty($arFields['USER_DESCRIPTION']) && mb_strlen($arFields['USER_DESCRIPTION']) > 2000)
 			$this->LAST_ERROR .= GetMessage('CRM_ERROR_FIELD_INCORRECT', array('%FIELD_NAME%' => GetMessage('CRM_FIELD_USER_DESCRIPTION')))
 				.' ('.GetMessage('CRM_FIELD_USER_DESCRIPTION_INCORRECT_INFO').").<br />\n";
 
@@ -103,18 +108,18 @@ class CAllCrmInvoice
 
 		if ($bStatusSuccess)
 		{
-			if (!empty($arFields['PAY_VOUCHER_NUM']) && strlen($arFields['PAY_VOUCHER_NUM']) > 20)
+			if (!empty($arFields['PAY_VOUCHER_NUM']) && mb_strlen($arFields['PAY_VOUCHER_NUM']) > 20)
 				$this->LAST_ERROR .= GetMessage('CRM_ERROR_FIELD_INCORRECT', array('%FIELD_NAME%' => GetMessage('CRM_FIELD_PAY_VOUCHER_NUM')))."<br />\n";
 			if (!empty($arFields['PAY_VOUCHER_DATE']) && !CheckDateTime($arFields['PAY_VOUCHER_DATE']))
 				$this->LAST_ERROR .= GetMessage('CRM_ERROR_FIELD_INCORRECT', array('%FIELD_NAME%' => GetMessage('CRM_FIELD_PAY_VOUCHER_DATE')))."<br />\n";
-			if (!empty($arFields['REASON_MARKED']) && strlen($arFields['REASON_MARKED']) > 255)
+			if (!empty($arFields['REASON_MARKED']) && mb_strlen($arFields['REASON_MARKED']) > 255)
 				$this->LAST_ERROR .= GetMessage('CRM_ERROR_FIELD_INCORRECT', array('%FIELD_NAME%' => GetMessage('CRM_FIELD_REASON_MARKED_SUCCESS')))."<br />\n";
 		}
 		elseif ($bStatusFailed)
 		{
 			if (!empty($arFields['DATE_MARKED']) && !CheckDateTime($arFields['DATE_MARKED']))
 				$this->LAST_ERROR .= GetMessage('CRM_ERROR_FIELD_INCORRECT', array('%FIELD_NAME%' => GetMessage('CRM_FIELD_DATE_MARKED')))."<br />\n";
-			if (!empty($arFields['REASON_MARKED']) && strlen($arFields['REASON_MARKED']) > 255)
+			if (!empty($arFields['REASON_MARKED']) && mb_strlen($arFields['REASON_MARKED']) > 255)
 				$this->LAST_ERROR .= GetMessage('CRM_ERROR_FIELD_INCORRECT', array('%FIELD_NAME%' => GetMessage('CRM_FIELD_REASON_MARKED')))."<br />\n";
 		}
 
@@ -165,7 +170,7 @@ class CAllCrmInvoice
 			}
 		}
 
-		if (strlen($this->LAST_ERROR) > 0)
+		if ($this->LAST_ERROR <> '')
 			return false;
 
 		return true;
@@ -189,7 +194,7 @@ class CAllCrmInvoice
 			$this->LAST_ERROR .= $e->GetString();
 		}
 
-		if (strlen($this->LAST_ERROR) > 0)
+		if ($this->LAST_ERROR <> '')
 			return false;
 
 		return true;
@@ -460,6 +465,24 @@ class CAllCrmInvoice
 
 		$userType = new CCrmUserType($GLOBALS['USER_FIELD_MANAGER'], self::$sUFEntityID);
 		$userType->ListPrepareFilter($arFilter);
+
+		if (
+			$arNavStartParams === false
+			&& isset($arOptions['QUERY_OPTIONS'])
+			&& is_array($arOptions['QUERY_OPTIONS'])
+		)
+		{
+			$queryOptions = $arOptions['QUERY_OPTIONS'];
+			$limit = isset($queryOptions['LIMIT']) ? (int)$queryOptions['LIMIT'] : 0;
+			$offset = isset($queryOptions['OFFSET']) ? (int)$queryOptions['OFFSET'] : 0;
+			if ($limit > 0)
+			{
+				$arNavStartParams = [
+					'nPageSize' => $limit,
+					'iNumPage' => (int)(floor($offset / $limit) + 1),
+				];
+			}
+		}
 
 		$result = Compatible\Helper::getList(
 			$arOrder, $arFilter, $arGroupBy, $arNavStartParams, $arSelectFields, $arOptions
@@ -2203,22 +2226,30 @@ class CAllCrmInvoice
 		return $arResult;
 	}
 
-	private static function _getAllowedPropertiesInfo()
+	private static function _getAllowedPropertiesInfo(?string $siteId = null)
 	{
-		if (self::$arinvoicePropertiesAllowed !== null)
-			return self::$arinvoicePropertiesAllowed;
+		if ($siteId === null)
+		{
+			$siteId = CCrmPaySystem::getDefaultSiteId();
+		}
 
-		$personTypeCompany = $personTypeContact = null;
-		$arPersonTypes = CCrmPaySystem::getPersonTypeIDs();
+		if (isset(self::$arinvoicePropertiesAllowed[$siteId]))
+		{
+			return self::$arinvoicePropertiesAllowed[$siteId];
+		}
+
+		$arPersonTypes = CCrmPaySystem::getPersonTypeIDs($siteId);
 		if ($arPersonTypes['COMPANY'] != "" && $arPersonTypes['CONTACT'] != "")
 		{
 			$personTypeCompany = $arPersonTypes['COMPANY'];
 			$personTypeContact = $arPersonTypes['CONTACT'];
 		}
 		else
-			return array();
+		{
+			return [];
+		}
 
-		self::$arinvoicePropertiesAllowed = array(
+		self::$arinvoicePropertiesAllowed[$siteId] = array(
 			$personTypeCompany => array(
 				'COMPANY' => GetMessage('CRM_INVOICE_PROPERTY_COMPANY_TITLE'),
 				'COMPANY_NAME' => GetMessage('CRM_INVOICE_PROPERTY_COMPANY_TITLE'),
@@ -2237,7 +2268,7 @@ class CAllCrmInvoice
 			)
 		);
 
-		return self::$arinvoicePropertiesAllowed;
+		return self::$arinvoicePropertiesAllowed[$siteId];
 	}
 
 	public static function GetPropertiesInfo($personTypeId = 0, $onlyEditable = false)
@@ -2516,7 +2547,7 @@ class CAllCrmInvoice
 				{
 					$curVal = trim($post["PR_INVOICE_".$arPropertyFields["ID"]]);
 					if ($arPropertyFields["TYPE"] == "CHECKBOX"
-						&& strlen($curVal) <= 0
+						&& $curVal == ''
 						&& $arPropertyFields["REQUIED"] != "Y")
 					{
 						$curVal = "N";
@@ -2626,9 +2657,11 @@ class CAllCrmInvoice
 					}
 					elseif ($property['FIELDS']['CODE'] === 'COMPANY_ADR')
 					{
-						$curVal = Bitrix\Crm\Format\CompanyAddressFormatter::format(
-							$arCompany,
-							array('TYPE_ID' => \Bitrix\Crm\EntityAddress::Registered)
+						$curVal = AddressFormatter::getSingleInstance()->formatTextComma(
+							CompanyAddress::mapEntityFields(
+								$arCompany,
+								['TYPE_ID' => EntityAddressType::Registered]
+							)
 						);
 					}
 					elseif ($property['FIELDS']['CODE'] === 'INN')
@@ -2674,7 +2707,9 @@ class CAllCrmInvoice
 					}
 					elseif ($property['FIELDS']['CODE'] === 'ADDRESS')
 					{
-						$curVal = Bitrix\Crm\Format\ContactAddressFormatter::format($arContact);
+						$curVal = AddressFormatter::getSingleInstance()->formatTextComma(
+							ContactAddress::mapEntityFields($arContact)
+						);
 					}
 
 					$arInvoiceProperties[$propertyKey]['VALUE'] = $curVal;
@@ -2746,10 +2781,7 @@ class CAllCrmInvoice
 						{
 							$valueKey = Bitrix\Crm\EntityRequisite::ADDRESS.'_'.$addrTypeId;
 							$requisiteValues[$valueKey] =
-								Bitrix\Crm\Format\EntityAddressFormatter::format(
-									$addrFields,
-									array('SEPARATOR' => Bitrix\Crm\Format\AddressSeparator::Comma)
-								);
+								AddressFormatter::getSingleInstance()->formatTextComma($addrFields);
 						}
 					}
 				}
@@ -2787,7 +2819,7 @@ class CAllCrmInvoice
 				$requisiteToPropsMap = array(
 					$personTypeCompany => array(
 						'RQ_COMPANY_NAME' => array('COMPANY_NAME', 'COMPANY'),
-						'RQ_ADDR_'.Bitrix\Crm\EntityAddress::Registered => 'COMPANY_ADR',
+						'RQ_ADDR_'.EntityAddressType::Registered => 'COMPANY_ADR',
 						'RQ_INN' => 'INN',
 						'RQ_KPP' => 'KPP',
 						'RQ_CONTACT' => 'CONTACT_PERSON',
@@ -2798,7 +2830,7 @@ class CAllCrmInvoice
 						'RQ_NAME' => 'FIO',
 						'RQ_EMAIL' => 'EMAIL',
 						'RQ_PHONE' => 'PHONE',
-						'RQ_ADDR_'.Bitrix\Crm\EntityAddress::Primary => 'ADDRESS'
+						'RQ_ADDR_'.EntityAddressType::Primary => 'ADDRESS'
 					),
 				);
 
@@ -3168,7 +3200,7 @@ class CAllCrmInvoice
 										$errMsg[] = $e->getMessage();
 										$bError = true;
 									}
-				
+
 									if ($bError)
 									{
 										$errString = implode('<br>', $errMsg);
@@ -3230,10 +3262,10 @@ class CAllCrmInvoice
 			$crmStatus = new CCrmStatus('INVOICE_STATUS');
 			if (!empty($statuses))
 			{
-				$defStatusNameList = [];
+				$defaultStatuses = [];
 				foreach (CCrmStatus::GetDefaultInvoiceStatuses() as $statusInfo)
 				{
-					$defStatusNameList[$statusInfo['STATUS_ID']] = $statusInfo['NAME'];
+					$defaultStatuses[$statusInfo['STATUS_ID']] = $statusInfo;
 				}
 				unset($statusInfo);
 
@@ -3241,14 +3273,17 @@ class CAllCrmInvoice
 				{
 					if (!in_array($statusId, $existStatuses, true))
 					{
-						$nameExist = isset($defStatusNameList[$statusId]);
-						if (!$nameExist)
+						if(!isset($defaultStatuses[$statusId]))
+						{
 							continue;
+						}
 
 						$status = array(
 							'STATUS_ID' => $statusId,
 							'SORT' => $statusSort,
-							'NAME' => $defStatusNameList[$statusId]
+							'NAME' => $defaultStatuses[$statusId]['NAME'],
+							'SEMANTICS' => $defaultStatuses[$statusId]['SEMANTICS'] ?? null,
+							'COLOR' => $defaultStatuses[$statusId]['COLOR'] ?? null,
 						);
 
 						if ($statusId === 'N'
@@ -3257,7 +3292,7 @@ class CAllCrmInvoice
 						)
 						{
 							$status['SYSTEM'] = 'Y';
-							$status['NAME_INIT'] = $defStatusNameList[$statusId];
+							$status['NAME_INIT'] = $defaultStatuses[$statusId];
 						}
 						else
 						{
@@ -3339,7 +3374,7 @@ class CAllCrmInvoice
 										$errMsg[] = $e->getMessage();
 										$bError = true;
 									}
-				
+
 									if ($bError)
 									{
 										$errString = implode('<br>', $errMsg);
@@ -3399,7 +3434,7 @@ class CAllCrmInvoice
 					unset($tmpCatalogId, $dbRes);
 					if ($catalogId > 0)
 					{
-						$databaseType = strtoupper($DBType);
+						$databaseType = mb_strtoupper($DBType);
 						$strSql = '';
 						switch ($databaseType)
 						{
@@ -3500,7 +3535,7 @@ class CAllCrmInvoice
 		if (COption::GetOptionString('crm', '~CRM_INVOICE_EXCH1C_UPDATE_12_5_17', 'N') === 'Y')
 		{
 			$pref = COption::GetOptionString('sale', '1C_SALE_ACCOUNT_NUMBER_SHOP_PREFIX', '');
-			if (strlen(strval($pref)) < 1)
+			if (mb_strlen(strval($pref)) < 1)
 				COption::SetOptionString('sale', '1C_SALE_ACCOUNT_NUMBER_SHOP_PREFIX', 'CRM_');
 			COption::SetOptionString('crm', '~CRM_INVOICE_EXCH1C_UPDATE_12_5_19', 'Y');
 			// disable after the separation invoices and orders
@@ -3773,7 +3808,7 @@ class CAllCrmInvoice
 				'ENTITY_ID' => 'CRM_INVOICE',
 				'FIELD_NAME' => $fieldName,
 				'USER_TYPE_ID' => 'integer',
-				'XML_ID' => strtolower($fieldName),
+				'XML_ID' => mb_strtolower($fieldName),
 				'SORT' => strval($maxUFSort + 10),
 				'MULTIPLE' => null,
 				'MANDATORY' => null,
@@ -4506,24 +4541,27 @@ class CAllCrmInvoice
 
 		if (intval($arInvoice['PERSON_TYPE_ID']) > 0)
 		{
-			$arSearchableProperties = self::_getAllowedPropertiesInfo();
+			$arSearchableProperties = self::_getAllowedPropertiesInfo($arInvoice['LID']);
 			$arSearchableProperties = $arSearchableProperties[$arInvoice['PERSON_TYPE_ID']];
-			$arInvoiceProps = self::GetProperties($arInvoice['ID'], $arInvoice['PERSON_TYPE_ID']);
-			foreach ($arInvoiceProps as $prop)
+			if (is_array($arSearchableProperties))
 			{
-				$propCode = $prop['FIELDS']['CODE'];
-				if (array_key_exists($propCode, $arSearchableProperties))
+				$arInvoiceProps = self::GetProperties($arInvoice['ID'], $arInvoice['PERSON_TYPE_ID']);
+				foreach ($arInvoiceProps as $prop)
 				{
-					$v = $prop['VALUE'];
-					if (!empty($v) && !is_numeric($v) && $v != 'N' && $v != 'Y')
-						$sBody .= $arSearchableProperties[$propCode].": $v\n";
+					$propCode = $prop['FIELDS']['CODE'];
+					if (array_key_exists($propCode, $arSearchableProperties))
+					{
+						$v = $prop['VALUE'];
+						if (!empty($v) && !is_numeric($v) && $v != 'N' && $v != 'Y')
+							$sBody .= $arSearchableProperties[$propCode].": $v\n";
+					}
 				}
 			}
 		}
 
-		$sDetailURL = CComponentEngine::MakePathFromTemplate(COption::GetOptionString('crm', 'path_to_'.strtolower($sEntityType).'_show'),
+		$sDetailURL = CComponentEngine::MakePathFromTemplate(COption::GetOptionString('crm', 'path_to_'.mb_strtolower($sEntityType).'_show'),
 			array(
-				strtolower($sEntityType).'_id' => $arInvoice['ID']
+				mb_strtolower($sEntityType).'_id' => $arInvoice['ID']
 			)
 		);
 
@@ -4531,9 +4569,7 @@ class CAllCrmInvoice
 
 		if (empty($arSite))
 		{
-			$by="sort";
-			$order="asc";
-			$rsSite = $site->GetList($by, $order);
+			$rsSite = $site->GetList();
 			while ($_arSite = $rsSite->Fetch())
 				$arSite[] = $_arSite['ID'];
 		}
@@ -4594,7 +4630,7 @@ class CAllCrmInvoice
 			'SITE_ID' => $arSitePath,
 			'PERMISSIONS' => $arAttr,
 			'BODY' => $sBody,
-			'TAGS' => 'crm,'.strtolower($sEntityType).','.GetMessage('CRM_'.$sEntityType)
+			'TAGS' => 'crm,'.mb_strtolower($sEntityType).','.GetMessage('CRM_'.$sEntityType)
 		);
 
 		if ($bReindex)
@@ -4609,7 +4645,7 @@ class CAllCrmInvoice
 
 		$srcCurrencyID = strval($srcCurrencyID);
 		$dstCurrencyID = strval($dstCurrencyID);
-		if (strlen($srcCurrencyID) <= 0 || strlen($dstCurrencyID) <= 0)
+		if ($srcCurrencyID == '' || $dstCurrencyID == '')
 			$srcCurrencyID = $dstCurrencyID = '';
 
 		foreach ($arProductRows as $row)
@@ -4835,7 +4871,7 @@ class CAllCrmInvoice
 
 			if (preg_match('/(.*)_from$/i'.BX_UTF_PCRE_MODIFIER, $k, $arMatch))
 			{
-				if(strlen($v) > 0)
+				if($v <> '')
 				{
 					$arFilter['>='.$arMatch[1]] = $v;
 				}
@@ -4843,7 +4879,7 @@ class CAllCrmInvoice
 			}
 			elseif (preg_match('/(.*)_to$/i'.BX_UTF_PCRE_MODIFIER, $k, $arMatch))
 			{
-				if(strlen($v) > 0)
+				if($v <> '')
 				{
 					if (($arMatch[1] == 'DATE_PAY_BEFORE' || $arMatch[1] == 'DATE_INSERT') && !preg_match('/\d{1,2}:\d{1,2}(:\d{1,2})?$/'.BX_UTF_PCRE_MODIFIER, $v))
 					{
@@ -5093,14 +5129,15 @@ class CAllCrmInvoice
 						foreach ($requisite->getAddresses($requisiteId) as $addrTypeId => $addrFields)
 						{
 							$valueKey = Bitrix\Crm\EntityRequisite::ADDRESS.'_'.$addrTypeId.'|'.$presetCountryId;
-							$requisiteValues[$valueKey] =
-								Bitrix\Crm\Format\EntityAddressFormatter::prepareLines(
-									$addrFields,
-									array(
-										'SEPARATOR' => Bitrix\Crm\Format\AddressSeparator::NewLine,
-										'NL2BR' => false
-									)
-								);
+							$addressLines = explode(
+								"\n",
+								str_replace(
+									["\r\n", "\n", "\r"], "\n",
+									AddressFormatter::getSingleInstance()->formatTextMultiline($addrFields)
+								)
+							);
+							$requisiteValues[$valueKey] = is_array($addressLines) ? $addressLines : [];
+							unset($valueKey, $addressLines);
 						}
 					}
 				}
@@ -5261,7 +5298,7 @@ class CAllCrmInvoice
 					$personTypeCompany => array(
 						'COMPANY_NAME' => 'RQ_COMPANY_NAME',
 						'COMPANY' => 'RQ_COMPANY_NAME',
-						'COMPANY_ADR' => 'RQ_ADDR_'.Bitrix\Crm\EntityAddress::Registered,
+						'COMPANY_ADR' => 'RQ_ADDR_'.EntityAddressType::Registered,
 						'INN' => 'RQ_INN',
 						'KPP' => 'RQ_KPP',
 						'CONTACT_PERSON' => 'RQ_CONTACT',
@@ -5272,7 +5309,7 @@ class CAllCrmInvoice
 						'FIO' => 'RQ_NAME',
 						'EMAIL' => 'RQ_EMAIL',
 						'PHONE' => 'RQ_PHONE',
-						'ADDRESS' => 'RQ_ADDR_'.Bitrix\Crm\EntityAddress::Primary,
+						'ADDRESS' => 'RQ_ADDR_'.EntityAddressType::Primary,
 					),
 				);
 
@@ -5394,14 +5431,15 @@ class CAllCrmInvoice
 						foreach ($requisite->getAddresses($mcRequisiteId) as $addrTypeId => $addrFields)
 						{
 							$valueKey = Bitrix\Crm\EntityRequisite::ADDRESS.'_'.$addrTypeId.'|'.$mcPresetCountryId;
-							$mcRequisiteValues[$valueKey] =
-								Bitrix\Crm\Format\EntityAddressFormatter::prepareLines(
-									$addrFields,
-									array(
-										'SEPARATOR' => Bitrix\Crm\Format\AddressSeparator::NewLine,
-										'NL2BR' => false
-									)
-								);
+							$addressLines = explode(
+								"\n",
+								str_replace(
+									["\r\n", "\n", "\r"], "\n",
+									AddressFormatter::getSingleInstance()->formatTextMultiline($addrFields)
+								)
+							);
+							$mcRequisiteValues[$valueKey] = is_array($addressLines) ? $addressLines : [];
+							unset($valueKey, $addressLines);
 						}
 					}
 				}
@@ -5533,8 +5571,8 @@ class CAllCrmInvoice
 		$fields = $USER_FIELD_MANAGER->GetUserFields(CCrmInvoice::$sUFEntityID, null, LANGUAGE_ID);
 		foreach ($fields as $key => $field)
 		{
-			$value = $USER_FIELD_MANAGER->GetUserFieldValue(CCrmInvoice::$sUFEntityID, $key, $ID);
-			$userFields[$key] = $value;
+			$addressLines = $USER_FIELD_MANAGER->GetUserFieldValue(CCrmInvoice::$sUFEntityID, $key, $ID);
+			$userFields[$key] = $addressLines;
 		}
 
 		return array(
@@ -5614,7 +5652,7 @@ class CAllCrmInvoice
 
 							$port = in_array($port, array(80, 443)) ? '' : ':'.$port;
 
-							return $scheme.'://'.$domain.$port.'/pub/pay/'.base64_encode($order->getField('ACCOUNT_NUMBER')).'/'.$payment->getHash().'/';
+							return $scheme.'://'.$domain.$port.'/pub/pay/'.self::base64UrlEncode($order->getField('ACCOUNT_NUMBER')).'/'.$payment->getHash().'/';
 						}
 					}
 				}
@@ -5622,6 +5660,15 @@ class CAllCrmInvoice
 		}
 
 		return '';
+	}
+
+	/**
+	 * @param string $value
+	 * @return string
+	 */
+	protected static function base64UrlEncode(string $value) : string
+	{
+		return rtrim(strtr(base64_encode($value), '+/', '-_'), '=');
 	}
 
 	public static function savePdf($invoice_id, &$error = null)
@@ -5665,7 +5712,7 @@ class CAllCrmInvoice
 			return false;
 		}
 
-		if (strlen($arOrder["SUM_PAID"]) > 0)
+		if ($arOrder["SUM_PAID"] <> '')
 			$arOrder["PRICE"] -= $arOrder["SUM_PAID"];
 
 		$service = \Bitrix\Sale\PaySystem\Manager::getObjectById($arOrder["PAY_SYSTEM_ID"]);
@@ -5746,7 +5793,7 @@ class CAllCrmInvoice
 			{
 				while($ar = $obTitle->Fetch())
 				{
-					if (isset($ar['PARAM2']) && strlen($ar['PARAM2']) > 0)
+					if (isset($ar['PARAM2']) && $ar['PARAM2'] <> '')
 					{
 						$result[] = (int)$ar['PARAM2'];
 					}

@@ -3,7 +3,7 @@ require_once($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/statistic/classes/genera
 
 class CStoplist extends CAllStopList
 {
-	public static function GetList(&$by, &$order, $arFilter=Array(), &$is_filtered)
+	public static function GetList($by = 's_id', $order = 'desc', $arFilter = [])
 	{
 		$err_mess = "File: ".__FILE__."<br>Line: ";
 		$DB = CDatabase::GetModuleConnection('statistic');
@@ -19,7 +19,7 @@ class CStoplist extends CAllStopList
 				}
 				else
 				{
-					if( (strlen($val) <= 0) || ($val === "NOT_REF") )
+					if( ((string)$val == '') || ($val === "NOT_REF") )
 						continue;
 				}
 				$match_value_set = array_key_exists($key."_EXACT_MATCH", $arFilter);
@@ -110,7 +110,6 @@ class CStoplist extends CAllStopList
 		else
 		{
 			$strSqlOrder = "ORDER BY S.ID $order";
-			$by = "s_id";
 		}
 
 		$strSqlSearch = GetFilterSqlSearch($arSqlSearch);
@@ -140,7 +139,7 @@ class CStoplist extends CAllStopList
 			";
 
 		$res = $DB->Query($strSql, false, $err_mess.__LINE__);
-		$is_filtered = (IsFiltered($strSqlSearch));
+
 		return $res;
 	}
 
@@ -180,11 +179,11 @@ class CStoplist extends CAllStopList
 				$site_id = $arParams["SITE_ID"];
 			}
 
-			$user_agent_len = strlen($user_agent);
+			$user_agent_len = mb_strlen($user_agent);
 			$user_agent = $DB->ForSql($user_agent, 500);
 			$url_from = $DB->ForSql($url_from, 2000);
 			$url_to = $DB->ForSql($url_to, 2000);
-			if (strlen($site_id) > 0)
+			if ($site_id <> '')
 			{
 				$site_where = "and (SITE_ID = '".$DB->ForSql($site_id, 2)."' or SITE_ID is null or length(SITE_ID)<=0)";
 			}

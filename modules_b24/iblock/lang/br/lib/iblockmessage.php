@@ -1,5 +1,0 @@
-<?
-$MESS["IBLOCK_MESSAGE_ENTITY_IBLOCK_ID_FIELD"] = "Bloco de informação ID";
-$MESS["IBLOCK_MESSAGE_ENTITY_MESSAGE_ID_FIELD"] = "ID das mensagem ";
-$MESS["IBLOCK_MESSAGE_ENTITY_MESSAGE_TEXT_FIELD"] = "Mensagem de texto";
-?>

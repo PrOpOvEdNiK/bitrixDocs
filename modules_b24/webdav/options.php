@@ -6,9 +6,9 @@
 # mailto:admin@bitrixsoft.com				 #
 ##############################################
 
-global $MESS;
-include(GetLangFileName($GLOBALS["DOCUMENT_ROOT"]."/bitrix/modules/webdav/lang/", "/options.php"));
-IncludeModuleLangFile($_SERVER["DOCUMENT_ROOT"].BX_ROOT."/modules/main/options.php");
+use \Bitrix\Main\Localization\Loc;
+Loc::loadMessages(__FILE__);
+Loc::loadMessages($_SERVER['DOCUMENT_ROOT'].BX_ROOT.'/modules/main/options.php');
 
 $module_id = "webdav";
 CModule::IncludeModule($module_id);
@@ -21,7 +21,7 @@ if($MOD_RIGHT>="R")
 $arAllOptions =	Array(
 	Array(
 		"office_extensions",
-		GetMessage('WEBDAV_OPTIONS_OFFICE_EXTENSIONS'),
+		Loc::getMessage('WEBDAV_OPTIONS_OFFICE_EXTENSIONS'),
 		".accda .accdb .accde .accdt .accdu .doc .docm .docx .dot .dotm ".
 		".dotx .gsa .gta .mda .mdb .mny .mpc .mpp .mpv .mso .msproducer .pcs ".
 		".pot .potm .potx .ppa .ppam .pps .ppsm .ppsx .ppt .pptm .pptx .pst .pub ".
@@ -29,24 +29,24 @@ $arAllOptions =	Array(
 		".xlt .xltm .xltx .xlv .xlw .xps .xsf .odt .ods .odp .odb .odg .odf",
 		Array("textarea",  5, 60)
 	),
-	Array( "hide_system_files", GetMessage('WEBDAV_OPTIONS_HIDE_SYSTEM_FILES'), "Y", Array("checkbox")),
-	Array( "webdav_log", GetMessage('WEBDAV_OPTIONS_LOG'), "N", Array("checkbox")),
-	Array( "webdav_socnet", GetMessage('WEBDAV_OPTIONS_SOCNET'), "Y", Array("checkbox")),
-	Array( "webdav_allow_ext_doc_services_global", GetMessage('WEBDAV_OPTIONS_ALLOW_EXTERNAL_DOC_SERVICES'), "Y", Array("checkbox")),
-	Array( "webdav_allow_ext_doc_services_local", GetMessage('WEBDAV_OPTIONS_ALLOW_EXTERNAL_DOC_SERVICES_LOC_POLICY'), "Y", Array("checkbox")),
-	Array( "webdav_allow_autoconnect_share_group_folder", GetMessage('WEBDAV_OPTIONS_ALLOW_AUTOCONNECT_SHARE_GROUP_FOLDER'), "Y", Array("checkbox")),
+	Array( "hide_system_files", Loc::getMessage('WEBDAV_OPTIONS_HIDE_SYSTEM_FILES'), "Y", Array("checkbox")),
+	Array( "webdav_log", Loc::getMessage('WEBDAV_OPTIONS_LOG'), "N", Array("checkbox")),
+	Array( "webdav_socnet", Loc::getMessage('WEBDAV_OPTIONS_SOCNET'), "Y", Array("checkbox")),
+	Array( "webdav_allow_ext_doc_services_global", Loc::getMessage('WEBDAV_OPTIONS_ALLOW_EXTERNAL_DOC_SERVICES'), "Y", Array("checkbox")),
+	Array( "webdav_allow_ext_doc_services_local", Loc::getMessage('WEBDAV_OPTIONS_ALLOW_EXTERNAL_DOC_SERVICES_LOC_POLICY'), "Y", Array("checkbox")),
+	Array( "webdav_allow_autoconnect_share_group_folder", Loc::getMessage('WEBDAV_OPTIONS_ALLOW_AUTOCONNECT_SHARE_GROUP_FOLDER'), "Y", Array("checkbox")),
 	Array(
 		"webdav_ext_links_url",
-		GetMessage('WEBDAV_OPTIONS_EXT_LINKS_URL'),
+		Loc::getMessage('WEBDAV_OPTIONS_EXT_LINKS_URL'),
 		CWebDavExtLinks::URL_DEF,
 		Array("text")
 	),
 );
 
 $arHistoryOptions = Array(
-	Array( "bp_history_size", GetMessage('WEBDAV_OPTIONS_BP_HISTOTY_SIZE', array("#LINK#" => '/bitrix/admin/settings.php?mid=workflow')), "50", Array("text")),
-	Array( "bp_history_glue", GetMessage('WEBDAV_OPTIONS_BP_HISTOTY_GLUE'), "Y", Array("checkbox")),
-	Array( "bp_history_glue_period", GetMessage('WEBDAV_OPTIONS_BP_HISTOTY_GLUE_PERIOD'), "300", Array("text")),
+	Array( "bp_history_size", Loc::getMessage('WEBDAV_OPTIONS_BP_HISTOTY_SIZE', array("#LINK#" => '/bitrix/admin/settings.php?mid=workflow')), "50", Array("text")),
+	Array( "bp_history_glue", Loc::getMessage('WEBDAV_OPTIONS_BP_HISTOTY_GLUE'), "Y", Array("checkbox")),
+	Array( "bp_history_glue_period", Loc::getMessage('WEBDAV_OPTIONS_BP_HISTOTY_GLUE_PERIOD'), "300", Array("text")),
 );
 
 if (!function_exists('wd_extensions_cleanup'))
@@ -58,7 +58,7 @@ if (!function_exists('wd_extensions_cleanup'))
 		for ($i=0; $i<sizeof($arExtensions); $i++)
 		{
 			$arExtensions[$i] = trim($arExtensions[$i]);
-			if (strlen($arExtensions[$i])>0 && substr($arExtensions[$i], 0, 1) != '.')
+			if ($arExtensions[$i] <> '' && mb_substr($arExtensions[$i], 0, 1) != '.')
 				$arExtensions[$i] = "." . $arExtensions[$i];
 		}
 		$arExtensions = array_filter(array_unique($arExtensions));
@@ -70,18 +70,18 @@ $arFileTypes = null;
 if($MOD_RIGHT>="Y" || $USER->IsAdmin())
 {
 
-	if ($REQUEST_METHOD=="GET" && strlen($RestoreDefaults)>0 && check_bitrix_sessid())
+	if ($REQUEST_METHOD=="GET" && $RestoreDefaults <> '' && check_bitrix_sessid())
 	{
 		COption::RemoveOption($module_id);
-		$z = CGroup::GetList($v1="id",$v2="asc", array("ACTIVE" => "Y", "ADMIN" => "N"));
+		$z = CGroup::GetList("id", "asc", array("ACTIVE" => "Y", "ADMIN" => "N"));
 		while($zr = $z->Fetch())
 			$APPLICATION->DelGroupRight($module_id, array($zr["ID"]));
 	}
 
 	$sFileTypes = COption::GetOptionString($module_id, "file_types");
-	$arFileTypes = @unserialize($sFileTypes);
+	$arFileTypes = @unserialize($sFileTypes, ['allowed_classes' => false]);
 
-	if($REQUEST_METHOD=="POST" && strlen($Update)>0 && check_bitrix_sessid())
+	if($REQUEST_METHOD=="POST" && $Update <> '' && check_bitrix_sessid())
 	{
 		$arOptions = array_merge($arAllOptions, $arHistoryOptions);
 
@@ -137,15 +137,15 @@ if($MOD_RIGHT>="Y" || $USER->IsAdmin())
 			{
 				$arNewType = array();
 				$sNewTypeName = trim(strip_tags($sNewTypeName));
-				if (strlen($sNewTypeName) <= 0) continue;
+				if ($sNewTypeName == '') continue;
 				$arNewType['NAME'] = $sNewTypeName;
 				if (isset($_POST['WD_ADD_TYPE_EXT'][$iIndex]))
 				{
 					$sNewTypeExt = trim(strip_tags($_POST['WD_ADD_TYPE_EXT'][$iIndex]));
-					if (strlen($sNewTypeExt) <= 0) continue;
+					if ($sNewTypeExt == '') continue;
 					$arNewType['EXTENSIONS'] = __wd_extensions_cleanup($sNewTypeExt);
 				}
-				$arNewType['ID'] = substr(md5($arNewType['EXTENSIONS']), 0, 8);
+				$arNewType['ID'] = mb_substr(md5($arNewType['EXTENSIONS']), 0, 8);
 				$arFileTypes[] = $arNewType;
 			}
 		}
@@ -161,8 +161,8 @@ if (!is_array($arFileTypes))
 
 $aTabs = array();
 
-$aTabs[] = array("DIV" => "set", "TAB" => GetMessage("MAIN_TAB_SET"), "ICON" => "webdav_settings", "TITLE" => GetMessage("MAIN_TAB_TITLE_SET"));
-$aTabs[] = array("DIV" => "history", "TAB" => GetMessage("HISTORY_TAB_SET"), "ICON" => "webdav_settings", "TITLE" => GetMessage("MAIN_HISTORY_TITLE_SET"));
+$aTabs[] = array("DIV" => "set", "TAB" => Loc::getMessage("MAIN_TAB_SET"), "ICON" => "webdav_settings", "TITLE" => Loc::getMessage("MAIN_TAB_TITLE_SET"));
+$aTabs[] = array("DIV" => "history", "TAB" => Loc::getMessage("HISTORY_TAB_SET"), "ICON" => "webdav_settings", "TITLE" => Loc::getMessage("MAIN_HISTORY_TITLE_SET"));
 
 $tabControl = new CAdminTabControl("tabControl", $aTabs);
 ?>
@@ -289,15 +289,15 @@ textarea { word-wrap: break-word; }
 <?__AdmSettingsDrawList("webdav", $arAllOptions);?>
 
 	<tr class="heading">
-		<td colspan="2"><?=GetMessage("WEBDAV_OPTIONS_FILE_TYPES")?></td>
+		<td colspan="2"><?=Loc::getMessage("WEBDAV_OPTIONS_FILE_TYPES")?></td>
 	</tr>
 	<tr>
 		<td valign="top" colspan="2">
 		<table border="0" cellspacing="0" cellpadding="0" class="internal" align="center" id="tblTYPES">
 			<tr class="heading">
-				<td><?echo GetMessage("WEBDAV_OPTIONS_FILES_TYPE_NAME")?></td>
-				<td><?echo GetMessage("WEBDAV_OPTIONS_FILES_TYPE_EXTENSIONS")?></td>
-				<td><?echo GetMessage("WEBDAV_OPTIONS_FILES_TYPE_REMOVE")?></td>
+				<td><?echo Loc::getMessage("WEBDAV_OPTIONS_FILES_TYPE_NAME")?></td>
+				<td><?echo Loc::getMessage("WEBDAV_OPTIONS_FILES_TYPE_EXTENSIONS")?></td>
+				<td><?echo Loc::getMessage("WEBDAV_OPTIONS_FILES_TYPE_REMOVE")?></td>
 			</tr>
 <?
 $n = 0;
@@ -329,7 +329,7 @@ foreach ($arFileTypes as $sFileTypeProps)
 			<tr>
 				<td colspan="3" style="border:none">
 				<br />
-				<input type="button" value="<?echo GetMessage("WEBDAV_OPTIONS_ADD_FILE_TYPE")?>" onClick="addNewTableRow('tblTYPES', /right\[(n)([0-9]*)\]/g, 2)">
+				<input type="button" value="<?echo Loc::getMessage("WEBDAV_OPTIONS_ADD_FILE_TYPE")?>" onClick="addNewTableRow('tblTYPES', /right\[(n)([0-9]*)\]/g, 2)">
 				</td>
 			</tr>
 		</table>
@@ -341,7 +341,7 @@ foreach ($arFileTypes as $sFileTypeProps)
 <script language="JavaScript">
 function RestoreDefaults()
 {
-	if(confirm('<?echo AddSlashes(GetMessage("MAIN_HINT_RESTORE_DEFAULTS_WARNING"))?>'))
+	if(confirm('<?echo AddSlashes(Loc::getMessage("MAIN_HINT_RESTORE_DEFAULTS_WARNING"))?>'))
 		window.location = "<?echo $APPLICATION->GetCurPage()?>?RestoreDefaults=Y&lang=<?echo LANG?>&mid=<?echo urlencode($mid)."&".bitrix_sessid_get();?>";
 }
 BX(function() {
@@ -352,11 +352,11 @@ BX(function() {
 	} catch(err) {}
 });
 </script>
-<input type="submit" name="Update" <?if ($MOD_RIGHT<"W") echo "disabled" ?> value="<?echo GetMessage("MAIN_SAVE")?>">
-<input type="reset" name="reset" value="<?echo GetMessage("MAIN_RESET")?>">
+<input type="submit" name="Update" <?if ($MOD_RIGHT<"W") echo "disabled" ?> value="<?echo Loc::getMessage("MAIN_SAVE")?>">
+<input type="reset" name="reset" value="<?echo Loc::getMessage("MAIN_RESET")?>">
 <input type="hidden" name="Update" value="Y">
 <?=bitrix_sessid_post();?>
-<input type="button" <?if ($MOD_RIGHT<"W") echo "disabled" ?> title="<?echo GetMessage("MAIN_HINT_RESTORE_DEFAULTS")?>" OnClick="RestoreDefaults();" value="<?echo GetMessage("MAIN_RESTORE_DEFAULTS")?>">
+<input type="button" <?if ($MOD_RIGHT<"W") echo "disabled" ?> title="<?echo Loc::getMessage("MAIN_HINT_RESTORE_DEFAULTS")?>" OnClick="RestoreDefaults();" value="<?echo Loc::getMessage("MAIN_RESTORE_DEFAULTS")?>">
 <?$tabControl->End();?>
 </form>
 <?

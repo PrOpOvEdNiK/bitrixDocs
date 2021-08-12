@@ -3,6 +3,7 @@
 namespace Bitrix\Crm\Order;
 
 use Bitrix\Crm;
+use Bitrix\Crm\Timeline\DeliveryController;
 use Bitrix\Sale;
 use Bitrix\Main;
 
@@ -43,9 +44,36 @@ class Shipment extends Sale\Shipment
 			}
 		}
 
+		if (!$this->isSystem() && !$isNew && $this->isChanged())
+		{
+			Crm\Automation\Trigger\ShipmentChangedTrigger::execute(
+				[['OWNER_TYPE_ID' => \CCrmOwnerType::Order, 'OWNER_ID' => $this->getField('ORDER_ID')]],
+				['SHIPMENT' => $this]
+			);
+		}
+
 		if ($this->fields->isChanged('ALLOW_DELIVERY') && $this->isAllowDelivery())
 		{
 			Crm\Automation\Trigger\AllowDeliveryTrigger::execute(
+				[['OWNER_TYPE_ID' => \CCrmOwnerType::Order, 'OWNER_ID' => $this->getField('ORDER_ID')]],
+				['SHIPMENT' => $this]
+			);
+		}
+
+		if (
+			$this->fields->isChanged('STATUS_ID')
+			&& $this->getField('STATUS_ID') === DeliveryStatus::getFinalStatus()
+		)
+		{
+			Crm\Automation\Trigger\ShipmentChangedTrigger::execute(
+				[['OWNER_TYPE_ID' => \CCrmOwnerType::Order, 'OWNER_ID' => $this->getField('ORDER_ID')]],
+				['SHIPMENT' => $this]
+			);
+		}
+
+		if ($this->fields->isChanged('TRACKING_NUMBER') && !empty($this->getField('TRACKING_NUMBER')))
+		{
+			Crm\Automation\Trigger\FillTrackingNumberTrigger::execute(
 				[['OWNER_TYPE_ID' => \CCrmOwnerType::Order, 'OWNER_ID' => $this->getField('ORDER_ID')]],
 				['SHIPMENT' => $this]
 			);
@@ -61,7 +89,7 @@ class Shipment extends Sale\Shipment
 				);
 			}
 
-			if (!$this->isSystem() && !$this->getOrder()->isNew())
+			if (!$isNew && !$this->isSystem() && !$this->getOrder()->isNew())
 			{
 				$timelineParams = [
 					'FIELDS' => $this->getFieldValues(),
@@ -76,6 +104,63 @@ class Shipment extends Sale\Shipment
 				];
 
 				Crm\Timeline\OrderShipmentController::getInstance()->onDeducted($this->getId(), $timelineParams);
+			}
+		}
+
+		if (!$this->isSystem()
+			&& $isNew
+			&& ($deliveryService = $this->getDelivery())
+		)
+		{
+			if ($deliveryService instanceof Sale\Delivery\Services\Crm\ICrmActivityProvider)
+			{
+				$activity = $deliveryService->provideCrmActivity($this);
+
+				$fields = [
+					'TYPE_ID' => \CCrmActivityType::Provider,
+					'ASSOCIATED_ENTITY_ID' => $this->getId(),
+					'PROVIDER_ID' => 'CRM_DELIVERY',
+					'PROVIDER_TYPE_ID' => 'DELIVERY',
+					'SUBJECT' => $activity->getSubject() ? $activity->getSubject() : 'Delivery',
+					'IS_HANDLEABLE' => $activity->isHandleable() ? 'Y' : 'N',
+					'COMPLETED' => $activity->isCompleted() ? 'Y' : 'N',
+					'STATUS' => $activity->getStatus(),
+					'RESPONSIBLE_ID' => $activity->getResponsibleId(),
+					'PRIORITY' => $activity->getPriority(),
+					'AUTHOR_ID' => $activity->getAuthorId(),
+					'BINDINGS' => $activity->getBindings(),
+					'SETTINGS' => [
+						'FIELDS' => $activity->getFields()
+					],
+				];
+
+				$activityId = (int)\CCrmActivity::add($fields, false);
+
+				if ($activityId > 0)
+				{
+					AddEventToStatFile(
+						'sale',
+						'deliveryActivityCreation',
+						$activityId,
+						$deliveryService->getName(),
+						'delivery_service_name'
+					);
+				}
+			}
+
+			if ($deliveryService instanceof Sale\Delivery\Services\Crm\ICrmEstimationMessageProvider)
+			{
+				$estimationMessage = $deliveryService->provideCrmEstimationMessage($this);
+
+				DeliveryController::getInstance()->createHistoryMessage(
+					$this->getId(),
+					$estimationMessage->getTypeId(),
+					[
+						'AUTHOR_ID' => $estimationMessage->getAuthorId(),
+						'SETTINGS' => ['FIELDS' => $estimationMessage->getFields()],
+						'BINDINGS' => $estimationMessage->getBindings()
+					]
+				);
 			}
 		}
 
@@ -126,9 +211,16 @@ class Shipment extends Sale\Shipment
 	 */
 	private function addTimelineEntryOnCreate()
 	{
+		$fields = $this->getFields()->getValues();
+		$createdBy = $this->getOrder()->getField('CREATED_BY');
+		if ($createdBy)
+		{
+			$fields['ORDER_CREATED_BY'] = $createdBy;
+		}
+
 		Crm\Timeline\OrderShipmentController::getInstance()->onCreate(
 			$this->getId(),
-			array('FIELDS' => $this->getFields()->getValues())
+			array('FIELDS' => $fields)
 		);
 	}
 

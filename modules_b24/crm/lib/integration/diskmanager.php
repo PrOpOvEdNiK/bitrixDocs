@@ -10,30 +10,19 @@ namespace Bitrix\Crm\Integration;
 use Bitrix\Disk\Driver;
 use Bitrix\Disk\File;
 use Bitrix\Disk\Folder;
+use Bitrix\Disk\Internals\ObjectTable;
 use Bitrix\Disk\SystemUser;
 use Bitrix\Disk\Ui\Text;
+use Bitrix\Disk\ZipNginx\ArchiveEntry;
+use Bitrix\Main\Engine\Response\Zip;
 use Bitrix\Main\Loader;
 use Bitrix\Main\EventResult;
 
 class DiskManager
 {
-	private static $defaultSiteID = null;
 	private static function getDefaultSiteID()
 	{
-		if(self::$defaultSiteID !== null)
-		{
-			return self::$defaultSiteID;
-		}
-
-		$siteEntity = new \CSite();
-		$dbSites = $siteEntity->GetList($by = 'sort', $order = 'desc', array('DEFAULT' => 'Y', 'ACTIVE' => 'Y'));
-		$defaultSite = is_object($dbSites) ? $dbSites->Fetch() : null;
-		if(is_array($defaultSite))
-		{
-			return (self::$defaultSiteID = $defaultSite['LID']);
-		}
-
-		return (self::$defaultSiteID = 's1');
+		return \Bitrix\Crm\Integration\Main\Site::getPortalSiteId();
 	}
 	public static function checkFileReadPermission($fileID, $userID = 0)
 	{
@@ -142,6 +131,7 @@ class DiskManager
 			'FILE_ID' => $file->getFileId(),
 			'NAME' => $file->getName(),
 			'SIZE' => \CFile::FormatSize($file->getSize()),
+			'BYTES' => $file->getSize(),
 			'CAN_READ' => $canRead,
 			'VIEW_URL' => $viewUrl,
 			'PREVIEW_URL' => $previewUrl,
@@ -192,9 +182,10 @@ class DiskManager
 	/**
 	 * @param int $typeID
 	 * @param string $siteID
+	 * @param bool $useMonthFolders
 	 * @return \Bitrix\Disk\Folder|null
 	 */
-	public static function ensureFolderCreated($typeID, $siteID = '')
+	public static function ensureFolderCreated($typeID, $siteID = '', $useMonthFolders = false)
 	{
 		if(!Loader::includeModule('disk'))
 		{
@@ -220,40 +211,66 @@ class DiskManager
 			return null;
 		}
 
+		$folderModel = static::loadFolderModel($storage, $storage, $typeID, $xmlID, $name);
+		if ($folderModel && $useMonthFolders)
+		{
+			$subFolderName = date('Y-m');
+			$subFolderXmlID = $xmlID.'_'.$subFolderName;
+			return static::loadFolderModel($storage, $folderModel, $typeID, $subFolderXmlID, $subFolderName);
+		}
+
+		return $folderModel;
+	}
+	/**
+	 * @param \Bitrix\Disk\Storage $storage
+	 * @param \Bitrix\Disk\Storage|\Bitrix\Disk\Folder $parent
+	 * @param int $typeID
+	 * @param string $xmlID
+	 * @param string $name
+	 * @return Folder|null
+	 */
+	protected static function loadFolderModel($storage, $parent, $typeID, $xmlID, $name)
+	{
+		$parentIsStorage = ($parent === $storage);
 		$folderModel = Folder::load(
 			array(
 				'STORAGE_ID' => $storage->getId(),
-				'PARENT_ID' => $storage->getRootObjectId(),
+				'PARENT_ID' => $parentIsStorage ? $parent->getRootObjectId() : $parent->getId(),
+				'DELETED_TYPE' => ObjectTable::DELETED_TYPE_NONE,
 				'=XML_ID' => $xmlID,
 			)
 		);
 
-		if ($folderModel)
+		if (!$folderModel)
 		{
-			return $folderModel;
-		}
-
-		$rights = array();
-		if($typeID === StorageFileType::EmailAttachment)
-		{
-			$specificRights = Driver::getInstance()->getRightsManager()->getSpecificRights($storage->getRootObject());
-			foreach ($specificRights as $right)
+			$rights = array();
+			if ($typeID === StorageFileType::EmailAttachment)
 			{
-				unset($right['ID'], $right['DOMAIN'], $right['OBJECT_ID']);
-				$right['NEGATIVE'] = true;
-				$rights[] = $right;
+				$specificRights = Driver::getInstance()->getRightsManager()->getSpecificRights($storage->getRootObject());
+				foreach ($specificRights as $right)
+				{
+					unset($right['ID'], $right['DOMAIN'], $right['OBJECT_ID']);
+					$right['NEGATIVE'] = true;
+					$rights[] = $right;
+				}
 			}
-		}
 
-		return $storage->addFolder(
-			array(
+			$data = array(
 				'NAME' => $name,
 				'XML_ID' => $xmlID,
 				'CREATED_BY' => SystemUser::SYSTEM_USER_ID
-			),
-			$rights,
-			true
-		);
+			);
+			if ($parentIsStorage)
+			{
+				$folderModel = $parent->addFolder($data, $rights, true);
+			}
+			else
+			{
+				$folderModel = $parent->addSubFolder($data, $rights, true);
+			}
+		}
+
+		return $folderModel;
 	}
 	/**
 	 * @param array $fileData
@@ -295,7 +312,8 @@ class DiskManager
 			$typeID = StorageFileType::EmailAttachment;
 		}
 
-		$folder = self::ensureFolderCreated($typeID, $siteID);
+		$useMonthFolders = isset($params['USE_MONTH_FOLDERS']) && (bool)$params['USE_MONTH_FOLDERS'];
+		$folder = self::ensureFolderCreated($typeID, $siteID, $useMonthFolders);
 		if(!$folder)
 		{
 			return false;
@@ -332,6 +350,45 @@ class DiskManager
 
 		\CCrmActivity::HandleStorageElementDeletion(StorageType::Disk, $objectID);
 		\CCrmQuote::HandleStorageElementDeletion(StorageType::Disk, $objectID);
+	}
+
+	/**
+	 * @param string $name
+	 * @param array  $fileIds
+	 * @return Zip\Archive|null
+	 * @throws \Bitrix\Main\LoaderException
+	 * @throws \Bitrix\Main\NotImplementedException
+	 */
+	public static function buildArchive(string $name, array $fileIds)
+	{
+		if (!Loader::includeModule('disk'))
+		{
+			return null;
+		}
+
+		$archive = new Zip\Archive($name);
+		foreach ($fileIds as $fileId)
+		{
+			$file = File::loadById($fileId);
+			if (!$file)
+			{
+				continue;
+			}
+
+			$archive->addEntry(ArchiveEntry::createFromFileModel($file, $file->getName()));
+		}
+
+		return $archive;
+	}
+
+	public static function isModZipEnabled(): bool
+	{
+		if (!Loader::includeModule('disk'))
+		{
+			return false;
+		}
+
+		return \Bitrix\Disk\ZipNginx\Configuration::isEnabled();
 	}
 
 	public static function writeFileToResponse($fileID, $options = array())

@@ -756,7 +756,7 @@ class CDavExchangeContacts
 		$arPhysicalAddresses = $contactItem->GetPath("/Contact/PhysicalAddresses/Entry");
 		foreach ($arPhysicalAddresses as $physicalAddress)
 		{
-			$entryKey = strtolower($physicalAddress->GetAttribute("Key"));
+			$entryKey = mb_strtolower($physicalAddress->GetAttribute("Key"));
 
 			if ($entryKey == "business")
 				$prefix = "WORK";
@@ -795,7 +795,7 @@ class CDavExchangeContacts
 		$arPhoneNumbers = $contactItem->GetPath("/Contact/PhoneNumbers/Entry");
 		foreach ($arPhoneNumbers as $phoneNumber)
 		{
-			$entryKey = strtolower($phoneNumber->GetAttribute("Key"));
+			$entryKey = mb_strtolower($phoneNumber->GetAttribute("Key"));
 			$v = $phoneNumber->GetContent();
 
 			if ($entryKey == "businessphone")
@@ -886,10 +886,10 @@ class CDavExchangeContacts
 			elseif ($key == "FileAs")
 			{
 				$v = $arFields["Surname"];
-				if (strlen($v) > 0 && (strlen($arFields["GivenName"]) > 0 || strlen($arFields["MiddleName"]) > 0))
+				if ($v <> '' && ($arFields["GivenName"] <> '' || $arFields["MiddleName"] <> ''))
 					$v .= ", ";
 				$v .= $arFields["GivenName"];
-				if (strlen($v) > 0 && strlen($arFields["MiddleName"]) > 0)
+				if ($v <> '' && $arFields["MiddleName"] <> '')
 					$v .= " ";
 				$v .= $arFields["MiddleName"];
 
@@ -1024,10 +1024,10 @@ class CDavExchangeContacts
 					$itemBody .= "       <Contact>\r\n";
 
 					$v = $arFields["Surname"];
-					if (strlen($v) > 0 && (strlen($arFields["GivenName"]) > 0 || strlen($arFields["MiddleName"]) > 0))
+					if ($v <> '' && ($arFields["GivenName"] <> '' || $arFields["MiddleName"] <> ''))
 						$v .= ", ";
 					$v .= $arFields["GivenName"];
-					if (strlen($v) > 0 && strlen($arFields["MiddleName"]) > 0)
+					if ($v <> '' && $arFields["MiddleName"] <> '')
 						$v .= " ";
 					$v .= $arFields["MiddleName"];
 
@@ -1175,10 +1175,10 @@ class CDavExchangeContacts
 		$arUserFilter = array("ACTIVE" => "Y", "!UF_DEPARTMENT" => false);
 		if ($paramUserId > 0)
 			$arUserFilter["ID_EQUAL_EXACT"] = $paramUserId;
-		if ($exchangeUseLogin == "N")
+		if ($exchangeUseLogin === "N")
 			$arUserFilter["!UF_BXDAVEX_MAILBOX"] = false;
 
-		$dbUserList = CUser::GetList($by = "UF_BXDAVEX_CNTSYNC", $order = "asc", $arUserFilter, array("SELECT" => array("ID", "LOGIN", "UF_BXDAVEX_MAILBOX", "UF_BXDAVEX_CNTSYNC")));
+		$dbUserList = CUser::GetList("UF_BXDAVEX_CNTSYNC", "asc", $arUserFilter, array("SELECT" => array("ID", "LOGIN", "UF_BXDAVEX_MAILBOX", "UF_BXDAVEX_CNTSYNC")));
 		while ($arUser = $dbUserList->Fetch())
 		{
 			$index++;
@@ -1190,11 +1190,11 @@ class CDavExchangeContacts
 
 			$lastSyncDate = $arUser["UF_BXDAVEX_CNTSYNC"];
 			if (empty($lastSyncDate))
-				$lastSyncDate = ConvertTimeStamp(mktime(0, 0, 0, 1, 1, 2000), FULL);
+				$lastSyncDate = ConvertTimeStamp(mktime(0, 0, 0, 1, 1, 2000), "FULL");
 
-			$GLOBALS["USER_FIELD_MANAGER"]->Update("USER", $arUser["ID"], array("UF_BXDAVEX_CNTSYNC" => ConvertTimeStamp(time(), FULL)));
+			$GLOBALS["USER_FIELD_MANAGER"]->Update("USER", $arUser["ID"], array("UF_BXDAVEX_CNTSYNC" => ConvertTimeStamp(time(), "FULL")));
 
-			$mailbox = (($exchangeUseLogin == "Y") ? $arUser["LOGIN"].$exchangeMailbox : $arUser["UF_BXDAVEX_MAILBOX"]);
+			$mailbox = (($exchangeUseLogin === "Y") ? $arUser["LOGIN"].$exchangeMailbox : $arUser["UF_BXDAVEX_MAILBOX"]);
 			if (empty($mailbox))
 				continue;
 
@@ -1202,8 +1202,8 @@ class CDavExchangeContacts
 			$arAddressbookCache = null;
 
 			$dbUserListTmp = CUser::GetList(
-				$by = "ID",
-				$order = "asc",
+				"ID",
+				"asc",
 				array("TIMESTAMP_X_1" => $lastSyncDate, "ACTIVE" => "Y", "!UF_DEPARTMENT" => false)
 			);
 			if ($arUserTmp = $dbUserListTmp->Fetch())

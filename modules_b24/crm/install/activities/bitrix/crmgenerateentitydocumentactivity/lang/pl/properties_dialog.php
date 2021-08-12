@@ -1,5 +1,0 @@
-<?
-$MESS["BPGEDA_PROP_DIALOG_ADD"] = "Dodaj";
-$MESS["BPGEDA_PROP_DIALOG_ADD_FIELD"] = "Dodaj pole";
-$MESS["BPGEDA_PROP_DIALOG_TEMPLATE_FIELDS"] = "Pola dokumentu";
-?>

@@ -1,3 +1,0 @@
-<?
-$MESS["DOCUMENTGENERATOR_DEFAULT_NUMERATOR_TITLE"] = "Numer prefiksu";
-?>

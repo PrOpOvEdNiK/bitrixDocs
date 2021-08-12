@@ -749,7 +749,7 @@ class CDiskStorage extends CWebDavAbstractStorage
 
 	public function isCorrectName($name, &$msg)
 	{
-		if(Path::validateFilename($name) && strpos($name, '%') === false)
+		if(Path::validateFilename($name) && mb_strpos($name, '%') === false)
 		{
 			return true;
 		}

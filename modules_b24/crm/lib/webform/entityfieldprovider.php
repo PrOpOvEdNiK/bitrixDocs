@@ -73,6 +73,16 @@ class EntityFieldProvider
 		{
 			foreach($entityFields['FIELDS'] as $fieldKey => $field)
 			{
+				if (
+					mb_strpos($entityName, 'DYNAMIC_') === 0
+					&&
+					in_array($field['entity_field_name'], ['CATEGORY_ID', 'STAGE_ID'])
+				)
+				{
+					unset($fieldsTree[$entityName]['FIELDS'][$fieldKey]);
+					continue;
+				}
+
 				if(!in_array($field['type'], $availableTypes))
 				{
 					unset($fieldsTree[$entityName]['FIELDS'][$fieldKey]);
@@ -144,7 +154,19 @@ class EntityFieldProvider
 		return $fields;
 	}
 
-	public static function getFieldsDescription($fields)
+	public static function getAllFieldsDescription()
+	{
+		$result = [];
+		$availableFields = EntityFieldProvider::getFields();
+		foreach($availableFields as $fieldAvailable)
+		{
+			$result[] = self::getFieldDescription($fieldAvailable);
+		}
+
+		return $result;
+	}
+
+	public static function getFieldsDescription(array $fields)
 	{
 		$availableFields = EntityFieldProvider::getFields();
 
@@ -154,7 +176,6 @@ class EntityFieldProvider
 			$fieldCodeList[] = $field['CODE'];
 		}
 
-		$stringTypes = array_keys(Helper::getFieldStringTypes());
 		foreach($availableFields as $fieldAvailable)
 		{
 			if(!in_array($fieldAvailable['name'], $fieldCodeList))
@@ -162,63 +183,12 @@ class EntityFieldProvider
 				continue;
 			}
 
-			//array_walk($fields, $modifyFunction, $fieldAvailable);
-
 			foreach($fields as $fieldKey => $field)
 			{
-				if($field['CODE'] != $fieldAvailable['name'])
+				$field = self::getFieldDescription($fieldAvailable, $field);
+				if(!$field)
 				{
 					continue;
-				}
-
-				$field['TYPE_ORIGINAL'] = $fieldAvailable['type'];
-				$field['MULTIPLE_ORIGINAL'] = $fieldAvailable['multiple'];
-				$field['VALUE_TYPE_ORIGINAL'] = $fieldAvailable['value_type'] ? $fieldAvailable['value_type'] : array();
-
-				$isSetOriginalType = ($field['TYPE'] != 'section' && (!in_array($field['TYPE'], $stringTypes)));
-				$isSetOriginalType = $isSetOriginalType && !($field['TYPE'] == 'radio' && $fieldAvailable['type'] == 'checkbox');
-				if($isSetOriginalType)
-				{
-					$field['TYPE'] = $fieldAvailable['type'];
-				}
-
-				$field['ENTITY_NAME'] = $fieldAvailable['entity_name'];
-				$field['ENTITY_FIELD_NAME'] = $fieldAvailable['entity_field_name'];
-				$field['ENTITY_CAPTION'] = $fieldAvailable['entity_caption'];
-				$field['ENTITY_FIELD_CAPTION'] = $fieldAvailable['caption'];
-				//$field['MULTIPLE'] = $fieldAvailable['multiple'];
-				if(isset($fieldAvailable['items']) && is_array($fieldAvailable['items']))
-				{
-					if(!isset($field['ITEMS']) || !is_array($field['ITEMS']))
-					{
-						$field['ITEMS'] = array();
-					}
-
-					$itemsTmp = array_values($field['ITEMS']);
-					$field['ITEMS'] = array();
-					foreach($fieldAvailable['items'] as $availableItem)
-					{
-						foreach($itemsTmp as $item)
-						{
-							if($item['ID'] != $availableItem['ID'])
-							{
-								continue;
-							}
-
-							if(isset($item['VALUE']) && strlen(trim($item['VALUE'])) > 0)
-							{
-								$availableItem['VALUE'] = (string) $item['VALUE'];
-							}
-							if(isset($item['SELECTED']))
-							{
-								$availableItem['SELECTED'] = (bool) $item['SELECTED'];
-							}
-
-							break;
-						}
-
-						$field['ITEMS'][] = $availableItem;
-					}
 				}
 
 				$fields[$fieldKey] = $field;
@@ -226,6 +196,79 @@ class EntityFieldProvider
 		}
 
 		return $fields;
+	}
+
+	private static function getFieldDescription(array $fieldAvailable, array $field = [])
+	{
+		static $stringTypes = null;
+		if ($stringTypes === null)
+		{
+			$stringTypes = array_keys(Helper::getFieldStringTypes());
+		}
+
+
+		if(!empty($field['CODE']) && $field['CODE'] != $fieldAvailable['name'])
+		{
+			return null;
+		}
+
+		$field['CODE'] = $fieldAvailable['name'];
+		$field['TYPE_ORIGINAL'] = $fieldAvailable['type'];
+		$field['MULTIPLE_ORIGINAL'] = $fieldAvailable['multiple'];
+		$field['VALUE_TYPE_ORIGINAL'] = $fieldAvailable['value_type'] ? $fieldAvailable['value_type'] : array();
+
+		$isSetOriginalType = ($field['TYPE'] != 'section' && (!in_array($field['TYPE'], $stringTypes)));
+		$isSetOriginalType = $isSetOriginalType && !($field['TYPE'] == 'radio' && $fieldAvailable['type'] == 'checkbox');
+		if($isSetOriginalType)
+		{
+			$field['TYPE'] = $fieldAvailable['type'];
+		}
+
+		$field['ENTITY_NAME'] = $fieldAvailable['entity_name'];
+		$field['ENTITY_FIELD_NAME'] = $fieldAvailable['entity_field_name'];
+		$field['ENTITY_CAPTION'] = $fieldAvailable['entity_caption'];
+		$field['ENTITY_FIELD_CAPTION'] = $fieldAvailable['caption'];
+
+
+
+		if(!isset($fieldAvailable['items']) || !is_array($fieldAvailable['items']))
+		{
+			return $field;
+		}
+
+
+		if(!isset($field['ITEMS']) || !is_array($field['ITEMS']))
+		{
+			$field['ITEMS'] = [];
+		}
+
+		$itemsTmp = array_values($field['ITEMS']);
+		$field['ITEMS'] = array();
+		foreach($fieldAvailable['items'] as $availableItem)
+		{
+			foreach($itemsTmp as $item)
+			{
+				if($item['ID'] != $availableItem['ID'])
+				{
+					continue;
+				}
+
+				if(isset($item['VALUE']) && trim($item['VALUE']) <> '')
+				{
+					$availableItem['VALUE'] = (string) $item['VALUE'];
+				}
+				if(isset($item['SELECTED']))
+				{
+					$availableItem['SELECTED'] = (bool) $item['SELECTED'];
+				}
+
+				break;
+			}
+
+			$field['ITEMS'][] = $availableItem;
+		}
+
+		return $field;
 	}
 
 	public static function getBooleanFieldItems()
@@ -238,17 +281,21 @@ class EntityFieldProvider
 
 	public static function getFieldsInternal($entityName, $entity)
 	{
-		$className = $entity['CLASS_NAME'];
-		$fieldInfoMethodName = isset($entity['GET_FIELDS_CALL']) ? $entity['GET_FIELDS_CALL'] : Entity::getDefaultFieldsInfoMethod();
-		$ufEntityId = $className::$sUFEntityID;
+		$fieldInfoMethodName = isset($entity['GET_FIELDS_CALL'])
+			? $entity['GET_FIELDS_CALL']
+			: Entity::getDefaultFieldsInfoMethod()
+		;
 
-		if(is_array($fieldInfoMethodName))
+		if(is_array($fieldInfoMethodName) || is_callable($fieldInfoMethodName))
 		{
 			$fieldsFunction = $fieldInfoMethodName;
 			$isAlreadyPreparedFields = true;
+			$ufEntityId = null;
 		}
 		else
 		{
+			$className = $entity['CLASS_NAME'];
+			$ufEntityId = $className::$sUFEntityID;
 			$fieldsFunction = array($className, $fieldInfoMethodName);
 			$isAlreadyPreparedFields = false;
 		}
@@ -259,8 +306,6 @@ class EntityFieldProvider
 		}
 
 		$fieldsInfo = call_user_func_array($fieldsFunction, array());
-		$userFieldsInfo = array();
-		self::prepareUserFieldsInfo($userFieldsInfo, $ufEntityId);
 		if($isAlreadyPreparedFields)
 		{
 			$commonExcludedFields = Entity::getEntityMapCommonExcludedFields();
@@ -273,19 +318,19 @@ class EntityFieldProvider
 
 				unset($fieldsInfo[$fieldId]);
 			}
-			//self::prepareMultiFieldsInfo($userFieldsInfo);
-			//$fieldsInfo = $fieldsInfo + $userFieldsInfo;
 		}
 		else
 		{
+			$userFieldsInfo = array();
+			self::prepareUserFieldsInfo($userFieldsInfo, $ufEntityId);
 			$fieldsInfo = $fieldsInfo + $userFieldsInfo;
-			if ($entity['HAS_MULTI_FIELDS'])
-			{
-				self::prepareMultiFieldsInfo($fieldsInfo);
-			}
-			$fieldsInfo = self::prepareFields($fieldsInfo);
 		}
 
+		if ($entity['HAS_MULTI_FIELDS'])
+		{
+			self::prepareMultiFieldsInfo($fieldsInfo);
+		}
+		$fieldsInfo = self::prepareFields($fieldsInfo);
 		return self::prepareWebFormFields($entityName, $fieldsInfo);
 	}
 
@@ -336,7 +381,7 @@ class EntityFieldProvider
 		}
 
 		// Skip wrong named fields
-		if(strpos($fieldID, '.') !== false || strpos($fieldID, '[') !== false || strpos($fieldID, ']') !== false)
+		if(mb_strpos($fieldID, '.') !== false || mb_strpos($fieldID, '[') !== false || mb_strpos($fieldID, ']') !== false)
 		{
 			return false;
 		}
@@ -567,5 +612,85 @@ class EntityFieldProvider
 		unset($fieldInfo);
 
 		return $result;
+	}
+
+	/**
+	 * Handler of event `main/onAfterSetEnumValues`.
+	 *
+	 * @param array $userField User field.
+	 * @param array $items Items.
+	 * @throws SystemException
+	 * @throws \Bitrix\Main\ArgumentException
+	 * @throws \Bitrix\Main\ObjectPropertyException
+	 */
+	public static function onUpdateUserFieldItems(array $userField, array $items)
+	{
+		$actualItems = [];
+		foreach ($items as $itemId => $item)
+		{
+			if (!is_numeric($itemId))
+			{
+				continue;
+			}
+
+			$actualItems[$itemId] = $item;
+		}
+
+		$fieldName = substr($userField['ENTITY_ID'], 4) . '_' . $userField['FIELD_NAME'];
+		$rows = Internals\FieldTable::getList([
+			'select' => ['FORM_ID'],
+			'filter' => [
+				'=CODE' => $fieldName
+			],
+		]);
+		foreach ($rows as $row)
+		{
+			$isChanged = false;
+			$form = new Form($row['FORM_ID']);
+			$formFields = $form->getFields();
+			foreach ($formFields as $index => $formField)
+			{
+				if ($formField['CODE'] !== $fieldName)
+				{
+					continue;
+				}
+
+				$fieldItems = is_array($formField['ITEMS']) ? $formField['ITEMS'] : [];
+				$fieldItems = array_combine(
+					array_column($fieldItems, 'ID'),
+					$fieldItems
+				);
+
+				$newItems = [];
+				foreach ($actualItems as $itemId => $item)
+				{
+					$newItem = [
+						'ID' => $itemId,
+						'VALUE' => $item['VALUE'],
+					];
+
+					if (!empty($fieldItems[$itemId]['DISABLED']))
+					{
+						$newItem['DISABLED'] = $fieldItems[$itemId]['DISABLED'] === 'Y' ? 'Y' : 'N';
+					}
+					if (!empty($fieldItems[$itemId]['SELECTED']))
+					{
+						$newItem['SELECTED'] = $fieldItems[$itemId]['SELECTED'] === 'Y' ? 'Y' : 'N';
+					}
+
+					$newItems[] = $newItem;
+				}
+
+				$formField['ITEMS'] = $newItems;
+				$formFields[$index] = $formField;
+				$isChanged = true;
+			}
+
+			if ($isChanged)
+			{
+				$form->merge(['FIELDS' => $formFields]);
+				$form->save();
+			}
+		}
 	}
 }

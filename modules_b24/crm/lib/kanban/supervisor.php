@@ -1,4 +1,5 @@
 <?php
+
 namespace Bitrix\Crm\Kanban;
 
 use Bitrix\Main\Entity;
@@ -6,10 +7,8 @@ use Bitrix\Main\Localization\Loc;
 
 class SupervisorTable extends Entity\DataManager
 {
-
 	const TTL_ACTIVITY = 1200;
 
-	protected static $pathMarkers = array('#lead_id#', '#contact_id#', '#company_id#', '#deal_id#', '#quote_id#', '#invoice_id#');
 	protected static $avatarSize = array('width' => 38, 'height' => 38);
 
 	/**
@@ -360,12 +359,12 @@ class SupervisorTable extends Entity\DataManager
 															'ELEMENT_ID' => $row['CONTACT_ID']));
 			while ($fm = $res->fetch())
 			{
-				$fm['TYPE_ID'] = strtolower($fm['TYPE_ID']);
+				$fm['TYPE_ID'] = mb_strtolower($fm['TYPE_ID']);
 				if (!in_array($fm['TYPE_ID'], array('phone', 'email', 'im')))
 				{
 					continue;
 				}
-				if ($fm['TYPE_ID'] == 'im' && strpos($fm['VALUE'], 'imol|') !== 0)
+				if ($fm['TYPE_ID'] == 'im' && mb_strpos($fm['VALUE'], 'imol|') !== 0)
 				{
 					continue;
 				}
@@ -411,9 +410,9 @@ class SupervisorTable extends Entity\DataManager
 	 * @param string $type Type of entity.
 	 * @return string
 	 */
-	protected function getUrl($id, $type)
+	protected static function getUrl($id, $type)
 	{
-		return str_replace(self::$pathMarkers, $id, \CrmCheckPath('PATH_TO_'.strtoupper($type).'_SHOW', '', ''));
+		return str_replace(\Bitrix\Crm\Kanban\Entity::getPathMarkers(), $id, \CrmCheckPath('PATH_TO_'.mb_strtoupper($type).'_SHOW', '', ''));
 	}
 
 	/**

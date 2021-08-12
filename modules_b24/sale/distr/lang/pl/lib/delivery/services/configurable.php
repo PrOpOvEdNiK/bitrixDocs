@@ -1,4 +1,0 @@
-<?
-$MESS["SALE_DLVR_HANDL_CONF_PERIOD_DAY"] = "dni";
-$MESS["SALE_DLVR_HANDL_CONF_PERIOD_HOUR"] = "godziny";
-?>

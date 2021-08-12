@@ -49,8 +49,8 @@ class CCrmRole
 			$arOrder = Array('ID' => 'DESC');
 		foreach ($arOrder as $by => $order)
 		{
-			$by = strtoupper($by);
-			$order = strtolower($order);
+			$by = mb_strtoupper($by);
+			$order = mb_strtolower($order);
 			if($order != 'asc')
 				$order = 'desc';
 
@@ -94,6 +94,7 @@ class CCrmRole
 
 	public function SetRelation($arRelation)
 	{
+		$this->log('SetRelation', $arRelation);
 		global $DB;
 		$sSql = 'DELETE FROM b_crm_role_relation';
 		$DB->Query($sSql, false, 'FILE: '.__FILE__.'<br /> LINE: '.__LINE__);
@@ -158,7 +159,7 @@ class CCrmRole
 			return $arRel;
 
 		foreach ($arRel as &$sRel)
-			$sRel = $DB->ForSql(strtoupper($sRel));
+			$sRel = $DB->ForSql(mb_strtoupper($sRel));
 		$sin = implode("','", $arRel);
 
 		if (isset($arResult[$sin]))
@@ -260,6 +261,8 @@ class CCrmRole
 		global $DB;
 		$ID = (int)$ID;
 
+		$this->log('SetRoleRelation', ['ID' => $ID, 'RELATION' => $arRelation]);
+
 		$sSql = 'DELETE FROM b_crm_role_perms WHERE ROLE_ID = '.$ID;
 		$DB->Query($sSql, false, 'FILE: '.__FILE__.'<br /> LINE: '.__LINE__);
 		foreach ($arRelation as $sEntity => $arPerms)
@@ -324,7 +327,7 @@ class CCrmRole
 			if (!isset($arFields['RELATION']) || !is_array($arFields['RELATION']))
 				$arFields['RELATION'] = array();
 			$sUpdate = $DB->PrepareUpdate('b_crm_role', $arFields, 'FILE: '.__FILE__.'<br /> LINE: '.__LINE__);
-			if (strlen($sUpdate) > 0)
+			if ($sUpdate <> '')
 				$DB->Query("UPDATE b_crm_role SET $sUpdate WHERE ID = $ID", false, 'FILE: '.__FILE__.'<br /> LINE: '.__LINE__);
 
 			$this->SetRoleRelation($ID, $arFields['RELATION']);
@@ -336,6 +339,7 @@ class CCrmRole
 
 	public function Delete($ID)
 	{
+		$this->log('Delete', ['ID' => $ID]);
 		global $DB;
 		$ID = (int)$ID;
 		$sSql = 'DELETE FROM b_crm_role_relation WHERE ROLE_ID = '.$ID;
@@ -354,7 +358,7 @@ class CCrmRole
 		if (($ID == false || isset($arFields['NAME'])) && empty($arFields['NAME']))
 			$this->LAST_ERROR .= GetMessage('CRM_ERROR_FIELD_IS_MISSING', array('%FIELD_NAME%' => GetMessage('CRM_FIELD_NAME')))."<br />";
 
-		if(strlen($this->LAST_ERROR) > 0)
+		if($this->LAST_ERROR <> '')
 			return false;
 
 		return true;
@@ -379,5 +383,73 @@ class CCrmRole
 			'WRITE' => array('-' => 'X'),
 			'DELETE' => array('-' => 'X')
 		);
+	}
+
+	public static function normalizePermissions(array $permissions): array
+	{
+		foreach ($permissions as $entityTypeName => $entityPermissions)
+		{
+			if (!is_array($entityPermissions))
+			{
+				$entityPermissions = [];
+				$permissions[$entityTypeName] = [];
+			}
+
+			foreach ($entityPermissions as $permissionType => $permissionsForType)
+			{
+				if (!is_array($permissionsForType))
+				{
+					$permissionsForType = [];
+					$permissions[$entityTypeName][$permissionType] = [];
+				}
+
+				$defaultPermissionValue = '-';
+				foreach ($permissionsForType as $fieldName => $permissionValue)
+				{
+					if ($fieldName === '-') // default permission
+					{
+						$defaultPermissionValue = trim($permissionValue);
+					}
+				}
+				foreach ($permissionsForType as $fieldName => $permissionValues)
+				{
+					if ($fieldName !== '-')
+					{
+						if (!is_array($permissionValues))
+						{
+							$permissionValues = [];
+							$permissions[$entityTypeName][$permissionType][$fieldName] = [];
+						}
+						foreach ($permissionValues as $fieldValue => $permissionValue)
+						{
+							if (trim($permissionValue) === $defaultPermissionValue)
+							{
+								// if permission for this field value equals to default permission, use inheritance:
+								$permissions[$entityTypeName][$permissionType][$fieldName][$fieldValue] = '-';
+							}
+						}
+					}
+				}
+			}
+		}
+		return $permissions;
+	}
+
+	/**
+	 * @internal
+	 */
+	protected function log(string $event, $extraData): void
+	{
+		if (Main\Config\Option::get('crm', '~CRM_LOG_PERMISSION_ROLE_CHANGES', 'N') !== 'Y')
+		{
+			return;
+		}
+		$logData = 'CRM_LOG_PERMISSION_ROLE_CHANGES: ' . $event . "\n";
+		$logData .= 'User: ' . \CCrmSecurityHelper::GetCurrentUserID();
+		if (!empty($extraData))
+		{
+			$logData .= "\n" . print_r($extraData, true);
+		}
+		AddMessage2Log($logData, 'crm');
 	}
 }

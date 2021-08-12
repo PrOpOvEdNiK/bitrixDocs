@@ -64,12 +64,33 @@ class ContactSearchContentBuilder extends SearchContentBuilder
 			return $map;
 		}
 
-		$map->add($entityID);
-		$map->addField($fields, 'LAST_NAME');
-		$map->addField($fields, 'NAME');
-		$map->addField($fields, 'SECOND_NAME');
+		$isShortIndex = ($options['isShortIndex'] ?? false);
+		if(!$isShortIndex)
+		{
+			$map->add($entityID);
+		}
 
-		if(isset($fields['ASSIGNED_BY_ID']))
+		$lastName = isset($fields['LAST_NAME']) ? $fields['LAST_NAME'] : '';
+		if($lastName !== '')
+		{
+			$map->addText($lastName);
+			$map->addText(SearchEnvironment::prepareSearchContent($lastName));
+
+			$customerNumber = $this->parseCustomerNumber($lastName, \CCrmContact::GetDefaultTitleTemplate());
+			if($customerNumber != $entityID)
+			{
+				$map->addTextFragments($customerNumber);
+			}
+		}
+
+		$map->addField($fields, 'NAME');
+
+		if(!$isShortIndex)
+		{
+			$map->addField($fields, 'SECOND_NAME');
+		}
+
+		if(isset($fields['ASSIGNED_BY_ID']) && !$isShortIndex)
 		{
 			$map->addUserByID($fields['ASSIGNED_BY_ID']);
 		}
@@ -96,32 +117,35 @@ class ContactSearchContentBuilder extends SearchContentBuilder
 			}
 		}
 
-		if(isset($fields['TYPE_ID']))
+		if(isset($fields['TYPE_ID']) && !$isShortIndex)
 		{
 			$map->addStatus('CONTACT_TYPE', $fields['TYPE_ID']);
 		}
 
-		if(isset($fields['COMMENTS']))
+		if(isset($fields['COMMENTS']) && !$isShortIndex)
 		{
 			$map->addHtml($fields['COMMENTS'], 1024);
 		}
 
 		//region Source
-		if(isset($fields['SOURCE_ID']))
+		if(isset($fields['SOURCE_ID']) && !$isShortIndex)
 		{
 			$map->addStatus('SOURCE', $fields['SOURCE_ID']);
 		}
 
-		if(isset($fields['SOURCE_DESCRIPTION']))
+		if(isset($fields['SOURCE_DESCRIPTION']) && !$isShortIndex)
 		{
 			$map->addText($fields['SOURCE_DESCRIPTION'], 1024);
 		}
 		//endregion
 
 		//region UserFields
-		foreach($this->getUserFields($entityID) as $userField)
+		if (!$isShortIndex)
 		{
-			$map->addUserField($userField);
+			foreach($this->getUserFields($entityID) as $userField)
+			{
+				$map->addUserField($userField);
+			}
 		}
 		//endregion
 
@@ -155,6 +179,42 @@ class ContactSearchContentBuilder extends SearchContentBuilder
 	protected function save($entityID, SearchMap $map)
 	{
 		ContactTable::update($entityID, array('SEARCH_CONTENT' => $map->getString()));
-		//ContactSearchTable::upsert(array('OWNER_ID' => $entityID, 'CONTENT' => $map->getString()));
+	}
+
+	protected function saveShortIndex(int $entityId, SearchMap $map, bool $checkExist = false): \Bitrix\Main\DB\Result
+	{
+		$connection = \Bitrix\Main\Application::getConnection();
+		$helper = $connection->getSqlHelper();
+
+		$searchContent = $helper->forSql($map->getString());
+
+		if ($checkExist)
+		{
+			$sql = "
+				INSERT INTO b_crm_contact_index(CONTACT_ID, SEARCH_CONTENT)
+				VALUES({$entityId}, '{$searchContent}')
+				ON DUPLICATE KEY UPDATE SEARCH_CONTENT= '{$searchContent}'
+			";
+			try
+			{
+				return $connection->query($sql);
+			}
+			catch (\Exception $exception)
+			{
+				return $connection->query($sql);
+			}
+		}
+
+		$sql = "
+			UPDATE b_crm_contact_index SET SEARCH_CONTENT= '{$searchContent}' WHERE CONTACT_ID = {$entityId}
+		";
+		return $connection->query($sql);
+	}
+
+	public function removeShortIndex(int $entityId): \Bitrix\Main\ORM\Data\Result
+	{
+		return \Bitrix\Crm\Entity\Index\ContactTable::delete([
+			'CONTACT_ID' => $entityId,
+		]);
 	}
 }

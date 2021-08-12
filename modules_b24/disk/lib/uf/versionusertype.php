@@ -222,7 +222,7 @@ final class VersionUserType
 	{
 		if(is_string($value) && $value[0] == 'n')
 		{
-			return array(self::TYPE_NEW_OBJECT, substr($value, 1));
+			return array(self::TYPE_NEW_OBJECT, mb_substr($value, 1));
 		}
 		return array(self::TYPE_ALREADY_ATTACHED, (int)$value);
 	}
@@ -230,7 +230,7 @@ final class VersionUserType
 	/**
 	 * @param      $userField
 	 * @param      $value
-	 * @param bool $userId False means current user id.
+	 * @param bool|int $userId False means current user id.
 	 * @return array
 	 */
 	public static function checkFields($userField, $value, $userId = false)
@@ -298,9 +298,15 @@ final class VersionUserType
 			}
 			else
 			{
+				$userId = (int)$userId;
 				$securityContext = $file->getStorage()->getSecurityContext($userId);
 			}
 
+			$hackData = AttachedObject::getStoredDataByObjectId($file->getId());
+			if ($userId !== false && isset($hackData['STATE']) && $userId === (int)$version->getCreatedBy())
+			{
+				return $errors;
+			}
 			//we don't check rights on file if version create current user. (uf logic, magic)
 			if($version->getCreatedBy() != self::getActivityUserId() && !$file->canRead($securityContext))
 			{

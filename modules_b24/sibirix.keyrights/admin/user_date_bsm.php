@@ -1,1 +1,0 @@
-<?define("sibirix_keyrights_TEMPORARY_CACHE", "JDYBD3tlAglpCixgAGRQeAMg");?>

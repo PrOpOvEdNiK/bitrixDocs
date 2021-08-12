@@ -4,7 +4,7 @@
  * @package bitrix
  * @subpackage tasks
  * @copyright 2001-2013 Bitrix
- * 
+ *
  * @deprecated
  */
 
@@ -39,9 +39,9 @@ class CTaskComments
 	/**
 	 * This is not a part of public API.
 	 * This function is for internal use only.
-	 * 
+	 *
 	 * This function WILL send notifications in case of comment add through bitrix:forum.comments component
-	 * 
+	 *
 	 * @access private
 	 * @deprecated
 	 */
@@ -78,89 +78,28 @@ class CTaskComments
 		}
 	}
 
-	/**
-	 * @param $messageData
-	 * @param $taskData
-	 * @param $fromUser
-	 * @param $toUsers
-	 * @param array $eventData
-	 *
-	 * @deprecated
-	 */
-	public static function sendAddMessage($messageData, $taskData, $fromUser, $toUsers, array $eventData = array())
-	{
-		IncludeModuleLangFile(__FILE__);
-
-		// some sources do not even pass $eventData, so ensure we got at least MESSAGE_ID
-		$eventData['MESSAGE_ID'] = $messageData['ID'];
-
-		$user = CTaskNotifications::getUser($fromUser);
-
-		// in comment messages we can get BBCODEs that are not supported by IM. rip them out. also limit text length to 100
-		$message = CTaskNotifications::clearNotificationText($messageData['POST_MESSAGE']);
-		$messageCropped = \Bitrix\Tasks\Util::trim(self::cropMessage(CTextParser::clearAllTags($message)));
-
-		$messageTemplate  = CTaskNotifications::getGenderMessage($fromUser, "TASKS_COMMENT_MESSAGE_ADD");
-		$messageTemplatePush = CTaskNotifications::getGenderMessage($fromUser, "TASKS_COMMENT_MESSAGE_ADD_PUSH");
-
-		if($messageCropped != '')
-		{
-			$messageTemplate .= GetMessage('TASKS_COMMENT_MESSAGE_ADD_WITH_TEXT');
-			$messageTemplatePush .= ': #TASK_COMMENT_TEXT#';
-		}
-
-		CTaskNotifications::SendMessageEx($taskData["ID"], $fromUser, $toUsers, array(
-			'INSTANT' => str_replace(
-				array("#TASK_COMMENT_TEXT#"),
-				array('[COLOR=#000000]'.$messageCropped.'[/COLOR]'),
-				$messageTemplate
-			),
-			'EMAIL' => str_replace(
-				array("#TASK_COMMENT_TEXT#"),
-				array($message),
-				$messageTemplate
-			),
-			'PUSH' => CTaskNotifications::cropMessage($messageTemplatePush, array(
-				'USER_NAME' => 			CUser::FormatName(CSite::GetNameFormat(false), $user),
-				'TASK_TITLE' => 		$taskData["TITLE"],
-				'TASK_COMMENT_TEXT' => 	html_entity_decode(CTextParser::clearAllTags($message)) // convert entities back and drop bbcode tags
-			), CTaskNotifications::PUSH_MESSAGE_MAX_LENGTH)
-		), array(
-			'ENTITY_CODE' => 'COMMENT',
-			'ENTITY_OPERATION' => 'ADD',
-			'EVENT_DATA' => $eventData,
-			'NOTIFY_EVENT' => 'comment',
-			'NOTIFY_ANSWER' => true,
-			'TASK_DATA' => $taskData,
-			'TASK_URL' => array(
-				'PARAMETERS' => \Bitrix\Tasks\Integration\Forum\Comment::getUrlParameters($messageData['ID']),
-				'HASH' => \Bitrix\Tasks\Integration\Forum\Comment::makeUrlHash($messageData['ID'])
-			)
-		));
-	}
-
 	// replaced
 	private static function cropMessage($message)
 	{
 		// cropped message to instant messenger
-		if (strlen($message) >= 100)
+		if (mb_strlen($message) >= 100)
 		{
 			$dot = '...';
-			$message = substr($message, 0, 99);
+			$message = mb_substr($message, 0, 99);
 
-			if (substr($message, -1) === '[')
-				$message = substr($message, 0, 98);
+			if (mb_substr($message, -1) === '[')
+				$message = mb_substr($message, 0, 98);
 
 			if (
-				(($lastLinkPosition = strrpos($message, '[u')) !== false)
-				|| (($lastLinkPosition = strrpos($message, 'http://')) !== false)
-				|| (($lastLinkPosition = strrpos($message, 'https://')) !== false)
-				|| (($lastLinkPosition = strrpos($message, 'ftp://')) !== false)
-				|| (($lastLinkPosition = strrpos($message, 'ftps://')) !== false)
+				(($lastLinkPosition = mb_strrpos($message, '[u')) !== false)
+				|| (($lastLinkPosition = mb_strrpos($message, 'http://')) !== false)
+				|| (($lastLinkPosition = mb_strrpos($message, 'https://')) !== false)
+				|| (($lastLinkPosition = mb_strrpos($message, 'ftp://')) !== false)
+				|| (($lastLinkPosition = mb_strrpos($message, 'ftps://')) !== false)
 			)
 			{
-				if (strpos($message, ' ', $lastLinkPosition) === false)
-					$message = substr($message, 0, $lastLinkPosition);
+				if (mb_strpos($message, ' ', $lastLinkPosition) === false)
+					$message = mb_substr($message, 0, $lastLinkPosition);
 			}
 
 			$message .= $dot;
@@ -180,14 +119,14 @@ class CTaskComments
 
 	/**
 	 * Create new comment for task
-	 * 
+	 *
 	 * @param integer $taskId
 	 * @param integer $commentAuthorId - ID of user who is comment's author
 	 * @param string $commentText - text in BB code
 	 * @param additional fields to be passed to CForumMessage::Add() through ForumAddMessage()
-	 * 
+	 *
 	 * @throws TasksException, CTaskAssertException
-	 * 
+	 *
 	 * @return integer $messageId
 	 */
 	public static function add($taskId, $commentAuthorId, $commentText, $arFields = array())
@@ -207,10 +146,23 @@ class CTaskComments
 
 		$forumId = CTasksTools::GetForumIdForIntranet();
 		$oTask = CTaskItem::getInstance($taskId, $commentAuthorId);
-		$arTask = $oTask->getData();
+
+		$arErrorCodes = array();
+
+		try
+		{
+			$arTask = $oTask->getData();
+		}
+		catch (TasksException $e)
+		{
+			throw new TasksException(
+				serialize($arErrorCodes),
+				TasksException::TE_ACTION_FAILED_TO_BE_PROCESSED
+				| TasksException::TE_FLAG_SERIALIZED_ERRORS_IN_MESSAGE
+			);
+		}
 
 		$outForumTopicId = $outStrUrl = null;
-		$arErrorCodes = array();
 
 		$messageId = self::__deprecated_Add(
 			$commentText,
@@ -252,16 +204,16 @@ class CTaskComments
 
 	/**
 	 * Update a comment
-	 * 
+	 *
 	 * @deprecated
-	 * 
+	 *
 	 * @param integer $taskId
 	 * @param integet $commentId
 	 * @param integer $commentEditorId - ID of user who is comment's editor
 	 * @param string[] $arFields - fields to be updated, including text in BB code
-	 * 
+	 *
 	 * @throws TasksException, CTaskAssertException
-	 * 
+	 *
 	 * @return boolean
 	 */
 	public static function update($taskId, $commentId, $commentEditorId, $arFields)
@@ -280,11 +232,25 @@ class CTaskComments
 		IncludeModuleLangFile(__FILE__);
 
 		$forumId = CTasksTools::GetForumIdForIntranet();
-		$oTask = CTaskItem::getInstance($taskId, $commentEditorId);
-		$arTask = $oTask->getData();
+
+		$arErrorCodes = array();
+
+		try
+		{
+			$oTask = CTaskItem::getInstance($taskId, $commentEditorId);
+			$arTask = $oTask->getData();
+		}
+		catch (TasksException $e)
+		{
+			throw new TasksException(
+				serialize($arErrorCodes),
+				TasksException::TE_ACTION_FAILED_TO_BE_PROCESSED
+				| TasksException::TE_FLAG_SERIALIZED_ERRORS_IN_MESSAGE
+			);
+		}
 
 		$outForumTopicId = $outStrUrl = null;
-		$arErrorCodes = array();
+
 
 		$arFields = array_merge(array(
 			'EDITOR_ID' => $commentEditorId
@@ -347,8 +313,15 @@ class CTaskComments
 		{
 			if (CModule::IncludeModule("socialnetwork"))
 			{
-				$oTask = CTaskItem::getInstance($taskId, CTasksTools::GetCommanderInChief());
-				$arTask = $oTask->getData();
+				try
+				{
+					$oTask = CTaskItem::getInstance($taskId, CTasksTools::GetCommanderInChief());
+					$arTask = $oTask->getData();
+				}
+				catch (TasksException $e)
+				{
+					throw new TasksException('', TasksException::TE_ACTION_FAILED_TO_BE_PROCESSED);
+				}
 
 				$bCrmTask = (
 					isset($arTask["UF_CRM_TASK"])
@@ -357,13 +330,13 @@ class CTaskComments
 							is_array($arTask["UF_CRM_TASK"])
 							&& (
 								isset($arTask["UF_CRM_TASK"][0])
-								&& strlen($arTask["UF_CRM_TASK"][0]) > 0
+								&& $arTask["UF_CRM_TASK"][0] <> ''
 							)
 						)
 						||
 						(
 							!is_array($arTask["UF_CRM_TASK"])
-							&& strlen($arTask["UF_CRM_TASK"]) > 0
+							&& $arTask["UF_CRM_TASK"] <> ''
 						)
 					)
 				);
@@ -571,7 +544,7 @@ class CTaskComments
 				{
 					if (is_array($arUF['UF_FORUM_MESSAGE_DOC']['VALUE']))
 						$arFilesIds = array_merge($arFilesIds, $arUF['UF_FORUM_MESSAGE_DOC']['VALUE']);
-				}				
+				}
 			}
 		}
 
@@ -614,8 +587,15 @@ class CTaskComments
 
 		$arRightsTasks = CWebDavIblock::GetTasks();	// tasks-operations
 
-		$oTask  = new CTaskItem((int)$taskId, CTasksTools::getCommanderInChief());
-		$arTask = $oTask->getData(false);
+		try
+		{
+			$oTask  = new CTaskItem((int)$taskId, CTasksTools::getCommanderInChief());
+			$arTask = $oTask->getData(false);
+		}
+		catch (TasksException | CTaskAssertException $e)
+		{
+			return;
+		}
 
 		$arTaskMembers = array_unique(array_merge(
 			array($arTask['CREATED_BY'], $arTask['RESPONSIBLE_ID']),
@@ -684,30 +664,6 @@ class CTaskComments
 	/**
 	 * @deprecated
 	 */
-	private static function getTaskMembersByTaskId($taskId, $excludeUser = 0)
-	{
-		$oTask = CTaskItem::getInstance((int)$taskId, CTasksTools::GetCommanderInChief());
-		$arTask = $oTask->getData(false);
-
-		$arUsersIds = CTaskNotifications::getRecipientsIDs($arTask, $bExcludeLoggedUser = false);
-
-		$excludeUser = (int) $excludeUser;
-
-		if ($excludeUser >= 1)
-		{
-			$currentUserPos = array_search($excludeUser, $arUsersIds);
-			if ($currentUserPos !== false)
-				unset($arUsersIds[$currentUserPos]);
-		}
-		else if ($excludeUser < 0)
-			CTaskAssert::logWarning('[0x3c2a31fe] invalid user id (' . $excludeUser . ')');
-
-		return ($arUsersIds);
-	}
-
-	/**
-	 * @deprecated
-	 */
 	private static function getTaskMembersByFields($arFields)
 	{
 		$arMembers = array();
@@ -741,9 +697,9 @@ class CTaskComments
 
 
 	/**
-	 * WARNING! This method is transitional and can be changed without 
+	 * WARNING! This method is transitional and can be changed without
 	 * any notifications! Don't use it.
-	 * 
+	 *
 	 * @deprecated
 	 */
 	public static function __deprecated_Add(
@@ -782,7 +738,7 @@ class CTaskComments
 
 				foreach ($arTmpTask as $key => $value)
 				{
-					if (substr($key, 0, 1) !== '~')
+					if (mb_substr($key, 0, 1) !== '~')
 						$arTask['~' . $key] = $arTmpTask[$key];
 				}
 			}
@@ -797,7 +753,7 @@ class CTaskComments
 		if ($forumTopicId <= 0)
 		{
 			$arUserStart = array(
-				"ID" => intVal($arTask["CREATED_BY"]),
+				"ID" => intval($arTask["CREATED_BY"]),
 				"NAME" => $GLOBALS["FORUM_STATUS_NAME"]["guest"]
 			);
 
@@ -811,7 +767,7 @@ class CTaskComments
 
 				if ($db_res && $res = $db_res->Fetch())
 				{
-					$res["FORUM_USER_ID"] = intVal($res["ID"]);
+					$res["FORUM_USER_ID"] = intval($res["ID"]);
 					$res["ID"] = $res["USER_ID"];
 				}
 				else
@@ -850,7 +806,7 @@ class CTaskComments
 
 			$TID = CForumTopic::Add($arFields);
 
-			if (intVal($TID) <= 0)
+			if (intval($TID) <= 0)
 				$arErrorCodes[] = array('code' => 'topic is not created');
 			else
 			{
@@ -889,7 +845,7 @@ class CTaskComments
 		{
 			foreach($arFieldsAdditional as $field => $value)
 			{
-				if(strlen($field) && substr($field, 0, 3) == 'UF_')
+				if(mb_strlen($field) && mb_substr($field, 0, 3) == 'UF_')
 				{
 					$arFieldsG[$field] = $value;
 					$GLOBALS[$field] = $value; // strange behaviour required for ForumMessageAdd() to handle UF_* properly
@@ -920,7 +876,7 @@ class CTaskComments
 				$res = array();
 				foreach ($_FILES as $key => $val)
 				{
-					if (substr($key, 0, strLen("FILE_NEW")) == "FILE_NEW" && !empty($val["name"]))
+					if (mb_substr($key, 0, mb_strlen("FILE_NEW")) == "FILE_NEW" && !empty($val["name"]))
 					{
 						$arFiles[] = $_FILES[$key];
 					}
@@ -942,8 +898,8 @@ class CTaskComments
 
 		$strErrorMessage = '';
 		$strOKMessage = '';
-		$MID = ForumAddMessage($MESSAGE_TYPE, $forumId, $TOPIC_ID, $MESSAGE_ID, 
-			$arFieldsG, $strErrorMessage, $strOKMessage, false, 
+		$MID = ForumAddMessage($MESSAGE_TYPE, $forumId, $TOPIC_ID, $MESSAGE_ID,
+			$arFieldsG, $strErrorMessage, $strOKMessage, false,
 			$_POST["captcha_word"], 0, $_POST["captcha_code"], $nameTemplate);
 
 		if ($MID <= 0 || !empty($strErrorMessage))
@@ -959,10 +915,10 @@ class CTaskComments
 
 			if ($forumTopicId <= 0)
 			{
-				$forumTopicId = $TID = intVal($arMessage["TOPIC_ID"]);
+				$forumTopicId = $TID = intval($arMessage["TOPIC_ID"]);
 			}
 
-			$outForumTopicId = intVal($forumTopicId);
+			$outForumTopicId = intval($forumTopicId);
 
 			if ($componentName !== null)
 				ForumClearComponentCache($componentName);
@@ -971,12 +927,12 @@ class CTaskComments
 			$strURL = ForumAddPageParams(
 				$strURL,
 				array(
-					"MID" => $MID, 
-					"result" => ($arForum["MODERATION"] != "Y" 
+					"MID" => $MID,
+					"result" => ($arForum["MODERATION"] != "Y"
 						|| CForumNew::CanUserModerateForum($forumId, $arUserGroupArray) ? "reply" : "not_approved"
 					)
-				), 
-				false, 
+				),
+				false,
 				false
 			);
 			$outStrUrl = $strURL;
@@ -1096,7 +1052,7 @@ class CTaskComments
 						$ufDocID = $GLOBALS["USER_FIELD_MANAGER"]->GetUserFieldValue("FORUM_MESSAGE", "UF_FORUM_MESSAGE_DOC", $MID, LANGUAGE_ID);
 						if ($ufDocID)
 							$arFieldsForSocnet["UF_SONET_COM_DOC"] = $ufDocID;
-							
+
 						$ufDocVer = $GLOBALS["USER_FIELD_MANAGER"]->GetUserFieldValue("FORUM_MESSAGE", "UF_FORUM_MESSAGE_VER", $MID, LANGUAGE_ID);
 						if ($ufDocVer)
 							$arFieldsForSocnet["UF_SONET_COM_VER"] = $ufDocVer;
@@ -1188,7 +1144,7 @@ class CTaskComments
 	 * This method is not part of public API.
 	 * Its purpose is for internal use only.
 	 * It can be changed without any notifications
-	 * 
+	 *
 	 * @deprecated
 	 * @access private
 	 */

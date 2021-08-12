@@ -52,7 +52,8 @@ class EventTable extends Entity\DataManager
 				})
 				->configureUnserializeCallback(function ($str) {
 					return unserialize(
-						EventTable::getFetchModificationForFieldsField($str)
+						EventTable::getFetchModificationForFieldsField($str),
+						['allowed_classes' => false]
 					);
 				}),
 
@@ -169,7 +170,7 @@ class EventTable extends Entity\DataManager
 
 		$ar = explode("&", $str);
 		$newar = array();
-		while (list (, $val) = each ($ar))
+		foreach($ar as $val)
 		{
 			$val = str_replace("%1", "&", $val);
 			$tar = explode("=", $val);

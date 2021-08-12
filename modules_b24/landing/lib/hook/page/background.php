@@ -1,11 +1,12 @@
 <?php
 namespace Bitrix\Landing\Hook\Page;
 
-use \Bitrix\Landing\Field;
-use \Bitrix\Landing\File;
-use \Bitrix\Landing\Manager;
-use \Bitrix\Landing\PublicAction;
-use \Bitrix\Main\Localization\Loc;
+use Bitrix\Landing\Field;
+use Bitrix\Landing\File;
+use Bitrix\Landing\Manager;
+use Bitrix\Landing\PublicAction;
+use Bitrix\Main\Localization\Loc;
+use Bitrix\Main\Page\Asset;
 
 Loc::loadMessages(__FILE__);
 
@@ -33,7 +34,7 @@ class Background extends \Bitrix\Landing\Hook\Page
 							if ($path)
 							{
 								$path = Manager::getUrlFromFile($path);
-								return $path.'!';
+								return $path;
 							}
 						}
 					}
@@ -42,10 +43,11 @@ class Background extends \Bitrix\Landing\Hook\Page
 			)),
 			'POSITION' => new Field\Select('POSITION', array(
 				'title' => Loc::getMessage('LANDING_HOOK_BG_POSITION'),
-				'help' => Loc::getMessage('LANDING_HOOK_BG_POSITION_HELP'),
+				'help' => Loc::getMessage('LANDING_HOOK_BG_POSITION_HELP_2'),
 				'options' => array(
-					'center' => Loc::getMessage('LANDING_HOOK_BG_POSITION_CENTER'),
-					'repeat' => Loc::getMessage('LANDING_HOOK_BG_POSITION_REPEAT')
+					'center' => Loc::getMessage('LANDING_HOOK_BG_POSITION_CENTER_2'),
+					'repeat' => Loc::getMessage('LANDING_HOOK_BG_POSITION_REPEAT_2'),
+					'center_repeat_y' => Loc::getMessage('LANDING_HOOK_BG_POSITION_CENTER_REPEAT_Y'),
 				)
 			)),
 			'COLOR' => new Field\Text('COLOR', array(
@@ -101,21 +103,36 @@ class Background extends \Bitrix\Landing\Hook\Page
 		$color = \htmlspecialcharsbx(trim($this->fields['COLOR']->getValue()));
 		$position = trim($this->fields['POSITION']->getValue());
 
-		if ($picture)
+		$this->setBackground($picture, $color, $position);
+	}
+
+	/**
+	 * Sets background.
+	 * @param string|null $picture Picture path or id.
+	 * @param string|null $color Color code.
+	 * @param string|null $position Position code.
+	 * @return void
+	 */
+	public static function setBackground(?string $picture, ?string $color = null, ?string $position = null): void
+	{
+		/**
+		 * !!!
+		 * Also see landing.pub/templates/.default/result_modifier.php
+		 * for web form backward compatibility.
+		 */
+
+		if ($picture && is_numeric($picture) && (int)$picture > 0)
 		{
-			if ($picture > 0)
-			{
-				$picture = \htmlspecialcharsbx(
-					\Bitrix\Landing\File::getFilePath($picture)
-				);
-			}
+			$picture = \htmlspecialcharsbx(
+				File::getFilePath((int)$picture)
+			);
 		}
 
 		if ($picture)
 		{
-			if ($position == 'center')
+			if ($position === 'center')
 			{
-				\Bitrix\Main\Page\Asset::getInstance()->addString(
+				Asset::getInstance()->addString(
 					'<style type="text/css">
 						body {
 							background-image: url("' . $picture . '");
@@ -127,9 +144,9 @@ class Background extends \Bitrix\Landing\Hook\Page
 					</style>'
 				);
 			}
-			else
+			elseif ($position === 'repeat')
 			{
-				\Bitrix\Main\Page\Asset::getInstance()->addString(
+				Asset::getInstance()->addString(
 					'<style type="text/css">
 						body {
 							background-image: url("' . $picture . '");
@@ -140,11 +157,25 @@ class Background extends \Bitrix\Landing\Hook\Page
 					</style>'
 				);
 			}
+			else
+			{
+				Asset::getInstance()->addString(
+					'<style type="text/css">
+						body {
+							background-image: url("' . $picture . '");
+							background-attachment: scroll;
+							background-position: top;
+							background-repeat: repeat-y;
+							background-size: 100%;
+						}
+					</style>'
+				);
+			}
 		}
 
 		if ($color)
 		{
-			\Bitrix\Main\Page\Asset::getInstance()->addString(
+			Asset::getInstance()->addString(
 				'<style type="text/css">
 					body {
 						background-color: ' . $color . '!important;

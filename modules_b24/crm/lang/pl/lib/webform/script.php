@@ -1,5 +1,0 @@
-<?
-$MESS["CRM_WEBFORM_SCRIPT_BUTTON_TEXT"] = "Nazwa przycisku";
-$MESS["CRM_WEBFORM_SCRIPT_WIDGET_FORM_CALLBACK_TITLE"] = "Oddzwonimy do Ciebie";
-$MESS["CRM_WEBFORM_SCRIPT_WIDGET_FORM_DEFAULT_TITLE"] = "Wypełnij formularz";
-?>

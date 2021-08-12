@@ -1,4 +1,5 @@
-<?
+<?php
+
 // 2012-04-13 Checked/modified for compatibility with new data model
 class CLTestMark
 {
@@ -8,7 +9,7 @@ class CLTestMark
 		global $DB;
 		$arMsg = Array();
 
-		if ( (is_set($arFields, "MARK") || $ID === false) && strlen($arFields["MARK"]) <= 0)
+		if ( (is_set($arFields, "MARK") || $ID === false) && (string)$arFields["MARK"] == '')
 			$arMsg[] = array("id"=>"MARK", "text"=> GetMessage("LEARNING_BAD_MARK"));
 
 
@@ -89,7 +90,7 @@ class CLTestMark
 
 
 	// 2012-04-13 Checked/modified for compatibility with new data model
-	function Delete($ID)
+	public static function Delete($ID)
 	{
 		global $DB;
 
@@ -106,14 +107,14 @@ class CLTestMark
 
 
 	// 2012-04-13 Checked/modified for compatibility with new data model
-	function GetByID($ID)
+	public static function GetByID($ID)
 	{
 		return CLTestMark::GetList($arOrder=Array(), $arFilter=Array("ID" => $ID));
 	}
 
 
 	// 2012-04-13 Checked/modified for compatibility with new data model
-	function GetByPercent($TEST_ID, $PERCENT)
+	public static function GetByPercent($TEST_ID, $PERCENT)
 	{
 		global $DB;
 
@@ -144,7 +145,7 @@ class CLTestMark
 
 
 	// 2012-04-13 Checked/modified for compatibility with new data model
-	function GetFilter($arFilter)
+	public static function GetFilter($arFilter)
 	{
 		if (!is_array($arFilter))
 			$arFilter = Array();
@@ -157,7 +158,7 @@ class CLTestMark
 			$key = $res["FIELD"];
 			$cOperationType = $res["OPERATION"];
 
-			$key = strtoupper($key);
+			$key = mb_strtoupper($key);
 
 			switch ($key)
 			{
@@ -175,7 +176,7 @@ class CLTestMark
 
 
 	// 2012-04-13 Checked/modified for compatibility with new data model
-	function GetList($arOrder=Array(), $arFilter=Array())
+	public static function GetList($arOrder=Array(), $arFilter=Array())
 	{
 		global $DB, $USER;
 
@@ -183,7 +184,7 @@ class CLTestMark
 
 		$strSqlSearch = "";
 		for($i=0; $i<count($arSqlSearch); $i++)
-			if(strlen($arSqlSearch[$i])>0)
+			if($arSqlSearch[$i] <> '')
 				$strSqlSearch .= " AND ".$arSqlSearch[$i]." ";
 
 		$strSql =
@@ -195,10 +196,11 @@ class CLTestMark
 		if (!is_array($arOrder))
 			$arOrder = Array();
 
+		$arSqlOrder = [];
 		foreach($arOrder as $by=>$order)
 		{
-			$by = strtolower($by);
-			$order = strtolower($order);
+			$by = mb_strtolower($by);
+			$order = mb_strtolower($order);
 			if ($order!="asc")
 				$order = "desc";
 

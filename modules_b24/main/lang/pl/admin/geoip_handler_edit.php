@@ -1,8 +1,0 @@
-<?
-$MESS["GEOIP_EDIT_DELETE"] = "Usuń";
-$MESS["GEOIP_EDIT_F_DESCRIPTION"] = "opis";
-$MESS["GEOIP_EDIT_F_SORT"] = "Sortowanie";
-$MESS["GEOIP_EDIT_F_TITLE"] = "Nazwa";
-$MESS["GEOIP_EDIT_PI_TIMEZONE"] = "Strefa czasowa";
-$MESS["GEOIP_EDIT_SPECIFIC_ABSENT"] = "Brak";
-?>

@@ -33,7 +33,7 @@ class ProtobufTransport
 		foreach ($requestBatches as $requestBatch)
 		{
 			$urlWithSignature = $queueServerUrl;
-			$httpClient = new HttpClient(["waitResponse" => false]);
+			$httpClient = new HttpClient(["streamTimeout" => 1]);
 			$bodyStream = $requestBatch->toStream();
 			if(\CPullOptions::IsServerShared())
 			{
@@ -42,7 +42,7 @@ class ProtobufTransport
 			}
 
 			$httpClient->disableSslVerification();
-			$httpClient->post($urlWithSignature, $bodyStream);
+			$httpClient->query(HttpClient::HTTP_POST, $urlWithSignature, $bodyStream);
 		}
 
 		return true;
@@ -212,7 +212,7 @@ class ProtobufTransport
 			{
 				$message = new Protobuf\IncomingMessage();
 				$message->setReceiversList(new MessageCollection($receivers));
-				$message->setExpiry($event['expire']);
+				$message->setExpiry($event['expiry']);
 				$message->setBody($body);
 				$message->setType($messageType); // for statistics
 
@@ -225,7 +225,7 @@ class ProtobufTransport
 		{
 			$message = new Protobuf\IncomingMessage();
 			$message->setReceiversList(new MessageCollection($receivers));
-			$message->setExpiry($event['expire']);
+			$message->setExpiry($event['expiry']);
 			$message->setBody($body);
 
 			$result[] = $message;

@@ -301,7 +301,7 @@ class CTaskElapsedTime
 			$key = $res["FIELD"];
 			$cOperationType = $res["OPERATION"];
 
-			$key = strtoupper($key);
+			$key = mb_strtoupper($key);
 
 			switch ($key)
 			{
@@ -379,8 +379,8 @@ class CTaskElapsedTime
 		{
 			foreach ($arOrder as $by => $order)
 			{
-				$by = strtolower($by);
-				$order = strtolower($order);
+				$by = mb_strtolower($by);
+				$order = mb_strtolower($order);
 				if ($order != "asc")
 					$order = "desc";
 
@@ -408,7 +408,7 @@ class CTaskElapsedTime
 	}
 
 
-	function GetByID($ID)
+	public static function GetByID($ID)
 	{
 		/** @noinspection PhpDeprecationInspection */
 		return CTaskElapsedTime::GetList(array(), array("ID" => $ID));

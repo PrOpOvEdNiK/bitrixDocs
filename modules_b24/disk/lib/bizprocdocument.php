@@ -414,7 +414,7 @@ class BizProcDocument
 
 	public static function getDocumentType($documentId)
 	{
-		if (substr($documentId, 0, strlen(self::DOCUMENT_TYPE_PREFIX)) == self::DOCUMENT_TYPE_PREFIX)
+		if (mb_substr($documentId, 0, mb_strlen(self::DOCUMENT_TYPE_PREFIX)) == self::DOCUMENT_TYPE_PREFIX)
 		{
 			return $documentId;
 		}
@@ -497,10 +497,15 @@ class BizProcDocument
 			{
 				$type['BASE_TYPE'] = 'user';
 			}
-			$result[static::getPrefixForCustomType() . $type['USER_TYPE_ID']] = array(
+			$typeId = static::getPrefixForCustomType().$type['USER_TYPE_ID'];
+			$result[$typeId] = array(
 				'Name' => $type['DESCRIPTION'],
 				'BaseType' => $type['BASE_TYPE'],
 			);
+			if ($type['USER_TYPE_ID'] === 'employee')
+			{
+				$result[$typeId]['typeClass'] = \Bitrix\Bizproc\BaseType\User::class;
+			}
 		}
 		return $result;
 	}
@@ -513,14 +518,14 @@ class BizProcDocument
 			throw new CBPArgumentNullException('documentType');
 		}
 
-		if(strpos($fields['type'], static::getPrefixForCustomType()) === 0)
+		if(mb_strpos($fields['type'], static::getPrefixForCustomType()) === 0)
 		{
-			$fields['type'] = substr($fields['type'], 3);
+			$fields['type'] = mb_substr($fields['type'], 3);
 		}
 
 		$fieldsTmp = array(
 			'USER_TYPE_ID' => $fields['type'],
-			'FIELD_NAME' => 'UF_' . strtoupper($fields['code']),
+			'FIELD_NAME' => 'UF_'.mb_strtoupper($fields['code']),
 			'ENTITY_ID' => 'DISK_FILE_' . $storageId,
 			'SORT' => 150,
 			'MULTIPLE' => $fields['multiple'] == 'Y' ? 'Y' : 'N',
@@ -612,7 +617,7 @@ class BizProcDocument
 				$file->rename((string)$valueField);
 			}
 			$search = 'UF_';
-			$res = strpos($codeField, $search);
+			$res = mb_strpos($codeField, $search);
 			if($res === 0)
 			{
 				$ufFields[$codeField] = $valueField;
@@ -694,7 +699,7 @@ class BizProcDocument
 			foreach($fields as $codeField => $valueField)
 			{
 				$search = 'UF_';
-				$res = strpos($codeField, $search);
+				$res = mb_strpos($codeField, $search);
 				if($res === 0)
 				{
 					$ufFields[$codeField] = $valueField;
@@ -945,7 +950,7 @@ class BizProcDocument
 			if(ModuleManager::isModuleInstalled('bitrix24'))
 			{
 				$siteId = \CAllSite::getDefSite();
-				$employeeGroup = \CGroup::getList(($by = ''), ($order = ''), array(
+				$employeeGroup = \CGroup::getList('', '', array(
 					'STRING_ID' => 'EMPLOYEES_' . $siteId,
 					'STRING_ID_EXACT_MATCH' => 'Y'
 				))->fetch();
@@ -970,7 +975,7 @@ class BizProcDocument
 
 	public static function getUsersFromUserGroup($group, $documentId)
 	{
-		if(substr($documentId, 0, 8)=="STORAGE_")
+		if(mb_substr($documentId, 0, 8) == "STORAGE_")
 		{
 			$storageId = self::getStorageIdByType($documentId);
 		}
@@ -989,7 +994,7 @@ class BizProcDocument
 			$storageId = $file->getStorageId();
 		}
 
-		if(strtolower($group) == "author")
+		if(mb_strtolower($group) == "author")
 		{
 			$documentId = intval($documentId);
 			if($documentId <= 0)
@@ -1012,7 +1017,7 @@ class BizProcDocument
 			if($storage->getProxyType() instanceof ProxyType\Group)
 			{
 				$entityId = $storage->getEntityId();
-				$group = strtoupper($group);
+				$group = mb_strtoupper($group);
 				if(Loader::includeModule("socialnetwork"))
 				{
 					$listUserGroup = array();
@@ -1079,7 +1084,7 @@ class BizProcDocument
 			$filter["GROUPS_ID"] = $group;
 		}
 
-		$query = \CUser::getList(($b = "ID"), ($o = "ASC"), $filter, ['FIELDS' => ['ID']]);
+		$query = \CUser::getList("ID", "ASC", $filter, ['FIELDS' => ['ID']]);
 		while($user = $query->fetch())
 		{
 			$userIds[] = $user["ID"];
@@ -1124,9 +1129,9 @@ class BizProcDocument
 
 		$customMethodName = "";
 		$customMethodNameMulty = "";
-		if (strpos($fieldType["Type"], ":") !== false)
+		if (mb_strpos($fieldType["Type"], ":") !== false)
 		{
-			$ar = \CIBlockProperty::getUserType(substr($fieldType["Type"], 2));
+			$ar = \CIBlockProperty::getUserType(mb_substr($fieldType["Type"], 2));
 			if (array_key_exists("GetPublicEditHTML", $ar))
 				$customMethodName = $ar["GetPublicEditHTML"];
 			if (array_key_exists("GetPublicEditHTMLMulty", $ar))
@@ -1173,10 +1178,10 @@ class BizProcDocument
 			<input type="text" size="40" id="id_<?= htmlspecialcharsbx($fieldName['Field']) ?>" name="<?= htmlspecialcharsbx($fieldName['Field']) ?>" value="<?= htmlspecialcharsbx($fieldValue) ?>">
 			<input type="button" value="..." onclick="BPAShowSelector('id_<?= htmlspecialcharsbx($fieldName['Field']) ?>', 'user');"><?
 		}
-		elseif ((strpos($fieldType["Type"], ":") !== false)
+		elseif ((mb_strpos($fieldType["Type"], ":") !== false)
 			&& $fieldType["Multiple"]
 			&& (is_array($customMethodNameMulty) && count($customMethodNameMulty) > 0
-				|| !is_array($customMethodNameMulty) && strlen($customMethodNameMulty) > 0
+				|| !is_array($customMethodNameMulty) && $customMethodNameMulty <> ''
 			)
 		)
 		{
@@ -1434,7 +1439,7 @@ class BizProcDocument
 				if ($fieldType['Multiple'])
 					echo '<tr><td>';
 
-				if (strpos($fieldType['Type'], static::getPrefixForCustomType()) === 0)
+				if (mb_strpos($fieldType['Type'], static::getPrefixForCustomType()) === 0)
 				{
 					$value1 = $value;
 					if($allowSelection && \CBPDocument::isExpression(trim($value1)))
@@ -1497,7 +1502,7 @@ class BizProcDocument
 						array('HIDE_ICONS' => 'Y')
 					);
 				}
-				elseif (is_array($customMethodName) && count($customMethodName) > 0 || !is_array($customMethodName) && strlen($customMethodName) > 0)
+				elseif (is_array($customMethodName) && count($customMethodName) > 0 || !is_array($customMethodName) && $customMethodName <> '')
 				{
 					if($fieldType['Type'] == static::getPrefixForCustomType() . 'HTML')
 					{
@@ -1651,7 +1656,7 @@ class BizProcDocument
 
 				if ($allowSelection)
 				{
-					if (!in_array($fieldType["Type"], array("file", "bool", "date", "datetime", static::getPrefixForCustomType() . "HTML")) && (strpos($fieldType['Type'], static::getPrefixForCustomType()) !== 0))
+					if (!in_array($fieldType["Type"], array("file", "bool", "date", "datetime", static::getPrefixForCustomType() . "HTML")) && (mb_strpos($fieldType['Type'], static::getPrefixForCustomType()) !== 0))
 					{
 						?><input type="button" value="..." onclick="BPAShowSelector('<?= $fieldNameId ?>', '<?= $fieldType["BaseType"] ?>');"><?
 					}
@@ -1679,7 +1684,7 @@ class BizProcDocument
 
 			if ($allowSelection)
 			{
-				if (in_array($fieldType['Type'], array('file', 'bool', "date", "datetime")) || (strpos($fieldType['Type'], static::getPrefixForCustomType()) === 0))
+				if (in_array($fieldType['Type'], array('file', 'bool', "date", "datetime")) || (mb_strpos($fieldType['Type'], static::getPrefixForCustomType()) === 0))
 				{
 					?>
 					<input type="text" id="id_<?= htmlspecialcharsbx($fieldName["Field"]) ?>_text" name="<?= htmlspecialcharsbx($fieldName["Field"]) ?>_text" value="<?
@@ -1714,7 +1719,7 @@ class BizProcDocument
 		if ($fieldType["Type"] == "user" || $fieldType['Type'] == static::getPrefixForCustomType() . 'employee')
 		{
 			$value = $request[$fieldName["Field"]];
-			if (strlen($value) > 0)
+			if ($value <> '')
 			{
 				$result = CBPHelper::usersStringToArray($value, self::generateDocumentComplexType($storageId), $errors);
 				if (count($errors) > 0)
@@ -1742,7 +1747,7 @@ class BizProcDocument
 				{
 					if ($fieldType["Type"] == "int")
 					{
-						if (strlen($value) > 0)
+						if ($value <> '')
 						{
 							$value = str_replace(" ", "", $value);
 							if ($value."|" == intval($value)."|")
@@ -1766,7 +1771,7 @@ class BizProcDocument
 					}
 					elseif ($fieldType["Type"] == "double")
 					{
-						if (strlen($value) > 0)
+						if ($value <> '')
 						{
 							$value = str_replace(" ", "", str_replace(",", ".", $value));
 							if (is_numeric($value))
@@ -1790,7 +1795,7 @@ class BizProcDocument
 					}
 					elseif ($fieldType["Type"] == "select")
 					{
-						if (!is_array($fieldType["Options"]) || count($fieldType["Options"]) <= 0 || strlen($value) <= 0)
+						if (!is_array($fieldType["Options"]) || count($fieldType["Options"]) <= 0 || $value == '')
 						{
 							$value = null;
 						}
@@ -1844,9 +1849,9 @@ class BizProcDocument
 							{
 								$value = "N";
 							}
-							elseif (strlen($value) > 0)
+							elseif ($value <> '')
 							{
-								$value = strtolower($value);
+								$value = mb_strtolower($value);
 								if (in_array($value, array("y", "yes", "true", "1")))
 								{
 									$value = "Y";
@@ -1873,9 +1878,9 @@ class BizProcDocument
 					}
 					elseif ($fieldType["Type"] == "file")
 					{
-						if (is_array($value) && array_key_exists("name", $value) && strlen($value["name"]) > 0)
+						if (is_array($value) && array_key_exists("name", $value) && $value["name"] <> '')
 						{
-							if (!array_key_exists("MODULE_ID", $value) || strlen($value["MODULE_ID"]) <= 0)
+							if (!array_key_exists("MODULE_ID", $value) || $value["MODULE_ID"] == '')
 								$value["MODULE_ID"] = "bizproc";
 
 							$value = CFile::saveFile($value, "bizproc_wf", true, true);
@@ -1894,7 +1899,7 @@ class BizProcDocument
 							$value = null;
 						}
 					}
-					elseif (strpos($fieldType["Type"], ":") !== false)
+					elseif (mb_strpos($fieldType["Type"], ":") !== false)
 					{
 						global $USER_FIELD_MANAGER;
 						$customTypeID = str_replace(static::getPrefixForCustomType(), '', $fieldType['Type']);
@@ -1929,12 +1934,12 @@ class BizProcDocument
 							$value = "user_".$value;
 						}
 
-						if (!is_array($value) && (strlen($value) == 0) || is_array($value) && (count($value) == 0 || count($value) == 1 && isset($value["VALUE"]) && !is_array($value["VALUE"]) && strlen($value["VALUE"]) == 0))
+						if (!is_array($value) && ($value == '') || is_array($value) && (count($value) == 0 || count($value) == 1 && isset($value["VALUE"]) && !is_array($value["VALUE"]) && $value["VALUE"] == ''))
 							$value = null;
 					}
 					else
 					{
-						if (!is_array($value) && strlen($value) <= 0)
+						if (!is_array($value) && $value == '')
 							$value = null;
 					}
 				}
@@ -1996,12 +2001,12 @@ class BizProcDocument
 					$result = array();
 					foreach($fieldValue as $r)
 					{
-						$result[] = ((strtoupper($r) != "N" && !empty($r)) ? Loc::getMessage("BPVDX_YES") : Loc::getMessage("BPVDX_NO"));
+						$result[] = ((mb_strtoupper($r) != "N" && !empty($r)) ? Loc::getMessage("BPVDX_YES") : Loc::getMessage("BPVDX_NO"));
 					}
 				}
 				else
 				{
-					$result = ((strtoupper($fieldValue) != "N" && !empty($fieldValue)) ? Loc::getMessage("BPVDX_YES") : Loc::getMessage("BPVDX_NO"));
+					$result = ((mb_strtoupper($fieldValue) != "N" && !empty($fieldValue)) ? Loc::getMessage("BPVDX_YES") : Loc::getMessage("BPVDX_NO"));
 				}
 				break;
 
@@ -2030,7 +2035,7 @@ class BizProcDocument
 				break;
 		}
 
-		if(strpos($fieldType['Type'], static::getPrefixForCustomType()) === 0)
+		if(mb_strpos($fieldType['Type'], static::getPrefixForCustomType()) === 0)
 		{
 			global $USER_FIELD_MANAGER, $APPLICATION;
 			$type = str_replace(static::getPrefixForCustomType(), '', $fieldType['Type']);
@@ -2278,7 +2283,7 @@ class BizProcDocument
 				foreach($workflowParameters as $idParameter => $valueParameter)
 				{
 					$search = $workflowTemplate['ID'];
-					$res = strpos($idParameter, $search);
+					$res = mb_strpos($idParameter, $search);
 					if($res === 7)
 					{
 						$parameterKey = end(explode('_', $idParameter));
@@ -2333,6 +2338,25 @@ class BizProcDocument
 		}
 
 		return $documentType;
+	}
+
+	/**
+	 * @param string $documentId
+	 * @param string $workflowId
+	 * @param int $status
+	 * @param null|\CBPActivity $rootActivity
+	 */
+	public static function onWorkflowStatusChange($documentId, $workflowId, $status, $rootActivity)
+	{
+		if (
+			$rootActivity
+			&& $status === \CBPWorkflowStatus::Running
+			&& !$rootActivity->workflow->isNew()
+			&& !\CBPRuntime::isFeatureEnabled()
+		)
+		{
+			throw new \Exception(Loc::getMessage('DISK_BZ_RESUME_RESTRICTED'));
+		}
 	}
 
 	/**

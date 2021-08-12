@@ -1,9 +1,0 @@
-<?
-$MESS["INTRANET_EMP_CURRENT_COUNT"] = "Est marqué";
-$MESS["INTRANET_EMP_HEAD"] = "chef";
-$MESS["INTRANET_LAST_SELECTED"] = "Derniers";
-$MESS["INTRANET_TAB_USER_GROUPS"] = "Groupes";
-$MESS["INTRANET_TAB_USER_STRUCTURE"] = "Entreprise";
-$MESS["INTRANET_USER_SEARCH"] = "Recherche";
-$MESS["INTRANET_USER_STRUCTURE"] = "Choisir dans la structure";
-?>

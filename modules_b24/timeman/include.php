@@ -3,7 +3,7 @@ if (!CModule::IncludeModule('intranet'))
 	return false;
 
 IncludeModuleLangFile(__FILE__);
-IncludeModuleLangFile(dirname(__FILE__).'/install/index.php');
+IncludeModuleLangFile($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/timeman/install/index.php");
 
 define('BX_TIMEMAN_ALLOWED_TIME_DELTA', 120); // allowed time delta - two minutes
 define('BX_TIMEMAN_WRONG_DATE_CHECK', 86400);
@@ -55,7 +55,7 @@ CJSCore::RegisterExt('timeman', array(
 		'/bitrix/themes/.default/clock.css'
 	),
 	'lang' => '/bitrix/modules/timeman/lang/'.LANGUAGE_ID.'/js_core_timeman.php',
-	'rel' => array('ajax', 'timer', 'popup', 'ls', 'planner')
+	'rel' => array('ajax', 'timer', 'popup', 'ls', 'planner', 'ui.layout-form')
 ));
 
 CJSCore::RegisterExt('timecontrol', array(

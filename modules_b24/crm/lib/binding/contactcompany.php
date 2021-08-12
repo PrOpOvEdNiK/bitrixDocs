@@ -55,7 +55,7 @@ class ContactCompanyTable extends Entity\DataManager
 
 		$sort = isset($data['SORT']) ? (int)$data['SORT'] : 0;
 		$roleID = isset($data['ROLE_ID']) ? (int)$data['ROLE_ID'] : 0;
-		$primary = isset($data['IS_PRIMARY']) && strtoupper($data['IS_PRIMARY']) === 'Y' ? 'Y' : 'N';
+		$primary = isset($data['IS_PRIMARY']) && mb_strtoupper($data['IS_PRIMARY']) === 'Y' ? 'Y' : 'N';
 
 		$connection = Main\Application::getConnection();
 		$queries = $connection->getSqlHelper()->prepareMerge(
@@ -439,7 +439,7 @@ class ContactCompanyTable extends Entity\DataManager
 			throw new Main\ArgumentException('Must be greater than zero', 'contactID');
 		}
 
-		$companyIDs = array_filter($companyIDs);
+		$companyIDs = array_filter(array_map('intval', $companyIDs));
 		if(empty($companyIDs))
 		{
 			return;
@@ -516,7 +516,7 @@ class ContactCompanyTable extends Entity\DataManager
 			throw new Main\ArgumentException('Must be greater than zero', 'companyID');
 		}
 
-		$contactIDs = array_filter($contactIDs);
+		$contactIDs = array_filter(array_map('intval', $contactIDs));
 		if(empty($contactIDs))
 		{
 			return;
@@ -662,7 +662,10 @@ class ContactCompanyTable extends Entity\DataManager
 			return '';
 		}
 
-		$entityTitle = \CSQLWhere::ForLIKE($entityTitle);
+		$where = new \CSQLWhere();
+
+		$entityTitle = $where->ForLIKE($entityTitle);
+
 		if($entityTypeID === \CCrmOwnerType::Company)
 		{
 			return "INNER JOIN (

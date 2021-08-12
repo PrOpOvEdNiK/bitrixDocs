@@ -147,7 +147,7 @@ class Importer
 		$datum = fread($f, filesize($filePath));
 		fclose($f);
 
-		if (substr($datum, 0, 10) === "compressed")
+		if (mb_substr($datum, 0, 10) === "compressed")
 			$datum = gzuncompress(Main\Text\BinaryString::getSubstring($datum, 10));
 
 		$len = intval(Main\Text\BinaryString::getSubstring($datum, 0, 10));
@@ -170,7 +170,7 @@ class Importer
 		if (empty($datum))
 			throw new Main\ArgumentNullException("datum");
 
-		if (substr($datum, 0, 10) === "compressed")
+		if (mb_substr($datum, 0, 10) === "compressed")
 			$datum = gzuncompress(Main\Text\BinaryString::getSubstring($datum, 10));
 
 		$len = intval(Main\Text\BinaryString::getSubstring($datum, 0, 10));
@@ -542,9 +542,7 @@ class Importer
 			'LANG' => array(),
 		);
 
-		$by = "lid";
-		$order = "asc";
-		$langList = \CLanguage::GetList($by, $order, array("ACTIVE" => "Y"));
+		$langList = \CLanguage::GetList('lid', 'asc', array("ACTIVE" => "Y"));
 		while ($lang = $langList->Fetch())
 			$iblockType['LANG'][$lang['LID']]['NAME'] = "Processes";
 

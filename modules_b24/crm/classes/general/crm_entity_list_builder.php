@@ -125,11 +125,11 @@ class CCrmEntityListBuilder
 			}
 			else
 			{
-				if($replace !== '' && strpos($this->sqlData['FROM'], $replace) !== false)
+				if($replace !== '' && mb_strpos($this->sqlData['FROM'], $replace) !== false)
 				{
 					$this->sqlData['FROM'] = str_replace($replace, $sql, $this->sqlData['FROM']);
 				}
-				elseif(stripos($this->sqlData['FROM'], trim($sql)) === false)
+				elseif(mb_stripos($this->sqlData['FROM'], trim($sql)) === false)
 				{
 					if($add2Start)
 					{
@@ -178,6 +178,49 @@ class CCrmEntityListBuilder
 		if(!is_array($arFilter))
 		{
 			$arFilter = array();
+		}
+
+		foreach($arFilter as $key => $value)
+		{
+			if ($key === 'SEARCH_CONTENT')
+			{
+				continue;
+			}
+			if ($key === 'RQ')
+			{
+				foreach($value as $rqKey => $item)
+				{
+					if ($item['VALUE'] === '^%^')
+					{
+						$arFilter[$key][$rqKey]['OPERATION'] = '!=';
+						$arFilter[$key][$rqKey]['VALUE'] = false;
+					}
+					if ($item['VALUE'] === '^&^')
+					{
+						$arFilter[$key][$rqKey]['OPERATION'] = '=';
+						$arFilter[$key][$rqKey]['VALUE'] = false;
+					}
+				}
+			}
+			else
+			{
+				if($value === '^%^' || $value === '^&^')
+				{
+					unset($arFilter[$key]);
+					if(mb_strpos($key, '?') === 0)
+					{
+						$key = mb_substr($key, 1);
+					}
+				}
+				if($value === '^%^')
+				{
+					$arFilter['!' . $key] = false;
+				}
+				elseif($value === '^&^')
+				{
+					$arFilter[$key] = false;
+				}
+			}
 		}
 
 		// ID must present in select (If select is empty it will be filled by CSqlUtil::PrepareSql)
@@ -259,7 +302,7 @@ class CCrmEntityListBuilder
 			foreach($arFilter as $filterKey => $filterValue)
 			{
 				//Adapt nested filters for UserTypeSQL
-				if(strpos($filterKey, '__INNER_FILTER') === 0)
+				if(mb_strpos($filterKey, '__INNER_FILTER') === 0)
 				{
 					$ufFilter[] = $filterValue;
 				}
@@ -407,7 +450,7 @@ class CCrmEntityListBuilder
 					$orderSql = $ufSelectSql->GetOrder($orderKey);
 					if(is_string($orderSql) && $orderSql !== '')
 					{
-						$order = strtoupper($order);
+						$order = mb_strtoupper($order);
 						if($order !== 'ASC' && $order !== 'DESC')
 						{
 							$order = 'ASC';
@@ -664,7 +707,7 @@ class CCrmEntityListBuilder
 		}
 		else
 		{
-			$dbType = strtoupper($dbType);
+			$dbType = mb_strtoupper($dbType);
 		}
 
 		if($dbType !== 'MYSQL')

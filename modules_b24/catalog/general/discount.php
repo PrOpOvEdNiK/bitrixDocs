@@ -1,16 +1,17 @@
-<?
-use Bitrix\Main,
-	Bitrix\Main\Loader,
-	Bitrix\Main\ModuleManager,
-	Bitrix\Main\Config\Option,
-	Bitrix\Main\Localization\LanguageTable,
-	Bitrix\Main\Localization\Loc,
-	Bitrix\Iblock,
-	Bitrix\Catalog,
-	Bitrix\Catalog\Product\Price,
-	Bitrix\Sale\DiscountCouponsManager,
-	Bitrix\Sale\Discount\Context,
-	Bitrix\Sale;
+<?php
+
+use Bitrix\Main;
+use Bitrix\Main\Loader;
+use Bitrix\Main\ModuleManager;
+use Bitrix\Main\Config\Option;
+use Bitrix\Main\Localization\LanguageTable;
+use Bitrix\Main\Localization\Loc;
+use Bitrix\Iblock;
+use Bitrix\Catalog;
+use Bitrix\Catalog\Product\Price;
+use Bitrix\Sale\DiscountCouponsManager;
+use Bitrix\Sale\Discount\Context;
+use Bitrix\Sale;
 
 Loc::loadMessages(__FILE__);
 
@@ -39,7 +40,7 @@ class CAllCatalogDiscount
 	static protected $useSaleDiscount = null;
 	static protected $getPriceTypesOnly = false;
 	static protected $getPercentFromBasePrice = null;
-	static private $needDiscountCache = null;
+	static private $needDiscountCache = [];
 
 	private static function calculatePriceByDiscount($basePrice, $currentPrice, $oneDiscount, &$needErase)
 	{
@@ -199,7 +200,7 @@ class CAllCatalogDiscount
 		self::$getPercentFromBasePrice = $useBasePrice;
 	}
 
-	public function CheckFields($ACTION, &$arFields, $ID = 0)
+	public static function CheckFields($ACTION, &$arFields, $ID = 0)
 	{
 		/** @global CMain $APPLICATION */
 		global $APPLICATION, $DB, $USER;
@@ -207,7 +208,7 @@ class CAllCatalogDiscount
 		$boolResult = true;
 		$arMsg = array();
 
-		$ACTION = strtoupper($ACTION);
+		$ACTION = mb_strtoupper($ACTION);
 		if ($ACTION != 'UPDATE' && $ACTION != 'ADD')
 			return false;
 
@@ -497,7 +498,7 @@ class CAllCatalogDiscount
 						}
 						else
 						{
-							$arFields['CONDITIONS'] = unserialize($arFields['CONDITIONS']);
+							$arFields['CONDITIONS'] = unserialize($arFields['CONDITIONS'], ['allowed_classes' => false]);
 							if (empty($arFields['CONDITIONS']) || !is_array($arFields['CONDITIONS']))
 							{
 								$boolCond = false;
@@ -536,14 +537,14 @@ class CAllCatalogDiscount
 						if (!empty($usedEntities))
 							$arFields['ENTITY'] = $usedEntities;
 
-						if (strtolower($DB->type) == 'mysql')
+						if ($DB->type == 'MYSQL')
 						{
 							if (64000 < CUtil::BinStrlen($arFields['UNPACK']) || 64000 < CUtil::BinStrlen($arFields['CONDITIONS']))
 							{
 								$boolResult = false;
 								$arMsg[] = array('id' => 'CONDITIONS', 'text' => Loc::getMessage('BT_MOD_CATALOG_DISC_ERR_CONDITIONS_TOO_LONG'));
 								unset($arFields['UNPACK']);
-								$arFields['CONDITIONS'] = unserialize($arFields['CONDITIONS']);
+								$arFields['CONDITIONS'] = unserialize($arFields['CONDITIONS'], ['allowed_classes' => false]);
 							}
 						}
 					}
@@ -581,7 +582,7 @@ class CAllCatalogDiscount
 		return $boolResult;
 	}
 
-	public function Add($arFields)
+	public static function Add($arFields)
 	{
 		foreach (GetModuleEvents("catalog", "OnBeforeDiscountAdd", true) as $arEvent)
 		{
@@ -692,7 +693,7 @@ class CAllCatalogDiscount
 		return $ID;
 	}
 
-	public function Update($ID, $arFields)
+	public static function Update($ID, $arFields)
 	{
 		$ID = (int)$ID;
 		if ($ID <= 0)
@@ -992,7 +993,7 @@ class CAllCatalogDiscount
 	 * @param int $ID
 	 * @return void
 	 */
-	public function GenerateDataFile($ID)
+	public static function GenerateDataFile($ID)
 	{
 	}
 
@@ -1003,7 +1004,7 @@ class CAllCatalogDiscount
 	 * @param bool|string $strDataFileName
 	 * @return void
 	 */
-	public function ClearFile($ID, $strDataFileName = false)
+	public static function ClearFile($ID, $strDataFileName = false)
 	{
 	}
 
@@ -1417,9 +1418,10 @@ class CAllCatalogDiscount
 
 		if (self::$useSaleDiscount && Loader::includeModule('sale'))
 		{
-			if (self::$needDiscountCache === null)
+			$cacheIndex = md5('S'.$siteID.'-U'.implode('_', $arUserGroups));
+			if (!isset(self::$needDiscountCache[$cacheIndex]))
 			{
-				self::$needDiscountCache = false;
+				self::$needDiscountCache[$cacheIndex] = false;
 
 				$cache = Sale\Discount\RuntimeCache\DiscountCache::getInstance();
 				$ids = $cache->getDiscountIds($arUserGroups);
@@ -1433,7 +1435,7 @@ class CAllCatalogDiscount
 					);
 					if (!empty($discountList))
 					{
-						self::$needDiscountCache = true;
+						self::$needDiscountCache[$cacheIndex] = true;
 					}
 					unset($discountList);
 				}
@@ -1445,7 +1447,7 @@ class CAllCatalogDiscount
 				'MODULE' => 'catalog',
 			);
 
-			if (self::$needDiscountCache && $arCatalogGroups !== array(-1))
+			if (self::$needDiscountCache[$cacheIndex] && $arCatalogGroups !== array(-1))
 			{
 				Catalog\Product\Price\Calculation::pushConfig();
 				Catalog\Product\Price\Calculation::setConfig([
@@ -1484,6 +1486,7 @@ class CAllCatalogDiscount
 
 				Catalog\Product\Price\Calculation::popConfig();
 			}
+			unset($cacheIndex);
 		}
 		else
 		{
@@ -2434,11 +2437,11 @@ class CAllCatalogDiscount
 		$boolProps = false;
 		if (isset($arExtend['catalog']['props']))
 			$boolProps = (boolean)$arExtend['catalog']['props'];
-		
+
 		$boolPrice = !empty($arExtend['catalog']['price']);
 		$productPriceIds = array();
 		$basketItemIds = array();
-		
+
 		if ($boolFields || $boolProps || $boolPrice)
 		{
 			$arMap = array();
@@ -2646,9 +2649,9 @@ class CAllCatalogDiscount
 						}
 						$arBasketResult[$price['PRODUCT_ID']]['CATALOG_GROUP_ID'] = $price['CATALOG_GROUP_ID'];
 					}
-					
+
 				}
-				
+
 				$rsProducts = CCatalogProduct::GetList(array(), array('@ID' => $arIDS), false, false, $arCatFields);
 				while ($arProduct = $rsProducts->Fetch())
 				{
@@ -3147,7 +3150,7 @@ class CAllCatalogDiscount
 				{
 					$property['USER_TYPE_SETTINGS'] = (
 						CheckSerializedData($property['USER_TYPE_SETTINGS'])
-						? unserialize($property['USER_TYPE_SETTINGS'])
+						? unserialize($property['USER_TYPE_SETTINGS'], ['allowed_classes' => false])
 						: array()
 					);
 				}
@@ -3424,7 +3427,7 @@ class CAllCatalogDiscount
 		}
 	}
 
-	protected function __CheckOneEntity(&$arFields, $strEntityID)
+	protected static function __CheckOneEntity(&$arFields, $strEntityID)
 	{
 		$boolResult = false;
 		$strEntityID = trim(strval($strEntityID));
@@ -3470,7 +3473,7 @@ class CAllCatalogDiscount
 		return $boolResult;
 	}
 
-	protected function __ArrayMultiple($arOrder, &$arResult, $arTuple, $arTemp = array())
+	protected static function __ArrayMultiple($arOrder, &$arResult, $arTuple, $arTemp = array())
 	{
 		if (empty($arTuple))
 		{
@@ -3515,7 +3518,7 @@ class CAllCatalogDiscount
 		return eval('return '.$strUnpack.';');
 	}
 
-	protected function __ConvertOldConditions($strAction, &$arFields)
+	protected static function __ConvertOldConditions($strAction, &$arFields)
 	{
 		$strAction = ToUpper($strAction);
 		if (!is_set($arFields, 'CONDITIONS'))
@@ -3569,7 +3572,7 @@ class CAllCatalogDiscount
 		}
 	}
 
-	protected function __ConvertOldOneEntity(&$arFields, $strEntityID)
+	protected static function __ConvertOldOneEntity(&$arFields, $strEntityID)
 	{
 		$arResult = false;
 		if (!empty($strEntityID))
@@ -3596,7 +3599,7 @@ class CAllCatalogDiscount
 		return $arResult;
 	}
 
-	protected function __AddOldOneEntity(&$arConditions, $strCondID, $arEntityValues, $boolOneEntity)
+	protected static function __AddOldOneEntity(&$arConditions, $strCondID, $arEntityValues, $boolOneEntity)
 	{
 		if (!empty($strCondID))
 		{
@@ -3655,7 +3658,7 @@ class CAllCatalogDiscount
 		}
 	}
 
-	protected function __GetConditionValues(&$arFields)
+	protected static function __GetConditionValues(&$arFields)
 	{
 		$arResult = false;
 		if (isset($arFields['CONDITIONS']) && !empty($arFields['CONDITIONS']))
@@ -3665,7 +3668,7 @@ class CAllCatalogDiscount
 			{
 				if (CheckSerializedData($arFields['CONDITIONS']))
 				{
-					$arConditions = unserialize($arFields['CONDITIONS']);
+					$arConditions = unserialize($arFields['CONDITIONS'], ['allowed_classes' => false]);
 				}
 			}
 			else
@@ -3686,7 +3689,7 @@ class CAllCatalogDiscount
 		return $arResult;
 	}
 
-	protected function __GetOldOneEntity(&$arFields, &$arCondList, $strEntityID, $strCondID)
+	protected static function __GetOldOneEntity(&$arFields, &$arCondList, $strEntityID, $strCondID)
 	{
 		if (is_array($arCondList) && !empty($arCondList))
 		{
@@ -3711,7 +3714,7 @@ class CAllCatalogDiscount
 		}
 	}
 
-	protected function __UpdateOldOneEntity($intID, &$arFields, $arParams, $boolUpdate)
+	protected static function __UpdateOldOneEntity($intID, &$arFields, $arParams, $boolUpdate)
 	{
 		global $DB;
 

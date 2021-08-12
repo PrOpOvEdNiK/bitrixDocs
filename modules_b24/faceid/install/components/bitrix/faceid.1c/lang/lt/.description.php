@@ -1,6 +1,0 @@
-<?
-$MESS["FIT1C_SERVICES_MAIN_SECTION"] = "CRM";
-$MESS["FIT1C_SERVICES_PARENT_SECTION"] = "Nustatymai ";
-$MESS["FIT1C_SECTION_TEMPLATE_NAME"] = "1C veido seklys";
-$MESS["FIT1C_SECTION_TEMPLATE_DESCRIPTION"] = "Atpažįsta 1C klientus pagal jų nuotraukas";
-?>

@@ -20,12 +20,12 @@ class Base
 	{
 		return get_called_class();
 	}
-	
+
 	public static function getName()
 	{
 		return '';
 	}
-	
+
 	public static function getId()
 	{
 		return 'CRM_BASE';
@@ -52,7 +52,7 @@ class Base
 			//'HTML' => '' TEXT & URL or HTML
 		);
 	}
-	
+
 	/**
 	 * @return array Supported types list.
 	 * Example:
@@ -151,17 +151,17 @@ class Base
 	{
 		return new Main\Result();
 	}
-	
+
 	public static function canUseCalendarEvents($providerTypeId = null)
 	{
 		return false;
 	}
-	
+
 	public static function canKeepCompletedInCalendar($providerTypeId = null)
 	{
 		return false;
 	}
-	
+
 	public static function canKeepReassignedInCalendar($providerTypeId = null)
 	{
 		return false;
@@ -242,7 +242,7 @@ class Base
 	 */
 	public static function getPlannerTitle(array $activity)
 	{
-		return '';	
+		return '';
 	}
 
 	/**
@@ -294,11 +294,11 @@ class Base
 	 */
 	public static function fillDefaultActivityFields(array &$activity)
 	{
-		
+
 	}
 
 	/**
-	 * 
+	 *
 	 * @return bool
 	 */
 	public static function checkOwner()
@@ -397,13 +397,13 @@ class Base
 	{
 		return null;
 	}
-	
+
 	public static function canUseCommunicationStatistics($statisticsType)
 	{
 		$all = static::getSupportedCommunicationStatistics();
 		return in_array($statisticsType, $all);
 	}
-	
+
 	public static function getSupportedCommunicationStatistics()
 	{
 		return array();
@@ -417,10 +417,44 @@ class Base
 	}
 
 	/**
+	 * Activity add callback
 	 * @param array $activityFields
+	 * @param array|null $params
 	 * return null
 	 */
-	public static function onAfterAdd($activityFields)
+	public static function onAfterAdd($activityFields, array $params = null)
+	{
+	}
+
+	/**
+	 * Activity update callback
+	 * @param int $id
+	 * @param array $changedFields
+	 * @param array $oldFields
+	 * @param array $newFields
+	 * @param array|null $params
+	 */
+	public static function onAfterUpdate(
+		int $id,
+		array $changedFields,
+		array $oldFields,
+		array $newFields,
+		array $params = null
+	)
+	{
+	}
+
+	/**
+	 * Activity delete callback
+	 * @param int $id
+	 * @param array $activityFields
+	 * @param array|null $params
+	 */
+	public static function onAfterDelete(
+		int $id,
+		array $activityFields,
+		array $params = null
+	)
 	{
 	}
 
@@ -502,5 +536,19 @@ class Base
 
 	public static function deleteByOwner($entityTypeId, $entityId)
 	{
+	}
+
+	public static function prepareHistoryItemData($historyFields)
+	{
+		return null;
+	}
+
+	/**
+	 * @param array $activityFields
+	 * @return null|string
+	 */
+	public static function getCustomViewLink(array $activityFields): ?string
+	{
+		return null;
 	}
 }

@@ -1,5 +1,0 @@
-<?
-$MESS["CRM_WEBFORM_SCRIPT_BUTTON_TEXT"] = "Mygtuko pavadinimas";
-$MESS["CRM_WEBFORM_SCRIPT_WIDGET_FORM_DEFAULT_TITLE"] = "Užpildyti formą";
-$MESS["CRM_WEBFORM_SCRIPT_WIDGET_FORM_CALLBACK_TITLE"] = "Mes perskambinsime Jums";
-?>

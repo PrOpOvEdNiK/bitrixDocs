@@ -1,5 +1,0 @@
-<?
-$MESS["SALE_CASHBOX_RSTR_BY_COMPANY"] = "Compañías";
-$MESS["SALE_CASHBOX_RSTR_BY_COMPANY_DESC"] = "por compañías";
-$MESS["SALE_CASHBOX_RSTR_BY_COMPANY_TITLE"] = "por compañías";
-?>

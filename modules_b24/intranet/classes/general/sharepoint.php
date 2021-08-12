@@ -1,4 +1,5 @@
-<?
+<?php
+
 IncludeModuleLangFile(__FILE__);
 
 class CAllIntranetSharepoint
@@ -176,7 +177,7 @@ class CAllIntranetSharepoint
 			list($sp_fld_name, $sp_fld_type) = explode(':', $sp_fld, 2);
 
 			$pos = 0;
-			if (strlen($property) == 1 || (false !== ($pos = strstr($property, ':'))))
+			if (mb_strlen($property) == 1 || (false !== ($pos = mb_strstr($property, ':'))))
 			{
 				$user_type = '';
 
@@ -413,9 +414,9 @@ class CAllIntranetSharepoint
 			}
 
 			if ($bFirst = (
-				strlen($arService['SYNC_LAST_TOKEN']) <= 0
+				$arService['SYNC_LAST_TOKEN'] == ''
 				||
-				strlen($arService['SYNC_PAGING']) > 0
+				$arService['SYNC_PAGING'] <> ''
 			))
 			{
 				$arService['SYNC_LAST_TOKEN'] = '';
@@ -643,7 +644,7 @@ class CAllIntranetSharepoint
 
 	public static function UpdateItems($arRows)
 	{
-		list(,$row) = each($arRows);
+		$row = current($arRows);
 
 		$IBLOCK_ID = $row['IBLOCK_ID'];
 		$PRIORITY = $row['PRIORITY'];
@@ -675,7 +676,7 @@ class CAllIntranetSharepoint
 
 				foreach ($arService['FIELDS'] as $fld)
 				{
-					if (substr($fld['FIELD_ID'], 0, 9) === 'PROPERTY_')
+					if (mb_substr($fld['FIELD_ID'], 0, 9) === 'PROPERTY_')
 						$fld['FIELD_ID'].= '_VALUE';
 
 					if ($val = self::_UpdateGetValueByType($arItem[$fld['FIELD_ID']], $fld['SP_FIELD_TYPE']))
@@ -1011,9 +1012,8 @@ class CAllIntranetSharepoint
 		}
 	}
 
-
 	// TODO: think how to return "local entry is newer" fault
-	protected function _Sync($arService, $row, &$arQueue)
+	protected static function _Sync($arService, $row, &$arQueue)
 	{
 		$IBLOCK_ID = $arService['IBLOCK_ID'];
 
@@ -1116,15 +1116,15 @@ class CAllIntranetSharepoint
 
 	private static function __prop($fld)
 	{
-		return (substr($fld, 0, 9) == 'PROPERTY_') ? intval(substr($fld, 9)) : null;
+		return (mb_substr($fld, 0, 9) == 'PROPERTY_') ? intval(mb_substr($fld, 9)) : null;
 	}
 
-	protected function _UpdateGetValueByType($value, $type)
+	protected static function _UpdateGetValueByType($value, $type)
 	{
 		return $value;
 	}
 
-	protected function _SyncGetValueByType($FIELD, &$arQueue)
+	protected static function _SyncGetValueByType($FIELD, &$arQueue)
 	{
 		$fld = $FIELD['FIELD'];
 
@@ -1268,7 +1268,7 @@ class CAllIntranetSharepoint
 	}
 
 	/* checks existance of UF with sharepoint id. and creates it. */
-	protected function _CheckUF()
+	protected static function _CheckUF()
 	{
 		static $RESULT = null;
 
@@ -1311,7 +1311,7 @@ class CAllIntranetSharepoint
 	}
 
 	/* parse a user string from sp like this: '8;#Ivan Ivanov,#ivanov@expample.com' and try to find such user inside the system */
-	protected function _SyncGetUser($user_str)
+	protected static function _SyncGetUser($user_str)
 	{
 		$USER_XML_ID = 0;
 		$USER_ID = 0;
@@ -1324,7 +1324,7 @@ class CAllIntranetSharepoint
 			{
 				if ($uf_name =  self::_CheckUF())
 				{
-					$dbRes = CUser::GetList($by='ID', $order='ASC', array($uf_name => $USER_XML_ID));
+					$dbRes = CUser::GetList('ID', 'ASC', array($uf_name => $USER_XML_ID));
 					if ($arRes = $dbRes->Fetch())
 					{
 						$USER_ID = $arRes['ID'];
@@ -1336,7 +1336,7 @@ class CAllIntranetSharepoint
 
 		if ($USER_ID <= 0)
 		{
-			$arUserFields = explode(',', substr($FIELDS, 1));
+			$arUserFields = explode(',', mb_substr($FIELDS, 1));
 			$arKeywords = preg_split('/[^\w@.]+/', $arUserFields[1]);
 
 			$arFilters = array(
@@ -1349,7 +1349,7 @@ class CAllIntranetSharepoint
 			{
 				$v = implode('|', $arKeywords);
 
-				if (strlen($v) > 0)
+				if ($v <> '')
 				{
 					$arFilters[] = array('EMAIL' => $v);
 					$arFilters[] = array('NAME' => $v);
@@ -1360,7 +1360,7 @@ class CAllIntranetSharepoint
 
 			foreach ($arFilters as $arFilter)
 			{
-				$dbRes = CUser::GetList($by='id', $order='asc', $arFilter);
+				$dbRes = CUser::GetList('id', 'asc', $arFilter);
 				if ($arUser = $dbRes->Fetch())
 				{
 					$USER_ID = $arUser['ID'];
@@ -1454,19 +1454,19 @@ class CAllIntranetSharepoint
 			$arSelectFields = $arGroupBy;
 			foreach ($arGroupBy as $key => $val)
 			{
-				$val = strtoupper($val);
-				$key = strtoupper($key);
+				$val = mb_strtoupper($val);
+				$key = mb_strtoupper($key);
 				if (array_key_exists($val, $arFields) && !in_array($key, $arGroupByFunct))
 				{
-					if (strlen($strSqlGroupBy) > 0)
+					if ($strSqlGroupBy <> '')
 						$strSqlGroupBy .= ", ";
 					$strSqlGroupBy .= $arFields[$val]["FIELD"];
 
 					if (isset($arFields[$val]["FROM"])
-						&& strlen($arFields[$val]["FROM"]) > 0
+						&& $arFields[$val]["FROM"] <> ''
 						&& !in_array($arFields[$val]["FROM"], $arAlreadyJoined))
 					{
-						if (strlen($strSqlFrom) > 0)
+						if ($strSqlFrom <> '')
 							$strSqlFrom .= " ";
 						$strSqlFrom .= $arFields[$val]["FROM"];
 						$arAlreadyJoined[] = $arFields[$val]["FROM"];
@@ -1485,7 +1485,7 @@ class CAllIntranetSharepoint
 		}
 		else
 		{
-			if (isset($arSelectFields) && !is_array($arSelectFields) && is_string($arSelectFields) && strlen($arSelectFields)>0 && array_key_exists($arSelectFields, $arFields))
+			if (isset($arSelectFields) && !is_array($arSelectFields) && is_string($arSelectFields) && $arSelectFields <> '' && array_key_exists($arSelectFields, $arFields))
 				$arSelectFields = array($arSelectFields);
 
 			if (!isset($arSelectFields)
@@ -1501,19 +1501,19 @@ class CAllIntranetSharepoint
 						continue;
 					}
 
-					if (strlen($strSqlSelect) > 0)
+					if ($strSqlSelect <> '')
 						$strSqlSelect .= ", ";
 
 					if ($arFields[$arFieldsKeys[$i]]["TYPE"] == "datetime")
 					{
-						if ((strtoupper($DB->type)=="ORACLE" || strtoupper($DB->type)=="MSSQL") && (array_key_exists($arFieldsKeys[$i], $arOrder)))
+						if (($DB->type == "ORACLE" || $DB->type == "MSSQL") && (array_key_exists($arFieldsKeys[$i], $arOrder)))
 							$strSqlSelect .= $arFields[$arFieldsKeys[$i]]["FIELD"].", ";
 
 						$strSqlSelect .= $DB->DateToCharFunction($arFields[$arFieldsKeys[$i]]["FIELD"], "FULL")." as ".$arFieldsKeys[$i];
 					}
 					elseif ($arFields[$arFieldsKeys[$i]]["TYPE"] == "date")
 					{
-						if ((strtoupper($DB->type)=="ORACLE" || strtoupper($DB->type)=="MSSQL") && (array_key_exists($arFieldsKeys[$i], $arOrder)))
+						if (($DB->type == "ORACLE" || $DB->type == "MSSQL") && (array_key_exists($arFieldsKeys[$i], $arOrder)))
 							$strSqlSelect .= $arFields[$arFieldsKeys[$i]]["FIELD"].", ";
 
 						$strSqlSelect .= $DB->DateToCharFunction($arFields[$arFieldsKeys[$i]]["FIELD"], "SHORT")." as ".$arFieldsKeys[$i];
@@ -1522,10 +1522,10 @@ class CAllIntranetSharepoint
 						$strSqlSelect .= $arFields[$arFieldsKeys[$i]]["FIELD"]." as ".$arFieldsKeys[$i];
 
 					if (isset($arFields[$arFieldsKeys[$i]]["FROM"])
-						&& strlen($arFields[$arFieldsKeys[$i]]["FROM"]) > 0
+						&& $arFields[$arFieldsKeys[$i]]["FROM"] <> ''
 						&& !in_array($arFields[$arFieldsKeys[$i]]["FROM"], $arAlreadyJoined))
 					{
-						if (strlen($strSqlFrom) > 0)
+						if ($strSqlFrom <> '')
 							$strSqlFrom .= " ";
 						$strSqlFrom .= $arFields[$arFieldsKeys[$i]]["FROM"];
 						$arAlreadyJoined[] = $arFields[$arFieldsKeys[$i]]["FROM"];
@@ -1536,11 +1536,11 @@ class CAllIntranetSharepoint
 			{
 				foreach ($arSelectFields as $key => $val)
 				{
-					$val = strtoupper($val);
-					$key = strtoupper($key);
+					$val = mb_strtoupper($val);
+					$key = mb_strtoupper($key);
 					if (array_key_exists($val, $arFields))
 					{
-						if (strlen($strSqlSelect) > 0)
+						if ($strSqlSelect <> '')
 							$strSqlSelect .= ", ";
 
 						if (in_array($key, $arGroupByFunct))
@@ -1551,14 +1551,14 @@ class CAllIntranetSharepoint
 						{
 							if ($arFields[$val]["TYPE"] == "datetime")
 							{
-								if ((strtoupper($DB->type)=="ORACLE" || strtoupper($DB->type)=="MSSQL") && (array_key_exists($val, $arOrder)))
+								if (($DB->type == "ORACLE" || $DB->type == "MSSQL") && (array_key_exists($val, $arOrder)))
 									$strSqlSelect .= $arFields[$val]["FIELD"].", ";
 
 								$strSqlSelect .= $DB->DateToCharFunction($arFields[$val]["FIELD"], "FULL")." as ".$val;
 							}
 							elseif ($arFields[$val]["TYPE"] == "date")
 							{
-								if ((strtoupper($DB->type)=="ORACLE" || strtoupper($DB->type)=="MSSQL") && (array_key_exists($val, $arOrder)))
+								if (($DB->type == "ORACLE" || $DB->type == "MSSQL") && (array_key_exists($val, $arOrder)))
 									$strSqlSelect .= $arFields[$val]["FIELD"].", ";
 
 								$strSqlSelect .= $DB->DateToCharFunction($arFields[$val]["FIELD"], "SHORT")." as ".$val;
@@ -1568,10 +1568,10 @@ class CAllIntranetSharepoint
 						}
 
 						if (isset($arFields[$val]["FROM"])
-							&& strlen($arFields[$val]["FROM"]) > 0
+							&& $arFields[$val]["FROM"] <> ''
 							&& !in_array($arFields[$val]["FROM"], $arAlreadyJoined))
 						{
-							if (strlen($strSqlFrom) > 0)
+							if ($strSqlFrom <> '')
 								$strSqlFrom .= " ";
 							$strSqlFrom .= $arFields[$val]["FROM"];
 							$arAlreadyJoined[] = $arFields[$val]["FROM"];
@@ -1580,9 +1580,9 @@ class CAllIntranetSharepoint
 				}
 			}
 
-			if (strlen($strSqlGroupBy) > 0)
+			if ($strSqlGroupBy <> '')
 			{
-				if (strlen($strSqlSelect) > 0)
+				if ($strSqlSelect <> '')
 					$strSqlSelect .= ", ";
 				$strSqlSelect .= "COUNT(%%_DISTINCT_%% ".$arFields[$arFieldsKeys[0]]["FIELD"].") as CNT";
 			}
@@ -1633,7 +1633,12 @@ class CAllIntranetSharepoint
 						{
 							if ($arFields[$key]["TYPE"] == "int")
 							{
-								array_walk($vals, create_function("&\$item", "\$item=IntVal(\$item);"));
+								array_walk(
+									$vals,
+									function (&$item) {
+										$item = (int)$item;
+									}
+								);
 								$vals = array_unique($vals);
 								$val = implode(",", $vals);
 
@@ -1644,7 +1649,12 @@ class CAllIntranetSharepoint
 							}
 							elseif ($arFields[$key]["TYPE"] == "double")
 							{
-								array_walk($vals, create_function("&\$item", "\$item=DoubleVal(\$item);"));
+								array_walk(
+									$vals,
+									function (&$item) {
+										$item = (float)$item;
+									}
+								);
 								$vals = array_unique($vals);
 								$val = implode(",", $vals);
 
@@ -1655,7 +1665,12 @@ class CAllIntranetSharepoint
 							}
 							elseif ($arFields[$key]["TYPE"] == "string" || $arFields[$key]["TYPE"] == "char")
 							{
-								array_walk($vals, create_function("&\$item", "\$item=\"'\".\$GLOBALS[\"DB\"]->ForSql(\$item).\"'\";"));
+								array_walk(
+									$vals,
+									function (&$item) {
+										$item = "'".$GLOBALS["DB"]->ForSql($item)."'";
+									}
+								);
 								$vals = array_unique($vals);
 								$val = implode(",", $vals);
 
@@ -1666,7 +1681,12 @@ class CAllIntranetSharepoint
 							}
 							elseif ($arFields[$key]["TYPE"] == "datetime")
 							{
-								array_walk($vals, create_function("&\$item", "\$item=\"'\".\$GLOBALS[\"DB\"]->CharToDateFunction(\$GLOBALS[\"DB\"]->ForSql(\$item), \"FULL\").\"'\";"));
+								array_walk(
+									$vals,
+									function (&$item) {
+										$item = $GLOBALS["DB"]->CharToDateFunction($item, "FULL");
+									}
+								);
 								$vals = array_unique($vals);
 								$val = implode(",", $vals);
 
@@ -1677,7 +1697,12 @@ class CAllIntranetSharepoint
 							}
 							elseif ($arFields[$key]["TYPE"] == "date")
 							{
-								array_walk($vals, create_function("&\$item", "\$item=\"'\".\$GLOBALS[\"DB\"]->CharToDateFunction(\$GLOBALS[\"DB\"]->ForSql(\$item), \"SHORT\").\"'\";"));
+								array_walk(
+									$vals,
+									function (&$item) {
+										$item = $GLOBALS["DB"]->CharToDateFunction($item, "SHORT");
+									}
+								);
 								$vals = array_unique($vals);
 								$val = implode(",", $vals);
 
@@ -1707,16 +1732,16 @@ class CAllIntranetSharepoint
 							{
 								if ($arFields[$key]["TYPE"] == "int")
 								{
-									if ((IntVal($val) == 0) && (strpos($strOperation, "=") !== False))
+									if ((intval($val) == 0) && (mb_strpos($strOperation, "=") !== False))
 										$arSqlSearch_tmp[] = "(".$arFields[$key]["FIELD"]." IS ".(($strNegative == "Y") ? "NOT " : "")."NULL) ".(($strNegative == "Y") ? "AND" : "OR")." ".(($strNegative == "Y") ? "NOT " : "")."(".$arFields[$key]["FIELD"]." ".$strOperation." 0)";
 									else
-										$arSqlSearch_tmp[] = (($strNegative == "Y") ? " ".$arFields[$key]["FIELD"]." IS NULL OR NOT " : "")."(".$arFields[$key]["FIELD"]." ".$strOperation." ".IntVal($val)." )";
+										$arSqlSearch_tmp[] = (($strNegative == "Y") ? " ".$arFields[$key]["FIELD"]." IS NULL OR NOT " : "")."(".$arFields[$key]["FIELD"]." ".$strOperation." ".intval($val)." )";
 								}
 								elseif ($arFields[$key]["TYPE"] == "double")
 								{
 									$val = str_replace(",", ".", $val);
 
-									if ((DoubleVal($val) == 0) && (strpos($strOperation, "=") !== False))
+									if ((DoubleVal($val) == 0) && (mb_strpos($strOperation, "=") !== False))
 										$arSqlSearch_tmp[] = "(".$arFields[$key]["FIELD"]." IS ".(($strNegative == "Y") ? "NOT " : "")."NULL) ".(($strNegative == "Y") ? "AND" : "OR")." ".(($strNegative == "Y") ? "NOT " : "")."(".$arFields[$key]["FIELD"]." ".$strOperation." 0)";
 									else
 										$arSqlSearch_tmp[] = (($strNegative == "Y") ? " ".$arFields[$key]["FIELD"]." IS NULL OR NOT " : "")."(".$arFields[$key]["FIELD"]." ".$strOperation." ".DoubleVal($val)." )";
@@ -1729,7 +1754,7 @@ class CAllIntranetSharepoint
 									}
 									else
 									{
-										if ((strlen($val) == 0) && (strpos($strOperation, "=") !== False))
+										if (($val == '') && (mb_strpos($strOperation, "=") !== False))
 											$arSqlSearch_tmp[] = "(".$arFields[$key]["FIELD"]." IS ".(($strNegative == "Y") ? "NOT " : "")."NULL) ".(($strNegative == "Y") ? "AND NOT" : "OR")." (".$DB->Length($arFields[$key]["FIELD"])." <= 0) ".(($strNegative == "Y") ? "AND NOT" : "OR")." (".$arFields[$key]["FIELD"]." ".$strOperation." '".$DB->ForSql($val)."' )";
 										else
 											$arSqlSearch_tmp[] = (($strNegative == "Y") ? " ".$arFields[$key]["FIELD"]." IS NULL OR NOT " : "")."(".$arFields[$key]["FIELD"]." ".$strOperation." '".$DB->ForSql($val)."' )";
@@ -1737,14 +1762,14 @@ class CAllIntranetSharepoint
 								}
 								elseif ($arFields[$key]["TYPE"] == "datetime")
 								{
-									if (strlen($val) <= 0)
+									if ($val == '')
 										$arSqlSearch_tmp[] = ($strNegative=="Y"?"NOT":"")."(".$arFields[$key]["FIELD"]." IS NULL)";
 									else
 										$arSqlSearch_tmp[] = ($strNegative=="Y"?" ".$arFields[$key]["FIELD"]." IS NULL OR NOT ":"")."(".$arFields[$key]["FIELD"]." ".$strOperation." ".$DB->CharToDateFunction($DB->ForSql($val), "FULL").")";
 								}
 								elseif ($arFields[$key]["TYPE"] == "date")
 								{
-									if (strlen($val) <= 0)
+									if ($val == '')
 										$arSqlSearch_tmp[] = ($strNegative=="Y"?"NOT":"")."(".$arFields[$key]["FIELD"]." IS NULL)";
 									else
 										$arSqlSearch_tmp[] = ($strNegative=="Y"?" ".$arFields[$key]["FIELD"]." IS NULL OR NOT ":"")."(".$arFields[$key]["FIELD"]." ".$strOperation." ".$DB->CharToDateFunction($DB->ForSql($val), "SHORT").")";
@@ -1755,10 +1780,10 @@ class CAllIntranetSharepoint
 				}
 
 				if (isset($arFields[$key]["FROM"])
-					&& strlen($arFields[$key]["FROM"]) > 0
+					&& $arFields[$key]["FROM"] <> ''
 					&& !in_array($arFields[$key]["FROM"], $arAlreadyJoined))
 				{
-					if (strlen($strSqlFrom) > 0)
+					if ($strSqlFrom <> '')
 						$strSqlFrom .= " ";
 					$strSqlFrom .= $arFields[$key]["FROM"];
 					$arAlreadyJoined[] = $arFields[$key]["FROM"];
@@ -1773,19 +1798,19 @@ class CAllIntranetSharepoint
 				}
 				if ($strOrNull == "Y")
 				{
-					if (strlen($strSqlSearch_tmp) > 0)
+					if ($strSqlSearch_tmp <> '')
 						$strSqlSearch_tmp .= ($strNegative=="Y" ? " AND " : " OR ");
 					$strSqlSearch_tmp .= "(".$arFields[$key]["FIELD"]." IS ".($strNegative=="Y" ? "NOT " : "")."NULL)";
 
 					if ($arFields[$key]["TYPE"] == "int" || $arFields[$key]["TYPE"] == "double")
 					{
-						if (strlen($strSqlSearch_tmp) > 0)
+						if ($strSqlSearch_tmp <> '')
 							$strSqlSearch_tmp .= ($strNegative=="Y" ? " AND " : " OR ");
 						$strSqlSearch_tmp .= "(".$arFields[$key]["FIELD"]." ".($strNegative=="Y" ? "<>" : "=")." 0)";
 					}
 					elseif ($arFields[$key]["TYPE"] == "string" || $arFields[$key]["TYPE"] == "char")
 					{
-						if (strlen($strSqlSearch_tmp) > 0)
+						if ($strSqlSearch_tmp <> '')
 							$strSqlSearch_tmp .= ($strNegative=="Y" ? " AND " : " OR ");
 						$strSqlSearch_tmp .= "(".$arFields[$key]["FIELD"]." ".($strNegative=="Y" ? "<>" : "=")." '')";
 					}
@@ -1798,7 +1823,7 @@ class CAllIntranetSharepoint
 
 		for ($i = 0; $i < count($arSqlSearch); $i++)
 		{
-			if (strlen($strSqlWhere) > 0)
+			if ($strSqlWhere <> '')
 				$strSqlWhere .= " AND ";
 			$strSqlWhere .= "(".$arSqlSearch[$i].")";
 		}
@@ -1808,8 +1833,8 @@ class CAllIntranetSharepoint
 		$arSqlOrder = Array();
 		foreach ($arOrder as $by => $order)
 		{
-			$by = strtoupper($by);
-			$order = strtoupper($order);
+			$by = mb_strtoupper($by);
+			$order = mb_strtoupper($order);
 
 			if ($order != "ASC")
 				$order = "DESC";
@@ -1819,10 +1844,10 @@ class CAllIntranetSharepoint
 				$arSqlOrder[] = " ".$arFields[$by]["FIELD"]." ".$order." ";
 
 				if (isset($arFields[$by]["FROM"])
-					&& strlen($arFields[$by]["FROM"]) > 0
+					&& $arFields[$by]["FROM"] <> ''
 					&& !in_array($arFields[$by]["FROM"], $arAlreadyJoined))
 				{
-					if (strlen($strSqlFrom) > 0)
+					if ($strSqlFrom <> '')
 						$strSqlFrom .= " ";
 					$strSqlFrom .= $arFields[$by]["FROM"];
 					$arAlreadyJoined[] = $arFields[$by]["FROM"];
@@ -1833,11 +1858,11 @@ class CAllIntranetSharepoint
 		$strSqlOrderBy = "";
 		DelDuplicateSort($arSqlOrder); for ($i = 0; $i < count($arSqlOrder); $i++)
 		{
-			if (strlen($strSqlOrderBy) > 0)
+			if ($strSqlOrderBy <> '')
 				$strSqlOrderBy .= ", ";
-			if(strtoupper($DB->type)=="ORACLE")
+			if($DB->type == "ORACLE")
 			{
-				if(substr($arSqlOrder[$i], -3)=="ASC")
+				if(mb_substr($arSqlOrder[$i], -3) == "ASC")
 					$strSqlOrderBy .= $arSqlOrder[$i]." NULLS FIRST";
 				else
 					$strSqlOrderBy .= $arSqlOrder[$i]." NULLS LAST";
@@ -1856,4 +1881,3 @@ class CAllIntranetSharepoint
 		);
 	}
 }
-?>

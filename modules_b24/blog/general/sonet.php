@@ -1,12 +1,13 @@
-<?
+<?php
+
 class CBlogSoNetPost
 {
-	function CanUserDeletePost($ID, $userID, $blogOwnerID, $groupOwnerID)
+	public static function CanUserDeletePost($ID, $userID, $blogOwnerID, $groupOwnerID)
 	{
-		$ID = IntVal($ID);
-		$userID = IntVal($userID);
-		$blogOwnerID = IntVal($blogOwnerID);
-		$groupOwnerID = IntVal($groupOwnerID);
+		$ID = intval($ID);
+		$userID = intval($userID);
+		$blogOwnerID = intval($blogOwnerID);
+		$groupOwnerID = intval($groupOwnerID);
 
 		$blogModulePermissions = $GLOBALS["APPLICATION"]->GetGroupRight("blog");
 		if ($blogModulePermissions >= "W")
@@ -64,9 +65,9 @@ class CBlogSoNetPost
 		return False;
 	}
 	
-	function OnGroupDelete($ID)
+	public static function OnGroupDelete($ID)
 	{
-		$ID = IntVal($ID);
+		$ID = intval($ID);
 		if($ID <= 0)
 			return false;
 		$arBlog = CBlog::GetBySocNetGroupID($ID);
@@ -82,4 +83,3 @@ class CBlogSoNetPost
 		\Bitrix\Blog\PostSocnetRightsTable::deleteByEntity('OSG'.$ID.'_L');
 	}
 }
-?>

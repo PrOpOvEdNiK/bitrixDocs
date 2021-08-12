@@ -74,7 +74,7 @@ class CWebDavLogOnlineEditBase
 		{
 			foreach ($select as $field)
 			{
-				$field = strtoupper($field);
+				$field = mb_strtoupper($field);
 				switch($field)
 				{
 					case 'USER':
@@ -133,8 +133,8 @@ class CWebDavLogOnlineEditBase
 			$sqlOrder = array();
 			foreach ($order as $by => $ord)
 			{
-				$by = strtoupper($by);
-				$sqlOrder[] = $by . ' ' . (strtoupper($ord) == 'DESC' ? 'DESC' : 'ASC');
+				$by = mb_strtoupper($by);
+				$sqlOrder[] = $by . ' ' . (mb_strtoupper($ord) == 'DESC' ? 'DESC' : 'ASC');
 			}
 			unset($by);
 			$sqlOrder = ' ORDER BY ' . implode(', ', $sqlOrder);

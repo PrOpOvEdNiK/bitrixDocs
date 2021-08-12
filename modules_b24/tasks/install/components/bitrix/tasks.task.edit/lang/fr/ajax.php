@@ -1,4 +1,0 @@
-<?
-$MESS["TASKS_WARNING_RESPONSIBLE_IS_ABSENCE"] = "#FORMATTED_USER_NAME# (responsable) est absent du #DATE_FROM# au #DATE_TO# (#ABSCENCE_REASON#).";
-$MESS["TASKS_WARNING_RESPONSIBLE_NOT_IN_TASK_GROUP"] = "#FORMATTED_USER_NAME# (responsable) n'est pas membre du groupe '#GROUP_NAME#'.";
-?>

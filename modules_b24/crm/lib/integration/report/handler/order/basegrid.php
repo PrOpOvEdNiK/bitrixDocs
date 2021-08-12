@@ -7,6 +7,7 @@ use Bitrix\Crm\Integration\Report\View\FunnelGrid;
 use Bitrix\Crm\PhaseSemantics;
 use Bitrix\Crm\Order\OrderStatus;
 use Bitrix\Crm\Binding\OrderContactCompanyTable;
+use Bitrix\Main\Loader;
 use Bitrix\Main\ORM\Query\Query;
 use Bitrix\Main\ORM\Fields\Relations\Reference;
 use Bitrix\Sale\Internals\OrderPropsValueTable;
@@ -17,6 +18,7 @@ use Bitrix\Report\VisualConstructor\IReportMultipleData;
 use Bitrix\Report\VisualConstructor\IReportMultipleGroupedData;
 use Bitrix\Report\VisualConstructor\IReportSingleData;
 use Bitrix\Crm\Integration\Report\Handler;
+use Bitrix\Sale\Internals\OrderTable;
 
 /**
  * Class Order
@@ -225,7 +227,7 @@ abstract class BaseGrid extends Handler\Base implements IReportSingleData, IRepo
 					$result[$key] = $userFilterItem;
 				}
 			}
-			if (strpos($name,'PROPERTY_') === 0)
+			if (mb_strpos($name, 'PROPERTY_') === 0)
 			{
 				$propertyId = (int)str_replace('PROPERTY_', '', $name);
 				if ("PROPERTY_{$propertyId}" !== $name)
@@ -251,7 +253,7 @@ abstract class BaseGrid extends Handler\Base implements IReportSingleData, IRepo
 
 				$propertyItterator++;
 			}
-			elseif (isset($orderFields[$name]) || strpos($name,'UF_') === 0)
+			elseif (isset($orderFields[$name]) || mb_strpos($name, 'UF_') === 0)
 			{
 				$result[$k] = $v;
 			}
@@ -340,7 +342,13 @@ abstract class BaseGrid extends Handler\Base implements IReportSingleData, IRepo
 		if ($this->loadedData === null)
 		{
 			$this->loadedData = [];
-			$query = new Query(\Bitrix\Crm\Order\Order::getInternalEntity());
+
+			if (!Loader::includeModule('sale'))
+			{
+				return $this->loadedData;
+			}
+
+			$query = new Query(OrderTable::getEntity());
 
 			$this->prepareQuery($query);
 			$exec = $query->exec();
@@ -379,6 +387,12 @@ abstract class BaseGrid extends Handler\Base implements IReportSingleData, IRepo
 	 */
 	public function prepare()
 	{
+		$userPermission = \CCrmPerms::GetCurrentUserPermissions();
+		if (!\CCrmAuthorizationHelper::CheckReadPermission(\CCrmOwnerType::Order, 0, $userPermission))
+		{
+			return [];
+		}
+
 		return $this->formatData($this->loadData());
 	}
 

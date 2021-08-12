@@ -39,10 +39,10 @@ class CWebDavVirtual extends CWebDavBase
 	
 	var $permission_real = "R";
 
-	function CWebDavVirtual($arStructure, $base_url, $arParams = array())
+	public function __construct($arStructure, $base_url, $arParams = array())
 	{
 		$arParams = (is_array($arParams) ? $arParams : array());
-		$this->CWebDavBase($base_url);
+		parent::__construct($base_url);
 		
 		$this->arStructure = $arStructure;
 		$this->permission =  $this->permission_real ;
@@ -229,7 +229,7 @@ class CWebDavVirtual extends CWebDavBase
 			$path = $options["section_id"]; 
 		elseif (is_set($options, "element_id"))
 			$path = $options["element_id"]; 
-		if (substr($path, 0, 1) != "/")
+		if (mb_substr($path, 0, 1) != "/")
 			$path = "/".$path; 
 		$id = md5($path);
 
@@ -247,7 +247,7 @@ class CWebDavVirtual extends CWebDavBase
 			"is_dir" => false, 
 			"is_file" => false, 
 			"parent_id" => false, 
-			"base_name" => substr(strrchr($path , '/'), 1)); 
+			"base_name" => mb_substr(strrchr($path, '/'), 1));
 		
 		$res = explode("/", $path_copy); 
 		// only folders supported right now !
@@ -306,7 +306,7 @@ class CWebDavVirtual extends CWebDavBase
 		$fspath = $path;
 		if (!empty($this->real_path_full))
 		{
-			if (strpos($path, $this->real_path_full) === false)
+			if (mb_strpos($path, $this->real_path_full) === false)
 				$fspath = str_replace(array("///", "//"), "/", $this->real_path_full."/".$path);
 			else 
 				$path = str_replace(array($this->real_path_full, "///", "//"), "/", $path);
@@ -440,8 +440,8 @@ class CWebDavVirtual extends CWebDavBase
 		elseif (!empty($path))
 		{
 			$path = $this->_udecode($path);
-			$strFileName = basename($path); 
-			$extention = strtolower(strrchr($strFileName, '.')); 
+			$strFileName = basename($path);
+			$extention = mb_strtolower(strrchr($strFileName, '.'));
 			if (in_array($method, array("COPY", "MOVE", "PUT")))
 			{
 				if (IsFileUnsafe($strFileName) || $strFileName == "index.php")

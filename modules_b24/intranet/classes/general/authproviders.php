@@ -137,12 +137,12 @@ class CIntranetAuthProvider extends CAuthProvider implements IProviderInterface
 					'ACTIVE' => 'Y',
 					'CONFIRM_CODE' => false,
 					'UF_DEPARTMENT' => intval($_REQUEST['item']),
-					'!EXTERNAL_AUTH_ID' => array('replica', 'email', 'bot', 'imconnector')
+					'!EXTERNAL_AUTH_ID' => \Bitrix\Main\UserTable::getExternalUserTypes()
 				);
 
 				$dbRes = CUser::GetList(
-					($by = 'last_name'),
-					($order = 'asc'),
+					'last_name',
+					'asc',
 					$arFilter,
 					array(
 						"FIELDS" => array('ID', 'NAME', 'LAST_NAME', 'SECOND_NAME', 'LOGIN', 'EMAIL', 'PERSONAL_PHOTO', 'PERSONAL_GENDER', 'WORK_POSITION', 'PERSONAL_PROFESSION')
@@ -276,7 +276,7 @@ class CIntranetAuthProvider extends CAuthProvider implements IProviderInterface
 			if ($arFilter)
 			{
 				//be careful with field list because of CUser::FormatName()
-				$dbRes = CUser::GetList(($by = 'last_name'), ($order = 'asc'),
+				$dbRes = CUser::GetList('last_name', 'asc',
 					$arFilter,
 					array(
 						"FIELDS" => array('ID', 'NAME', 'LAST_NAME', 'SECOND_NAME', 'LOGIN', 'EMAIL', 'PERSONAL_PHOTO', 'PERSONAL_GENDER', 'WORK_POSITION', 'PERSONAL_PROFESSION'),
@@ -345,20 +345,20 @@ class CIntranetAuthProvider extends CAuthProvider implements IProviderInterface
 			$arLastID = array();
 			foreach($arLRU as $val)
 			{
-				if (substr($val, 0, 2) == 'DR')
+				if (mb_substr($val, 0, 2) == 'DR')
 				{
-					$id = substr($val, 2);
+					$id = mb_substr($val, 2);
 					$arLast['DR'][] = $id;
 					$arLastID[$id] = $id;
 				}
-				else if (substr($val, 0, 1) == 'D')
+				else if (mb_substr($val, 0, 1) == 'D')
 				{
-					$id = substr($val, 1);
+					$id = mb_substr($val, 1);
 					$arLast['D'][] = $id;
 					$arLastID[$id] = $id;
 				}
-				else if (substr($val, 0, 2) == 'IU')
-					$arLast['U'][] = substr($val, 2);
+				else if (mb_substr($val, 0, 2) == 'IU')
+					$arLast['U'][] = mb_substr($val, 2);
 			}
 			$dbRes = CIBlockSection::GetList(
 				array('ID' => 'ASC'),
@@ -397,7 +397,7 @@ class CIntranetAuthProvider extends CAuthProvider implements IProviderInterface
 			if (!empty($arLast['U']))
 			{
 				//be careful with field list because of CUser::FormatName()
-				$res = CUser::GetList(($by="LAST_NAME"), ($order="asc"),
+				$res = CUser::GetList("LAST_NAME", "asc",
 					array("ID"=>implode("|", $arLast['U'])),
 					array("FIELDS" => array('ID', 'NAME', 'LAST_NAME', 'SECOND_NAME', 'LOGIN', 'EMAIL', 'PERSONAL_PHOTO', 'PERSONAL_GENDER', 'WORK_POSITION', 'PERSONAL_PROFESSION'))
 				);
@@ -536,7 +536,7 @@ class CIntranetAuthProvider extends CAuthProvider implements IProviderInterface
 		}
 		if(!empty($arID['U']))
 		{
-			$res = CUser::GetList(($by="id"), ($order=""), array("ID"=>implode("|", $arID['U'])), array("FIELDS"=>array('ID', 'EMAIL', 'LOGIN', 'SECOND_NAME', 'LAST_NAME', 'NAME')));
+			$res = CUser::GetList("id", '', array("ID"=>implode("|", $arID['U'])), array("FIELDS"=>array('ID', 'EMAIL', 'LOGIN', 'SECOND_NAME', 'LAST_NAME', 'NAME')));
 			while($arUser = $res->Fetch())
 				$arResult["IU".$arUser["ID"]] = array("provider"=>GetMessage("authprov_name_out_user1"), "name"=>CUser::FormatName(CSite::GetNameFormat(false), $arUser, true, false));
 		}

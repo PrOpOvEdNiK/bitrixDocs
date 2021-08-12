@@ -35,7 +35,16 @@ class Task
 		{
 			return false;
 		}
-		$task = new \CTaskItem($taskId, static::getUser()->GetID());
+
+		try
+		{
+			$task = new \CTaskItem($taskId, static::getUser()->GetID());
+		}
+		catch (\CTaskAssertException $e)
+		{
+			return false;
+		}
+
 		$access = $task->checkCanRead();
 
 		return !!$access;
@@ -114,9 +123,9 @@ class Task
 		if($task['DESCRIPTION'] != '')
 		{
 			$description = \CTextParser::clearAllTags($task['DESCRIPTION']);
-			if(strlen($description) > 100)
+			if(mb_strlen($description) > 100)
 			{
-				$description = substr($description, 0, 100).'...';
+				$description = mb_substr($description, 0, 100).'...';
 			}
 
 			$grid[] = Array(
@@ -147,7 +156,7 @@ class Task
 		return $attach;
 	}
 
-	protected function getUser()
+	protected static function getUser()
 	{
 		return User::get();
 	}

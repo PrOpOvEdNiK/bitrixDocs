@@ -1,9 +1,9 @@
 <?php
+
 IncludeModuleLangFile(__FILE__);
 
 class CAllCatalogDocs
 {
-
 	static $types = array(
 		"A" => "CCatalogArrivalDocs",
 		"M" => "CCatalogMovingDocs",
@@ -101,17 +101,17 @@ class CAllCatalogDocs
 	 * @param $arFields
 	 * @return bool
 	 */
-	protected function checkFields($action, &$arFields)
+	protected static function checkFields($action, &$arFields)
 	{
 		global $DB;
 		global $APPLICATION;
 
-		if((($action == 'ADD') || isset($arFields["DOC_TYPE"])) && strlen($arFields["DOC_TYPE"]) <= 0 && !isset(self::$types[$arFields["DOC_TYPE"]]))
+		if((($action == 'ADD') || isset($arFields["DOC_TYPE"])) && $arFields["DOC_TYPE"] == '' && !isset(self::$types[$arFields["DOC_TYPE"]]))
 		{
 			$APPLICATION->ThrowException(GetMessage("CAT_DOC_WRONG_TYPE"));
 			return false;
 		}
-		if((($action == 'ADD') || isset($arFields["SITE_ID"])) && strlen($arFields["SITE_ID"]) <=0 )
+		if((($action == 'ADD') || isset($arFields["SITE_ID"])) && $arFields["SITE_ID"] == '' )
 		{
 			$APPLICATION->ThrowException(GetMessage("CAT_DOC_WRONG_SITE_ID"));
 			return false;
@@ -124,14 +124,13 @@ class CAllCatalogDocs
 		{
 			$arFields['~DATE_STATUS'] = $DB->GetNowFunction();
 		}
-		if(isset($arFields["DATE_DOCUMENT"]) && (!CDataBase::IsDate($arFields["DATE_DOCUMENT"])))
+		if(isset($arFields["DATE_DOCUMENT"]) && (!$DB->IsDate($arFields["DATE_DOCUMENT"])))
 		{
 			unset($arFields["DATE_DOCUMENT"]);
 			$arFields['~DATE_DOCUMENT'] = $DB->GetNowFunction();
 		}
 		return true;
 	}
-
 
 	/**
 	 * @param $documentId
@@ -159,9 +158,9 @@ class CAllCatalogDocs
 			if ('Y' != $arDocType['STATUS'])
 			{
 				$documentClass = self::$types[$arDocType["DOC_TYPE"]];
-				if(strlen($arDocType["CURRENCY"]) > 0)
+				if($arDocType["CURRENCY"] <> '')
 					$currency = $arDocType["CURRENCY"];
-				if(strlen($arDocType["CONTRACTOR_ID"]) > 0)
+				if($arDocType["CONTRACTOR_ID"] <> '')
 					$contractorId = $arDocType["CONTRACTOR_ID"];
 
 				$result = $documentClass::conductDocument($documentId, $userId, $currency, $contractorId);

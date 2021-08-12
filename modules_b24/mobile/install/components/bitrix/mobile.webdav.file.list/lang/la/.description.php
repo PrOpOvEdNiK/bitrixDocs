@@ -1,4 +1,0 @@
-<?
-$MESS["COMP_WEBDAV_RECENT_MOBILE_DESCR"] = "Archivos";
-$MESS["COMP_WEBDAV_RECENT_MOBILE_TITLE"] = "Archivos (móvil)";
-?>

@@ -1,3 +1,0 @@
-<?
-$MESS["DISK_B24_FEATURES_DISK_FOLDER_SHARING_DESCR"] = "Votre offre actuelle ne vous permet de partager les fichiers que sur le Lecteur avec vos collègues. Si vous voulez rendre l'intégralité du dossier disponible aux autres utilisateurs et leur permettre d'afficher, éditer et téléverser les fichiers, vous pouvez passer sur une offre commerciale. Le partage de dossier est disponible avec les offres commerciales sélectionnées.";
-?>

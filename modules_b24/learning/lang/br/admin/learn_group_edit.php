@@ -1,3 +1,0 @@
-<?
-$MESS["LEARNING_ADMIN_CHANGE_ATTACHED_COURSE"] = "selecionar";
-?>

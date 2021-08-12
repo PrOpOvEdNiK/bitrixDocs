@@ -1,4 +1,5 @@
-<?
+<?php
+
 IncludeModuleLangFile(__FILE__);
 
 class CListsSocnet
@@ -52,7 +53,7 @@ waiting for integration lists into events_user_view
 		);
 	}
 
-	function OnFillSocNetMenu(&$arResult, $arParams = array())
+	public static function OnFillSocNetMenu(&$arResult, $arParams = array())
 	{
 		global $USER;
 
@@ -65,7 +66,7 @@ waiting for integration lists into events_user_view
 			CSocNetUser::IsCurrentUserModuleAdmin()
 		));
 
-		$arResult["Title"]["group_lists"] = (array_key_exists("ActiveFeatures", $arResult) && array_key_exists("group_lists", $arResult["ActiveFeatures"]) && strlen($arResult["ActiveFeatures"]["group_lists"]) > 0 ? $arResult["ActiveFeatures"]["group_lists"] : GetMessage("LISTS_SOCNET_TAB"));
+		$arResult["Title"]["group_lists"] = (array_key_exists("ActiveFeatures", $arResult) && array_key_exists("group_lists", $arResult["ActiveFeatures"]) && $arResult["ActiveFeatures"]["group_lists"] <> '' ? $arResult["ActiveFeatures"]["group_lists"] : GetMessage("LISTS_SOCNET_TAB"));
 
 		if (!array_key_exists("SEF_MODE", $arResult) || $arResult["SEF_MODE"] != "N")
 		{
@@ -84,7 +85,7 @@ waiting for integration lists into events_user_view
 		}
 	}
 
-	function OnParseSocNetComponentPath(&$arUrlTemplates, &$arCustomPagesPath, $arParams)
+	public static function OnParseSocNetComponentPath(&$arUrlTemplates, &$arCustomPagesPath, $arParams)
 	{
 		if ($arParams["SEF_MODE"] == "N")
 		{
@@ -155,7 +156,7 @@ waiting for integration lists into events_user_view
 		);
 	}
 
-	function OnInitSocNetComponentVariables(&$arVariableAliases, &$arCustomPagesPath)
+	public static function OnInitSocNetComponentVariables(&$arVariableAliases, &$arCustomPagesPath)
 	{
 		$arVariableAliases['list_id'] = 'list_id';
 		$arVariableAliases['section_id'] = 'section_id';
@@ -168,4 +169,3 @@ waiting for integration lists into events_user_view
 		$arVariableAliases['ID'] = 'ID';
 	}
 }
-?>

@@ -1,5 +1,0 @@
-<?
-$MESS["LANDING_BLOCK_32.2.IMG_ONE_BIG_NAME"] = "Grande image centrée";
-$MESS["LANDING_BLOCK_32.2.IMG_ONE_BIG_NAME2"] = "Bannière avec espacement";
-$MESS["LANDING_BLOCK_32.2.IMG_ONE_BIG_NODES_LANDINGBLOCKNODEIMG"] = "Image";
-?>

@@ -1,4 +1,0 @@
-<?
-$MESS["SALE_HPS_WEBMONEY_PAYMENT_DESC"] = "Оплата #ID# від #DATE_INSERT#";
-$MESS["SALE_HPS_WEBMONEY_BUTTON"] = "Сплатити";
-?>

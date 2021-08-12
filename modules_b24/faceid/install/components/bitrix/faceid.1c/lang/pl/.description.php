@@ -1,3 +1,0 @@
-<?
-$MESS["FIT1C_SERVICES_PARENT_SECTION"] = "Ustawienia";
-?>

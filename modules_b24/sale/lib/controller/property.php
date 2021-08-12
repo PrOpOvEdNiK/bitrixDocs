@@ -425,6 +425,11 @@ class Property extends Controller
 				'REQUIRED' => 'Y',
 				'RLABEL' => $personType['NAME']
 			],
+			'ENTITY_TYPE' => [
+				'TYPE' => 'STRING',
+				'LABEL' => 'ENTITY_TYPE',
+				'HIDDEN' => 'Y',
+			],
 			'PROPS_GROUP_ID' => [
 				'TYPE' => 'ENUM',
 				'LABEL' => Loc::getMessage('F_PROPS_GROUP_ID'),
@@ -503,7 +508,7 @@ class Property extends Controller
 		{
 			foreach ($commonSettings['TYPE']['OPTIONS'] as $key => $option)
 			{
-				$commonSettings['TYPE']['OPTIONS'][$key] = substr($option, 0, strpos($option, '[') - 1);
+				$commonSettings['TYPE']['OPTIONS'][$key] = mb_substr($option, 0, mb_strpos($option, '[') - 1);
 			}
 		}
 
@@ -793,38 +798,18 @@ class Property extends Controller
 
 	protected function validateRelations()
 	{
-		$hasRelations = false;
 		$relationsSettings = $this->getRelationSettings();
 
 		foreach ($relationsSettings as $name => $input)
 		{
 			if (($value = $this->property['RELATIONS'][$name]) && $value != array(''))
 			{
-				$hasRelations = true;
 				if ($error = Manager::getError($input, $value))
 					$errors [] = $input['LABEL'].': '.implode(', ', $error);
 			}
 			else
 			{
 				$relations[$name] = array();
-			}
-		}
-
-		if ($hasRelations)
-		{
-			if ($this->property['IS_LOCATION4TAX'] === 'Y')
-			{
-				$this->errors[] = Loc::getMessage('ERROR_LOCATION4TAX_RELATION_NOT_ALLOWED');
-			}
-
-			if ($this->property['IS_EMAIL'] === 'Y')
-			{
-				$this->errors[] = Loc::getMessage('ERROR_EMAIL_RELATION_NOT_ALLOWED');
-			}
-
-			if ($this->property['IS_PROFILE_NAME'] === 'Y')
-			{
-				$this->errors[] = Loc::getMessage('ERROR_PROFILE_NAME_RELATION_NOT_ALLOWED');
 			}
 		}
 	}
@@ -1167,7 +1152,7 @@ class Property extends Controller
 
 	static public function prepareFields(array $fields)
 	{
-		$fields['TYPE'] = strtoupper($fields['TYPE']);
+		$fields['TYPE'] = mb_strtoupper($fields['TYPE']);
 
 		return $fields;
 	}

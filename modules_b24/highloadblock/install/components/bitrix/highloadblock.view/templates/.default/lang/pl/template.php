@@ -1,5 +1,0 @@
-<?
-$MESS["HLBLOCK_ROW_VIEW_BACK_TO_LIST"] = "Powrót do listy";
-$MESS["HLBLOCK_ROW_VIEW_NAME_COLUMN"] = "Pole";
-$MESS["HLBLOCK_ROW_VIEW_VALUE_COLUMN"] = "Wartość";
-?>

@@ -1,4 +1,7 @@
 <?
+/**
+ * Class CCalendarUserSettings
+ */
 class CCalendarUserSettings
 {
 	private static
@@ -117,14 +120,14 @@ class CCalendarUserSettings
 
 		if ($str !== false && CheckSerializedData($str))
 		{
-			$ids = unserialize($str);
+			$ids = unserialize($str, ['allowed_classes' => false]);
 			if (is_array($ids) && count($ids) > 0)
 			{
 				foreach($ids as $id)
 				{
-					if (intVal($id) > 0)
+					if (intval($id) > 0)
 					{
-						$res[] = intVal($id);
+						$res[] = intval($id);
 					}
 				}
 			}
@@ -174,14 +177,14 @@ class CCalendarUserSettings
 
 		if ($str !== false && CheckSerializedData($str))
 		{
-			$ids = unserialize($str);
+			$ids = unserialize($str, ['allowed_classes' => false]);
 			if (is_array($ids) && count($ids) > 0)
 			{
 				foreach($ids as $id)
 				{
-					if (intVal($id) > 0)
+					if (intval($id) > 0)
 					{
-						$res[] = intVal($id);
+						$res[] = intval($id);
 					}
 				}
 			}
@@ -217,33 +220,12 @@ class CCalendarUserSettings
 
 		if (class_exists('CUserOptions') && $userId > 0)
 		{
-			//CUserOptions::DeleteOption("calendar", "hidden_sections");
 			$res = CUserOptions::GetOption("calendar", "hidden_sections", false, $userId);
 			if ($res !== false && is_array($res) && isset($res['hidden_sections']))
 				$res = explode(',', $res['hidden_sections']);
 		}
 		if (!is_array($res))
 			$res = array();
-
-		return $res;
-	}
-
-	public static function getSectionCustomization($userId = false)
-	{
-		$res = array(
-//			'tasks' => array(
-//				'name' => 'awdawd',
-//				'color' => '#FF0000'
-//			)
-		);
-
-		if (class_exists('CUserOptions') && $userId > 0)
-		{
-			//CUserOptions::DeleteOption("calendar", "hidden_sections");
-//			$res = CUserOptions::GetOption("calendar", "hidden_sections", false, $userId);
-//			if ($res !== false && is_array($res) && isset($res['hidden_sections']))
-//				$res = explode(',', $res['hidden_sections']);
-		}
 
 		return $res;
 	}

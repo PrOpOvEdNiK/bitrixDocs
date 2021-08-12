@@ -1,6 +1,0 @@
-<?
-$MESS['LEARNING_COURSE_DETAIL_NAME'] = 'Kurso duomenys';
-$MESS['LEARNING_COURSE_DETAIL_DESC'] = 'Kurso duomenys';
-$MESS['LEARNING_SERVICE'] = 'Apmokymas';
-$MESS['LEARNING_COURSE_SERVICE'] = 'Kursai';
-?>

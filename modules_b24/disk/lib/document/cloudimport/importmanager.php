@@ -93,7 +93,7 @@ final class ImportManager implements IErrorable
 
 		$cloudImport = Entry::add(array(
 			'USER_ID' => $this->documentHandler->getUserId(),
-			'SERVICE' => $this->documentHandler->getCode(),
+			'SERVICE' => $this->documentHandler::getCode(),
 			'SERVICE_OBJECT_ID' => $fileData->getId(),
 			'ETAG' => $fileMetadata['etag'],
 			'CONTENT_SIZE' => $fileMetadata['size'],
@@ -118,7 +118,7 @@ final class ImportManager implements IErrorable
 		$cloudImport = Entry::add(array(
 			'OBJECT_ID' => $cloudImport->getObjectId(),
 			'USER_ID' => $this->documentHandler->getUserId(),
-			'SERVICE' => $this->documentHandler->getCode(),
+			'SERVICE' => $this->documentHandler::getCode(),
 			'SERVICE_OBJECT_ID' => $fileData->getId(),
 			'ETAG' => $fileMetadata['etag'],
 			'CONTENT_SIZE' => $fileMetadata['size'],
@@ -302,7 +302,7 @@ final class ImportManager implements IErrorable
 			array(
 				'NAME' => $name,
 				'CREATED_BY' => $this->documentHandler->getUserId(),
-				'CONTENT_PROVIDER' => $this->documentHandler->getCode(),
+				'CONTENT_PROVIDER' => $this->documentHandler::getCode(),
 			),
 			array(),
 			true
@@ -341,7 +341,7 @@ final class ImportManager implements IErrorable
 			$originalExtension = TypeFile::getExtensionByMimeType($mimeType);
 		}
 
-		$newExtension = strtolower(trim(getFileExtension($fileName), '.'));
+		$newExtension = mb_strtolower(trim(getFileExtension($fileName), '.'));
 		if ($originalExtension !== $newExtension && $originalExtension !== null)
 		{
 			return getFileNameWithoutExtension($fileName) . '.' . $originalExtension;
@@ -414,7 +414,7 @@ final class ImportManager implements IErrorable
 	{
 		foreach ($required as $item)
 		{
-			if(!isset($inputParams[$item]) || (!$inputParams[$item] && !(is_string($inputParams[$item]) && strlen($inputParams[$item]))))
+			if(!isset($inputParams[$item]) || (!$inputParams[$item] && !(is_string($inputParams[$item]) && mb_strlen($inputParams[$item]))))
 			{
 				if($item === 'size' && is_numeric($inputParams[$item]) && ((int)$inputParams[$item]) === 0)
 				{

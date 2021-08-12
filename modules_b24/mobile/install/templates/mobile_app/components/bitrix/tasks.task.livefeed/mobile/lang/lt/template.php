@@ -1,4 +1,0 @@
-<?
-$MESS["TASKS_SONET_LOG_DESCRIPTION"] = "aprašymas";
-$MESS["TASKS_SONET_LOG_RESPONSIBLE_ID"] = "Atsakingas";
-?>

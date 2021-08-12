@@ -1,3 +1,0 @@
-<?
-$MESS["CRM_ENTITY_RQ_CONV_INTRO"] = "Jūs nebereikės įvedinėti rekvizitus kaskart, kai sukuriate naują sąskaitą. Pateikite kontaktinius duomenis vieną kartą ir naudoti juos visuose CRM savybėse. Mes rekomenduojame jums konvertuoti senus rekvizitus į naujus tolesniam naudojimui. <b>Laukas \"Adresas\" irgi bus nukopijuotas bet paslėptas.</b> <a id=\"#EXEC_ID#\" href=\"#EXEC_URL#\">Konvertuoti</a> <a id=\"#SKIP_ID#\" href=\"#SKIP_URL#\">Praleisti</a>";
-?>

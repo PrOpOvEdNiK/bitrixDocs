@@ -1,7 +1,7 @@
-<?
+<?php
+
 class CAllSocNetLogFavorites
 {
-
 	public static function Change($user_id, $log_id, array $params = array('TRIGGER_EVENT' => true))
 	{
 		global $DB, $APPLICATION;
@@ -22,6 +22,9 @@ class CAllSocNetLogFavorites
 		$strSQL = "SELECT * FROM b_sonet_log_favorites WHERE USER_ID = ".$user_id." AND LOG_ID = ".$log_id;
 		$dbRes = $DB->Query($strSQL, false, "FILE: ".__FILE__."<br> LINE: ".__LINE__);
 
+		$pool = \Bitrix\Main\Application::getInstance()->getConnectionPool();
+		$pool->useMasterOnly(true);
+
 		$result = false;
 		if (!$arRes = $dbRes->Fetch())
 		{
@@ -40,6 +43,8 @@ class CAllSocNetLogFavorites
 				$APPLICATION->ThrowException(GetMessage("SONET_LF_CANNOT_INSERT"), "CANNOT_DELETE");
 		}
 
+		$pool->useMasterOnly(false);
+
 		if(
 			$result
 			&& (!isset($params['TRIGGER_EVENT']) || $params['TRIGGER_EVENT'] === true)
@@ -54,4 +59,3 @@ class CAllSocNetLogFavorites
 		return $result;
 	}
 }
-?>

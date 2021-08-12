@@ -44,19 +44,19 @@ class CIMMail
 				continue;
 			}
 
-			if (!$arNotify["TO_USER_LID"] || StrLen($arNotify["TO_USER_LID"]) <= 0)
+			if (!$arNotify["TO_USER_LID"] || $arNotify["TO_USER_LID"] == '')
 			{
 				$arNotify["TO_USER_LID"] = $defSiteID;
-				if (!$arNotify["TO_USER_LID"] || StrLen($arNotify["TO_USER_LID"]) <= 0)
+				if (!$arNotify["TO_USER_LID"] || $arNotify["TO_USER_LID"] == '')
 				{
 					unset($arUnsendNotify[$id]);
 					continue;
 				}
 			}
-			if (strlen($arNotify["MESSAGE_OUT"]) <= 0)
+			if ($arNotify["MESSAGE_OUT"] == '')
 				$arNotify["MESSAGE_OUT"] = $arNotify["MESSAGE"];
 
-			if (!(isset($arNotify["EMAIL_TEMPLATE"]) && strlen($arNotify["EMAIL_TEMPLATE"]) > 0))
+			if (!(isset($arNotify["EMAIL_TEMPLATE"]) && $arNotify["EMAIL_TEMPLATE"] <> ''))
 				$arNotify["EMAIL_TEMPLATE"] = "IM_NEW_NOTIFY";
 
 			$arNotify["USER"] = \Bitrix\Im\User::formatFullNameFromDatabase(array(
@@ -123,11 +123,11 @@ class CIMMail
 				"SENDER_SECOND_NAME" => $arNotify["FROM_USER_SECOND_NAME"], // legacy
 				"EMAIL_TO" => $arNotify["TO_USER_EMAIL"],
 				"TITLE" => trim($arNotify["NOTIFY_TITLE"]),
-				"MESSAGE" => CTextParser::convert4mail(str_replace("#BR#", "\n", strip_tags($arNotify["MESSAGE_OUT"]))),
-				"MESSAGE_50" => $CTP->html_cut(str_replace(array("<br>","<br/>","<br />", "#BR#"), Array(" ", " ", " ", " "), nl2br(CTextParser::convert4mail(strip_tags($arNotify["MESSAGE_OUT"])))), 50),
+				"MESSAGE" => $CTP->convert4mail(str_replace("#BR#", "\n", strip_tags($arNotify["MESSAGE_OUT"]))),
+				"MESSAGE_50" => $CTP->html_cut(str_replace(array("<br>","<br/>","<br />", "#BR#"), Array(" ", " ", " ", " "), nl2br($CTP->convert4mail(strip_tags($arNotify["MESSAGE_OUT"])))), 50),
 			);
 
-			if (strlen($arFields['TITLE'])>0)
+			if ($arFields['TITLE'] <> '')
 				$arFields["MESSAGE_50"] = $arFields['TITLE'];
 			else
 				$arFields["TITLE"] = $arFields['MESSAGE_50'];
@@ -158,6 +158,8 @@ class CIMMail
 		$arToUser = Array();
 		$arFromUser = Array();
 		$arDialog = Array();
+		$parser = new CTextParser();
+
 		foreach($arUnsendMessage as $id => $arMessage)
 		{
 			if (!isset($arMark[$arMessage["TO_USER_ID"]][$arMessage["CHAT_ID"]]) || $arMark[$arMessage["TO_USER_ID"]][$arMessage["CHAT_ID"]] < $arMessage["ID"])
@@ -187,16 +189,16 @@ class CIMMail
 				continue;
 			}
 
-			if (strlen($arMessage["MESSAGE_OUT"]) <= 0)
+			if ($arMessage["MESSAGE_OUT"] == '')
 				$arMessage["MESSAGE_OUT"] = $arMessage["MESSAGE"];
 
 			if (!isset($arToUser[$arMessage["TO_USER_ID"]]))
 			{
 				$siteID = $arMessage["TO_USER_LID"];
-				if ($siteID == false || StrLen($siteID) <= 0)
+				if ($siteID == false || $siteID == '')
 				{
 					$siteID = $defSiteID;
-					if ($siteID == false || StrLen($siteID) <= 0)
+					if ($siteID == false || $siteID == '')
 						continue;
 				}
 
@@ -248,7 +250,7 @@ class CIMMail
 
 			$arDialog[$arMessage["TO_USER_ID"]][$arMessage["FROM_USER_ID"]][] = Array(
 				'DATE_CREATE' => FormatDate("FULL", $arMessage["DATE_CREATE"]),
-				'MESSAGE' => CTextParser::convert4mail(str_replace("#BR#", "\n", strip_tags($arMessage["MESSAGE_OUT"])))
+				'MESSAGE' => $parser->convert4mail(str_replace("#BR#", "\n", strip_tags($arMessage["MESSAGE_OUT"])))
 			);
 		}
 
@@ -341,9 +343,9 @@ class CIMMail
 		if (COption::GetOptionString('extranet', 'extranet_site', '') == SITE_ID)
 			return false;
 
-		if (isset($_SESSION['aExtranetUser_'.$USER->GetID()][SITE_ID]))
+		if (isset(\Bitrix\Main\Application::getInstance()->getKernelSession()['aExtranetUser_'.$USER->GetID()][SITE_ID]))
 		{
-			if (!$_SESSION['aExtranetUser_'.$USER->GetID()][SITE_ID])
+			if (!\Bitrix\Main\Application::getInstance()->getKernelSession()['aExtranetUser_'.$USER->GetID()][SITE_ID])
 				return false;
 		}
 		else if (CModule::IncludeModule('extranet') && !CExtranet::IsIntranetUser())
@@ -364,7 +366,7 @@ class CIMMail
 		if (!CUserOptions::GetOption('global', 'davex_mailbox'))
 		{
 			$arUser = CUser::GetList(
-				$by = 'ID', $order = 'ASC',
+				'ID', 'ASC',
 				array('ID_EQUAL_EXACT' => $USER->GetID()),
 				array('SELECT' => array('UF_BXDAVEX_MAILBOX'), 'FIELDS' => array('ID'))
 			)->Fetch();

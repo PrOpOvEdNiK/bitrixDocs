@@ -41,16 +41,18 @@ final class Avatar
 			$src = false;
 			if ($avatarId > 0)
 			{
-				/** @noinspection PhpDynamicAsStaticMethodCallInspection */
+
 				$imageFile = \CFile::getFileArray($avatarId);
 				if ($imageFile !== false)
 				{
-					/** @noinspection PhpDynamicAsStaticMethodCallInspection */
+
 					$fileTmp = \CFile::resizeImageGet(
 						$imageFile,
 						array("width" => $width, "height" => $height),
 						BX_RESIZE_IMAGE_EXACT,
-						false
+						false,
+						false,
+						\Bitrix\Main\Context::getCurrent()->getRequest()->isAjaxRequest()
 					);
 					$src = $fileTmp["src"];
 				}

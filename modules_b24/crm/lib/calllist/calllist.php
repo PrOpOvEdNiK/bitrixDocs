@@ -492,24 +492,9 @@ final class CallList
 		));
 	}
 	
-	public static function getStatusList()
+	public static function getStatusList(): array
 	{
-		if(!is_null(self::$statusList))
-			return self::$statusList;
-
-		self::$statusList = array();
-		$cursor = \CCrmStatus::GetList(array('SORT' => 'ASC'), array(
-			'ENTITY_ID' => 'CALL_LIST'
-		));
-		while ($row = $cursor->Fetch())
-		{
-			self::$statusList[] = array(
-				'SORT' => $row['SORT'],
-				'STATUS_ID' => $row['STATUS_ID'],
-				'NAME' => $row['NAME'],
-			);
-		}
-		return self::$statusList;
+		return array_values(\CCrmStatus::GetStatus('CALL_LIST'));
 	}
 
 	/**
@@ -979,7 +964,7 @@ final class CallList
 				}
 				unset($gridFilter['COMMUNICATION_TYPE']);
 			}
-			elseif ($k != 'ID' && $k != 'LOGIC' && $k != '__INNER_FILTER' && $k != '__JOINS' && $k != '__CONDITIONS' && strpos($k, 'UF_') !== 0 && preg_match('/^[^\=\%\?\>\<]{1}/', $k) === 1)
+			elseif ($k != 'ID' && $k != 'LOGIC' && $k != '__INNER_FILTER' && $k != '__JOINS' && $k != '__CONDITIONS' && mb_strpos($k, 'UF_') !== 0 && preg_match('/^[^\=\%\?\>\<]{1}/', $k) === 1)
 			{
 				$gridFilter['%'.$k] = $v;
 				unset($gridFilter[$k]);

@@ -1,4 +1,0 @@
-<?
-$MESS["LISTS_CONTROLLER_ERROR_REQUIRED_PARAMETER"] = "El parámetro #PARAM# es requerido.";
-$MESS["LISTS_CONTROLLER_ERROR_UNKNOWN_ACTION"] = "Acción desconocida: #ACTION#.";
-?>

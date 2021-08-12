@@ -121,14 +121,21 @@ class WorkTime
 			//Dialog is accepted by the operator.
 			if(
 				$this->session['OPERATOR_ID'] > 0 && $this->session['STATUS'] >= Session::STATUS_ANSWER &&
-				!$queueManager->isRemoveSession($finish, $vote)
+				$queueManager->isRemoveSession($finish, $vote) === false
 			)
 			{
-				$result = $queueManager->isOperatorActive($this->session['OPERATOR_ID']);
+				if($queueManager->isOperatorActive($this->session['OPERATOR_ID'], true) === true)
+				{
+					$result = true;
+				}
+				else
+				{
+					$result = false;
+				}
 			}
 			else
 			{
-				$result = $queueManager->isOperatorsActiveLine();
+				$result = $queueManager->isOperatorsActiveLine(true);
 			}
 		}
 		else
@@ -145,11 +152,6 @@ class WorkTime
 	 * @param bool $finish
 	 * @param bool $vote
 	 * @return bool
-	 * @throws \Bitrix\Main\ArgumentException
-	 * @throws \Bitrix\Main\LoaderException
-	 * @throws \Bitrix\Main\ObjectException
-	 * @throws \Bitrix\Main\ObjectPropertyException
-	 * @throws \Bitrix\Main\SystemException
 	 */
 	public function automaticAddMessage($finish = false, $vote = false)
 	{
@@ -191,11 +193,6 @@ class WorkTime
 	 * @param bool $finish
 	 * @param bool $vote
 	 * @return bool|int
-	 * @throws \Bitrix\Main\ArgumentException
-	 * @throws \Bitrix\Main\LoaderException
-	 * @throws \Bitrix\Main\ObjectException
-	 * @throws \Bitrix\Main\ObjectPropertyException
-	 * @throws \Bitrix\Main\SystemException
 	 */
 	public function sendMessage($finish = false, $vote = false)
 	{
@@ -210,15 +207,15 @@ class WorkTime
 		)
 		{
 			$result = Im::addMessage([
-				"TO_CHAT_ID" => $this->session['CHAT_ID'],
-				"MESSAGE" => $this->config['WORKTIME_DAYOFF_TEXT'],
-				"SYSTEM" => 'Y',
-				"IMPORTANT_CONNECTOR" => 'Y',
-				"PARAMS" => [
-					"CLASS" => "bx-messenger-content-item-ol-output",
-					"IMOL_FORM" => "offline",
-					"TYPE" => "lines",
-					"COMPONENT_ID" => "bx-imopenlines-message",
+				'TO_CHAT_ID' => $this->session['CHAT_ID'],
+				'MESSAGE' => $this->config['WORKTIME_DAYOFF_TEXT'],
+				'SYSTEM' => 'Y',
+				'IMPORTANT_CONNECTOR' => 'Y',
+				'PARAMS' => [
+					'"CLASS" '=> 'bx-messenger-content-item-ol-output',
+					'IMOL_FORM' => 'offline',
+					'TYPE' => 'lines',
+					'COMPONENT_ID' => 'bx-imopenlines-message',
 				]
 			]);
 

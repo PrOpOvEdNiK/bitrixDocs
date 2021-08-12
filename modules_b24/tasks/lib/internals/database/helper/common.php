@@ -3,7 +3,7 @@
  * Bitrix Framework
  * @package tasks
  * @copyright 2001-2015 Bitrix
- * 
+ *
  * This class is for internal use only, not a part of public API.
  * It can be changed at any time without notification.
  *
@@ -211,7 +211,7 @@ abstract class Common
 
 	public static function createIndex($tableName, $ixNamePostfix, $columns = array(), $unique = false)
 	{
-		if(!strlen($tableName) || !strlen($ixNamePostfix) || !is_array($columns) || empty($columns))
+		if(!mb_strlen($tableName) || !mb_strlen($ixNamePostfix) || !is_array($columns) || empty($columns))
 			return false;
 
 		$dbConnection = Main\HttpApplication::getConnection();
@@ -223,7 +223,7 @@ abstract class Common
 
 		$ixName = static::getIndexName($tableName, $ixNamePostfix, $columns);
 
-		if(strlen($ixName) > 30)
+		if(mb_strlen($ixName) > 30)
 			return false;
 
 		if(!static::checkIndexNameExists($ixName, $tableName))
@@ -290,57 +290,23 @@ abstract class Common
 		$sqlHelper = $connection->getSqlHelper();
 
 		$query = $prefix = '';
-		if ($connection instanceof DB\MysqlCommonConnection)
+
+		foreach ($items as $item)
 		{
-			foreach ($items as $item)
-			{
-				list($prefix, $values) = $sqlHelper->prepareInsert($tableName, $item);
+			list($prefix, $values) = $sqlHelper->prepareInsert($tableName, $item);
 
-				$query .= ($query? ', ' : ' ') . '(' . $values . ')';
-				if(strlen($query) > 2048)
-				{
-					$connection->queryExecute("INSERT INTO {$tableName} ({$prefix}) VALUES {$query}");
-					$query = '';
-				}
-			}
-			unset($item);
-
-			if ($query && $prefix)
+			$query .= ($query? ', ' : ' ') . '(' . $values . ')';
+			if(mb_strlen($query) > 2048)
 			{
 				$connection->queryExecute("INSERT INTO {$tableName} ({$prefix}) VALUES {$query}");
+				$query = '';
 			}
 		}
-		elseif ($connection instanceof DB\MssqlConnection)
-		{
-			$valueData = array();
-			foreach ($items as $item)
-			{
-				list($prefix, $values) = $sqlHelper->prepareInsert($tableName, $item);
-				$valueData[] = "SELECT {$values}";
-			}
-			unset($item);
+		unset($item);
 
-			$valuesSql = implode(' UNION ALL ', $valueData);
-			if ($valuesSql && $prefix)
-			{
-				$connection->queryExecute("INSERT INTO {$tableName} ({$prefix}) $valuesSql");
-			}
-		}
-		elseif ($connection instanceof DB\OracleConnection)
+		if ($query && $prefix)
 		{
-			$valueData = array();
-			foreach ($items as $item)
-			{
-				list($prefix, $values) = $sqlHelper->prepareInsert($tableName, $item);
-				$valueData[] = "SELECT {$values} FROM dual";
-			}
-			unset($item);
-
-			$valuesSql = implode(' UNION ALL ', $valueData);
-			if ($valuesSql && $prefix)
-			{
-				$connection->queryExecute("INSERT INTO {$tableName} ({$prefix}) $valuesSql");
-			}
+			$connection->queryExecute("INSERT INTO {$tableName} ({$prefix}) VALUES {$query}");
 		}
 	}
 

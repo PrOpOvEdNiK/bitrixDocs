@@ -13,7 +13,7 @@ require_once($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/classes/general/adm
 
 class CMpNotifications
 {
-	function OnAdminInformerInsertItemsHandlerMP() {
+	public static function OnAdminInformerInsertItemsHandlerMP() {
 		global $USER;
 		if(LICENSE_KEY == "DEMO")
 		{
@@ -26,7 +26,7 @@ class CMpNotifications
 		$daysCheck = intval(COption::GetOptionString('main', 'update_autocheck', '1'));
 		if($daysCheck > 0)
 		{
-			$arModulesResult = unserialize(COption::GetOptionString("main", "last_mp_modules_result"));
+			$arModulesResult = unserialize(COption::GetOptionString("main", "last_mp_modules_result"), ['allowed_classes' => false]);
 			if(!is_array($arModulesResult))
 			{
 				$arModulesResult = array("check_date" => 0);
@@ -81,7 +81,7 @@ class CMpNotifications
 
 				for ($i = 0, $cnt = count($arUpdateList["MODULE"]); $i < $cnt; $i++)
 				{
-					if (strlen($arUpdateList["MODULE"][$i]['@']['DATE_TO']) > 0 && Date::isCorrect($arUpdateList["MODULE"][$i]['@']['DATE_TO']))
+					if ($arUpdateList["MODULE"][$i]['@']['DATE_TO'] <> '' && Date::isCorrect($arUpdateList["MODULE"][$i]['@']['DATE_TO']))
 					{
 						$dateTo = new Date($arUpdateList["MODULE"][$i]['@']['DATE_TO']);
 						$ID = $arUpdateList["MODULE"][$i]["@"]["ID"];
@@ -121,7 +121,7 @@ class CMpNotifications
 		$arResult = Array();
 		$arResultModules = array();
 
-		if (strlen($strError_tmp) <= 0)
+		if ($strError_tmp == '')
 		{
 			CUpdateClientPartner::__ParseServerData($content, $arResult, $strError_tmp);
 			if (is_array($arResult['DATA']['#']['MODULE']) && count($arResult['DATA']['#']['MODULE']) > 0)
@@ -182,13 +182,13 @@ class CMpNotifications
 		$strError_tmp = "";
 		$arRequestedModules = array();
 		$arClientModules = CUpdateClientPartner::GetCurrentModules($strError_tmp);
-		if (strlen($strError_tmp) <= 0)
+		if ($strError_tmp == '')
 		{
 			if (count($arClientModules) > 0)
 			{
 				foreach ($arClientModules as $key => $value)
 				{
-					if (strpos($key, ".") !== false)
+					if (mb_strpos($key, ".") !== false)
 					{
 						$arRequestedModules[] = $key;
 					}
@@ -202,7 +202,7 @@ class CMpNotifications
 	//check notification's type to add
 	public static function addMpNotifications($arModulesResult)
 	{
-		$serverName = (CMain::IsHTTPS() ? "https" : "http")."://".((defined("SITE_SERVER_NAME") && strlen(SITE_SERVER_NAME) > 0) ? SITE_SERVER_NAME : COption::GetOptionString("main", "server_name", ""));
+		$serverName = (CMain::IsHTTPS() ? "https" : "http")."://".((defined("SITE_SERVER_NAME") && SITE_SERVER_NAME <> '') ? SITE_SERVER_NAME : COption::GetOptionString("main", "server_name", ""));
 		if (count($arModulesResult['update_module']) <= 0 && count($arModulesResult['end_update']) <= 0 && ($arModulesResult['new_module']) <= 0)
 		{
 			return false;

@@ -99,11 +99,21 @@ class Page
 	public function preparePrevPageLogId()
 	{
 		$request = $this->getRequest();
-		$processorInstance = $this->getProcessorInstance();
+		$params = $this->getComponent()->arParams;
 
-		if ($request->get('pplogid') !== null)
+		$prevPageLogId = null;
+		if (isset($params['PREV_PAGE_LOG_ID']))
 		{
-			$prevPageLogIdList = explode('|', trim($request->get('pplogid')));
+			$prevPageLogId = $params['PREV_PAGE_LOG_ID'];
+		}
+		elseif ($request->get('pplogid') !== null)
+		{
+			$prevPageLogId = $request->get('pplogid');
+		}
+
+		if ($prevPageLogId !== null)
+		{
+			$prevPageLogIdList = explode('|', trim($prevPageLogId));
 			foreach($prevPageLogIdList as $key => $val)
 			{
 				preg_match('/^(\d+)$/', $val, $matches);
@@ -124,7 +134,7 @@ class Page
 
 		$this->setNeedSetLogPage(false);
 
-		if ($params['SET_LOG_PAGE_CACHE'] == 'Y')
+		if ($params['SET_LOG_PAGE_CACHE'] === 'Y')
 		{
 			$resPages = LogPageTable::getList([
 				'order' => [],
@@ -143,10 +153,10 @@ class Page
 				$this->setDateLastPageStart($pagesFields['PAGE_LAST_DATE']);
 				$this->setLastPageData([
 					'TRAFFIC_LAST_DATE_TS' => ($pagesFields['TRAFFIC_LAST_DATE'] ? $processorInstance->makeTimeStampFromDateTime($pagesFields['TRAFFIC_LAST_DATE'], 'FULL') : 0),
-					'TRAFFIC_AVG' => intval($pagesFields['TRAFFIC_AVG']),
-					'TRAFFIC_CNT' => intval($pagesFields['TRAFFIC_CNT'])
+					'TRAFFIC_AVG' => (int)$pagesFields['TRAFFIC_AVG'],
+					'TRAFFIC_CNT' => (int)$pagesFields['TRAFFIC_CNT']
 				]);
-				$processorInstance->setFilterKey('>=LOG_UPDATE', convertTimeStamp($processorInstance->makeTimeStampFromDateTime($pagesFields['PAGE_LAST_DATE'], 'FULL') - 60*60*24*4, 'FULL'));
+				$processorInstance->setFilterKey('>=LOG_UPDATE', convertTimeStamp($processorInstance->makeTimeStampFromDateTime($pagesFields['PAGE_LAST_DATE'], 'FULL') - 60*60*24*1, 'FULL'));
 			}
 			elseif(
 				$result['isExtranetSite']
@@ -159,7 +169,8 @@ class Page
 					],
 					'filter' => [
 						'USER_ID' => $result['currentUserId'],
-						'@ROLE' => UserToGroupTable::getRolesMember()
+						'@ROLE' => UserToGroupTable::getRolesMember(),
+						'!GROUP_DATE_CREATE' => false
 					],
 					'select' => [
 						'GROUP_DATE_CREATE' => 'GROUP.DATE_CREATE'
@@ -172,8 +183,8 @@ class Page
 			}
 			elseif (
 				(
-					$result['COUNTER_TYPE'] != '**'
-					|| $result['MY_GROUPS_ONLY'] != 'Y'
+					$result['COUNTER_TYPE'] !== '**'
+					|| $result['MY_GROUPS_ONLY'] !== 'Y'
 				)
 				&& $result['PAGE_NUMBER'] <= 1
 			)
@@ -219,9 +230,9 @@ class Page
 
 		if ($lastEventFields)
 		{
-			if ($params['USE_FOLLOW'] == 'N')
+			if ($params['USE_FOLLOW'] === 'N')
 			{
-				if (empty($processorInstance->getOrderKey('LOG_DATE')))
+				if (!empty($processorInstance->getOrderKey('LOG_DATE')))
 				{
 					$result['LAST_ENTRY_DATE_TS'] = $processorInstance->makeTimeStampFromDateTime($lastEventFields['LOG_DATE'], 'FULL');
 				}
@@ -240,7 +251,7 @@ class Page
 			}
 		}
 
-		if ($params['SET_LOG_PAGE_CACHE'] != 'N')
+		if ($params['SET_LOG_PAGE_CACHE'] !== 'N')
 		{
 			$result['dateLastPageTS'] = $result['LAST_ENTRY_DATE_TS'];
 		}
@@ -250,12 +261,10 @@ class Page
 			$dateLastPage = convertTimeStamp($result['dateLastPageTS'], 'FULL');
 		}
 
-		$lastPageData = $this->getLastPageData();
 		if (
 			Util::checkUserAuthorized()
-			&& $params['SET_LOG_PAGE_CACHE'] == 'Y'
+			&& $params['SET_LOG_PAGE_CACHE'] === 'Y'
 			&& $dateLastPage
-			&& $lastPageData
 			&& (
 				!$this->getDateLastPageStart()
 				|| $this->getDateLastPageStart() != $dateLastPage
@@ -263,6 +272,16 @@ class Page
 			)
 		)
 		{
+			$lastPageData = $this->getLastPageData();
+			if (empty($lastPageData))
+			{
+				$lastPageData = [
+					'TRAFFIC_AVG' => 0,
+					'TRAFFIC_CNT' => 0,
+					'TRAFFIC_LAST_DATE_TS' => 0
+				];
+			}
+
 			$bNeedSetTraffic = \CSocNetLogComponent::isSetTrafficNeeded([
 				'PAGE_NUMBER' => $result['PAGE_NUMBER'],
 				'GROUP_CODE' => $result['COUNTER_TYPE'],
@@ -312,7 +331,7 @@ class Page
 			count($result['arLogTmpID']) == 0
 			&& $this->getDateLastPageStart() !== null
 			&& Util::checkUserAuthorized()
-			&& $params['SET_LOG_PAGE_CACHE'] == 'Y'
+			&& $params['SET_LOG_PAGE_CACHE'] === 'Y'
 		)
 		{
 			\CSocNetLogPages::deleteEx($result['currentUserId'], SITE_ID, $params['PAGE_SIZE'], $result['COUNTER_TYPE']);

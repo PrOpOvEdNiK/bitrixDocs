@@ -1,5 +1,0 @@
-<?
-$MESS["TARIFF_RESTRICTION_TEXT"] = "La administración del tiempo de trabajo es una herramienta esencial para cualquier supervisor. Vea cuándo cada empleado comenzó y terminó su jornada laboral, cuántas horas trabajaron, en qué trabajaron y si alguien llegó tarde o se fue temprano. El digital punch clock de Bitrix24 funciona en cualquier dispositivo y le proporciona un informe detallado del tiempo de trabajo para cada empleado, en el sitio o en el remoto. <a href=\"javascript:void(0)\" onclick='top.BX.Helper.show(\"redirect=detail&code=1429531\");'>Detalles</a>";
-$MESS["TARIFF_RESTRICTION_TEXT2"] = "La administración del tiempo de trabajo solo está disponible en los <a href=\"/settings/license_all.php\" target=\"_blank\">planes comerciales seleccionados</a>.";
-$MESS["TITLE"] = "Resumen del tiempo de trabajo";
-?>

@@ -1,4 +1,0 @@
-<?
-$MESS["USER_TYPE_MONEY_DEFAULT_VALUE"] = "Valor por defecto";
-$MESS["USER_TYPE_MONEY_DESCRIPTION"] = "Moneda";
-?>

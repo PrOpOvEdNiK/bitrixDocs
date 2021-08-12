@@ -30,7 +30,7 @@ abstract class Type
 
 	public static function convertBooleanUserFieldValue($value)
 	{
-		if (strtolower($value) == 'n')
+		if (mb_strtolower($value) == 'n')
 		{
 			return false;
 		}
@@ -148,7 +148,7 @@ abstract class Type
 			return array();
 		}
 
-		$data = unserialize($data);
+		$data = unserialize($data, ['allowed_classes' => false]);
 		return is_array($data) ? $data : array();
 	}
 

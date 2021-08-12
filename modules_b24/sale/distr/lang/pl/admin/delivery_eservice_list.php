@@ -1,4 +1,0 @@
-<?
-$MESS["SALE_ESDL_DELETE"] = "Usuń";
-$MESS["SALE_ESDL_DELETE_DESCR"] = "Usuń";
-?>

@@ -1,85 +1,134 @@
 <?php
-namespace Bitrix\ImBot\Bot;
 
-use Bitrix\Main\Localization\Loc;
+namespace Bitrix\ImBot\Bot;
 
 abstract class Base
 {
 	const MODULE_ID = "imbot";
 	const BOT_CODE = "";
 
-	protected static $lastError = null;
+	/** @var \Bitrix\ImBot\Error  */
+	protected static $lastError;
 
+
+	/**
+	 * Returns registered bot Id.
+	 *
+	 * @return bool|int
+	 */
 	public static function getBotId()
 	{
 		$class = self::getClassName();
 		if (!$class::BOT_CODE)
+		{
 			return false;
+		}
 
 		return \Bitrix\Main\Config\Option::get(self::MODULE_ID, $class::BOT_CODE."_bot_id", 0);
 	}
 
+	/**
+	 * Saves new Id of the registered bot.
+	 *
+	 * @param int $id
+	 *
+	 * @return bool
+	 */
 	public static function setBotId($id)
 	{
 		$class = self::getClassName();
 		if (!$class::BOT_CODE)
+		{
 			return false;
+		}
 
 		\Bitrix\Main\Config\Option::set(self::MODULE_ID, $class::BOT_CODE."_bot_id", $id);
 
 		return true;
 	}
 
-	public static function getBotOption($userId, $name, $value = false)
-	{
-		$class = self::getClassName();
-		if (!$class::BOT_CODE)
-			return false;
-
-		return \CUserOptions::GetOption(self::MODULE_ID, $class::BOT_CODE.'_'.$name, $value, $userId);
-	}
-
-	public static function setBotOption($userId, $name, $value)
-	{
-		$class = self::getClassName();
-		if (!$class::BOT_CODE)
-			return false;
-
-		\CUserOptions::SetOption(self::MODULE_ID, $class::BOT_CODE.'_'.$name, $value, false, $userId);
-
-		return true;
-	}
-
+	/**
+	 * Event handler when bot join to chat.
+	 *
+	 * @param string $dialogId
+	 * @param array $joinFields
+	 *
+	 * @return bool
+	 */
 	public static function onChatStart($dialogId, $joinFields)
 	{
 		return true;
 	}
 
+	/**
+	 * Event handler on message add.
+	 *
+	 * @param int $messageId
+	 * @param array $messageFields
+	 *
+	 * @return bool
+	 */
 	public static function onMessageAdd($messageId, $messageFields)
 	{
 		return true;
 	}
 
+	/**
+	 * Event handler on answer add.
+	 *
+	 * @param string $command
+	 * @param array $params
+	 *
+	 * @return array
+	 */
 	public static function onAnswerAdd($command, $params)
 	{
 		return null;
 	}
 
+	/**
+	 * Event handler on command add.
+	 *
+	 * @param int $messageId
+	 * @param array $messageFields
+	 *
+	 * @return bool
+	 */
 	public static function onCommandAdd($messageId, $messageFields)
 	{
 		return true;
 	}
 
+	/**
+	 * Returns title and description for app or command list.
+	 *
+	 * @param string $command App or command code.
+	 * @param string $lang Language Id.
+	 *
+	 * @return bool|array
+	 */
 	public static function onCommandLang($command, $lang = null)
 	{
 		return false;
 	}
 
-	public static function onBotDelete($bodId)
+	/**
+	 * Event handler on bot remove.
+	 *
+	 * @param int|null $bodId
+	 *
+	 * @return bool
+	 */
+	public static function onBotDelete($bodId = null)
 	{
 		return self::setBotId(0);
 	}
 
+	/**
+	 * @param string $lang
+	 *
+	 * @return array|bool|string
+	 */
 	public static function uploadAvatar($lang = LANGUAGE_ID)
 	{
 		$avatarUrl = '';
@@ -102,9 +151,14 @@ abstract class Base
 		return $avatarUrl;
 	}
 
+	/**
+	 * @param $iconName
+	 *
+	 * @return bool|int
+	 */
 	public static function uploadIcon($iconName)
 	{
-		if (strlen($iconName) <= 0)
+		if ($iconName == '')
 			return false;
 		
 		$iconId = false;
@@ -127,13 +181,16 @@ abstract class Base
 	}
 
 	/**
-	 * @return \Bitrix\ImBot\Bot\Base
+	 * @return \Bitrix\ImBot\Bot\Base|string
 	 */
-	public static function getClassName()
+	protected static function getClassName()
 	{
 		return get_called_class();
 	}
 
+	/**
+	 * @return \Bitrix\ImBot\Error
+	 */
 	public static function getError()
 	{
 		if (!self::$lastError)

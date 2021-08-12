@@ -26,7 +26,7 @@ class CSearcher extends CAllSearcher
 		return $strSql;
 	}
 
-	public static function GetList(&$by, &$order, $arFilter=Array(), &$is_filtered, $LIMIT=false)
+	public static function GetList($by = 's_today_hits', $order = 'desc', $arFilter = [], &$is_filtered = false, $LIMIT = false)
 	{
 		$err_mess = "File: ".__FILE__."<br>Line: ";
 		$DB = CDatabase::GetModuleConnection('statistic');
@@ -43,10 +43,10 @@ class CSearcher extends CAllSearcher
 			$date2 = $arFilter["DATE2_PERIOD"];
 			$date_from = MkDateTime(ConvertDateTime($date1,"D.M.Y"),"d.m.Y");
 			$date_to = MkDateTime(ConvertDateTime($date2,"D.M.Y")." 23:59","d.m.Y H:i");
-			if (CheckDateTime($date1) && strlen($date1)>0)
+			if (CheckDateTime($date1) && $date1 <> '')
 			{
 				$filter_period = true;
-				if (strlen($date2)>0)
+				if ($date2 <> '')
 				{
 					$strSqlPeriod = "sum(if(D.DATE_STAT<FROM_UNIXTIME('$date_from'),0, if(D.DATE_STAT>FROM_UNIXTIME('$date_to'),0,";
 					$strT=")))";
@@ -57,7 +57,7 @@ class CSearcher extends CAllSearcher
 					$strT="))";
 				}
 			}
-			elseif (CheckDateTime($date2) && strlen($date2)>0)
+			elseif (CheckDateTime($date2) && $date2 <> '')
 			{
 				ResetFilterLogic();
 				$filter_period = true;
@@ -74,7 +74,7 @@ class CSearcher extends CAllSearcher
 				}
 				else
 				{
-					if( (strlen($val) <= 0) || ($val === "NOT_REF") )
+					if( ((string)$val == '') || ($val === "NOT_REF") )
 						continue;
 				}
 				$match_value_set = array_key_exists($key."_EXACT_MATCH", $arFilter);
@@ -137,15 +137,14 @@ class CSearcher extends CAllSearcher
 			$strSqlOrder = "ORDER BY TODAY_HITS desc, YESTERDAY_HITS desc, B_YESTERDAY_HITS desc, TOTAL_HITS desc, PERIOD_HITS";
 		else
 		{
-			$by = "s_today_hits";
 			$strSqlOrder = "ORDER BY TODAY_HITS desc, YESTERDAY_HITS desc, B_YESTERDAY_HITS desc, TOTAL_HITS desc, PERIOD_HITS";
 		}
 
-		if ($order!="asc")
+		if ($order != "asc")
 		{
 			$strSqlOrder .= " desc ";
-			$order="desc";
 		}
+
 		$limit_sql = "LIMIT ".intval(COption::GetOptionString('statistic','RECORDS_LIMIT'));
 		if (intval($LIMIT)>0)
 			$limit_sql = "LIMIT ".intval($LIMIT);
@@ -183,7 +182,7 @@ class CSearcher extends CAllSearcher
 		";
 
 		$res = $DB->Query($strSql, false, $err_mess.__LINE__);
-		$is_filtered = (IsFiltered($strSqlSearch) || $filter_period || strlen($strSqlSearch_h)>0);
+		$is_filtered = (IsFiltered($strSqlSearch) || $filter_period || $strSqlSearch_h <> '');
 		return $res;
 	}
 
@@ -205,7 +204,7 @@ class CSearcher extends CAllSearcher
 		return $res;
 	}
 
-	public static function GetDynamicList($SEARCHER_ID, &$by, &$order, &$arMaxMin, $arFilter=Array())
+	public static function GetDynamicList($SEARCHER_ID, $by = 's_date', $order = 'desc', &$arMaxMin = [], $arFilter = [])
 	{
 		$err_mess = "File: ".__FILE__."<br>Line: ";
 		$DB = CDatabase::GetModuleConnection('statistic');
@@ -223,7 +222,7 @@ class CSearcher extends CAllSearcher
 				}
 				else
 				{
-					if( (strlen($val) <= 0) || ($val === "NOT_REF") )
+					if( ((string)$val == '') || ($val === "NOT_REF") )
 						continue;
 				}
 
@@ -248,14 +247,14 @@ class CSearcher extends CAllSearcher
 		if ($by == "s_date") $strSqlOrder = "ORDER BY D.DATE_STAT";
 		else
 		{
-			$by = "s_date";
 			$strSqlOrder = "ORDER BY D.DATE_STAT";
 		}
+
 		if ($order!="asc")
 		{
 			$strSqlOrder .= " desc ";
-			$order="desc";
 		}
+
 		$strSql =	"
 			SELECT
 				".$DB->DateToCharFunction("D.DATE_STAT","SHORT")."		DATE_STAT,

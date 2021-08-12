@@ -70,16 +70,16 @@ if ($WORKFLOW_RIGHT >= "R")
 		&& check_bitrix_sessid()
 	)
 	{
-		if(strlen($_POST["RestoreDefaults"]) > 0)
+		if($_POST["RestoreDefaults"] <> '')
 		{
 			COption::RemoveOption($module_id);
-			$z = CGroup::GetList($v1="id",$v2="asc", array("ACTIVE" => "Y", "ADMIN" => "N"));
+			$z = CGroup::GetList("id", "asc", array("ACTIVE" => "Y", "ADMIN" => "N"));
 			while($zr = $z->Fetch())
 			{
 				$APPLICATION->DelGroupRight($module_id, array($zr["ID"]));
 			}
 		}
-		elseif(strlen($Update) > 0)
+		elseif($Update <> '')
 		{
 			foreach($arAllOptions as $option)
 			{

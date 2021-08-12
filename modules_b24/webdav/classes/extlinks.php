@@ -1,9 +1,9 @@
-<?
+<?php
+
 IncludeModuleLangFile(__FILE__);
 
 class CWebDavExtLinks
 {
-
 	const MODULE_NAME = "webdav";
 	const SESSION_UIN = "webdav.extlinks";
 	const SESSION_OPTIONS = "arOptions";
@@ -161,13 +161,13 @@ class CWebDavExtLinks
 			? $USER : new CUser();
 	}
 
-	static function VerifyFields($arFieldsNames)
+	public static function VerifyFields($arFieldsNames)
 	{
 		$res = array_intersect($arFieldsNames, self::$arTableFields);
 		return $res;
 	}
 
-	static function GetUrl()
+	public static function GetUrl()
 	{
 		if(self::$url == null)
 		{
@@ -187,7 +187,7 @@ class CWebDavExtLinks
 		return self::$url;
 	}
 
-	static function UpdateUrlRewrite($url)
+	public static function UpdateUrlRewrite($url)
 	{
 		CUrlRewriter::Delete(array("ID" => "bitrix:webdav.extlinks"));
 		$arU = array(
@@ -199,19 +199,19 @@ class CWebDavExtLinks
 		CUrlRewriter::Add($arU);
 	}
 
-	static function GetDemoFileName()
+	public static function GetDemoFileName()
 	{	
 		$lang = defined("LANGUAGE_ID") ? LANGUAGE_ID : "en";		
 		return "bitrix24" . $lang . ".docx";
 	}
 
-	static function GetDemoLoadFileUrl()
+	public static function GetDemoLoadFileUrl()
 	{
 		$url = self::GetFullURL("/bitrix/components/bitrix/webdav.extlinks/demo/" . self::GetDemoFileName());
 		return $url;
 	}
 
-	static function GetDemoList()
+	public static function GetDemoList()
 	{
 		$arT = array(
 			"URL" => "/" . self::GetDemoFileName(),
@@ -227,12 +227,12 @@ class CWebDavExtLinks
 		return $rs;
 	}
 
-	static function __SortMethod($a, $b)
+	public static function __SortMethod($a, $b)
 	{
 		return ($a["PRIORITY"] < $b["PRIORITY"]) ? -1 : 1;
 	}
 
-	static function PrintDialogDiv($ob)
+	public static function PrintDialogDiv($ob)
 	{
 		$url = $ob->_path;
 		$urlFull = $ob->base_url_full . "/";
@@ -244,7 +244,7 @@ class CWebDavExtLinks
 		$linksNum = 0;
 		$arLinks = array();
 		$description = "";
-		if(array_key_exists("DESCRIPTION", $fileOptT) && strlen($fileOptT["DESCRIPTION"]) > 0)
+		if(array_key_exists("DESCRIPTION", $fileOptT) && $fileOptT["DESCRIPTION"] <> '')
 		{
 			$description = HTMLToTxt($fileOptT["DESCRIPTION"]);
 		}
@@ -297,7 +297,7 @@ class CWebDavExtLinks
 
 
 
-		usort($arLinks, array(self, '__SortMethod'));
+		usort($arLinks, array(CWebDavExtLinks::class, '__SortMethod'));
 		$fileName = htmlspecialcharsbx(GetFileName(CHTTP::urndecode($url)));
 		$size = "";
 		$sizeI = intval($fileOptT["F_SIZE"]);
@@ -306,7 +306,7 @@ class CWebDavExtLinks
 			$size .= " (" . htmlspecialcharsbx(CFile::FormatSize($sizeI)) . ")";
 		}	
 		$changeTime = "";
-		if(strlen($fileOptT["CHANGE_TIME"]) > 0)
+		if($fileOptT["CHANGE_TIME"] <> '')
 		{
 			$changeTime = " " . GetMessage("WD_EXT_LINKS_DIALOG_CHANGE_TIME") . " " . $fileOptT["CHANGE_TIME"];
 		}
@@ -375,7 +375,7 @@ class CWebDavExtLinks
 				{
 					$optionsStr .= " " .GetMessage("WD_EXT_LINKS_DIALOG_USER_NAME") . ": " . $arProfilesLinks[$v["USER_ID"]];
 				}
-				if(strlen($optionsStr) > 0)
+				if($optionsStr <> '')
 				{
 					$optionsStr = '<span class="ext-link-list-options">' . $optionsStr . '</span>';
 				}
@@ -444,12 +444,12 @@ class CWebDavExtLinks
 
 	}
 
-	static function GetHttpHostUrl()
+	public static function GetHttpHostUrl()
 	{
 		$protocol = (CMain::IsHTTPS() ? "https" : "http");
 		$host = $_SERVER['HTTP_HOST'];
 		$port = $_SERVER['SERVER_PORT'];
-		if($port <> 80 && $port <> 443 && $port > 0 && strpos($host, ":") === false)
+		if($port <> 80 && $port <> 443 && $port > 0 && mb_strpos($host, ":") === false)
 		{
 			$host .= ":".$port;
 		}
@@ -465,19 +465,19 @@ class CWebDavExtLinks
 		return ($protocol . "://" . $host);
 	}
 
-	static function GetFullExternalURL()
+	public static function GetFullExternalURL()
 	{
 		$fullExtURL = self::GetHttpHostUrl() . self::GetUrl() . "/";
 		return $fullExtURL;
 	}
 
-	static function GetFullURL($p)
+	public static function GetFullURL($p)
 	{
 		$fullURL = self::GetHttpHostUrl() . $p;
 		return $fullURL;
 	}
 
-	protected function GetUserProfilesLinks($arUsers)
+	protected static function GetUserProfilesLinks($arUsers)
 	{
 		$path = trim(COption::GetOptionString("intranet", "path_user", "", SITE_ID));		
 		/* /company/personal/user/#USER_ID#/ */
@@ -490,9 +490,7 @@ class CWebDavExtLinks
 		$strUsers = implode("|", $arUsers);
 		$arProfilesLinks = array();
 
-		$f = "ID";
-		$o = "asc";
-		$rs = CUser::GetList($f, $o, array( "ID" => $strUsers), array("FIELDS"=>array("NAME","LAST_NAME","SECOND_NAME","LOGIN","EMAIL","ID")));
+		$rs = CUser::GetList('id', 'asc', array( "ID" => $strUsers), array("FIELDS"=>array("NAME","LAST_NAME","SECOND_NAME","LOGIN","EMAIL","ID")));
 		$nameFormat = CSite::GetNameFormat();
 		while($ar = $rs->Fetch())
 		{
@@ -504,7 +502,7 @@ class CWebDavExtLinks
 		return $arProfilesLinks;
 	}
 
-	function IsFirstView($userID = null)
+	public static function IsFirstView($userID = null)
 	{
 		$userID = self::GetUserID($userID);
 		$OpFV = CUserOptions::GetOption("webdav", "ext-link-dialog-first-run", false, $userID);
@@ -516,7 +514,7 @@ class CWebDavExtLinks
 		return false;
 	}
 
-	function GetExtensionIcon($urlT)
+	public static function GetExtensionIcon($urlT)
 	{
 		$arIco = array(
 			"doc" => "doc.jpg",
@@ -536,12 +534,12 @@ class CWebDavExtLinks
 		$arIm = explode(",", CFile::GetImageExtensions());
 		foreach($arIm as $ci)
 		{
-			if(strlen($ci) > 0)
+			if($ci <> '')
 			{
 				$arIco[$ci] = "pic.jpg";
 			}
 		}
-		$fExtQ = strtolower(GetFileExtension($urlT));
+		$fExtQ = mb_strtolower(GetFileExtension($urlT));
 		if(array_key_exists($fExtQ, $arIco))
 		{
 			$res = $arIco[$fExtQ];
@@ -550,18 +548,18 @@ class CWebDavExtLinks
 		return $res;
 	}
 
-	function GetChangeTime($arT)
+	public static function GetChangeTime($arT)
 	{
 		$t1 = "";
 		$t2 = "";
 		$ts1 = 0;
 		$ts2 = 0;
-		if(array_key_exists("TIMESTAMP_X", $arT) && strlen($arT["TIMESTAMP_X"]) > 0)
+		if(array_key_exists("TIMESTAMP_X", $arT) && $arT["TIMESTAMP_X"] <> '')
 		{
 			$t1 = $arT["TIMESTAMP_X"];
 			$ts1 = MakeTimeStamp($arT["TIMESTAMP_X"]);
 		}
-		if(array_key_exists("FILE", $arT) && array_key_exists("TIMESTAMP_X", $arT["FILE"]) && strlen($arT["FILE"]["TIMESTAMP_X"]) > 0)
+		if(array_key_exists("FILE", $arT) && array_key_exists("TIMESTAMP_X", $arT["FILE"]) && $arT["FILE"]["TIMESTAMP_X"] <> '')
 		{
 			$t2 = $arT["FILE"]["TIMESTAMP_X"];
 			$ts2 = MakeTimeStamp($arT["FILE"]["TIMESTAMP_X"]);
@@ -578,12 +576,12 @@ class CWebDavExtLinks
 
 	}
 
-	protected function checkHash($string)
+	protected static function checkHash($string)
 	{
 		return preg_match('/^[0-9a-f]{16,32}$/i', $string);
 	}
 
-	function GenerateHash($val=null, $salt="")
+	public static function GenerateHash($val=null, $salt="")
 	{
 		if($val == null)
 		{
@@ -593,18 +591,18 @@ class CWebDavExtLinks
 		return $hash;
 	}
 
-	function GenerateExtLinkHash()
+	public static function GenerateExtLinkHash()
 	{
 		do
 		{
-			$hash = substr(self::GenerateHash(), 0, self::HASH_LEN);
+			$hash = mb_substr(self::GenerateHash(), 0, self::HASH_LEN);
 			$isNotUnique = self::CheckLink($hash);
 		}
 		while($isNotUnique);
 		return $hash;
 	}
 
-	function GetLifeTime($options)
+	public static function GetLifeTime($options)
 	{
 		$n = intval($options["LIFETIME_NUMBER"]);
 		$r = 0;
@@ -633,14 +631,14 @@ class CWebDavExtLinks
 		return  $r;
 	}
 
-	function GetHashFromURL($link = '')
+	public static function GetHashFromURL($link = '')
 	{
 		if(!$link)
 		{
 			$link = $_SERVER['REQUEST_URI'];
 		}
-		$partUri = substr($link, strpos($link, self::GetUrl() . "/"));
-		$partUri = substr($partUri, strlen(self::GetUrl() . "/"));
+		$partUri = mb_substr($link, mb_strpos($link, self::GetUrl()."/"));
+		$partUri = mb_substr($partUri, mb_strlen(self::GetUrl()."/"));
 		foreach (explode('/', $partUri) as $part)
 		{
 			if(self::checkHash($part))
@@ -653,7 +651,7 @@ class CWebDavExtLinks
 		return false;
 	}
 
-	function GetList($arFilter, $arFields = array(), $arOptions = array())
+	public static function GetList($arFilter, $arFields = array(), $arOptions = array())
 	{
 		global $DB;
 		$fields = "*";
@@ -698,11 +696,11 @@ class CWebDavExtLinks
 
 		foreach($arFilter as $key => $val)
 		{
-			if((is_array($val) && count($val) <= 0) || (!is_array($val) && strlen($val) <= 0))
+			if((is_array($val) && count($val) <= 0) || (!is_array($val) && $val == ''))
 			{
 				continue;
 			}
-			$key = strtoupper($key);
+			$key = mb_strtoupper($key);
 			if (is_array($val))
 			{
 				$val = implode(" | ",$val);
@@ -739,7 +737,7 @@ class CWebDavExtLinks
 		}
 		$strSqlSearch = GetFilterSqlSearch($arSqlSearch);
 
-		if(strlen($groupBy) > 0)
+		if($groupBy <> '')
 		{
 			$groupBy = "GROUP BY " . $groupBy;
 		}
@@ -757,7 +755,7 @@ class CWebDavExtLinks
 		return $rs;
 	}
 
-	function CheckLink($hash)
+	public static function CheckLink($hash)
 	{
 		$res = self::GetList(array("HASH" => $hash));
 		if($res->Fetch())
@@ -767,7 +765,7 @@ class CWebDavExtLinks
 		return false;
 	}
 
-	function Delete($arFilter)
+	public static function Delete($arFilter)
 	{
 		global $DB;
 		$arSqlSearch = Array();
@@ -781,11 +779,11 @@ class CWebDavExtLinks
 		}
 		foreach($arFilter as $key => $val)
 		{
-			if((is_array($val) && count($val) <= 0) || (!is_array($val) && strlen($val) <= 0))
+			if((is_array($val) && count($val) <= 0) || (!is_array($val) && $val == ''))
 			{
 				continue;
 			}
-			$key = strtoupper($key);
+			$key = mb_strtoupper($key);
 			if (is_array($val))
 			{
 				$val = implode(" | ",$val);
@@ -829,7 +827,7 @@ class CWebDavExtLinks
 		return true;
 	}
 
-	function DeleteSingleSessionLink($hash)
+	public static function DeleteSingleSessionLink($hash)
 	{
 		if(empty($hash) || !is_string($hash))
 		{
@@ -843,9 +841,9 @@ class CWebDavExtLinks
 		self::Delete($filter);
 	}
 
-	function DeleteLink($hash, $userID = null)
+	public static function DeleteLink($hash, $userID = null)
 	{
-		if(strlen($hash) <= 0)
+		if($hash == '')
 		{
 			$GLOBALS["APPLICATION"]->RestartBuffer();
 			echo "error";
@@ -862,9 +860,9 @@ class CWebDavExtLinks
 		die();
 	}
 
-	function DeleteAllLinks($url, $ob, $userID = null)
+	public static function DeleteAllLinks($url, $ob, $userID = null)
 	{			
-		if(strlen($url) <= 0)
+		if($url == '')
 		{
 			$GLOBALS["APPLICATION"]->RestartBuffer();
 			echo "error";
@@ -884,7 +882,7 @@ class CWebDavExtLinks
 		die();
 	}
 
-	static function ConvertCharsetIfNeed($t)
+	public static function ConvertCharsetIfNeed($t)
 	{
 		$charsetFrom = CUtil::DetectUTF8($t) ? "utf-8" : 'windows-1251';
 		$charsetTo = (defined('BX_UTF') && BX_UTF == true) ? "utf-8" : 'windows-1251';
@@ -896,7 +894,7 @@ class CWebDavExtLinks
 	}
 
 	//$options = array("URL", "IBLOCK_TYPE", "IBLOCK_ID", "FOLDER", "BASE_URL", "USER_ID", "PASSWORD", "LIFETIME", "F_SIZE", "DESCRIPTION", "ROOT_SECTION_ID")
-	function AddExtLink($options)
+	public static function AddExtLink($options)
 	{
 		global $DB;
 		$arFields_i = array();
@@ -914,7 +912,7 @@ class CWebDavExtLinks
 		{
 			$arFields_i["USER_ID"] = intval($options["USER_ID"]);
 		}
-		if(strlen($options["PASSWORD"]) > 0)
+		if($options["PASSWORD"] <> '')
 		{
 			$arFields_i["SALT"] = self::GenerateHash();
 			$arFields_i["PASSWORD"] = self::GenerateHash($options["PASSWORD"], $arFields_i["SALT"]);
@@ -944,7 +942,7 @@ class CWebDavExtLinks
 		if(array_key_exists("IBLOCK_ID", $options))
 		{
 			$arFields_i["RESOURCE_TYPE"] = "IBLOCK";
-			$arFields_i["IBLOCK_TYPE"] = (strlen($options["IBLOCK_TYPE"]) > 0 && $options["IBLOCK_TYPE"] != 0) ? $options["IBLOCK_TYPE"] : "";
+			$arFields_i["IBLOCK_TYPE"] = ($options["IBLOCK_TYPE"] <> '' && $options["IBLOCK_TYPE"] != 0) ? $options["IBLOCK_TYPE"] : "";
 			$arFields_i["IBLOCK_ID"] = intval($options["IBLOCK_ID"]);
 		}
 		else
@@ -965,7 +963,7 @@ class CWebDavExtLinks
 		return ($id != false ? $arFields_i["HASH"] : false);
 	}
 
-	function CheckPassword($arLink, $inputPass)
+	public static function CheckPassword($arLink, $inputPass)
 	{
 		$inputPassH = self::GenerateHash($inputPass, $arLink["SALT"]);		
 		return ($arLink["PASSWORD"] === $inputPassH);
@@ -1000,9 +998,9 @@ class CWebDavExtLinks
 			));
 
 		$fileName = str_replace(' ', '_', getFileName($o['URL']));
-		if(strlen($fileName) > 25)
+		if(mb_strlen($fileName) > 25)
 		{
-			$fileName = substr($fileName, 0, 25) . '...';
+			$fileName = mb_substr($fileName, 0, 25).'...';
 		}
 		$fileName = CWebDavTools::urlEncode($fileName);
 		$hash = self::AddExtLink($o);
@@ -1010,7 +1008,7 @@ class CWebDavExtLinks
 		return $hash != false? self::getFullExternalURL() . $hash . '/' . $fileName: false;
 	}
 
-	function GetExtLink($arParams, $options, $userID = null)
+	public static function GetExtLink($arParams, $options, $userID = null)
 	{
 		$hashLink = self::getHashLink($arParams, $options, $userID);
 		$GLOBALS["APPLICATION"]->RestartBuffer();
@@ -1029,7 +1027,7 @@ class CWebDavExtLinks
 		die;
 	}
 
-	function InsertDialogCallText($urlT)
+	public static function InsertDialogCallText($urlT)
 	{
 		CUtil::InitJSCore(array('popup'));
 		$arMessT = array();
@@ -1050,14 +1048,14 @@ class CWebDavExtLinks
 		return "ShowExtLinkDialog('" . $urlT . "&GetExtLink=1&IFRAME=Y','" . $urlT . "&GetDialogDiv=1')";
 	}
 
-	function LoadFile($arLink)
+	public static function LoadFile($arLink)
 	{
 		$hash = $arLink;
 		if(is_array($arLink))
 		{
 			$hash = $arLink["HASH"];
 		}
-		if(strlen($hash) <= 0)
+		if($hash == '')
 		{
 			return true;
 		}
@@ -1150,7 +1148,7 @@ class CWebDavExtLinks
 		LocalRedirect(CHTTP::urlAddParams($APPLICATION->GetCurPage(), array('notfoud' => true)));
 	}
 
-	function incDownloadCount($hash, $linkType)
+	public static function incDownloadCount($hash, $linkType)
 	{
 		global $DB;
 
@@ -1183,7 +1181,7 @@ class CWebDavExtLinks
 	protected static function getEntityType($iblockCode)
 	{
 		$entityType = explode('_', $iblockCode);
-		$entityType = strtolower(array_shift($entityType));
+		$entityType = mb_strtolower(array_shift($entityType));
 
 		return $entityType;
 	}
@@ -1219,7 +1217,7 @@ class CWebDavExtLinks
 
 	}
 
-	function GetFileOptions($ob)
+	public static function GetFileOptions($ob)
 	{
 		$res = array("F_SIZE" => "", "DESCRIPTION" => "");
 		$optionsQ = array (
@@ -1243,7 +1241,7 @@ class CWebDavExtLinks
 		return $res;
 	}
 
-	function CheckSessID()
+	public static function CheckSessID()
 	{
 		if(!check_bitrix_sessid())
 		{
@@ -1253,7 +1251,7 @@ class CWebDavExtLinks
 		}
 	}
 
-	function CheckRights($ob)
+	public static function CheckRights($ob)
 	{
 		$ob->IsDir();
 		if(!$ob->CheckWebRights("", array('action' => 'read', 'arElement' => $ob->arParams), false))
@@ -1264,7 +1262,7 @@ class CWebDavExtLinks
 		}
 	}
 
-	function RemoveExpired()
+	public static function RemoveExpired()
 	{
 		self::Delete(array(
 			'SKIP_USER_FILTER' => true,

@@ -4,6 +4,7 @@ namespace Bitrix\Disk;
 
 use Bitrix\Disk\Internals\Entity\ModelSynchronizer;
 use Bitrix\Disk\Internals\Error\Error;
+use Bitrix\Disk\Internals\ObjectPathTable;
 use Bitrix\Disk\Internals\ObjectTable;
 use Bitrix\Disk\Internals\SharingTable;
 use Bitrix\Disk\Security\SecurityContext;
@@ -644,9 +645,9 @@ abstract class BaseObject extends Internals\Model implements \JsonSerializable
 	 * @param string $newName New name.
 	 * @return bool
 	 */
-	public function rename($newName)
+	public function rename($newName, bool $generateUniqueName = false)
 	{
-		$success = $this->renameInternal($newName, false);
+		$success = $this->renameInternal($newName, $generateUniqueName);
 		if($success)
 		{
 			$this->changeParentUpdateTime();
@@ -750,6 +751,14 @@ abstract class BaseObject extends Internals\Model implements \JsonSerializable
 		if($this->getParentId() == $realFolderId)
 		{
 			return $this;
+		}
+
+		$ancestors = ObjectPathTable::getAncestors($folder->getId());
+		if (in_array($this->getRealObjectId(), array_column($ancestors, 'PARENT_ID'), true))
+		{
+			$this->errorCollection[] = new Error(Loc::getMessage('DISK_OBJECT_MODEL_INVALID_MOVEMENT_TO_CHILD'));
+
+			return null;
 		}
 
 		$possibleNewName = $this->name;
@@ -1059,17 +1068,25 @@ abstract class BaseObject extends Internals\Model implements \JsonSerializable
 			$nameAfterDelete = $this->generateUniqueName($nameAfterDelete, $this->getParentId());
 		}
 
-		$status = $this->update(array(
+		$data = [
 			'CODE' => null,
 			'NAME' => $nameAfterDelete,
 			'DELETED_TYPE' => $deletedType,
-			'DELETE_TIME' => new DateTime(),
-			'DELETED_BY' => $deletedBy,
-		));
+		];
 
-		if($status)
+		$alreadyDeleted = $this->isDeleted();
+		if (!$alreadyDeleted)
 		{
-			Driver::getInstance()->getIndexManager()->dropIndexByModuleSearch($this);
+			$data['DELETE_TIME'] = new DateTime();
+			$data['DELETED_BY'] = $deletedBy;
+		}
+
+		$status = $this->update($data);
+		if ($status)
+		{
+			$driver = Driver::getInstance();
+			$driver->getDeletionNotifyManager()->put($this, $deletedBy);
+			$driver->getIndexManager()->dropIndexByModuleSearch($this);
 
 			$event = new Event(Driver::INTERNAL_MODULE_ID, "onAfterMarkDeletedObject", array($this, $deletedBy, $deletedType));
 			$event->send();
@@ -1171,7 +1188,8 @@ abstract class BaseObject extends Internals\Model implements \JsonSerializable
 	protected function recalculateDeletedTypeAfterRestore($restoredBy)
 	{
 		$fakeContext = Storage::getFakeSecurityContext();
-		foreach ($this->getParents($fakeContext, array('filter' => array('MIXED_SHOW_DELETED' => true)), SORT_ASC) as $parent)
+		$parents = $this->getParents($fakeContext, ['filter' => ['MIXED_SHOW_DELETED' => true]], SORT_ASC);
+		foreach ($parents as $parent)
 		{
 			if(!$parent instanceof Folder || !$parent->isDeleted())
 			{
@@ -1181,7 +1199,11 @@ abstract class BaseObject extends Internals\Model implements \JsonSerializable
 			/** @var $parent Folder */
 			foreach ($parent->getChildren($fakeContext, array('filter' => array('!==DELETED_TYPE' => ObjectTable::DELETED_TYPE_NONE,))) as $childPotentialRoot)
 			{
-				if($childPotentialRoot instanceof Folder && $childPotentialRoot->getId() != $this->getId())
+				if($childPotentialRoot->getId() == $this->getId())
+				{
+					continue;
+				}
+				if($childPotentialRoot instanceof Folder)
 				{
 					/** @var $childPotentialRoot Folder */
 					$childPotentialRoot->markDeletedNonRecursiveInternal($childPotentialRoot->getDeletedBy());
@@ -1191,13 +1213,17 @@ abstract class BaseObject extends Internals\Model implements \JsonSerializable
 					$childPotentialRoot->markDeletedInternal($childPotentialRoot->getDeletedBy());
 				}
 			}
-			unset($childPotentialRoot);
+		}
+
+		foreach ($parents as $parent)
+		{
+			if (!$parent instanceof Folder || !$parent->isDeleted())
+			{
+				continue;
+			}
 
 			$parent->restoreNonRecursive($restoredBy);
 		}
-		unset($parent);
-
-		return;
 	}
 
 	/**
@@ -1348,7 +1374,7 @@ abstract class BaseObject extends Internals\Model implements \JsonSerializable
 		while (!static::isUniqueName($newName, $underObjectId))
 		{
 			$count++;
-			list($newName) = static::getNextGeneratedName($mainPartName, $suffix, $underObjectId, $count > 2);
+			[$newName] = static::getNextGeneratedName($mainPartName, $suffix, $underObjectId, $count > 2);
 
 			if ($count > 10)
 			{
@@ -1378,8 +1404,8 @@ abstract class BaseObject extends Internals\Model implements \JsonSerializable
 		{
 			$right = ').'. $suffix;
 		}
-		$lengthR = strlen($right);
-		$lengthL = strlen($left);
+		$lengthR = mb_strlen($right);
+		$lengthL = mb_strlen($left);
 
 		$connection = Application::getConnection();
 		$sqlHelper = $connection->getSqlHelper();
@@ -1418,7 +1444,7 @@ abstract class BaseObject extends Internals\Model implements \JsonSerializable
 			];
 		}
 
-		$counter = substr($row['NAME'], $lengthL, strlen($row['NAME']) - $lengthL - $lengthR);
+		$counter = mb_substr($row['NAME'], $lengthL, mb_strlen($row['NAME']) - $lengthL - $lengthR);
 		$counter = (int)$counter + 1;
 
 		return [
@@ -1509,7 +1535,7 @@ abstract class BaseObject extends Internals\Model implements \JsonSerializable
 			{
 				continue;
 			}
-			list($type, $id) = Sharing::parseEntityValue($sharing->getToEntity());
+			[$type, $id] = Sharing::parseEntityValue($sharing->getToEntity());
 			$members[$type][] = $id;
 			$membersToSharing[$type . '|' . $id] = $sharing;
 		}
@@ -1532,19 +1558,17 @@ abstract class BaseObject extends Internals\Model implements \JsonSerializable
 				));
 				while($userRow = $query->fetch())
 				{
+					/** @var User $userModel */
+					$userModel = User::buildFromRow($userRow);
 					/** @var Sharing $sharing */
 					$sharing = $membersToSharing[$type . '|' . $userRow['ID']];
 					$entityList[] = array(
 						'sharingId' => $sharing->getId(),
 						'entityId' => Sharing::CODE_USER . $userRow['ID'],
-						'name' => \CUser::formatName('#NAME# #LAST_NAME#', array(
-							"NAME" => $userRow['NAME'],
-							"LAST_NAME" => $userRow['LAST_NAME'],
-							"SECOND_NAME" => $userRow['SECOND_NAME'],
-							"LOGIN" => $userRow['LOGIN'],
-						), false, false),
+						'name' => $userModel->getFormattedName(),
 						'right' => $sharing->getTaskName(),
-						'avatar' => Avatar::getPerson($userRow['PERSONAL_PHOTO']),
+						'avatar' => $userModel->getAvatarSrc(),
+						'url' => $userModel->getDetailUrl(),
 						'type' => 'users',
 					);
 				}

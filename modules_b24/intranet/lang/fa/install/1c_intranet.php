@@ -1,5 +1,0 @@
-<?
-$MESS["1C_INTRANET_FIELD_DEPARTMENT"] = "بخش";
-$MESS["1C_INTRANET_FIELD_POST"] = "مکان";
-$MESS["1C_INTRANET_FIELD_USER"] = "کاربر";
-?>

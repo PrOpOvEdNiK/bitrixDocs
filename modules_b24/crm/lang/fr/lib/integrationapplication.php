@@ -1,3 +1,0 @@
-<?
-$MESS["WS_CRMINTEGRATION_APP_TITLE"] = "CRM";
-?>

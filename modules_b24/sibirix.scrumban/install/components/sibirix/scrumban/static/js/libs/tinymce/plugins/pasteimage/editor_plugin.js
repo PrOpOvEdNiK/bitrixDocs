@@ -1,4 +1,0 @@
-/**
- *
- */
-(function($){tinymce.create("tinymce.plugins.PasteImagePlugin",{init:function(e){function n(e){var t=e.contentWindow;if(t&&t.addEventListener){t.addEventListener("paste",r,false)}}function r(e){if(!e.clipboardData||!e.clipboardData.items){return}var n=e.clipboardData.items;for(var r=0;r<n.length;r++){if(n[r].type.indexOf("image")!==-1){var s=n[r].getAsFile();var o=window.URL||window.webkitURL;var u=o.createObjectURL(s);i(u);t.appendPastedImage(s,u)}}}function i(t){e.execCommand("mceInsertContent",false,e.dom.createHTML("img",{src:t,alt:""}))}var t;e.onInit.add(function(e){n(e);t=$("#"+e.editorId).closest(".scrumbanTextEditor").controller()})},getInfo:function(){return{longname:"Clipboard image pasting",author:"Smiling Cheater <ivan.kozhevin@sibirix.ru>",authorurl:"http://www.sibirix.ru/",infourl:"",version:"0.1"}}});tinymce.PluginManager.add("pasteimage",tinymce.plugins.PasteImagePlugin)})(SCRUMBAN.jQuery);

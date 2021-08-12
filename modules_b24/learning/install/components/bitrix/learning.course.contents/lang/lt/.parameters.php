@@ -1,6 +1,0 @@
-<?
-$MESS['LEARNING_DESC_YES'] = 'Taip';
-$MESS['LEARNING_DESC_NO'] = 'Ne';
-$MESS['LEARNING_COURSE_ID'] = 'Kurso identifikatorius';
-$MESS['LEARNING_CHECK_PERMISSIONS'] = 'Tikrinti prieigos teises';
-?>

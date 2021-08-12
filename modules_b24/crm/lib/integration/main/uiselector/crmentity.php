@@ -20,7 +20,7 @@ class CrmEntity extends \Bitrix\Main\UI\Selector\EntityBase
 
 	public static function getMultiKey($key, $email)
 	{
-		return $key.':'.substr(md5($email), 0, 8);
+		return $key.':'.mb_substr(md5($email), 0, 8);
 	}
 
 	protected static function processMultiFields(array $entityList = [], array $entityOptions = [])

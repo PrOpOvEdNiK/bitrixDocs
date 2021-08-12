@@ -22,7 +22,7 @@ use Bitrix\Crm\UtmTable;
  */
 class Trace
 {
-	const DETECT_TIME_MINUTES = 5;
+	const DETECT_TIME_MINUTES = 10;
 	const FIND_ENTITIES_TIME_DAYS = 7;
 
 	protected $id;
@@ -43,8 +43,13 @@ class Trace
 
 	protected $ref;
 
+	protected $gid;
+
 	/** @var bool Use detecting of Date Create. */
-	private $useDetectingOfDateCreate;
+	private $useDetectingOfDateCreate = false;
+
+	/** @var bool Use trace detecting. */
+	private $useTraceDetecting = true;
 
 	/** @var DateTime|null Date create. */
 	private $dateCreate;
@@ -176,6 +181,12 @@ class Trace
 			}
 		}
 
+		$gid = self::getValueByKey($data, 'gid');
+		if ($gid)
+		{
+			$this->setGid($gid);
+		}
+
 		$url = self::getValueByKey($data, 'url');
 		if (!$url && $this->pages)
 		{
@@ -281,6 +292,28 @@ class Trace
 	}
 
 	/**
+	 * Get guest id.
+	 *
+	 * @return string|null
+	 */
+	public function getGid()
+	{
+		return $this->gid;
+	}
+
+	/**
+	 * Set guest id.
+	 *
+	 * @param string $gid Guest ID.
+	 * @return $this
+	 */
+	public function setGid($gid)
+	{
+		$this->gid = $gid;
+		return $this;
+	}
+
+	/**
 	 * Set url.
 	 *
 	 * @param string $url Url.
@@ -315,7 +348,7 @@ class Trace
 	 */
 	public function addUtm($name, $value)
 	{
-		$name = strtoupper($name);
+		$name = mb_strtoupper($name);
 		if (in_array($name, UtmTable::getCodeList()) && $value)
 		{
 			$this->utm[$name] = $value;
@@ -438,6 +471,18 @@ class Trace
 	}
 
 	/**
+	 * Use trace detecting.
+	 *
+	 * @param bool $mode Mode.
+	 * @return $this
+	 */
+	public function useTraceDetecting($mode = true)
+	{
+		$this->useTraceDetecting = $mode;
+		return $this;
+	}
+
+	/**
 	 * Get ID.
 	 *
 	 * @return int|null
@@ -459,7 +504,7 @@ class Trace
 
 	protected function detect()
 	{
-		if ($this->loaded)
+		if ($this->loaded || !$this->useTraceDetecting)
 		{
 			return null;
 		}
@@ -577,6 +622,8 @@ class Trace
 				/** @var Crm\Entity\Identificator\Complex $entity */
 				self::appendEntity($this->id, $entity->getTypeId(), $entity->getId());
 			}
+
+			Source\Level\TraceSplitter::instance()->split($this);
 		}
 
 		return $this->id;

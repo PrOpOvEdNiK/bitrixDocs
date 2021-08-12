@@ -1,5 +1,0 @@
-<?
-$MESS["SENDER_MAILING_STATS_COUNTER_READ"] = "Wyświetlenia";
-$MESS["SENDER_MAILING_STATS_NO_DATA"] = "Brak danych.";
-$MESS["SENDER_MAILING_STATS_READ"] = "Wyświetlenia";
-?>

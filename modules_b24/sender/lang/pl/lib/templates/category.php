@@ -1,7 +1,0 @@
-<?
-$MESS["SENDER_TEMPLATES_CATEGORY_ADDITIONAL"] = "Więcej";
-$MESS["SENDER_TEMPLATES_CATEGORY_BASE"] = "Standardowe";
-$MESS["SENDER_TEMPLATES_CATEGORY_CASES"] = "Szablony kampanii testowanych w czasie";
-$MESS["SENDER_TEMPLATES_CATEGORY_RECENT"] = "Ostatnio używane";
-$MESS["SENDER_TEMPLATES_CATEGORY_USER"] = "Moje szablony";
-?>

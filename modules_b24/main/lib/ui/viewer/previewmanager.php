@@ -192,13 +192,17 @@ final class PreviewManager
 			$response = $this->sendResizedImage($file);
 		}
 
+		if ($response instanceof Response\BFile && isset($options['cache_time']))
+		{
+			$response->setCacheTime($options['cache_time']);
+		}
+
 		if ($response instanceof \Bitrix\Main\Response)
 		{
 			/** @global \CMain $APPLICATION */
 			global $APPLICATION;
 
 			$APPLICATION->RestartBuffer();
-			while(ob_end_clean());
 
 			Application::getInstance()->end(0, $response);
 		}
@@ -395,7 +399,7 @@ final class PreviewManager
 			'previewfile'
 		);
 
-		return unserialize(base64_decode($unsignedParameters));
+		return unserialize(base64_decode($unsignedParameters), ['allowed_classes' => false]);
 	}
 
 	public function getByImage($fileId, Uri $sourceUri)

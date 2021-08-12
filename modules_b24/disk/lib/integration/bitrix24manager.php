@@ -46,6 +46,16 @@ class Bitrix24Manager
 		return \CBitrix24BusinessTools::isToolAvailable($userId, $entityType, false);
 	}
 
+	public static function isUserRestricted(int $userId): bool
+	{
+		if (!Loader::includeModule('bitrix24'))
+		{
+			return false;
+		}
+
+		return \Bitrix\Bitrix24\Limits\User::isUserRestricted($userId);
+	}
+
 	/**
 	 * Returns true if tariff for this portal is not free.
 	 *
@@ -90,30 +100,38 @@ class Bitrix24Manager
 		return true;
 	}
 
+	public static function getFeatureVariable($feature)
+	{
+		if (Loader::includeModule('bitrix24'))
+		{
+			return Feature::getVariable($feature);
+		}
+
+		return null;
+	}
+
 	public static function filterJsAction($feature, $jsAction, $skip = false)
 	{
+		$map = [
+			'disk_manual_external_link' => 'limit_office_share_file',
+			'disk_manual_external_folder' => 'limit_office_share_link',
+			'disk_file_sharing' => 'limit_office_files_access_permissions',
+			'disk_folder_sharing' => 'limit_office_folders_access_permissions',
+		];
+
+		$helpdeskId = $map[$feature];
+
+		if ($feature === 'disk_manual_external_folder')
+		{
+			$feature = 'disk_manual_external_link';
+		}
+
 		if ($skip || self::isFeatureEnabled($feature))
 		{
 			return $jsAction;
 		}
 
-		['title' => $title, 'descr' => $descr] = self::processFeatureToMessageCode($feature);
 
-		return "BX.Bitrix24.LicenseInfoPopup.show('{$feature}', '{$title}', '{$descr}')";
-	}
-
-	private static function processFeatureToMessageCode($feature): array
-	{
-		if ($feature === 'disk_manual_external_link')
-		{
-			$feature = 'disk_external_link';
-		}
-
-		$featureInMessage = strtoupper($feature);
-
-		return [
-			'title' => GetMessageJS("DISK_B24_FEATURES_{$featureInMessage}_1_TITLE"),
-			'descr' => GetMessageJS("DISK_B24_FEATURES_{$featureInMessage}_1_DESCR")
-		];
+		return "BX.UI.InfoHelper.show('{$helpdeskId}')";
 	}
 }

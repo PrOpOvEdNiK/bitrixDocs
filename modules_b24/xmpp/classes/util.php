@@ -1,21 +1,22 @@
-<?
+<?php
+
 class CXMPPUtility
 {
 	static function GetUserByJId($jId)
 	{
-		if (strlen($jId) <= 0)
+		if ($jId == '')
 			return false;
 
-		$pos = strpos($jId, "@");
+		$pos = mb_strpos($jId, "@");
 		if ($pos !== false)
-			$login = substr($jId, 0, $pos);
+			$login = mb_substr($jId, 0, $pos);
 		else
 			$login = $jId;
 
-		if (strlen($login) <= 0)
+		if ($login == '')
 			return false;
 
-		$dbUsers = CUser::GetList($by = "ID", $order = "desc", array("LOGIN_EQUAL_EXACT" => $login, "!UF_DEPARTMENT" => false));
+		$dbUsers = CUser::GetList("ID", "desc", array("LOGIN_EQUAL_EXACT" => $login, "!UF_DEPARTMENT" => false));
 		$arUser = $dbUsers->Fetch();
 		if (!$arUser)
 			return false;
@@ -43,11 +44,11 @@ class CXMPPUtility
 
 		$userID = implode(' | ', $arUserID);
 
-		if (strlen($userID) == 0)
+		if ($userID == '')
 			return false;
 
 		$arUserJID = array();
-		$dbUsers = CUser::GetList($by = "ID", $order = "desc", array("ID" => $userID, "!UF_DEPARTMENT" => false), array('FIELDS' => array('ID', 'LOGIN')));
+		$dbUsers = CUser::GetList("ID", "desc", array("ID" => $userID, "!UF_DEPARTMENT" => false), array('FIELDS' => array('ID', 'LOGIN')));
 		while($arUser = $dbUsers->Fetch())
 		{
 			$arUserJID[$arUser['ID']] = CXMPPUtility::GetJId($arUser, $domain);
@@ -66,7 +67,7 @@ class CXMPPUtility
 
 		$login = preg_replace("/[^a-zA-Z0-9._-]/i", "_", $arUser["LOGIN"]);
 
-		return strtolower($login."@".$domain);
+		return mb_strtolower($login."@".$domain);
 	}
 
 	static function Show($str, $level = 0)
@@ -167,7 +168,7 @@ class CXMPPUtility
 
 	static function GetMessageArray($senderJId, $receiverJId, $messageType, $body, $domain = "")
 	{
-		if (strlen($receiverJId) <= 0)
+		if ($receiverJId == '')
 			return false;
 
 		if (empty($domain))
@@ -202,7 +203,7 @@ class CXMPPUtility
 
 	static function GetErrorArray($receiverJId, $stanzaKind, $errorType, $condition, $senderJId = "", $id = "", $text = "", $domain = "")
 	{
-		if (strlen($receiverJId) <= 0)
+		if ($receiverJId == '')
 			return false;
 
 		$arAllowableStanzaKinds = array("message", "presence", "iq");
@@ -360,13 +361,13 @@ class CXMPPUtility
 			),
 		);
 
-		if (strlen($senderJId) > 0)
+		if ($senderJId <> '')
 			$arResult[$stanzaKind]["."]["from"] = self::GetJIdWithResource($senderJId, $domain);
 
-		if (strlen($id) > 0)
+		if ($id <> '')
 			$arResult[$stanzaKind]["."]["id"] = $id;
 
-		if (strlen($text) > 0)
+		if ($text <> '')
 		{
 			$arResult[$stanzaKind]["error"]["text"] = array(
 				"." => array(
@@ -439,7 +440,7 @@ class CXMPPUtility
 
 	public static function GetJIdWithResource($jid, $domain = "")
 	{
-		if (strpos($jid, "/") !== false)
+		if (mb_strpos($jid, "/") !== false)
 			return $jid;
 
 		if (!CXMPPServer::IsServerStarted())
@@ -478,4 +479,3 @@ class CXMPPUtility
 		return str_replace(array("#NOBR#","#/NOBR#"), array("",""), COption::GetOptionString("xmpp", "name_template", "#LAST_NAME# #NAME#"));
 	}
 }
-?>

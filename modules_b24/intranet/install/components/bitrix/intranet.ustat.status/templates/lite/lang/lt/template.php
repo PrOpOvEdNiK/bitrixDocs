@@ -1,7 +1,0 @@
-<?
-$MESS["INTRANET_USTAT_RATING_LOADING"] = "Kraunama...";
-$MESS["INTRANET_USTAT_RATING_COMMON_TAB"] = "Bendras reitingas";
-$MESS["INTRANET_USTAT_RATING_INVOLVE_TAB"] = "Nedalyvauja";
-$MESS["INTRANET_USTAT_WIDGET_TITLE"] = "Įmonės pulsas";
-$MESS["INTRANET_USTAT_WIDGET_LOADING"] = "Įkeliama...";
-?>

@@ -1,9 +1,0 @@
-<script type="text/ejs" id="tplLabelAdd">
-    <%
-    if (this.labelList && labelList.length) {
-        for (var iLabel=0; labelList.length > iLabel; iLabel++) {
-            %><div title="<%= labelList[iLabel].title %>" data-id="<%= labelList[iLabel].id %>" class="markerItem item <%= labelList[iLabel].cssClass %>"><i></i></div><%
-        }
-    }
-    %>
-</script>

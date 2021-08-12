@@ -1,4 +1,0 @@
-<?
-$MESS["LANDING_BLOCK_MENU16__CONTACTS__PRESET_LINK"] = "Lien du contact";
-$MESS["LANDING_BLOCK_MENU16__CONTACTS__PRESET_TEXT"] = "Texte du contact";
-?>

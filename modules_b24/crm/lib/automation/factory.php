@@ -5,6 +5,8 @@ use Bitrix\Bitrix24\Feature;
 use Bitrix\Bizproc;
 use Bitrix\Crm\Automation\Target;
 use Bitrix\Crm\Automation\Trigger\BaseTrigger;
+use Bitrix\Crm\Service\Container;
+use Bitrix\Crm\Settings\QuoteSettings;
 use Bitrix\Main\Error;
 use Bitrix\Main\Loader;
 use Bitrix\Main\NotSupportedException;
@@ -14,20 +16,40 @@ use Bitrix\Crm\ActivityTable;
 
 class Factory
 {
-	private static $supportedEntityTypes = array(
+	private static $supportedEntityTypes = null;
+
+	private static $limitedEntityTypes = [
 		\CCrmOwnerType::Lead,
 		\CCrmOwnerType::Deal,
-		\CCrmOwnerType::Order,
-		//\CCrmOwnerType::Invoice,
-	);
+	];
 
 	private static $triggerRegistry;
-	private static $featuresCache = array();
 
 	private static $targets = [];
 
 	private static $newActivities = [];
 	private static $conversionResults = [];
+
+	private static $limitationCache = [];
+
+	private static function getSupportedEntityTypes()
+	{
+		if (is_null(static::$supportedEntityTypes))
+		{
+			static::$supportedEntityTypes = [
+					\CCrmOwnerType::Lead,
+					\CCrmOwnerType::Deal,
+					\CCrmOwnerType::Order,
+			];
+
+			if (QuoteSettings::getCurrent()->isFactoryEnabled())
+			{
+				static::$supportedEntityTypes[] = \CCrmOwnerType::Quote;
+			}
+		}
+
+		return static::$supportedEntityTypes;
+	}
 
 	public static function isAutomationAvailable($entityTypeId, $ignoreLicense = false)
 	{
@@ -36,17 +58,98 @@ class Factory
 
 		if (!$ignoreLicense && Loader::includeModule('bitrix24'))
 		{
-			$feature = 'crm_automation_'.strtolower(\CCrmOwnerType::ResolveName($entityTypeId));
+			$feature = 'crm_automation_'.mb_strtolower(\CCrmOwnerType::ResolveName($entityTypeId));
+			$is = Feature::isFeatureEnabled($feature);
 
-			if (!isset(static::$featuresCache[$feature]))
+			if (!$is && self::isLimitationSupported() && in_array($entityTypeId, self::$limitedEntityTypes))
 			{
-				static::$featuresCache[$feature] = Feature::isFeatureEnabled($feature);
+				$is = Feature::isFeatureEnabled($feature.'_limited');
 			}
 
-			return static::$featuresCache[$feature];
+			return $is;
 		}
 
 		return true;
+	}
+
+	public static function isAutomationRunnable(int $entityTypeId): bool
+	{
+		if (static::isAutomationAvailable($entityTypeId))
+		{
+			if (self::isAutomationLimited($entityTypeId))
+			{
+				return !self::isOverLimited($entityTypeId);
+			}
+
+			return true;
+		}
+
+		return false;
+	}
+
+	public static function isAutomationLimited(int $entityTypeId): bool
+	{
+		if (Loader::includeModule('bitrix24'))
+		{
+			$feature = 'crm_automation_'.mb_strtolower(\CCrmOwnerType::ResolveName($entityTypeId));
+			$is = Feature::isFeatureEnabled($feature);
+
+			if ($is)
+			{
+				return false;
+			}
+
+			return (
+				in_array($entityTypeId, self::$limitedEntityTypes)
+				&& Feature::isFeatureEnabled($feature.'_limited')
+			);
+		}
+
+		return false;
+	}
+
+	public static function getRobotsLimit(int $entityTypeId): int
+	{
+		if (static::isAutomationLimited($entityTypeId))
+		{
+			return (int) Feature::getVariable('crm_automation_robots_limit');
+		}
+		return 0;
+	}
+
+	private static function isOverLimited($entityTypeId): bool
+	{
+		$limit = static::getRobotsLimit($entityTypeId);
+
+		if ($limit <= 0)
+		{
+			return false;
+		}
+
+		if (isset(self::$limitationCache[$entityTypeId]))
+		{
+			return self::$limitationCache[$entityTypeId];
+		}
+
+		$target = self::createTarget($entityTypeId);
+		$statuses = $target->getEntityStatuses();
+
+		$triggersCnt = count($target->getTriggers($statuses));
+
+		if ($triggersCnt > $limit)
+		{
+			return self::$limitationCache[$entityTypeId] = true;
+		}
+
+		$documentType = \CCrmBizProcHelper::ResolveDocumentType($entityTypeId);
+		$robotsCnt = \Bitrix\Bizproc\Automation\Helper::countAllRobots($documentType, $statuses);
+
+		return self::$limitationCache[$entityTypeId] = ($triggersCnt + $robotsCnt > $limit);
+	}
+
+	private static function isLimitationSupported()
+	{
+		return method_exists(\Bitrix\Bizproc\Automation\Helper::class, 'countAllRobots');
 	}
 
 	public static function canUseBizprocDesigner()
@@ -54,20 +157,36 @@ class Factory
 		if (Loader::includeModule('bitrix24'))
 		{
 			$feature = 'crm_automation_designer';
-			if (!isset(static::$featuresCache[$feature]))
-			{
-				static::$featuresCache[$feature] = Feature::isFeatureEnabled($feature);
-			}
-
-			return static::$featuresCache[$feature];
+			return Feature::isFeatureEnabled($feature);
 		}
 
 		return true;
 	}
 
+	public static function isBizprocDesignerSupported(int $entityTypeId): bool
+	{
+		return (
+			$entityTypeId === \CCrmOwnerType::Lead
+			|| $entityTypeId === \CCrmOwnerType::Deal
+			|| $entityTypeId === \CCrmOwnerType::Contact
+			|| $entityTypeId === \CCrmOwnerType::Company
+			|| $entityTypeId === \CCrmOwnerType::Order
+			|| $entityTypeId === \CCrmOwnerType::Quote
+			|| \CCrmOwnerType::isPossibleDynamicTypeId($entityTypeId)
+		);
+	}
+
+	public static function isBizprocDesignerEnabled(int $entityTypeId): bool
+	{
+		$isSupported = static::isBizprocDesignerSupported($entityTypeId);
+		$factory = Container::getInstance()->getFactory($entityTypeId);
+
+		return isset($factory) ? $factory->isBizProcEnabled() : $isSupported;
+	}
+
 	public static function canUseAutomation()
 	{
-		foreach (static::$supportedEntityTypes as $entityTypeId)
+		foreach (static::getSupportedEntityTypes() as $entityTypeId)
 		{
 			if (static::isAutomationAvailable($entityTypeId))
 				return true;
@@ -77,7 +196,14 @@ class Factory
 
 	public static function isSupported($entityTypeId)
 	{
-		return in_array((int)$entityTypeId, static::$supportedEntityTypes, true);
+		$isSupported = in_array((int)$entityTypeId, static::getSupportedEntityTypes(), true);
+		if (!$isSupported && \CCrmOwnerType::isPossibleDynamicTypeId((int)$entityTypeId))
+		{
+			$factory = Container::getInstance()->getFactory((int)$entityTypeId);
+			$isSupported = $factory && $factory->isAutomationEnabled();
+		}
+
+		return $isSupported;
 	}
 
 	public static function runOnAdd($entityTypeId, $entityId)
@@ -89,7 +215,7 @@ class Factory
 
 		$result = new Result();
 
-		if (empty($entityId) || !static::isAutomationAvailable($entityTypeId))
+		if (empty($entityId) || !static::isAutomationRunnable($entityTypeId))
 		{
 			$result->addError(new Error('not available'));
 			return $result;
@@ -110,7 +236,7 @@ class Factory
 	{
 		$result = new Result();
 
-		if (empty($entityId) || !static::isAutomationAvailable($entityTypeId))
+		if (empty($entityId) || !static::isAutomationRunnable($entityTypeId))
 		{
 			$result->addError(new Error('not available'));
 			return $result;
@@ -156,6 +282,14 @@ class Factory
 		elseif ($entityTypeId === \CCrmOwnerType::Invoice)
 		{
 			return new Target\InvoiceTarget();
+		}
+		elseif ($entityTypeId === \CCrmOwnerType::Quote)
+		{
+			return new Target\ItemTarget($entityTypeId);
+		}
+		elseif (\CCrmOwnerType::isPossibleDynamicTypeId($entityTypeId) || $entityTypeId === \CCrmOwnerType::Quote)
+		{
+			return new Target\ItemTarget($entityTypeId);
 		}
 		else
 		{
@@ -207,6 +341,8 @@ class Factory
 		{
 			self::$triggerRegistry = [];
 			foreach ([
+					Trigger\ResponsibleChangedTrigger::className(),
+					Trigger\FieldChangedTrigger::className(),
 					Trigger\EmailTrigger::className(),
 					Trigger\EmailSentTrigger::className(),
 					Trigger\EmailReadTrigger::className(),
@@ -218,16 +354,23 @@ class Factory
 					Trigger\InvoiceTrigger::className(),
 					Trigger\PaymentTrigger::className(),
 					Trigger\AllowDeliveryTrigger::className(),
+					Trigger\FillTrackingNumberTrigger::className(),
+					Trigger\ShipmentChangedTrigger::className(),
 					Trigger\DeductedTrigger::className(),
 					Trigger\OrderCanceledTrigger::className(),
+					Trigger\OrderPaidTrigger::className(),
+					Trigger\DeliveryFinishedTrigger::className(),
 					Trigger\WebHookTrigger::className(),
 					Trigger\VisitTrigger::className(),
 					Trigger\GuestReturnTrigger::className(),
 					Trigger\OpenLineTrigger::className(),
 					Trigger\OpenLineMessageTrigger::className(),
+					Trigger\OpenLineAnswerControlTrigger::className(),
+					Trigger\OpenLineAnswerTrigger::className(),
 					Trigger\ResourceBookingTrigger::className(),
 					Trigger\DocumentCreateTrigger::className(),
 					Trigger\DocumentViewTrigger::className(),
+					Trigger\TaskStatusTrigger::className(),
 					Trigger\AppTrigger::className(),
 				 ]
 				 as $triggerClass
@@ -376,5 +519,4 @@ class Factory
 
 		return $result;
 	}
-
 }

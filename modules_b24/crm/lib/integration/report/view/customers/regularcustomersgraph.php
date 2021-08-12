@@ -54,6 +54,11 @@ class RegularCustomersGraph extends ColumnLogarithmic
 			}
 		}
 
+		if ($result['chartCursor'])
+		{
+			$result['chartCursor']['categoryBalloonEnabled'] = false;
+		}
+
 		$result["clickGraphItem"] = "BX.Crm.Report.Dashboard.Content.RegularCustomers.onItemClick";
 
 		return $result;

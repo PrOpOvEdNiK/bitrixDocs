@@ -1,3 +1,0 @@
-<?
-$MESS["TASKS_IM_CHAT_TITLE"] = "Tarea: #TASK_TITLE#";
-?>

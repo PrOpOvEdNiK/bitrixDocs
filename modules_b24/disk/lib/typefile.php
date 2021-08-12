@@ -52,6 +52,7 @@ final class TypeFile
 			case 'jpg':
 			case 'jpeg':
 			case 'png':
+			case 'webp':
 			case 'gif':
 			case 'bmp':
 				return self::IMAGE;
@@ -128,11 +129,11 @@ final class TypeFile
 			case 'epub':
 			case 'msg':
 			case 'eml':
-			// IMAGES
+				// IMAGES
 			case 'tif':
 			case 'tiff':
 			case 'psd':
-			// FONTS
+				// FONTS
 			case 'ttf':
 			case 'otf':
 			case 'eot':
@@ -198,7 +199,7 @@ final class TypeFile
 	{
 		$mimes = static::getMimeTypeExtensionList();
 		$mimes = array_flip($mimes);
-		$mimeType = strtolower($mimeType);
+		$mimeType = mb_strtolower($mimeType);
 		if (isset($mimes[$mimeType]))
 		{
 			return $mimes[$mimeType];
@@ -216,7 +217,7 @@ final class TypeFile
 	public static function getMimeTypeByFilename($filename)
 	{
 		$mimes = static::getMimeTypeExtensionList();
-		$extension = strtolower(getFileExtension($filename));
+		$extension = mb_strtolower(getFileExtension($filename));
 		if (isset($mimes[$extension]))
 		{
 			return $mimes[$extension];
@@ -237,6 +238,7 @@ final class TypeFile
 			'jpeg' => 'image/jpeg',
 			'bmp' => 'image/bmp',
 			'png' =>'image/png',
+			'webp' =>'image/webp',
 			'tif' => 'image/tiff',
 			'tiff' => 'image/tiff',
 			'psd' => 'image/vnd.adobe.photoshop',

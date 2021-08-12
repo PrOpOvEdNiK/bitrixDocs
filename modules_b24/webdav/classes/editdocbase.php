@@ -24,7 +24,7 @@ abstract class CWebDavEditDocBase
 		{
 			if(!empty($http->headers['WWW-Authenticate']) && is_string($http->headers['WWW-Authenticate']))
 			{
-				if(strpos($http->headers['WWW-Authenticate'], 'insufficient') !== false)
+				if(mb_strpos($http->headers['WWW-Authenticate'], 'insufficient') !== false)
 				{
 					$this->setInternalError(static::INTERNAL_ERROR_INSUFFICIENT_SCOPE);
 				}
@@ -133,7 +133,7 @@ abstract class CWebDavEditDocBase
 		);
 		$ext = GetFileExtension($filename);
 
-		return !empty($allowFormat[$ext]) || !empty($allowFormat[strtolower($ext)]);
+		return !empty($allowFormat[$ext]) || !empty($allowFormat[mb_strtolower($ext)]);
 	}
 
 	public static function isNeedConvertExtension($filename)
@@ -153,8 +153,8 @@ abstract class CWebDavEditDocBase
 
 	protected function recoverExtensionInName(array &$fileData, $mimeType)
 	{
-		$originalExtension = strtolower(trim(CWebDavIblock::getExtensionByMimeType($mimeType), '.'));
-		$newExtension = strtolower(trim(GetFileExtension($fileData['name']), '.'));
+		$originalExtension = mb_strtolower(trim(CWebDavIblock::getExtensionByMimeType($mimeType), '.'));
+		$newExtension = mb_strtolower(trim(GetFileExtension($fileData['name']), '.'));
 		if($originalExtension != $newExtension)
 		{
 			$fileData['name'] = GetFileNameWithoutExtension($fileData['name']) . '.' . $originalExtension;

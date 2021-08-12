@@ -1,5 +1,0 @@
-<?
-$MESS["EXTRANET_TOP_MENU_MAIN"] = "Home";
-$MESS["EXTRANET_TOP_MENU_WORKGROUPS"] = "Workgroups";
-$MESS["EXTRANET_TOP_MENU_CONTACTS"] = "Contacts";
-?>

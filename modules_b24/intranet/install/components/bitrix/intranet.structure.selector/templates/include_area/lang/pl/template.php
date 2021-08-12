@@ -1,5 +1,0 @@
-<?
-$MESS["INTR_ISS_TPL_DEPARTMENT"] = "Dział";
-$MESS["INTR_ISS_TPL_FIO"] = "Nazwa";
-$MESS["INTR_ISS_TPL_SUBMIT"] = "Szukaj";
-?>

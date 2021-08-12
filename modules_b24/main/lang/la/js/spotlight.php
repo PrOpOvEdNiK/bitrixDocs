@@ -1,4 +1,0 @@
-<?
-$MESS["MAIN_SPOTLIGHT_REMIND_LATER"] = "recordar más tarde";
-$MESS["MAIN_SPOTLIGHT_UNDERSTAND"] = "OK";
-?>

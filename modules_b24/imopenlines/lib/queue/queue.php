@@ -1,7 +1,9 @@
 <?php
 namespace Bitrix\ImOpenLines\Queue;
 
-use \Bitrix\Main\Loader,
+use \Bitrix\Main\Event,
+	\Bitrix\Main\Loader,
+	\Bitrix\Main\EventResult,
 	\Bitrix\Main\Type\DateTime,
 	\Bitrix\Main\Localization\Loc;
 
@@ -34,6 +36,146 @@ abstract class Queue
 	protected $chat = null;
 
 	protected $cacheRemoveSession = [];
+
+	/**
+	 * @param $parameters
+	 * @return array
+	 */
+	protected static function sendEventOnBeforeSessionTransfer($parameters): array
+	{
+		$result = $parameters['newOperatorQueue'];
+
+		//Event
+		$event = new Event('imopenlines', 'OnBeforeSessionTransfer', $parameters);
+		$event->send();
+
+		foreach($event->getResults() as $eventResult)
+		{
+			$errorEvent = false;
+			$errorsMessageEvent = [];
+
+			if ((int)$eventResult->getType() === EventResult::SUCCESS)
+			{
+				$newValues = $eventResult->getParameters();
+				if (!empty($newValues['newOperatorQueue']))
+				{
+					if(!isset($newValues['newOperatorQueue']['RESULT']))
+					{
+						$errorEvent = true;
+						$errorsMessageEvent[] = 'The event handler must pass the value [newOperatorQueue][RESULT]';
+					}
+					elseif (!is_bool($newValues['newOperatorQueue']['RESULT']))
+					{
+						$errorEvent = true;
+						$errorsMessageEvent[] = '[newOperatorQueue][RESULT] only the bool type is allowed';
+					}
+					if(!isset($newValues['newOperatorQueue']['OPERATOR_ID']))
+					{
+						$errorEvent = true;
+						$errorsMessageEvent[] = 'The event handler must pass the value [newOperatorQueue][OPERATOR_ID]';
+					}
+					elseif(
+						!is_numeric($newValues['newOperatorQueue']['OPERATOR_ID']) &&
+						(
+							mb_strpos($newValues['newOperatorQueue']['OPERATOR_ID'], 'queue') !== 0 ||
+							!is_numeric(mb_substr($newValues['newOperatorQueue']['OPERATOR_ID'], 5))
+						)
+					)
+					{
+						$errorEvent = true;
+						$errorsMessageEvent[] = '[newOperatorQueue][OPERATOR_ID] only a number is allowed, including 0 or a number with the "queue" prefix';
+					}
+					if(!isset($newValues['newOperatorQueue']['OPERATOR_LIST']))
+					{
+						$errorEvent = true;
+						$errorsMessageEvent[] = 'The event handler must pass the value [newOperatorQueue][OPERATOR_LIST]';
+					}
+					elseif(!is_array($newValues['newOperatorQueue']['OPERATOR_LIST']))
+					{
+						$errorEvent = true;
+						$errorsMessageEvent[] = '[newOperatorQueue][OPERATOR_LIST] only an array is allowed, including an empty array []';
+					}
+					else
+					{
+						foreach ($newValues['newOperatorQueue']['OPERATOR_LIST'] as $operator)
+						{
+							if(empty($operator))
+							{
+								$errorEvent = true;
+								$errorsMessageEvent[] = '[newOperatorQueue][OPERATOR_LIST] each value must not be empty';
+							}
+							elseif(!is_numeric($operator))
+							{
+								$errorEvent = true;
+								$errorsMessageEvent[] = '[newOperatorQueue][OPERATOR_LIST] each value must be a digit';
+							}
+						}
+					}
+					if(!isset($newValues['newOperatorQueue']['DATE_QUEUE']))
+					{
+						$errorEvent = true;
+						$errorsMessageEvent[] = 'The event handler must pass the value [newOperatorQueue][DATE_QUEUE]';
+					}
+					elseif(
+						!($newValues['newOperatorQueue']['DATE_QUEUE'] instanceof DateTime) &&
+						!empty($newValues['newOperatorQueue']['DATE_QUEUE'])
+					)
+					{
+						$errorEvent = true;
+						$errorsMessageEvent[] = '[newOperatorQueue][DATE_QUEUE] a valid value is only an object of the "\Bitrix\Main\Type\DateTime" class or "false"';
+					}
+					elseif(
+						empty($newValues['newOperatorQueue']['DATE_QUEUE']) &&
+						(
+							empty($newValues['newOperatorQueue']['OPERATOR_ID']) &&
+							empty($newValues['newOperatorQueue']['OPERATOR_LIST'])
+						)
+					)
+					{
+						$errorEvent = true;
+						$errorsMessageEvent[] = '[newOperatorQueue][DATE_QUEUE] if an "empty" value is passed, including "false", then [newOperatorQueue][OPERATOR_ID] or [newOperatorQueue][OPERATOR_LIST] must have non-empty values';
+					}
+					if(!isset($newValues['newOperatorQueue']['QUEUE_HISTORY']))
+					{
+						$errorEvent = true;
+						$errorsMessageEvent[] = 'The event handler must pass the value [newOperatorQueue][QUEUE_HISTORY]';
+					}
+					elseif (!is_array($newValues['newOperatorQueue']['QUEUE_HISTORY']))
+					{
+						$errorEvent = true;
+						$errorsMessageEvent[] = '[newOperatorQueue][QUEUE_HISTORY] only an array is allowed, including an empty array []';
+					}
+
+					if($errorEvent === false)
+					{
+						$result = $newValues['newOperatorQueue'];
+					}
+				}
+				else
+				{
+					$errorEvent = true;
+					$errorsMessageEvent[] = 'The event handler returned an empty "newOperatorQueue" value';
+				}
+			}
+			else
+			{
+				$errorEvent = true;
+				$errorsMessageEvent[] = 'The result of the processing of the event returned with an error';
+			}
+
+			if($errorEvent === true)
+			{
+				$eventError = new Event('imopenlines', 'OnErrorEventBeforeSessionTransfer',
+					[
+						'errors' => $errorsMessageEvent,
+						'eventResult' => $eventResult
+					]);
+				$eventError->send();
+			}
+		}
+
+		return $result;
+	}
 
 	/**
 	 * Queue constructor.
@@ -122,19 +264,22 @@ abstract class Queue
 	 * Basic check that the operator is active.
 	 *
 	 * @param $userId
-	 * @return bool
+	 * @param bool $ignorePause
+	 * @return bool|string
 	 * @throws \Bitrix\Main\ArgumentException
 	 * @throws \Bitrix\Main\LoaderException
 	 * @throws \Bitrix\Main\ObjectException
 	 * @throws \Bitrix\Main\SystemException
 	 */
-	public function isOperatorActive($userId)
+	public function isOperatorActive($userId, bool $ignorePause = false)
 	{
-		return ImOpenLines\Queue::isOperatorActive($userId, $this->config['CHECK_AVAILABLE']);
+		return ImOpenLines\Queue::isOperatorActive($userId, $this->config['CHECK_AVAILABLE'], $ignorePause);
 	}
 
 	/**
 	 * Are there any available operators in the line.
+	 *
+	 * @param bool $ignorePause
 	 *
 	 * @return bool
 	 * @throws \Bitrix\Main\ArgumentException
@@ -142,9 +287,9 @@ abstract class Queue
 	 * @throws \Bitrix\Main\ObjectPropertyException
 	 * @throws \Bitrix\Main\SystemException
 	 */
-	public function isOperatorsActiveLine(): bool
+	public function isOperatorsActiveLine(bool $ignorePause = false): bool
 	{
-		return ImOpenLines\Queue::isOperatorsActiveLine($this->config['ID'], $this->config['CHECK_AVAILABLE']);
+		return ImOpenLines\Queue::isOperatorsActiveLine($this->config['ID'], $this->config['CHECK_AVAILABLE'], $ignorePause);
 	}
 
 	/**
@@ -161,9 +306,9 @@ abstract class Queue
 	{
 		$result = false;
 
-		if($this->isOperatorActive($userId))
+		if($this->isOperatorActive($userId) === true)
 		{
-			if($userId != $currentOperator)
+			if((int)$userId !== (int)$currentOperator)
 			{
 				$freeCountChatOperator = ImOpenLines\Queue::getCountFreeSlotOperator($userId, $this->config['ID'], $this->config["MAX_CHAT"], $this->config["TYPE_MAX_CHAT"]);
 
@@ -267,15 +412,16 @@ abstract class Queue
 
 					$crmOperatorId = $crmManager->getOperatorId();
 
-					if($crmOperatorId > 0)
+					if(
+						$crmOperatorId !== null &&
+						$crmOperatorId > 0 &&
+						$this->isActiveCrmUser($crmOperatorId) === true
+					)
 					{
-						if($this->isActiveCrmUser($crmOperatorId))
-						{
-							$operatorId = $crmOperatorId;
+						$operatorId = $crmOperatorId;
 
-							$result['DATE_QUEUE'] = null;
-							$result['OPERATOR_CRM'] = true;
-						}
+						$result['DATE_QUEUE'] = null;
+						$result['OPERATOR_CRM'] = true;
 					}
 				}
 				//END CRM
@@ -355,7 +501,10 @@ abstract class Queue
 		{
 			$resultOperatorQueue = $this->getOperatorsQueue($this->session['OPERATOR_ID']);
 
-			if($manual && $resultOperatorQueue['RESULT'] != true)
+			if(
+				$manual &&
+				$resultOperatorQueue['RESULT'] != true
+			)
 			{
 				self::sendMessageSkipAlone($this->session['CHAT_ID']);
 			}
@@ -365,34 +514,66 @@ abstract class Queue
 					'REASON_RETURN' => ImOpenLines\Queue::REASON_DEFAULT
 				];
 
-				if($this->session['OPERATOR_ID'] != $resultOperatorQueue['OPERATOR_ID'])
-				{
-					$this->chat->transfer([
-						'FROM' => $this->session['OPERATOR_ID'],
-						'TO' => $resultOperatorQueue['OPERATOR_ID'],
-						'MODE' => Chat::TRANSFER_MODE_AUTO,
-						'LEAVE' => $this->config['WELCOME_BOT_LEFT'] == Config::BOT_LEFT_CLOSE && Im\User::getInstance($this->session['OPERATOR_ID'])->isBot()? 'N':'Y'
-					]);
-				}
+				$reasonReturn = SessionCheckTable::getById($this->session['ID'])->fetch()['REASON_RETURN'];
 
-				if($resultOperatorQueue['RESULT'] == true)
+				//Event
+				$resultOperatorQueue = self::sendEventOnBeforeSessionTransfer(
+					[
+						'session' => $this->session,
+						'config' => $this->config,
+						'chat' => $this->chat,
+						'reasonReturn' => $reasonReturn,
+						'newOperatorQueue' => $resultOperatorQueue
+					]
+				);
+				// END Event
+
+				$leaveTransfer = (string)$this->config['WELCOME_BOT_LEFT'] === Config::BOT_LEFT_CLOSE && Im\User::getInstance($this->session['OPERATOR_ID'])->isBot()? 'N':'Y';
+
+				if((bool)$resultOperatorQueue['RESULT'] === true)
 				{
+					if(!empty($resultOperatorQueue['OPERATOR_ID']))
+					{
+						if((int)$this->session['OPERATOR_ID'] !== (int)$resultOperatorQueue['OPERATOR_ID'])
+						{
+							$this->chat->transfer([
+								'FROM' => $this->session['OPERATOR_ID'],
+								'TO' => $resultOperatorQueue['OPERATOR_ID'],
+								'MODE' => Chat::TRANSFER_MODE_AUTO,
+								'LEAVE' => $leaveTransfer
+							]);
+						}
+					}
+					elseif(!empty($resultOperatorQueue['OPERATOR_LIST']))
+					{
+						$this->chat->setOperators($resultOperatorQueue['OPERATOR_LIST'], $this->session['ID']);
+						$this->chat->update(['AUTHOR_ID' => 0]);
+					}
+
 					$updateSessionCheck['UNDISTRIBUTED'] = 'N';
 
 					$result = true;
 				}
 				else
 				{
+					if((int)$this->session['OPERATOR_ID'] !== 0)
+					{
+						$this->chat->transfer([
+							'FROM' => $this->session['OPERATOR_ID'],
+							'TO' => 0,
+							'MODE' => Chat::TRANSFER_MODE_AUTO,
+							'LEAVE' => $leaveTransfer
+						]);
+					}
+
 					$updateSessionCheck['UNDISTRIBUTED'] = 'Y';
 				}
 
 				$updateSessionCheck['DATE_QUEUE'] = $resultOperatorQueue['DATE_QUEUE'];
 
-				$reasonReturn = SessionCheckTable::getById($this->session['ID'])->fetch()['REASON_RETURN'];
-
 				SessionCheckTable::update($this->session['ID'], $updateSessionCheck);
 
-				if($this->session['OPERATOR_ID'] != $resultOperatorQueue['OPERATOR_ID'])
+				if((int)$this->session['OPERATOR_ID'] !== (int)$resultOperatorQueue['OPERATOR_ID'])
 				{
 					$updateSession = [
 						'OPERATOR_ID' => $resultOperatorQueue['OPERATOR_ID'],
@@ -419,17 +600,14 @@ abstract class Queue
 	 * @param bool $finish
 	 * @param bool $vote
 	 * @return bool
-	 * @throws \Bitrix\Main\ArgumentException
-	 * @throws \Bitrix\Main\LoaderException
-	 * @throws \Bitrix\Main\ObjectException
-	 * @throws \Bitrix\Main\ObjectPropertyException
-	 * @throws \Bitrix\Main\SystemException
 	 */
-	public function automaticActionAddMessage($finish = false, $vote = false)
+	public function automaticActionAddMessage($finish = false, $vote = false): bool
 	{
-		if($this->isRemoveSession($finish, $vote))
+		$removeSession = $this->isRemoveSession($finish, $vote);
+
+		if($removeSession !== false)
 		{
-			$this->transferOperatorNotAvailable();
+			$this->transferOperatorNotAvailable($removeSession);
 		}
 
 		return true;
@@ -441,38 +619,42 @@ abstract class Queue
 	 * @param bool $finish
 	 * @param bool $vote
 	 * @param bool $noCache
-	 * @return bool
+	 * @return bool|string
 	 * @throws \Bitrix\Main\ArgumentException
 	 * @throws \Bitrix\Main\LoaderException
 	 * @throws \Bitrix\Main\ObjectException
 	 * @throws \Bitrix\Main\ObjectPropertyException
 	 * @throws \Bitrix\Main\SystemException
 	 */
-	public function isRemoveSession($finish = false, $vote = false, $noCache = false): bool
+	public function isRemoveSession($finish = false, $vote = false, $noCache = false)
 	{
 		$result = false;
 
-		if(!$noCache && isset($this->cacheRemoveSession[$this->session['ID']]))
+		if(
+			!$noCache &&
+			isset($this->cacheRemoveSession[$this->session['ID']])
+		)
 		{
 			$result = $this->cacheRemoveSession[$this->session['ID']];
 		}
 		else
 		{
-			if(!$this->sessionManager->isNowCreated() && $finish !== true && $vote !== true)
+			if(
+				$finish !== true &&
+				$vote !== true &&
+				!$this->sessionManager->isNowCreated() &&
+
+				!empty($this->session['OPERATOR_ID']) &&
+				(string)$this->session['PAUSE'] !== 'Y' &&
+				$this->session['STATUS'] >= Session::STATUS_ANSWER &&
+
+				!ImOpenLines\Queue::isOperatorSingleInLine($this->session['CONFIG_ID'], $this->session['OPERATOR_ID'])
+			)
 			{
-				if(
-					!empty($this->session['OPERATOR_ID']) &&
-					$this->session['PAUSE'] != 'Y' &&
-					$this->session['STATUS'] >= Session::STATUS_ANSWER
-				)
+				$operatorActive = $this->isOperatorActive($this->session['OPERATOR_ID'], true);
+				if($operatorActive !== true)
 				{
-					if (!ImOpenLines\Queue::isOperatorSingleInLine($this->session['CONFIG_ID'], $this->session['OPERATOR_ID']))
-					{
-						if(!$this->isOperatorActive($this->session['OPERATOR_ID']))
-						{
-							$result = true;
-						}
-					}
+					$result = $operatorActive;
 				}
 			}
 
@@ -486,7 +668,7 @@ abstract class Queue
 	 * Check the operator responsible for CRM on the possibility of transfer of chat.
 	 *
 	 * @param $userId
-	 * @return bool
+	 * @return bool|string
 	 * @throws \Bitrix\Main\ArgumentException
 	 * @throws \Bitrix\Main\LoaderException
 	 * @throws \Bitrix\Main\ObjectException
@@ -500,15 +682,15 @@ abstract class Queue
 	/**
 	 * Directing a conversation to a queue when an operator is not available.
 	 *
+	 * @param string $reasonReturn
 	 * @throws \Bitrix\Main\ArgumentException
 	 * @throws \Bitrix\Main\LoaderException
 	 * @throws \Bitrix\Main\ObjectException
+	 * @throws \Bitrix\Main\ObjectPropertyException
 	 * @throws \Bitrix\Main\SystemException
 	 */
-	public function transferOperatorNotAvailable()
+	public function transferOperatorNotAvailable($reasonReturn = ImOpenLines\Queue::REASON_OPERATOR_NOT_AVAILABLE): void
 	{
-		$reasonReturn = ImOpenLines\Queue::REASON_OPERATOR_NOT_AVAILABLE;
-
 		ImOpenLines\Queue::returnSessionToQueue($this->session['ID'], $reasonReturn);
 
 		ImOpenLines\Queue::transferToNextSession(false, ImOpenLines\Queue\Event::COUNT_SESSIONS_REALTIME, $this->config['ID']);
@@ -525,7 +707,7 @@ abstract class Queue
 	public function transferOperatorOffline()
 	{
 		ImOpenLines\Im::addMessage([
-			"TO_CHAT_ID" => $this->session['CHAT_ID'],
+			'TO_CHAT_ID' => $this->session['CHAT_ID'],
 			'MESSAGE' => Loc::getMessage('IMOL_QUEUE_SESSION_TRANSFER_OPERATOR_OFFLINE'),
 			'SYSTEM' => 'Y',
 			'SKIP_COMMAND' => 'Y'
@@ -541,7 +723,7 @@ abstract class Queue
 	public static function sendMessageSkipAlone($chatId)
 	{
 		ImOpenLines\Im::addMessage([
-			"TO_CHAT_ID" => $chatId,
+			'TO_CHAT_ID' => $chatId,
 			'MESSAGE' => Loc::getMessage('IMOL_QUEUE_SESSION_SKIP_ALONE'),
 			'SYSTEM' => 'Y',
 			'SKIP_COMMAND' => 'Y'

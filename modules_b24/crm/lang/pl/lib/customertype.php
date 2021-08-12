@@ -1,4 +1,0 @@
-<?
-$MESS["CRM_CUSTOMER_GENERAL"] = "Główny";
-$MESS["CRM_CUSTOMER_RETURNING"] = "Powtórz";
-?>

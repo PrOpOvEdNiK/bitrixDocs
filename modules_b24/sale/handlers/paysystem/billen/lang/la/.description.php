@@ -1,4 +1,4 @@
-<?
+<?php
 $MESS["SALE_HPS_BILL_EN_ACC_POS_SUPPLI"] = "Puesto de trabajo del contador";
 $MESS["SALE_HPS_BILL_EN_ACC_POS_SUPPLI_DESC"] = "Puesto de trabajo del contador (ventas)";
 $MESS["SALE_HPS_BILL_EN_ACC_POS_SUPPLI_VAL"] = "El Contador";
@@ -54,7 +54,7 @@ $MESS["SALE_HPS_BILL_EN_COLUMN_SUM_TITLE"] = "Título de columna de total";
 $MESS["SALE_HPS_BILL_EN_COLUMN_SUM_VALUE"] = "Total";
 $MESS["SALE_HPS_BILL_EN_COLUMN_VAT_RATE_SHOW"] = "Mostrar columna de impuestos";
 $MESS["SALE_HPS_BILL_EN_COLUMN_VAT_RATE_TITLE"] = "Título de columna de impuestos";
-$MESS["SALE_HPS_BILL_EN_COLUMN_VAT_RATE_VALUE"] = "Tasa de Impuesto";
+$MESS["SALE_HPS_BILL_EN_COLUMN_VAT_RATE_VALUE"] = "Tasa de impuesto";
 $MESS["SALE_HPS_BILL_EN_COMMENT1"] = "1 comentario por factura";
 $MESS["SALE_HPS_BILL_EN_COMMENT2"] = "2 comentario por factura";
 $MESS["SALE_HPS_BILL_EN_CUSTOMER"] = "Comprador";
@@ -81,11 +81,11 @@ $MESS["SALE_HPS_BILL_EN_HEADER_VALUE"] = "Factura";
 $MESS["SALE_HPS_BILL_EN_LOGO"] = "Logo del proveedor (tamaño recomendado 80x80&nbsp;px)";
 $MESS["SALE_HPS_BILL_EN_LOGO_DESC"] = "Logo del proveedor";
 $MESS["SALE_HPS_BILL_EN_LOGO_DPI"] = "Escala del logo";
+$MESS["SALE_HPS_BILL_EN_LOGO_DPI_72"] = "133% (72 dpi)";
+$MESS["SALE_HPS_BILL_EN_LOGO_DPI_96"] = "100% (96 dpi)";
 $MESS["SALE_HPS_BILL_EN_LOGO_DPI_150"] = "64% (150 dpi)";
 $MESS["SALE_HPS_BILL_EN_LOGO_DPI_300"] = "32% (300 dpi)";
 $MESS["SALE_HPS_BILL_EN_LOGO_DPI_600"] = "16% (600 dpi)";
-$MESS["SALE_HPS_BILL_EN_LOGO_DPI_72"] = "133% (72 dpi)";
-$MESS["SALE_HPS_BILL_EN_LOGO_DPI_96"] = "100% (96 dpi)";
 $MESS["SALE_HPS_BILL_EN_MARGIN_BOTTOM"] = "Margen inferior (mm)";
 $MESS["SALE_HPS_BILL_EN_MARGIN_LEFT"] = "Margen izquierdo (mm)";
 $MESS["SALE_HPS_BILL_EN_MARGIN_RIGHT"] = "Margen derecho (mm)";
@@ -101,4 +101,3 @@ $MESS["SALE_HPS_BILL_EN_SUPPLI"] = "Vendedor";
 $MESS["SALE_HPS_BILL_EN_SUPPLI_DESC"] = "Nombre del beneficiario o vendedor";
 $MESS["SALE_HPS_BILL_EN_TITLE"] = "Factura  (Inglés)";
 $MESS["SALE_HPS_BILL_EN_TOTAL_SHOW"] = "Mostrar resumen";
-?>

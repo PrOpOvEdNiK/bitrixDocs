@@ -36,14 +36,11 @@ CModule::AddAutoloadClasses(
 		"CIntranetSearchConverter" => "tools/search.php",
 		"CIntranetSearchConverters" => "tools/search.php",
 		"CIntranetNotify" => "classes/general/notify.php",
-		"CIntranetTasks" => "classes/general/tasks.php",
 		"CEventCalendar" => "classes/general/event_calendar.php",
 		"CIntranetCalendarWS" => "classes/general/ws_calendar.php",
 		"CIntranetContactsWS" => "classes/general/ws_contacts.php",
-		"CIntranetTasksWS" => "classes/general/ws_tasks.php",
 		"CIntranetRestService" => "classes/general/rest.php",
 		"CIntranetToolbar" => "classes/general/toolbar.php",
-		"CIntranetTasksDocument" => "classes/general/tasks_document.php",
 		"CIntranetSharepoint" => "classes/".$DBType."/sharepoint.php",
 		"CIntranetSharepointQueue" => "classes/".$DBType."/sharepoint_queue.php",
 		"CIntranetSharepointLog" => "classes/".$DBType."/sharepoint_log.php",
@@ -66,6 +63,9 @@ $GLOBALS['INTRANET_TOOLBAR'] = new CIntranetToolbar();
 
 CJSCore::RegisterExt('intranet_structure', array(
 	'js' => '/bitrix/js/intranet/structure.js',
+	'css' => [
+		'/bitrix/js/intranet/intranet-common.css'
+	],
 	'lang' => '/bitrix/modules/intranet/lang/'.LANGUAGE_ID.'/js_core_intranet_structure.php',
 	'rel' => array('ajax', 'popup')
 ));
@@ -79,7 +79,10 @@ CJSCore::RegisterExt('planner', array(
 
 CJSCore::RegisterExt("intranet_notify_dialog", array(
 	"js" => "/bitrix/js/intranet/notify_dialog/notify_dialog.js",
-	"css" => "/bitrix/js/intranet/notify_dialog/notify_dialog.css",
+	"css" => [
+		'/bitrix/js/intranet/intranet-common.css',
+		'/bitrix/js/intranet/notify_dialog/notify_dialog.css'
+	],
 	"lang" => "/bitrix/modules/intranet/lang/".LANGUAGE_ID."/install/js/notify_dialog.php",
 	"rel" => array("popup")
 ));

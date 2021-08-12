@@ -1,3 +1,0 @@
-<?
-$MESS["CRM_DOCGEN_DATAPROVIDER_INVOICE_TITLE"] = "Factura";
-?>

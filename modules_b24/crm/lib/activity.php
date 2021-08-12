@@ -140,6 +140,9 @@ class ActivityTable extends Entity\DataManager
 			'SUBJECT' => array(
 				'data_type' => 'string'
 			),
+			'DESCRIPTION' => array(
+				'data_type' => 'string',
+			),
 			'COMPLETED' => array(
 				'data_type' => 'boolean',
 				'values' => array('N', 'Y')
@@ -279,6 +282,9 @@ class ActivityTable extends Entity\DataManager
 			'SEARCH_CONTENT' => array(
 				'data_type' => 'string'
 			),
+			new TextField('SETTINGS', [
+				'serialized' => true
+			]),
 			new TextField('PROVIDER_PARAMS', [
 				'serialized' => true
 			])

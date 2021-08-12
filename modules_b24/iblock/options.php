@@ -31,6 +31,7 @@ $arAllOptions = array(
 	array("list_full_date_edit", GetMessage("IBLOCK_LIST_FULL_DATE_EDIT"), "N", array("checkbox", "Y")),
 	array("combined_list_mode", GetMessage("IBLOCK_COMBINED_LIST_MODE"), "N", array("checkbox", "Y")),
 	array("iblock_menu_max_sections", GetMessage("IBLOCK_MENU_MAX_SECTIONS"), "50", array("text", 5)),
+	array("change_user_by_group_active_modify", GetMessage("IBLOCK_OPTION_CHANGE_USER_BY_GROUP_ACTIVE_MODIFY"), "N", array("checkbox", "N")),
 	GetMessage('IBLOCK_OPTION_SECTION_CUSTOM_FORM'),
 	array("custom_edit_form_use_property_id", GetMessage("IBLOCK_CUSTOM_FORM_USE_PROPERTY_ID"), "Y", array("checkbox", "Y")),
 	GetMessage('IBLOCK_OPTION_SECTION_IMPORT_EXPORT'),
@@ -44,9 +45,9 @@ $tabControl = new CAdminTabControl("tabControl", $aTabs);
 
 $request = Main\Context::getCurrent()->getRequest();
 
-if($request->isPost() && strlen($Update.$Apply.$RestoreDefaults)>0 && check_bitrix_sessid())
+if($request->isPost() && $Update.$Apply.$RestoreDefaults <> '' && check_bitrix_sessid())
 {
-	if(strlen($RestoreDefaults)>0)
+	if($RestoreDefaults <> '')
 	{
 		COption::RemoveOption("iblock");
 	}
@@ -147,7 +148,7 @@ if($request->isPost() && strlen($Update.$Apply.$RestoreDefaults)>0 && check_bitr
 			Main\Config\Option::set('iblock', 'iblock_activity_dates_period', $period, '');
 		}
 	}
-	if(strlen($Update)>0 && strlen($_REQUEST["back_url_settings"])>0)
+	if($Update <> '' && $_REQUEST["back_url_settings"] <> '')
 		LocalRedirect($_REQUEST["back_url_settings"]);
 	else
 		LocalRedirect($APPLICATION->GetCurPage()."?mid=".urlencode($mid)."&lang=".LANGUAGE_ID."&back_url_settings=".urlencode($_REQUEST["back_url_settings"])."&".$tabControl->ActiveTabParam());
@@ -199,6 +200,14 @@ if (!isset($periodList[$currentValues['iblock_activity_dates_period']]))
 	$currentValues['iblock_activity_dates_period'] = -1;
 }
 
+$optionHints = array(
+	'property_features_enabled' => GetMessage(
+		'IBLOCK_PROPERTY_FEATURES_HINT',
+		['#LINK#' => 'https://dev.1c-bitrix.ru/learning/course/index.php?COURSE_ID=42&LESSON_ID=1986']
+	),
+	'change_user_by_group_active_modify' => GetMessage('IBLOCK_OPTION_CHANGE_USER_BY_GROUP_ACTIVE_MODIFY_HINT')
+);
+
 $tabControl->Begin();
 ?><form method="post" action="<?echo $APPLICATION->GetCurPage()?>?mid=<?=urlencode($mid)?>&amp;lang=<?echo LANGUAGE_ID?>"><?
 $tabControl->BeginNextTab();
@@ -216,20 +225,15 @@ foreach($arAllOptions as $arOption)
 		$controlId = htmlspecialcharsbx($id);
 		?>
 		<tr>
-			<td width="40%" nowrap <? if ($type[0] == "textarea") echo 'class="adm-detail-valign-top"' ?>>
+			<td style="width: 40%; white-space: nowrap;" <? if ($type[0] == "textarea") echo 'class="adm-detail-valign-top"' ?>>
 				<?
-				if ($id == 'property_features_enabled')
+				if (isset($optionHints[$id]))
 				{
-					$message = GetMessage(
-						'IBLOCK_PROPERTY_FEATURES_HINT',
-						['#LINK#' => 'https://dev.1c-bitrix.ru/learning/course/index.php?COURSE_ID=42&LESSON_ID=1986']
-					);
 					?><span id="hint_<?= $controlId; ?>"></span>
-					<script type="text/javascript">BX.hint_replace(BX('hint_<?=$controlId;?>'), '<?=\CUtil::JSEscape($message); ?>');</script>&nbsp;<?
-					unset($message);
+					<script type="text/javascript">BX.hint_replace(BX('hint_<?=$controlId;?>'), '<?=\CUtil::JSEscape($optionHints[$id]); ?>');</script>&nbsp;<?
 				}
 				?><label for="<?=$controlId; ?>"><?=htmlspecialcharsbx($arOption[1]); ?></label>
-			<td width="60%">
+			<td>
 			<?
 			switch ($type[0])
 			{
@@ -346,7 +350,7 @@ $tabControl->BeginNextTab();
 $tabControl->Buttons();?>
 	<input type="submit" name="Update" value="<?=GetMessage("MAIN_SAVE")?>" title="<?=GetMessage("MAIN_OPT_SAVE_TITLE")?>" class="adm-btn-save">
 	<input type="submit" name="Apply" value="<?=GetMessage("MAIN_OPT_APPLY")?>" title="<?=GetMessage("MAIN_OPT_APPLY_TITLE")?>">
-	<?if(strlen($_REQUEST["back_url_settings"])>0):?>
+	<?if($_REQUEST["back_url_settings"] <> ''):?>
 		<input type="button" name="Cancel" value="<?=GetMessage("MAIN_OPT_CANCEL")?>" title="<?=GetMessage("MAIN_OPT_CANCEL_TITLE")?>" onclick="window.location='<?echo htmlspecialcharsbx(CUtil::addslashes($_REQUEST["back_url_settings"]))?>'">
 		<input type="hidden" name="back_url_settings" value="<?=htmlspecialcharsbx($_REQUEST["back_url_settings"])?>">
 	<?endif?>

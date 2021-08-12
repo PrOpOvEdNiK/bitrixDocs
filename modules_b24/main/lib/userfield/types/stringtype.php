@@ -3,6 +3,7 @@
 namespace Bitrix\Main\UserField\Types;
 
 use Bitrix\Main\Localization\Loc;
+use Bitrix\Main\Text\HtmlFilter;
 use CUserTypeManager;
 
 Loc::loadMessages(__FILE__);
@@ -56,10 +57,21 @@ class StringType extends BaseType
 		$min = (int)$userField['SETTINGS']['MIN_LENGTH'];
 		$max = (int)$userField['SETTINGS']['MAX_LENGTH'];
 
+		$regExp = '';
+		if (
+			!empty($userField['SETTINGS']['REGEXP'])
+			&&
+			//Checking the correctness of the regular expression entered by the user
+			@preg_match($userField['SETTINGS']['REGEXP'], null) !== false
+		)
+		{
+			$regExp = $userField['SETTINGS']['REGEXP'];
+		}
+
 		return [
 			'SIZE' => ($size <= 1 ? 20 : ($size > 255 ? 225 : $size)),
 			'ROWS' => ($rows <= 1 ? 1 : ($rows > 50 ? 50 : $rows)),
-			'REGEXP' => $userField['SETTINGS']['REGEXP'],
+			'REGEXP' => $regExp,
 			'MIN_LENGTH' => $min,
 			'MAX_LENGTH' => $max,
 			'DEFAULT_VALUE' => $userField['SETTINGS']['DEFAULT_VALUE'],
@@ -90,16 +102,19 @@ class StringType extends BaseType
 	 */
 	public static function checkFields(array $userField, $value): array
 	{
+		$fieldName = HtmlFilter::encode(
+			$userField['EDIT_FORM_LABEL'] <> ''
+				? $userField['EDIT_FORM_LABEL'] : $userField['FIELD_NAME']
+		);
+
 		$msg = [];
-		if($value != '' && strlen($value) < $userField['SETTINGS']['MIN_LENGTH'])
+		if($value != '' && mb_strlen($value) < $userField['SETTINGS']['MIN_LENGTH'])
 		{
 			$msg[] = [
 				'id' => $userField['FIELD_NAME'],
 				'text' => Loc::GetMessage('USER_TYPE_STRING_MIN_LEGTH_ERROR',
 					[
-						'#FIELD_NAME#' => ($userField['EDIT_FORM_LABEL'] != '' ?
-							$userField['EDIT_FORM_LABEL'] : $userField['FIELD_NAME']
-						),
+						'#FIELD_NAME#' => $fieldName,
 						'#MIN_LENGTH#' => $userField['SETTINGS']['MIN_LENGTH']
 					]
 				)
@@ -107,17 +122,14 @@ class StringType extends BaseType
 		}
 		if(
 			$userField['SETTINGS']['MAX_LENGTH'] > 0
-			&& strlen($value) > $userField['SETTINGS']['MAX_LENGTH']
+			&& mb_strlen($value) > $userField['SETTINGS']['MAX_LENGTH']
 		)
 		{
 			$msg[] = [
 				'id' => $userField['FIELD_NAME'],
 				'text' => Loc::GetMessage('USER_TYPE_STRING_MAX_LEGTH_ERROR',
 					[
-						'#FIELD_NAME#' => (
-						$userField['EDIT_FORM_LABEL'] != '' ?
-							$userField['EDIT_FORM_LABEL'] : $userField['FIELD_NAME']
-						),
+						'#FIELD_NAME#' => $fieldName,
 						'#MAX_LENGTH#' => $userField['SETTINGS']['MAX_LENGTH']
 					]
 				),
@@ -125,6 +137,7 @@ class StringType extends BaseType
 		}
 		if(
 			$userField['SETTINGS']['REGEXP'] != ''
+			&& (string) $value !== ''
 			&& !preg_match($userField['SETTINGS']['REGEXP'], $value)
 		)
 		{
@@ -134,10 +147,7 @@ class StringType extends BaseType
 					$userField['ERROR_MESSAGE'] :
 					Loc::GetMessage('USER_TYPE_STRING_REGEXP_ERROR',
 						[
-							'#FIELD_NAME#' => (
-							$userField['EDIT_FORM_LABEL'] != '' ?
-								$userField['EDIT_FORM_LABEL'] : $userField['FIELD_NAME']
-							)
+							'#FIELD_NAME#' => $fieldName
 						]
 					)
 				),

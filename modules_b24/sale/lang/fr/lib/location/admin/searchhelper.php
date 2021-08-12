@@ -1,4 +1,0 @@
-<?
-$MESS["SALE_LOCATION_ADMIN_SEARCH_HELPER_ENTITY_INVALID_DBINDEX"] = "Un ou plusieurs index sont manquants dans les endroits liés tables de base de données. Cela peut diminuer les performances des emplacements. Il est conseillé que vous#ANCHOR_INDEX_RESTORE#restaurer les index de base de données manuellement#ANCHOR_END#.";
-$MESS["SALE_LOCATION_ADMIN_SEARCH_HELPER_ENTITY_INVALID_SINDEX"] = "Index de recherche des emplacements est obsolète. Si vous utilisez la recherche incrémentale dans la boîte d'entrée, il peut être lent, les résultats non pertinents. Il est conseillé que vous #ANCHOR_INDEX_RESTORE#restaurer manuellement l'index#ANCHOR_END#.";
-?>

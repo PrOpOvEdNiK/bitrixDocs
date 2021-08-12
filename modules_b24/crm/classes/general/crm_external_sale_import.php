@@ -555,19 +555,26 @@ class CCrmExternalSaleImport
 
 		if (is_array($arOrder["CONTRACTOR"]["ADDRESS"]))
 		{
-			foreach ($arOrder["CONTRACTOR"]["ADDRESS"] as $key => $val)
-			{
-				if ($key == "VIEW")
-					continue;
-				if (!empty($arFields["ADDRESS"]))
-					$arFields["ADDRESS"] .= ", ";
-				$arFields["ADDRESS"] .= $val;
-			}
-			if (isset($arOrder["CONTRACTOR"]["ADDRESS"]["VIEW"]))
+			if (isset($arOrder["CONTRACTOR"]["ADDRESS"]["VIEW"]) && $arOrder["CONTRACTOR"]["ADDRESS"]["VIEW"] != '')
 			{
 				if (!empty($arFields["ADDRESS"]))
 					$arFields["ADDRESS"] .= "\n";
 				$arFields["ADDRESS"] .= $arOrder["CONTRACTOR"]["ADDRESS"]["VIEW"];
+			}
+			else
+			{
+				foreach ($arOrder["CONTRACTOR"]["ADDRESS"] as $key => $val)
+				{
+					if ($key == "VIEW")
+					{
+						continue;
+					}
+					if (!empty($arFields["ADDRESS"]))
+					{
+						$arFields["ADDRESS"] .= ", ";
+					}
+					$arFields["ADDRESS"] .= $val;
+				}
 			}
 		}
 		if (is_array($arOrder["CONTRACTOR"]["CONTACTS"]))
@@ -586,7 +593,7 @@ class CCrmExternalSaleImport
 			$arInc = array();
 			foreach ($arOrder["CONTRACTOR"]["CONTACTS"] as $val)
 			{
-				$t = strtoupper(preg_replace("/\s/", "", $val["TYPE"]));
+				$t = mb_strtoupper(preg_replace("/\s/", "", $val["TYPE"]));
 				if (!isset($arMapTmp[$t]))
 				{
 					continue;
@@ -630,8 +637,8 @@ class CCrmExternalSaleImport
 		if ($contactId == 0)
 		{
 			if (
-				(!isset($arFields['NAME']) || (strlen($arFields['NAME']) <= 0))
-				&& (!isset($arFields['LAST_NAME']) || (strlen($arFields['LAST_NAME']) <= 0))
+				(!isset($arFields['NAME']) || ($arFields['NAME'] == ''))
+				&& (!isset($arFields['LAST_NAME']) || ($arFields['LAST_NAME'] == ''))
 			)
 				$arFields['LAST_NAME'] = $contactXmlId;
 
@@ -755,7 +762,7 @@ class CCrmExternalSaleImport
 			$arInc = array();
 			foreach ($arOrder["CONTRACTOR"]["CONTACTS"] as $val)
 			{
-				$t = strtoupper(preg_replace("/\s/", "", $val["TYPE"]));
+				$t = mb_strtoupper(preg_replace("/\s/", "", $val["TYPE"]));
 				if (!isset($arMapTmp[$t]))
 				{
 					continue;
@@ -814,7 +821,7 @@ class CCrmExternalSaleImport
 		$obj = new CCrmCompany(false);
 		if ($companyId == 0)
 		{
-			if (!isset($arFields['TITLE']) || (strlen($arFields['TITLE']) <= 0))
+			if (!isset($arFields['TITLE']) || ($arFields['TITLE'] == ''))
 				$arFields['TITLE'] = $companyXmlId;
 
 			$assignedById = $this->arExternalSale["RESPONSIBLE"];
@@ -946,17 +953,17 @@ class CCrmExternalSaleImport
 			{
 				if (!empty($arProp["VALUE"]))
 				{
-					$arAdditionalInfo[strtoupper($arProp["NAME"])] = $arProp["VALUE"];
-					if ($arAdditionalInfo[strtoupper($arProp["NAME"])] == "true")
-						$arAdditionalInfo[strtoupper($arProp["NAME"])] = true;
-					elseif ($arAdditionalInfo[strtoupper($arProp["NAME"])] == "false")
-						$arAdditionalInfo[strtoupper($arProp["NAME"])] = false;
+					$arAdditionalInfo[mb_strtoupper($arProp["NAME"])] = $arProp["VALUE"];
+					if ($arAdditionalInfo[mb_strtoupper($arProp["NAME"])] == "true")
+						$arAdditionalInfo[mb_strtoupper($arProp["NAME"])] = true;
+					elseif ($arAdditionalInfo[mb_strtoupper($arProp["NAME"])] == "false")
+						$arAdditionalInfo[mb_strtoupper($arProp["NAME"])] = false;
 				}
 
-				switch (strtoupper($arProp["NAME"]))
+				switch(mb_strtoupper($arProp["NAME"]))
 				{
 					case 'CANCELED':
-						if ($arProp["VALUE"] == 'true')
+						if($arProp["VALUE"] == 'true')
 						{
 							$arFields["STAGE_ID"] = \Bitrix\Crm\Category\DealCategory::prepareStageID(
 								$dealCategoryId,
@@ -966,7 +973,7 @@ class CCrmExternalSaleImport
 						}
 						break;
 					case 'ORDERPAID':
-						if ($arProp["VALUE"] == 'true')
+						if($arProp["VALUE"] == 'true')
 						{
 							$arFields["STAGE_ID"] = \Bitrix\Crm\Category\DealCategory::prepareStageID(
 								$dealCategoryId,
@@ -1259,44 +1266,61 @@ class CCrmExternalSaleImport
 		if (!$isBPIncluded)
 			return;
 
-		static $arBPTemplates = null;
-		if ($arBPTemplates === null)
+		static $arBPTemplates = [];
+
+		$autoExecType = $isNewDeal ? CBPDocumentEventType::Create : CBPDocumentEventType::Edit;
+		if (!array_key_exists($autoExecType, $arBPTemplates))
 		{
-			$arBPTemplates = CBPWorkflowTemplateLoader::SearchTemplatesByDocumentType(
+			$arBPTemplates[$autoExecType] = CBPWorkflowTemplateLoader::SearchTemplatesByDocumentType(
 				array('crm', 'CCrmDocumentDeal', 'DEAL'),
-				$isNewDeal ? CBPDocumentEventType::Create : CBPDocumentEventType::Edit
+				$autoExecType
 			);
 		}
 
-		if (!is_array($arBPTemplates))
-			return;
-
-		if (!is_array($arParameters))
-			$arParameters = array($arParameters);
-		if (!array_key_exists("TargetUser", $arParameters))
+		if (is_array($arBPTemplates[$autoExecType]))
 		{
+			if (!is_array($arParameters))
+			{
+				$arParameters = array($arParameters);
+			}
+			if (!array_key_exists("TargetUser", $arParameters))
+			{
+				$assignedById = intval(COption::GetOptionString("crm", "sale_deal_assigned_by_id", "0"));
+				if ($assignedById > 0)
+				{
+					$arParameters["TargetUser"] = "user_" . $assignedById;
+				}
+			}
+
+			$runtime = CBPRuntime::GetRuntime();
+
+			foreach ($arBPTemplates[$autoExecType] as $wt)
+			{
+				try
+				{
+					$wi = $runtime->CreateWorkflow(
+						$wt["ID"],
+						array('crm', 'CCrmDocumentDeal', 'DEAL_' . $dealId),
+						$arParameters
+					);
+					$wi->Start();
+				}
+				catch (Exception $e)
+				{
+					$this->AddError($e->getCode(), $e->getMessage());
+				}
+			}
+		}
+		if($isNewDeal)
+		{
+			$starter = new \Bitrix\Crm\Automation\Starter(\CCrmOwnerType::Deal, $dealId);
 			$assignedById = intval(COption::GetOptionString("crm", "sale_deal_assigned_by_id", "0"));
 			if ($assignedById > 0)
-				$arParameters["TargetUser"] =  "user_".$assignedById;
-		}
-
-		$runtime = CBPRuntime::GetRuntime();
-
-		foreach ($arBPTemplates as $wt)
-		{
-			try
 			{
-				$wi = $runtime->CreateWorkflow(
-					$wt["ID"],
-					array('crm', 'CCrmDocumentDeal', 'DEAL_'.$dealId),
-					$arParameters
-				);
-				$wi->Start();
+				$starter->setUserId($assignedById);
 			}
-			catch (Exception $e)
-			{
-				$this->AddError($e->getCode(), $e->getMessage());
-			}
+
+			$starter->setContextToImport()->runOnAdd();
 		}
 
 		self::AddTrace('SAVE_ORDER_DEAL_BP:FINISED');
@@ -1316,43 +1340,49 @@ class CCrmExternalSaleImport
 		if (!$isBPIncluded)
 			return;
 
-		static $arBPTemplates = null;
-		if ($arBPTemplates === null)
+		static $arBPTemplates = [];
+
+		$autoExecType = $isNewContact ? CBPDocumentEventType::Create : CBPDocumentEventType::Edit;
+		if (!array_key_exists($autoExecType, $arBPTemplates))
 		{
-			$arBPTemplates = CBPWorkflowTemplateLoader::SearchTemplatesByDocumentType(
+			$arBPTemplates[$autoExecType] = CBPWorkflowTemplateLoader::SearchTemplatesByDocumentType(
 				array('crm', 'CCrmDocumentContact', 'CONTACT'),
-				$isNewContact ? CBPDocumentEventType::Create : CBPDocumentEventType::Edit
+				$autoExecType
 			);
 		}
 
-		if (!is_array($arBPTemplates))
-			return;
-
-		if (!is_array($arParameters))
-			$arParameters = array($arParameters);
-		if (!array_key_exists("TargetUser", $arParameters))
+		if (is_array($arBPTemplates[$autoExecType]))
 		{
-			$assignedById = intval(COption::GetOptionString("crm", "sale_deal_assigned_by_id", "0"));
-			if ($assignedById > 0)
-				$arParameters["TargetUser"] =  "user_".$assignedById;
-		}
-
-		$runtime = CBPRuntime::GetRuntime();
-
-		foreach ($arBPTemplates as $wt)
-		{
-			try
+			if (!is_array($arParameters))
 			{
-				$wi = $runtime->CreateWorkflow(
-					$wt["ID"],
-					array('crm', 'CCrmDocumentContact', 'CONTACT_'.$contactId),
-					$arParameters
-				);
-				$wi->Start();
+				$arParameters = array($arParameters);
 			}
-			catch (Exception $e)
+			if (!array_key_exists("TargetUser", $arParameters))
 			{
-				$this->AddError($e->getCode(), $e->getMessage());
+				$assignedById = intval(COption::GetOptionString("crm", "sale_deal_assigned_by_id", "0"));
+				if ($assignedById > 0)
+				{
+					$arParameters["TargetUser"] = "user_" . $assignedById;
+				}
+			}
+
+			$runtime = CBPRuntime::GetRuntime();
+
+			foreach ($arBPTemplates[$autoExecType] as $wt)
+			{
+				try
+				{
+					$wi = $runtime->CreateWorkflow(
+						$wt["ID"],
+						array('crm', 'CCrmDocumentContact', 'CONTACT_' . $contactId),
+						$arParameters
+					);
+					$wi->Start();
+				}
+				catch (Exception $e)
+				{
+					$this->AddError($e->getCode(), $e->getMessage());
+				}
 			}
 		}
 
@@ -1373,43 +1403,48 @@ class CCrmExternalSaleImport
 		if (!$isBPIncluded)
 			return;
 
-		static $arBPTemplates = null;
-		if ($arBPTemplates === null)
+		static $arBPTemplates = [];
+		$autoExecType = $isNewCompany ? CBPDocumentEventType::Create : CBPDocumentEventType::Edit;
+		if (!array_key_exists($autoExecType, $arBPTemplates))
 		{
-			$arBPTemplates = CBPWorkflowTemplateLoader::SearchTemplatesByDocumentType(
+			$arBPTemplates[$autoExecType] = CBPWorkflowTemplateLoader::SearchTemplatesByDocumentType(
 				array('crm', 'CCrmDocumentCompany', 'COMPANY'),
-				$isNewCompany ? CBPDocumentEventType::Create : CBPDocumentEventType::Edit
+				$autoExecType
 			);
 		}
 
-		if (!is_array($arBPTemplates))
-			return;
-
-		if (!is_array($arParameters))
-			$arParameters = array($arParameters);
-		if (!array_key_exists("TargetUser", $arParameters))
+		if (is_array($arBPTemplates[$autoExecType]))
 		{
-			$assignedById = intval(COption::GetOptionString("crm", "sale_deal_assigned_by_id", "0"));
-			if ($assignedById > 0)
-				$arParameters["TargetUser"] =  "user_".$assignedById;
-		}
-
-		$runtime = CBPRuntime::GetRuntime();
-
-		foreach ($arBPTemplates as $wt)
-		{
-			try
+			if (!is_array($arParameters))
 			{
-				$wi = $runtime->CreateWorkflow(
-					$wt["ID"],
-					array('crm', 'CCrmDocumentCompany', 'COMPANY_'.$companyId),
-					$arParameters
-				);
-				$wi->Start();
+				$arParameters = array($arParameters);
 			}
-			catch (Exception $e)
+			if (!array_key_exists("TargetUser", $arParameters))
 			{
-				$this->AddError($e->getCode(), $e->getMessage());
+				$assignedById = intval(COption::GetOptionString("crm", "sale_deal_assigned_by_id", "0"));
+				if ($assignedById > 0)
+				{
+					$arParameters["TargetUser"] = "user_" . $assignedById;
+				}
+			}
+
+			$runtime = CBPRuntime::GetRuntime();
+
+			foreach ($arBPTemplates[$autoExecType] as $wt)
+			{
+				try
+				{
+					$wi = $runtime->CreateWorkflow(
+						$wt["ID"],
+						array('crm', 'CCrmDocumentCompany', 'COMPANY_' . $companyId),
+						$arParameters
+					);
+					$wi->Start();
+				}
+				catch (Exception $e)
+				{
+					$this->AddError($e->getCode(), $e->getMessage());
+				}
 			}
 		}
 
@@ -1428,7 +1463,7 @@ class CCrmExternalSaleImport
 			if (!$result)
 				return false;
 
-			list($companyId, $isNewCompany) = $result;
+			[$companyId, $isNewCompany] = $result;
 			if (!$skipBP)
 				$this->SaveOrderDataCompanyBP($companyId, $isNewCompany);
 		}
@@ -1438,7 +1473,7 @@ class CCrmExternalSaleImport
 			if (!$result)
 				return false;
 
-			list($contactId, $isNewContact) = $result;
+			[$contactId, $isNewContact] = $result;
 			if (!$skipBP)
 				$this->SaveOrderDataContactBP($contactId, $isNewContact);
 		}
@@ -1447,7 +1482,7 @@ class CCrmExternalSaleImport
 		if (!$result)
 			return false;
 
-		list($dealId, $isNewDeal) = $result;
+		[$dealId, $isNewDeal] = $result;
 
 		$this->SaveOrderDataProducts($arOrder, $dealId);
 
@@ -1474,7 +1509,7 @@ class CCrmExternalSaleImport
 
 		$ar = array("#NAME#" => $this->arExternalSale["NAME"]);
 		foreach ($this->arImportResult->ToArray() as $k => $v)
-			$ar["#".strtoupper($k)."#"] = $v;
+			$ar["#".mb_strtoupper($k)."#"] = $v;
 
 		$message = str_replace(
 			array("#DEAL_URL#", "#CONTACT_URL#", "#COMPANY_URL#"),
@@ -1648,22 +1683,22 @@ class CCrmExternalSaleImport
 			return null;
 		}
 
-		if (substr(ltrim($orderData), 0, strlen('<?xml')) != '<?xml')
+		if (mb_substr(ltrim($orderData), 0, mb_strlen('<?xml')) != '<?xml')
 		{
 			$orderDataTmp = @gzuncompress($orderData);
-			if (substr(ltrim($orderDataTmp), 0, strlen('<?xml')) != '<?xml')
+			if (mb_substr(ltrim($orderDataTmp), 0, mb_strlen('<?xml')) != '<?xml')
 			{
-				if (strpos($orderDataTmp, "You haven't rights for exchange") !== false)
+				if (mb_strpos($orderDataTmp, "You haven't rights for exchange") !== false)
 					$arErrors[] = array("PD2", GetMessage("CRM_EXT_SALE_IMPORT_UNKNOWN_ANSW_PERMS"));
-				elseif (strpos($orderDataTmp, "failure") !== false)
+				elseif (mb_strpos($orderDataTmp, "failure") !== false)
 				{
 					$arErrors[] = array("PD2", GetMessage("CRM_EXT_SALE_IMPORT_UNKNOWN_ANSW_F"));
 					$arErrors[] = array("PD2", preg_replace("/\s*failure\n/", "", $orderDataTmp));
 				}
-				elseif (strpos($orderData, "Authorization") !== false || strpos($orderData, "Access denied") !== false)
+				elseif (mb_strpos($orderData, "Authorization") !== false || mb_strpos($orderData, "Access denied") !== false)
 					$arErrors[] = array("PD2", GetMessage("CRM_EXT_SALE_IMPORT_UNKNOWN_ANSW_PERMS1"));
 				else
-					$arErrors[] = array("PD2", GetMessage("CRM_EXT_SALE_IMPORT_UNKNOWN_ANSW").substr($orderData, 0, 100));
+					$arErrors[] = array("PD2", GetMessage("CRM_EXT_SALE_IMPORT_UNKNOWN_ANSW").mb_substr($orderData, 0, 100));
 				return null;
 			}
 			$orderData = $orderDataTmp;
@@ -1673,7 +1708,7 @@ class CCrmExternalSaleImport
 		$charset = "";
 		if (preg_match("/^<"."\?xml[^>]+?encoding=[\"']([^>\"']+)[\"'][^>]*\?".">/i", $orderData, $matches))
 			$charset = trim($matches[1]);
-		if (!empty($charset) && (strtoupper($charset) != strtoupper(SITE_CHARSET)))
+		if (!empty($charset) && (mb_strtoupper($charset) != mb_strtoupper(SITE_CHARSET)))
 			$orderData = CharsetConverter::ConvertCharset($orderData, $charset, SITE_CHARSET);
 
 		$objXML = new CDataXML();
@@ -1709,7 +1744,7 @@ class CCrmExternalSaleImport
 			$arSettings["QuantityFormat"]["CRD"] = '.';
 		if (!isset($arSettings["DateFormat"]["DF"]))
 			$arSettings["DateFormat"]["DF"] = 'yyyy-MM-dd';
-		$arSettings["DateFormat"]["DF"] = strtoupper($arSettings["DateFormat"]["DF"]);
+		$arSettings["DateFormat"]["DF"] = mb_strtoupper($arSettings["DateFormat"]["DF"]);
 		if (!isset($arSettings["TimeFormat"]["DF"]))
 			$arSettings["TimeFormat"]["DF"] = 'HH:MM:SS';
 		$arSettings["TimeFormat"]["DF"] = str_replace("MM", "MI", $arSettings["TimeFormat"]["DF"]);
@@ -1748,7 +1783,7 @@ class CCrmExternalSaleImport
 		}
 
 		$requestMethod = isset($arOptions["REQUEST_METHOD"]) && is_string($arOptions["REQUEST_METHOD"])
-			? strtoupper($arOptions["REQUEST_METHOD"]) : "";
+			? mb_strtoupper($arOptions["REQUEST_METHOD"]) : "";
 		if($requestMethod === "")
 		{
 			$requestMethod = "GET";
@@ -2213,7 +2248,7 @@ class CCrmExternalSaleImport
 						$arResultTmp["NAME"] = $value;
 						break;
 					case 'InPrice':
-						$arResultTmp["IN_PRICE"] = (strtolower($value) == 'true') ? true : false;
+						$arResultTmp["IN_PRICE"] = (mb_strtolower($value) == 'true') ? true : false;
 						break;
 					case 'Amount':
 						$arResultTmp["PRICE"] = str_replace($arSettings["SumFormat"]["CRD"], ".", $value);
@@ -2314,7 +2349,7 @@ class CCrmExternalSaleImport
 						$arResultTmp["NAME"] = $value;
 						break;
 					case 'InPrice':
-						$arResultTmp["IN_PRICE"] = (strtolower($value) == 'true') ? true : false;
+						$arResultTmp["IN_PRICE"] = (mb_strtolower($value) == 'true') ? true : false;
 						break;
 					case 'Amount':
 						$arResultTmp["PRICE"] = str_replace($arSettings["SumFormat"]["CRD"], ".", $value);
@@ -2370,7 +2405,7 @@ class CCrmExternalSaleImport
 				do
 				{
 					$data = fread($fp, $readSize);
-					if (strlen($data) == 0)
+					if ($data == '')
 						break;
 
 					@fwrite($fp1, $data);

@@ -11,7 +11,7 @@ use Bitrix\DocumentGenerator\DataProvider\Filterable;
 use Bitrix\DocumentGenerator\DataProviderManager;
 use Bitrix\DocumentGenerator\Nameable;
 
-class Deal extends ProductsDataProvider implements Nameable, Filterable
+class Deal extends ProductsDataProvider implements Filterable
 {
 	protected $contacts;
 
@@ -188,11 +188,6 @@ class Deal extends ProductsDataProvider implements Nameable, Filterable
 		return \CCrmOwnerType::Deal;
 	}
 
-	protected function getCrmProductOwnerType()
-	{
-		return 'D';
-	}
-
 	/**
 	 * @return string
 	 */
@@ -209,7 +204,7 @@ class Deal extends ProductsDataProvider implements Nameable, Filterable
 	{
 		return [
 			'NAME' => static::getLangName().' ('.$category['NAME'].')',
-			'PROVIDER' => strtolower(static::class).'_category_'.$category['ID'],
+			'PROVIDER' => mb_strtolower(static::class).'_category_'.$category['ID'],
 		];
 	}
 

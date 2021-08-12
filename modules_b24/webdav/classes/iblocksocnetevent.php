@@ -127,14 +127,14 @@ class CWebDavSocNetEvent
 						);
 
 		CWebDavIblock::LibOptions('lib_paths', true, $this->IBlockID,
-			(strlen($this->arPath['PATH_TO_GROUP_FILES_ELEMENT']) > 0) ? $this->arPath['PATH_TO_GROUP_FILES_ELEMENT'] : $this->arPath['PATH_TO_USER_FILES_ELEMENT']);
+			($this->arPath['PATH_TO_GROUP_FILES_ELEMENT'] <> '') ? $this->arPath['PATH_TO_GROUP_FILES_ELEMENT'] : $this->arPath['PATH_TO_USER_FILES_ELEMENT']);
 	}
 
 	public function SocNetGroupRename($id, $arParams)
 	{
 		if ($this->IBlockID == null)
 			return;
-		if (! (isset($arParams['NAME']) && strlen($arParams['NAME'])>0))
+		if (! (isset($arParams['NAME']) && $arParams['NAME'] <> ''))
 			return;
 
 		$arGroup = CSocNetGroup::GetByID($id);
@@ -160,7 +160,7 @@ class CWebDavSocNetEvent
 		}
 	}
 
-	public function GetSocnetLogByFileID($sourceID, $eventID)
+	public static function GetSocnetLogByFileID($sourceID, $eventID)
 	{
 		$arLog = null;
 		$rsLog = CSocNetLog::GetList(Array("ID" => "DESC"), array(
@@ -172,7 +172,7 @@ class CWebDavSocNetEvent
 		return $arLog;
 	}
 
-	public function SocnetLogUpdateRights($ID, $iblockID, $eventID)
+	public static function SocnetLogUpdateRights($ID, $iblockID, $eventID)
 	{
 		if (!CModule::IncludeModule("socialnetwork"))
 		{
@@ -254,7 +254,7 @@ class CWebDavSocNetEvent
 			return;
 
 		$url = $this->arPath["PATH_TO_GROUP_FILES_ELEMENT"];
-		if (IsModuleInstalled("extranet") && strlen($this->arPath["SEF_FOLDER"]) > 0 && strpos($url, $this->arPath["SEF_FOLDER"]) === 0)
+		if (IsModuleInstalled("extranet") && $this->arPath["SEF_FOLDER"] <> '' && mb_strpos($url, $this->arPath["SEF_FOLDER"]) === 0)
 			$url = str_replace($this->arPath["SEF_FOLDER"], "#GROUPS_PATH#", $url);
 			
 		$urlParams = array(
@@ -267,7 +267,7 @@ class CWebDavSocNetEvent
 		);
 
 		if (
-			(strpos($url, "#PATH#") !== false) 
+			(mb_strpos($url, "#PATH#") !== false)
 			&& ($this->object != null)
 		)
 			$urlParams["PATH"] = $this->object->GetObjectPath($this->object->GetObject(array("element_id" => $arParams["ELEMENT"]["id"])));
@@ -547,7 +547,7 @@ UPDATE_TYPE:
 					"RATING_ENTITY_ID" => intval($ID)
 				);
 
-				if (intVal($arMessage["AUTHOR_ID"]) > 0)
+				if (intval($arMessage["AUTHOR_ID"]) > 0)
 					$arFieldsForSocnet["USER_ID"] = $arMessage["AUTHOR_ID"];
 
 				if ($bUpdate)
@@ -606,7 +606,7 @@ UPDATE_TYPE:
 						"RATING_ENTITY_ID" => intval($arComment["ID"])
 					);
 
-					if (intVal($arComment["AUTHOR_ID"]) > 0)
+					if (intval($arComment["AUTHOR_ID"]) > 0)
 						$arFieldsForSocnet["USER_ID"] = $arComment["AUTHOR_ID"];
 
 					$log_comment_id = CSocNetLogComments::Add($arFieldsForSocnet, false, false); //, true
@@ -668,7 +668,7 @@ UPDATE_TYPE:
 			return $arEntity;
 		}
 
-		$arEventParams = unserialize(strlen($arFields["~PARAMS"]) > 0 ? $arFields["~PARAMS"] : $arFields["PARAMS"]);
+		$arEventParams = unserialize($arFields["~PARAMS"] <> '' ? $arFields["~PARAMS"] : $arFields["PARAMS"], ['allowed_classes' => false]);
 
 		if (intval($arFields["ENTITY_ID"]) > 0)
 		{
@@ -676,13 +676,13 @@ UPDATE_TYPE:
 				is_array($arEventParams)
 				&& count($arEventParams) > 0
 				&& array_key_exists("ENTITY_NAME", $arEventParams)
-				&& strlen($arEventParams["ENTITY_NAME"]) > 0
+				&& $arEventParams["ENTITY_NAME"] <> ''
 			)
 			{
 				if (
 					!$bMail
 					&& array_key_exists("ENTITY_URL", $arEventParams)
-					&& strlen($arEventParams["ENTITY_URL"]) > 0
+					&& $arEventParams["ENTITY_URL"] <> ''
 				)
 				{
 					$arSocNetAllowedSubscribeEntityTypesDesc = CSocNetAllowed::GetAllowedEntityTypesDesc();
@@ -733,10 +733,10 @@ UPDATE_TYPE:
 		}
 
 		$title = "";
-		if (strlen($arFields["TITLE"]) > 0)
+		if ($arFields["TITLE"] <> '')
 		{
 
-			if (!$bMail && strlen($arFields["URL"]) > 0)
+			if (!$bMail && $arFields["URL"] <> '')
 				$title_tmp = '<a href="'.$arFields["URL"].'">'.$arFields["TITLE"].'</a>';
 			else
 				$title_tmp = $arFields["TITLE"];
@@ -753,14 +753,14 @@ UPDATE_TYPE:
 		$url = false;
 
 		if (
-			strlen($arFields["URL"]) > 0
-			&& strlen($arFields["SITE_ID"]) > 0
+			$arFields["URL"] <> ''
+			&& $arFields["SITE_ID"] <> ''
 		)
 		{
 			$rsSites = CSite::GetByID($arFields["SITE_ID"]);
 			$arSite = $rsSites->Fetch();
 
-			if (strlen($arSite["SERVER_NAME"]) > 0)
+			if ($arSite["SERVER_NAME"] <> '')
 				$server_name = $arSite["SERVER_NAME"];
 			else
 				$server_name = COption::GetOptionString("main", "server_name", $GLOBALS["SERVER_NAME"]);
@@ -784,14 +784,14 @@ UPDATE_TYPE:
 		if (!$bMail)
 			$arResult["EVENT_FORMATTED"]["IS_MESSAGE_SHORT"] = true;
 
-		if (strlen($url) > 0)
+		if ($url <> '')
 			$arResult["EVENT_FORMATTED"]["URL"] = $url;
 
 		$arResult["HAS_COMMENTS"] = "N";
 		if (
-			intval($arFields["SOURCE_ID"]) > 0 
+			intval($arFields["SOURCE_ID"]) > 0
 			&& array_key_exists("PARAMS", $arFields) 
-			&& strlen($arFields["PARAMS"]) > 0
+			&& $arFields["PARAMS"] <> ''
 		)
 		{
 			$arFieldsParams = explode("&", $arFields["PARAMS"]);
@@ -847,7 +847,7 @@ UPDATE_TYPE:
 		if (
 			!$bMail
 			&& array_key_exists("URL", $arLog)
-			&& strlen($arLog["URL"]) > 0
+			&& $arLog["URL"] <> ''
 		)
 			$file_tmp = '<a href="'.$arLog["URL"].'">'.$arLog["TITLE"].'</a>';
 		else
@@ -869,7 +869,7 @@ UPDATE_TYPE:
 		if ($bMail)
 		{
 			$url = CSocNetLogTools::FormatEvent_GetURL($arLog);
-			if (strlen($url) > 0)
+			if ($url <> '')
 				$arResult["EVENT_FORMATTED"]["URL"] = $url;
 		}
 
@@ -949,10 +949,10 @@ UPDATE_TYPE:
 								if ($bSHOW_NAME)
 									$AUTHOR_NAME = $GLOBALS["USER"]->GetFormattedName(false);
 
-								if (strlen(Trim($AUTHOR_NAME))<=0)
+								if (Trim($AUTHOR_NAME) == '')
 									$AUTHOR_NAME = $GLOBALS["USER"]->GetLogin();
 
-								if (strlen($AUTHOR_NAME)<=0)
+								if ($AUTHOR_NAME == '')
 									$bError = true;
 							}
 
@@ -967,7 +967,7 @@ UPDATE_TYPE:
 										"PARAM1" => "IB",
 										"PARAM2" => $arElement["ID"],
 										"AUTHOR_NAME" => $AUTHOR_NAME,
-										"AUTHOR_ID" => IntVal($GLOBALS["USER"]->GetParam("USER_ID")),
+										"AUTHOR_ID" => intval($GLOBALS["USER"]->GetParam("USER_ID")),
 										"FORUM_ID" => $FORUM_ID,
 										"TOPIC_ID" => $TOPIC_ID,
 										"NEW_TOPIC" => "Y",
@@ -998,7 +998,7 @@ UPDATE_TYPE:
 									"APPROVED" => "Y",
 									"PARAM2" => $arElement["ID"],
 									"AUTHOR_NAME" => $AUTHOR_NAME,
-									"AUTHOR_ID" => IntVal($GLOBALS["USER"]->GetParam("USER_ID")),
+									"AUTHOR_ID" => intval($GLOBALS["USER"]->GetParam("USER_ID")),
 									"FORUM_ID" => $FORUM_ID,
 									"TOPIC_ID" => $TOPIC_ID,
 									"NEW_TOPIC" => "N",
@@ -1022,7 +1022,7 @@ UPDATE_TYPE:
 								$arFieldsMessage["AUTHOR_REAL_IP"] = ($AUTHOR_REAL_IP!==False) ? $AUTHOR_REAL_IP : "<no address>";
 
 								$messageID = CForumMessage::Add($arFieldsMessage, false);
-								if (intVal($messageID)<=0)
+								if (intval($messageID)<=0)
 									$bError = true;
 								else
 								{
@@ -1032,7 +1032,7 @@ UPDATE_TYPE:
 										$F_EVENT1 = $arForum["EVENT1"];
 										$F_EVENT2 = $arForum["EVENT2"];
 										$F_EVENT3 = $arForum["EVENT3"];
-										if (strlen($F_EVENT3)<=0)
+										if ($F_EVENT3 == '')
 										{
 											$arForumSite_tmp = CForumNew::GetSites($FORUM_ID);
 											$F_EVENT3 = CForumNew::PreparePath2Message($arForumSite_tmp[SITE_ID], array("FORUM_ID"=>$FORUM_ID, "TOPIC_ID"=>$TOPIC_ID, "MESSAGE_ID"=>$messageID));
@@ -1066,7 +1066,7 @@ UPDATE_TYPE:
 		if (!CModule::IncludeModule("iblock"))
 			return false;
 
-		$ID = IntVal($ID);
+		$ID = intval($ID);
 
 		$dbIBlock = CIBlock::GetByID($ID);
 		$arIBlock = $dbIBlock->GetNext();
@@ -1082,7 +1082,7 @@ UPDATE_TYPE:
 	static function ShowIBlockByID($arEntityDesc, $strEntityURL, $arParams)
 	{
 		$url = str_replace("#SITE_DIR#", SITE_DIR, $arEntityDesc["LIST_PAGE_URL"]);
-		if (strpos($url, "/") === 0)
+		if (mb_strpos($url, "/") === 0)
 			$url = "/".ltrim($url, "/");
 
 		$name = "<a href=\"".$url."\">".$arEntityDesc["NAME"]."</a>";

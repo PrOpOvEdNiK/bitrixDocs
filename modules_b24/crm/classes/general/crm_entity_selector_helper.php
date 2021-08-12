@@ -1,4 +1,12 @@
 <?php
+
+use Bitrix\Crm\Order\Order;
+use Bitrix\Crm\RequisiteAddress;
+use Bitrix\Crm\Security\EntityAuthorization;
+use Bitrix\Crm\Service\Container;
+use Bitrix\Location\Entity\Address;
+use Bitrix\Main\Localization\Loc;
+
 IncludeModuleLangFile(__FILE__);
 
 class CCrmEntitySelectorHelper
@@ -7,7 +15,7 @@ class CCrmEntitySelectorHelper
 	{
 		$enableSlider = \Bitrix\Crm\Settings\LayoutSettings::getCurrent()->isSliderEnabled();
 
-		$entityTypeName = strtoupper(strval($entityTypeName));
+		$entityTypeName = mb_strtoupper(strval($entityTypeName));
 		$entityID = intval($entityID);
 		if(!is_array($options))
 		{
@@ -19,11 +27,11 @@ class CCrmEntitySelectorHelper
 
 		$bEntityEditorFormat = (
 			isset($options['ENTITY_EDITOR_FORMAT'])
-			&& ($options['ENTITY_EDITOR_FORMAT'] === true || strtoupper($options['ENTITY_EDITOR_FORMAT']) === 'Y')
+			&& ($options['ENTITY_EDITOR_FORMAT'] === true || mb_strtoupper($options['ENTITY_EDITOR_FORMAT']) === 'Y')
 		);
 		$bEntityPrefixEnabled = (
 			isset($options['ENTITY_PREFIX_ENABLED'])
-			&& ($options['ENTITY_PREFIX_ENABLED'] === true || strtoupper($options['ENTITY_PREFIX_ENABLED']) === 'Y')
+			&& ($options['ENTITY_PREFIX_ENABLED'] === true || mb_strtoupper($options['ENTITY_PREFIX_ENABLED']) === 'Y')
 		);
 
 		$isHidden = (
@@ -33,7 +41,7 @@ class CCrmEntitySelectorHelper
 
 		if($isHidden)
 		{
-			$requireMultifields = $requireBindings = $requireRequisiteData = false;
+			$requireMultifields = $requireBindings = $requireRequisiteData = $requireEditRequisiteData =  false;
 		}
 		else
 		{
@@ -43,6 +51,11 @@ class CCrmEntitySelectorHelper
 			$requireRequisiteData = (
 				isset($options['REQUIRE_REQUISITE_DATA'])
 				&& ($options['REQUIRE_REQUISITE_DATA'] === true || $options['REQUIRE_REQUISITE_DATA'] === 'Y')
+			);
+
+			$requireEditRequisiteData = (
+				isset($options['REQUIRE_EDIT_REQUISITE_DATA'])
+				&& ($options['REQUIRE_EDIT_REQUISITE_DATA'] === true || $options['REQUIRE_EDIT_REQUISITE_DATA'] === 'Y')
 			);
 		}
 
@@ -55,7 +68,7 @@ class CCrmEntitySelectorHelper
 		if ($bEntityEditorFormat)
 		{
 			$result['id'] = $entityID;
-			$result['type'] = strtolower($entityTypeName);
+			$result['type'] = mb_strtolower($entityTypeName);
 			$result['typeName'] = $entityTypeName;
 			$result['place'] = $result['type'];
 		}
@@ -77,7 +90,7 @@ class CCrmEntitySelectorHelper
 		{
 			return $result;
 		}
-		
+
 		$advancedInfoKey = $bEntityEditorFormat ? 'advancedInfo' : 'ADVANCED_INFO';
 		$contactTypeKey = $bEntityEditorFormat ? 'contactType' : 'CONTACT_TYPE';
 		$contactTypeIdKey = $bEntityEditorFormat ? 'id' : 'ID';
@@ -87,6 +100,8 @@ class CCrmEntitySelectorHelper
 		$bindingDataKey = $bEntityEditorFormat ? 'bindings' : 'BINDINGS';
 		$permissionsKey = $bEntityEditorFormat ? 'permissions' : 'PERMISSIONS';
 		$canUpdateKey = $bEntityEditorFormat ? 'canUpdate' : 'CAN_UPDATE';
+
+		$entityTypeId = \CCrmOwnerType::ResolveID($entityTypeName);
 
 		if($entityTypeName === 'CONTACT')
 		{
@@ -101,6 +116,7 @@ class CCrmEntitySelectorHelper
 			if($isHidden)
 			{
 				$result[$titleKey] = GetMessage('CRM_ENT_SEL_HLP_HIDDEN_CONTACT');
+				$result[$advancedInfoKey]['hasEditRequisiteData'] = true;
 			}
 			else
 			{
@@ -183,6 +199,7 @@ class CCrmEntitySelectorHelper
 								$result[$advancedInfoKey][$multiFieldsKey][] = array(
 									'ID' => $normalizeMultifields ? $arRes['ID'] : $entityID,
 									'ENTITY_ID' => $normalizeMultifields ? $entityID : $arRes['ID'],
+									'ENTITY_TYPE_NAME' => $entityTypeName,
 									'TYPE_ID' => $arRes['TYPE_ID'],
 									'VALUE_TYPE' => $arRes['VALUE_TYPE'],
 									'VALUE' => $arRes['VALUE'],
@@ -202,9 +219,27 @@ class CCrmEntitySelectorHelper
 
 					// requisites
 					if ($requireRequisiteData)
+					{
+						$requisiteDataParams =
+							$requireEditRequisiteData ?
+								[
+									'VIEW_FORMATTED' => true,
+									'ADDRESS_AS_JSON' => true,
+								]
+								:
+								[
+									'VIEW_DATA_ONLY' => true
+								];
+
 						$result[$advancedInfoKey][$requisiteDataKey] = self::PrepareRequisiteData(
-							CCrmOwnerType::Contact, $entityID, array('VIEW_DATA_ONLY' => true)
+							CCrmOwnerType::Contact, $entityID, $requisiteDataParams
 						);
+					}
+					$result[$advancedInfoKey]['hasEditRequisiteData'] = $requireEditRequisiteData;
+				}
+				else
+				{
+					$result['notFound'] = true;
 				}
 			}
 		}
@@ -221,6 +256,7 @@ class CCrmEntitySelectorHelper
 			if($isHidden)
 			{
 				$result[$titleKey] = GetMessage('CRM_ENT_SEL_HLP_HIDDEN_COMPANY');
+				$result[$advancedInfoKey]['hasEditRequisiteData'] = true;
 			}
 			else
 			{
@@ -286,6 +322,7 @@ class CCrmEntitySelectorHelper
 								$result[$advancedInfoKey][$multiFieldsKey][] = array(
 									'ID' => $normalizeMultifields ? $arRes['ID'] : $entityID,
 									'ENTITY_ID' => $normalizeMultifields ? $entityID : $arRes['ID'],
+									'ENTITY_TYPE_NAME' => $entityTypeName,
 									'TYPE_ID' => $arRes['TYPE_ID'],
 									'VALUE_TYPE' => $arRes['VALUE_TYPE'],
 									'VALUE' => $arRes['VALUE'],
@@ -297,12 +334,30 @@ class CCrmEntitySelectorHelper
 						}
 					}
 				}
+				else
+				{
+					$result['notFound'] = true;
+				}
 
 				// requisites
 				if ($requireRequisiteData)
+				{
+					$requisiteDataParams =
+						$requireEditRequisiteData ?
+						[
+							'VIEW_FORMATTED' => true,
+							'ADDRESS_AS_JSON' => true,
+						]
+						:
+						[
+							'VIEW_DATA_ONLY' => true
+						];
+
 					$result[$advancedInfoKey][$requisiteDataKey] = self::PrepareRequisiteData(
-						CCrmOwnerType::Company, $entityID, array('VIEW_DATA_ONLY' => true)
+						CCrmOwnerType::Company, $entityID, $requisiteDataParams
 					);
+				}
+				$result[$advancedInfoKey]['hasEditRequisiteData'] = $requireEditRequisiteData;
 			}
 		}
 		elseif($entityTypeName === 'LEAD')
@@ -376,6 +431,7 @@ class CCrmEntitySelectorHelper
 								$result[$advancedInfoKey][$multiFieldsKey][] = array(
 									'ID' => $normalizeMultifields ? $arRes['ID'] : $entityID,
 									'ENTITY_ID' => $normalizeMultifields ? $entityID : $arRes['ID'],
+									'ENTITY_TYPE_NAME' => $entityTypeName,
 									'TYPE_ID' => $arRes['TYPE_ID'],
 									'VALUE_TYPE' => $arRes['VALUE_TYPE'],
 									'VALUE' => $arRes['VALUE'],
@@ -386,6 +442,10 @@ class CCrmEntitySelectorHelper
 							}
 						}
 					}
+				}
+				else
+				{
+					$result['notFound'] = true;
 				}
 			}
 		}
@@ -425,6 +485,10 @@ class CCrmEntitySelectorHelper
 						$arRes['CONTACT_FULL_NAME'];
 					$result[$descKey] = $clientTitle;
 				}
+				else
+				{
+					$result['notFound'] = true;
+				}
 			}
 		}
 		elseif($entityTypeName === 'QUOTE')
@@ -448,17 +512,104 @@ class CCrmEntitySelectorHelper
 				{
 					$result[$titleKey] = empty($arRes['TITLE']) ? $arRes['QUOTE_NUMBER'] : $arRes['QUOTE_NUMBER'].' - '.$arRes['TITLE'];
 
-					$result[$urlKey] = CComponentEngine::MakePathFromTemplate(
-						COption::GetOptionString('crm', 'path_to_quote_show'),
-						array(
-							'quote_id' => $entityID
-						)
-					);
+					$result[$urlKey] = Container::getInstance()->getRouter()->getItemDetailUrl(\CCrmOwnerType::Quote, $entityID);
 
 					$clientTitle = (!empty($arRes['COMPANY_TITLE'])) ? $arRes['COMPANY_TITLE'] : '';
 					$clientTitle .= (($clientTitle !== '' && !empty($arRes['CONTACT_FULL_NAME'])) ? ', ' : '').$arRes['CONTACT_FULL_NAME'];
 					$result[$descKey] = $clientTitle;
 				}
+				else
+				{
+					$result['notFound'] = true;
+				}
+			}
+		}
+		elseif($entityTypeName === 'ORDER')
+		{
+			if ($bEntityEditorFormat && $bEntityPrefixEnabled)
+				$result['id'] = 'O_'.$result['id'];
+
+			if($isHidden)
+			{
+				$result[$titleKey] = Loc::getMessage('CRM_ENT_SEL_HLP_HIDDEN_ORDER');
+			}
+			else
+			{
+				$result[$permissionsKey] = [
+					$canUpdateKey => EntityAuthorization::checkUpdatePermission(
+						\CCrmOwnerType::Order, $entityID, $userPermissions
+					),
+				];
+
+				$order = Order::getList([
+					'select' => ['ID', 'ACCOUNT_NUMBER'],
+					'filter' => [
+						'=ID'=> $entityID,
+					],
+				])->fetchRaw();
+
+				if ($order)
+				{
+					$result[$titleKey] = Loc::getMessage(
+						'CRM_ENT_SEL_HLP_ORDER_SUMMARY',
+						[
+							'#ORDER_NUMBER#' => (
+								isset($order['ACCOUNT_NUMBER'])
+								? htmlspecialcharsbx($order['ACCOUNT_NUMBER'])
+								: $order['ID']
+							),
+						]
+					);
+					$result[$urlKey] = CComponentEngine::MakePathFromTemplate(
+						COption::GetOptionString('crm', 'path_to_order_details'),
+						[
+							'order_id' => $entityID,
+						]
+					);
+				}
+				else
+				{
+					$result['notFound'] = true;
+				}
+			}
+		}
+		elseif(\CCrmOwnerType::isPossibleDynamicTypeId($entityTypeId))
+		{
+			if ($bEntityEditorFormat && $bEntityPrefixEnabled)
+			{
+				$result['id'] = 'DY_' . $entityTypeId . '-' . $result['id'];
+			}
+
+			if($isHidden)
+			{
+				$result[$titleKey] = GetMessage('CRM_ENT_SEL_HLP_HIDDEN_DYNAMIC');
+			}
+			else
+			{
+				$factory = Container::getInstance()->getFactory($entityTypeId);
+				if (!$factory)
+				{
+					return $result;
+				}
+
+				$item = $factory->getItem($entityID);
+
+				if (!$item)
+				{
+					$result['notFound'] = true;
+					return $result;
+				}
+
+				$result[$permissionsKey] = [
+					$canUpdateKey => Container::getInstance()->getUserPermissions()->canUpdateItem($item),
+				];
+
+				$result[$titleKey] = $item->getTitle();
+
+				$result[$urlKey] = Container::getInstance()
+					->getRouter()
+					->getItemDetailUrl($entityTypeId, $entityID)
+				;
 			}
 		}
 
@@ -505,7 +656,7 @@ class CCrmEntitySelectorHelper
 		$i = 0;
 		foreach($entityTypeNames as $typeName)
 		{
-			$typeName = strtoupper(strval($typeName));
+			$typeName = mb_strtoupper(strval($typeName));
 
 			if($typeName === 'CONTACT')
 			{
@@ -892,10 +1043,23 @@ class CCrmEntitySelectorHelper
 	{
 		$entityTypeId = (int)$entityTypeId;
 		$entityId = (int)$entityId;
-		$copyMode = (isset($options['COPY_MODE'])
-			&& ($options['COPY_MODE'] === true || $options['COPY_MODE'] === 'Y'));
-		$viewDataOnly = (isset($options['VIEW_DATA_ONLY'])
-			&& ($options['VIEW_DATA_ONLY'] === true || $options['VIEW_DATA_ONLY'] === 'Y'));
+
+		// Options
+		$copyMode = (
+			isset($options['COPY_MODE']) && ($options['COPY_MODE'] === true || $options['COPY_MODE'] === 'Y')
+		);
+		$viewDataOnly = (
+			isset($options['VIEW_DATA_ONLY'])
+			&& ($options['VIEW_DATA_ONLY'] === true || $options['VIEW_DATA_ONLY'] === 'Y')
+		);
+		$viewFormatted = (
+			isset($options['VIEW_FORMATTED'])
+			&& ($options['VIEW_FORMATTED'] === true || $options['VIEW_FORMATTED'] === 'Y')
+		);
+		$addressAsJson = (
+			isset($options['ADDRESS_AS_JSON'])
+			&& ($options['ADDRESS_AS_JSON'] === true || $options['ADDRESS_AS_JSON'] === 'Y')
+		);
 
 		$result = array();
 
@@ -963,7 +1127,9 @@ class CCrmEntitySelectorHelper
 				while ($row = $res->fetch())
 				{
 					if ($needLoadAddresses)
-						$row[Bitrix\Crm\EntityRequisite::ADDRESS] = array();
+					{
+						$row[Bitrix\Crm\EntityRequisite::ADDRESS] = [];
+					}
 					$presetIds[] = (int)$row['PRESET_ID'];
 					$requisiteList[$row['ID']] = $row;
 					if (!$bSelected && $requisiteIdSelected === intval($row['ID']))
@@ -1010,7 +1176,8 @@ class CCrmEntitySelectorHelper
 									'REGION',
 									'PROVINCE',
 									'COUNTRY',
-									'COUNTRY_CODE'
+									'COUNTRY_CODE',
+									'LOC_ADDR_ID'
 								)
 							)
 						);
@@ -1019,7 +1186,24 @@ class CCrmEntitySelectorHelper
 							$requisiteId = (int)$row['ENTITY_ID'];
 							$typeId = (int)$row['TYPE_ID'];
 							unset($row['ENTITY_ID'], $row['TYPE_ID']);
-							$requisiteList[$requisiteId][Bitrix\Crm\EntityRequisite::ADDRESS][$typeId] = $row;
+							if ($addressAsJson)
+							{
+								if (RequisiteAddress::isLocationModuleIncluded())
+								{
+									/** @var $locationAddress Address */
+									$locationAddress = RequisiteAddress::makeLocationAddressByFields($row);
+									if ($locationAddress)
+									{
+										$requisiteList[$requisiteId][Bitrix\Crm\EntityRequisite::ADDRESS][$typeId] =
+											$locationAddress->toJson();
+									}
+									unset($locationAddress);
+								}
+							}
+							else
+							{
+								$requisiteList[$requisiteId][Bitrix\Crm\EntityRequisite::ADDRESS][$typeId] = $row;
+							}
 						}
 					}
 
@@ -1123,7 +1307,16 @@ class CCrmEntitySelectorHelper
 							$requisiteData['fields'] = $dataFields;
 						}
 						$fieldsInView = array_intersect_assoc($presetFieldsMap, $fieldsAllowedMap);
-						$requisiteData['viewData'] = $requisite->prepareViewData($viewDataFields, $fieldsInView);
+
+						if ($viewFormatted)
+						{
+							$requisiteData['viewData'] = $requisite->prepareViewDataFormatted($viewDataFields, $fieldsInView);
+						}
+						else
+						{
+							$requisiteData['viewData'] = $requisite->prepareViewData($viewDataFields, $fieldsInView);
+						}
+
 						unset($presetFields, $fieldsInView);
 						if ($bankDetailCountryId <= 0)
 							$bankDetailCountryId = \Bitrix\Crm\EntityPreset::getCurrentCountryId();
@@ -1186,8 +1379,18 @@ class CCrmEntitySelectorHelper
 
 						if (!empty($requisiteDataJson) && ($viewDataOnly || !empty($requisiteDataSign)))
 						{
+							if (is_array($presetList[$presetID])
+								&& isset($presetList[$presetID]['COUNTRY_ID']))
+							{
+								$presetCountryId = (int)$presetList[$presetID]['COUNTRY_ID'];
+							}
+							else
+							{
+								$presetCountryId = 0;
+							}
 							$resultItem = array(
 								'presetId' => $presetID,
+								'presetCountryId' => $presetCountryId,
 								'requisiteId' => $copyMode ? 0 : $requisiteId,
 								'entityTypeId' => $entityTypeId,
 								'entityId' => $copyMode ? 0 : $entityId,
@@ -1212,7 +1415,7 @@ class CCrmEntitySelectorHelper
 
 		return $result;
 	}
-	
+
 	public static function PrepareBankDetailsData($entityTypeId, $entityId, $options = array())
 	{
 		$entityTypeId = (int)$entityTypeId;
@@ -1307,7 +1510,7 @@ class CCrmEntitySelectorHelper
 				$result['bankDetailViewDataList'][$selectedIndex]['selected'] = true;
 			}
 		}
-		
+
 		return $result;
 	}
 }

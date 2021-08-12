@@ -1,5 +1,0 @@
-<?
-$MESS["CRM_PS_LIST_BLOCK_ACTIVE"] = "Actif";
-$MESS["CRM_PS_LIST_BLOCK_CONNECT"] = "connecter";
-$MESS["CRM_PS_LIST_BLOCK_DISCONNECT"] = "déconnecter";
-?>

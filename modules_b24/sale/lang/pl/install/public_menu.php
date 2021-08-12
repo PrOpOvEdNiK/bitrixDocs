@@ -1,7 +1,0 @@
-<?
-$MESS["SALE_INSTALL_MENU_BASKET"] = "Koszyk";
-$MESS["SALE_INSTALL_MENU_ORDER"] = "Zamówienia";
-$MESS["SALE_INSTALL_MENU_REGULAR_PAYMENT"] = "Regularna płatność";
-$MESS["SALE_INSTALL_MENU_SALE_ACCOUNT"] = "Konto";
-$MESS["SALE_INSTALL_MENU_SALE_PROFILES"] = "Inormacje o kliencie";
-?>

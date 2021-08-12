@@ -259,6 +259,16 @@ final class ProjectDependenceTable extends Mesh
 	 */
 	public static function getListByLegacyTaskFilter(array $filter = array(), array $parameters = array())
 	{
+
+		/**
+		 * Group by subtask should be ignored for fulltext search
+		 * See #140001 for more information
+		 */
+		if (array_key_exists('::SUBFILTER-FULL_SEARCH_INDEX', $filter))
+		{
+			unset($filter['ONLY_ROOT_TASKS']);
+		}
+
 		$mixins = TaskTable::getRuntimeMixins(
 			array(
 				array(
@@ -354,7 +364,7 @@ final class ProjectDependenceTable extends Mesh
 	public static function getMap()
 	{
 		// to avoid warnings in php7
-		$entityName = '\\Bitrix\\Tasks\\TaskTable';
+		$entityName = '\\Bitrix\\Tasks\\Internals\\TaskTable';
 		if(func_num_args() > 0)
 		{
 			$entityName = func_get_arg(0);

@@ -1,4 +1,0 @@
-<?
-$MESS["CRM_INVOICE_SUM_STAT_PRESET_OVERALL_COUNT"] = "Liczba faktur";
-$MESS["CRM_INVOICE_SUM_STAT_PRESET_OVERALL_SUM"] = "Całkowita wartość faktur";
-?>

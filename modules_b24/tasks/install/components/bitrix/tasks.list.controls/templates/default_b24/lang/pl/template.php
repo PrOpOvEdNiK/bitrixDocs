@@ -1,4 +1,0 @@
-<?
-$MESS["TASK_TOOLBAR_FILTER_BUTTON"] = "Filtr";
-$MESS["TASK_TOOLBAR_FILTER_REPORTS"] = "Raporty";
-?>

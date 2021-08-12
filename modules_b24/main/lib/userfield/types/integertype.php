@@ -3,6 +3,7 @@
 namespace Bitrix\Main\UserField\Types;
 
 use Bitrix\Main\Localization\Loc;
+use Bitrix\Main\Text\HtmlFilter;
 use CUserTypeManager;
 
 Loc::loadMessages(__FILE__);
@@ -75,11 +76,16 @@ class IntegerType extends BaseType
 
 	/**
 	 * @param array $userField
-	 * @param string|array $value
+	 * @param $value
 	 * @return array
 	 */
 	public static function checkFields(array $userField, $value): array
 	{
+		$fieldName = HtmlFilter::encode(
+			$userField['EDIT_FORM_LABEL'] <> ''
+				? $userField['EDIT_FORM_LABEL'] : $userField['FIELD_NAME']
+		);
+
 		$msg = [];
 		if(
 			$value !== ''
@@ -91,7 +97,7 @@ class IntegerType extends BaseType
 				'id' => $userField['FIELD_NAME'],
 				'text' => Loc::getMessage('USER_TYPE_INTEGER_MIN_VALUE_ERROR',
 					[
-						'#FIELD_NAME#' => $userField['EDIT_FORM_LABEL'],
+						'#FIELD_NAME#' => $fieldName,
 						'#MIN_VALUE#' => $userField['SETTINGS']['MIN_VALUE']
 					]
 				),
@@ -99,7 +105,7 @@ class IntegerType extends BaseType
 		}
 		if(
 			$value !== ''
-			&& $userField['SETTINGS']['MAX_VALUE'] <> 0
+			&& $userField['SETTINGS']['MAX_VALUE'] != 0
 			&& (int)$value > $userField['SETTINGS']['MAX_VALUE']
 		)
 		{
@@ -107,12 +113,27 @@ class IntegerType extends BaseType
 				'id' => $userField['FIELD_NAME'],
 				'text' => Loc::getMessage('USER_TYPE_INTEGER_MAX_VALUE_ERROR',
 					[
-						'#FIELD_NAME#' => $userField['EDIT_FORM_LABEL'],
+						'#FIELD_NAME#' => $fieldName,
 						'#MAX_VALUE#' => $userField['SETTINGS']['MAX_VALUE']
 					]
 				),
 			];
 		}
+		if(
+			$value != ''
+			&& !preg_match('/^[-+]?\d+$/', $value)
+		)
+		{
+			$msg[] = [
+				'id' => $userField['FIELD_NAME'],
+				'text' => Loc::getMessage('USER_TYPE_INTEGER_TYPE_ERROR',
+					[
+						'#FIELD_NAME#' => $fieldName
+					]
+				),
+			];
+		}
+
 		return $msg;
 	}
 

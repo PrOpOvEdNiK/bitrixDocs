@@ -1,4 +1,4 @@
-<?
+<?php
 $className = "CXMPPReceiveError";
 $classVersion = 2;
 
@@ -15,7 +15,7 @@ if (!class_exists("CXMPPReceiveError"))
 
 		function ReceiveMessage($senderJId, array $arMessage, CXMPPClient $senderClient)
 		{
-			if (strlen($senderJId) <= 0)
+			if ($senderJId == '')
 				return false;
 
 			if (array_key_exists("message", $arMessage))
@@ -55,4 +55,3 @@ if (!class_exists("CXMPPReceiveError"))
 		}
 	}
 }
-?>

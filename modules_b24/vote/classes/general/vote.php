@@ -41,7 +41,7 @@ class CAllVote
 					"id" => "CHANNEL_ID",
 					"text" => GetMessage("VOTE_EMPTY_CHANNEL_ID"));
 			else:
-				$rChannel = CVoteChannel::GetList($by, $order, arraY('ID' => intval($arFields['CHANNEL_ID'])), $filtered);
+				$rChannel = CVoteChannel::GetList('', '', array('ID' => intval($arFields['CHANNEL_ID'])));
 				if (! ($rChannel && $arChannel = $rChannel->Fetch()))
 				{
 					$aMsg[] = array(
@@ -70,7 +70,7 @@ class CAllVote
 		if (is_set($arFields, "DATE_END") || $ACTION == "ADD")
 		{
 			$arFields["DATE_END"] = trim($arFields["DATE_END"]);
-			if (strlen($arFields["DATE_END"]) <= 0):
+			if ($arFields["DATE_END"] == ''):
 				if ($date_start != false):
 					$date_end = $date_start + 2592000;
 					$arFields["DATE_END"] = GetTime($date_end, "FULL");
@@ -112,7 +112,7 @@ class CAllVote
 					"text" => str_replace("#ID#", $vid, GetMessage("VOTE_WRONG_INTERVAL")));
 			endif;
 		}
-		if (is_set($arFields, "IMAGE_ID") && strlen($arFields["IMAGE_ID"]["name"]) <= 0 && strlen($arFields["IMAGE_ID"]["del"]) <= 0)
+		if (is_set($arFields, "IMAGE_ID") && $arFields["IMAGE_ID"]["name"] == '' && $arFields["IMAGE_ID"]["del"] == '')
 		{
 			unset($arFields["IMAGE_ID"]);
 		}
@@ -320,7 +320,7 @@ class CAllVote
 		}
 
 		$state = true;
-		$rQuestions = CVoteQuestion::GetList($ID, $by, $order, array(), $is_filtered);
+		$rQuestions = CVoteQuestion::GetList($ID);
 		while ($arQuestion = $rQuestions->Fetch())
 		{
 			$state = $state && ( CVoteQuestion::Copy($arQuestion['ID'], $newID) !== false);
@@ -352,7 +352,7 @@ class CAllVote
 	public static function GetByID($ID)
 	{
 		$ID = intval($ID);
-		return CVote::GetList($by="s_id", $order="desc", array("ID" => $ID), $is_filtered = false);
+		return CVote::GetList("s_id", "desc", array("ID" => $ID));
 	}
 
 	public static function GetByIDEx($ID)
@@ -635,9 +635,9 @@ class CAllVote
 
 class _CVoteDBResult extends CDBResult
 {
-	function _CVoteDBResult($res, $params = array())
+	public function __construct($res, $params = array())
 	{
-		parent::CDBResult($res);
+		parent::__construct($res);
 	}
 	function Fetch()
 	{

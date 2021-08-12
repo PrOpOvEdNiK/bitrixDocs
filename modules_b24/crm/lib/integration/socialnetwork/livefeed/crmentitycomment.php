@@ -1,4 +1,5 @@
-<?
+<?php
+
 namespace Bitrix\Crm\Integration\Socialnetwork\Livefeed;
 
 use \Bitrix\Socialnetwork\Livefeed\Provider;
@@ -14,14 +15,14 @@ final class CrmEntityComment extends \Bitrix\Socialnetwork\Livefeed\Provider
 	protected $logEntityType = null;
 	protected $logEntityId = null;
 
-	public static function getId()
+	public static function getId(): string
 	{
 		return static::PROVIDER_ID;
 	}
 
-	public function getEventId()
+	public function getEventId(): array
 	{
-		return array(
+		return [
 			\CCrmLiveFeedEvent::LeadPrefix.\CCrmLiveFeedEvent::Add.\CCrmLiveFeedEvent::CommentSuffix,
 			\CCrmLiveFeedEvent::LeadPrefix.\CCrmLiveFeedEvent::Progress.\CCrmLiveFeedEvent::CommentSuffix,
 			\CCrmLiveFeedEvent::LeadPrefix.\CCrmLiveFeedEvent::Denomination.\CCrmLiveFeedEvent::CommentSuffix,
@@ -43,8 +44,8 @@ final class CrmEntityComment extends \Bitrix\Socialnetwork\Livefeed\Provider
 			\CCrmLiveFeedEvent::DealPrefix.\CCrmLiveFeedEvent::Progress.\CCrmLiveFeedEvent::CommentSuffix,
 			\CCrmLiveFeedEvent::DealPrefix.\CCrmLiveFeedEvent::Message.\CCrmLiveFeedEvent::CommentSuffix,
 			\CCrmLiveFeedEvent::InvoicePrefix.\CCrmLiveFeedEvent::Add.\CCrmLiveFeedEvent::CommentSuffix,
-			\CCrmLiveFeedEvent::ActivityPrefix.\CCrmLiveFeedEvent::Add.\CCrmLiveFeedEvent::CommentSuffix
-		);
+			\CCrmLiveFeedEvent::ActivityPrefix.\CCrmLiveFeedEvent::Add.\CCrmLiveFeedEvent::CommentSuffix,
+		];
 	}
 
 	public function getType()
@@ -69,7 +70,7 @@ final class CrmEntityComment extends \Bitrix\Socialnetwork\Livefeed\Provider
 			));
 			if ($logComentFields = $res->fetch())
 			{
-				$logId = intval($logComentFields['LOG_ID']);
+				$logId = (int)$logComentFields['LOG_ID'];
 			}
 
 			if ($logId)
@@ -190,12 +191,12 @@ final class CrmEntityComment extends \Bitrix\Socialnetwork\Livefeed\Provider
 
 		$message = (
 			isset($params['MESSAGE'])
-			&& strlen($params['MESSAGE']) > 0
+			&& $params['MESSAGE'] <> ''
 				? $params['MESSAGE']
 				: ''
 		);
 
-		if (strlen($message) <= 0)
+		if ($message == '')
 		{
 			return false;
 		}
@@ -251,30 +252,51 @@ final class CrmEntityComment extends \Bitrix\Socialnetwork\Livefeed\Provider
 		if (!empty($logEventId))
 		{
 			$providerCrmLead = new CrmLead();
+			if (in_array($logEventId, $providerCrmLead->getMessageEventId()))
+			{
+				return 'LEAD_MESSAGE';
+			}
 			if (in_array($logEventId, $providerCrmLead->getEventId()))
 			{
 				return 'LEAD';
 			}
+
 			$providerCrmContact = new CrmContact();
+			if (in_array($logEventId, $providerCrmContact->getMessageEventId()))
+			{
+				return 'CONTACT_MESSAGE';
+			}
 			if (in_array($logEventId, $providerCrmContact->getEventId()))
 			{
 				return 'CONTACT';
 			}
+
 			$providerCrmCompany = new CrmCompany();
+			if(in_array($logEventId, $providerCrmCompany->getMessageEventId()))
+			{
+				return 'COMPANY_MESSAGE';
+			}
 			if (in_array($logEventId, $providerCrmCompany->getEventId()))
 			{
 				return 'COMPANY';
 			}
+
 			$providerCrmDeal = new CrmDeal();
+			if (in_array($logEventId, $providerCrmDeal->getMessageEventId()))
+			{
+				return 'DEAL_MESSAGE';
+			}
 			if (in_array($logEventId, $providerCrmDeal->getEventId()))
 			{
 				return 'DEAL';
 			}
+
 			$providerCrmInvoice = new CrmInvoice();
 			if (in_array($logEventId, $providerCrmInvoice->getEventId()))
 			{
 				return 'INVOICE';
 			}
+
 			$providerCrmActivity = new CrmActivity();
 			if (in_array($logEventId, $providerCrmActivity->getEventId()))
 			{

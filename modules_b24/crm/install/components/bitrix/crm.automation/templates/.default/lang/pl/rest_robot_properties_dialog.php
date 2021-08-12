@@ -1,3 +1,0 @@
-<?
-$MESS["CRM_AUTOMATION_ADD_MULTIPLE"] = "dodaj";
-?>

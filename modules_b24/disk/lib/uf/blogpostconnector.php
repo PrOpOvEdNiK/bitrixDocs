@@ -38,6 +38,11 @@ final class BlogPostConnector extends Connector
 
 	public function getDataToShow()
 	{
+		return $this->getDataToShowForUser($this->getUser()->getId());
+	}
+
+	public function getDataToShowForUser(int $userId)
+	{
 		if(!$this->loadBlogPostData())
 		{
 			return null;
@@ -92,7 +97,7 @@ final class BlogPostConnector extends Connector
 			)
 		));
 
-		/** @noinspection PhpDynamicAsStaticMethodCallInspection */
+
 		\CBlogComment::addLiveComment($comId, array(
 			"MODE" => "PULL_MESSAGE",
 			"AUX" => 'fileversion',
@@ -195,6 +200,11 @@ final class BlogPostConnector extends Connector
 				));
 			$post = $queryPost->fetch();
 
+			if (!empty($post['DETAIL_TEXT']))
+			{
+				$post['DETAIL_TEXT'] = \Bitrix\Main\Text\Emoji::decode($post['DETAIL_TEXT']);
+			}
+
 			$cache->endDataCache($post);
 		}
 		if(!$post)
@@ -202,7 +212,7 @@ final class BlogPostConnector extends Connector
 			$this->canRead = false;
 			return false;
 		}
-		/** @noinspection PhpDynamicAsStaticMethodCallInspection */
+
 		$this->canRead = \CBlogPost::getSocNetPostPerms($this->entityId, true, $userId, $post["AUTHOR_ID"]) >= BLOG_PERMS_READ;
 
 		if (!$this->canRead)
@@ -226,6 +236,7 @@ final class BlogPostConnector extends Connector
 				{
 					$res = WorkgroupTable::getList([
 						'filter' => [
+							'@ID' => $sonetGroupsIdList,
 							'=LANDING' => 'Y',
 							'=ACTIVE' => 'Y'
 						],
@@ -312,7 +323,7 @@ final class BlogPostConnector extends Connector
 		$members = array();
 		if($this->blogPostData["HAS_SOCNET_ALL"] != "Y")
 		{
-			/** @noinspection PhpDynamicAsStaticMethodCallInspection */
+
 			$perm = \CBlogPost::getSocnetPermsName($this->entityId);
 			foreach($perm as $type => $v)
 			{
@@ -320,19 +331,19 @@ final class BlogPostConnector extends Connector
 				{
 					if($type == "SG")
 					{
-						/** @noinspection PhpDynamicAsStaticMethodCallInspection */
+
 						if($socNetGroup = \CSocNetGroup::getByID($vv["ENTITY_ID"]))
 						{
 							$name = $socNetGroup["~NAME"];
 							$link = \CComponentEngine::makePathFromTemplate($this->getPathToGroup(), array("group_id" => $vv["ENTITY_ID"]));
 
 							$groupSiteID = false;
-							/** @noinspection PhpDynamicAsStaticMethodCallInspection */
+
 							$queryGroupSite = \CSocNetGroup::getSite($vv["ENTITY_ID"]);
 
 							while($groupSite = $queryGroupSite->fetch())
 							{
-								/** @noinspection PhpDynamicAsStaticMethodCallInspection */
+
 								if(!$isExtranetInstalled || $groupSite["LID"] != \CExtranet::getExtranetSiteID()
 								)
 								{
@@ -343,9 +354,9 @@ final class BlogPostConnector extends Connector
 
 							if($groupSiteID)
 							{
-								/** @noinspection PhpDynamicAsStaticMethodCallInspection */
+
 								$tmp = \CSocNetLogTools::processPath(array("GROUP_URL" => $link), $this->getUser()->getId(), $groupSiteID); // user_id is not important parameter
-								$link = (strlen($tmp["URLS"]["GROUP_URL"]) > 0 ? $tmp["URLS"]["GROUP_URL"] : $link);
+								$link = ($tmp["URLS"]["GROUP_URL"] <> '' ? $tmp["URLS"]["GROUP_URL"] : $link);
 							}
 							$isExtranet = (is_array($GLOBALS["arExtranetGroupID"]) && in_array($vv["ENTITY_ID"], $GLOBALS["arExtranetGroupID"]));
 

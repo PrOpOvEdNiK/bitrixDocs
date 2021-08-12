@@ -1,4 +1,0 @@
-<?
-$MESS["CRM_REQUISITE_ADDRESS_TYPE_HOME"] = "Registracijos adresas";
-$MESS["CRM_REQUISITE_ADDRESS_TYPE_BENEFICIARY"] = "Gavėjo adresas";
-?>

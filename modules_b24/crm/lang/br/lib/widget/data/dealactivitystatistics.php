@@ -1,6 +1,0 @@
-<?
-$MESS["CRM_DEAL_ACT_STAT_PRESET_CALL_OVERALL_COUNT"] = "Número de chamadas";
-$MESS["CRM_DEAL_ACT_STAT_PRESET_EMAIL_OVERALL_COUNT"] = "Número de e-mails";
-$MESS["CRM_DEAL_ACT_STAT_PRESET_MEETING_OVERALL_COUNT"] = "Número de reuniões";
-$MESS["CRM_DEAL_ACT_STAT_PRESET_OVERALL_COUNT"] = "Contagem de atividade";
-?>

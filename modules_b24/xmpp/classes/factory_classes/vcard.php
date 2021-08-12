@@ -1,4 +1,4 @@
-<?
+<?php
 $className = "CXMPPReceiveIQVCard";
 $classVersion = 2;
 
@@ -17,7 +17,7 @@ if (!class_exists("CXMPPReceiveIQVCard"))
 		{
 			if (!$senderClient->IsAuthenticated())
 				return false;
-			if (strlen($senderJId) <= 0)
+			if ($senderJId == '')
 				return false;
 
 			if (!array_key_exists("iq", $arMessage) || !array_key_exists("vcard", $arMessage["iq"]) || $arMessage["iq"]["vcard"]["."]["xmlns"] != "vcard-temp")
@@ -108,38 +108,38 @@ if (!class_exists("CXMPPReceiveIQVCard"))
 						),
 					);
 
-					if (strlen($arUser["WORK_FAX"]) > 0)
+					if ($arUser["WORK_FAX"] <> '')
 						$arResult["iq"]["vCard"]["TEL"][] = array(
 							"WORK" => array("#" => ""),
 							"FAX" => array("#" => ""),
 							"NUMBER" => array("#" => $arUser["WORK_FAX"]),
 						);
-					if (strlen($arUser["PERSONAL_MOBILE"]) > 0)
+					if ($arUser["PERSONAL_MOBILE"] <> '')
 						$arResult["iq"]["vCard"]["TEL"][] = array(
 							"HOME" => array("#" => ""),
 							"CELL" => array("#" => ""),
 							"NUMBER" => array("#" => $arUser["PERSONAL_MOBILE"]),
 						);
-					if (strlen($arUser["WORK_PHONE"]) > 0)
+					if ($arUser["WORK_PHONE"] <> '')
 						$arResult["iq"]["vCard"]["TEL"][] = array(
 							"WORK" => array("#" => ""),
 							"VOICE" => array("#" => ""),
 							"NUMBER" => array("#" => $arUser["WORK_PHONE"]),
 						);
-					if (strlen($arUser["PERSONAL_PHONE"]) > 0)
+					if ($arUser["PERSONAL_PHONE"] <> '')
 						$arResult["iq"]["vCard"]["TEL"][] = array(
 							"HOME" => array("#" => ""),
 							"VOICE" => array("#" => ""),
 							"NUMBER" => array("#" => $arUser["PERSONAL_PHONE"]),
 						);
-					if (strlen($arUser["PERSONAL_FAX"]) > 0)
+					if ($arUser["PERSONAL_FAX"] <> '')
 						$arResult["iq"]["vCard"]["TEL"][] = array(
 							"HOME" => array("#" => ""),
 							"FAX" => array("#" => ""),
 							"NUMBER" => array("#" => $arUser["PERSONAL_FAX"]),
 						);
 
-					if (strlen($arUser["WORK_STREET"]) > 0 || strlen($arUser["WORK_CITY"]) > 0 || strlen($arUser["WORK_COUNTRY"]) > 0)
+					if ($arUser["WORK_STREET"] <> '' || $arUser["WORK_CITY"] <> '' || $arUser["WORK_COUNTRY"] <> '')
 						$arResult["iq"]["vCard"]["ADR"][] = array(
 							"WORK" => array("#" => ""),
 							"EXTADD" => array("#" => ""),
@@ -149,7 +149,7 @@ if (!class_exists("CXMPPReceiveIQVCard"))
 							"PCODE" => array("#" => $arUser["WORK_ZIP"]),
 							"CTRY" => array("#" => GetCountryByID($arUser["WORK_COUNTRY"])),
 						);
-					if (strlen($arUser["PERSONAL_STREET"]) > 0 || strlen($arUser["PERSONAL_CITY"]) > 0 || strlen($arUser["PERSONAL_COUNTRY"]) > 0)
+					if ($arUser["PERSONAL_STREET"] <> '' || $arUser["PERSONAL_CITY"] <> '' || $arUser["PERSONAL_COUNTRY"] <> '')
 						$arResult["iq"]["vCard"]["ADR"][] = array(
 							"HOME" => array("#" => ""),
 							"EXTADD" => array("#" => ""),
@@ -203,4 +203,3 @@ if (!class_exists("CXMPPReceiveIQVCard"))
 		}
 	}
 }
-?>

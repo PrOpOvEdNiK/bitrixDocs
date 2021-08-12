@@ -1,5 +1,0 @@
-<?php
-$arTooltips = array(
-
-);
-?>

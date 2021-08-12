@@ -1,5 +1,0 @@
-<?
-$MESS["SUPPORT_FAQ_EL_COMPONENTS"] = "FAQ";
-$MESS["SUPPORT_FAQ_EL_COMPONENT_DESCRIPTION"] = "Mostrar lista de preguntas";
-$MESS["SUPPORT_FAQ_EL_COMPONENT_NAME"] = "Sección FAQ";
-?>

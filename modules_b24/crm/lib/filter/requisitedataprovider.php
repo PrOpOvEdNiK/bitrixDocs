@@ -9,7 +9,7 @@ use Bitrix\Crm\RequisiteAddress;
 
 Loc::loadMessages(__FILE__);
 
-class RequisiteDataProvider extends DataProvider
+class RequisiteDataProvider extends Main\Filter\DataProvider
 {
 	/** @var EntitySettings|null */
 	protected $settings = null;
@@ -106,12 +106,6 @@ class RequisiteDataProvider extends DataProvider
 		}
 
 		$countries = EntityPreset::getCountryList();
-		$addressTypes = array();
-		foreach(RequisiteAddress::getClientTypeInfos() as $typeInfo)
-		{
-			$addressTypes[$typeInfo['id']] = $typeInfo['name'];
-		}
-
 		$fieldNamePrefix = Loc::getMessage('CRM_REQUISITE_FILTER_PREFIX');
 		foreach($countrySort as $countryId)
 		{
@@ -142,14 +136,16 @@ class RequisiteDataProvider extends DataProvider
 							)
 						);
 					}
-					elseif(!empty($addressTypes))
+					else
 					{
 						$addressTypeId = RequisiteAddress::Undefined;
 						$addressTypeName = $fieldTitles[$fieldName][$countryId];
 						$addressLabels = RequisiteAddress::getShortLabels(RequisiteAddress::Primary);
 						foreach(array_keys($requisite->getAddressFieldMap(RequisiteAddress::Primary)) as $fieldKey)
 						{
-							if($fieldKey === 'ADDRESS_2' || $fieldKey === 'COUNTRY_CODE')
+							if($fieldKey === 'ADDRESS_2'
+								|| $fieldKey === 'COUNTRY_CODE'
+								|| $fieldKey === 'LOC_ADDR_ID')
 							{
 								continue;
 							}

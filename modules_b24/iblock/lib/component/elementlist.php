@@ -190,6 +190,8 @@ abstract class ElementList extends Base
 
 		$this->getSpecificIblockParams($params);
 
+		$params['CALCULATE_SKU_MIN_PRICE'] = (isset($params['CALCULATE_SKU_MIN_PRICE']) && $params['CALCULATE_SKU_MIN_PRICE'] === 'Y');
+
 		return $params;
 	}
 
@@ -211,7 +213,7 @@ abstract class ElementList extends Base
 		{
 			$params[$order] = (isset($default['ORDER']) ? $default['ORDER'] : 'SORT');
 		}
-		$params[$order] = strtoupper($params[$order]);
+		$params[$order] = mb_strtoupper($params[$order]);
 
 		if ($params[$order] === 'ID' && !empty($params[$direction]) && is_array($params[$direction]))
 		{
@@ -230,6 +232,16 @@ abstract class ElementList extends Base
 		}
 
 		return $params;
+	}
+
+	protected function checkProductIblock(array $product): bool
+	{
+		$result = true;
+		if (!$this->isMultiIblockMode())
+		{
+			$result = ($product['PRODUCT_IBLOCK_ID'] == $this->arParams['IBLOCK_ID']);
+		}
+		return $result;
 	}
 
 	protected static function predictElementCountByVariants($variants, $isBigData = false)
@@ -281,7 +293,7 @@ abstract class ElementList extends Base
 	protected function getPaginationParams(&$params)
 	{
 		$params['DISPLAY_TOP_PAGER'] = isset($params['DISPLAY_TOP_PAGER']) && $params['DISPLAY_TOP_PAGER'] === 'Y';
-		$params['DISPLAY_BOTTOM_PAGER'] = $params['DISPLAY_BOTTOM_PAGER'] !== 'N';
+		$params['DISPLAY_BOTTOM_PAGER'] = !isset($params['DISPLAY_BOTTOM_PAGER']) || $params['DISPLAY_BOTTOM_PAGER'] !== 'N';
 		$params['LAZY_LOAD'] = isset($params['LAZY_LOAD']) && $params['LAZY_LOAD'] === 'Y' ? 'Y' : 'N';
 
 		if ($params['DISPLAY_TOP_PAGER'] || $params['DISPLAY_BOTTOM_PAGER'] || $params['LAZY_LOAD'] === 'Y')
@@ -299,6 +311,17 @@ abstract class ElementList extends Base
 		else
 		{
 			$this->setPaginationMode(false);
+			$params['PAGER_SHOW_ALWAYS'] = false;
+			$params['PAGER_SHOW_ALL'] = false;
+			$params['LOAD_ON_SCROLL'] = 'N';
+		}
+		if ($params['LAZY_LOAD'] === 'Y' && $params['LOAD_ON_SCROLL'] === 'Y')
+		{
+			$params['DEFERRED_LOAD'] = isset($params['DEFERRED_LOAD']) && $params['DEFERRED_LOAD'] === 'Y' ? 'Y' : 'N';
+		}
+		else
+		{
+			$params['DEFERRED_LOAD'] = 'N';
 		}
 	}
 
@@ -581,6 +604,31 @@ abstract class ElementList extends Base
 		);
 	}
 
+	/**
+	 * Returns list of product ids which will be showed on first hit.
+	 * @return array
+	 */
+	protected function getProductIds()
+	{
+		if ($this->isEmptyStartLoad())
+		{
+			return [];
+		}
+		return parent::getProductIds();
+	}
+
+	/**
+	 * @return bool
+	 */
+	protected function isEmptyStartLoad(): bool
+	{
+		return (
+			$this->arParams['LAZY_LOAD'] === 'Y'
+			&& $this->arParams['LOAD_ON_SCROLL'] === 'Y'
+			&& $this->arParams['DEFERRED_LOAD'] === 'Y'
+		);
+	}
+
 	// some logic of \CComponentAjax to execute in component_epilog
 	public function prepareLinks(&$data)
 	{
@@ -627,7 +675,7 @@ abstract class ElementList extends Base
 				if ($value == '')
 					continue;
 
-				$paramName = strtolower($linkParams[1][$key]);
+				$paramName = mb_strtolower($linkParams[1][$key]);
 
 				if ($paramName === 'href')
 				{
@@ -653,13 +701,13 @@ abstract class ElementList extends Base
 				{
 					$realUrl = $url;
 
-					$pos = strpos($url, '#');
+					$pos = mb_strpos($url, '#');
 					if ($pos !== false)
 					{
-						$realUrl = substr($realUrl, 0, $pos);
+						$realUrl = mb_substr($realUrl, 0, $pos);
 					}
 
-					$realUrl .= strpos($url, '?') === false ? '?' : '&';
+					$realUrl .= mb_strpos($url, '?') === false ? '?' : '&';
 					$realUrl .= $addParam;
 
 					$arData[$i] = \CAjax::GetLinkEx($realUrl, $url, $match[2], 'comp_'.$this->arParams['AJAX_ID'], $strAdditional);
@@ -678,7 +726,7 @@ abstract class ElementList extends Base
 	private function checkPcreLimit($data)
 	{
 		$pcreBacktrackLimit = (int)ini_get('pcre.backtrack_limit');
-		$textLen = function_exists('mb_strlen') ? mb_strlen($data, 'latin1') : strlen($data);
+		$textLen = function_exists('mb_strlen')? mb_strlen($data, 'latin1') : mb_strlen($data);
 		$textLen++;
 
 		if ($pcreBacktrackLimit > 0 && $pcreBacktrackLimit < $textLen)
@@ -695,19 +743,19 @@ abstract class ElementList extends Base
 		if (preg_match('/^(#|mailto:|javascript:|callto:)/', $url))
 			return false;
 
-		if (strpos($url, '://') !== false)
+		if (mb_strpos($url, '://') !== false)
 			return false;
 
 		$url = preg_replace('/#.*/', '', $url);
 
-		if (strpos($url, '?') !== false)
+		if (mb_strpos($url, '?') !== false)
 		{
-			$url = substr($url, 0, strpos($url, '?'));
+			$url = mb_substr($url, 0, mb_strpos($url, '?'));
 		}
 
-		if (substr($url, -4) != '.php')
+		if (mb_substr($url, -4) != '.php')
 		{
-			if (substr($url, -1) != '/')
+			if (mb_substr($url, -1) != '/')
 			{
 				$url .= '/';
 			}
@@ -717,14 +765,14 @@ abstract class ElementList extends Base
 
 		$currentUrl = $this->arParams['CURRENT_BASE_PAGE'];
 
-		if (strpos($currentUrl, '?') !== false)
+		if (mb_strpos($currentUrl, '?') !== false)
 		{
-			$currentUrl = substr($currentUrl, 0, strpos($currentUrl, '?'));
+			$currentUrl = mb_substr($currentUrl, 0, mb_strpos($currentUrl, '?'));
 		}
 
-		if (substr($currentUrl, -4) != '.php')
+		if (mb_substr($currentUrl, -4) != '.php')
 		{
-			if (substr($currentUrl, -1) != '/')
+			if (mb_substr($currentUrl, -1) != '/')
 			{
 				$currentUrl .= '/';
 			}
@@ -940,36 +988,71 @@ abstract class ElementList extends Base
 
 	protected function getSort()
 	{
-		$sortFields = array();
-
-		if (
-			(
-				$this->isIblockCatalog
-				|| (
-					$this->isMultiIblockMode()
-					|| (!$this->isMultiIblockMode() && $this->offerIblockExist($this->arParams['IBLOCK_ID']))
+		$sortFields = $this->getCustomSort();
+		if (empty($sortFields))
+		{
+			if (
+				(
+					$this->isIblockCatalog
+					|| (
+						$this->isMultiIblockMode()
+						|| (!$this->isMultiIblockMode() && $this->offerIblockExist($this->arParams['IBLOCK_ID']))
+					)
 				)
+				&& $this->arParams['HIDE_NOT_AVAILABLE'] === 'L'
 			)
-			&& $this->arParams['HIDE_NOT_AVAILABLE'] === 'L'
-		)
-		{
-			$sortFields['AVAILABLE'] = 'desc,nulls';
-		}
+			{
+				$sortFields['AVAILABLE'] = 'desc,nulls';
+			}
 
-		$field = strtoupper($this->arParams['ELEMENT_SORT_FIELD']);
-		if (!isset($sortFields[$field]))
-		{
-			$sortFields[$field] = $this->arParams['ELEMENT_SORT_ORDER'];
-		}
+			$field = mb_strtoupper($this->arParams['ELEMENT_SORT_FIELD']);
+			if (!isset($sortFields[$field]))
+			{
+				$sortFields[$field] = $this->arParams['ELEMENT_SORT_ORDER'];
+			}
 
-		$field = strtoupper($this->arParams['ELEMENT_SORT_FIELD2']);
-		if (!isset($sortFields[$field]))
-		{
-			$sortFields[$field] = $this->arParams['ELEMENT_SORT_ORDER2'];
+			$field = mb_strtoupper($this->arParams['ELEMENT_SORT_FIELD2']);
+			if (!isset($sortFields[$field]))
+			{
+				$sortFields[$field] = $this->arParams['ELEMENT_SORT_ORDER2'];
+			}
+			unset($field);
+			if (!isset($sortFields['ID']))
+			{
+				$sortFields['ID'] = 'DESC';
+			}
 		}
-		unset($field);
 
 		return $sortFields;
+	}
+
+	protected function getCustomSort(): array
+	{
+		$result = [];
+
+		if (!empty($this->arParams['CUSTOM_ELEMENT_SORT']) && is_array($this->arParams['CUSTOM_ELEMENT_SORT']))
+		{
+			foreach ($this->arParams['CUSTOM_ELEMENT_SORT'] as $field => $value)
+			{
+				if (!is_string($value))
+				{
+					continue;
+				}
+				$field = strtoupper($field);
+				if (isset($result[$field]))
+				{
+					continue;
+				}
+				if (!preg_match(self::SORT_ORDER_MASK, $value))
+				{
+					continue;
+				}
+				$result[$field] = $value;
+			}
+			unset($field, $value);
+		}
+
+		return $result;
 	}
 
 	protected function getElementList($iblockId, $products)
@@ -1858,7 +1941,7 @@ abstract class ElementList extends Base
 				'cookieDomain' => Main\Web\Cookie::getCookieDomain(),
 				'serverTime' => time()
 			),
-			'params' => $this->getBigDataServiceRequestParams($this->arParams['RCM_TYPE'])
+			'params' => $this->getBigDataServiceRequestParams(($this->arParams['RCM_TYPE'] ?? ''))
 		);
 	}
 
@@ -2101,7 +2184,7 @@ abstract class ElementList extends Base
 				: (int)$item['CATALOG_QUANTITY'];
 
 			$item['CATALOG'] = false;
-			$item['CATALOG_SUBSCRIPTION'] = $item['CATALOG_SUBSCRIPTION'] === 'Y' ? 'Y' : 'N';
+			$item['CATALOG_SUBSCRIPTION'] = ($item['CATALOG_SUBSCRIPTION'] ?? '') === 'Y' ? 'Y' : 'N';
 
 			$item['BIG_DATA'] = $this->getAction() === 'bigDataLoad';
 
@@ -2125,17 +2208,18 @@ abstract class ElementList extends Base
 					$this->editTemplateOfferProps($item);
 					$this->editTemplateJsOffers($item);
 				}
-				else
+
+				if ($this->arParams['CALCULATE_SKU_MIN_PRICE'] || $this->arParams['PRODUCT_DISPLAY_MODE'] !== 'Y')
 				{
-					$strBaseCurrency = '';
+					$baseCurrency = '';
 					if ($this->arResult['MODULES']['catalog'] && !isset($this->arResult['CONVERT_CURRENCY']['CURRENCY_ID']))
 					{
-						$strBaseCurrency = Currency\CurrencyManager::getBaseCurrency();
+						$baseCurrency = Currency\CurrencyManager::getBaseCurrency();
 					}
 
 					$currency = isset($this->arResult['CONVERT_CURRENCY']['CURRENCY_ID'])
 						? $this->arResult['CONVERT_CURRENCY']['CURRENCY_ID']
-						: $strBaseCurrency;
+						: $baseCurrency;
 
 					$item['ITEM_START_PRICE'] = null;
 					$item['ITEM_START_PRICE_SELECTED'] = null;
@@ -2169,7 +2253,7 @@ abstract class ElementList extends Base
 						}
 						unset($priceScale, $currentPrice);
 					}
-					unset($offer);
+					unset($index);
 
 					if ($minPriceIndex !== null)
 					{
@@ -2197,7 +2281,7 @@ abstract class ElementList extends Base
 					}
 					unset($minPriceIndex, $minPrice);
 
-					unset($strBaseCurrency, $currency);
+					unset($baseCurrency, $currency);
 				}
 			}
 
@@ -2333,13 +2417,13 @@ abstract class ElementList extends Base
 			$ratioSelectedIndex = $offer['ITEM_MEASURE_RATIO_SELECTED'];
 			$oneRow = array(
 				'ID' => $offer['ID'],
-				'NAME' => $offer['~NAME'],
+				'NAME' => ($offer['~NAME'] ?? ''),
 				'TREE' => $offer['TREE'],
 				'DISPLAY_PROPERTIES' => $skuProps,
 
 				// compatible prices
-				'PRICE' => isset($offer['RATIO_PRICE']) ? $offer['RATIO_PRICE'] : $offer['MIN_PRICE'],
-				'BASIS_PRICE' => $offer['MIN_PRICE'],
+				'PRICE' => ($offer['RATIO_PRICE'] ?? $offer['MIN_PRICE'] ?? 0),
+				'BASIS_PRICE' => ($offer['MIN_PRICE'] ?? 0),
 
 				// new prices
 				'ITEM_PRICE_MODE' => $offer['ITEM_PRICE_MODE'],
@@ -2363,7 +2447,7 @@ abstract class ElementList extends Base
 			);
 			unset($ratioSelectedIndex);
 
-			if (isset($offer['MORE_PHOTO_COUNT']) && $offer['MORE_PHOTO_COUNT'] > 1)
+			if (isset($offer['MORE_PHOTO_COUNT']) && $offer['MORE_PHOTO_COUNT'] > 0)
 			{
 				$oneRow['MORE_PHOTO'] = $offer['MORE_PHOTO'];
 				$oneRow['MORE_PHOTO_COUNT'] = $offer['MORE_PHOTO_COUNT'];
@@ -2397,7 +2481,11 @@ abstract class ElementList extends Base
 		$item['SKU_TREE_VALUES'] = array();
 
 		$iblockParams = $this->storage['IBLOCK_PARAMS'][$item['IBLOCK_ID']];
-		$skuPropList = $this->arResult['SKU_PROPS'][$item['IBLOCK_ID']];
+		$skuPropList = [];
+		if (isset($this->arResult['SKU_PROPS'][$item['IBLOCK_ID']]))
+		{
+			$skuPropList = $this->arResult['SKU_PROPS'][$item['IBLOCK_ID']];
+		}
 		$skuPropIds = array_keys($skuPropList);
 		$matrixFields = array_fill_keys($skuPropIds, false);
 

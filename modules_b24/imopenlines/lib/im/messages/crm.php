@@ -162,27 +162,30 @@ class Crm
 	 * @param $entityId
 	 * @param $eventType
 	 * @return mixed
-	 * @throws \Bitrix\Main\LoaderException
 	 */
 	protected function sendMessageAboutEntity($entityType, $entityId, $eventType)
 	{
-		$result = Im::addMessage(Array(
+		$message = Loc::getMessage('IMOL_MESSAGE_CRM_' . $entityType . '_' . $eventType);
+
+		if(empty($message))
+		{
+			$message = Loc::getMessage('IMOL_MESSAGE_CRM_OTHER_' . $eventType);
+		}
+
+		return Im::addMessage(Array(
 			"TO_CHAT_ID" => $this->chatId,
-			"MESSAGE" => '[b]'.Loc::getMessage('IMOL_MESSAGE_CRM_' . $entityType . '_' . $eventType).'[/b]',
+			"MESSAGE" => '[b]' . $message . '[/b]',
 			"SYSTEM" => 'Y',
-			"ATTACH" => $this->getEntityCard($entityType, $entityId),
+			"ATTACH" => self::getEntityCard($entityType, $entityId),
 			"RECENT_ADD" => $this->getUserViewChat(),
 			//"KEYBOARD" => $keyboard
 		));
-
-		return $result;
 	}
 
 	/**
 	 * @param $entityType
 	 * @param $entityId
 	 * @return \CIMMessageParamAttach|null
-	 * @throws \Bitrix\Main\LoaderException
 	 */
 	protected static function getEntityCard($entityType, $entityId)
 	{
@@ -205,7 +208,7 @@ class Crm
 					));
 				}
 
-				if (!empty($entityData['FULL_NAME']) && strpos($entityData['TITLE'], $entityData['FULL_NAME']) === false)
+				if (!empty($entityData['FULL_NAME']) && mb_strpos($entityData['TITLE'], $entityData['FULL_NAME']) === false)
 				{
 					$entityGrid[] = Array('DISPLAY' => 'COLUMN', 'NAME' => Loc::getMessage('IMOL_MESSAGE_CRM_CARD_FULL_NAME'), 'VALUE' => $entityData['FULL_NAME']);
 				}

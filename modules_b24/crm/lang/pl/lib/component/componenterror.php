@@ -1,5 +1,0 @@
-<?
-$MESS["CRM_COMPONENT_ERROR_ENTITY_NOT_FOUND"] = "Nie znaleziono obiektu";
-$MESS["CRM_COMPONENT_ERROR_GENERAL"] = "Błąd ogólny.";
-$MESS["CRM_COMPONENT_ERROR_PERMISSION_DENIED"] = "Odmowa dostępu";
-?>

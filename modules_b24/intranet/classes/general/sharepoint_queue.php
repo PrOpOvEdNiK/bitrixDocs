@@ -20,7 +20,7 @@ class CAllIntranetSharepointQueue
 			}
 		}
 
-		if (strlen($arFields['SP_METHOD']) <= 0)
+		if ($arFields['SP_METHOD'] == '')
 		{
 			$APPLICATION->ThrowException(GetMessage('ISPQ_ERROR_NO_METHOD'));
 			return false;
@@ -61,11 +61,11 @@ class CAllIntranetSharepointQueue
 
 		if (is_array($res))
 		{
-			if (strlen($res['SP_METHOD_PARAMS']) > 0)
-				$res['SP_METHOD_PARAMS'] = unserialize($res['SP_METHOD_PARAMS']);
+			if ($res['SP_METHOD_PARAMS'] <> '')
+				$res['SP_METHOD_PARAMS'] = unserialize($res['SP_METHOD_PARAMS'], ["allowed_classes" => false]);
 
-			if (strlen($res['CALLBACK']) > 0)
-				$res['CALLBACK'] = unserialize($res['CALLBACK']);
+			if ($res['CALLBACK'] <> '')
+				$res['CALLBACK'] = unserialize($res['CALLBACK'], ["allowed_classes" => false]);
 		}
 
 		return $res;

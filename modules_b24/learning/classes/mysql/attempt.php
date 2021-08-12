@@ -1,13 +1,14 @@
-<?
+<?php
+
 require_once($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/learning/classes/general/attempt.php");
 
 class CTestAttempt extends CAllTestAttempt
 {
-	function DoInsert($arInsert, $arFields)
+	public static function DoInsert($arInsert, $arFields)
 	{
 		global $DB;
 
-		if (strlen($arInsert[0]) <= 0 || strlen($arInsert[0])<= 0)		// BUG ?
+		if ($arInsert[0] == '' || $arInsert[0] == '')		// BUG ?
 			return false;
 
 		if (!isset($arFields["DATE_START"]))

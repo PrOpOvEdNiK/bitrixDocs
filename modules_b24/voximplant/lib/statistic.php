@@ -4,7 +4,9 @@ namespace Bitrix\Voximplant;
 use Bitrix\Main\Entity;
 use Bitrix\Main\EventResult;
 use Bitrix\Main\Localization\Loc;
+use Bitrix\Main\ORM\Fields\Relations\OneToMany;
 use Bitrix\Voximplant\Model\Base;
+use Bitrix\Voximplant\Model\CallCrmEntityTable;
 use Bitrix\Voximplant\Model\StatisticIndexTable;
 use Bitrix\Voximplant\Model\TranscriptLineTable;
 use Bitrix\Voximplant\Model\TranscriptTable;
@@ -14,7 +16,7 @@ Loc::loadMessages(__FILE__);
 
 /**
  * Class StatisticTable
- * 
+ *
  * Fields:
  * <ul>
  * <li> ID int mandatory
@@ -38,7 +40,20 @@ Loc::loadMessages(__FILE__);
  * </ul>
  *
  * @package Bitrix\Voximplant
- **/
+ *
+ * DO NOT WRITE ANYTHING BELOW THIS
+ *
+ * <<< ORMENTITYANNOTATION
+ * @method static EO_Statistic_Query query()
+ * @method static EO_Statistic_Result getByPrimary($primary, array $parameters = array())
+ * @method static EO_Statistic_Result getById($id)
+ * @method static EO_Statistic_Result getList(array $parameters = array())
+ * @method static EO_Statistic_Entity getEntity()
+ * @method static \Bitrix\Voximplant\EO_Statistic createObject($setDefaultValues = true)
+ * @method static \Bitrix\Voximplant\EO_Statistic_Collection createCollection()
+ * @method static \Bitrix\Voximplant\EO_Statistic wakeUpObject($row)
+ * @method static \Bitrix\Voximplant\EO_Statistic_Collection wakeUpCollection($rows)
+ */
 
 class StatisticTable extends Base
 {
@@ -120,6 +135,10 @@ class StatisticTable extends Base
 			new Entity\IntegerField('CALL_RECORD_ID', array(
 				'title' => Loc::getMessage('STATISTIC_ENTITY_CALL_RECORD_ID_FIELD'),
 			)),
+			new Entity\StringField('CALL_RECORD_URL', array(
+				'validation' => function(){return array(new Entity\Validator\Length(null, 2000));},
+				'title' => Loc::getMessage('STATISTIC_ENTITY_CALL_RECORD_URL_FIELD'),
+			)),
 			new Entity\IntegerField('CALL_WEBDAV_ID', array(
 				'title' => Loc::getMessage('STATISTIC_ENTITY_CALL_WEBDAV_ID_FIELD'),
 			)),
@@ -166,6 +185,9 @@ class StatisticTable extends Base
 				array("=this.TRANSCRIPT_ID" => "ref.ID"),
 				array("join_type" => "LEFT")
 			),
+
+			(new OneToMany('CRM_BINDINGS', CallCrmEntityTable::class, 'CALL'))->configureJoinType('left'),
+
 			new \Bitrix\Main\Entity\ExpressionField(
 				'HAS_RECORD',
 				'CASE WHEN %s IS NULL THEN \'N\' ELSE \'Y\' END',

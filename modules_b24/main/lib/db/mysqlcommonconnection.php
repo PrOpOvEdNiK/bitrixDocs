@@ -13,18 +13,7 @@ abstract class MysqlCommonConnection extends Connection
 	protected $engine = "";
 
 	/**
-	 * $configuration may contain following keys:
-	 * <ul>
-	 * <li>host
-	 * <li>database
-	 * <li>login
-	 * <li>password
-	 * <li>initCommand
-	 * <li>options
-	 * <li>engine
-	 * </ul>
-	 *
-	 * @param array $configuration Array of Name => Value pairs.
+	 * @inheritDoc
 	 */
 	public function __construct(array $configuration)
 	{
@@ -33,18 +22,14 @@ abstract class MysqlCommonConnection extends Connection
 	}
 
 	/**
-	 * Checks if a table exists.
-	 *
-	 * @param string $tableName The table name.
-	 *
-	 * @return boolean
+	 * @inheritDoc
 	 */
 	public function isTableExists($tableName)
 	{
 		$tableName = preg_replace("/[^a-z0-9%_]+/i", "", $tableName);
 		$tableName = trim($tableName);
 
-		if (strlen($tableName) <= 0)
+		if ($tableName == '')
 		{
 			return false;
 		}
@@ -55,15 +40,7 @@ abstract class MysqlCommonConnection extends Connection
 	}
 
 	/**
-	 * Checks if an index exists.
-	 * Actual columns in the index may differ from requested.
-	 * $columns may present an "prefix" of actual index columns.
-	 *
-	 * @param string $tableName A table name.
-	 * @param array  $columns An array of columns in the index.
-	 *
-	 * @return boolean
-	 * @throws \Bitrix\Main\Db\SqlQueryException
+	 * @inheritDoc
 	 */
 	public function isIndexExists($tableName, array $columns)
 	{
@@ -71,26 +48,23 @@ abstract class MysqlCommonConnection extends Connection
 	}
 
 	/**
-	 * Returns the name of an index.
-	 *
-	 * @param string $tableName A table name.
-	 * @param array $columns An array of columns in the index.
-	 * @param bool $strict The flag indicating that the columns in the index must exactly match the columns in the $arColumns parameter.
-	 *
-	 * @return string|null Name of the index or null if the index doesn't exist.
-	 * @throws \Bitrix\Main\Db\SqlQueryException
+	 * @inheritDoc
 	 */
 	public function getIndexName($tableName, array $columns, $strict = false)
 	{
-		if (!is_array($columns) || count($columns) <= 0)
+		if (empty($columns))
+		{
 			return null;
+		}
 
 		$tableName = preg_replace("/[^a-z0-9_]+/i", "", $tableName);
 		$tableName = trim($tableName);
 
 		$rs = $this->query("SHOW INDEX FROM `".$this->getSqlHelper()->forSql($tableName)."`");
 		if (!$rs)
+		{
 			return null;
+		}
 
 		$indexes = array();
 		while ($ar = $rs->fetch())
@@ -98,34 +72,11 @@ abstract class MysqlCommonConnection extends Connection
 			$indexes[$ar["Key_name"]][$ar["Seq_in_index"] - 1] = $ar["Column_name"];
 		}
 
-		$columnsList = implode(",", $columns);
-		foreach ($indexes as $indexName => $indexColumns)
-		{
-			ksort($indexColumns);
-			$indexColumnList = implode(",", $indexColumns);
-			if ($strict)
-			{
-				if ($indexColumnList === $columnsList)
-					return $indexName;
-			}
-			else
-			{
-				if (substr($indexColumnList, 0, strlen($columnsList)) === $columnsList)
-					return $indexName;
-			}
-		}
-
-		return null;
+		return static::findIndex($indexes, $columns, $strict);
 	}
 
 	/**
-	 * Returns fields objects according to the columns of a table.
-	 * Table must exists.
-	 *
-	 * @param string $tableName The table name.
-	 *
-	 * @return ScalarField[] An array of objects with columns information.
-	 * @throws \Bitrix\Main\Db\SqlQueryException
+	 * @inheritDoc
 	 */
 	public function getTableFields($tableName)
 	{
@@ -133,7 +84,7 @@ abstract class MysqlCommonConnection extends Connection
 		{
 			$this->connectInternal();
 
-			$sqlTableName = ($tableName{0} === '(')
+			$sqlTableName = ($tableName[0] === '(')
 				? $sqlTableName = $tableName.' AS xyz' // subquery
 				: $sqlTableName = $this->getSqlHelper()->quote($tableName); // regular table name
 
@@ -147,14 +98,7 @@ abstract class MysqlCommonConnection extends Connection
 	}
 
 	/**
-	 * @param string        $tableName     Name of the new table.
-	 * @param ScalarField[] $fields        Array with columns descriptions.
-	 * @param string[]      $primary       Array with primary key column names.
-	 * @param string[]      $autoincrement Which columns will be auto incremented ones.
-	 *
-	 * @return void
-	 * @throws \Bitrix\Main\ArgumentException
-	 * @throws \Bitrix\Main\Db\SqlQueryException
+	 * @inheritDoc
 	 */
 	public function createTable($tableName, $fields, $primary = array(), $autoincrement = array())
 	{
@@ -174,7 +118,7 @@ abstract class MysqlCommonConnection extends Connection
 
 			$sqlFields[] = $this->getSqlHelper()->quote($realColumnName)
 				. ' ' . $this->getSqlHelper()->getColumnTypeByField($field)
-				. ' NOT NULL' // null for oracle if is not primary
+				. ($field->isNullable() ? '' : ' NOT NULL') // null for oracle if is not primary
 				. (in_array($columnName, $autoincrement, true) ? ' AUTO_INCREMENT' : '')
 			;
 		}
@@ -203,17 +147,7 @@ abstract class MysqlCommonConnection extends Connection
 	}
 
 	/**
-	 * Creates index on column(s)
-	 * @api
-	 *
-	 * @param string          $tableName     Name of the table.
-	 * @param string          $indexName     Name of the new index.
-	 * @param string|string[] $columnNames   Name of the column or array of column names to be included into the index.
-	 * @param string[]        $columnLengths Array of column names and maximum length for them.
-	 * @param null            $indexType
-	 *
-	 * @return Result
-	 * @throws SqlQueryException
+	 * @inheritDoc
 	 */
 	public function createIndex($tableName, $indexName, $columnNames, $columnLengths = null, $indexType = null)
 	{
@@ -246,10 +180,10 @@ abstract class MysqlCommonConnection extends Connection
 		$indexTypeSql = '';
 
 		if ($indexType !== null
-			&& in_array(strtoupper($indexType), [static::INDEX_UNIQUE, static::INDEX_FULLTEXT, static::INDEX_SPATIAL], true)
+			&& in_array(mb_strtoupper($indexType), [static::INDEX_UNIQUE, static::INDEX_FULLTEXT, static::INDEX_SPATIAL], true)
 		)
 		{
-			$indexTypeSql = strtoupper($indexType);
+			$indexTypeSql = mb_strtoupper($indexType);
 		}
 
 		$sql = 'CREATE '.$indexTypeSql.' INDEX '.$sqlHelper->quote($indexName).' ON '.$sqlHelper->quote($tableName)
@@ -259,13 +193,7 @@ abstract class MysqlCommonConnection extends Connection
 	}
 
 	/**
-	 * Renames the table. Renamed table must exists and new name must not be occupied by any database object.
-	 *
-	 * @param string $currentName Old name of the table.
-	 * @param string $newName New name of the table.
-	 *
-	 * @return void
-	 * @throws \Bitrix\Main\Db\SqlQueryException
+	 * @inheritDoc
 	 */
 	public function renameTable($currentName, $newName)
 	{
@@ -273,12 +201,7 @@ abstract class MysqlCommonConnection extends Connection
 	}
 
 	/**
-	 * Drops the table.
-	 *
-	 * @param string $tableName Name of the table to be dropped.
-	 *
-	 * @return void
-	 * @throws \Bitrix\Main\Db\SqlQueryException
+	 * @inheritDoc
 	 */
 	public function dropTable($tableName)
 	{
@@ -290,10 +213,7 @@ abstract class MysqlCommonConnection extends Connection
 	 *********************************************************/
 
 	/**
-	 * Starts new database transaction.
-	 *
-	 * @return void
-	 * @throws \Bitrix\Main\Db\SqlQueryException
+	 * @inheritDoc
 	 */
 	public function startTransaction()
 	{
@@ -301,10 +221,7 @@ abstract class MysqlCommonConnection extends Connection
 	}
 
 	/**
-	 * Commits started database transaction.
-	 *
-	 * @return void
-	 * @throws \Bitrix\Main\Db\SqlQueryException
+	 * @inheritDoc
 	 */
 	public function commitTransaction()
 	{
@@ -312,10 +229,7 @@ abstract class MysqlCommonConnection extends Connection
 	}
 
 	/**
-	 * Rollbacks started database transaction.
-	 *
-	 * @return void
-	 * @throws \Bitrix\Main\Db\SqlQueryException
+	 * @inheritDoc
 	 */
 	public function rollbackTransaction()
 	{
@@ -323,15 +237,59 @@ abstract class MysqlCommonConnection extends Connection
 	}
 
 	/*********************************************************
+	 * Global named lock
+	 *********************************************************/
+
+	/**
+	 * @inheritDoc
+	 */
+	public function lock($name, $timeout = 0)
+	{
+		$timeout = (int)$timeout;
+		$name = $this->getLockName($name);
+
+		$lock = $this->query("SELECT GET_LOCK('{$name}', {$timeout}) as L")->fetch();
+
+		return ($lock["L"] == "1");
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function unlock($name)
+	{
+		$name = $this->getLockName($name);
+
+		$lock = $this->query("SELECT RELEASE_LOCK('{$name}') as L")->fetch();
+
+		return ($lock["L"] == "1");
+	}
+
+	protected function getLockName($name)
+	{
+		$unique = \CMain::GetServerUniqID();
+
+		//64 characters max for mysql 5.7+
+		return $unique.md5($name);
+	}
+
+	/*********************************************************
 	 * Type, version, cache, etc.
 	 *********************************************************/
+
+	/**
+	 * @inheritDoc
+	 */
+	public function getType()
+	{
+		return "mysql";
+	}
 
 	/**
 	 * Sets default storage engine for all consequent CREATE TABLE statements and all other relevant DDL.
 	 * Storage engine read from .settings.php file. It is 'engine' key of the 'default' from the 'connections'.
 	 *
 	 * @return void
-	 * @throws \Bitrix\Main\Db\SqlQueryException
 	 */
 	public function setStorageEngine()
 	{
@@ -353,7 +311,6 @@ abstract class MysqlCommonConnection extends Connection
 	 * Returns max packet length to send to or receive from the database server.
 	 *
 	 * @return int
-	 * @throws \Bitrix\Main\Db\SqlQueryException
 	 */
 	public function getMaxAllowedPacket()
 	{

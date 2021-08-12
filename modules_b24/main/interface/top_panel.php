@@ -2,13 +2,10 @@
 if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true) die();
 IncludeModuleLangFile(__FILE__);
 
-if($_GET["back_url_pub"] <> "" && !is_array($_GET["back_url_pub"]) && strpos($_GET["back_url_pub"], "/") === 0)
-	$_SESSION["BACK_URL_PUB"] = $_GET["back_url_pub"];
+if($_GET["back_url_pub"] <> "" && !is_array($_GET["back_url_pub"]) && mb_strpos($_GET["back_url_pub"], "/") === 0)
+	\Bitrix\Main\Application::getInstance()->getSession()["BACK_URL_PUB"] = $_GET["back_url_pub"];
 
-if($_GET["back_url_additional"] <> "" && !is_array($_GET["back_url_additional"]) && strpos($_GET["back_url_additional"], "/") === 0)
-	$_SESSION["BACK_URL_ADDITIONAL"] = $_GET["back_url_additional"];
-
-$params = DeleteParam(array("logout", "back_url_pub", "back_url_additional", "sessid"));
+$params = DeleteParam(array("logout", "back_url_pub", "sessid"));
 
 $arPanelButtons = array();
 
@@ -84,11 +81,11 @@ if($USER->IsAuthorized())
 
 	//Help
 	$module = (defined("ADMIN_MODULE_NAME")? ADMIN_MODULE_NAME: "main");
-	$page = (defined("HELP_FILE") && strpos(HELP_FILE, '/') === false? HELP_FILE : basename($APPLICATION->GetCurPage()));
+	$page = (defined("HELP_FILE") && mb_strpos(HELP_FILE, '/') === false? HELP_FILE : basename($APPLICATION->GetCurPage()));
 
 	$aActiveSection = $adminMenu->ActiveSection();
 	$section = $aActiveSection["help_section"]."/";
-	if (defined("HELP_FILE") && strpos(HELP_FILE, $section) === 0)
+	if (defined("HELP_FILE") && mb_strpos(HELP_FILE, $section) === 0)
 		$section = "";
 }
 
@@ -130,38 +127,9 @@ if (count($arLangMenu) > 1)
 
 $arPanelButtons[] = $arLangButton;
 
-$sPubUrl = ($_SESSION["BACK_URL_PUB"] <> ""?
-	htmlspecialcharsbx($_SESSION["BACK_URL_PUB"]).(strpos($_SESSION["BACK_URL_PUB"], "?") !== false? "&amp;":"?") : '/?').
+$sPubUrl = (\Bitrix\Main\Application::getInstance()->getSession()["BACK_URL_PUB"] <> ""?
+	htmlspecialcharsbx(\Bitrix\Main\Application::getInstance()->getSession()["BACK_URL_PUB"]).(mb_strpos(\Bitrix\Main\Application::getInstance()->getSession()["BACK_URL_PUB"], "?") !== false? "&amp;":"?") : '/?').
 	'back_url_admin='.urlencode($APPLICATION->GetCurPage().($params<>""? "?".$params:""));
-
-if (\Bitrix\Main\Config\Option::get("sale", "~IS_SALE_CRM_SITE_MASTER_FINISH") === "Y")
-{
-	$defaultSite = \Bitrix\Main\SiteTable::getList([
-		"select" => ["SERVER_NAME"],
-		"filter" => ["=DEF" => "Y"]
-	])->fetch();
-	if ($defaultSite && isset($defaultSite["SERVER_NAME"]) && !empty($defaultSite["SERVER_NAME"]))
-	{
-		$sPubUrl = ((\Bitrix\Main\Context::getCurrent()->getRequest()->isHttps() ? "https" : "http")."://".$defaultSite["SERVER_NAME"]).$sPubUrl;
-	}
-	elseif ($serverName = \Bitrix\Main\Config\Option::get("main", "server_name"))
-	{
-		$sPubUrl = ((\Bitrix\Main\Context::getCurrent()->getRequest()->isHttps() ? "https" : "http")."://".$serverName).$sPubUrl;
-	}
-}
-elseif (\Bitrix\Main\Config\Option::get("sale", "~IS_SALE_BSM_SITE_MASTER_FINISH") === "Y"
-	&& $additionalSiteId = \Bitrix\Main\Config\Option::get("sale", "~BSM_WIZARD_SITE_ID")
-)
-{
-	$additionalSite = \Bitrix\Main\SiteTable::getList([
-		"select" => ["SERVER_NAME"],
-		"filter" => ["LID" => $additionalSiteId]
-	])->fetch();
-	if ($additionalSite && !empty($additionalSite["SERVER_NAME"]))
-	{
-		$sPubUrl = ((\Bitrix\Main\Context::getCurrent()->getRequest()->isHttps() ? "https" : "http")."://".$additionalSite["SERVER_NAME"]).$sPubUrl;
-	}
-}
 
 $aUserOptGlobal = CUserOptions::GetOption("global", "settings");
 
@@ -178,85 +146,206 @@ if($USER->IsAuthorized())
 ?>
 <div id="bx-panel" class="adm-header"><div class="adm-header-left">
 	<div class="adm-header-btn-wrap">
-		<a hidefocus="true" href="<?=$sPubUrl?>" id="bx-panel-view-tab" class="adm-header-btn adm-header-btn-site" title="<?=GetMessage("adm_top_panel_view_title")?>"><?=GetMessage("admin_panel_site")?></a>
 		<?php
-		$isDefault = true;
+		$adminPanelSiteList = [];
 
 		if (\Bitrix\Main\Config\Option::get("sale", "~IS_SALE_CRM_SITE_MASTER_FINISH") === "Y"
-			&& $additionalSiteId = \Bitrix\Main\Config\Option::get("sale", "~CRM_WIZARD_SITE_ID")
+			|| \Bitrix\Main\Config\Option::get('sale', '~IS_SALE_BSM_SITE_MASTER_FINISH') === 'Y'
 		)
 		{
-			$additionalTabTitle = GetMessage("adm_top_panel_view_b24_title");
-			$additionalTabMessage = GetMessage("admin_panel_b24");
+			$adminPanelSiteIdList = [];
+			$adminPanelSiteList = [];
+			$isAdminPanelDefaultSiteExists = false;
 
-			$additionalSite = \Bitrix\Main\SiteTable::getList([
-				"select" => ["SERVER_NAME"],
-				"filter" => ["LID" => $additionalSiteId]
-			])->fetch();
-			if ($additionalSite && !empty($additionalSite["SERVER_NAME"]))
+			$adminPanelSiteIterator = \Bitrix\Main\SiteTable::getList([
+				'select' => ['LID', 'NAME', 'DEF', 'SITE_NAME', 'SERVER_NAME', 'SORT'],
+				'filter' => [
+					'=ACTIVE' => 'Y',
+				],
+				'cache' => ['ttl' => 86400],
+			]);
+			while ($adminPanelSiteData = $adminPanelSiteIterator->fetch())
 			{
-				$isDefault = false;
+				$adminPanelSiteIdList[] = $adminPanelSiteData['LID'];
 
-				$additionalSiteUrl = ($_SESSION["BACK_URL_ADDITIONAL"] <> ""
-					? htmlspecialcharsbx($_SESSION["BACK_URL_ADDITIONAL"]).(strpos($_SESSION["BACK_URL_ADDITIONAL"], "?") !== false? "&amp;":"?")
-					: '/?').'back_url_admin='.urlencode($APPLICATION->GetCurPage().($params<>"" ? "?".$params : ""));
+				if (empty($adminPanelSiteData['SERVER_NAME']))
+				{
+					continue;
+				}
 
-				$additionalSiteHost = \Bitrix\Main\Context::getCurrent()->getRequest()->isHttps() ? "https://" : "http://";
-				$additionalSiteServerName = $additionalSiteHost.$additionalSite["SERVER_NAME"].$additionalSiteUrl;
+				$adminPanelSiteList[] = [
+					'ID' => $adminPanelSiteData['LID'],
+					'NAME' => $adminPanelSiteData['SITE_NAME'] ?: $adminPanelSiteData['NAME'],
+					'SERVER_NAME' => $adminPanelSiteData['SERVER_NAME'],
+					'DEF' => $adminPanelSiteData['DEF'],
+					'SORT' => $adminPanelSiteData['SORT'],
+				];
+
+				if ($adminPanelSiteData['DEF'] === 'Y')
+				{
+					$isAdminPanelDefaultSiteExists = true;
+				}
+			}
+			unset($adminPanelSiteData, $adminPanelSiteIterator);
+
+			if ($adminPanelSiteIdList)
+			{
+				$adminPanelSiteDomainIterator = \Bitrix\Main\SiteDomainTable::getList([
+					'select' => [
+						'LID',
+						'DOMAIN',
+						'NAME' => 'SITE.NAME',
+						'SITE_NAME' => 'SITE.SITE_NAME',
+						'DEF' => 'SITE.DEF',
+						'SORT' => 'SITE.SORT',
+					],
+					'filter' => [
+						'=LID' => $adminPanelSiteIdList,
+					],
+					'cache' => ['ttl' => 86400],
+				]);
+				while ($adminPanelSiteDomainData = $adminPanelSiteDomainIterator->fetch())
+				{
+					$isAdminDomainExists = (bool)array_filter($adminPanelSiteList, static function ($site) use ($adminPanelSiteDomainData) {
+						return $site['SERVER_NAME'] === $adminPanelSiteDomainData['DOMAIN'];
+					});
+
+					if (!$isAdminDomainExists)
+					{
+						$adminPanelSiteList[] = [
+							'ID' => $adminPanelSiteDomainData['LID'],
+							'NAME' => $adminPanelSiteDomainData['SITE_NAME'] ?: $adminPanelSiteDomainData['NAME'],
+							'SERVER_NAME' => $adminPanelSiteDomainData['DOMAIN'],
+							'DEF' => $adminPanelSiteDomainData['DEF'],
+							'SORT' => $adminPanelSiteDomainData['SORT'],
+						];
+
+						if ($adminPanelSiteDomainData['DEF'] === 'Y')
+						{
+							$isAdminPanelDefaultSiteExists = true;
+						}
+					}
+				}
+				unset($adminPanelSiteDomainData, $adminPanelSiteDomainIterator, $isAdminDomainExists);
+			}
+			unset($adminPanelSiteIdList);
+
+			if (!$isAdminPanelDefaultSiteExists)
+			{
+				$adminPanelDefaultServerName = \Bitrix\Main\Config\Option::get("main", "server_name");
+				$isAdminPanelDefaultSiteExists = (bool)array_filter($adminPanelSiteList, static function ($adminPanelSite) use ($adminPanelDefaultServerName) {
+					return $adminPanelSite['SERVER_NAME'] === $adminPanelDefaultServerName;
+				});
+				if (!$isAdminPanelDefaultSiteExists)
+				{
+					array_unshift(
+						$adminPanelSiteList,
+						[
+							'NAME' => \Bitrix\Main\Config\Option::get("main", "site_name"),
+							'SERVER_NAME' => $adminPanelDefaultServerName,
+							'DEF' => 'Y',
+							'SORT' => 1,
+						]
+					);
+				}
+				unset($adminPanelDefaultServerName);
+			}
+			unset($isAdminPanelDefaultSiteExists);
+
+			\Bitrix\Main\Type\Collection::sortByColumn($adminPanelSiteList, ['SORT' => SORT_ASC]);
+
+			if (count($adminPanelSiteList) > 1)
+			{
+				$adminPanelSiteMenu = [];
+				$adminPanelDefaultButtonTitle = '';
+				$adminPanelDefaultButtonLink = '';
+				$adminPanelProtocol = \Bitrix\Main\Context::getCurrent()->getRequest()->isHttps() ? "https://" : "http://";
+				foreach ($adminPanelSiteList as $adminPanelSite)
+				{
+					$adminPanelSiteId = $adminPanelSite['ID'] ?? null;
+					$adminPanelMenuItemTitle =
+						$adminPanelSite['NAME']
+						. ' (' . $adminPanelSite['SERVER_NAME'] . ')'
+						. ($adminPanelSiteId ? ' [' . $adminPanelSiteId . ']' : '')
+					;
+					$adminPanelMenuItemLink = $adminPanelProtocol.$adminPanelSite['SERVER_NAME'];
+
+					$adminPanelSiteMenu[] = [
+						'TEXT' => $adminPanelMenuItemTitle,
+						'LINK' => $adminPanelMenuItemLink,
+					];
+
+					if ($adminPanelSite['DEF'] === 'Y')
+					{
+						$adminPanelDefaultButtonTitle = $adminPanelMenuItemTitle;
+						$adminPanelDefaultButtonLink = $adminPanelMenuItemLink;
+					}
+				}
+				unset($adminPanelSite, $adminPanelSiteId, $adminPanelMenuItemTitle, $adminPanelMenuItemLink);
+
+				if (!$adminPanelDefaultButtonTitle || !$adminPanelDefaultButtonLink)
+				{
+					$adminPanelDefaultButtonTitle = current($adminPanelSiteMenu)['TEXT'];
+					$adminPanelDefaultButtonLink = current($adminPanelSiteMenu)['LINK'];
+				}
+
+				$adminPanelDefaultButtonTitle = htmlspecialcharsbx($adminPanelDefaultButtonTitle);
+				$adminPanelDefaultButtonLink = htmlspecialcharsbx($adminPanelDefaultButtonLink);
+
+				if (mb_strlen($adminPanelDefaultButtonTitle) > 30)
+				{
+					$adminPanelDefaultButtonTitle = mb_substr($adminPanelDefaultButtonTitle, 0, 30) . '...';
+				}
 				?>
-				<a hidefocus="true" href="<?=BX_ROOT."/admin/index.php?lang=".LANGUAGE_ID?>" class="adm-header-btn adm-header-btn-admin"><?=GetMessage("admin_panel_admin")?></a>
-				<a hidefocus="true" href="<?=$additionalSiteServerName?>" id="bx-panel-view-tab" class="adm-header-btn adm-header-btn-crm" title="<?=$additionalTabTitle?>"><?=$additionalTabMessage?></a>
+				<a id="bx-panel-view-site-btn" class="adm-header-notif-block" href="<?= $adminPanelDefaultButtonLink ?>" title="<?= $adminPanelDefaultButtonTitle ?>" hidefocus="true" onfocus="this.blur();">
+					<strong>
+						<span id="bx-panel-view-tab-select" class="adm-header-notif-counter"><?= $adminPanelDefaultButtonTitle ?></span>
+					</strong>
+				</a>
+				<script type="text/javascript">
+						BX.adminPanel.registerButton(
+							"bx-panel-view-site-btn",
+							{
+								MENU: <?=CUtil::PhpToJsObject($adminPanelSiteMenu)?>,
+							}
+						)
+				</script>
+				<?php
+				unset(
+					$adminPanelSiteMenu,
+					$adminPanelDefaultButtonTitle,
+					$adminPanelDefaultButtonLink,
+					$adminPanelProtocol
+				);
+			}
+			else
+			{
+				?>
+				<a hidefocus="true" href="<?= $sPubUrl ?>" id="bx-panel-view-tab" class="adm-header-btn adm-header-btn-site" title="<?=GetMessage("adm_top_panel_view_title")?>"><?=GetMessage("admin_panel_site")?></a>
 				<?php
 			}
 		}
-		elseif (\Bitrix\Main\Config\Option::get("sale", "~IS_SALE_BSM_SITE_MASTER_FINISH") === "Y"
-			&& $additionalSiteId = \Bitrix\Main\Config\Option::get("sale", "~BSM_WIZARD_SITE_ID")
-		)
+		else
 		{
-			$additionalSite = \Bitrix\Main\SiteTable::getList([
-				"select" => ["SERVER_NAME"],
-				"filter" => ["LID" => $additionalSiteId]
-			])->fetch();
-			if ($additionalSite)
-			{
-				$defaultSite = \Bitrix\Main\SiteTable::getList([
-					"select" => ["SERVER_NAME"],
-					"filter" => ["=DEF" => "Y"]
-				])->fetch();
-
-				if ($defaultSite && isset($defaultSite["SERVER_NAME"]) && !empty($defaultSite["SERVER_NAME"]))
-				{
-					$defaultServerName = (\Bitrix\Main\Context::getCurrent()->getRequest()->isHttps() ? "https" : "http")."://".$defaultSite["SERVER_NAME"];
-				}
-				elseif ($serverName = \Bitrix\Main\Config\Option::get("main", "server_name"))
-				{
-					$defaultServerName = (\Bitrix\Main\Context::getCurrent()->getRequest()->isHttps() ? "https" : "http")."://".$serverName;
-				}
-
-				if ($defaultServerName)
-				{
-					$isDefault = false;
-					$additionalTabTitle = GetMessage("adm_top_panel_view_b24_title");
-					$additionalTabMessage = GetMessage("admin_panel_b24");
-
-					$additionalSiteUrl = ($_SESSION["BACK_URL_ADDITIONAL"] <> ""
-							? htmlspecialcharsbx($_SESSION["BACK_URL_ADDITIONAL"]).(strpos($_SESSION["BACK_URL_ADDITIONAL"], "?") !== false? "&amp;":"?")
-							: '/?').'back_url_admin='.urlencode($APPLICATION->GetCurPage().($params<>"" ? "?".$params : ""));
-					$defaultServerName = $defaultServerName.$additionalSiteUrl;
-					?>
-					<a hidefocus="true" href="<?=BX_ROOT."/admin/index.php?lang=".LANGUAGE_ID?>" class="adm-header-btn adm-header-btn-admin"><?=GetMessage("admin_panel_admin")?></a>
-					<a hidefocus="true" href="<?=$defaultServerName?>" id="bx-panel-view-tab" class="adm-header-btn adm-header-btn-crm" title="<?=$additionalTabTitle?>"><?=$additionalTabMessage?></a>
-					<?php
-				}
-			}
+			?>
+			<a hidefocus="true" href="<?= $sPubUrl ?>" id="bx-panel-view-tab" class="adm-header-btn adm-header-btn-site" title="<?=GetMessage("adm_top_panel_view_title")?>"><?=GetMessage("admin_panel_site")?></a>
+			<?php
 		}
 
-		if ($isDefault)
+		if (count($adminPanelSiteList) > 1)
+		{
+			?>
+			<a hidefocus="true" href="<?=BX_ROOT."/admin/index.php?lang=".LANGUAGE_ID?>" class="adm-header-notif-block"><span class="adm-header-notif-counter"><?=GetMessage("admin_panel_admin")?></span></a>
+			<?php
+		}
+		else
 		{
 			?>
 			<a hidefocus="true" href="<?=BX_ROOT."/admin/index.php?lang=".LANGUAGE_ID?>" class="adm-header-btn adm-header-btn-admin"><?=GetMessage("admin_panel_admin")?></a>
 			<?php
 		}
+
+		unset($adminPanelSiteList);
 		?>
 	</div>
 <?php
@@ -319,7 +408,7 @@ if ($USER->IsAuthorized()):
 <?
 	}
 
-?><a hidefocus="true" href="<?=htmlspecialcharsbx((defined('BX_ADMIN_SECTION_404') && BX_ADMIN_SECTION_404 == 'Y' ? '/bitrix/admin/' : $APPLICATION->GetCurPage())).'?logout=yes'.htmlspecialcharsbx(($s=DeleteParam(array("logout"))) == ""? "":"&".$s)?>" class="adm-header-exit" id="bx-panel-logout" title="<?=GetMessage('admin_panel_logout_title')?>"><?=GetMessage("admin_panel_logout")?></a><?
+?><a hidefocus="true" href="<?=htmlspecialcharsbx((defined('BX_ADMIN_SECTION_404') && BX_ADMIN_SECTION_404 == 'Y' ? '/bitrix/admin/' : $APPLICATION->GetCurPage()).'?'.CUser::getLogoutParams())?>" class="adm-header-exit" id="bx-panel-logout" title="<?=GetMessage('admin_panel_logout_title')?>"><?=GetMessage("admin_panel_logout")?></a><?
 
 	$Execs = $hkInstance->GetCodeByClassName("bx-panel-logout",GetMessage('admin_panel_logout'));
 	echo $hkInstance->PrintJSExecs($Execs);
@@ -347,7 +436,7 @@ if ($USER->IsAuthorized()):
 				"url" => urlencode("https://".$_SERVER["HTTP_HOST"].$APPLICATION->GetCurPageParam()),
 				"user_id" => $USER->GetID(),
 				"is_admin" => $USER->IsAdmin() ? 1 : 0,
-				"help_url" => urlencode("http://dev.1c-bitrix.ru/user_help/".$section.(defined("HELP_FILE") && strpos(HELP_FILE, '/') !== false?  HELP_FILE : $module."/".$page))
+				"help_url" => urlencode("http://dev.1c-bitrix.ru/user_help/".$section.(defined("HELP_FILE") && mb_strpos(HELP_FILE, '/') !== false?  HELP_FILE : $module."/".$page))
 			)
 		);
 		$frameOpenUrl = CHTTP::urlAddParams($helpUrl, array(

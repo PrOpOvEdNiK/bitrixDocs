@@ -205,7 +205,7 @@ class Cleaner implements IErrorable, Volume\IVolumeTimeLimit
 			$cleaner->instanceTask()->fixState();
 
 			$retry = 1;
-			while ($retry <= 2)
+			while ($retry <= 3)
 			{
 				try
 				{
@@ -214,10 +214,10 @@ class Cleaner implements IErrorable, Volume\IVolumeTimeLimit
 				}
 				catch (Main\DB\SqlQueryException $exception)
 				{
-					if (stripos($exception->getMessage(), 'deadlock found when trying to get lock; try restarting transaction') !== false)
+					if (mb_stripos($exception->getMessage(), 'deadlock found when trying to get lock; try restarting transaction') !== false)
 					{
-						// retrying in a few microseconds
-						usleep(100);
+						// retrying in a few seconds
+						sleep(5);
 						$retry ++;
 						continue;
 					}
@@ -1172,8 +1172,10 @@ class Cleaner implements IErrorable, Volume\IVolumeTimeLimit
 		}
 
 		// restrict delete root folder
+		$isRootFolder = false;
 		if ($folder->getStorage()->getRootObjectId() == $folder->getId())
 		{
+			$isRootFolder = true;
 			$emptyOnly = true;
 		}
 
@@ -1209,12 +1211,25 @@ class Cleaner implements IErrorable, Volume\IVolumeTimeLimit
 			{
 				continue;
 			}
+			if ($isRootFolder)
+			{
+				// allow delete only files in root folder
+				if ($row['PARENT_ID'] != $folder->getId() || $row['TYPE'] != \Bitrix\Disk\Internals\ObjectTable::TYPE_FILE)
+				{
+					continue;
+				}
+			}
 
 			$object = \Bitrix\Disk\BaseObject::buildFromArray($row);
 
 			/** @var Folder|File $object */
-			if($object instanceof \Bitrix\Disk\Folder)
+			if ($object instanceof \Bitrix\Disk\Folder)
 			{
+				if ($isRootFolder)
+				{
+					// disallow recursive delete from root
+					continue;
+				}
 				/** @var \Bitrix\Disk\File $object */
 				$securityContext = $this->getSecurityContext($this->getOwner(), $object);
 				if ($object->canDelete($securityContext))
@@ -1667,7 +1682,7 @@ class Cleaner implements IErrorable, Volume\IVolumeTimeLimit
 		);
 		if (!empty($optionSerialized))
 		{
-			return unserialize($optionSerialized);
+			return unserialize($optionSerialized, ['allowed_classes' => false]);
 		}
 
 		return null;

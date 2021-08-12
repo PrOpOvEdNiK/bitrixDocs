@@ -1,8 +1,0 @@
-<?
-$MESS["EXTRANET_LEFT_MENU_LIVE_FEED"] = "Veiklos juosta";
-$MESS["EXTRANET_LEFT_MENU_TASKS"] = "Užduotys";
-$MESS["EXTRANET_LEFT_MENU_CALENDAR"] = "Kalendorius";
-$MESS["EXTRANET_LEFT_MENU_DISK"] = "Mano diskas";
-$MESS["EXTRANET_LEFT_MENU_PHOTO"] = "Nuotraukos";
-$MESS["EXTRANET_LEFT_MENU_BLOG"] = "Pokalbiai";
-?>

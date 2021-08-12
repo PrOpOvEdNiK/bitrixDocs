@@ -50,10 +50,12 @@ class RequisiteAddress extends EntityAddress
 	 * @param $fieldName
 	 * @param array|null $aliases
 	 * @return int
+	 *
+	 * @deprecated Use methods of EntityAddressType and EntityAddress
 	 */
 	public static function resolveEntityFieldTypeID($fieldName, array $aliases = null)
 	{
-		return EntityAddress::Primary;
+		return EntityAddressType::Primary;
 	}
 
 	/**
@@ -66,29 +68,60 @@ class RequisiteAddress extends EntityAddress
 		EntityAddress::deleteByEntity(\CCrmOwnerType::Requisite, $entityID);
 	}
 
+	/** @deprecated Use methods of EntityAddressType and EntityAddress */
 	public static function getTypeInfos()
 	{
 		if(self::$typeInfos === null)
 		{
-			self::includeModuleFile();
+			self::$typeInfos = self::getTypesList();
 
-			self::$typeInfos = parent::getTypeInfos();
-			self::$typeInfos[self::Home] = array(
-				'ID' => self::Home,
-				'DESCRIPTION' => GetMessage('CRM_REQUISITE_ADDRESS_TYPE_HOME')
-			);
-			self::$typeInfos[self::Beneficiary] = array(
-				'ID' => self::Beneficiary,
-				'DESCRIPTION' => GetMessage('CRM_REQUISITE_ADDRESS_TYPE_BENEFICIARY')
-			);
+			$defaultId = static::getDefaultTypeId();
+			foreach (self::$typeInfos as $id => $typeInfo)
+			{
+				self::$typeInfos[$id]['IS_DEFAULT'] = ($id === $defaultId);
+			}
 		}
 		return self::$typeInfos;
 	}
 
+	/** @deprecated Use methods of EntityAddressType and EntityAddress */
+	public static function getTypesList()
+	{
+		static $addressTypes;
+		if($addressTypes === null)
+		{
+			$addressTypes = [];
+			$descriptions = EntityAddressType::getDescriptions(EntityAddressType::getAvailableIds());
+			foreach ($descriptions as $typeId => $description)
+			{
+				$addressTypes[$typeId] = [
+					'ID' => $typeId,
+					'DESCRIPTION' => $description
+				];
+			}
+		}
+
+		return $addressTypes;
+	}
+
+	/** @deprecated Use methods of EntityAddressType and EntityAddress */
+	public static function getDefaultTypeId()
+	{
+		$veryDefaultId = EntityAddressType::getDefaultIdByZone(EntityAddress::getZoneId());
+		$defaultId = Main\Config\Option::get('crm', 'requisite_default_address_type', $veryDefaultId);
+		$addressTypeMap = array_fill_keys(EntityAddressType::getAllIDs(), true);
+
+		return (isset($addressTypeMap[$defaultId]) ? $defaultId : $veryDefaultId);
+	}
+
+	/** @deprecated Use methods of EntityAddressType and EntityAddress */
 	public static function getClientTypeInfos()
 	{
 		self::includeModuleFile();
 		return array_merge(
+			array(
+				array('id' => self::Delivery, 'name' => GetMessage('CRM_REQUISITE_ADDRESS_TYPE_DELIVERY')),
+			),
 			parent::getClientTypeInfos(),
 			array(
 				array('id' => self::Home, 'name' => GetMessage('CRM_REQUISITE_ADDRESS_TYPE_HOME')),
@@ -97,6 +130,7 @@ class RequisiteAddress extends EntityAddress
 		);
 	}
 
+	/** @deprecated Use methods of EntityAddressType and EntityAddress */
 	public static function getTypeDescription($typeID)
 	{
 		if(!is_int($typeID))
@@ -104,9 +138,9 @@ class RequisiteAddress extends EntityAddress
 			$typeID = (int)$typeID;
 		}
 
-		if(!self::isDefined($typeID))
+		if(!EntityAddressType::isDefined($typeID))
 		{
-			$typeID = self::Primary;
+			$typeID = EntityAddressType::getDefaultIdByZone(EntityAddress::getZoneId());
 		}
 
 		$typeInfos = self::getTypeInfos();
@@ -159,7 +193,8 @@ class RequisiteAddress extends EntityAddress
 					'REGION',
 					'PROVINCE',
 					'COUNTRY',
-					'COUNTRY_CODE'
+					'COUNTRY_CODE',
+					'LOC_ADDR_ID'
 				)
 			);
 			$query->setFilter(array('=REF_RQ.ENTITY_TYPE_ID' => $entityTypeId, '@REF_RQ.ENTITY_ID' => $entityIds));
@@ -177,7 +212,8 @@ class RequisiteAddress extends EntityAddress
 					'REGION' => isset($row['REGION']) ? $row['REGION'] : '',
 					'PROVINCE' => isset($row['PROVINCE']) ? $row['PROVINCE'] : '',
 					'COUNTRY' => isset($row['COUNTRY']) ? $row['COUNTRY'] : '',
-					'COUNTRY_CODE' => isset($row['COUNTRY_CODE']) ? $row['COUNTRY_CODE'] : ''
+					'COUNTRY_CODE' => isset($row['COUNTRY_CODE']) ? $row['COUNTRY_CODE'] : '',
+					'LOC_ADDR_ID' => isset($row['LOC_ADDR_ID']) ? (int)$row['LOC_ADDR_ID'] : 0
 				);
 			}
 		}

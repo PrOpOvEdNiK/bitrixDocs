@@ -58,7 +58,7 @@ class CWebDavEventLog
 			$action = $object['action'];
 			$object = $object['object'];
 		}
-		return "WEBDAV_".strtoupper($object)."_".strtoupper($action);
+		return "WEBDAV_".mb_strtoupper($object)."_".mb_strtoupper($action);
 	}
 
 	function MakeSectionURL($IBlockSectionID)
@@ -125,19 +125,19 @@ class CWebDavEventLog
 
 class CEventWebDav
 {
-	function MakeWebDavObject()
+	public static function MakeWebDavObject()
 	{
 		$obj = new CEventWebDav;
 		return $obj;
 	}
 
-	function GetFilter()
+	public static function GetFilter()
 	{
 		$arFilter["DOCUMENTS"] = GetMessage("LOG_TYPE_DOCUMENTS");		
 		return	$arFilter;
 	}
 	
-	function GetAuditTypes()
+	public static function GetAuditTypes()
 	{
 		return array(
 			"WEBDAV_ELEMENT_DELETE" => "[WEBDAV_ELEMENT_DELETE] ".GetMessage("LOG_TYPE_ELEMENT_DELETE"),
@@ -156,24 +156,26 @@ class CEventWebDav
 		); 
 	}
 	
-	function GetEventInfo($row)
+	public static function GetEventInfo($row)
 	{
-		$DESCRIPTION = unserialize($row['DESCRIPTION']);
+		$DESCRIPTION = unserialize($row['DESCRIPTION'], ['allowed_classes' => false]);
 
 		$IblockURL = '';
 		if (isset($DESCRIPTION['URL']) && !empty($DESCRIPTION['URL']))
 			$IblockURL = $DESCRIPTION['URL'];
 
-		if (strpos($row['AUDIT_TYPE_ID'], "SECTION"))
+		if(mb_strpos($row['AUDIT_TYPE_ID'], "SECTION"))
 		{
-			if (empty($IblockURL) && isset($DESCRIPTION["ID"]))
+			if(empty($IblockURL) && isset($DESCRIPTION["ID"]))
 			{
-				$rsElement = CIBlockSection::GetList(array(), array("=ID"=>$DESCRIPTION["ID"]), false,	array("SECTION_PAGE_URL"));
-				if ($arElement = $rsElement->GetNext())
+				$rsElement = CIBlockSection::GetList(array(), array("=ID" => $DESCRIPTION["ID"]), false, array("SECTION_PAGE_URL"));
+				if($arElement = $rsElement->GetNext())
+				{
 					$IblockURL = $arElement["SECTION_PAGE_URL"];
+				}
 			}
 			switch($row['AUDIT_TYPE_ID'])
-			{	
+			{
 				case "WEBDAV_SECTION_ADD":
 					$EventPrint = GetMessage("LOG_WEBDAV_SECTION_ADD");
 					break;
@@ -185,26 +187,28 @@ class CEventWebDav
 					break;
 				case "WEBDAV_SECTION_RESTORE":
 					$EventPrint = GetMessage("LOG_WEBDAV_SECTION_RESTORE");
-					break;	
+					break;
 				case "WEBDAV_SECTION_MOVE":
 					$EventPrint = GetMessage("LOG_WEBDAV_SECTION_MOVE", array("#MOVE_TO#" => $DESCRIPTION['MOVE_TO']));
 					break;
 				case "WEBDAV_SECTION_RENAME":
 					$EventPrint = GetMessage("LOG_WEBDAV_SECTION_RENAME", array("#NAME_BEFORE#" => $DESCRIPTION['NAME_BEFORE']));
-					break;		
+					break;
 			}
 		}
 		else
 		{
 // elements
-			if (empty($IblockURL) && isset($DESCRIPTION["ID"]))
+			if(empty($IblockURL) && isset($DESCRIPTION["ID"]))
 			{
-				$rsElement = CIBlockElement::GetList(array(), array("=ID"=>$DESCRIPTION["ID"]), false, false, array("DETAIL_PAGE_URL"));
-				if ($arElement = $rsElement->GetNext())
+				$rsElement = CIBlockElement::GetList(array(), array("=ID" => $DESCRIPTION["ID"]), false, false, array("DETAIL_PAGE_URL"));
+				if($arElement = $rsElement->GetNext())
+				{
 					$IblockURL = $arElement["DETAIL_PAGE_URL"];
+				}
 			}
 			switch($row['AUDIT_TYPE_ID'])
-			{	
+			{
 				case "WEBDAV_ELEMENT_ADD":
 					$EventPrint = GetMessage("LOG_WEBDAV_ELEMENT_ADD");
 					break;
@@ -219,14 +223,14 @@ class CEventWebDav
 					break;
 				case "WEBDAV_ELEMENT_MOVE":
 					$EventPrint = GetMessage("LOG_WEBDAV_ELEMENT_MOVE", array("#MOVE_TO#" => $DESCRIPTION['MOVE_TO']));
-					break;	
+					break;
 				case "WEBDAV_ELEMENT_RENAME":
 					$EventPrint = GetMessage("LOG_WEBDAV_ELEMENT_RENAME", array("#NAME_BEFORE#" => $DESCRIPTION['NAME_BEFORE']));
-					break;	
+					break;
 				case "WEBDAV_ELEMENT_UPDATE":
 					$EventPrint = GetMessage("LOG_WEBDAV_ELEMENT_UPDATE");
 					break;
-			}		
+			}
 		}
 
 		// iblock path		
@@ -243,7 +247,7 @@ class CEventWebDav
 				);	   
 	}
 	
-	function GetFilterSQL($var)
+	public static function GetFilterSQL($var)
 	{
 		$ar[] = array("MODULE_ID" => "webdav");
 		return $ar;

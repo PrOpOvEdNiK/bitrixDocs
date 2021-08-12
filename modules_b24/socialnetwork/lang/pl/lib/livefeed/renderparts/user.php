@@ -1,4 +1,0 @@
-<?
-$MESS["SONET_LIVEFEED_RENDERPARTS_USER_ALL"] = "Wszyscy pracownicy";
-$MESS["SONET_LIVEFEED_RENDERPARTS_USER_ALL_BUS"] = "Wszyscy użytkownicy";
-?>

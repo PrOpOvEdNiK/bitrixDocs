@@ -172,21 +172,11 @@ class EntityPreset
 
 	public static function getActiveItemList()
 	{
-		$presetFilter = array(
-			'=ENTITY_TYPE_ID' => EntityPreset::Requisite,
-			'=ACTIVE' => 'Y'
-		);
-
-		if (!EntityPreset::isUTFMode())
-		{
-			$presetFilter['=COUNTRY_ID'] = EntityPreset::getCurrentCountryId();
-		}
-
 		$entity = self::getSingleInstance();
 		$dbResult = $entity->getList(
 			array(
 				'order' => array('SORT' => 'ASC', 'ID' => 'ASC'),
-				'filter' => $presetFilter,
+				'filter' => self::getActivePresetFilter(),
 				'select' => array('ID', 'NAME')
 			)
 		);
@@ -197,6 +187,58 @@ class EntityPreset
 			$results[$fields['ID']] = $fields['NAME'];
 		}
 		return $results;
+	}
+
+	public static function getListForRequisiteEntityEditor()
+	{
+		$entity = self::getSingleInstance();
+		$dbResult = $entity->getList(
+			array(
+				'order' => array('SORT' => 'ASC', 'ID' => 'ASC'),
+				'filter' => self::getActivePresetFilter(),
+				'select' => array('ID', 'NAME', 'COUNTRY_ID')
+			)
+		);
+
+		$results = array();
+		while ($fields = $dbResult->fetch())
+		{
+			$results[$fields['ID']] = $fields;
+		}
+		return $results;
+	}
+
+	public static function getDefault()
+	{
+		$entity = self::getSingleInstance();
+		$dbResult = $entity->getList(
+			array(
+				'order' => array('SORT' => 'ASC', 'ID' => 'ASC'),
+				'filter' => self::getActivePresetFilter(),
+				'select' => array('ID', 'NAME'),
+				'limit' => 1,
+				'cache' => 3600
+			)
+		);
+		if ($preset = $dbResult->fetch())
+		{
+			return $preset;
+		}
+		return null;
+	}
+
+	protected static function getActivePresetFilter()
+	{
+		$presetFilter = array(
+			'=ENTITY_TYPE_ID' => EntityPreset::Requisite,
+			'=ACTIVE' => 'Y',
+		);
+
+		if (!EntityPreset::isUTFMode())
+		{
+			$presetFilter['=COUNTRY_ID'] = EntityPreset::getCurrentCountryId();
+		}
+		return $presetFilter;
 	}
 
 	// Get Fields Metadata
@@ -380,6 +422,11 @@ class EntityPreset
 		$fields['DATE_CREATE'] = new \Bitrix\Main\Type\DateTime();
 		$fields['CREATED_BY_ID'] = \CCrmSecurityHelper::GetCurrentUserID();
 
+		if (isset($fields['SETTINGS']))
+		{
+			$fields['SETTINGS'] = $this->settingsPrepareFieldsBeforeSave($fields['SETTINGS']);
+		}
+
 		return PresetTable::add($fields);
 	}
 
@@ -387,7 +434,12 @@ class EntityPreset
 	{
 		unset($fields['DATE_CREATE'], $fields['CREATED_BY_ID']);
 		$fields['DATE_MODIFY'] = new \Bitrix\Main\Type\DateTime();
-		$fields['MODIFY_BY_ID'] = \CCrmSecurityHelper::GetCurrentUserID();
+		$fields['MODIFY_BY_ID '] = \CCrmSecurityHelper::GetCurrentUserID();
+
+		if (isset($fields['SETTINGS']))
+		{
+			$fields['SETTINGS'] = $this->settingsPrepareFieldsBeforeSave($fields['SETTINGS']);
+		}
 
 		return PresetTable::update($id, $fields);
 	}
@@ -495,14 +547,14 @@ class EntityPreset
 		$newField['FIELD_NAME'] = '';
 		if (isset($field['FIELD_NAME']))
 		{
-			$newField['FIELD_NAME'] = substr(strval($field['FIELD_NAME']), 0, 255);
+			$newField['FIELD_NAME'] = mb_substr(strval($field['FIELD_NAME']), 0, 255);
 			if ($newField['FIELD_NAME'] === false)
 				$newField['FIELD_NAME'] = '';
 		}
 		$newField['FIELD_TITLE'] = '';
 		if (isset($field['FIELD_TITLE']))
 		{
-			$newField['FIELD_TITLE'] = substr(strval($field['FIELD_TITLE']), 0, 255);
+			$newField['FIELD_TITLE'] = mb_substr(strval($field['FIELD_TITLE']), 0, 255);
 			if ($newField['FIELD_TITLE'] === false)
 				$newField['FIELD_TITLE'] = '';
 		}
@@ -567,7 +619,7 @@ class EntityPreset
 			$fieldModified = true;
 			if ($fieldName === 'FIELD_NAME' || $fieldName === 'FIELD_TITLE')
 			{
-				$value = substr(strval($fieldValue), 0, 255);
+				$value = mb_substr(strval($fieldValue), 0, 255);
 				if ($value === false)
 					$value = '';
 			}
@@ -623,6 +675,72 @@ class EntityPreset
 		return true;
 	}
 
+	protected function settingsPrepareFieldsBeforeSave($settings)
+	{
+		$result = $settings;
+
+		if (is_array($settings['FIELDS']) && !empty($settings['FIELDS']))
+		{
+			$fields = [];
+			$fieldIdMap = [];
+			$fieldNameMap = [];
+			$lastFieldId = 0;
+			$fieldsModified = false;
+			$lastFieldIdModified = false;
+			$settingsLastFieldId = isset($settings['LAST_FIELD_ID']) ? (int)$settings['LAST_FIELD_ID'] : 0;
+			foreach ($settings['FIELDS'] as $fieldInfo)
+			{
+				if (isset($fieldInfo['ID'])
+					&& $fieldInfo['ID'] > 0
+					&& isset($fieldInfo['FIELD_NAME'])
+					&& is_string($fieldInfo['FIELD_NAME'])
+					&& $fieldInfo['FIELD_NAME'] !== '')
+				{
+					$fieldId = (int)$fieldInfo['ID'];
+					$fieldName = $fieldInfo['FIELD_NAME'];
+					if (!isset($fieldNameMap[$fieldName]))
+					{
+						if (isset($fieldIdMap[$fieldId]))
+						{
+							$fieldId = $lastFieldId + 1;
+							$fieldInfo['ID'] = $fieldId;
+							$fieldsModified = true;
+						}
+						$fieldIdMap[$fieldId] = true;
+						$fieldNameMap[$fieldName] = true;
+						$fields[] = $fieldInfo;
+						if ($fieldId > $lastFieldId)
+						{
+							$lastFieldId = $fieldId;
+						}
+					}
+					else
+					{
+						$fieldsModified = true;
+					}
+				}
+				else
+				{
+					$fieldsModified = true;
+				}
+			}
+			if ($lastFieldId === 0 || $lastFieldId > $settingsLastFieldId)
+			{
+				$lastFieldIdModified = true;
+			}
+			if ($fieldsModified)
+			{
+				$result['FIELDS'] = $fields;
+			}
+			if ($lastFieldIdModified)
+			{
+				$result['LAST_FIELD_ID'] = $lastFieldId;
+			}
+		}
+
+		return $result;
+	}
+
 	public function getSettingsFieldsOfPresets($entityTypeId, $type = 'all', $options = array())
 	{
 		$result = array();
@@ -633,7 +751,7 @@ class EntityPreset
 		$arrangeByCountry = false;
 		if (isset($options['ARRANGE_BY_COUNTRY'])
 			&& ($options['ARRANGE_BY_COUNTRY'] === true
-				|| strtoupper(strval($options['ARRANGE_BY_COUNTRY'])) === 'Y'))
+				|| mb_strtoupper(strval($options['ARRANGE_BY_COUNTRY'])) === 'Y'))
 		{
 			$arrangeByCountry = true;
 		}
@@ -896,5 +1014,15 @@ class EntityPreset
 			$title = '['.$id.'] - '.GetMessage('CRM_ENTITY_PRESET_NAME_EMPTY');
 
 		return $title;
+	}
+
+	public static function getByXmlId($xmlId)
+	{
+		$preset = PresetTable::getList([
+			'select' => ['ID'],
+			'filter' => ['=XML_ID' => $xmlId],
+			'cache' => 3600
+		])->fetch();
+		return $preset ? $preset['ID'] : false;
 	}
 }

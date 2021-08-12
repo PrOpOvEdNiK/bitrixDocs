@@ -1,9 +1,10 @@
-<?
+<?php
+
 IncludeModuleLangFile(__FILE__);
 
 class CSupportSuperCoupon
 {
-	function Generate($arParams = array())
+	public static function Generate($arParams = array())
 	{
 		global $DB, $USER, $APPLICATION;
 		if (!is_array($arParams))
@@ -11,7 +12,7 @@ class CSupportSuperCoupon
 			$arParams = array();
 		}
 
-		if(array_key_exists('KEY_FORMAT', $arParams) && strlen($arParams['KEY_FORMAT']) > 0)
+		if(array_key_exists('KEY_FORMAT', $arParams) && $arParams['KEY_FORMAT'] <> '')
 		{
 			$couponFormat = $arParams['KEY_FORMAT'];
 		}
@@ -78,7 +79,7 @@ class CSupportSuperCoupon
 		return $coupon;
 	}
 	
-	function Add($arFields)
+	public static function Add($arFields)
 	{
 		global $DB, $USER;
 		
@@ -106,7 +107,7 @@ class CSupportSuperCoupon
 		return $DB->Add('b_ticket_supercoupons', $arFields);
 	}
 	
-	function Update($ID, $arFields)
+	public static function Update($ID, $arFields)
 	{
 		global $DB, $APPLICATION, $USER;
 		
@@ -121,7 +122,7 @@ class CSupportSuperCoupon
 		}
 		
 		$strUpdate = $DB->PrepareUpdate('b_ticket_supercoupons', $arFields);
-		if (strlen($strUpdate) > 0)
+		if ($strUpdate <> '')
 		{
 			$strSql = "UPDATE b_ticket_supercoupons SET $strUpdate WHERE ID=$ID";
 			$q = $DB->Query($strSql, false, "File: ".__FILE__."<br>Line: ".__LINE__);
@@ -142,7 +143,7 @@ class CSupportSuperCoupon
 		return true;
 	}
 	
-	function UseCoupon($coupon)
+	public static function UseCoupon($coupon)
 	{
 		global $DB, $USER;
 		$ret = false;
@@ -248,7 +249,7 @@ class CSupportSuperCoupon
 		return $ret;
 	}
 	
-	function GetList($arOrder = array(), $arFilter = array())
+	public static function GetList($arOrder = array(), $arFilter = array())
 	{
 		global $DB;
 		$arFields = array(
@@ -344,12 +345,12 @@ class CSupportSuperCoupon
 			{
 				if (array_key_exists($k, $arFields))
 				{
-					$v = strtoupper($v);
+					$v = mb_strtoupper($v);
 					if($v != 'DESC')
 					{
 						$v  ='ASC';
 					}
-					if (strlen($order) > 0)
+					if ($order <> '')
 					{
 						$order .= ', ';
 					}
@@ -372,12 +373,12 @@ class CSupportSuperCoupon
 		LEFT JOIN b_ticket_sla S ON (C.SLA_ID IS NOT NULL AND C.SLA_ID = S.ID)
 		';
 		
-		if (strlen($where) > 0)
+		if ($where <> '')
 		{
 			$strQuery .= ' WHERE ' . $where;
 		}
 		
-		if (strlen($order) > 0)
+		if ($order <> '')
 		{
 			$strQuery .= ' ORDER BY ' . $order;
 		}
@@ -385,7 +386,7 @@ class CSupportSuperCoupon
 		return $DB->Query($strQuery, false, "File: ".__FILE__."<br>Line: ".__LINE__);
 	}
 	
-	function Delete($ID)
+	public static function Delete($ID)
 	{
 		global $DB;
 		$ID = intval($ID);
@@ -396,7 +397,7 @@ class CSupportSuperCoupon
 		return true;
 	}
 	
-	function GetLogList($arOrder = array(), $arFilter = array())
+	public static function GetLogList($arOrder = array(), $arFilter = array())
 	{
 		global $DB;
 		$arFields = array(
@@ -446,12 +447,12 @@ class CSupportSuperCoupon
 			{
 				if (array_key_exists($k, $arFields))
 				{
-					$v = strtoupper($v);
+					$v = mb_strtoupper($v);
 					if($v != 'DESC')
 					{
 						$v  ='ASC';
 					}
-					if (strlen($order) > 0)
+					if ($order <> '')
 					{
 						$order .= ', ';
 					}
@@ -469,12 +470,12 @@ class CSupportSuperCoupon
 		LEFT JOIN b_ticket_supercoupons C ON (L.COUPON_ID = C.ID)
 		LEFT JOIN b_user U ON (L.USER_ID IS NOT NULL AND L.USER_ID = U.ID)";
 		
-		if (strlen($where) > 0)
+		if ($where <> '')
 		{
 			$strQuery .= ' WHERE ' . $where;
 		}
 		
-		if (strlen($order) > 0)
+		if ($order <> '')
 		{
 			$strQuery .= ' ORDER BY ' . $order;
 		}
@@ -484,12 +485,12 @@ class CSupportSuperCoupon
 		
 	}
 	
-	function _getrandsymbol($x)
+	public static function _getrandsymbol($x)
 	{
 		return ToUpper(randString(1));
 	}
 	
-	function __CheckFields($arFields)
+	public static function __CheckFields($arFields)
 	{
 		$aMsg = array();
 		
@@ -510,7 +511,7 @@ class CSupportSuperCoupon
 			$aMsg[] = array("id"=>"ACTIVE", "text"=>GetMessage("SUP_ST_ERR_ACTIVE"));
 		}
 				
-		if(is_set($arFields, "SLA_ID") && IntVal($arFields['SLA_ID']) == 0)
+		if(is_set($arFields, "SLA_ID") && intval($arFields['SLA_ID']) == 0)
 		{
 			$aMsg[] = array("id"=>"SLA_ID", "text"=>GetMessage("SUP_ST_ERR_SLA_ID"));
 		}
@@ -525,4 +526,3 @@ class CSupportSuperCoupon
 		return true;
 	}
 }
-?>

@@ -258,6 +258,7 @@ class LeadController extends BaseController
 		$this->suspendChats($entityID, $recyclingEntityID);
 		$this->suspendProductRows($entityID, $recyclingEntityID);
 		$this->suspendScoringHistory($entityID, $recyclingEntityID);
+		$this->suspendCustomRelations((int)$entityID, (int)$recyclingEntityID);
 
 		//region Relations
 		foreach($relations as $relation)
@@ -334,6 +335,8 @@ class LeadController extends BaseController
 		}
 		//endregion
 
+		$fields = $this->prepareFields($fields);
+
 		$entity = new \CCrmLead(false);
 		$newEntityID = $entity->Add(
 			$fields,
@@ -367,6 +370,7 @@ class LeadController extends BaseController
 		$this->recoverChats($recyclingEntityID, $newEntityID);
 		$this->recoverProductRows($recyclingEntityID, $newEntityID);
 		$this->recoverScoringHistory($recyclingEntityID, $newEntityID);
+		$this->recoverCustomRelations((int)$recyclingEntityID, (int)$newEntityID);
 
 		$this->recoverActivities($recyclingEntityID, $entityID, $newEntityID, $params, $relationMap);
 
@@ -377,6 +381,7 @@ class LeadController extends BaseController
 
 		$this->rebuildSearchIndex($newEntityID);
 		$this->startRecoveryWorkflows($newEntityID);
+		//TODO: start automation???
 
 		return true;
 	}
@@ -428,8 +433,9 @@ class LeadController extends BaseController
 		$relationMap->build();
 
 		$this->eraseActivities($recyclingEntityID, $params, $relationMap);
+		$this->eraseSuspendProductRows($recyclingEntityID);
 		$this->eraseSuspendedMultiFields($recyclingEntityID);
-		$this->eraseSuspendedAddresses($recyclingEntityID, array(Crm\EntityAddress::Primary));
+		$this->eraseSuspendedAddresses($recyclingEntityID, array(Crm\EntityAddressType::Primary));
 		$this->eraseSuspendedTimeline($recyclingEntityID);
 		$this->eraseSuspendedDocuments($recyclingEntityID);
 		$this->eraseSuspendedLiveFeed($recyclingEntityID);
@@ -438,10 +444,29 @@ class LeadController extends BaseController
 		$this->eraseSuspendedObservers($recyclingEntityID);
 		$this->eraseSuspendedWaitings($recyclingEntityID);
 		$this->eraseSuspendedChats($recyclingEntityID);
-		$this->eraseSuspendProductRows($recyclingEntityID);
 		$this->eraseSuspendedUserFields($recyclingEntityID);
 		$this->eraseSuspendedScoringHistory($recyclingEntityID);
+		$this->eraseSuspendedCustomRelations($recyclingEntityID);
 
 		Relation::deleteByRecycleBin($recyclingEntityID);
+	}
+
+	/**
+	 * Set correct values of standard fields
+	 * @param array $fields
+	 * @return array
+	 */
+	protected function prepareFields(array $fields): array
+	{
+		if (
+			isset($fields['STATUS_ID'])
+			&& !\CCrmLEad::IsStatusExists($fields['STATUS_ID'])
+		)
+		{
+			// if old status does not exist, STATUS_ID should be empty to be defined automatically
+			unset($fields['STATUS_ID']);
+		}
+
+		return $fields;
 	}
 }

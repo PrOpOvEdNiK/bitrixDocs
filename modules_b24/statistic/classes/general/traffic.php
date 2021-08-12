@@ -4,11 +4,9 @@ class CAllTraffic
 {
 	public static function DynamicDays($date1="", $date2="", $site_id="")
 	{
-		$by = "";
-		$order = "";
 		$arMaxMin = array();
 		$is_filtered = false;
-		$z = CTraffic::GetDailyList($by, $order, $arMaxMin, array("DATE1"=>$date1, "DATE2"=>$date2, "SITE_ID"=>$site_id), $is_filtered);
+		$z = CTraffic::GetDailyList('', '', $arMaxMin, array("DATE1"=>$date1, "DATE2"=>$date2, "SITE_ID"=>$site_id));
 		$d = 0;
 		while($zr = $z->Fetch())
 			$d++;
@@ -79,7 +77,7 @@ class CAllTraffic
 				$SITE_ID = SITE_ID;
 		}
 
-		if (strlen($SITE_ID)>0 && is_array($arParamSite) && count($arParamSite)>0)
+		if ($SITE_ID <> '' && is_array($arParamSite) && count($arParamSite)>0)
 		{
 			$arFields = array();
 			foreach($arParamSite as $name=>$value)

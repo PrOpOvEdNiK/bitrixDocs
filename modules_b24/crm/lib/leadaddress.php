@@ -37,7 +37,8 @@ class LeadAddress extends EntityAddress
 				'REGION' => 'ADDRESS_REGION',
 				'PROVINCE' => 'ADDRESS_PROVINCE',
 				'COUNTRY' => 'ADDRESS_COUNTRY',
-				'COUNTRY_CODE' => 'ADDRESS_COUNTRY_CODE'
+				'COUNTRY_CODE' => 'ADDRESS_COUNTRY_CODE',
+				'LOC_ADDR_ID' => 'ADDRESS_LOC_ADDR_ID'
 			);
 		}
 
@@ -61,7 +62,7 @@ class LeadAddress extends EntityAddress
 	*/
 	public static function resolveEntityFieldTypeID($fieldName, array $aliases = null)
 	{
-		return EntityAddress::Primary;
+		return EntityAddressType::Primary;
 	}
 
 	/**

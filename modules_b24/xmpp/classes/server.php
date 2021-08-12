@@ -1,4 +1,5 @@
-<?
+<?php
+
 class CXMPPServer
 {
 	private $sockServer;
@@ -78,7 +79,7 @@ class CXMPPServer
 		$this->initialized = true;
 	}
 
-	public function Run()
+	public static function Run()
 	{
 		$server = CXMPPServer::GetServer();
 
@@ -96,7 +97,9 @@ class CXMPPServer
 	protected function Start()
 	{
 		$listen = COption::GetOptionString("xmpp", "listen_domain", "0.0.0.0");
-		$this->sockServer = stream_socket_server("tcp://".$listen.":5222", $errno = 0, $errstr = "");
+		$errno = 0;
+		$errstr = "";
+		$this->sockServer = stream_socket_server("tcp://".$listen.":5222", $errno, $errstr);
 
 		if (!$this->sockServer)
 		{
@@ -124,7 +127,9 @@ class CXMPPServer
 		);
 
 		$listen = COption::GetOptionString("xmpp", "listen_domain", "0.0.0.0");
-		$this->sockServerSSL = stream_socket_server("ssl://".$listen.":5223", $errno = 0, $errstr = "", STREAM_SERVER_BIND | STREAM_SERVER_LISTEN, $context);
+		$errno = 0;
+		$errstr = "";
+		$this->sockServerSSL = stream_socket_server("ssl://".$listen.":5223", $errno, $errstr, STREAM_SERVER_BIND | STREAM_SERVER_LISTEN, $context);
 
 		if (!$this->sockServerSSL)
 		{
@@ -165,59 +170,73 @@ class CXMPPServer
 		{
 			$arReadSockets = $this->arSockets;
 
-			$n = @stream_select($arReadSockets, $w = null, $e = null, 3);
-			if ($n > 0)
+			$w = null;
+			$e = null;
+
+			foreach ($arReadSockets as $k => $r)
 			{
-				while (list($k, $r) = each($arReadSockets))
+				if (get_resource_type($r) !== 'stream')
 				{
-					if ($this->sockServer && ($r == $this->sockServer))
+					unset($arReadSockets[$k]);
+				}
+			}
+
+			if (count($arReadSockets) > 0)
+			{
+				$n = stream_select($arReadSockets, $w, $e, 3);
+				if ($n !== false && $n > 0)
+				{
+					foreach ($arReadSockets as $k => $r)
 					{
-						if (is_resource($sock = stream_socket_accept($this->sockServer, 0, $ip)))
+						if ($this->sockServer && ($r == $this->sockServer))
 						{
-							$this->lastClientId++;
-							$id = $this->lastClientId;
-
-							stream_set_timeout($sock, 5);
-							$this->arClients[$id] = new CXMPPClient($id, $sock);
-							$this->arSockets[$id + $this->socketsClientsStartIndex] = $sock;
-
-							$this->WriteToLog("Client connected (".$id.")", 5);
-						}
-					}
-					elseif ($this->sockServerSSL && ($r == $this->sockServerSSL))
-					{
-						if (is_resource($sock = stream_socket_accept($this->sockServerSSL, 0, $ip)))
-						{
-							$this->lastClientId++;
-							$id = $this->lastClientId;
-
-							stream_set_timeout($sock, 5);
-							$this->arClients[$id] = new CXMPPClient($id, $sock);
-							$this->arSockets[$id + $this->socketsClientsStartIndex] = $sock;
-
-							$this->WriteToLog("Client connected (".$id.")", 5);
-						}
-					}
-					else
-					{
-						$id = array_search($r, $this->arSockets);
-						if ($id !== false && $id > 1)
-						{
-							if (CXMPPUtility::SelectDatabase($this->arClients[$id - $this->socketsClientsStartIndex]->GetClientDomain()))
+							if (is_resource($sock = stream_socket_accept($this->sockServer, 0, $ip)))
 							{
-								$this->arClients[$id - $this->socketsClientsStartIndex]->Receive();
+								$this->lastClientId++;
+								$id = $this->lastClientId;
+
+								stream_set_timeout($sock, 5);
+								$this->arClients[$id] = new CXMPPClient($id, $sock);
+								$this->arSockets[$id + $this->socketsClientsStartIndex] = $sock;
+
+								$this->WriteToLog("Client connected (".$id.")", 5);
 							}
-							else
+						}
+						elseif ($this->sockServerSSL && ($r == $this->sockServerSSL))
+						{
+							if (is_resource($sock = stream_socket_accept($this->sockServerSSL, 0, $ip)))
 							{
-								$this->arClients[$id - $this->socketsClientsStartIndex]->Disconnect();
-								$this->WriteToLog("Client is disconnected because it was not possible to select the database (".$this->arClients[$id - $this->socketsClientsStartIndex]->GetClientDomain().")", 10);
+								$this->lastClientId++;
+								$id = $this->lastClientId;
+
+								stream_set_timeout($sock, 5);
+								$this->arClients[$id] = new CXMPPClient($id, $sock);
+								$this->arSockets[$id + $this->socketsClientsStartIndex] = $sock;
+
+								$this->WriteToLog("Client connected (".$id.")", 5);
 							}
 						}
 						else
 						{
-							$sn1 = @stream_socket_get_name($r, true);
-							$sn2 = @stream_socket_get_name($r, false);
-							$this->WriteToLog("Debug: Socket is not found (".$sn1."-".$sn2.")", 10);
+							$id = array_search($r, $this->arSockets);
+							if ($id !== false && $id > 1)
+							{
+								if (CXMPPUtility::SelectDatabase($this->arClients[$id - $this->socketsClientsStartIndex]->GetClientDomain()))
+								{
+									$this->arClients[$id - $this->socketsClientsStartIndex]->Receive();
+								}
+								else
+								{
+									$this->arClients[$id - $this->socketsClientsStartIndex]->Disconnect();
+									$this->WriteToLog("Client is disconnected because it was not possible to select the database (".$this->arClients[$id - $this->socketsClientsStartIndex]->GetClientDomain().")", 10);
+								}
+							}
+							else
+							{
+								$sn1 = @stream_socket_get_name($r, true);
+								$sn2 = @stream_socket_get_name($r, false);
+								$this->WriteToLog("Debug: Socket is not found (".$sn1."-".$sn2.")", 10);
+							}
 						}
 					}
 				}
@@ -312,8 +331,8 @@ class CXMPPServer
 			}
 
 			if ($this->arClients[$id]->IsAuthenticated()
-				&& (!array_key_exists($clientJId, $this->arClientsIndex[$clientDomain])
-					|| count($this->arClientsIndex[$clientDomain][$clientJId]) <= 0))
+				 && (!array_key_exists($clientJId, $this->arClientsIndex[$clientDomain])
+					  || count($this->arClientsIndex[$clientDomain][$clientJId]) <= 0))
 			{
 				foreach ($this->arClientsIndex[$clientDomain] as $jid1 => $arId1)
 				{
@@ -374,8 +393,8 @@ class CXMPPServer
 			$arOnlineOnSiteTmp = array();
 
 			$dbUsers = CUser::GetList(
-				$b = "LOGIN",
-				$o = "DESC",
+				"LOGIN",
+				"DESC",
 				array(
 					"ACTIVE" => "Y",
 					"LAST_ACTIVITY" => 600,
@@ -394,7 +413,7 @@ class CXMPPServer
 			foreach ($arOffline as $jid)
 			{
 				if (!array_key_exists($jid, $this->arClientsIndex[$clientDomain])
-					|| array_key_exists($jid, $this->arClientsIndex[$clientDomain]) && count($this->arClientsIndex[$clientDomain][$jid]) <= 0)
+					 || array_key_exists($jid, $this->arClientsIndex[$clientDomain]) && count($this->arClientsIndex[$clientDomain][$jid]) <= 0)
 				{
 					$this->SendAll(
 						array(
@@ -414,7 +433,7 @@ class CXMPPServer
 			foreach ($arOnline as $jid)
 			{
 				if (!array_key_exists($jid, $this->arClientsIndex[$clientDomain])
-					|| array_key_exists($jid, $this->arClientsIndex[$clientDomain]) && count($this->arClientsIndex[$clientDomain][$jid]) <= 0)
+					 || array_key_exists($jid, $this->arClientsIndex[$clientDomain]) && count($this->arClientsIndex[$clientDomain][$jid]) <= 0)
 					$this->SendAll(
 						array(
 							"presence" => array(
@@ -546,9 +565,9 @@ class CXMPPServer
 
 	public function Send($jid, $arMessage, $clientDomain = "")
 	{
-		$p = strpos($jid, "/");
+		$p = mb_strpos($jid, "/");
 		if ($p !== false)
-			$jid = substr($jid, 0, $p);
+			$jid = mb_substr($jid, 0, $p);
 
 		if (empty($clientDomain))
 			$clientDomain = CXMPPServer::GetDomain();
@@ -681,7 +700,7 @@ class CXMPPServer
 				if ($logSize > $this->logMaxSize)
 				{
 					if (($fp = @fopen($_SERVER["DOCUMENT_ROOT"].$this->logFileName, "rb"))
-						&& ($fp1 = @fopen($_SERVER["DOCUMENT_ROOT"].$this->logFileName."_", "wb")))
+						 && ($fp1 = @fopen($_SERVER["DOCUMENT_ROOT"].$this->logFileName."_", "wb")))
 					{
 						$iSeekLen = intval($logSize - $this->logMaxSize / 2.0);
 						fseek($fp, $iSeekLen);
@@ -690,7 +709,7 @@ class CXMPPServer
 						do
 						{
 							$data = fread($fp, 8192);
-							if (strlen($data) == 0)
+							if ($data == '')
 								break;
 
 							@fwrite($fp1, $data);
@@ -749,4 +768,3 @@ class CXMPPServer
 		return $this->bitrix24Mode;
 	}
 }
-?>

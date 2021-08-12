@@ -1,6 +1,0 @@
-<?
-$MESS["CRM_PRODUCT_MENU_NAME"] = "A CRM toolbar.";
-$MESS["CRM_PRODUCT_MENU_DESCRIPTION"] = "A CRM toolbar.";
-$MESS["CRM_NAME"] = "CRM";
-$MESS["CRM_PRODUCT_NAME"] = "Products";
-?>

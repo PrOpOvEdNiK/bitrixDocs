@@ -5,12 +5,12 @@ use Bitrix\Main\Application;
 use Bitrix\Main\Data\Cache;
 use Bitrix\Main\Error;
 use Bitrix\Main\Loader;
+use Bitrix\Main\Localization\Loc;
 use Bitrix\Main\NotImplementedException;
 use Bitrix\Main\Result;
-use Bitrix\Main\Localization\Loc;
-
 use Bitrix\Tasks\CheckList\Task\TaskCheckListFacade;
 use Bitrix\Tasks\Integration;
+use Bitrix\Tasks\Internals\Counter;
 use Bitrix\Tasks\Internals\TaskTable;
 use Bitrix\Tasks\Internals\Task\SearchIndexTable;
 use Bitrix\Tasks\Internals\Task\FavoriteTable;
@@ -18,12 +18,15 @@ use Bitrix\Tasks\Internals\Task\SortingTable;
 use Bitrix\Tasks\Internals\Task\ViewedTable;
 use Bitrix\Tasks\Internals\Task\ParameterTable;
 use Bitrix\Tasks\Internals\Helper\Task\Dependence;
-use Bitrix\Tasks\Kanban\TaskStageTable;
+use Bitrix\Tasks\Internals\UserOption;
 use Bitrix\Tasks\Kanban\StagesTable;
+use Bitrix\Tasks\Kanban\TaskStageTable;
+use Bitrix\Tasks\Scrum\Internal\ItemTable as ScrumItem;
 use Bitrix\Tasks\Util\Restriction\Bitrix24Restriction\Limit\TaskLimit;
 use Bitrix\Tasks\Util\Type\DateTime;
 use Bitrix\Tasks\Util\User;
 
+use Bitrix\Recyclebin\Recyclebin;
 use Bitrix\Recyclebin\Internals\Entity;
 use Bitrix\Recyclebin\Internals\Contracts\Recyclebinable;
 
@@ -209,7 +212,7 @@ if (Loader::includeModule('recyclebin'))
 				{
 					foreach ($taskData as $value)
 					{
-						$data = unserialize($value['DATA']);
+						$data = unserialize($value['DATA'], ['allowed_classes' => false]);
 						$action = $value['ACTION'];
 
 						self::restoreAdditionalData($taskId, $action, $data);
@@ -219,8 +222,16 @@ if (Loader::includeModule('recyclebin'))
 				$task = \CTaskItem::getInstance($taskId, 1);
 				$task->update([], [
 					'FORCE_RECOUNT_COUNTER' => 'Y',
-					'PIN_IN_STAGE' => false
+					'PIN_IN_STAGE' => false,
 				]);
+
+				Counter\CounterService::addEvent(
+					Counter\Event\EventDictionary::EVENT_AFTER_TASK_RESTORE,
+					$task->getData(false)
+				);
+
+				Integration\SocialNetwork\Log::showLogByTaskId($taskId);
+				ScrumItem::activateBySourceId($taskId);
 			}
 			catch (\Exception $e)
 			{
@@ -376,6 +387,7 @@ if (Loader::includeModule('recyclebin'))
 				\CTaskReminders::DeleteByTaskID($taskId);
 				FavoriteTable::deleteByTaskId($taskId, ['LOW_LEVEL' => true]);
 				SortingTable::deleteByTaskId($taskId);
+				UserOption::deleteByTaskId($taskId);
 				TaskStageTable::clearTask($taskId);
 				TaskCheckListFacade::deleteByEntityIdOnLowLevel($taskId);
 
@@ -404,12 +416,16 @@ if (Loader::includeModule('recyclebin'))
 
 				$USER_FIELD_MANAGER->Delete('TASKS_TASK', $taskId);
 
+				ScrumItem::deleteBySourceId($taskId);
+
 				TaskTable::delete($taskId);
 			}
 			catch (\Exception $e)
 			{
 				$result->addError(new Error($e->getMessage(), $e->getCode()));
 			}
+
+			Integration\SocialNetwork\Log::deleteLogByTaskId($taskId);
 
 			return $result;
 		}
@@ -456,6 +472,15 @@ if (Loader::includeModule('recyclebin'))
 					],
 				],
 			];
+		}
+
+		public static function isInTheRecycleBin(int $taskId): bool
+		{
+			$taskId = (int) $taskId;
+
+			$recycleBinEntityId = Recyclebin::findId('tasks', Manager::TASKS_RECYCLEBIN_ENTITY, $taskId);
+
+			return (!empty($recycleBinEntityId));
 		}
 	}
 }

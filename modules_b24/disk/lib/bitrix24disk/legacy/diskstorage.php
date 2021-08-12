@@ -6,6 +6,7 @@ use Bitrix\Disk\Bitrix24Disk\PageState;
 use Bitrix\Disk\Bitrix24Disk\TmpFile;
 use Bitrix\Disk\Configuration;
 use Bitrix\Disk\Driver;
+use Bitrix\Disk\Internals\Path;
 use Bitrix\Disk\Sharing;
 use Bitrix\Disk\SpecificFolder;
 use Bitrix\Disk\Storage;
@@ -25,7 +26,6 @@ use Bitrix\Disk\Internals\Error\Error;
 use Bitrix\Disk\Internals\Error\ErrorCollection;
 use Bitrix\Main\Entity\ExpressionField;
 use Bitrix\Main\Entity\ReferenceField;
-use Bitrix\Main\IO\Path;
 use Bitrix\Main\IO;
 use Bitrix\Main\Loader;
 use Bitrix\Main\Type\DateTime;
@@ -63,12 +63,7 @@ class DiskStorage extends AbstractStorage
 		$this->userId = User::resolveUserId($user?: $USER);
 		$this->connection = Application::getConnection();
 
-		if (!\CMain::ForkActions([$this, 'finalize']))
-		{
-			register_shutdown_function(function(){
-				$this->finalize();
-			});
-		}
+		Application::getInstance()->addBackgroundJob([$this, 'finalize']);
 	}
 
 	public function finalize()
@@ -214,7 +209,7 @@ class DiskStorage extends AbstractStorage
 		$cache = Data\Cache::createInstance();
 		if($cache->initCache(15768000, 'storage_isshared_' . $this->storage->getId(), 'disk'))
 		{
-			list($this->sharedData,) = $cache->getVars();
+			[$this->sharedData,] = $cache->getVars();
 		}
 		else
 		{
@@ -263,7 +258,7 @@ class DiskStorage extends AbstractStorage
 		$cache = Data\Cache::createInstance();
 		if($cache->initCache(15768000, 'storage_tr_' . $this->storage->getId(), 'disk'))
 		{
-			list($formattedFolders, $this->cacheBreadcrumbs) = $cache->getVars();
+			[$formattedFolders, $this->cacheBreadcrumbs] = $cache->getVars();
 		}
 		else
 		{
@@ -731,7 +726,7 @@ class DiskStorage extends AbstractStorage
 		/** @var array $fileArray */
 		if($tmpFile->isCloud() && $tmpFile->getContentType())
 		{
-			/** @noinspection PhpDynamicAsStaticMethodCallInspection */
+
 			$fileId = \CFile::saveFile(array(
 				'name' => $tmpFile->getFilename(),
 				'tmp_name' => $tmpFile->getAbsolutePath(),
@@ -746,7 +741,7 @@ class DiskStorage extends AbstractStorage
 
 				return array();
 			}
-			/** @noinspection PhpDynamicAsStaticMethodCallInspection */
+
 			$fileArray = \CFile::getFileArray($fileId);
 			if(!$fileArray)
 			{
@@ -907,7 +902,7 @@ class DiskStorage extends AbstractStorage
 		/** @var array $fileArray */
 		if($tmpFile->isCloud() && $tmpFile->getContentType())
 		{
-			/** @noinspection PhpDynamicAsStaticMethodCallInspection */
+
 			$fileId = \CFile::saveFile(array(
 				'name' => $tmpFile->getFilename(),
 				'tmp_name' => $tmpFile->getAbsolutePath(),
@@ -916,7 +911,7 @@ class DiskStorage extends AbstractStorage
 				'height' => $tmpFile->getHeight(),
 				'MODULE_ID' => Driver::INTERNAL_MODULE_ID,
 			), Driver::INTERNAL_MODULE_ID, true, true);
-			/** @noinspection PhpDynamicAsStaticMethodCallInspection */
+
 			$fileArray = \CFile::getFileArray($fileId);
 			if(!$fileArray)
 			{
@@ -1438,7 +1433,7 @@ class DiskStorage extends AbstractStorage
 
 	protected function formatFolderToResponse(Folder $folder)
 	{
-		if(empty($folder) || strlen($folder->getName()) === 0)
+		if(empty($folder) || $folder->getName() == '')
 		{
 			return array();
 		}
@@ -1485,7 +1480,7 @@ class DiskStorage extends AbstractStorage
 
 	protected function formatFileToResponse(File $file)
 	{
-		if(empty($file) || strlen($file->getName()) === 0)
+		if(empty($file) || $file->getName() == '')
 		{
 			return array();
 		}
@@ -1552,9 +1547,9 @@ class DiskStorage extends AbstractStorage
 
 	public function convertFromExternalVersion($version)
 	{
-		if(substr($version, -3, 3) === '000')
+		if(mb_substr($version, -3, 3) === '000')
 		{
-			return substr($version, 0, -3);
+			return mb_substr($version, 0, -3);
 		}
 		return $version;
 	}

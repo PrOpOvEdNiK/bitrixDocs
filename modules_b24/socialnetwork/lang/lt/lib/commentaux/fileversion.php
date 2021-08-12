@@ -1,8 +1,0 @@
-<?
-$MESS["SONET_COMMENTAUX_FILEVERSION_TEXT"] = "įkėlė naują failo versiją";
-$MESS["SONET_COMMENTAUX_FILEVERSION_TEXT_M"] = "įkėlė naują failo versiją";
-$MESS["SONET_COMMENTAUX_FILEVERSION_TEXT_F"] = "įkėlė naują failo versiją";
-$MESS["SONET_COMMENTAUX_HEAD_FILEVERSION_TEXT"] = "redagavo failą";
-$MESS["SONET_COMMENTAUX_HEAD_FILEVERSION_TEXT_M"] = "redagavo failą";
-$MESS["SONET_COMMENTAUX_HEAD_FILEVERSION_TEXT_F"] = "redagavo failą";
-?>

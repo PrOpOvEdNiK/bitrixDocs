@@ -1,7 +1,7 @@
 <?php
 class CPath
 {
-	public static function GetList($PARENT_ID="", $COUNTER_TYPE="COUNTER_FULL_PATH", &$by, &$order, $arFilter=Array(), &$is_filtered)
+	public static function GetList($PARENT_ID = '', $COUNTER_TYPE = 'COUNTER_FULL_PATH', $by = 's_counter', $order = 'desc', $arFilter = [])
 	{
 		$err_mess = "File: ".__FILE__."<br>Line: ";
 		$DB = CDatabase::GetModuleConnection('statistic');
@@ -12,7 +12,7 @@ class CPath
 		$counter = "P.".$COUNTER_TYPE;
 		$where_counter = "and P.".$COUNTER_TYPE.">0";
 
-		if (strlen($PARENT_ID)<=0 && $COUNTER_TYPE=="COUNTER")
+		if ($PARENT_ID == '' && $COUNTER_TYPE=="COUNTER")
 		{
 			$where_parent = "and (P.PARENT_PATH_ID is null or ".$DB->Length("P.PARENT_PATH_ID")."<=0)";
 		}
@@ -31,7 +31,7 @@ class CPath
 
 		if (is_array($arFilter))
 		{
-			if (strlen($arFilter["ADV"])>0)
+			if ($arFilter["ADV"] <> '')
 			{
 				$from_adv = " , b_stat_path_adv A ";
 				$where_adv = "and A.PATH_ID = P.PATH_ID and A.DATE_STAT = P.DATE_STAT ";
@@ -62,7 +62,7 @@ class CPath
 				}
 				else
 				{
-					if( (strlen($val) <= 0) || ($val === "NOT_REF") )
+					if( ((string)$val == '') || ($val === "NOT_REF") )
 						continue;
 				}
 				$match_value_set = array_key_exists($key."_EXACT_MATCH", $arFilter);
@@ -145,14 +145,14 @@ class CPath
 		elseif ($by == "s_counter")	$strSqlOrder = "ORDER BY COUNTER";
 		else
 		{
-			$by = "s_counter";
 			$strSqlOrder = "ORDER BY COUNTER desc, ".$select1;
 		}
-		if ($order!="asc")
+
+		if ($order != "asc")
 		{
 			$strSqlOrder .= " desc ";
-			$order="desc";
 		}
+
 		$strSql = "
 			SELECT /*TOP*/
 				P.PATH_ID,
@@ -171,7 +171,7 @@ class CPath
 		";
 
 		$res = $DB->Query(CStatistics::DBTopSql($strSql), false, $err_mess.__LINE__);
-		$is_filtered = (IsFiltered($strSqlSearch));
+
 		return $res;
 	}
 

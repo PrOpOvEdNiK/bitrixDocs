@@ -2,16 +2,23 @@
 
 namespace Bitrix\Tasks\Helper;
 
+use Bitrix\Main;
+use Bitrix\Main\Config\Option;
 use Bitrix\Main\Context;
 use Bitrix\Main\Localization\Loc;
 use Bitrix\Tasks\Internals\Counter;
 use Bitrix\Tasks\Internals\SearchIndex;
-use Bitrix\Tasks\Internals\Task\SearchIndexTable;
+use Bitrix\Tasks\Scrum\Internal\EntityTable;
+use Bitrix\Tasks\Scrum\Service\BacklogService;
+use Bitrix\Tasks\Scrum\Service\ItemService;
 use Bitrix\Tasks\Util\Restriction\Bitrix24Restriction\Limit\FilterLimit;
+use Bitrix\Tasks\Util\User;
 
 class Filter extends Common
 {
 	protected static $instance = null;
+
+	protected static $options = [];
 
 	public function getDefaultRoleId()
 	{
@@ -29,7 +36,7 @@ class Filter extends Common
 			$filter = $filterOptions->getFilter();
 
 			$fState = $request->get('F_STATE');
-			if ($fState && !is_array($fState) && substr($fState, 0, 2) == 'sR')
+			if ($fState && !is_array($fState) && mb_substr($fState, 0, 2) == 'sR')
 			{
 				$roleCode = $request->get('F_STATE');
 
@@ -84,91 +91,179 @@ class Filter extends Common
 	 */
 	public function getOptions()
 	{
-		static $instance = null;
-
-		if (!$instance)
+		if (empty(static::$options[$this->getId()]))
 		{
-			$instance = new \Bitrix\Main\UI\Filter\Options($this->getId(), static::getPresets());
+			static::$options[$this->getId()] = new \Bitrix\Main\UI\Filter\Options(
+				$this->getId(),
+				static::getPresets($this)
+			);
 		}
 
-		return $instance;
+		return static::$options[$this->getId()];
+	}
+
+	/**
+	 * @param Common|null $filterInstance
+	 * @return array[]
+	 */
+	public static function getPresets(Common $filterInstance = null)
+	{
+		$presets = [];
+
+		$isScrumProject = false;
+		$userId = 0;
+
+		if ($filterInstance)
+		{
+			$isScrumProject = $filterInstance->isScrumProject();
+			$userId = $filterInstance->getUserId();
+		}
+
+		if ($isScrumProject)
+		{
+			$presets['filter_tasks_scrum'] = [
+				'name' => 'SCRUM',
+				'default' => true,
+				'fields' => [
+					'STATUS' => [
+						\CTasks::STATE_PENDING,
+						\CTasks::STATE_IN_PROGRESS,
+						\CTasks::STATE_SUPPOSEDLY_COMPLETED,
+						\CTasks::STATE_DEFERRED,
+						EntityTable::STATE_COMPLETED_IN_ACTIVE_SPRINT
+					],
+				],
+				'sort' => 1,
+			];
+		}
+
+		$presets['filter_tasks_in_progress'] = [
+			'name' => Loc::getMessage('TASKS_PRESET_IN_PROGRESS'),
+			'default' => !$isScrumProject,
+			'fields' => [
+				'STATUS' => [
+					\CTasks::STATE_PENDING,
+					\CTasks::STATE_IN_PROGRESS,
+					\CTasks::STATE_SUPPOSEDLY_COMPLETED,
+					\CTasks::STATE_DEFERRED,
+				]
+			],
+		];
+
+		if ($isScrumProject)
+		{
+			$presets['filter_tasks_in_progress']['sort'] = 2;
+		}
+
+		$presets['filter_tasks_completed'] = [
+			'name' => Loc::getMessage('TASKS_PRESET_COMPLETED'),
+			'default' => false,
+			'fields' => [
+				'STATUS' => [
+					\CTasks::STATE_COMPLETED
+				]
+			]
+		];
+
+		if ($isScrumProject)
+		{
+			$presets['filter_tasks_completed']['sort'] = 3;
+		}
+
+		if ($isScrumProject)
+		{
+			$presets['filter_tasks_my'] = [
+				'name' => Loc::getMessage('TASKS_PRESET_MY'),
+				'default' => false,
+				'fields' => [
+					'RESPONSIBLE_ID' => $userId
+				],
+				'sort' => 4
+			];
+		}
+
+		if (!$isScrumProject)
+		{
+			$presets['filter_tasks_deferred'] = [
+				'name' => Loc::getMessage('TASKS_PRESET_DEFERRED'),
+				'default' => false,
+				'fields' => [
+					'STATUS' => [
+						\CTasks::STATE_DEFERRED
+					]
+				]
+			];
+			$presets['filter_tasks_expire'] = [
+				'name' => Loc::getMessage('TASKS_PRESET_EXPIRED'),
+				'default' => false,
+				'fields' => [
+					'STATUS' => [
+						\CTasks::STATE_PENDING,
+						\CTasks::STATE_IN_PROGRESS
+					],
+					'PROBLEM' => \CTaskListState::VIEW_TASK_CATEGORY_EXPIRED
+				]
+			];
+			$presets['filter_tasks_expire_candidate'] = [
+				'name' => Loc::getMessage('TASKS_PRESET_EXPIRED_CAND'),
+				'default' => false,
+				'fields' => [
+					'STATUS' => [
+						\CTasks::STATE_PENDING,
+						\CTasks::STATE_IN_PROGRESS
+					],
+					'PROBLEM' => \CTaskListState::VIEW_TASK_CATEGORY_EXPIRED_CANDIDATES
+				]
+			];
+		}
+
+		return $presets;
 	}
 
 	/**
 	 * @return array
 	 */
-	public static function getPresets()
+	public function process(): array
 	{
-		$presets = array(
-			'filter_tasks_in_progress' => array(
-				'name' => Loc::getMessage('TASKS_PRESET_IN_PROGRESS'),
-				'default' => true,
-				'fields' => array(
-					'STATUS' => array(
-						\CTasks::STATE_PENDING,
-						\CTasks::STATE_IN_PROGRESS
-					)
-				)
-			),
-			'filter_tasks_completed' => array(
-				'name' => Loc::getMessage('TASKS_PRESET_COMPLETED'),
-				'default' => false,
-				'fields' => array(
-					'STATUS' => array(
-						\CTasks::STATE_COMPLETED
-					)
-				)
-			),
-			'filter_tasks_deferred' => array(
-				'name' => Loc::getMessage('TASKS_PRESET_DEFERRED'),
-				'default' => false,
-				'fields' => array(
-					'STATUS' => array(
-						\CTasks::STATE_DEFERRED
-					)
-				)
-			),
-			'filter_tasks_expire' => array(
-				'name' => Loc::getMessage('TASKS_PRESET_EXPIRED'),
-				'default' => false,
-				'fields' => array(
-					'STATUS' => array(
-						\CTasks::STATE_PENDING,
-						\CTasks::STATE_IN_PROGRESS
-					),
-					'PROBLEM' => \CTaskListState::VIEW_TASK_CATEGORY_EXPIRED
-				)
-			),
-			'filter_tasks_expire_candidate' => array(
-				'name' => Loc::getMessage('TASKS_PRESET_EXPIRED_CAND'),
-				'default' => false,
-				'fields' => array(
-					'STATUS' => array(
-						\CTasks::STATE_PENDING,
-						\CTasks::STATE_IN_PROGRESS
-					),
-					'PROBLEM' => \CTaskListState::VIEW_TASK_CATEGORY_EXPIRED_CANDIDATES
-				)
-			)
+		$filter = array_merge(
+			$this->processMainFilter(),
+			$this->processUFFilter()
 		);
+		$filter = $this->postProcess($filter);
 
-		return $presets;
+		return $filter;
 	}
 
-	public function process()
+	/**
+	 * @param array $filter
+	 * @return array
+	 */
+	private function postProcess(array $filter): array
 	{
-		$arrFilter = array_merge($this->processMainFilter(), $this->processUFFilter());
+		$filter['ZOMBIE'] = 'N';
+		$filter['CHECK_PERMISSIONS'] = 'Y';
+		$filter['ONLY_ROOT_TASKS'] = 'Y';
 
-		$arrFilter['ZOMBIE'] = 'N';
-		$arrFilter['CHECK_PERMISSIONS'] = 'Y';
-		$arrFilter['ONLY_ROOT_TASKS'] = 'Y';
+		if ($this->isScrumProject())
+		{
+			$epicKey = '::SUBFILTER-EPIC';
+			if (isset($filter[$epicKey]))
+			{
+				$filter['EPIC'] = $filter[$epicKey]['EPIC'];
+				unset($filter[$epicKey]);
+			}
+		}
 
-		return $arrFilter;
+		return $filter;
 	}
 
-	private function processUFFilter()
+	/**
+	 * @return array
+	 */
+	private function processUFFilter(): array
 	{
-		$arrFilter = $rawFilter = [];
+		$ufFilter = [];
+		$fieldsToSkipEmptyClearing = [];
 
 		$filters = $this->getFilters();
 		foreach ($filters as $fieldId => $filterRow)
@@ -180,73 +275,70 @@ class Filter extends Common
 
 			switch ($filterRow['type'])
 			{
-				default:
-					//					$field = $this->getFilterFieldData($fieldId);
-					//					if ($field)
-					//					{
-					//						if (is_numeric($field) && $fieldId != 'TITLE')
-					//						{
-					//							$rawFilter[$fieldId] = $field;
-					//						}
-					//						else
-					//						{
-					//							$rawFilter['%'.$fieldId] = $field;
-					//						}
-					//					}
-					//
-					//					$arrFilter[$fieldId] = $field[$fieldId];
-					break;
 				case 'crm':
 				case 'string':
-					$arrFilter['%'.$fieldId] = $this->getFilterFieldData($fieldId);
+					$ufFilter["%{$fieldId}"] = $this->getFilterFieldData($fieldId);
 					break;
+
 				case 'date':
 					$data = $this->getDateFilterFieldData($filterRow);
 					if ($data)
 					{
-						$arrFilter = array_merge($arrFilter, $data);
+						$ufFilter = array_merge($ufFilter, $data);
 					}
 					break;
+
 				case 'number':
 					$data = $this->getNumberFilterFieldData($filterRow);
 					if ($data)
 					{
-						$arrFilter = array_merge($arrFilter, $data);
+						$ufFilter = array_merge($ufFilter, $data);
 					}
 					break;
+
 				case 'list':
 					$data = $this->getListFilterFieldData($filterRow);
 					if ($data)
 					{
-						$arrFilter = array_merge($arrFilter, $data);
+						$map = [
+							1 => null,
+							2 => 1,
+						];
+						$key = key($data);
+						$value = current($data);
+						if (array_key_exists($value, $map))
+						{
+							$data[$key] = $map[$value];
+						}
+						$ufFilter = array_merge($ufFilter, $data);
+						$fieldsToSkipEmptyClearing[] = $key;
 					}
 					break;
+
 				case 'dest_selector':
 					$data = $this->getDestSelectorFilterFieldData($filterRow);
 					if ($data)
 					{
-						$arrFilter = array_merge($arrFilter, $data);
+						$ufFilter = array_merge($ufFilter, $data);
 					}
+					break;
+
+				default:
 					break;
 			}
 		}
 
-		$arrFilter = array_filter($arrFilter);
+		$ufFilter = array_filter(
+			$ufFilter,
+			static function ($value, $key) use ($fieldsToSkipEmptyClearing) {
+				return in_array($key, $fieldsToSkipEmptyClearing, true)
+					|| $value === '0'
+					|| !empty($value);
+			},
+			ARRAY_FILTER_USE_BOTH
+		);
 
-		$map = [
-			1 => null,
-			2 => 1
-		];
-
-		foreach ($arrFilter as $key => $value)
-		{
-			if (in_array($value, array_keys($map)))
-			{
-				$arrFilter[$key] = $map[$value];
-			}
-		}
-
-		return $arrFilter;
+		return $ufFilter;
 	}
 
 	private function processMainFilter()
@@ -271,10 +363,11 @@ class Filter extends Common
 
 		if ($this->getFilterFieldData('FIND') && !FilterLimit::isLimitExceeded())
 		{
-			$operator = (($isFullTextIndexEnabled = SearchIndexTable::isFullTextIndexEnabled())? '*' : '*%');
-			$value = SearchIndex::prepareStringToSearch($this->getFilterFieldData('FIND'), $isFullTextIndexEnabled);
-
-			$filter['::SUBFILTER-FULL_SEARCH_INDEX'][$operator . 'FULL_SEARCH_INDEX'] = $value;
+			$value = SearchIndex::prepareStringToSearch($this->getFilterFieldData('FIND'));
+			if ($value !== '')
+			{
+				$filter['::SUBFILTER-FULL_SEARCH_INDEX']['*FULL_SEARCH_INDEX'] = $value;
+			}
 		}
 
 		foreach ($filters as $fieldId => $filterRow)
@@ -340,30 +433,50 @@ class Filter extends Common
 	}
 
 	/**
-	 * @param $filter
-	 * @return mixed
+	 * @param array $filter
+	 * @return array
+	 * @throws Main\ArgumentException
+	 * @throws Main\ArgumentNullException
+	 * @throws Main\ArgumentOutOfRangeException
+	 * @throws Main\SystemException
 	 */
-	private function postProcessMainFilter($filter)
+	private function postProcessMainFilter(array $filter): array
 	{
-		$prefix = "::SUBFILTER-";
-		$searchKey = $prefix . 'COMMENT_SEARCH_INDEX';
+		$prefix = '::SUBFILTER-';
+		$searchKey = "{$prefix}COMMENT_SEARCH_INDEX";
+		$statusKey = "{$prefix}STATUS";
 
-		if (isset($filter[$prefix . 'PARAMS']['::REMOVE-MEMBER']))
+		if (isset($filter["{$prefix}PARAMS"]['::REMOVE-MEMBER']))
 		{
-			unset($filter[$prefix . 'ROLEID']['MEMBER']);
-			unset($filter[$prefix . 'PARAMS']['::REMOVE-MEMBER']);
+			unset($filter["{$prefix}ROLEID"]['MEMBER'], $filter["{$prefix}PARAMS"]['::REMOVE-MEMBER']);
 		}
 
 		if (isset($filter[$searchKey]))
 		{
 			reset($filter[$searchKey]);
 
-			$operator = (($isFullTextIndexEnabled = SearchIndexTable::isFullTextIndexEnabled())? '*' : '*%');
 			$key = key($filter[$searchKey]);
-			$value = SearchIndex::prepareStringToSearch(current($filter[$searchKey]), $isFullTextIndexEnabled);
-
+			$value = SearchIndex::prepareStringToSearch(current($filter[$searchKey]));
+			if ($value !== '')
+			{
+				$filter[$searchKey]["*{$key}"] = $value;
+			}
 			unset($filter[$searchKey][$key]);
-			$filter[$searchKey][$operator . $key] = $value;
+		}
+
+		if (
+			isset($filter[$statusKey])
+			&& (int) $this->getUserId() === (int) User::getId()
+		)
+		{
+			$filter[$statusKey] = [
+				'::LOGIC' => 'OR',
+				'::SUBFILTER-1' => $filter[$statusKey],
+				'::SUBFILTER-2' => [
+					'WITH_COMMENT_COUNTERS' => 'Y',
+					'REAL_STATUS' => \CTasks::STATE_COMPLETED
+				],
+			];
 		}
 
 		return $filter;
@@ -391,6 +504,8 @@ class Filter extends Common
 	{
 		$fields = $this->getAvailableFields();
 		$filter = array();
+
+		$isScrumProject = $this->isScrumProject();
 
 		if (in_array('CREATED_BY', $fields))
 		{
@@ -432,12 +547,24 @@ class Filter extends Common
 					'departmentSelectDisable' => 'Y',
 					'isNumeric' => 'Y',
 					'prefix' => 'U',
-				)
+				),
+				'default' => $isScrumProject
 			);
 		}
 
 		if (in_array('STATUS', $fields))
 		{
+			$statusItems = [
+				\CTasks::STATE_PENDING => Loc::getMessage('TASKS_STATUS_2'),
+				\CTasks::STATE_IN_PROGRESS => Loc::getMessage('TASKS_STATUS_3'),
+				\CTasks::STATE_SUPPOSEDLY_COMPLETED => Loc::getMessage('TASKS_STATUS_4'),
+				\CTasks::STATE_COMPLETED => Loc::getMessage('TASKS_STATUS_5'),
+				\CTasks::STATE_DEFERRED => Loc::getMessage('TASKS_STATUS_6'),
+			];
+			if ($this->isTaskScrumEnabled())
+			{
+				$statusItems[EntityTable::STATE_COMPLETED_IN_ACTIVE_SPRINT] = Loc::getMessage('TASKS_STATUS_8');
+			}
 			$filter['STATUS'] = array(
 				'id' => 'STATUS',
 				'name' => Loc::getMessage('TASKS_FILTER_STATUS'),
@@ -445,13 +572,8 @@ class Filter extends Common
 				'params' => array(
 					'multiple' => 'Y'
 				),
-				'items' => array(
-					\CTasks::STATE_PENDING => Loc::getMessage('TASKS_STATUS_2'),
-					\CTasks::STATE_IN_PROGRESS => Loc::getMessage('TASKS_STATUS_3'),
-					\CTasks::STATE_SUPPOSEDLY_COMPLETED => Loc::getMessage('TASKS_STATUS_4'),
-					\CTasks::STATE_COMPLETED => Loc::getMessage('TASKS_STATUS_5'),
-					\CTasks::STATE_DEFERRED => Loc::getMessage('TASKS_STATUS_6')
-				)
+				'items' => $statusItems,
+				'default' => $isScrumProject
 			);
 		}
 
@@ -665,7 +787,19 @@ class Filter extends Common
 			$filter['TAG'] = array(
 				'id' => 'TAG',
 				'name' => Loc::getMessage('TASKS_FILTER_TAG'),
-				'type' => 'string'
+				'type' => 'string',
+				'default' => $isScrumProject
+			);
+		}
+
+		if ($isScrumProject)
+		{
+			$filter['EPIC'] = array(
+				'id' => 'EPIC',
+				'name' => Loc::getMessage('TASKS_FILTER_EPIC'),
+				'type' => 'list',
+				'items' => $this->getEpics(),
+				'default' => true
 			);
 		}
 
@@ -680,7 +814,7 @@ class Filter extends Common
 				'id' => 'ROLEID',
 				'name' => Loc::getMessage('TASKS_FILTER_ROLEID'),
 				'type' => 'list',
-				'default' => true,
+				'default' => !$isScrumProject,
 				'items' => $items
 			);
 		}
@@ -691,6 +825,15 @@ class Filter extends Common
 				'id' => 'COMMENT_SEARCH_INDEX',
 				'name' => Loc::getMessage('TASKS_FILTER_COMMENT'),
 				'type' => 'fulltext'
+			);
+		}
+
+		if (in_array('CREATED_DATE', $fields))
+		{
+			$filter['ACTIVITY_DATE'] = array(
+				'id' => 'ACTIVITY_DATE',
+				'name' => Loc::getMessage('TASKS_FILTER_ACTIVITY_DATE'),
+				'type' => 'date'
 			);
 		}
 
@@ -752,7 +895,7 @@ class Filter extends Common
 						'selector' => array(
 							'TYPE' => 'companies',
 							'DATA' => array(
-								'ID' => strtolower($item['FIELD_NAME']),
+								'ID' => mb_strtolower($item['FIELD_NAME']),
 								'FIELD_ID' => $item['FIELD_NAME'],
 								'ENTITY_TYPE_NAMES' => $entityTypeNames,
 								'IS_MULTIPLE' => 'Y'
@@ -773,6 +916,16 @@ class Filter extends Common
 		}
 
 		return $filter;
+	}
+
+	/**
+	 * @return bool
+	 * @throws Main\ArgumentNullException
+	 * @throws Main\ArgumentOutOfRangeException
+	 */
+	private function isTaskScrumEnabled(): bool
+	{
+		return (Option::get('tasks', 'tasks_scrum_enabled', 'N') === 'Y');
 	}
 
 	/**
@@ -803,7 +956,8 @@ class Filter extends Common
 			'TAG',
 			'ACTIVE',
 			'ROLEID',
-			'COMMENT'
+			'COMMENT',
+			'ACTIVITY_DATE'
 		);
 
 		if ($this->getGroupId() == 0)
@@ -817,25 +971,35 @@ class Filter extends Common
 	/**
 	 * @return array
 	 */
-	private function getAllowedTaskCategories()
+	private function getAllowedTaskCategories(): array
 	{
-		$list = array();
+		$list = [];
 
-		$taskCategories = array(
+		$taskCategories = [
 			\CTaskListState::VIEW_TASK_CATEGORY_WO_DEADLINE,
 			\CTaskListState::VIEW_TASK_CATEGORY_NEW,
 			\CTaskListState::VIEW_TASK_CATEGORY_EXPIRED_CANDIDATES,
 			\CTaskListState::VIEW_TASK_CATEGORY_EXPIRED,
 			\CTaskListState::VIEW_TASK_CATEGORY_WAIT_CTRL,
-			\CTaskListState::VIEW_TASK_CATEGORY_DEFERRED
-		);
-
+			\CTaskListState::VIEW_TASK_CATEGORY_DEFERRED,
+			\CTaskListState::VIEW_TASK_CATEGORY_NEW_COMMENTS,
+		];
+		if ($this->getGroupId() > 0)
+		{
+			$taskCategories[] = \CTaskListState::VIEW_TASK_CATEGORY_PROJECT_EXPIRED;
+			$taskCategories[] = \CTaskListState::VIEW_TASK_CATEGORY_PROJECT_NEW_COMMENTS;
+		}
 		foreach ($taskCategories as $categoryId)
 		{
 			$list[$categoryId] = \CTaskListState::getTaskCategoryName($categoryId);
 		}
 
 		return $list;
+	}
+
+	public function isSearchFieldApplied(): bool
+	{
+		return (!$this->isFilterEmpty() && $this->getFilterFieldData('FIND', ''));
 	}
 
 	private function isFilterEmpty()
@@ -919,81 +1083,15 @@ class Filter extends Common
 
 		switch ($row['id'])
 		{
-			default:
-				if ($field)
-				{
-					$arrFilter[$row['id']] = $field;
-				}
-				break;
-			case 'PARAMS':
-				foreach ($field as $item)
-				{
-					switch ($item)
-					{
-						case 'FAVORITE':
-							$arrFilter["FAVORITE"] = 'Y';
-							break;
-						case 'MARKED':
-							$arrFilter["!MARK"] = false;
-							break;
-						case 'OVERDUED':
-							$arrFilter["OVERDUED"] = "Y";
-							break;
-						case 'IN_REPORT':
-							$arrFilter["ADD_IN_REPORT"] = "Y";
-							break;
-						case 'SUBORDINATE':
-							// Don't set SUBORDINATE_TASKS for admin, it will cause all tasks to be showed
-							if (!\Bitrix\Tasks\Util\User::isSuper())
-							{
-								$arrFilter["SUBORDINATE_TASKS"] = "Y";
-							}
-							break;
-						case 'ANY_TASK':
-							$arrFilter['::REMOVE-MEMBER'] = true; // hack
-							break;
-					}
-				}
-				break;
 			case 'STATUS':
 				$arrFilter['REAL_STATUS'] = $field; //TODO!!!
-				break;
-			case 'ROLEID':
-				switch ($field)
-				{
-					default:
-						if (!$this->getGroupId())
-						{
-							$arrFilter['MEMBER'] = $this->getUserId();
-						}
-						break;
-
-					case 'view_role_responsible':
-						$arrFilter['=RESPONSIBLE_ID'] = $this->getUserId();
-						break;
-
-					case 'view_role_originator':
-						$arrFilter['=CREATED_BY'] = $this->getUserId();
-						$arrFilter['!REFERENCE:RESPONSIBLE_ID'] = 'CREATED_BY';
-						break;
-
-					case 'view_role_accomplice':
-						$arrFilter['=ACCOMPLICE'] = $this->getUserId();
-						break;
-
-					case 'view_role_auditor':
-						$arrFilter['=AUDITOR'] = $this->getUserId();
-						break;
-				}
 				break;
 
 			case 'PROBLEM':
 				switch ($field)
 				{
 					case Counter\Type::TYPE_WO_DEADLINE:
-						$roleId = $this->getFilterFieldData('ROLEID');
-
-						switch ($roleId)
+						switch ($this->getFilterFieldData('ROLEID'))
 						{
 							case Counter\Role::RESPONSIBLE:
 								$arrFilter['!CREATED_BY'] = $this->getUserId();
@@ -1016,12 +1114,12 @@ class Filter extends Common
 										'::LOGIC' => 'OR',
 										'::SUBFILTER-R' => [
 											'!CREATED_BY' => $userId,
-											'RESPONSIBLE_ID' => $userId
+											'RESPONSIBLE_ID' => $userId,
 										],
 										'::SUBFILTER-O' => [
 											'CREATED_BY' => $userId,
-											'!RESPONSIBLE_ID' => $userId
-										]
+											'!RESPONSIBLE_ID' => $userId,
+										],
 									];
 								}
 								break;
@@ -1030,12 +1128,18 @@ class Filter extends Common
 						break;
 
 					case Counter\Type::TYPE_EXPIRED:
-						$arrFilter['<=DEADLINE'] = Counter::getExpiredTime();
+						if ($this->getGroupId() > 0)
+						{
+							$arrFilter['MEMBER'] = $this->getUserId();
+						}
+						$arrFilter['<=DEADLINE'] = Counter\Deadline::getExpiredTime();
+						$arrFilter['IS_MUTED'] = 'N';
+						$arrFilter['REAL_STATUS'] = [\CTasks::STATE_PENDING, \CTasks::STATE_IN_PROGRESS];
 						break;
 
 					case Counter\Type::TYPE_EXPIRED_CANDIDATES:
-						$arrFilter['>=DEADLINE'] = Counter::getExpiredTime();
-						$arrFilter['<=DEADLINE'] = Counter::getExpiredSoonTime();
+						$arrFilter['>=DEADLINE'] = Counter\Deadline::getExpiredTime();
+						$arrFilter['<=DEADLINE'] = Counter\Deadline::getExpiredSoonTime();
 						break;
 
 					case Counter\Type::TYPE_WAIT_CTRL:
@@ -1053,8 +1157,97 @@ class Filter extends Common
 						$arrFilter['REAL_STATUS'] = \CTasks::STATE_DEFERRED;
 						break;
 
+					case Counter\Type::TYPE_NEW_COMMENTS:
+						if ($this->getGroupId() > 0)
+						{
+							$arrFilter['MEMBER'] = $this->getUserId();
+						}
+						$arrFilter['WITH_NEW_COMMENTS'] = 'Y';
+						$arrFilter['IS_MUTED'] = 'N';
+						break;
+
+					case Counter\Type::TYPE_PROJECT_EXPIRED:
+						$arrFilter['PROJECT_EXPIRED'] = 'Y';
+						break;
+
+					case Counter\Type::TYPE_PROJECT_NEW_COMMENTS:
+						$arrFilter['PROJECT_NEW_COMMENTS'] = 'Y';
+						break;
+
 					default:
 						break;
+				}
+				break;
+
+			case 'ROLEID':
+				switch ($field)
+				{
+					case 'view_role_responsible':
+						$arrFilter['=RESPONSIBLE_ID'] = $this->getUserId();
+						break;
+
+					case 'view_role_originator':
+						$arrFilter['=CREATED_BY'] = $this->getUserId();
+						$arrFilter['!REFERENCE:RESPONSIBLE_ID'] = 'CREATED_BY';
+						break;
+
+					case 'view_role_accomplice':
+						$arrFilter['=ACCOMPLICE'] = $this->getUserId();
+						break;
+
+					case 'view_role_auditor':
+						$arrFilter['=AUDITOR'] = $this->getUserId();
+						break;
+
+					default:
+						if (!$this->getGroupId())
+						{
+							$arrFilter['MEMBER'] = $this->getUserId();
+						}
+						break;
+				}
+				break;
+
+			case 'PARAMS':
+				foreach ($field as $item)
+				{
+					switch ($item)
+					{
+						case 'FAVORITE':
+							$arrFilter["FAVORITE"] = 'Y';
+							break;
+
+						case 'MARKED':
+							$arrFilter["!MARK"] = false;
+							break;
+
+						case 'OVERDUED':
+							$arrFilter["OVERDUED"] = "Y";
+							break;
+
+						case 'IN_REPORT':
+							$arrFilter["ADD_IN_REPORT"] = "Y";
+							break;
+
+						case 'SUBORDINATE':
+							// Don't set SUBORDINATE_TASKS for admin, it will cause all tasks to be showed
+							if (!\Bitrix\Tasks\Util\User::isSuper())
+							{
+								$arrFilter["SUBORDINATE_TASKS"] = "Y";
+							}
+							break;
+
+						case 'ANY_TASK':
+							$arrFilter['::REMOVE-MEMBER'] = true; // hack
+							break;
+					}
+				}
+				break;
+
+			default:
+				if ($field)
+				{
+					$arrFilter[$row['id']] = $field;
 				}
 				break;
 		}
@@ -1092,5 +1285,25 @@ class Filter extends Common
 		unset($scheme['UF_TASK_WEBDAV_FILES'], $scheme['UF_MAIL_MESSAGE']);
 
 		return $scheme;
+	}
+
+	private function getEpics(): array
+	{
+		$backlogService = new BacklogService();
+		$itemService = new ItemService();
+
+		$backlog = $backlogService->getBacklogByGroupId($this->getGroupId());
+		if ($backlogService->getErrors() || $backlog->isEmpty())
+		{
+			return [];
+		}
+
+		$epics = [];
+		foreach ($itemService->getAllEpicTags($backlog->getId()) as $epic)
+		{
+			$epics[$epic['id']] = $epic['name'];
+		}
+
+		return $epics;
 	}
 }

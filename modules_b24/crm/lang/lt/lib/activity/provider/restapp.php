@@ -1,4 +1,0 @@
-<?
-$MESS["CRM_ACTIVITY_PROVIDER_REST_APP_NAME"] = "Programos veiksmai";
-$MESS["CRM_ACTIVITY_PROVIDER_REST_APP_OPEN_BUTTON"] = "Atidaryti programą";
-?>

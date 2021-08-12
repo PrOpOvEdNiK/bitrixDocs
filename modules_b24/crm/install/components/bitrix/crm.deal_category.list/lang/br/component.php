@@ -1,9 +1,0 @@
-<?
-$MESS["CRM_COLUMN_DEAL_CATEGORY_CREATED_DATE"] = "Criado em";
-$MESS["CRM_COLUMN_DEAL_CATEGORY_ID"] = "ID";
-$MESS["CRM_COLUMN_DEAL_CATEGORY_NAME"] = "Nome";
-$MESS["CRM_COLUMN_DEAL_CATEGORY_SORT"] = "Classificação";
-$MESS["CRM_DEAL_CATEGORY_DEFAULT_NAME"] = "Novo pipeline";
-$MESS["CRM_MODULE_NOT_INSTALLED"] = "O módulo de CRM não está instalado.";
-$MESS["CRM_PERMISSION_DENIED"] = "Acesso negado";
-?>

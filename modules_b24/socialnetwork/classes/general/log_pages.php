@@ -1,7 +1,8 @@
-<?
+<?php
+
 class CSocNetLogPages
 {
-	function GetList($arOrder = array(), $arFilter = array(), $arGroupBy = false, $arNavStartParams = false, $arSelectFields = array())
+	public static function GetList($arOrder = array(), $arFilter = array(), $arGroupBy = false, $arNavStartParams = false, $arSelectFields = array())
 	{
 		if (func_num_args() <= 2)
 		{
@@ -39,11 +40,11 @@ class CSocNetLogPages
 			"SELECT ".$arSqls["SELECT"]." ".
 			"FROM b_sonet_log_page SLP ".
 			"	".$arSqls["FROM"]." ";
-		if (strlen($arSqls["WHERE"]) > 0)
+		if ($arSqls["WHERE"] <> '')
 		{
 			$strSql .= "WHERE ".$arSqls["WHERE"]." ";
 		}
-		if (strlen($arSqls["ORDERBY"]) > 0)
+		if ($arSqls["ORDERBY"] <> '')
 		{
 			$strSql .= "ORDER BY ".$arSqls["ORDERBY"]." ";
 		}
@@ -66,7 +67,7 @@ class CSocNetLogPages
 
 		$strWhere = " USER_ID = ".$user_id;
 		if (
-			strlen($site_id) > 0
+			$site_id <> ''
 			&& $site_id != "**"
 		)
 		{
@@ -74,7 +75,7 @@ class CSocNetLogPages
 		}
 
 		if (
-			strlen($group_code) > 0
+			$group_code <> ''
 			&& $group_code != "**"
 		)
 		{
@@ -110,7 +111,7 @@ class CSocNetLogPages
 		if (
 			$user_id <= 0
 			|| $page_size <= 0
-			|| strlen($page_last_date) <= 0
+			|| $page_last_date == ''
 		)
 		{
 			return false;
@@ -158,4 +159,3 @@ class CSocNetLogPages
 		}
 	}
 }
-?>

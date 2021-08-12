@@ -1,3 +1,0 @@
-<?
-$MESS["FORM_VALIDATOR_FILE_TYPE_SETTINGS_EXT_IMG"] = "تصاویر";
-?>

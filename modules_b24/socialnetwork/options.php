@@ -17,10 +17,10 @@ IncludeModuleLangFile(__FILE__);
 
 CModule::IncludeModule('socialnetwork');
 
-if ($REQUEST_METHOD=="GET" && strlen($RestoreDefaults)>0 && $SONET_RIGHT=="W" && check_bitrix_sessid())
+if ($REQUEST_METHOD=="GET" && $RestoreDefaults <> '' && $SONET_RIGHT=="W" && check_bitrix_sessid())
 {
 	COption::RemoveOption("socialnetwork");
-	$z = CGroup::GetList($v1="id",$v2="asc", array("ACTIVE" => "Y", "ADMIN" => "N"));
+	$z = CGroup::GetList("id", "asc", array("ACTIVE" => "Y", "ADMIN" => "N"));
 	while($zr = $z->Fetch())
 	{
 		$APPLICATION->DelGroupRight($module_id, array($zr["ID"]));
@@ -109,7 +109,7 @@ if (!empty($arRes))
 {
 	foreach ($arRes as $key => $val)
 	{
-		$arTooltipProperties[$val["FIELD_NAME"]] = (strLen($val["EDIT_FORM_LABEL"]) > 0 ? $val["EDIT_FORM_LABEL"] : $val["FIELD_NAME"]);
+		$arTooltipProperties[$val["FIELD_NAME"]] = ($val["EDIT_FORM_LABEL"] <> '' ? $val["EDIT_FORM_LABEL"] : $val["FIELD_NAME"]);
 	}
 }
 
@@ -200,8 +200,8 @@ if (!function_exists('set_valign'))
 }
 
 $arAllOptionsCommon = array(
-	array("follow_default_type", GetMessage("SONET_LOG_FOLLOW_DEFAULT_TYPE"), "Y", Array("checkbox")),
-	array("allow_livefeed_toall", GetMessage("SONET_LOG_ALLOW_TOALL"), "Y", Array("checkbox")),
+	array("follow_default_type", GetMessage($bIntranet ? "SONET_LOG_FOLLOW_DEFAULT_TYPE2" : "SONET_LOG_FOLLOW_DEFAULT_TYPE"), "Y", Array("checkbox")),
+	array("allow_livefeed_toall", GetMessage($bIntranet ? "SONET_LOG_ALLOW_TOALL2" : "SONET_LOG_ALLOW_TOALL"), "Y", Array("checkbox")),
 	array("livefeed_toall_rights", GetMessage("SONET_LOG_TOALL_RIGHTS"), 'a:1:{i:0;s:2:"AU";}', Array("hidden")),
 	array("default_livefeed_toall", GetMessage("SONET_LOG_DEFAULT_TOALL"), "Y", Array("checkbox")),
 	array("email_users_all", GetMessage("SONET_LOG_EMAIL_USERS_ALL"), "N", Array("checkbox")),
@@ -209,7 +209,7 @@ $arAllOptionsCommon = array(
 
 if (!IsModuleInstalled("intranet"))
 {
-	$arAllOptionsCommon[] = array("sonet_log_smart_filter", GetMessage("SONET_LOG_SMART_FILTER"), "N", Array("checkbox"));
+	$arAllOptionsCommon[] = array("sonet_log_smart_filter", GetMessage($bIntranet ? "SONET_LOG_SMART_FILTER2" : "SONET_LOG_SMART_FILTER"), "N", Array("checkbox"));
 }
 
 if (IsModuleInstalled("im"))
@@ -217,11 +217,8 @@ if (IsModuleInstalled("im"))
 	$arAllOptionsCommon[] = array("use_workgroup_chat", GetMessage("SONET_USE_WORKGROUP_CHAT"), "Y", Array("checkbox"));
 }
 
-if(strtolower($DB->type) == 'mysql')
-{
-	$fulltextIndexExists = $DB->IndexExists("b_sonet_log_index", array("CONTENT"));
-	$arAllOptionsCommon[] = array("use_lf_fulltext_index", GetMessage("SONET_USE_LF_FULLTEXT_INDEX"), ($fulltextIndexExists ? "Y" : "N"), array("checkbox"));
-}
+$fulltextIndexExists = $DB->IndexExists("b_sonet_log_index", array("CONTENT"));
+$arAllOptionsCommon[] = array("use_lf_fulltext_index", GetMessage($bIntranet ? "SONET_USE_LF_FULLTEXT_INDEX2" : "SONET_USE_LF_FULLTEXT_INDEX"), ($fulltextIndexExists ? "Y" : "N"), array("checkbox"));
 
 $arAllOptions = array(
 	array("allow_frields", GetMessage("SONET_ALLOW_FRIELDS"), "Y", Array("checkbox")),
@@ -382,7 +379,7 @@ $arAllOptionsGroupsGender[] = array("default_group_picture", GetMessage("SONET_G
 $strWarning = "";
 if (
 	$REQUEST_METHOD == "POST"
-	&& strlen($Update) > 0
+	&& $Update <> ''
 	&& $SONET_RIGHT == "W"
 	&& check_bitrix_sessid()
 )
@@ -417,7 +414,7 @@ if (
 			if ($arAllOptionsCommon[$i][0] == 'use_lf_fulltext_index')
 			{
 				if (
-					strtolower($DB->type) == 'mysql'
+					$DB->type == 'MYSQL'
 					&& $val == 'Y'
 				)
 				{
@@ -452,7 +449,7 @@ if (
 		}
 	}
 
-	$dbSites = CSite::GetList(($b = ""), ($o = ""), array("ACTIVE" => "Y"));
+	$dbSites = CSite::GetList('', '', array("ACTIVE" => "Y"));
 
 	$bFriendsDisabledForAllSites = true;
 	$bFriendsEnabledForAnySite = false;
@@ -585,10 +582,10 @@ if (
 
 				$checkRes = CFile::CheckImageFile($arPICTURE, 0, 0, 0);
 
-				if (strlen($checkRes) <= 0)
+				if ($checkRes == '')
 				{
 					$fid = CFile::SaveFile($arPICTURE, "socialnetwork");
-					if ($arPICTURE["del"] == "Y" || strlen($_FILES[$name]["name"]) > 0)
+					if ($arPICTURE["del"] == "Y" || $_FILES[$name]["name"] <> '')
 						COption::SetOptionInt("socialnetwork", $arAllOptionsUsersGender[$gender][$i][0], intval($fid), $arAllOptionsUsersGender[$gender][$i][1], $arSite["ID"]);
 				}
 				else
@@ -658,10 +655,10 @@ if (
 
 			$checkRes = CFile::CheckImageFile($arPICTURE, 0, 0, 0);
 
-			if (strlen($checkRes) <= 0)
+			if ($checkRes == '')
 			{
 				$fid = CFile::SaveFile($arPICTURE, "socialnetwork");
-				if ($arPICTURE["del"] == "Y" || strlen($_FILES[$name]["name"]) > 0)
+				if ($arPICTURE["del"] == "Y" || $_FILES[$name]["name"] <> '')
 					COption::SetOptionInt("socialnetwork", $arAllOptionsGroupsGender[$i][0], intval($fid), $arAllOptionsGroupsGender[$i][1], $arSite["ID"]);
 			}
 			else
@@ -787,7 +784,7 @@ if (
 	CBitrixComponent::clearComponentCache("bitrix:menu");
 }
 
-if (strlen($strWarning) > 0)
+if ($strWarning <> '')
 {
 	CAdminMessage::ShowMessage($strWarning);
 }
@@ -814,7 +811,7 @@ $arChildTabControlGroupCommon = new CAdminViewTabControl("childTabControlGroupCo
 
 $aSiteTabs = array();
 
-$dbSites = CSite::GetList(($b = ""), ($o = ""), array("ACTIVE" => "Y"));
+$dbSites = CSite::GetList('', '', array("ACTIVE" => "Y"));
 while ($arSite = $dbSites->Fetch())
 {
 	$aSiteTabs[] = array("DIV" => "opt_site_".$arSite["ID"], "TAB" => '['.$arSite["ID"].'] '.htmlspecialcharsbx($arSite["NAME"]), 'TITLE' => GetMessage('SONET_OPTIONS_FOR_SITE').' ['.$arSite["ID"].'] '.htmlspecialcharsbx($arSite["NAME"]));
@@ -858,7 +855,7 @@ $arChildTabControlSite = new CAdminViewTabControl("childTabControlSite", $aSiteT
 $siteList = array(
 	array("ID" => "all", "NAME" => GetMessage("SONET_ALL_SITES"))
 );
-$rsSites = CSite::GetList($by="sort", $order="asc", array("ACTIVE" => "Y"));
+$rsSites = CSite::GetList("sort", "asc", array("ACTIVE" => "Y"));
 $i = 1;
 while($arRes = $rsSites->Fetch())
 {
@@ -972,9 +969,9 @@ $tabControl->BeginNextTab();
 			}
 			elseif ($Option[0] == "livefeed_toall_rights")
 			{
-				$arToAllRights = unserialize($val);
+				$arToAllRights = unserialize($val, [ 'allowed_classes' => false ]);
 				if (!$arToAllRights)
-					$arToAllRights = unserialize($Option[2]);
+					$arToAllRights = unserialize($Option[2], [ 'allowed_classes' => false ]);
 
 				$access = new CAccess();
 				$arNames = $access->GetNames($arToAllRights);
@@ -1136,7 +1133,7 @@ $tabControl->BeginNextTab();
 
 				if (in_array($type[0], array("select_fields", "select_properties", "select_rating")))
 				{
-					$val = ($type[1] == true ? unserialize($val) : array($val)); // multiple select
+					$val = ($type[1] == true ? unserialize($val, [ 'allowed_classes' => false ]) : array($val)); // multiple select
 				}
 				?><tr>
 					<td <?=set_valign($type[0], $type[1])?> width="40%" align="right"><?

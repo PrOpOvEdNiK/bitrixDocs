@@ -18,6 +18,7 @@ class CCrmEvent
 	const TYPE_VIEW = 3;
 	const TYPE_EXPORT = 4;
 	const TYPE_DELETE = 5;
+	const TYPE_MERGER = 6;
 
 	/** @var array  */
 	private static $eventTypes = null;
@@ -143,7 +144,7 @@ class CCrmEvent
 	}
 	public function Share($srcEntity, $dstEntities, $typeName)
 	{
-		$typeName = strtoupper(strval($typeName));
+		$typeName = mb_strtoupper(strval($typeName));
 		if($typeName === '')
 		{
 			return;
@@ -468,22 +469,40 @@ class CCrmEvent
 		$sOrder = '';
 		foreach($arSort as $key => $val)
 		{
-			$ord = (strtoupper($val) <> 'ASC'? 'DESC':'ASC');
-			switch (strtoupper($key))
+			$ord = (mb_strtoupper($val) <> 'ASC'? 'DESC':'ASC');
+			switch(mb_strtoupper($key))
 			{
-				case 'ID':	$sOrder .= ', CER.ID '.$ord; break;
-				case 'CREATED_BY_ID':	$sOrder .= ', CE.CREATED_BY_ID '.$ord; break;
-				case 'EVENT_TYPE':	$sOrder .= ', CE.EVENT_TYPE '.$ord; break;
-				case 'ENTITY_TYPE':	$sOrder .= ', CER.ENTITY_TYPE '.$ord; break;
-				case 'ENTITY_ID':	$sOrder .= ', CER.ENTITY_ID '.$ord; break;
-				case 'EVENT_ID':	$sOrder .= ', CE.EVENT_ID '.$ord; break;
-				case 'DATE_CREATE':	$sOrder .= ', CE.DATE_CREATE '.$ord; break;
-				case 'EVENT_NAME':	$sOrder .= ', CE.EVENT_NAME 	 '.$ord; break;
-				case 'ENTITY_FIELD':	$sOrder .= ', CER.ENTITY_FIELD 	 '.$ord; break;
+				case 'ID':
+					$sOrder .= ', CER.ID '.$ord;
+					break;
+				case 'CREATED_BY_ID':
+					$sOrder .= ', CE.CREATED_BY_ID '.$ord;
+					break;
+				case 'EVENT_TYPE':
+					$sOrder .= ', CE.EVENT_TYPE '.$ord;
+					break;
+				case 'ENTITY_TYPE':
+					$sOrder .= ', CER.ENTITY_TYPE '.$ord;
+					break;
+				case 'ENTITY_ID':
+					$sOrder .= ', CER.ENTITY_ID '.$ord;
+					break;
+				case 'EVENT_ID':
+					$sOrder .= ', CE.EVENT_ID '.$ord;
+					break;
+				case 'DATE_CREATE':
+					$sOrder .= ', CE.DATE_CREATE '.$ord;
+					break;
+				case 'EVENT_NAME':
+					$sOrder .= ', CE.EVENT_NAME 	 '.$ord;
+					break;
+				case 'ENTITY_FIELD':
+					$sOrder .= ', CER.ENTITY_FIELD 	 '.$ord;
+					break;
 			}
 		}
 
-		if (strlen($sOrder)<=0)
+		if ($sOrder == '')
 			$sOrder = 'CER.ID DESC';
 
 		$strSqlOrder = ' ORDER BY '.TrimEx($sOrder,',');
@@ -638,7 +657,7 @@ class CCrmEvent
 			$dbItemResult = $this->cdb->Query("SELECT ID, FILES FROM b_crm_event WHERE ID = {$eventID}", false, $err_mess.__LINE__);
 			if($itemFields = $dbItemResult->Fetch())
 			{
-				$arFiles = isset($itemFields['FILES']) ? unserialize($itemFields['FILES']) : null;
+				$arFiles = isset($itemFields['FILES']) ? unserialize($itemFields['FILES'], ['allowed_classes' => false]) : null;
 				if(is_array($arFiles))
 				{
 					foreach($arFiles as $iFileId)
@@ -668,7 +687,7 @@ class CCrmEvent
 
 		$err_mess = (self::err_mess()).'<br>Function: Delete<br>Line: ';
 
-		$ID = IntVal($ID);
+		$ID = intval($ID);
 
 		$db_events = GetModuleEvents('crm', 'OnBeforeCrmEventDelete');
 		while($arEvent = $db_events->Fetch())
@@ -704,7 +723,7 @@ class CCrmEvent
 				$obRes = $this->cdb->Query("SELECT ID, FILES FROM b_crm_event WHERE ID = '$row[EVENT_ID]'", false, $err_mess.__LINE__);
 				if (($aRow = $obRes->Fetch()) !== false)
 				{
-					if (($arFiles = unserialize($aRow['FILES'])) !== false)
+					if (($arFiles = unserialize($aRow['FILES'], ['allowed_classes' => false])) !== false)
 					{
 						foreach ($arFiles as $iFileId)
 							CFile::Delete((int) $iFileId);
@@ -724,8 +743,8 @@ class CCrmEvent
 
 		$err_mess = (self::err_mess()).'<br>Function: SetAssignedByElement<br>Line: ';
 
-		$assignedId = IntVal($assignedId);
-		$entityId = IntVal($entityId);
+		$assignedId = intval($assignedId);
+		$entityId = intval($entityId);
 
 		if ($entityType == '' || $entityId == 0)
 			return false;
@@ -782,7 +801,8 @@ class CCrmEvent
 				self::TYPE_EMAIL => GetMessage('CRM_EVENT_TYPE_SNS'),
 				self::TYPE_VIEW => GetMessage('CRM_EVENT_TYPE_VIEW'),
 				self::TYPE_EXPORT => GetMessage('CRM_EVENT_TYPE_EXPORT'),
-				self::TYPE_DELETE => GetMessage('CRM_EVENT_TYPE_DELETE')
+				self::TYPE_DELETE => GetMessage('CRM_EVENT_TYPE_DELETE'),
+				self::TYPE_MERGER => GetMessage('CRM_EVENT_TYPE_MERGER'),
 			);
 		}
 		return self::$eventTypes;
@@ -813,6 +833,14 @@ class CCrmEvent
 		{
 			return false;
 		}
+		$user = \Bitrix\Main\UserTable::query()
+			->where('ID', $userID)
+			->setSelect(['IS_REAL_USER'])
+			->fetch();
+		if (!$user || $user['IS_REAL_USER'] !== 'Y')
+		{
+			return false;
+		}
 
 		$timestamp = time() + CTimeZone::GetOffset();
 		//Event grouping interval in seconds
@@ -820,6 +848,7 @@ class CCrmEvent
 
 		$query = new Bitrix\Main\Entity\Query(Bitrix\Crm\EventTable::getEntity());
 		$query->addSelect('DATE_CREATE');
+		$query->addSelect('CREATED_BY_ID');
 		$query->addFilter('=EVENT_TYPE', CCrmEvent::TYPE_VIEW);
 		$query->addFilter('>=DATE_CREATE', ConvertTimeStamp(($timestamp - $interval), 'FULL'));
 
@@ -830,12 +859,15 @@ class CCrmEvent
 		$query->addFilter('@ID', new Bitrix\Main\DB\SqlExpression($subQuery->getQuery()));
 
 		$query->addOrder('DATE_CREATE', 'DESC');
-		$query->setLimit(1);
+		$query->setLimit(50);
 
 		$dbResult = $query->exec();
-		if(is_array($dbResult->fetch()))
+		while ($event = $dbResult->fetch())
 		{
-			return false;
+			if ($event['CREATED_BY_ID'] == $userID)
+				{
+					return false;
+				}
 		}
 
 		$entity = new CCrmEvent();

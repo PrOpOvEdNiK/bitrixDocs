@@ -3,7 +3,8 @@ namespace Bitrix\Sale\Domain\Verification;
 
 use Bitrix\Main,
 	Bitrix\Landing,
-	Bitrix\Main\NotImplementedException;
+	Bitrix\Main\NotImplementedException,
+	Bitrix\Main\Event;
 
 /**
  * Class Manager
@@ -11,10 +12,12 @@ use Bitrix\Main,
  */
 abstract class BaseManager
 {
+	private const ON_BUILD_VERIFICATION_MANAGER_LIST = "onBuildVerificationManagerList";
+
 	/**
 	 * @return string
 	 */
-	abstract protected static function getPathPrefix(): string;
+	abstract public static function getPathPrefix(): string;
 
 	/**
 	 * @return string
@@ -61,7 +64,7 @@ abstract class BaseManager
 	 * @return array
 	 * @throws Main\LoaderException
 	 */
-	private static function getLandingSiteList() : array
+	public static function getLandingSiteList() : array
 	{
 		$landingSiteList = [];
 
@@ -95,7 +98,7 @@ abstract class BaseManager
 		$landingSiteList = self::getLandingSiteList();
 
 		$result = array_filter($landingSiteList, static function($site) use ($domain) {
-			return $site['DOMAIN_NAME'] === $domain;
+			return $site['SERVER_NAME'] === $domain;
 		});
 
 		return $result ? true : false;
@@ -155,9 +158,24 @@ abstract class BaseManager
 			]);
 		}
 
-		self::addUrlRewrite($data["DOMAIN"], $data["PATH"]);
+		$addResult = Internals\DomainVerificationTable::add($data);
+		if ($addResult->isSuccess())
+		{
+			if (self::canUseUrlRewrite($data["DOMAIN"]))
+			{
+				self::addUrlRewrite($data["DOMAIN"], $data["PATH"]);
+			}
+			elseif (self::isLandingSite($data["DOMAIN"]))
+			{
+				self::registerLandingEventHandler();
+			}
+			else
+			{
+				self::registerB24EventHandler();
+			}
+		}
 
-		return Internals\DomainVerificationTable::add($data);
+		return $addResult;
 	}
 
 	/**
@@ -212,9 +230,21 @@ abstract class BaseManager
 	public static function delete($id): Main\ORM\Data\DeleteResult
 	{
 		$domainVerificationData = Internals\DomainVerificationTable::getById($id)->fetch();
-		self::deleteUrlRewrite($domainVerificationData["DOMAIN"], $domainVerificationData["PATH"]);
 
-		return Internals\DomainVerificationTable::delete($id);
+		$deleteResult = Internals\DomainVerificationTable::delete($id);
+		if ($deleteResult->isSuccess())
+		{
+			if (self::canUseUrlRewrite($domainVerificationData["DOMAIN"]))
+			{
+				self::deleteUrlRewrite($domainVerificationData["DOMAIN"], $domainVerificationData["PATH"]);
+			}
+			else
+			{
+				self::unRegisterEventHandlers();
+			}
+		}
+
+		return $deleteResult;
 	}
 
 	/**
@@ -350,14 +380,6 @@ abstract class BaseManager
 		}
 
 		$site = current($site);
-		if (self::isLandingSite($site["SERVER_NAME"]))
-		{
-			$site = Main\SiteTable::getList([
-				"select" => ["ID" => "LID"],
-				"filter" => ["=DEF" => "Y"],
-			])->fetch();
-		}
-
 		if ($site["ID"])
 		{
 			return $site["ID"];
@@ -384,5 +406,152 @@ abstract class BaseManager
 			],
 			"limit" => 1
 		])->fetch();
+	}
+
+	/**
+	 * @return bool
+	 */
+	private static function isB24(): bool
+	{
+		return Main\ModuleManager::isModuleInstalled('bitrix24');
+	}
+
+	/**
+	 * @return array|string[]
+	 * @throws Main\LoaderException
+	 */
+	public static function getManagerList(): array
+	{
+		$handlerList = [
+			'\Bitrix\Sale\PaySystem\Domain\Verification\Manager' => '/bitrix/modules/sale/lib/paysystem/domain/verification/manager.php',
+		];
+
+		$event = new Event('sale', self::ON_BUILD_VERIFICATION_MANAGER_LIST);
+		$event->send();
+
+		$resultList = $event->getResults();
+		if (is_array($resultList) && !empty($resultList))
+		{
+			$customHandlerList = [];
+			foreach ($resultList as $eventResult)
+			{
+				/** @var  Main\EventResult $eventResult */
+				if ($eventResult->getType() === Main\EventResult::SUCCESS)
+				{
+					$params = $eventResult->getParameters();
+					if (!empty($params) && is_array($params))
+					{
+						$customHandlerList[] = $params;
+					}
+				}
+			}
+
+			$handlerList = array_merge($handlerList, ...$customHandlerList);
+		}
+
+		Main\Loader::registerAutoLoadClasses(null, $handlerList);
+
+		return $handlerList;
+	}
+
+	/**
+	 * @param $domain
+	 * @return bool
+	 * @throws Main\LoaderException
+	 */
+	private static function canUseUrlRewrite($domain): bool
+	{
+		return (!self::isB24() && !self::isLandingSite($domain));
+	}
+
+	private static function registerLandingEventHandler(): void
+	{
+		$eventManager = Main\EventManager::getInstance();
+		$handlers = $eventManager->findEventHandlers('landing', 'onPubHttpStatus');
+		$onPubHttStatus = array_filter($handlers, static function($handler) {
+			return $handler['TO_METHOD'] === 'landingDomainVerificationHandler';
+		});
+		if (!$onPubHttStatus)
+		{
+			$eventManager->registerEventHandler(
+				'landing',
+				'onPubHttpStatus',
+				'sale',
+				'\Bitrix\Sale\Domain\Verification\Service',
+				'landingDomainVerificationHandler'
+			);
+		}
+	}
+
+	private static function registerB24EventHandler(): void
+	{
+		$eventManager = Main\EventManager::getInstance();
+		$handlers = $eventManager->findEventHandlers('main', 'OnEpilog');
+		$onEpilog = array_filter($handlers, static function($handler) {
+			return $handler['TO_METHOD'] === 'b24DomainVerificationHandler';
+		});
+		if (!$onEpilog)
+		{
+			$eventManager->registerEventHandler(
+				'main',
+				'OnEpilog',
+				'sale',
+				'\Bitrix\Sale\Domain\Verification\Service',
+				'b24DomainVerificationHandler');
+		}
+	}
+
+	private static function unRegisterEventHandlers(): void
+	{
+		$domainVerificationList = Internals\DomainVerificationTable::getList()->fetchAll();
+
+		$needUnRegisterLandingHandler = true;
+		$needUnRegisterB24Handler = true;
+
+		foreach ($domainVerificationList as $domainVerification)
+		{
+			if (self::isLandingSite($domainVerification['DOMAIN']))
+			{
+				$needUnRegisterLandingHandler = false;
+			}
+			else
+			{
+				$needUnRegisterB24Handler = false;
+			}
+		}
+
+		if ($needUnRegisterLandingHandler)
+		{
+			self::unRegisterLandingEventHandler();
+		}
+
+		if ($needUnRegisterB24Handler)
+		{
+			self::unRegisterB24EventHandler();
+		}
+	}
+
+	private static function unRegisterLandingEventHandler(): void
+	{
+		$eventManager = Main\EventManager::getInstance();
+		$eventManager->unRegisterEventHandler(
+			'landing',
+			'onPubHttpStatus',
+			'sale',
+			'\Bitrix\Sale\Domain\Verification\Service',
+			'landingDomainVerificationHandler'
+		);
+	}
+
+	private static function unRegisterB24EventHandler(): void
+	{
+		$eventManager = Main\EventManager::getInstance();
+		$eventManager->unRegisterEventHandler(
+			'main',
+			'OnEpilog',
+			'sale',
+			'\Bitrix\Sale\Domain\Verification\Service',
+			'b24DomainVerificationHandler'
+		);
 	}
 }

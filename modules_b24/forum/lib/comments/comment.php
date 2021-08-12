@@ -6,6 +6,7 @@ use Bitrix\Forum\Internals\Error\ErrorCollection;
 use Bitrix\Forum\MessageTable;
 use Bitrix\Main\Config\Option;
 use Bitrix\Main\Loader;
+use Bitrix\Main\Web\Json;
 use \Bitrix\Main\Localization\Loc;
 use \Bitrix\Forum\Internals\Error\Error;
 use \Bitrix\Main\Event;
@@ -21,6 +22,8 @@ class Comment extends BaseObject
 	const ERROR_PARAMS_MESSAGE = 'params0006';
 	const ERROR_PERMISSION = 'params0007';
 	const ERROR_MESSAGE_IS_NULL = 'params0008';
+	const ERROR_PARAMS_TYPE = 'params0009';
+
 
 	/* @var integer */
 	private $id = 0;
@@ -39,7 +42,8 @@ class Comment extends BaseObject
 			"USE_SMILES" => ($params["USE_SMILES"] == "Y" ? "Y" : "N"),
 			"APPROVED" => $this->topic["APPROVED"],
 			"XML_ID" => $this->getEntity()->getXmlId(),
-			"AUX" => isset($params["AUX"]) ? $params["AUX"] : 'N',
+			"AUX" => ($params["AUX"] ?? 'N'),
+			"AUX_DATA" => ($params["AUX_DATA"] ?? ''),
 		);
 		if (array_key_exists("POST_DATE", $params))
 		{
@@ -50,12 +54,47 @@ class Comment extends BaseObject
 			$result["SOURCE_ID"] = $params["SOURCE_ID"];
 		}
 		$errorCollection = new ErrorCollection();
-		if (strlen($result["POST_MESSAGE"]) <= 0)
+		if (isset($params["SERVICE_TYPE"]))
+		{
+			if (!in_array($params["SERVICE_TYPE"], \Bitrix\Forum\Comments\Service\Manager::getTypesList()))
+			{
+				$errorCollection->addOne(new Error(Loc::getMessage("FORUM_CM_ERR_TYPE_INCORRECT"), self::ERROR_PARAMS_TYPE));
+			}
+			else
+			{
+				$result["SERVICE_TYPE"] = $params["SERVICE_TYPE"];
+				if (!isset($params["SERVICE_DATA"]))
+				{
+					if (($result["SERVICE_TYPE"] === \Bitrix\Forum\Comments\Service\Manager::TYPE_TASK_INFO ||
+						$result["SERVICE_TYPE"] === \Bitrix\Forum\Comments\Service\Manager::TYPE_TASK_CREATED)
+						&& JSon::decode($result["POST_MESSAGE"]) == $params["AUX_DATA"])
+					{
+						$params["SERVICE_DATA"] = $result["POST_MESSAGE"];
+						$result["POST_MESSAGE"] = "";
+					}
+					else
+					{
+						$params["SERVICE_DATA"] = Json::encode($params["AUX_DATA"] ?? []);
+					}
+				}
+				$result["SERVICE_DATA"] = $params["SERVICE_DATA"];
+				if ($result["POST_MESSAGE"] == "" &&
+					($handler = \Bitrix\Forum\Comments\Service\Manager::find(
+						["SERVICE_TYPE" => $result["SERVICE_TYPE"]]
+					)))
+				{
+					$result["POST_MESSAGE"] = $handler->getText($result["SERVICE_DATA"]);
+				}
+			}
+		}
+		if ($result["POST_MESSAGE"] == '')
+		{
 			$errorCollection->addOne(new Error(Loc::getMessage("FORUM_CM_ERR_EMPTY_TEXT"), self::ERROR_PARAMS_MESSAGE));
+		}
 
-		if (strlen($result["AUTHOR_NAME"]) <= 0 && $result["AUTHOR_ID"] > 0)
+		if ($result["AUTHOR_NAME"] == '' && $result["AUTHOR_ID"] > 0)
 			$result["AUTHOR_NAME"] = self::getUserName($result["AUTHOR_ID"]);
-		if (strlen($result["AUTHOR_NAME"]) <= 0)
+		if ($result["AUTHOR_NAME"] == '')
 			$errorCollection->addOne(new Error(Loc::getMessage("FORUM_CM_ERR_EMPTY_AUTHORS_NAME"), self::ERROR_PARAMS_MESSAGE));
 
 		if (is_array($params["FILES"]) && in_array($this->forum["ALLOW_UPLOAD"], array("Y", "F", "A")))
@@ -63,9 +102,9 @@ class Comment extends BaseObject
 			$result["FILES"] = array();
 			foreach ($params["FILES"] as $key => $val)
 			{
-				if (intval($val["FILE_ID"]) > 0)
+				if (intval($val["FILE_ID"]) > 0 && $val["del"] !== "Y")
 				{
-					$val["del"] = ($val["del"] == "Y" ? "Y" : "");
+					unset($val["del"]);
 				}
 				$result["FILES"][$key] = $val;
 			}
@@ -88,19 +127,27 @@ class Comment extends BaseObject
 		{
 			$result["APPROVED"] = ($this->forum["MODERATION"] != "Y" || $this->getEntity()->canModerate($this->getUser()->getId())) ? "Y" : "N";
 		}
-
 		if ($errorCollection->hasErrors())
 		{
 			$errorCollectionParam->add($errorCollection->toArray());
 			return false;
 		}
+
+		global $USER_FIELD_MANAGER;
+		if ($result["SERVICE_TYPE"])
+		{
+			$fields = $USER_FIELD_MANAGER->getUserFields("FORUM_MESSAGE");
+			if (($ufData = array_intersect_key($params, $fields)) && !empty($ufData))
+			{
+				$USER_FIELD_MANAGER->editFormAddFields("FORUM_MESSAGE", $result, ["FORM" => $ufData]);
+			}
+		}
 		else
 		{
-			global $USER_FIELD_MANAGER;
 			$USER_FIELD_MANAGER->editFormAddFields("FORUM_MESSAGE", $result);
-			$params = $result;
-			return true;
 		}
+		$params = $result;
+		return true;
 	}
 
 	private function updateStatisticModule($messageId)
@@ -132,7 +179,8 @@ class Comment extends BaseObject
 	 */
 	public function add(array $params)
 	{
-		$aux = (isset($params['AUX']) && $params['AUX'] == "Y");
+		$aux = (isset($params['AUX']) && $params['AUX'] === "Y");
+		$auxData = ($params['AUX_DATA'] ?? '');
 
 		$params = array(
 			"SOURCE_ID" => $params["SOURCE_ID"],
@@ -150,7 +198,13 @@ class Comment extends BaseObject
 			"AUTHOR_REAL_IP" => "<no address>",
 			"GUEST_ID" => $_SESSION["SESS_GUEST_ID"],
 
-			"AUX" => $params["AUX"]
+			"AUX" => $params["AUX"],
+			"AUX_DATA" => $auxData,
+			"SERVICE_TYPE" => ($params["SERVICE_TYPE"] ?? null),
+			"SERVICE_DATA" => ($params["SERVICE_DATA"] ?? null),
+
+			"UF_TASK_COMMENT_TYPE" => ($params["UF_TASK_COMMENT_TYPE"] ?? null),
+			'UF_FORUM_MES_URL_PRV' => ($params['UF_FORUM_MES_URL_PRV'] ?? null),
 		);
 
 		if ($this->prepareFields($params, $this->errorCollection))
@@ -159,11 +213,32 @@ class Comment extends BaseObject
 			{
 				$params["AUTHOR_IP"] = $realIp;
 				$params["AUTHOR_REAL_IP"] = $realIp;
-				if (\Bitrix\Main\Config\Option::get("forum", "FORUM_GETHOSTBYADDR", "N") == "Y")
+				if (\Bitrix\Main\Config\Option::get('forum', 'FORUM_GETHOSTBYADDR', 'N') === "Y")
 				{
 					$params["AUTHOR_REAL_IP"] = @gethostbyaddr($realIp);
 				}
 			}
+
+			/***************** Events OnBeforeCommentAdd ******************/
+			$event = new Event("forum", "OnBeforeCommentAdd", [
+				$this->getEntity()->getType(),
+				$this->getEntity()->getId(),
+				$params
+			]);
+			$event->send($this);
+			if($event->getResults())
+			{
+				foreach($event->getResults() as $eventResult)
+				{
+					if($eventResult->getType() != EventResult::SUCCESS)
+					{
+						$run = false;
+						break;
+					}
+				}
+			}
+			/***************** /Events *****************************************/
+
 			$topic = \Bitrix\Forum\Topic::getById($params["TOPIC_ID"]);
 			$result = \Bitrix\Forum\Message::create($topic, $params);
 
@@ -179,7 +254,10 @@ class Comment extends BaseObject
 
 				$this->setComment($mid);
 
-				if (!$aux)
+				if (
+					!$aux // create task from livefeed
+					|| $auxData <> '' // tasks commentposter, add to livefeed
+				)
 				{
 					$event = new Event("forum", "OnAfterCommentAdd", array(
 							$this->getEntity()->getType(),
@@ -188,7 +266,8 @@ class Comment extends BaseObject
 								"TOPIC_ID" => $this->topic["ID"],
 								"MESSAGE_ID" => $mid,
 								"PARAMS" => $params,
-								"MESSAGE" => $this->getComment()
+								"MESSAGE" => $this->getComment(),
+								"AUX_DATA" => $auxData
 							))
 					);
 					$event->send();
@@ -270,7 +349,7 @@ class Comment extends BaseObject
 						"EDIT_REASON" => trim($paramsRaw["EDIT_REASON"]),
 						"EDIT_DATE" => ""
 					);
-					if (strlen($params["EDITOR_NAME"]) <= 0)
+					if ($params["EDITOR_NAME"] == '')
 						$params["EDITOR_NAME"] = ($params["EDITOR_ID"] > 0 ? self::getUserName($params["EDITOR_ID"]) : Loc::getMessage("GUEST"));
 				}
 				$result = \Bitrix\Forum\Message::getById($this->message["ID"])->edit($params);

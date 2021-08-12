@@ -17,15 +17,8 @@ if (Main\Loader::includeModule("sale"))
 		/** @noinspection PhpVariableNamingConventionInspection */
 		global $APPLICATION;
 		$APPLICATION->restartBuffer();
-		header('Content-Type: text/plain');
 
-		$service = new Sale\Domain\Verification\Service($domainVerification);
-		if (Sale\Domain\Verification\BaseManager::isLandingSite($service->getDomain()))
-		{
-			$service->setPubHttpStatusHandler();
-		}
-
-		$service->setEndBufferContentHandler();
+		Sale\Domain\Verification\Service::setEndBufferContentHandler($domainVerification["CONTENT"]);
 	}
 	else
 	{

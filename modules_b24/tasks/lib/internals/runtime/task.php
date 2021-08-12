@@ -339,7 +339,7 @@ final class Task extends \Bitrix\Tasks\Internals\Runtime
 				{
 					$fields[$v->getName()] = true;
 				}
-				else
+				elseif (is_array($v))
 				{
 					$type = $v['data_type'];
 					if($type == 'integer' || $type == 'string' || $type == 'boolean' || $type == 'datetime')
@@ -416,13 +416,13 @@ final class Task extends \Bitrix\Tasks\Internals\Runtime
 
 			$subordinate = Intranet\Internals\Runtime\UserDepartment::getSubordinateFilter(array(
 				'USER_ID' => $parameters['USER_ID'],
-				'REF_FIELD' => 'this.TM'
+				'REF_FIELD' => 'TM.USER_ID',
 			));
 
 			$query = new Entity\Query(TaskTable::getEntity());
 			$query->setSelect(['TASK_ID' => 'ID']);
 			$query->registerRuntimeField('', $memberReference);
-			$query->registerRuntimeField('', $subordinate['runtime'][0]);
+			self::apply($query, [$subordinate]);
 
 			$query = static::setRuntimeOptionsForQuery($runtimeOptions, $query);
 

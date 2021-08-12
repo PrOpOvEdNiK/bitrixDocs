@@ -16,6 +16,10 @@ use Bitrix\Main\ArgumentException;
 use Bitrix\Main\NotImplementedException;
 use Bitrix\Main\ObjectException;
 use Bitrix\Main\SystemException;
+use Bitrix\Tasks\Access\ActionDictionary;
+use Bitrix\Tasks\Access\Permission\PermissionDictionary;
+use Bitrix\Tasks\Access\Permission\TasksTemplatePermissionTable;
+use Bitrix\Tasks\Access\TemplateAccessController;
 use Bitrix\Tasks\CheckList\Template\TemplateCheckListFacade;
 use Bitrix\Tasks\Manager;
 use Bitrix\Tasks\Integration;
@@ -31,6 +35,11 @@ final class Template extends \Bitrix\Tasks\Dispatcher\PublicAction
 	 */
 	public function get($id, array $parameters = array())
 	{
+		if (!TemplateAccessController::can(Util\User::getId(), ActionDictionary::ACTION_TEMPLATE_READ, $id))
+		{
+			return [];
+		}
+
 		// todo: field access policy here?
 		$select = array();
 		if(array_key_exists('select', $parameters) && count($parameters['select']))
@@ -95,40 +104,65 @@ final class Template extends \Bitrix\Tasks\Dispatcher\PublicAction
 	{
 		$result = array();
 
+		if (!TemplateAccessController::can(Util\User::getId(), ActionDictionary::ACTION_TEMPLATE_CREATE))
+		{
+			return $result;
+		}
+
 		// todo: check $data here, check for publicly-readable\writable keys\values
 
 		$this->prepareMembers($data);
 		$this->prepareReplicateParams($data);
 
-		if ($this->errors->checkNoFatals())
+		if (!$this->errors->checkNoFatals())
 		{
-			$analyticsData = Manager\Task\Template::getAnalyticsData($data);
+			return $result;
+		}
 
-			$checkListItems = ($data['SE_CHECKLIST']?: []);
-			unset($data['SE_CHECKLIST']);
+		$analyticsData = Manager\Task\Template::getAnalyticsData($data);
 
-			$template = new Item\Task\Template($data);
-			$saveResult = $template->save();
+		$checkListItems = ($data['SE_CHECKLIST']?: []);
+		unset($data['SE_CHECKLIST']);
 
-			$this->errors->load($saveResult->getErrors());
+		$templatePermissions = null;
+		if (array_key_exists('SE_TEMPLATE_ACCESS', $data))
+		{
+			$templatePermissions = $data['SE_TEMPLATE_ACCESS'];
+			unset($data['SE_TEMPLATE_ACCESS']);
+		}
 
-			$templateId = $template->getId();
+		$template = new Item\Task\Template($data);
+		$saveResult = $template->save();
 
-			if ($templateId)
+		$this->errors->load($saveResult->getErrors());
+
+		$templateId = $template->getId();
+
+		if (!$templateId)
+		{
+			return $result;
+		}
+
+		$result['ID'] = $templateId;
+
+		$mergeResult = TemplateCheckListFacade::merge(
+			$templateId,
+			Util\User::getId(),
+			$checkListItems,
+			['analyticsData' => $analyticsData]
+		);
+		if (!$mergeResult->isSuccess())
+		{
+			$saveResult->loadErrors($mergeResult->getErrors());
+		}
+		// todo: also DATA and CAN keys here...
+
+		if ($templatePermissions !== null)
+		{
+			$res = $this->saveTemplatePermissions($template, $templatePermissions);
+			if (!$res->isSuccess())
 			{
-				$result['ID'] = $templateId;
-
-				$mergeResult = TemplateCheckListFacade::merge(
-					$templateId,
-					Util\User::getId(),
-					$checkListItems,
-					['analyticsData' => $analyticsData]
-				);
-				if (!$mergeResult->isSuccess())
-				{
-					$saveResult->loadErrors($mergeResult->getErrors());
-				}
-				// todo: also DATA and CAN keys here...
+				$saveResult->loadErrors($res->getErrors());
 			}
 		}
 
@@ -152,6 +186,11 @@ final class Template extends \Bitrix\Tasks\Dispatcher\PublicAction
 			return $result;
 		}
 
+		if (!TemplateAccessController::can(Util\User::getId(), ActionDictionary::ACTION_TEMPLATE_EDIT, $id))
+		{
+			return $result;
+		}
+
 		$result['ID'] = $id;
 
 		// todo: check $data here, check for publicly-readable\writable keys\values
@@ -166,11 +205,18 @@ final class Template extends \Bitrix\Tasks\Dispatcher\PublicAction
 			$checkListItems = $data['SE_CHECKLIST'];
 			unset($data['SE_CHECKLIST']);
 
+			$templatePermissions = null;
+			if (array_key_exists('SE_TEMPLATE_ACCESS', $data))
+			{
+				$templatePermissions = $data['SE_TEMPLATE_ACCESS'];
+				unset($data['SE_TEMPLATE_ACCESS']);
+			}
+
 			$template = new Item\Task\Template($id);
 			$template->setData($data);
 			$saveResult = $template->save();
 
-			if ($checkListItems && $saveResult->isSuccess())
+			if ($saveResult->isSuccess() && $checkListItems)
 			{
 				$mergeResult = TemplateCheckListFacade::merge(
 					$id,
@@ -181,6 +227,18 @@ final class Template extends \Bitrix\Tasks\Dispatcher\PublicAction
 				if (!$mergeResult->isSuccess())
 				{
 					$saveResult->loadErrors($mergeResult->getErrors());
+				}
+			}
+
+			if (
+				$saveResult->isSuccess()
+				&& $templatePermissions !== null
+			)
+			{
+				$res = $this->saveTemplatePermissions($template, $templatePermissions);
+				if (!$res->isSuccess())
+				{
+					$saveResult->loadErrors($res->getErrors());
 				}
 			}
 
@@ -198,6 +256,11 @@ final class Template extends \Bitrix\Tasks\Dispatcher\PublicAction
 		$result = array();
 
 		if(!($id = $this->checkId($id)))
+		{
+			return $result;
+		}
+
+		if (!TemplateAccessController::can(Util\User::getId(), ActionDictionary::ACTION_TEMPLATE_EDIT, $id))
 		{
 			return $result;
 		}
@@ -232,6 +295,47 @@ final class Template extends \Bitrix\Tasks\Dispatcher\PublicAction
 	public function stopReplication($id)
 	{
 		return $this->toggleReplication($id, false);
+	}
+
+	private function saveTemplatePermissions($template, array $permissions)
+	{
+		$res = new Util\Result();
+
+		$permissions = array_values($permissions);
+
+		/**
+		 * Delete all permissions if anyone gets new access
+		 */
+		if (!empty($permissions) && is_array($permissions[0]))
+		{
+			TasksTemplatePermissionTable::deleteList([
+				'=TEMPLATE_ID' => $template->getId()
+			]);
+		}
+		else
+		{
+			TasksTemplatePermissionTable::deleteList([
+				'=TEMPLATE_ID' => $template->getId(),
+				'!=ACCESS_CODE' => 'U'.Util\User::getId()
+			]);
+		}
+
+		foreach ($permissions as $permission)
+		{
+			if (empty($permission))
+			{
+				continue;
+			}
+
+			TasksTemplatePermissionTable::add([
+				'TEMPLATE_ID' 		=> $template->getId(),
+				'ACCESS_CODE' 		=> $permission['GROUP_CODE'],
+				'PERMISSION_ID' 	=> $permission['PERMISSION_ID'],
+				'VALUE' 			=> PermissionDictionary::VALUE_YES
+			]);
+		}
+
+		return $res;
 	}
 
 	private function toggleReplication($id, $way)

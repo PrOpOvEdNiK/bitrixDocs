@@ -1,3 +1,0 @@
-<?
-$MESS["P_GALLERY_SIZE_RECALC_CONTINUE"] = "Kontynuuj";
-?>

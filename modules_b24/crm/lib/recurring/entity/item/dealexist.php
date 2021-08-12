@@ -218,13 +218,13 @@ class DealExist extends DealEntity
 		$fields['STAGE_ID'] = \CCrmDeal::GetStartStageID($fields['CATEGORY_ID']);
 
 		$beginDate = $this->calculateBeginDate();
-		if (strlen($beginDate) > 0)
+		if ($beginDate <> '')
 		{
 			$fields['BEGINDATE'] = $beginDate;
 		}
 
 		$closeDate = $this->calculateCloseDate();
-		if (strlen($closeDate) > 0)
+		if ($closeDate <> '')
 		{
 			$fields['CLOSEDATE'] = $closeDate;
 		}
@@ -367,7 +367,8 @@ class DealExist extends DealEntity
 			$arErrors
 		);
 
-		Automation\Factory::runOnAdd(\CCrmOwnerType::Deal, $newId);
+		$starter = new Automation\Starter(\CCrmOwnerType::Deal, $newId);
+		$starter->runOnAdd();
 
 		$event = new Main\Event("crm", static::ON_DEAL_RECURRING_EXPOSE_EVENT, [
 			'ID' => $this->id,

@@ -1,5 +1,0 @@
-<?
-$MESS["CRM_AUTOMATION_DELAY_ACTIVITY"] = "Pausa";
-$MESS["CRM_AUTOMATION_PARALLEL_ACTIVITY"] = "Execução paralela";
-$MESS["CRM_AUTOMATION_TEMPLATE_NAME"] = "Modelo de automação (#STATUS#)";
-?>

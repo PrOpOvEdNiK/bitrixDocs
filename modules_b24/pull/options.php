@@ -20,9 +20,9 @@ $aTabs = array(
 );
 $tabControl = new CAdminTabControl("tabControl", $aTabs);
 $registrationErrors = [];
-if(strlen($_POST['Update'].$_GET['RestoreDefaults'])>0 && check_bitrix_sessid() && $MOD_RIGHT>='W')
+if($_POST['Update'].$_GET['RestoreDefaults'] <> '' && check_bitrix_sessid() && $MOD_RIGHT>='W')
 {
-	if(strlen($_GET['RestoreDefaults'])>0)
+	if($_GET['RestoreDefaults'] <> '')
 	{
 		$arDefValues = $arDefaultValues['default'];
 		foreach($arDefValues as $key=>$value)
@@ -31,7 +31,7 @@ if(strlen($_POST['Update'].$_GET['RestoreDefaults'])>0 && check_bitrix_sessid() 
 		}
 		COption::RemoveOption("pull", 'exclude_sites');
 	}
-	elseif(strlen($_POST['Update'])>0)
+	elseif($_POST['Update'] <> '')
 	{
 		if ($_POST['push_server_mode'] === 'N')
 		{
@@ -160,7 +160,7 @@ if(strlen($_POST['Update'].$_GET['RestoreDefaults'])>0 && check_bitrix_sessid() 
 			foreach ($_POST['exclude_sites'] as $site)
 			{
 				$site = htmlspecialcharsbx(trim($site));
-				if (strlen($site) <= 0)
+				if ($site == '')
 					continue;
 
 				$arSites[$site] = $site;
@@ -183,7 +183,7 @@ foreach ($ar as $key => $value)
 	$arDependentModule[] = $value['MODULE_ID'];
 
 
-$dbSites = CSite::GetList(($b = ""), ($o = ""), Array("ACTIVE" => "Y"));
+$dbSites = CSite::GetList('', '', Array("ACTIVE" => "Y"));
 $arSites = array();
 $aSubTabs = array();
 while ($site = $dbSites->Fetch())
@@ -313,29 +313,8 @@ $arExcludeSites = CPullOptions::GetExcludeSites();
 	</tr>
 	<tbody id="pull_local_settings" style="<?= \CPullOptions::IsServerShared() || !CPullOptions::GetQueueServerStatus() ? "display: none" : ""?>">
 	<tr>
-		<td width="40%"><nobr><?=GetMessage("PULL_OPTIONS_NGINX_VERSION")?></nobr>:</td>
+		<td width="40%" valign="top" style="padding-top:9px"><nobr><?=GetMessage("PULL_OPTIONS_NGINX_VERSION")?></nobr>:</td>
 		<td width="60%">
-			<nobr>
-				<label>
-					<input type="radio" id="config_nginx_version_1" value="1" name="nginx_version" <?=(CPullOptions::GetQueueServerVersion() == 1?' checked':'')?>>
-					<?=GetMessage("PULL_OPTIONS_NGINX_VERSION_034")?>
-				</label>
-			</nobr>
-			<br>
-			<nobr>
-				<label>
-					<input type="radio" id="config_nginx_version_2" value="2" name="nginx_version" <?=(CPullOptions::GetQueueServerVersion() == 2?' checked':'')?>>
-					<?=GetMessage("PULL_OPTIONS_NGINX_VERSION_040")?>
-				</label>
-			</nobr>
-			<br>
-			<nobr>
-				<label>
-					<input type="radio" id="config_nginx_version_3" value="3" name="nginx_version" <?=(CPullOptions::GetQueueServerVersion() == 3?' checked':'')?>>
-					<?=GetMessage("PULL_OPTIONS_NGINX_VERSION_710")?>
-				</label>
-			</nobr>
-			<br>
 			<nobr>
 				<label>
 					<input type="radio" id="config_nginx_version_4" value="4" name="nginx_version" <?=(CPullOptions::GetQueueServerVersion() == 4?' checked':'')?>>
@@ -343,6 +322,32 @@ $arExcludeSites = CPullOptions::GetExcludeSites();
 				</label>
 			</nobr>
 			<br>
+			<br>
+			<div style="border: 1px solid darkred; padding: 10px">
+				<div style="padding-bottom: 5px">
+					<b><?=GetMessage('PULL_NOTIFY_OUTDATED');?></b>
+				</div>
+				<nobr>
+					<label>
+						<input type="radio" id="config_nginx_version_3" value="3" name="nginx_version" <?=(CPullOptions::GetQueueServerVersion() == 3?' checked':'')?>>
+						<?=GetMessage("PULL_OPTIONS_NGINX_VERSION_710")?>
+					</label>
+				</nobr>
+				<br>
+				<nobr>
+					<label>
+						<input type="radio" id="config_nginx_version_2" value="2" name="nginx_version" <?=(CPullOptions::GetQueueServerVersion() == 2?' checked':'')?>>
+						<?=GetMessage("PULL_OPTIONS_NGINX_VERSION_040")?>
+					</label>
+				</nobr>
+				<br>
+				<nobr>
+					<label>
+						<input type="radio" id="config_nginx_version_1" value="1" name="nginx_version" <?=(CPullOptions::GetQueueServerVersion() == 1?' checked':'')?>>
+						<?=GetMessage("PULL_OPTIONS_NGINX_VERSION_034")?>
+					</label>
+				</nobr>
+			</div>
 		</td>
 	</tr>
 	<tr class="heading">
@@ -410,23 +415,25 @@ $arExcludeSites = CPullOptions::GetExcludeSites();
 		</td>
 	</tr>
 	<?if (count($arSites) > 1 || count($arExcludeSites) > 0):?>
-	<tr class="heading">
-		<td colspan="2"><b><?=GetMessage('PULL_OPTIONS_HEAD_BLOCK')?></b></td>
-	</tr>
-	<tr valign="top">
-		<td><?=GetMessage("PULL_OPTIONS_SITES")?>:</td>
-		<td>
-			<select name="exclude_sites[]" multiple size="4">
-				<option value=""></option>
-			<?foreach($arSites as $site):?>
-				<option value="<?=$site['ID']?>" <?=(isset($arExcludeSites[$site['ID']])?' selected':'')?>><? echo $site['NAME'].' ['.$site['ID'].']'?></option>
-			<?endforeach;?>
-			</select>
-		</td>
-	</tr>
+		<tbody id="pull_disabled_sites">
+		<tr class="heading">
+			<td colspan="2"><b><?=GetMessage('PULL_OPTIONS_HEAD_BLOCK')?></b></td>
+		</tr>
+		<tr valign="top">
+			<td><?=GetMessage("PULL_OPTIONS_SITES")?>:</td>
+			<td>
+				<select name="exclude_sites[]" multiple size="4">
+					<option value=""></option>
+					<?foreach($arSites as $site):?>
+						<option value="<?=$site['ID']?>" <?=(isset($arExcludeSites[$site['ID']])?' selected':'')?>><? echo $site['NAME'].' ['.$site['ID'].']'?></option>
+					<?endforeach;?>
+				</select>
+			</td>
+		</tr>
+		</tbody>
 	<?endif;?>
 
-<?$tabControl->Buttons();?>
+	<?$tabControl->Buttons();?>
 <script language="JavaScript">
 BX.bind(BX('push_enable'), 'change', function(){
 	BX('push_message_per_hit').disabled = !this.checked;
@@ -437,23 +444,36 @@ BX.bind(BX('push_server_mode'), 'bxchange', function() {
 	var disabledServerSection = BX("pull_disabled");
 	var sharedServerSettings = BX("pull_cloud_settings");
 	var localServerSettings = BX("pull_local_settings");
+	var disabledSites = BX("pull_disabled_sites");
 	if (mode == "N")
 	{
 		disabledServerSection.style.removeProperty("display");
 		sharedServerSettings.style.display = "none";
 		localServerSettings.style.display = "none";
+		if(disabledSites)
+		{
+			disabledSites.style.display = "none";
+		}
 	}
 	else if (mode == "<?=CPullOptions::SERVER_MODE_PERSONAL?>")
 	{
 		disabledServerSection.style.display = "none";
 		sharedServerSettings.style.display = "none";
 		localServerSettings.style.removeProperty("display");
+		if(disabledSites)
+		{
+			disabledSites.style.removeProperty("display");
+		}
 	}
 	else
 	{
 		disabledServerSection.style.display = "none";
 		sharedServerSettings.style.removeProperty("display");
 		localServerSettings.style.display = "none";
+		if(disabledSites)
+		{
+			disabledSites.style.removeProperty("display");
+		}
 	}
 });
 

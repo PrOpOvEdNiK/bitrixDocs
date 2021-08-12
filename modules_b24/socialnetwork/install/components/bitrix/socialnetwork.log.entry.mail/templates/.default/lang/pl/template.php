@@ -1,4 +1,0 @@
-<?
-$MESS["SLEM_TEMPLATE_ADD_COMMENT_LINK"] = "Komentuj";
-$MESS["SLEM_TEMPLATE_LIKE"] = "Lubię";
-?>

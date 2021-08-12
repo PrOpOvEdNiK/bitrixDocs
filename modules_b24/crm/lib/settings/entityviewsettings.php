@@ -2,6 +2,7 @@
 namespace Bitrix\Crm\Settings;
 
 use Bitrix\Crm;
+use Bitrix\Main\Type\Date;
 
 class EntityViewSettings
 {
@@ -87,7 +88,8 @@ class EntityViewSettings
 	 */
 	public function getViewID($entityTypeID)
 	{
-		$entityTypeName = strtolower(\CCrmOwnerType::ResolveName($entityTypeID));
+		/** @var string $entityTypeName */
+		$entityTypeName = mb_strtolower(\CCrmOwnerType::ResolveName($entityTypeID));
 		if($entityTypeName === '')
 		{
 			return self::UNDEFINED;
@@ -102,7 +104,7 @@ class EntityViewSettings
 		$value = $index[$entityTypeName];
 		$parts = explode(':', $value);
 		return self::resolveID(
-			strtoupper(is_array($parts) && count($parts) >= 2 ? $parts[0] : $value)
+			mb_strtoupper(is_array($parts) && count($parts) >= 2? $parts[0] : $value)
 		);
 	}
 
@@ -136,9 +138,7 @@ class EntityViewSettings
 			return $settings['firstPageLink'];
 		}
 
-		$entityTypeName = strtolower(
-			Crm\Settings\LeadSettings::isEnabled() ? \CCrmOwnerType::LeadName : \CCrmOwnerType::DealName
-		);
+		$entityTypeName = mb_strtolower(Crm\Settings\LeadSettings::isEnabled()? \CCrmOwnerType::LeadName : \CCrmOwnerType::DealName);
 		return "/crm/{$entityTypeName}/?redirect_to";
 	}
 }

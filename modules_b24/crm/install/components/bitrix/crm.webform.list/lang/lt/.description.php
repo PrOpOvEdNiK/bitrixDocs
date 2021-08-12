@@ -1,6 +1,0 @@
-<?
-$MESS["CRM_WEBFORM_LIST_NAME"] = "CRM formos";
-$MESS["CRM_WEBFORM_LIST_DESCRIPTION"] = "CRM formų sąrašas";
-$MESS["CRM_NAME"] = "CRM";
-$MESS["CRM_WEBFORM_NAME"] = "CRM formos";
-?>

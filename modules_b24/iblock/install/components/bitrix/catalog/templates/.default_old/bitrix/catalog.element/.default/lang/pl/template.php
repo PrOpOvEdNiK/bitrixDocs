@@ -1,5 +1,0 @@
-<?
-$MESS["COMMENTARY"] = "Komentarze";
-$MESS["CT_BCE_CATALOG_BTN_MESSAGE_CLOSE"] = "Zamknij";
-$MESS["CT_BCE_CATALOG_BTN_SEND_PROPS"] = "Wybierz";
-?>

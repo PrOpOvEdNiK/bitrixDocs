@@ -1,4 +1,4 @@
-<?
+<?php
 $className = "CXMPPStream";
 $classVersion = 2;
 
@@ -51,7 +51,7 @@ if (!class_exists("CXMPPStream"))
 					if (CXMPPUtility::SelectDatabase($senderClient->GetClientDomain()))
 					{
 						$bAllowSasl = false;
-						if (strlen($version) > 0)
+						if ($version <> '')
 						{
 							$ar = explode(".", $version);
 							$majorV = intval($ar[0]);
@@ -93,7 +93,7 @@ if (!class_exists("CXMPPStream"))
 			{
 				$mechanism = "PLAIN";
 				if (array_key_exists("mechanism", $arMessage["auth"]["."]))
-					$mechanism = strtoupper($arMessage["auth"]["."]["mechanism"]);
+					$mechanism = mb_strtoupper($arMessage["auth"]["."]["mechanism"]);
 
 				$message = '';
 
@@ -101,9 +101,9 @@ if (!class_exists("CXMPPStream"))
 				{
 					$r = base64_decode($arMessage["auth"]["#"]);
 
-					if (strlen($r) > 0)
+					if ($r <> '')
 					{
-						if (substr($r, 0, 1) == "\x00")
+						if (mb_substr($r, 0, 1) == "\x00")
 							$r = "z".$r;
 
 						$arResp = explode("\x00", $r);
@@ -112,7 +112,7 @@ if (!class_exists("CXMPPStream"))
 						$login = $arResp[1];
 						$pwd = $arResp[2];
 
-						if (strlen($login) > 0)
+						if ($login <> '')
 						{
 							$authResult = $GLOBALS["USER"]->Login($login, $pwd, "N");
 							CXMPPUtility::Show("!S ".$login.": ".(is_array($authResult) ? Print_R($authResult, true) : $authResult), 0);
@@ -214,4 +214,3 @@ if (!class_exists("CXMPPStream"))
 		}
 	}
 }
-?>

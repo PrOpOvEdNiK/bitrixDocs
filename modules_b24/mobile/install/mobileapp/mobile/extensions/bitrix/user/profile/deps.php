@@ -1,2 +1,0 @@
-<?
-return ["files", "task", "disk"];

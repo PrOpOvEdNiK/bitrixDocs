@@ -16,7 +16,7 @@ class CacheProvider extends StaticCacheProvider
 	{
 	}
 
-	public static  function getObject()
+	public static function getObject()
 	{
 		return new self();
 	}
@@ -90,7 +90,8 @@ class CacheProvider extends StaticCacheProvider
 
 			if ($sendHeader === true)
 			{
-				header("X-Bitrix-Composite-Delete:".md5(\CHTMLPagesCache::getHttpHost().$privateKey));
+				$response = \Bitrix\Main\Context::getCurrent()->getResponse();
+				$response->addHeader("X-Bitrix-Composite-Delete", md5(\CHTMLPagesCache::getHttpHost().$privateKey));
 			}
 		}
 	}
@@ -108,7 +109,7 @@ class CacheProvider extends StaticCacheProvider
 				"=ACTIVE" => "Y",
 				"=CONFIRM_CODE" => false,
 				"!UF_DEPARTMENT" => false,
-				"!=EXTERNAL_AUTH_ID" => array("replica", "email", "bot", "imconnector")
+				"=IS_REAL_USER" => "Y"
 			)
 		));
 
@@ -117,6 +118,7 @@ class CacheProvider extends StaticCacheProvider
 			self::deleteUserCache($user["ID"], false);
 		}
 
-		header("X-Bitrix-Composite-Delete:All");
+		$response = \Bitrix\Main\Context::getCurrent()->getResponse();
+		$response->addHeader("X-Bitrix-Composite-Delete", "All");
 	}
 }

@@ -1,4 +1,0 @@
-<?
-$MESS["I_BLOCK_ELEMENT_PROXY_ENTITY_NAME"] = "Pavadinimas";
-$MESS["I_BLOCK_ELEMENT_GRC_PROXY_ENTITY_NAME"] = "Sandorio produktai";
-?>

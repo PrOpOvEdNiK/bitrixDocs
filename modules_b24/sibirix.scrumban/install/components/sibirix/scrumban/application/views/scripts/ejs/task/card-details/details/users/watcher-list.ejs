@@ -1,7 +1,0 @@
-<script type='text/ejs' id='taskWatcherList'>
-    <dt><?= $this->t('WATCHERS') ?>:<i class='hiddenCopyableText'> </i></dt>
-    <dd class="responsibles">
-        <% for (var indexWatcher=0;watcher.length > indexWatcher;indexWatcher++) { if (watcher[indexWatcher].user && watcher[indexWatcher].user.id == currentUser) { %><%== $.View('taskWatcherItem', watcher[indexWatcher]) %><% } } %>
-        <% for (var indexWatcher=0;watcher.length > indexWatcher;indexWatcher++) { if (watcher[indexWatcher].user && watcher[indexWatcher].user.id != currentUser) { %><%== $.View('taskWatcherItem', watcher[indexWatcher]) %><% } } %><div title="<?= $this->t('ADD_A_MEMBER') ?>" class="add"></div>
-    </dd>
-</script>

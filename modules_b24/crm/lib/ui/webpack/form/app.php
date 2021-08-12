@@ -44,7 +44,7 @@ class App extends Webpack\Base
 		}
 		else
 		{
-			return '\\Bitrix\\Crm\\UI\\Webpack\\Form\\App::rebuildAgent();';
+			return static::class . '::rebuildAgent();';
 		}
 	}
 
@@ -59,5 +59,11 @@ class App extends Webpack\Base
 		$this->fileName = 'app.js';
 		$this->addExtension('crm.site.form.embed');
 		$this->embeddedModuleName = 'crm.site.form.loader';
+	}
+
+	protected function configureFile()
+	{
+		$this->fileDir = 'form';
+		$this->fileName = 'app.js';
 	}
 }

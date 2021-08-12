@@ -10,6 +10,7 @@ class CVoxImplantAccount
 	const ACCOUNT_CURRENCY = "account_currency";
 	const ACCOUNT_BALANCE = "account_balance";
 	const ACCOUNT_NAME = "account_name";
+	const LAST_TOP_UP_TIMESTAMP = "last_top_up_timestamp";
 
 	private $account_name = null;
 	private $account_balance = 0;
@@ -25,11 +26,6 @@ class CVoxImplantAccount
 
 	public function UpdateAccountInfo($accountInfo = null)
 	{
-		if(\Bitrix\Voximplant\Limits::isRestOnly())
-		{
-			return false;
-		}
-
 		if(is_null($accountInfo))
 		{
 			$ViHttp = new CVoxImplantHttp();
@@ -79,10 +75,10 @@ class CVoxImplantAccount
 
 	public function GetAccountName()
 	{
-		if (strlen($this->account_name)<=0)
+		if ($this->account_name == '')
 		{
 			$this->account_name = COption::GetOptionString("voximplant", self::ACCOUNT_NAME);
-			if (strlen($this->account_name)<=0)
+			if ($this->account_name == '')
 			{
 				if (!$this->UpdateAccountInfo())
 				{
@@ -102,43 +98,51 @@ class CVoxImplantAccount
 
 	public function SetAccountBalance($balance)
 	{
-		if ($this->account_balance == $balance)
+		$isTopUp = ($balance > $this->GetAccountBalance());
+		if ($this->GetAccountBalance() == $balance)
 		{
 			return true;
 		}
 		$this->account_balance = floatval($balance);
 
 		COption::SetOptionString("voximplant", self::ACCOUNT_BALANCE, $this->account_balance);
+		if ($isTopUp)
+		{
+			COption::SetOptionString("voximplant", self::LAST_TOP_UP_TIMESTAMP, time());
+		}
 
 		\Bitrix\Voximplant\Integration\Pull::sendBalanceUpdate($this->account_balance, $this->GetAccountCurrency(false));
 
 		return true;
 	}
 
+	public function GetLastTopUpTimestamp()
+	{
+		return COption::GetOptionInt("voximplant", self::LAST_TOP_UP_TIMESTAMP, 0);
+	}
+
 	public function GetAccountBalance($liveBalance = false)
 	{
-		if ($liveBalance)
-			$this->UpdateAccountInfo();
+		$updateResult = $liveBalance ? $this->UpdateAccountInfo() : false;
 
-		if (floatval($this->account_balance)<=0)
+		if($liveBalance && !$updateResult)
 		{
-			$this->account_balance = COption::GetOptionString("voximplant", self::ACCOUNT_BALANCE, 0);
-			if (floatval($this->account_balance)<=0)
-			{
-				if (!$liveBalance && !$this->UpdateAccountInfo())
-				{
-					return false;
-				}
-			}
+			return false;
 		}
-		return floatval($this->account_balance);
+
+		if ($this->account_balance <= 0)
+		{
+			$this->account_balance = (float)COption::GetOptionString("voximplant", self::ACCOUNT_BALANCE, 0);
+		}
+
+		return (float)$this->account_balance;
 	}
 
 	public function GetBalanceFormatted()
 	{
 		$balance = $this->GetAccountBalance();
 		$currency = $this->GetAccountCurrency();
-		if($currency == 'RUR')
+		if($currency === 'RUR')
 		{
 			$currency = 'RUB';
 		}
@@ -162,7 +166,7 @@ class CVoxImplantAccount
 		if($accountLang == '')
 			return false;
 
-		if($accountLang == 'ru')
+		if($accountLang === 'ru')
 		{
 			return 300;
 		}
@@ -186,10 +190,10 @@ class CVoxImplantAccount
 
 	public function GetAccountCurrency($allowUpdate = true)
 	{
-		if (strlen($this->account_currency)<=0)
+		if ($this->account_currency == '')
 		{
 			$this->account_currency = COption::GetOptionString("voximplant", self::ACCOUNT_CURRENCY);
-			if (strlen($this->account_currency)<=0 && $allowUpdate)
+			if ($this->account_currency == '' && $allowUpdate)
 			{
 				if (!$this->UpdateAccountInfo())
 				{
@@ -230,10 +234,10 @@ class CVoxImplantAccount
 
 	public function GetAccountLang($allowUpdate = true)
 	{
-		if (strlen($this->account_lang)<=0)
+		if ($this->account_lang == '')
 		{
 			$this->account_lang = COption::GetOptionString("voximplant", self::ACCOUNT_LANG);
-			if (strlen($this->account_lang)<=0)
+			if ($this->account_lang == '')
 			{
 				if(!$allowUpdate)
 					return false;

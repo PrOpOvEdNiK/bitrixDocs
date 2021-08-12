@@ -1,6 +1,0 @@
-<?
-$MESS["TASKS_EXCEL_ID"] = "ID";
-$MESS["TASKS_EXCEL_TITLE"] = "Tarefa";
-$MESS["TASKS_EXCEL_UF_CRM_TASK"] = "CRM";
-$MESS["TASKS_LIST_CRM_TYPE_CO"] = "Empresa";
-?>

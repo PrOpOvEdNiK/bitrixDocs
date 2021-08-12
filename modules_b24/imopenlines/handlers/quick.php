@@ -9,10 +9,9 @@ if (is_object($APPLICATION))
 	$APPLICATION->RestartBuffer();
 }
 
-if (!CModule::IncludeModule("imopenlines"))
+if (!\Bitrix\Main\Loader::includeModule('imopenlines') || !\Bitrix\Main\Loader::includeModule('im'))
 {
-	CMain::FinalActions();
-	die();
+	\Bitrix\Main\Application::getInstance()->terminate();
 }
 
 $error = '';
@@ -38,7 +37,11 @@ $params = array();
 $params['DOMAIN'] = $check['scheme'].'://'.$check['host'];
 $params['SERVER_NAME'] = $check['host'];
 
-if(!isset($_SERVER['HTTP_REFERER']) || empty($_SERVER['HTTP_REFERER']) || strpos($_SERVER['HTTP_REFERER'], $params['DOMAIN']) !== 0)
+if (
+	isset($_SERVER['HTTP_REFERER'])
+	&& !empty($_SERVER['HTTP_REFERER'])
+	&& mb_strpos($_SERVER['HTTP_REFERER'], $params['DOMAIN']) !== 0
+)
 {
 	$style = "
 	    font-family: 'Helvetica Neue', Helvetica, sans-serif;
@@ -54,9 +57,35 @@ if(!isset($_SERVER['HTTP_REFERER']) || empty($_SERVER['HTTP_REFERER']) || strpos
 	die();
 }
 
-$parsedUserCode = \Bitrix\ImOpenLines\Session\Common::parseUserCode($getRequest['DIALOG_ENTITY_ID']);
-$params['IMOP_ID'] = $parsedUserCode['CONFIG_ID'];
-
+$lineId = null;
+$dialogId = $getRequest['DIALOG_ID'] ?? null;
+$userCode = $getRequest['DIALOG_ENTITY_ID'] ?? '';
+if($dialogId)
+{
+	$chatId = \Bitrix\Im\Dialog::getChatId($dialogId);
+	if($chatId)
+	{
+		$sessionData = \Bitrix\ImOpenLines\Model\SessionTable::getList([
+			'select' => ['CONFIG_ID'],
+			'filter' => [
+				'=CHAT_ID' => $chatId,
+			],
+			'order' => [
+				'ID' => 'DESC',
+			],
+			'limit' => 1,
+		])->fetch();
+		if($sessionData)
+		{
+			$lineId = $sessionData['CONFIG_ID'];
+		}
+	}
+}
+if(!$lineId)
+{
+	$lineId = \Bitrix\ImOpenLines\Session\Common::parseUserCode($userCode)['CONFIG_ID'];
+}
+$params['IMOP_ID'] = $lineId;
 $APPLICATION->IncludeComponent("bitrix:imopenlines.iframe.quick", ".default", $params, false, Array("HIDE_ICONS" => "Y"));
 
 CMain::FinalActions();

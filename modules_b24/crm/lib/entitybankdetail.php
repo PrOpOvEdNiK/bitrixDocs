@@ -352,7 +352,7 @@ class EntityBankDetail
 							{
 								$title = ($countryId > 0 && isset($titleMap[$fieldName][$countryId])) ?
 									$titleMap[$fieldName][$countryId] : $fieldName;
-								$length = strlen($strValue);
+								$length = mb_strlen($strValue);
 								if (isset($params['min']) && $params['min'] > 0)
 								{
 									if ($length < $params['min'])
@@ -1120,7 +1120,7 @@ class EntityBankDetail
 			foreach (array_keys($countryIds) as $countryId)
 			{
 				$countryCode = EntityPreset::getCountryCodeById($countryId);
-				$countryCodeLower = strtolower($countryCode);
+				$countryCodeLower = mb_strtolower($countryCode);
 				$phrasesConfig = [];
 				$filePath= Main\IO\Path::normalize(
 					Main\Application::getDocumentRoot().
@@ -1137,7 +1137,7 @@ class EntityBankDetail
 					&& !empty($phrasesConfig['phrases']))
 				{
 					$phrases = $phrasesConfig['phrases'];
-					$sourceEncoding = strtolower($phrasesConfig['encoding']);
+					$sourceEncoding = mb_strtolower($phrasesConfig['encoding']);
 					$needConvertEncoding = ($sourceEncoding !== $targetEncoding);
 					foreach ($titleMap as $fieldName => &$titlesByCountry)
 					{

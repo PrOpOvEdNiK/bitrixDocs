@@ -39,6 +39,8 @@ class ExportPath
 	{
 		$this->keepField(['pathList', 'codeList', 'seekOffset', 'seekPathLangId']);
 
+		Loc::loadLanguageFile(__DIR__ . '/exportaction.php');
+
 		parent::__construct($name, $controller, $config);
 	}
 
@@ -76,7 +78,7 @@ class ExportPath
 
 			foreach ($pathList as $testPath)
 			{
-				if (substr($testPath, -4) === '.php')
+				if (mb_substr($testPath, -4) === '.php')
 				{
 					if (Translate\IO\Path::isLangDir($testPath))
 					{
@@ -104,7 +106,7 @@ class ExportPath
 			if ($this->totalItems > 0)
 			{
 				$this->exportFileName = $this->generateExportFileName($path, $this->languages);
-				$this->createExportTempFile();
+				$this->createExportTempFile($this->exportFileName);
 			}
 
 			$this->saveProgressParameters();
@@ -134,13 +136,27 @@ class ExportPath
 		$processedItemCount = 0;
 
 		$filterCodeList = $this->codeList ?: [];
+		$fileCodeList = [];
+		foreach ($filterCodeList as $pathCode)
+		{
+			[$path, $code] = explode('::', $pathCode);
+			if ($path && $code)
+			{
+				$langFilePath = Translate\IO\Path::replaceLangId($path, '#LANG_ID#');
+				if (!isset($fileCodeList[$langFilePath]))
+				{
+					$fileCodeList[$langFilePath] = [];
+				}
+				$fileCodeList[$langFilePath][] = $code;
+			}
+		}
 
 		for ($pos = ((int)$this->seekOffset > 0 ? (int)$this->seekOffset : 0), $total = count($this->pathList); $pos < $total; $pos ++)
 		{
 			$exportingPath = $this->pathList[$pos];
 
 			// file
-			if (substr($exportingPath, -4) === '.php')
+			if (mb_substr($exportingPath, -4) === '.php')
 			{
 				$langFilePath = Translate\IO\Path::replaceLangId($exportingPath, '#LANG_ID#');
 
@@ -158,7 +174,7 @@ class ExportPath
 					$fullPaths[$langId] = $langFullPath;
 				}
 
-				$rows = $this->mergeLangFiles($langFilePath, $fullPaths, $this->collectUntranslated, $filterCodeList);
+				$rows = $this->mergeLangFiles($langFilePath, $fullPaths, $this->collectUntranslated, $fileCodeList[$langFilePath]);
 				foreach ($rows as $row)
 				{
 					$csvFile->put(array_values($row));
@@ -212,7 +228,7 @@ class ExportPath
 					{
 						foreach ($filePaths as $langFilePath => $fullPaths)
 						{
-							$rows = $this->mergeLangFiles($langFilePath, $fullPaths, $this->collectUntranslated, $filterCodeList);
+							$rows = $this->mergeLangFiles($langFilePath, $fullPaths, $this->collectUntranslated, $fileCodeList[$langFilePath]);
 							foreach ($rows as $row)
 							{
 								$csvFile->put(array_values($row));

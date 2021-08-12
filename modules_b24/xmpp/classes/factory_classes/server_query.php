@@ -1,4 +1,4 @@
-<?
+<?php
 $className = "CXMPPServerQuery";
 $classVersion = 2;
 
@@ -76,4 +76,3 @@ if (!class_exists("CXMPPServerQuery"))
 		}
 	}
 }
-?>

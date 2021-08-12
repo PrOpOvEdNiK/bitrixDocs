@@ -121,16 +121,24 @@ class Date extends Base
 
 		$className = static::generateControlClassName($fieldType, $field);
 		$renderResult = '';
+		$isPublicControl = $renderMode & FieldType::RENDER_MODE_PUBLIC;
 
-		if ($renderMode & FieldType::RENDER_MODE_PUBLIC && $allowSelection)
+		if ($isPublicControl && $allowSelection)
 		{
-			$renderResult = '<input name="'.htmlspecialcharsbx($name).'" type="text" '
-				.'class="'.htmlspecialcharsbx($className).'"
-					value="'.htmlspecialcharsbx($value).'"
-					placeholder="'.htmlspecialcharsbx($fieldType->getDescription()).'"
-					data-role="inline-selector-target"
-					data-selector-type="'.htmlspecialcharsbx($fieldType->getType()).'"
-				>';
+			$selectorAttributes = sprintf(
+				'data-role="inline-selector-target" data-selector-type="%s" data-property="%s" ',
+				htmlspecialcharsbx($fieldType->getType()),
+				htmlspecialcharsbx(Main\Web\Json::encode($fieldType->getProperty()))
+			);
+
+			$renderResult = sprintf(
+				'<input name="%s" type="text" class="%s" value="%s" placeholder="%s" %s/>',
+				htmlspecialcharsbx($name),
+				htmlspecialcharsbx($className),
+				htmlspecialcharsbx($value),
+				htmlspecialcharsbx($fieldType->getDescription()),
+				$selectorAttributes
+			);
 		}
 		elseif ($renderMode & FieldType::RENDER_MODE_MOBILE)
 		{
@@ -143,14 +151,18 @@ class Date extends Base
 		else
 		{
 			\CJSCore::Init(['popup', 'date']);
-			$renderResult = '<input type="text" name="'.htmlspecialcharsbx($name)
-				.'" value="'.htmlspecialcharsbx($value).'" class="'.htmlspecialcharsbx($className).'"/>'
-				.'<img src="/bitrix/js/main/core/images/calendar-icon.gif" alt="calendar" class="calendar-icon" '
-				.'onclick="BX.calendar({node:this, field: this.previousSibling, bTime: '
-				.(static::getType() == FieldType::DATETIME ? 'true' : 'false')
-				.', bHideTime: '.(static::getType() == FieldType::DATETIME ? 'false' : 'true').'});" '
-				.'onmouseover="BX.addClass(this, \'calendar-icon-hover\');" '
-				.'onmouseout="BX.removeClass(this, \'calendar-icon-hover\');" border="0"/>';
+			$renderResult = sprintf(
+				'<input type="text" name="%s" value="%s" class="%s"/>'
+						. '<img src="/bitrix/js/main/core/images/calendar-icon.gif" alt="calendar" class="calendar-icon" '
+						. 'onclick="BX.calendar({node:this, field: this.previousSibling, bTime: %s, bHideTime: %s});" '
+						. 'onmouseover="BX.addClass(this, \'calendar-icon-hover\');" '
+						. 'onmouseout="BX.removeClass(this, \'calendar-icon-hover\');" border="0"/>',
+				htmlspecialcharsbx($name),
+				htmlspecialcharsbx($value),
+				$isPublicControl ? htmlspecialcharsbx($className) : '',
+				static::getType() == FieldType::DATETIME ? 'true' : 'false',
+				static::getType() == FieldType::DATETIME ? 'false' : 'true'
+			);
 
 			$tzName = 'tz_'.$name;
 			$zones = self::getZones();
@@ -164,6 +176,10 @@ class Date extends Base
 			if ($fieldType->isMultiple())
 			{
 				$tzClassName .= ' bizproc-type-control-date-lc-multiple';
+			}
+			if (!$isPublicControl)
+			{
+				$tzClassName = '';
 			}
 
 			$renderResult .= '<select name="'.htmlspecialcharsbx($tzName).'" class="'.$tzClassName.'">';
@@ -305,7 +321,7 @@ class Date extends Base
 	{
 		$value = parent::extractValue($fieldType, $field, $request);
 
-		if ($value !== null && is_string($value) && strlen($value) > 0)
+		if ($value !== null && is_string($value) && $value <> '')
 		{
 			if (\CBPActivity::isExpression($value))
 				return $value;
@@ -413,7 +429,7 @@ class Date extends Base
 
 			if ($documentId)
 			{
-				$userId = \CBPHelper::ExtractUsers('author', $documentId, true);
+				$userId = \CBPHelper::ExtractUsers(['author', 'responsible'], $documentId, true);
 				$offset = $userId ? \CTimeZone::GetOffset($userId, true) : 0;
 
 				$value = new Value\DateTime($value->getTimestamp(), $offset);
@@ -425,18 +441,18 @@ class Date extends Base
 		return $value;
 	}
 
-	public static function internalizeValue(FieldType $fieldType, $objectName, $value)
+	public static function internalizeValue(FieldType $fieldType, $context, $value)
 	{
 		if ($value && is_string($value))
 		{
-			$offset = \CTimeZone::GetOffset();//($objectName === 'Document') ? \CTimeZone::GetOffset() : 0;
+			$offset = \CTimeZone::GetOffset();
 			try
 			{
 				$obj = (static::getType() === FieldType::DATE)
 					? new Value\Date($value, $offset)
 					: new Value\DateTime($value, $offset);
 				//set value if everything is ok
-				if ($obj->getTimestamp() > 0)
+				if ($obj->getTimestamp() !== null)
 				{
 					$value = $obj;
 				}
@@ -448,18 +464,24 @@ class Date extends Base
 		return $value;
 	}
 
-	public static function externalizeValue(FieldType $fieldType, $objectName, $value)
+	public static function externalizeValue(FieldType $fieldType, $context, $value)
 	{
 		//serialized date string
 		if (is_string($value) && preg_match('#(.+)\s\[([0-9\-]+)\]#', $value))
 		{
-			$value = static::internalizeValue($fieldType, $objectName, $value);
+			$value = static::internalizeValue($fieldType, $context, $value);
 		}
 
 		if ($value instanceof Value\Date)
 		{
-			return (string) $value->toSystemObject();
+			return $context === 'rest' ? $value->toSystemObject()->format('c') : (string) $value->toSystemObject();
 		}
+
+		if (is_string($value) && $context === 'rest')
+		{
+			return date('c', strtotime($value));
+		}
+
 		return $value;
 	}
 
@@ -472,18 +494,19 @@ class Date extends Base
 		foreach (\DateTimeZone::listIdentifiers() as $tz)
 		{
 			foreach ($exclude as $ex)
-				if (strpos($tz, $ex) === 0)
+				if (mb_strpos($tz, $ex) === 0)
 					continue 2;
 			try
 			{
-				$oTz = new \DateTimeZone($tz);
-				$timezones[$tz] = ['timezone_id' => $tz, 'offset' => $oTz->getOffset(new \DateTime("now", $oTz))];
+				$dateTimeZone = new \DateTimeZone($tz);
+				$timezones[$tz] = ['timezone_id' => $tz, 'offset' => $dateTimeZone->getOffset(new \DateTime("now", $dateTimeZone))];
 			} catch (\Exception $e)
 			{
 			}
 		}
 
-		uasort($timezones, function ($a, $b) {
+		uasort($timezones, function ($a, $b)
+		{
 			if ($a['offset'] == $b['offset'])
 				return strcmp($a['timezone_id'], $b['timezone_id']);
 

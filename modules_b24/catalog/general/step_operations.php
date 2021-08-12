@@ -263,7 +263,7 @@ class CCatalogProductSetAvailable extends CCatalogStepOperations
 			CCatalogProductSet::recalculateSet($productSet['ID'], $productSet['ITEM_ID']);
 			$arTimeFields = array(
 				'~TIMESTAMP_X' => $DB->CharToDateFunction($productSet['TIMESTAMP_X'], "FULL"),
-				'~MODIFIED_BY' => $productSet['MODIFIED_BY']
+				'MODIFIED_BY' => $productSet['MODIFIED_BY']
 			);
 			$strUpdate = $DB->PrepareUpdate($tableName, $arTimeFields);
 			if (!empty($strUpdate))
@@ -1035,15 +1035,19 @@ class CCatalogProductAvailable extends CCatalogStepOperations
 				else
 				{
 					$product['SUCCESS'] = false;
-					$errorId = 'BX_CATALOG_REINDEX_ERR_PRODUCT_UPDATE_FAIL';
+					$errorId = 'BX_CATALOG_REINDEX_ERR_PRODUCT_UPDATE_FAIL_EXT';
 					if (
 						$product['TYPE'] == Catalog\ProductTable::TYPE_OFFER
 						|| $product['TYPE'] == Catalog\ProductTable::TYPE_FREE_OFFER
 					)
-						$errorId = 'BX_CATALOG_REINDEX_ERR_OFFER_UPDATE_FAIL';
+						$errorId = 'BX_CATALOG_REINDEX_ERR_OFFER_UPDATE_FAIL_EXT';
 					$this->addError(Loc::getMessage(
 						$errorId,
-						['#ID#' => $id, '#NAME#' => $product['NAME']]
+						[
+							'#ID#' => $id,
+							'#NAME#' => $product['NAME'],
+							'#ERROR#' => implode('; ', $productResult->getErrorMessages())
+						]
 					));
 					unset($errorId);
 				}
@@ -1100,6 +1104,7 @@ class CCatalogProductAvailable extends CCatalogStepOperations
 		}
 
 		$success = true;
+		$errorMessage = [];
 		foreach (array_keys($this->prices[$id]) as $rowId)
 		{
 			$row = $this->prices[$id][$rowId];
@@ -1116,6 +1121,7 @@ class CCatalogProductAvailable extends CCatalogStepOperations
 			if (!$rowResult->isSuccess())
 			{
 				$success = false;
+				$errorMessage = $rowResult->getErrorMessages();
 				break;
 			}
 		}
@@ -1125,19 +1131,23 @@ class CCatalogProductAvailable extends CCatalogStepOperations
 
 		if (!$success)
 		{
-			$errorId = 'BX_CATALOG_REINDEX_ERR_PRODUCT_PRICE_UPDATE_FAIL';
+			$errorId = 'BX_CATALOG_REINDEX_ERR_PRODUCT_PRICE_UPDATE_FAIL_EXT';
 			if (
 				$product['TYPE'] == Catalog\ProductTable::TYPE_OFFER
 				|| $product['TYPE'] == Catalog\ProductTable::TYPE_FREE_OFFER
 			)
-				$errorId = 'BX_CATALOG_REINDEX_ERR_OFFER_PRICE_UPDATE_FAIL';
+				$errorId = 'BX_CATALOG_REINDEX_ERR_OFFER_PRICE_UPDATE_FAIL_EXT';
 			$this->addError(Loc::getMessage(
 				$errorId,
-				['#ID#' => $id, '#NAME#' => $product['NAME']]
+				[
+					'#ID#' => $id,
+					'#NAME#' => $product['NAME'],
+					'#ERROR#' => implode('; ', $errorMessage)
+				]
 			));
 			unset($errorId);
 		}
-		unset($success);
+		unset($errorMessage, $success);
 	}
 
 	private function updateSkuPrices($id, array $product)
@@ -1148,6 +1158,7 @@ class CCatalogProductAvailable extends CCatalogStepOperations
 			return;
 
 		$success = true;
+		$errorMessage = [];
 		if (!empty($this->calculatePrices[$id]))
 		{
 			foreach (array_keys($this->calculatePrices[$id]) as $resultPriceType)
@@ -1173,13 +1184,14 @@ class CCatalogProductAvailable extends CCatalogStepOperations
 				if (!$rowResult->isSuccess())
 				{
 					$success = false;
+					$errorMessage = $rowResult->getErrorMessages();
 					break;
 				}
 			}
 		}
 		unset($this->calculatePrices[$id]);
 
-		if (!empty($this->existPriceIds[$id]))
+		if ($success && !empty($this->existPriceIds[$id]))
 		{
 			$conn = Main\Application::getConnection();
 			$helper = $conn->getSqlHelper();
@@ -1196,11 +1208,15 @@ class CCatalogProductAvailable extends CCatalogStepOperations
 		if (!$success)
 		{
 			$this->addError(Loc::getMessage(
-				'BX_CATALOG_REINDEX_ERR_PRODUCT_UPDATE_FAIL',
-				['#ID#' => $id, '#NAME#' => $product['NAME']]
+				'BX_CATALOG_REINDEX_ERR_PRODUCT_UPDATE_FAIL_EXT',
+				[
+					'#ID#' => $id,
+					'#NAME#' => $product['NAME'],
+					'#ERROR#' => implode('; ', $errorMessage)
+				]
 			));
 		}
-		unset($success);
+		unset($errorMessage, $success);
 	}
 
 	private function updateMeasureRatios($id, array $product)

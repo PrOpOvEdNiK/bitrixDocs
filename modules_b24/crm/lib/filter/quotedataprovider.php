@@ -7,10 +7,11 @@ use Bitrix\Main\Localization\Loc;
 use Bitrix\Crm;
 use Bitrix\Crm\Counter\EntityCounterType;
 use Bitrix\Crm\PhaseSemantics;
+use Bitrix\Main\Loader;
 
 Loc::loadMessages(__FILE__);
 
-class QuoteDataProvider extends EntityDataProvider
+class QuoteDataProvider extends Main\Filter\EntityDataProvider
 {
 	/** @var QuoteSettings|null */
 	protected $settings = null;
@@ -37,9 +38,23 @@ class QuoteDataProvider extends EntityDataProvider
 	protected function getFieldName($fieldID)
 	{
 		$name = Loc::getMessage("CRM_QUOTE_FILTER_{$fieldID}");
-		if($name === null)
+		if (empty($name))
 		{
 			$name = \CCrmQuote::GetFieldCaption($fieldID);
+		}
+
+		if (empty($name))
+		{
+			$factory = Crm\Service\Container::getInstance()->getFactory(\CCrmOwnerType::Quote);
+			if ($factory)
+			{
+				$name = $factory->getFieldCaption((string)$fieldID);
+			}
+		}
+
+		if (empty($name))
+		{
+			$name = $fieldID;
 		}
 
 		return $name;
@@ -126,7 +141,10 @@ class QuoteDataProvider extends EntityDataProvider
 			),
 			'PRODUCT_ROW_PRODUCT_ID' => $this->createField(
 				'PRODUCT_ROW_PRODUCT_ID',
-				array('type' => 'dest_selector', 'partial' => true)
+				[
+					'type' => 'entity_selector',
+					'partial' => true,
+				]
 			),
 			'ENTITIES_LINKS' => $this->createField(
 				'ENTITIES_LINKS',
@@ -359,24 +377,27 @@ class QuoteDataProvider extends EntityDataProvider
 		}
 		elseif($fieldID === 'PRODUCT_ROW_PRODUCT_ID')
 		{
-			return array(
-				'params' => array(
-					'apiVersion' => 3,
-					'context' => 'CRM_QUOTE_FILTER_PRODUCT_ID',
-					'contextCode' => 'CRM',
-					'useClientDatabase' => 'N',
-					'enableAll' => 'N',
-					'enableDepartments' => 'N',
-					'enableUsers' => 'N',
-					'enableSonetgroups' => 'N',
-					'allowEmailInvitation' => 'N',
-					'allowSearchEmailUsers' => 'N',
-					'departmentSelectDisable' => 'Y',
-					'enableCrm' => 'Y',
-					'enableCrmProducts' => 'Y',
-					'convertJson' => 'Y'
-				)
-			);
+			return [
+				'params' => [
+					'multiple' => 'N',
+					'dialogOptions' => [
+						'height' => 200,
+						'context' => 'catalog-products',
+						'entities' => [
+							Loader::includeModule('iblock')
+							&& Loader::includeModule('catalog')
+								? [
+									'id' => 'product',
+									'options' => [
+										'iblockId' => \Bitrix\Crm\Product\Catalog::getDefaultId(),
+										'basePriceId' => \Bitrix\Crm\Product\Price::getBaseId(),
+									],
+								]
+								: [],
+						],
+					],
+				],
+			];
 		}
 		elseif(Crm\Tracking\UI\Filter::hasField($fieldID))
 		{

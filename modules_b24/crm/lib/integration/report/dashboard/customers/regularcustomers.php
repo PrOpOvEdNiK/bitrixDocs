@@ -18,7 +18,7 @@ use Bitrix\Report\VisualConstructor\Helper\Util;
  */
 class RegularCustomers
 {
-	const VERSION = '3';
+	const VERSION = '5';
 	const BOARD_KEY = 'crm_regular_customers';
 
 	/**
@@ -78,7 +78,6 @@ class RegularCustomers
 
 		return $widget;
 	}
-
 
 	private static function buildRegularCustomersGrid()
 	{

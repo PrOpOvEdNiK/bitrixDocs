@@ -1,4 +1,0 @@
-<?
-$MESS["SALE_DELIVERY_INP_DELETE"] = "Ištrinti";
-$MESS["SALE_DELIVERY_INP_ADD"] = "Pridėti";
-?>

@@ -1,7 +1,0 @@
-<?
-$MESS["DOCGEN_TEMPLATES_DEFAULT_TEMPLATE_INSTALL_PROGRESS"] = "Czekaj, trwa instalowanie szablonu";
-$MESS["DOCGEN_TEMPLATES_DEFAULT_TEMPLATE_REINSTALL"] = "Zainstaluj ponownie";
-$MESS["DOCGEN_TEMPLATES_DEFAULT_TEMPLATE_REINSTALL_COMPLETE"] = "Szablon #NAME# został zainstalowany";
-$MESS["DOCGEN_TEMPLATES_DEFAULT_TEMPLATE_REINSTALL_CONFIRM"] = "Czy na pewno chcesz zastąpić zainstalowany szablon?";
-$MESS["DOCGEN_TEMPLATES_DEFAULT_TEMPLATE_REINSTALL_ERROR"] = "Nie można zainstalować szablonu #NAME#";
-?>

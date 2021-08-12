@@ -1,19 +1,17 @@
-<?
-IncludeModuleLangFile(__FILE__);
+<?php
 
+IncludeModuleLangFile(__FILE__);
 
 class CAllTicketReminder
 {
-		
-	function err_mess()
+	public static function err_mess()
 	{
 		$module_id = "support";
 		@include($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/".$module_id."/install/version.php");
 		return "<br>Module: ".$module_id." <br>Class: CAllTicketReminder<br>File: ".__FILE__;
 	}
 	
-
-	function ConvertResponseTimeUnit($rt, $rtu)
+	public static function ConvertResponseTimeUnit($rt, $rtu)
 	{
 		switch($rtu)
 		{
@@ -24,7 +22,7 @@ class CAllTicketReminder
 		return 0;
 	}
 
-	function RecalculateLastMessageDeadline($RSD = true)
+	public static function RecalculateLastMessageDeadline($RSD = true)
 	{
 		global $DB, $DBType;
 		$err_mess = (self::err_mess())."<br>Function: RecalculateLastMessage<br>Line: ";
@@ -143,8 +141,7 @@ class CAllTicketReminder
 
 	}
 
-
-	function RecalculateSupportDeadline($arFilter = array())
+	public static function RecalculateSupportDeadline($arFilter = array())
 	{
 		global $DB;
 		$err_mess = (CAllTicketReminder::err_mess())."<br>Function: RecalculateSupportDeadline<br>Line: ";	
@@ -153,8 +150,8 @@ class CAllTicketReminder
 		if(!is_array($arFilter)) $arFilter = array();
 		foreach($arFilter as $key => $val)
 		{
-			if((is_array($val) && count($val) <= 0) || (!is_array($val) && strlen($val) <= 0)) continue;
-			$key = strtoupper($key);
+			if((is_array($val) && count($val) <= 0) || (!is_array($val) && (string) $val == '')) continue;
+			$key = mb_strtoupper($key);
 			if (is_array($val)) $val = implode(" | ",$val);
 			switch($key)
 			{
@@ -197,7 +194,7 @@ class CAllTicketReminder
 	
 	/*$arTicket = ID,SLA_ID,RESPONSE_TIME, D_1_USER_M_AFTER_SUP_M, RESPONSE_TIME_UNIT, NOTICE_TIME, NOTICE_TIME_UNIT,DEADLINE_SOURCE_DATE
 	$dateType = CTicket::ADD, CTicket::UPDATE CTicket::DELETE, CTicket::IGNORE, CTicket::REOPEN, CTicket::NEW_SLA*/
-	function RecalculateSupportDeadlineForOneTicket($arTicket, $arFields = array(), $dateType = array("EVENT"=>array(CTicket::IGNORE)))
+	public static function RecalculateSupportDeadlineForOneTicket($arTicket, $arFields = array(), $dateType = array("EVENT"=>array(CTicket::IGNORE)))
 	{
 		global $DB;
 		$err_mess = (CAllTicketReminder::err_mess())."<br>Function: RecalculateSupportDeadlineForOneTicket<br>Line: ";	
@@ -317,8 +314,7 @@ class CAllTicketReminder
 		$DB->Update("b_ticket", $arFields, "WHERE ID='" . $ticketID . "'", $err_mess . __LINE__);
 	}
 
-
-	function SupportDeadline($arrTicket)
+	public static function SupportDeadline($arrTicket)
 	{
 
 		global $MESS, $DB;
@@ -381,8 +377,7 @@ class CAllTicketReminder
 
 	}
 
-
-	function SupportDeadlineNotify($arrTicket0)
+	public static function SupportDeadlineNotify($arrTicket0)
 	{
 		//SUPPORT_DEADLINE_NOTIFY
 		//SUPPORT_DEADLINE			= EXPIRATION_DATE
@@ -410,8 +405,8 @@ class CAllTicketReminder
 		//$oldMess = $MESS;
 		IncludeModuleLangFile($_SERVER["DOCUMENT_ROOT"] . "/bitrix/modules/support/classes/general/messages.php", $arSite["LANGUAGE_ID"]);
 
-		$sourceName = strlen($arTicket["SOURCE_NAME"]) <= 0 ? "" : "[" . $arTicket["SOURCE_NAME"] . "] ";
-		if(intval($arTicket["OWNER_USER_ID"]) > 0 || strlen(trim($arTicket["OWNER_LOGIN"])) > 0)
+		$sourceName = $arTicket["SOURCE_NAME"] == '' ? "" : "[" . $arTicket["SOURCE_NAME"] . "] ";
+		if(intval($arTicket["OWNER_USER_ID"]) > 0 || trim($arTicket["OWNER_LOGIN"]) <> '')
 		{
 			$ownerText = "[" . $arTicket["OWNER_USER_ID"] . "] (" . $arTicket["OWNER_LOGIN"] . ") " . $arTicket["OWNER_NAME"];
 			//if(strlen(trim($OWNER_SID)) > 0 && $OWNER_SID != "null") $ownerText = " / " . $ownerText;
@@ -437,7 +432,7 @@ class CAllTicketReminder
 			foreach($arrEmails as $email)
 			{
 				$email = trim($email);
-				if(strlen($email) > 0)
+				if($email <> '')
 				{
 					preg_match_all("#[<\[\(](.*?)[>\]\)]#i" . BX_UTF_PCRE_MODIFIER, $email, $arr);
 					if(is_array($arr[1]) && count($arr[1]) > 0)
@@ -445,7 +440,7 @@ class CAllTicketReminder
 						foreach($arr[1] as $email)
 						{
 							$email = trim($email);
-							if(strlen($email)>0 && !in_array($email, $arrOwnerEMail) && check_email($email))
+							if($email <> '' && !in_array($email, $arrOwnerEMail) && check_email($email))
 							{
 								$arrOwnerEMail[] = $email;
 							}
@@ -460,9 +455,9 @@ class CAllTicketReminder
 
 		// prepare email to support
 		$support_email = $arTicket["RESPONSIBLE_EMAIL"];
-		if(strlen($support_email) <= 0)
+		if($support_email == '')
 			$support_email = $support_admin_email;
-		if(strlen($support_email) <= 0)
+		if($support_email == '')
 			$support_email = COption::GetOptionString("main", "email_from","");
 
 		$arr = explode(",", $support_email);
@@ -475,7 +470,7 @@ class CAllTicketReminder
 		$support_admin_email = implode(",", $arAdminEMails);
 
 		$createdModuleName = "";
-		if($arTicket["CREATED_MODULE_NAME"] == "support" || !strlen($arTicket["CREATED_MODULE_NAME"]))
+		if($arTicket["CREATED_MODULE_NAME"] == "support" || !mb_strlen($arTicket["CREATED_MODULE_NAME"]))
 		{
 			if(intval($arTicket["CREATED_USER_ID"]) > 0)
 			{
@@ -575,7 +570,7 @@ class CAllTicketReminder
 		$DB->Update("b_ticket_message", $arFields, "WHERE ID='" . $arMessage["ID"] . "'", $err_mess . __LINE__);
 	}
 
-	function AgentFunction()
+	public static function AgentFunction()
 	{
 		//IS_OVERDUE
 		//IS_NOTIFIED
@@ -639,15 +634,11 @@ class CAllTicketReminder
 		return "CTicketReminder::AgentFunction();";
 	}
 
-
-	function StartAgent()
+	public static function StartAgent()
 	{
 		CAgent::RemoveModuleAgents("support");
 		CAgent::AddAgent("CTicketReminder::AgentFunction();", "support", "N", 60);
 		CAgent::AddAgent('CTicket::CleanUpOnline();', 'support', 'N');
 		CAgent::AddAgent('CTicket::AutoClose();', 'support', 'N');
 	}
-
 }
-
-?>

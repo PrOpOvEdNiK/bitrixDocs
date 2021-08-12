@@ -1,6 +1,0 @@
-<?
-$MESS["IM_MESSENGER_DIALOG_READED"] = "Message consulté : #DATE#";
-$MESS["IM_MESSENGER_DIALOG_READED_CHAT"] = "Message consulté par : #USERS#";
-$MESS["IM_MESSENGER_DIALOG_READED_CHAT_MORE"] = "#COUNT# en plus";
-$MESS["IM_MESSENGER_DIALOG_WRITES_MESSAGE"] = "#USER# écrit un message...";
-?>

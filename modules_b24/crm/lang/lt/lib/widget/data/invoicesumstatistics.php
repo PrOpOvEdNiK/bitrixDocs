@@ -1,4 +1,0 @@
-<?
-$MESS["CRM_INVOICE_SUM_STAT_PRESET_OVERALL_COUNT"] = "Sąskaitų skaičius";
-$MESS["CRM_INVOICE_SUM_STAT_PRESET_OVERALL_SUM"] = "Sąskaitų suma";
-?>

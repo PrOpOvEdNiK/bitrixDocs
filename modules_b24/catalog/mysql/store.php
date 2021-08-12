@@ -129,6 +129,23 @@ class CCatalogStore extends CAllCatalogStore
 			"ELEMENT_ID" => array("FIELD" => "CP.PRODUCT_ID", "TYPE" => "int")
 		);
 
+		if (!is_array($arOrder))
+		{
+			$arOrder = [];
+		}
+		if (!empty($arOrder))
+		{
+			$arOrder = array_change_key_case($arOrder, CASE_UPPER);
+			foreach (array_keys($arOrder) as $field)
+			{
+				$arOrder[$field] = strtoupper($arOrder[$field]);
+				if ($arOrder[$field] !== 'DESC')
+				{
+					$arOrder[$field] = 'ASC';
+				}
+			}
+		}
+
 		$userField = new CUserTypeSQL();
 		$userField->SetEntity("CAT_STORE", "CS.ID");
 		$userField->SetSelect($arSelectFields);
@@ -136,7 +153,7 @@ class CCatalogStore extends CAllCatalogStore
 		$userField->SetOrder($arOrder);
 
 		$strUfFilter = $userField->GetFilter();
-		$strSqlUfFilter = (strlen($strUfFilter) > 0) ? " (".$strUfFilter.") " : "";
+		$strSqlUfFilter = ($strUfFilter <> '') ? " (".$strUfFilter.") " : "";
 
 
 		$strSqlUfOrder = "";
@@ -146,7 +163,7 @@ class CCatalogStore extends CAllCatalogStore
 			if (empty($field))
 				continue;
 
-			if (strlen($strSqlUfOrder) > 0)
+			if ($strSqlUfOrder <> '')
 				$strSqlUfOrder .= ', ';
 			$strSqlUfOrder .= $field." ".$by;
 		}
@@ -160,9 +177,9 @@ class CCatalogStore extends CAllCatalogStore
 			if (!empty($arSqls["WHERE"]))
 				$strSql .= " WHERE ".$arSqls["WHERE"]." ";
 
-			if (strlen($arSqls["WHERE"]) > 0 && strlen($strSqlUfFilter) > 0)
+			if ($arSqls["WHERE"] <> '' && $strSqlUfFilter <> '')
 				$strSql .= " AND ".$strSqlUfFilter." ";
-			elseif (strlen($arSqls["WHERE"]) == 0 && strlen($strSqlUfFilter) > 0)
+			elseif ($arSqls["WHERE"] == '' && $strSqlUfFilter <> '')
 				$strSql .= " WHERE ".$strSqlUfFilter." ";
 
 			if (!empty($arSqls["GROUPBY"]))
@@ -178,9 +195,9 @@ class CCatalogStore extends CAllCatalogStore
 		if (!empty($arSqls["WHERE"]))
 			$strSql .= " WHERE ".$arSqls["WHERE"]." ";
 
-		if (strlen($arSqls["WHERE"]) > 0 && strlen($strSqlUfFilter) > 0)
+		if ($arSqls["WHERE"] <> '' && $strSqlUfFilter <> '')
 			$strSql .= " AND ".$strSqlUfFilter." ";
-		elseif (strlen($arSqls["WHERE"]) <= 0 && strlen($strSqlUfFilter) > 0)
+		elseif ($arSqls["WHERE"] == '' && $strSqlUfFilter <> '')
 			$strSql .= " WHERE ".$strSqlUfFilter." ";
 
 		if (!empty($arSqls["GROUPBY"]))
@@ -188,7 +205,7 @@ class CCatalogStore extends CAllCatalogStore
 
 		if (!empty($arSqls["ORDERBY"]))
 			$strSql .= " ORDER BY ".$arSqls["ORDERBY"];
-		elseif (strlen($arSqls["ORDERBY"]) <= 0 && strlen($strSqlUfOrder) > 0)
+		elseif ($arSqls["ORDERBY"] == '' && $strSqlUfOrder <> '')
 			$strSql .= " ORDER BY ".$strSqlUfOrder;
 
 		$intTopCount = 0;
@@ -202,9 +219,9 @@ class CCatalogStore extends CAllCatalogStore
 			if (!empty($arSqls["WHERE"]))
 				$strSql_tmp .= " WHERE ".$arSqls["WHERE"];
 
-			if (strlen($arSqls["WHERE"]) > 0 && strlen($strSqlUfFilter) > 0)
+			if ($arSqls["WHERE"] <> '' && $strSqlUfFilter <> '')
 				$strSql_tmp .= " AND ".$strSqlUfFilter." ";
-			elseif (strlen($arSqls["WHERE"]) <= 0 && strlen($strSqlUfFilter) > 0)
+			elseif ($arSqls["WHERE"] == '' && $strSqlUfFilter <> '')
 				$strSql_tmp .= " WHERE ".$strSqlUfFilter." ";
 
 			if (!empty($arSqls["GROUPBY"]))

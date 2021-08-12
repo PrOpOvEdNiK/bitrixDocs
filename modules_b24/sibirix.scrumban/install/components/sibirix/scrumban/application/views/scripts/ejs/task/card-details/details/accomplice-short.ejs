@@ -1,9 +1,0 @@
-<script type="text/ejs" id="taskResponsiblesShort">
-    <div class="jsUsersPopup" style="width: 0px; height: 0px;"></div>
-    <% if (accompliceList.length > 0) { %>
-        <div class="add" <% if (accompliceList[0].user.avatar) { %>style="background: url('<%= accompliceList[0].user.avatar %>') 50% 50% no-repeat;"<% } %> ></div>
-    <% } else { %>
-        <div class="add"></div>
-    <% } %>
-    <% if (accompliceList.length > 1) { %><div class="multiple right"></div><div class="multiple bottom"></div><% } %>
-</script>

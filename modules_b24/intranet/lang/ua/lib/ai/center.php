@@ -1,6 +1,0 @@
-<?
-$MESS["INTRANET_AI_ASSISTANT_ALICE"] = "Аліса";
-$MESS["INTRANET_AI_ASSISTANT_GOOGLE"] = "Google Асистент";
-$MESS["INTRANET_AI_CRM_SCORING"] = "Скоринг CRM";
-$MESS["INTRANET_AI_SEGMENT_SCORING"] = "Скоринг сегментів";
-$MESS["INTRANET_AI_FACE_CARD"] = "Face-карт";

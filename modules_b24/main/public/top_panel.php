@@ -9,6 +9,8 @@
 if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true)
 	die();
 
+use Bitrix\Main;
+
 IncludeModuleLangFile(__FILE__);
 
 class CTopPanel
@@ -128,7 +130,8 @@ class CTopPanel
 		$encCurrentDirPath = urlencode($currentDirPath);
 		$encCurrentFilePath = urlencode($currentFilePath);
 		$encRequestUri = urlencode($_SERVER["REQUEST_URI"]);
-		$encSiteTemplateId = urlencode(SITE_TEMPLATE_ID);
+		$siteTemplateId = (defined('SITE_TEMPLATE_ID') ? SITE_TEMPLATE_ID : '.default');
+		$encSiteTemplateId = urlencode($siteTemplateId);
 
 		$documentRoot = CSite::GetSiteDocRoot(SITE_ID);
 		$filemanExists = IsModuleInstalled("fileman");
@@ -142,9 +145,9 @@ class CTopPanel
 		{
 			require_once($_SERVER["DOCUMENT_ROOT"].BX_ROOT."/modules/main/admin_tools.php");
 			//create page from new template
-			$arActPageTemplates = CPageTemplate::GetList(array(SITE_TEMPLATE_ID));
+			$arActPageTemplates = CPageTemplate::GetList(array($siteTemplateId));
 			//create page from old template
-			$arPageTemplates = GetFileTemplates(SITE_ID, array(SITE_TEMPLATE_ID));
+			$arPageTemplates = GetFileTemplates(SITE_ID, array($siteTemplateId));
 		}
 
 		// CREATE PAGE button and submenu
@@ -607,7 +610,7 @@ class CTopPanel
 			}
 			$arMenu[] = array("SEPARATOR"=>true);
 
-			$sessionClearCache = (isset($_SESSION["SESS_CLEAR_CACHE"]) && $_SESSION["SESS_CLEAR_CACHE"] == "Y");
+			$sessionClearCache = (isset(\Bitrix\Main\Application::getInstance()->getKernelSession()["SESS_CLEAR_CACHE"]) && \Bitrix\Main\Application::getInstance()->getSession()["SESS_CLEAR_CACHE"] == "Y");
 			$arMenu[] = array(
 				"TEXT"=>GetMessage("top_panel_cache_not"),
 				"TITLE"=>GetMessage("top_panel_cache_not_title"),
@@ -700,7 +703,9 @@ class CTopPanel
 
 			if ($USER->CanDoOperation("edit_php"))
 			{
-				$filePath = SITE_TEMPLATE_PATH."/styles.css";
+				$siteTemplatePath = (defined('SITE_TEMPLATE_PATH') ? SITE_TEMPLATE_PATH : '/bitrix/templates/.default');
+
+				$filePath = $siteTemplatePath."/styles.css";
 
 				if (file_exists($_SERVER['DOCUMENT_ROOT'].$filePath))
 				{
@@ -726,7 +731,7 @@ class CTopPanel
 					$bUseSubmenu = true;
 				}
 
-				$filePath = SITE_TEMPLATE_PATH."/template_styles.css";
+				$filePath = $siteTemplatePath."/template_styles.css";
 
 				if (file_exists($_SERVER['DOCUMENT_ROOT'].$filePath))
 				{
@@ -808,8 +813,8 @@ class CTopPanel
 		if ($USER->CanDoOperation("edit_php"))
 		{
 			//show debug information
-			$sessionShowIncludeTimeExec = isset($_SESSION["SESS_SHOW_INCLUDE_TIME_EXEC"]) && $_SESSION["SESS_SHOW_INCLUDE_TIME_EXEC"]=="Y";
-			$sessionShowTimeExec = isset($_SESSION["SESS_SHOW_TIME_EXEC"]) && $_SESSION["SESS_SHOW_TIME_EXEC"]=="Y";
+			$sessionShowIncludeTimeExec = isset(\Bitrix\Main\Application::getInstance()->getKernelSession()["SESS_SHOW_INCLUDE_TIME_EXEC"]) && \Bitrix\Main\Application::getInstance()->getKernelSession()["SESS_SHOW_INCLUDE_TIME_EXEC"]=="Y";
+			$sessionShowTimeExec = isset(\Bitrix\Main\Application::getInstance()->getKernelSession()["SESS_SHOW_TIME_EXEC"]) && \Bitrix\Main\Application::getInstance()->getKernelSession()["SESS_SHOW_TIME_EXEC"]=="Y";
 			$cmd = ($sessionShowIncludeTimeExec && $sessionShowTimeExec && $DB->ShowSqlStat? "N" : "Y");
 			$url = $APPLICATION->GetCurPageParam("show_page_exec_time=".$cmd."&show_include_exec_time=".$cmd."&show_sql_stat=".$cmd, array("show_page_exec_time", "show_include_exec_time", "show_sql_stat"));
 			$arMenu = array(
@@ -851,26 +856,6 @@ class CTopPanel
 					"HK_ID"	=>"top_panel_debug_time",
 				),
 			);
-			if(\Bitrix\Main\Loader::includeModule("compression") && CCompress::CheckCanGzip() !== 0)
-			{
-				$bShowCompressed = isset($_SESSION["SESS_COMPRESS"]) && $_SESSION["SESS_COMPRESS"] == "Y";
-				if(isset($_GET["compress"]))
-				{
-					if($_GET["compress"] === "Y" || $_GET["compress"] === "y")
-						$bShowCompressed = true;
-					elseif($_GET["compress"] === "N" || $_GET["compress"] === "n")
-						$bShowCompressed = false;
-				}
-
-				$arMenu[] = array("SEPARATOR"=>true);
-				$arMenu[] = array(
-					"TEXT"=>GetMessage("top_panel_debug_compr"),
-					"TITLE"=>GetMessage("top_panel_debug_compr_title"),
-					"CHECKED"=>(!!$bShowCompressed),
-					"ACTION"=>"jsUtils.Redirect([], '".CUtil::addslashes($APPLICATION->GetCurPageParam("compress=".($bShowCompressed? "N" : "Y"), array("compress")))."');",
-					"HK_ID"=>"top_panel_debug_compr",
-				);
-			}
 
 			$APPLICATION->AddPanelButton(array(
 				"HREF"=>$url,
@@ -996,7 +981,7 @@ class CTopPanel
 		//we have settings in the main module options
 		if($bShowPanel == false)
 		{
-			$arCodes = unserialize(COption::GetOptionString("main", "show_panel_for_users"));
+			$arCodes = unserialize(COption::GetOptionString("main", "show_panel_for_users"), ['allowed_classes' => false]);
 			if(!empty($arCodes))
 			{
 				$userCodes = $USER->GetAccessCodes();
@@ -1010,7 +995,7 @@ class CTopPanel
 		//hiding the panel has the higher priority
 		if($bShowPanel == true)
 		{
-			$arCodes = unserialize(COption::GetOptionString("main", "hide_panel_for_users"));
+			$arCodes = unserialize(COption::GetOptionString("main", "hide_panel_for_users"), ['allowed_classes' => false]);
 			if(!empty($arCodes))
 			{
 				if($userCodes == null)
@@ -1103,9 +1088,9 @@ class CTopPanel
 		if (
 			isset($_GET["back_url_admin"])
 			&& $_GET["back_url_admin"] != ""
-			&& strpos($_GET["back_url_admin"], "/") === 0
+			&& mb_strpos($_GET["back_url_admin"], "/") === 0
 		)
-			$_SESSION["BACK_URL_ADMIN"] = $_GET["back_url_admin"];
+			\Bitrix\Main\Application::getInstance()->getSession()["BACK_URL_ADMIN"] = $_GET["back_url_admin"];
 
 		$aUserOpt = CUserOptions::GetOption("admin_panel", "settings");
 		$aUserOptGlobal = CUserOptions::GetOption("global", "settings");
@@ -1121,7 +1106,7 @@ class CTopPanel
 		$href = $APPLICATION->GetCurPage();
 		$hrefEnc = htmlspecialcharsbx($href);
 
-		$toggleModeDynamic = $aUserOptGlobal['panel_dynamic_mode'] == 'Y';
+		$toggleModeDynamic = ($aUserOptGlobal['panel_dynamic_mode'] ?? '') == 'Y';
 		$toggleMode = $toggleModeDynamic && !$toggleModeSet
 			? $aUserOpt['edit'] == 'on'
 			: $APPLICATION->GetShowIncludeAreas() == 'Y';
@@ -1140,7 +1125,7 @@ class CTopPanel
 	<div id="bx-panel-error">'.GetMessage("top_panel_browser").'</div><![endif]-->
 	<script type="text/javascript">BX.admin.dynamic_mode='.($toggleModeDynamic ? 'true' : 'false').'; BX.admin.dynamic_mode_show_borders = '.($toggleMode ? 'true' : 'false').';</script>
 	<div style="display:none; overflow:hidden;" id="bx-panel-back"></div>
-	<div id="bx-panel"'.($aUserOpt["collapsed"] == "on" ? ' class="bx-panel-folded"':'').'>
+	<div id="bx-panel"'.(($aUserOpt["collapsed"] ?? '') == "on" ? ' class="bx-panel-folded"':'').'>
 		<div id="bx-panel-top">
 			<div id="bx-panel-top-gutter"></div>
 			<div id="bx-panel-tabs">
@@ -1148,113 +1133,68 @@ class CTopPanel
 		$result .= '
 			<a id="bx-panel-menu" href="" '.CTopPanel::AddAttrHint(GetMessage('top_panel_start_menu_tooltip_title'), GetMessage('top_panel_start_menu_tooltip')).'><span id="bx-panel-menu-icon"></span><span id="bx-panel-menu-text">'.GetMessage("top_panel_menu").'</span></a><div id="bx-panel-btn-wrap">';
 
-		$additionalSiteId = null;
-		$backUrlParamName = "back_url_pub";
-		$additionalTabButton = "";
-		$additionalTabMessage = GetMessage("top_panel_b24");
+		$backUrlParamName = 'back_url_pub';
+		$siteList = [];
 
-		if (\Bitrix\Main\Config\Option::get("sale", "~IS_SALE_CRM_SITE_MASTER_FINISH") === "Y")
+		if (
+			Main\Config\Option::get('sale', '~IS_SALE_CRM_SITE_MASTER_FINISH') === 'Y'
+			|| Main\Config\Option::get('sale', '~IS_SALE_BSM_SITE_MASTER_FINISH') === 'Y'
+		)
 		{
-			$additionalSiteId = \Bitrix\Main\Config\Option::get("sale", "~CRM_WIZARD_SITE_ID");
-		}
-		elseif (\Bitrix\Main\Config\Option::get("sale", "~IS_SALE_BSM_SITE_MASTER_FINISH") === "Y")
-		{
-			$additionalSiteId = \Bitrix\Main\Config\Option::get("sale", "~BSM_WIZARD_SITE_ID");
-		}
-
-		$additionalSite = \Bitrix\Main\SiteTable::getList([
-			"select" => ["SERVER_NAME"],
-			"filter" => ["LID" => $additionalSiteId]
-		])->fetch();
-
-		if ($additionalSite)
-		{
-			$defaultServerName = '';
-			$additionalServerName = '';
-
-			if ($additionalSiteId == SITE_ID
-				&& \Bitrix\Main\Config\Option::get("sale", "~IS_SALE_CRM_SITE_MASTER_FINISH") === "Y"
-			)
+			$siteList = self::getSiteList();
+			if (count($siteList) > 1)
 			{
-				$backUrlParamName = 'back_url_additional';
+				$siteMenu = [];
+				$defaultButtonTitle = '';
+				$protocol = Main\Context::getCurrent()->getRequest()->isHttps() ? "https://" : "http://";
+				foreach ($siteList as $site)
+				{
+					$siteId = $site['ID'] ?? null;
+					$isDefault = $siteId === SITE_ID;
+					$menuItemTitle =
+						$site['NAME']
+						. ' (' . $site['SERVER_NAME'] . ')'
+						. ($siteId ? ' [' . $siteId . ']' : '')
+					;
+					$siteMenu[] = [
+						'TEXT' => $menuItemTitle,
+						'ACTION' => 'jsUtils.Redirect([], \''.CUtil::JSEscape($protocol.$site['SERVER_NAME']).'\')',
+						'DEFAULT' => $isDefault,
+					];
 
-				$defaultSite = \Bitrix\Main\SiteTable::getList([
-					"select" => ["SERVER_NAME"],
-					"filter" => ["=DEF" => "Y"]
-				])->fetch();
-				if (!empty($defaultSite["SERVER_NAME"]))
-				{
-					$defaultServerName = (\Bitrix\Main\Context::getCurrent()->getRequest()->isHttps() ? "https" : "http")."://".$defaultSite["SERVER_NAME"];
+					if ($isDefault)
+					{
+						$defaultButtonTitle = $menuItemTitle;
+					}
 				}
-				elseif ($serverName = \Bitrix\Main\Config\Option::get("main", "server_name"))
+
+				if (!$defaultButtonTitle)
 				{
-					$defaultServerName = (\Bitrix\Main\Context::getCurrent()->getRequest()->isHttps() ? "https" : "http")."://".$serverName;
+					$defaultButtonTitle = current($siteMenu)['TEXT'];
 				}
+
+				$defaultButtonTitle = htmlspecialcharsbx($defaultButtonTitle);
+				if (mb_strlen($defaultButtonTitle) > 30)
+				{
+					$defaultButtonTitle = mb_substr($defaultButtonTitle, 0, 30) . '...';
+				}
+
+				$result .= '<a id="bx-panel-view-tab" class="bx-panel-view-tab-btn"><strong><span id="bx-panel-view-tab-select">'.$defaultButtonTitle.'</span></strong></a>';
+				$result .= '
+					<script type="text/javascript">
+						BX.admin.panel.RegisterButton({
+							ID: "bx-panel-view-tab-select",
+							TYPE: "SMALL",
+							MENU: '.CUtil::PhpToJsObject($siteMenu).',
+							TEXT: "'.$defaultButtonTitle.'",
+							GROUP_ID: 0
+						})
+					</script>
+				';
 			}
 			else
 			{
-				if (!empty($additionalSite["SERVER_NAME"]))
-				{
-					$additionalServerName = (\Bitrix\Main\Context::getCurrent()->getRequest()->isHttps() ? "https" : "http")."://".$additionalSite["SERVER_NAME"];
-				}
-			}
-
-			if (\Bitrix\Main\Config\Option::get("sale", "~IS_SALE_CRM_SITE_MASTER_FINISH") === "Y")
-			{
-				if ($defaultServerName)
-				{
-					$result .= '<a id="bx-panel-view-site" href="'.$defaultServerName.'"><span>'.GetMessage("top_panel_site").'</span></a>';
-				}
-				else
-				{
-					$result .= '<a id="bx-panel-view-tab"><span>'.GetMessage("top_panel_site").'</span></a>';
-				}
-
-				if ($additionalServerName)
-				{
-					$additionalTabButton = '<a id="bx-panel-view-site" href="'.$additionalServerName.'"><span>'.$additionalTabMessage.'</span></a>';
-				}
-				else
-				{
-					$additionalTabButton = '<a id="bx-panel-view-tab"><span>' . $additionalTabMessage . '</span></a>';
-				}
-			}
-			elseif (\Bitrix\Main\Config\Option::get("sale", "~IS_SALE_BSM_SITE_MASTER_FINISH") === "Y")
-			{
-				$defaultSite = \Bitrix\Main\SiteTable::getList([
-					"select" => ["LID", "SERVER_NAME"],
-					"filter" => ["=DEF" => "Y"]
-				])->fetch();
-				if ($defaultSite["LID"] === SITE_ID)
-				{
-					$backUrlParamName = 'back_url_additional';
-					$result .= '<a id="bx-panel-view-site" href="'.$additionalServerName.'"><span>'.GetMessage("top_panel_site").'</span></a>';
-				}
-				else
-				{
-					$result .= '<a id="bx-panel-view-tab"><span>'.GetMessage("top_panel_site").'</span></a>';
-				}
-
-				if ($additionalServerName)
-				{
-					if (!empty($defaultSite["SERVER_NAME"]))
-					{
-						$defaultServerName = (\Bitrix\Main\Context::getCurrent()->getRequest()->isHttps() ? "https" : "http")."://".$defaultSite["SERVER_NAME"];
-					}
-					elseif ($serverName = \Bitrix\Main\Config\Option::get("main", "server_name"))
-					{
-						$defaultServerName = (\Bitrix\Main\Context::getCurrent()->getRequest()->isHttps() ? "https" : "http")."://".$serverName;
-					}
-
-					if ($defaultSite["LID"] === SITE_ID)
-					{
-						$additionalTabButton = '<a id="bx-panel-view-tab"><span>'.$additionalTabMessage.'</span></a>';
-					}
-					else
-					{
-						$additionalTabButton = '<a id="bx-panel-view-site" href="'.$defaultServerName.'"><span>'.$additionalTabMessage.'</span></a>';
-					}
-				}
+				$result .= '<a id="bx-panel-view-tab"><span>'.GetMessage("top_panel_site").'</span></a>';
 			}
 		}
 		else
@@ -1262,14 +1202,25 @@ class CTopPanel
 			$result .= '<a id="bx-panel-view-tab"><span>'.GetMessage("top_panel_site").'</span></a>';
 		}
 
-		$result .= '
-				<a id="bx-panel-admin-tab" href="'.(
-						isset($_SESSION["BACK_URL_ADMIN"]) && $_SESSION["BACK_URL_ADMIN"] <> ""
-						? htmlspecialcharsbx($_SESSION["BACK_URL_ADMIN"]).(strpos($_SESSION["BACK_URL_ADMIN"], "?") !== false? "&amp;":"?")
-						: '/bitrix/admin/index.php?lang='.LANGUAGE_ID.'&amp;'
-					).$backUrlParamName.'='.urlencode($href.($params<>""? "?".$params:"")).'"><span>'.GetMessage("top_panel_admin").'</span></a>';
+		$isBackUrlAdmin = (
+			isset(Main\Application::getInstance()->getSession()["BACK_URL_ADMIN"])
+			&& Main\Application::getInstance()->getSession()["BACK_URL_ADMIN"] != ""
+		);
+		$adminHref = (
+			$isBackUrlAdmin
+				? htmlspecialcharsbx(Main\Application::getInstance()->getSession()["BACK_URL_ADMIN"]) . (mb_strpos(Main\Application::getInstance()->getSession()["BACK_URL_ADMIN"], "?") !== false ? "&amp;" : "?")
+				: '/bitrix/admin/index.php?lang=' . LANGUAGE_ID . '&amp;'
+			) . $backUrlParamName . '=' . urlencode($href . ($params != "" ? "?".$params : ""));
 
-		$result .= $additionalTabButton;
+		if (count($siteList) > 1)
+		{
+			$result .= '<a id="bx-panel-admin-tab" class="bx-panel-admin-tab-btn" href="'.$adminHref.'"><span>'.GetMessage("top_panel_admin").'</span></a>';
+		}
+		else
+		{
+			$result .= '<a id="bx-panel-admin-tab" href="'.$adminHref.'"><span>'.GetMessage("top_panel_admin").'</span></a>';
+		}
+
 		$result .= "</div>";
 
 		$back_url = CUtil::JSUrlEscape(CUtil::addslashes($href.($params<>""? "?".$params:"")));
@@ -1277,10 +1228,10 @@ class CTopPanel
 			'DIV' => 'bx-panel-menu',
 			'ACTIVE_CLASS' => 'bx-pressed',
 			'MENU_URL' => '/bitrix/admin/get_start_menu.php?lang='.LANGUAGE_ID.'&back_url_pub='.urlencode($back_url).'&'.bitrix_sessid_get(),
-			'MENU_PRELOAD' => ($aUserOptGlobal["start_menu_preload"] == 'Y')
+			'MENU_PRELOAD' => (($aUserOptGlobal["start_menu_preload"] ?? '') == 'Y')
 		);
 
-		$result .= '<script type="text/javascript">BX.message({MENU_ENABLE_TOOLTIP: '.($aUserOptGlobal['start_menu_title'] <> 'N' ? 'true' : 'false').'}); new BX.COpener('.CUtil::PhpToJsObject($arStartMenuParams).');</script>';
+		$result .= '<script type="text/javascript">BX.message({MENU_ENABLE_TOOLTIP: '.(($aUserOptGlobal['start_menu_title'] ?? '') <> 'N' ? 'true' : 'false').'}); new BX.COpener('.CUtil::PhpToJsObject($arStartMenuParams).');</script>';
 
 		$hkInstance = CHotKeys::getInstance();
 
@@ -1327,13 +1278,13 @@ class CTopPanel
 			$result .= '<a id="bx-panel-user"><span id="bx-panel-user-icon"></span><span id="bx-panel-user-text">'.$userName.'</span></a>';
 		}
 
-		$result .= '<a href="'.$hrefEnc.'?logout=yes'.htmlspecialcharsbx(($s=DeleteParam(array("logout"))) == ""? "":"&".$s).'" id="bx-panel-logout" '.CTopPanel::AddAttrHint(GetMessage('top_panel_logout_tooltip').$hkInstance->GetTitle("bx-panel-logout",true)).'>'.GetMessage("top_panel_logout").'</a>';
+		$result .= '<a href="'.$hrefEnc.'?'.htmlspecialcharsbx(CUser::getLogoutParams()).'" id="bx-panel-logout" '.CTopPanel::AddAttrHint(GetMessage('top_panel_logout_tooltip').$hkInstance->GetTitle("bx-panel-logout",true)).'>'.GetMessage("top_panel_logout").'</a>';
 
 		$toggleCaptionOn = '<span id="bx-panel-toggle-caption-mode-on">'.GetMessage("top_panel_on").'</span>';
 		$toggleCaptionOff = '<span id="bx-panel-toggle-caption-mode-off">'.GetMessage("top_panel_off").'</span>';
 		$toggleCaptions = $toggleMode ? $toggleCaptionOn.$toggleCaptionOff : $toggleCaptionOff.$toggleCaptionOn;
 		$toogle = '<a href="'.$toggleModeLink.'" id="bx-panel-toggle" class="bx-panel-toggle'.($toggleMode ? '-on' : '-off').'"'.($toggleModeDynamic ? '' : ' '.CTopPanel::AddAttrHint(GetMessage("top_panel_edit_mode_new_tooltip_title"), GetMessage('top_panel_toggle_tooltip').$hkInstance->GetTitle("bx-panel-small-toggle",true))).'><span id="bx-panel-switcher-gutter-left"></span><span id="bx-panel-toggle-indicator"><span id="bx-panel-toggle-icon"></span><span id="bx-panel-toggle-icon-overlay"></span></span><span class="bx-panel-break"></span><span id="bx-panel-toggle-caption">'.GetMessage("top_panel_edit_mode_new").'</span><span class="bx-panel-break"></span><span id="bx-panel-toggle-caption-mode">'.$toggleCaptions.'</span><span id="bx-panel-switcher-gutter-right"></span></a>';
-		if ($aUserOpt["collapsed"] == "on")
+		if (($aUserOpt["collapsed"] ?? '') == "on")
 			$result .= $toogle;
 
 		$result .= '<a href="" id="bx-panel-expander" '.CTopPanel::AddAttrHint(GetMessage("top_panel_expand_tooltip_title"), GetMessage("top_panel_expand_tooltip").$hkInstance->GetTitle("bx-panel-expander",true)).'><span id="bx-panel-expander-text">'.GetMessage("top_panel_expand").'</span><span id="bx-panel-expander-arrow"></span></a>';
@@ -1343,7 +1294,7 @@ class CTopPanel
 			$result .= '<a id="bx-panel-hotkeys" href="javascript:void(0)" onclick="BXHotKeys.ShowSettings();" '.CTopPanel::AddAttrHint(GetMessage("HK_PANEL_TITLE").$hkInstance->GetTitle("bx-panel-hotkeys",true)).'></a>';
 		}
 
-		$result .= '<a href="javascript:void(0)" id="bx-panel-pin"'.($aUserOpt['fix'] == 'on' ? ' class="bx-panel-pin-fixed"' : '').' '.CTopPanel::AddAttrHint(GetMessage('top_panel_pin_tooltip')).'></a>';
+		$result .= '<a href="javascript:void(0)" id="bx-panel-pin"'.(($aUserOpt['fix'] ?? '') == 'on' ? ' class="bx-panel-pin-fixed"' : '').' '.CTopPanel::AddAttrHint(GetMessage('top_panel_pin_tooltip')).'></a>';
 
 		$Execs = $hkInstance->GetCodeByClassName("bx-panel-logout",GetMessage('top_panel_logout_tooltip'));
 		$result .= $hkInstance->PrintJSExecs($Execs);
@@ -1361,7 +1312,7 @@ class CTopPanel
 		/* BUTTONS */
 		$result .= '<div id="bx-panel-site-toolbar"><div id="bx-panel-buttons-gutter"></div><div id="bx-panel-switcher">';
 
-		if ($aUserOpt["collapsed"] != "on")
+		if (($aUserOpt["collapsed"] ?? '') != "on")
 			$result .= $toogle;
 
 		$result .= '<a href="" id="bx-panel-hider" '.CTopPanel::AddAttrHint(GetMessage("top_panel_collapse_tooltip_title"), GetMessage("top_panel_collapse_tooltip").$hkInstance->GetTitle("bx-panel-expander",true)).'>'.GetMessage("top_panel_collapse").'<span id="bx-panel-hider-arrow"></span></a>';
@@ -1401,7 +1352,7 @@ class CTopPanel
 			if (array_key_exists("RESORT_MENU", $arButton) && $arButton["RESORT_MENU"] === true && is_array($arButton['MENU']) && !empty($arButton['MENU']))
 				sortByColumn($arButton['MENU'], "SORT", '', PHP_INT_MAX/*nulls last*/);
 
-			$bHasMenu = is_array($arButton['MENU']) && count($arButton['MENU']) > 0;
+			$bHasMenu = is_array(($arButton['MENU'] ?? null)) && count($arButton['MENU']) > 0;
 
 			if ($bHasMenu && !$bHasAction)
 			{
@@ -1421,9 +1372,9 @@ class CTopPanel
 				$last_btn_small_cnt = 0;
 			}
 
-			if ($bHasAction && substr(strtolower($arButton['HREF']), 0, 11) == 'javascript:')
+			if ($bHasAction && mb_substr(mb_strtolower($arButton['HREF']), 0, 11) == 'javascript:')
 			{
-				$arButton['ONCLICK'] = substr($arButton['HREF'], 11);
+				$arButton['ONCLICK'] = mb_substr($arButton['HREF'], 11);
 				$arButton['HREF'] = 'javascript:void(0)';
 			}
 
@@ -1543,8 +1494,8 @@ class CTopPanel
 
 		$result .= '<script type="text/javascript">
 		BX.admin.panel.state = {
-			fixed: '.($aUserOpt["fix"] == "on" ? 'true' : 'false').',
-			collapsed: '.($aUserOpt["collapsed"] == "on" ? 'true' : 'false').'
+			fixed: '.(($aUserOpt["fix"] ?? '') == "on" ? 'true' : 'false').',
+			collapsed: '.(($aUserOpt["collapsed"] ?? '') == "on" ? 'true' : 'false').'
 		};
 		BX.admin.moreButton.init({ buttonTitle : "'.GetMessageJS("top_panel_more_button_title").'"});
 		</script>';
@@ -1557,5 +1508,104 @@ class CTopPanel
 		$result .= $adminPage->ShowSound();
 
 		return $result;
+	}
+
+	private static function getSiteList(): array
+	{
+		$siteList = [];
+		$siteIdList = [];
+		$isDefaultSiteExists = false;
+
+		$siteIterator = Main\SiteTable::getList([
+			'select' => ['LID', 'NAME', 'DEF', 'SITE_NAME', 'SERVER_NAME', 'SORT'],
+			'filter' => [
+				'=ACTIVE' => 'Y',
+			],
+			'cache' => ['ttl' => 86400],
+		]);
+		while ($siteData = $siteIterator->fetch())
+		{
+			$siteIdList[] = $siteData['LID'];
+
+			if (empty($siteData['SERVER_NAME']))
+			{
+				continue;
+			}
+
+			$siteList[] = [
+				'ID' => $siteData['LID'],
+				'NAME' => $siteData['SITE_NAME'] ?: $siteData['NAME'],
+				'SERVER_NAME' => $siteData['SERVER_NAME'],
+				'SORT' => $siteData['SORT'],
+			];
+
+			if ($siteData['DEF'] === 'Y')
+			{
+				$isDefaultSiteExists = true;
+			}
+		}
+
+		if ($siteIdList)
+		{
+			$siteDomainIterator = Main\SiteDomainTable::getList([
+				'select' => [
+					'LID',
+					'DOMAIN',
+					'NAME' => 'SITE.NAME',
+					'SITE_NAME' => 'SITE.SITE_NAME',
+					'DEF' => 'SITE.DEF',
+					'SORT' => 'SITE.SORT',
+				],
+				'filter' => [
+					'=LID' => $siteIdList,
+				],
+				'cache' => ['ttl' => 86400],
+			]);
+			while ($siteDomainData = $siteDomainIterator->fetch())
+			{
+				$isDomainExists = (bool)array_filter($siteList, static function ($site) use ($siteDomainData) {
+					return $site['SERVER_NAME'] === $siteDomainData['DOMAIN'];
+				});
+
+				if (!$isDomainExists)
+				{
+					$siteList[] = [
+						'ID' => $siteDomainData['LID'],
+						'NAME' => $siteDomainData['SITE_NAME'] ?: $siteDomainData['NAME'],
+						'SERVER_NAME' => $siteDomainData['DOMAIN'],
+						'SORT' => $siteDomainData['SORT']
+					];
+
+					if ($siteDomainData['DEF'] === 'Y')
+					{
+						$isDefaultSiteExists = true;
+					}
+				}
+			}
+		}
+
+		if (!$isDefaultSiteExists)
+		{
+			$serverName = Main\Config\Option::get('main', 'server_name', '', '');
+			$isDefaultSiteExists = (bool)array_filter($siteList, static function ($site) use ($serverName) {
+				return $site['SERVER_NAME'] === $serverName;
+			});
+			if (!$isDefaultSiteExists)
+			{
+				$siteName = Main\Config\Option::get('main', 'site_name', '', '');
+				array_unshift(
+					$siteList,
+					[
+						'NAME' => $siteName,
+						'SERVER_NAME' => $serverName,
+						'SORT' => 1,
+					]
+				);
+			}
+		}
+
+		Main\Type\Collection::sortByColumn($siteList, ['SORT' => SORT_ASC]);
+
+		return $siteList;
 	}
 }

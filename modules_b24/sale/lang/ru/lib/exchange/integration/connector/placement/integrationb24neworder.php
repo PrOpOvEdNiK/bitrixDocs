@@ -1,3 +1,0 @@
-<?php
-$MESS ['SALE_INTEGRATIONB24_NEWORDER_TITLE'] = "Новый заказ";
-$MESS ['SALE_INTEGRATIONB24_NEWORDER_GROUPNAME'] = "Интеграция c БУС";

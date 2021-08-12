@@ -1,3 +1,0 @@
-<?
-$MESS["CRM_REPORT_VC_W_C_CHART_COLUMN_INCOME"] = "Bénéfice";
-?>

@@ -1,5 +1,0 @@
-<?
-$MESS["FILE_PREVIEW_TITLE"] = "Byla";
-$MESS["FILE_PREVIEW_SIZE"] = "Dydis";
-$MESS["FILE_PREVIEW_UPDATED"] = "Atnaujinta";
-?>

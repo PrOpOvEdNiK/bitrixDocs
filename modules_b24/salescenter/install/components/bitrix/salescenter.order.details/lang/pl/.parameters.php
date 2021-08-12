@@ -1,5 +1,0 @@
-<?
-$MESS["SOD_TEMPLATE_MODE"] = "Tryb wyświetlania";
-$MESS["SOD_TEMPLATE_MODE_DARK_VALUE"] = "Ciemny";
-$MESS["SOD_TEMPLATE_MODE_LIGHT_VALUE"] = "Jasny";
-?>

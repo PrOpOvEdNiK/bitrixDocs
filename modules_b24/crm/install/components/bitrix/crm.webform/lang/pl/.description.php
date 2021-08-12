@@ -1,5 +1,0 @@
-<?
-$MESS["CRM_WEB_FORM_COMPLEX_DESCRIPTION"] = "Formularze CRM";
-$MESS["CRM_WEB_FORM_COMPLEX_NAME"] = "Formularze CRM";
-$MESS["CRM_WEB_FORM_NAME"] = "Formularze CRM";
-?>

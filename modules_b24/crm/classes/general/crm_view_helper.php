@@ -1,7 +1,7 @@
 <?php
 IncludeModuleLangFile(__FILE__);
 
-use Bitrix\Crm\CustomerType;
+use Bitrix\Crm\Order;
 use Bitrix\Crm\Conversion\LeadConversionType;
 use Bitrix\Crm\Category\DealCategory;
 use Bitrix\Crm\Integration\OpenLineManager;
@@ -156,8 +156,8 @@ class CCrmViewHelper
 		}
 
 		$dbUser = CUser::GetList(
-			($by = 'id'),
-			($order = 'asc'),
+			'id',
+			'asc',
 			array('ID'=> $userID),
 			array(
 				'FIELDS' => array(
@@ -360,8 +360,8 @@ class CCrmViewHelper
 		$photoHtml = strval($photoHtml);
 
 		$result = '<div class="crm-client-photo-wrapper">'.($photoHtml !== ''
-			? $photoHtml
-			: '<div class="crm-avatar crm-avatar-user"></div>').'</div>';
+				? $photoHtml
+				: '<div class="ui-icon ui-icon-common-user crm-avatar crm-avatar-user"><i></i></div>').'</div>';
 
 		$result .= '<div class="crm-client-info-wrapper">';
 		if($url !== '' || $titleHtml !== '')
@@ -414,8 +414,8 @@ class CCrmViewHelper
 				self::RenderClientSummaryPanel($childParams, array_merge(array('ENABLE_WRAPPER' => false), $arOptions));
 				//region Counter
 				echo '<div class="crm-detail-info-resp-slide-counter-container">',
-					'<div class="crm-detail-info-resp-slide-counter">', ($selectedIndex + 1), ' / ', $count, '</div>',
-					'</div>';
+				'<div class="crm-detail-info-resp-slide-counter">', ($selectedIndex + 1), ' / ', $count, '</div>',
+				'</div>';
 				//endregion
 				echo '</div>';
 				//endregion
@@ -561,9 +561,9 @@ class CCrmViewHelper
 	public static function RenderNearestActivity($arParams)
 	{
 		$gridManagerID = isset($arParams['GRID_MANAGER_ID']) ? $arParams['GRID_MANAGER_ID'] : '';
-		$mgrID = strtolower($gridManagerID);
+		$mgrID = mb_strtolower($gridManagerID);
 
-		$entityTypeName = isset($arParams['ENTITY_TYPE_NAME']) ? strtolower($arParams['ENTITY_TYPE_NAME']) : '';
+		$entityTypeName = isset($arParams['ENTITY_TYPE_NAME'])? mb_strtolower($arParams['ENTITY_TYPE_NAME']) : '';
 		$entityID = isset($arParams['ENTITY_ID']) ? $arParams['ENTITY_ID'] : '';
 
 		$allowEdit = isset($arParams['ALLOW_EDIT']) ? $arParams['ALLOW_EDIT'] : false;
@@ -686,7 +686,7 @@ class CCrmViewHelper
 	}
 	public static function RenderListMultiField(&$arFields, $typeName, $prefix = '', $arEntityTypes = null, $arOptions = null)
 	{
-		$typeName = strtoupper(strval($typeName));
+		$typeName = mb_strtoupper(strval($typeName));
 		$prefix = strval($prefix);
 
 		if(!is_array($arEntityTypes))
@@ -712,7 +712,7 @@ class CCrmViewHelper
 	}
 	public static function PrepareFormMultiField($arEntityFields, $typeName, $prefix = '', $arEntityTypes = null, $arOptions = null)
 	{
-		$typeName = strtoupper(strval($typeName));
+		$typeName = mb_strtoupper(strval($typeName));
 		$prefix = strval($prefix);
 
 		if(!is_array($arEntityTypes))
@@ -774,7 +774,7 @@ class CCrmViewHelper
 
 			if($qty > 1)
 			{
-				$anchorID = $prefix.'_'.strtolower($typeName);
+				$anchorID = $prefix.'_'.mb_strtolower($typeName);
 				$result .= '<span class="crm-client-contacts-block-text-list-icon" id="'.htmlspecialcharsbx($anchorID).'" onclick="'
 					.CCrmViewHelper::PrepareMultiFieldValuesPopup($anchorID, $anchorID, $typeName, $values, $valueTypes, array_merge($arOptions, array('SKIP_FIRST' => true)))
 					.'"><span>';
@@ -839,7 +839,7 @@ class CCrmViewHelper
 				return isset($arOptions['STUB']) ? $arOptions['STUB'] : '';
 			}
 
-			$crmEmail = strtolower(trim(COption::GetOptionString('crm', 'mail', '')));
+			$crmEmail = mb_strtolower(trim(COption::GetOptionString('crm', 'mail', '')));
 			if($crmEmail !== '')
 			{
 				$valueUrl = $valueUrl.'?cc='.urlencode($crmEmail);
@@ -870,11 +870,11 @@ class CCrmViewHelper
 			{
 				$className = isset($arParams['CLASS_NAME']) ? $arParams['CLASS_NAME'] : 'crm-client-contacts-block-text-tel';
 				return '<a'.($className !== '' ? ' class="'.htmlspecialcharsbx($className).'"' : '')
-				.' title="'.htmlspecialcharsbx($linkAttrs['TITLE']).'"'
-				.' href="'.htmlspecialcharsbx($linkAttrs['HREF']).'"'
-				.' onclick="'.htmlspecialcharsbx($linkAttrs['ONCLICK'])
-				.'">'
-				.htmlspecialcharsbx($linkAttrs['TEXT']).'</a>';
+					.' title="'.htmlspecialcharsbx($linkAttrs['TITLE']).'"'
+					.' href="'.htmlspecialcharsbx($linkAttrs['HREF']).'"'
+					.' onclick="'.htmlspecialcharsbx($linkAttrs['ONCLICK'])
+					.'">'
+					.htmlspecialcharsbx($linkAttrs['TEXT']).'</a>';
 			}
 		}
 
@@ -925,7 +925,7 @@ class CCrmViewHelper
 	}
 	public static function PrepareListMultiFieldValues(&$arFields, $typeName, &$arValueTypes)
 	{
-		$typeName = strtoupper(strval($typeName));
+		$typeName = mb_strtoupper(strval($typeName));
 
 		$result = array();
 		foreach($arValueTypes as $valueTypeID => &$arValueType)
@@ -967,7 +967,7 @@ class CCrmViewHelper
 			$ID = uniqid('CRM_MULTI_FIELD_');
 		}
 
-		$typeName = strtoupper(strval($typeName));
+		$typeName = mb_strtoupper(strval($typeName));
 		$result = '';
 		$arValueData = array();
 		foreach($arValueTypes as $valueTypeID => &$arValueType)
@@ -1032,7 +1032,7 @@ class CCrmViewHelper
 						self::PrepareMultiFieldHtml($typeName, array('VALUE_TYPE_ID' => $current['VALUE_TYPE_ID'], 'VALUE_TYPE' => $valueType, 'VALUE' => $current['VALUE']))
 					),
 					'type' => htmlspecialcharsbx(
-						isset($valueType['SHORT']) ? strtolower($valueType['SHORT']) : ''
+						isset($valueType['SHORT'])? mb_strtolower($valueType['SHORT']) : ''
 					)
 				);
 
@@ -1111,7 +1111,7 @@ class CCrmViewHelper
 						)
 					),
 					'type' => htmlspecialcharsbx(
-						isset($valueType['SHORT']) ? strtolower($valueType['SHORT']) : ''
+						isset($valueType['SHORT'])? mb_strtolower($valueType['SHORT']) : ''
 					)
 				);
 
@@ -1152,7 +1152,7 @@ class CCrmViewHelper
 			'value' =>
 				self::PrepareMultiFieldHtml($typeName, $params, $arOptions),
 			'type' => htmlspecialcharsbx(
-				is_array($valueType) && isset($valueType['SHORT']) ? strtolower($valueType['SHORT']) : ''
+				is_array($valueType) && isset($valueType['SHORT'])? mb_strtolower($valueType['SHORT']) : ''
 			)
 		);
 
@@ -1173,7 +1173,7 @@ class CCrmViewHelper
 
 
 		$dbUsers = CUser::GetList(
-			($by = 'id'), ($sort = 'asc'),
+			'id', 'asc',
 			array('ID' => $userID),
 			array('FIELDS' =>  array('ID', 'NAME', 'SECOND_NAME', 'LAST_NAME', 'LOGIN', 'TITLE', 'EMAIL', 'PERSONAL_PHOTO'))
 		);
@@ -1269,7 +1269,7 @@ class CCrmViewHelper
 		$userInfoProviderID = isset($arParams['USER_INFO_PROVIDER_ID']) ? $arParams['USER_INFO_PROVIDER_ID'] : '';
 		if($userInfoProviderID === '')
 		{
-			$userInfoProviderID = $serviceUrl !== '' ? md5(strtolower($serviceUrl)) : '';
+			$userInfoProviderID = $serviceUrl !== '' ? md5(mb_strtolower($serviceUrl)) : '';
 		}
 
 		if($userInfoProviderID !== '')
@@ -1277,23 +1277,23 @@ class CCrmViewHelper
 			if(!self::$USER_INFO_PROVIDER_MESSAGES_REGISTRED)
 			{
 				echo '<script type="text/javascript">',
-					'BX.ready(function(){',
-					'BX.CrmUserInfoProvider.messages = ',
-						'{ "generalError":"', GetMessageJS('CRM_GET_USER_INFO_GENERAL_ERROR'), '" }',
-					'});',
-					'</script>';
+				'BX.ready(function(){',
+				'BX.CrmUserInfoProvider.messages = ',
+				'{ "generalError":"', GetMessageJS('CRM_GET_USER_INFO_GENERAL_ERROR'), '" }',
+				'});',
+				'</script>';
 
 				self::$USER_INFO_PROVIDER_MESSAGES_REGISTRED = true;
 			}
 
 			echo '<script type="text/javascript">',
-				'BX.ready(function(){',
-				'BX.CrmUserInfoProvider.createIfNotExists(',
-					'"', CUtil::JSEscape($userInfoProviderID), '",',
-					'{ "serviceUrl":"', CUtil::JSEscape($serviceUrl), '", "userProfileUrlTemplate":"', CUtil::JSEscape($userProfileUrlTemplate) , '" }',
-				');',
-				'});',
-				'</script>';
+			'BX.ready(function(){',
+			'BX.CrmUserInfoProvider.createIfNotExists(',
+			'"', CUtil::JSEscape($userInfoProviderID), '",',
+			'{ "serviceUrl":"', CUtil::JSEscape($serviceUrl), '", "userProfileUrlTemplate":"', CUtil::JSEscape($userProfileUrlTemplate) , '" }',
+			');',
+			'});',
+			'</script>';
 		}
 
 		$instantEditorID = isset($arParams['INSTANT_EDITOR_ID']) ? $arParams['INSTANT_EDITOR_ID'] : '';
@@ -1302,17 +1302,17 @@ class CCrmViewHelper
 		if(!$editable)
 		{
 			echo '<script type="text/javascript">',
-				'BX.ready(function(){',
-				'BX.CrmUserLinkField.create(',
-					'{',
-					'"containerId":"', CUtil::JSEscape($containerID), '"',
-					', "userInfoProviderId":"', CUtil::JSEscape($userInfoProviderID), '"',
-					', "editorId":"', CUtil::JSEscape($instantEditorID), '"',
-					', "fieldId":"', CUtil::JSEscape($fieldID), '"',
-					'}',
-				');',
-				'});',
-				'</script>';
+			'BX.ready(function(){',
+			'BX.CrmUserLinkField.create(',
+			'{',
+			'"containerId":"', CUtil::JSEscape($containerID), '"',
+			', "userInfoProviderId":"', CUtil::JSEscape($userInfoProviderID), '"',
+			', "editorId":"', CUtil::JSEscape($instantEditorID), '"',
+			', "fieldId":"', CUtil::JSEscape($fieldID), '"',
+			'}',
+			');',
+			'});',
+			'</script>';
 		}
 		else
 		{
@@ -1347,18 +1347,18 @@ class CCrmViewHelper
 			echo '<script type="text/javascript">';
 			echo 'BX.ready(function(){';
 			echo 'BX.CrmSidebarUserSelector.create(',
-				'"', $userSelectorName, '", ',
-				'BX("', CUtil::JSEscape($editButtonID), '"), ',
-				'BX("', CUtil::JSEscape($containerID), '"), ',
-				'"', CUtil::JSEscape($userSelectorName), '", ',
-				'{',
-				'"userInfoProviderId":"', CUtil::JSEscape($userInfoProviderID), '"',
-				', "editorId":"', CUtil::JSEscape($instantEditorID),'"',
-				', "fieldId":"', CUtil::JSEscape($fieldID), '"',
-				', "enableLazyLoad":', $enableLazyLoad ? 'true' : 'false',
-				', "serviceUrl":"', CUtil::JSEscape($serviceUrl), '"',
-				'}',
-				');';
+			'"', $userSelectorName, '", ',
+			'BX("', CUtil::JSEscape($editButtonID), '"), ',
+			'BX("', CUtil::JSEscape($containerID), '"), ',
+			'"', CUtil::JSEscape($userSelectorName), '", ',
+			'{',
+			'"userInfoProviderId":"', CUtil::JSEscape($userInfoProviderID), '"',
+			', "editorId":"', CUtil::JSEscape($instantEditorID),'"',
+			', "fieldId":"', CUtil::JSEscape($fieldID), '"',
+			', "enableLazyLoad":', $enableLazyLoad ? 'true' : 'false',
+			', "serviceUrl":"', CUtil::JSEscape($serviceUrl), '"',
+			'}',
+			');';
 			echo '});';
 			echo '</script>';
 		}
@@ -1386,11 +1386,11 @@ class CCrmViewHelper
 			$inputWidth = isset($arParams['INPUT_WIDTH']) ? intval($arParams['INPUT_WIDTH']) : 0;
 
 			echo '<span class="crm-instant-editor-fld crm-instant-editor-fld-input">',
-				'<span class="crm-instant-editor-fld-text">', htmlspecialcharsbx($value), '</span>';
+			'<span class="crm-instant-editor-fld-text">', htmlspecialcharsbx($value), '</span>';
 
 			echo '<input class="crm-instant-editor-data-input" type="text" value="', htmlspecialcharsbx($value),
-				'" style="display:none;', ($inputWidth > 0 ? "width:{$inputWidth}px;" : ''), '" />',
-				'<input class="crm-instant-editor-data-name" type="hidden" value="', htmlspecialcharsbx($fieldID), '" />';
+			'" style="display:none;', ($inputWidth > 0 ? "width:{$inputWidth}px;" : ''), '" />',
+			'<input class="crm-instant-editor-data-name" type="hidden" value="', htmlspecialcharsbx($fieldID), '" />';
 
 			if($suffixHtml !== '')
 			{
@@ -1508,8 +1508,8 @@ class CCrmViewHelper
 
 			$containerClassName = isset($arParams['CONTAINER_CLASS']) ? $arParams['CONTAINER_CLASS'] : '';
 			echo '<span',
-				($containerClassName !== '' ? ' class="'.htmlspecialcharsbx($containerClassName).'"' : ''),
-				'>';
+			($containerClassName !== '' ? ' class="'.htmlspecialcharsbx($containerClassName).'"' : ''),
+			'>';
 
 			$uniqueID = uniqid();
 
@@ -1533,11 +1533,11 @@ class CCrmViewHelper
 
 			echo '<script type="text/javascript">';
 			echo 'BX.ready(function(){',
-				'BX.CmrSidebarFieldSelector.create(',
-				'"', CUtil::JSEscape($selectorName), '",',
-				'"', CUtil::JSEscape($fieldID), '",',
-				'BX("', CUtil::JSEscape($itemID) ,'"),',
-				'{
+			'BX.CmrSidebarFieldSelector.create(',
+			'"', CUtil::JSEscape($selectorName), '",',
+			'"', CUtil::JSEscape($fieldID), '",',
+			'BX("', CUtil::JSEscape($itemID) ,'"),',
+			'{
 					"options": ', CUtil::PhpToJSObject($resultItems), ',
 					"buttonId":', CUtil::JSEscape($buttonID) ,'
 				});});';
@@ -1580,7 +1580,7 @@ class CCrmViewHelper
 			? $config['periodType']
 			: Bitrix\Crm\Widget\FilterPeriodType::UNDEFINED;
 
-		$prefix = strtolower($editorID);
+		$prefix = mb_strtolower($editorID);
 		$controls = array(
 			'period' => "{$prefix}_type",
 			'year' => "{$prefix}_year",
@@ -1594,25 +1594,25 @@ class CCrmViewHelper
 		echo '<input type="hidden" id="', $paramID, '" name="', $paramName, '" />';
 
 		echo '<span class="bx-select-wrap">',
-			'<select id="', $controls['period'], '" class="bx-select"></select>',
-			'</span>';
+		'<select id="', $controls['period'], '" class="bx-select"></select>',
+		'</span>';
 
 		echo '<span id="', $controls['quarterWrap'] ,'" class="bx-select-wrap" style="margin: 0 0 5px;',
-			($periodType !== Bitrix\Crm\Widget\FilterPeriodType::QUARTER ? ' display:none;' : ''),'">',
-			'<select id="', $controls['quarter'], '" class="bx-select"></select>',
-			'</span>';
+		($periodType !== Bitrix\Crm\Widget\FilterPeriodType::QUARTER ? ' display:none;' : ''),'">',
+		'<select id="', $controls['quarter'], '" class="bx-select"></select>',
+		'</span>';
 
 		echo '<span id="', $controls['monthWrap'] ,'" class="bx-select-wrap" style="margin: 0 0 5px;',
-			($periodType !== Bitrix\Crm\Widget\FilterPeriodType::MONTH ? ' display:none;' : ''),' ">',
-			'<select id="', $controls['month'], '" class="bx-select"></select>',
-			'</span>';
+		($periodType !== Bitrix\Crm\Widget\FilterPeriodType::MONTH ? ' display:none;' : ''),' ">',
+		'<select id="', $controls['month'], '" class="bx-select"></select>',
+		'</span>';
 
 		echo '<span id="', $controls['yearWrap'] ,'" class="bx-select-wrap" style="margin: 0 0 5px;',
-			($periodType !== Bitrix\Crm\Widget\FilterPeriodType::YEAR
-				&& $periodType !== Bitrix\Crm\Widget\FilterPeriodType::MONTH
-				&& $periodType !== Bitrix\Crm\Widget\FilterPeriodType::QUARTER ? ' display:none;' : ''),'">',
-			'<select id="', $controls['year'], '" class="bx-select"></select>',
-			'</span>';
+		($periodType !== Bitrix\Crm\Widget\FilterPeriodType::YEAR
+		&& $periodType !== Bitrix\Crm\Widget\FilterPeriodType::MONTH
+		&& $periodType !== Bitrix\Crm\Widget\FilterPeriodType::QUARTER ? ' display:none;' : ''),'">',
+		'<select id="', $controls['year'], '" class="bx-select"></select>',
+		'</span>';
 
 		echo '<script type="text/javascript">',
 		'BX.ready(function(){',
@@ -1747,10 +1747,10 @@ class CCrmViewHelper
 		}
 
 		echo '<script type="text/javascript">',
-			'BX.ready(function(){',
-			'BX.CrmUserSearchPopup.deletePopup("', $ID, '");',
-			'BX.CrmUserSearchPopup.create("', $ID, '", { searchInput: BX("', CUtil::JSEscape($searchInputID), '"), dataInput: BX("', CUtil::JSEscape($dataInputID),'"), componentName: "', CUtil::JSEscape($componentName),'", user: {} }, ', $delay,');',
-			'});</script>';
+		'BX.ready(function(){',
+		'BX.CrmUserSearchPopup.deletePopup("', $ID, '");',
+		'BX.CrmUserSearchPopup.create("', $ID, '", { searchInput: BX("', CUtil::JSEscape($searchInputID), '"), dataInput: BX("', CUtil::JSEscape($dataInputID),'"), componentName: "', CUtil::JSEscape($componentName),'", user: {} }, ', $delay,');',
+		'});</script>';
 
 		$GLOBALS['APPLICATION']->IncludeComponent(
 			'bitrix:intranet.user.selector.new',
@@ -1812,12 +1812,12 @@ class CCrmViewHelper
 			else
 			{
 				echo '<span class="crm-entity-file-info"><a target="_blank" class="crm-entity-file-link" href="',
-					htmlspecialcharsbx(
-						CComponentEngine::MakePathFromTemplate(
-							$fileUrlTemplate,
-							array('file_id' => $fileInfo['ID'])
-						)
-					), '">',
+				htmlspecialcharsbx(
+					CComponentEngine::MakePathFromTemplate(
+						$fileUrlTemplate,
+						array('file_id' => $fileInfo['ID'])
+					)
+				), '">',
 					htmlspecialcharsbx($fileInfo['ORIGINAL_NAME']).'</a><span class="crm-entity-file-size">',
 					CFile::FormatSize($fileInfo['FILE_SIZE']).'</span></span>';
 			}
@@ -1853,15 +1853,6 @@ class CCrmViewHelper
 		}
 
 		self::$DEAL_STAGES[$categoryID] = CCrmDeal::GetStages($categoryID);
-		$scheme = Bitrix\Crm\Color\DealStageColorScheme::getByCategory($categoryID);
-		foreach(self::$DEAL_STAGES[$categoryID] as $k => $v)
-		{
-			$element = $scheme->getElementByName($k);
-			if($element !== null)
-			{
-				self::$DEAL_STAGES[$categoryID][$k]['COLOR'] = $element->getColor();
-			}
-		}
 
 		return self::$DEAL_STAGES[$categoryID];
 	}
@@ -1941,12 +1932,12 @@ class CCrmViewHelper
 			'selectorTitle' => GetMessage('CRM_DEAL_STAGE_MANAGER_SELECTOR_TTL'),
 			'checkErrorTitle' => GetMessage('CRM_DEAL_STAGE_MANAGER_CHECK_ERROR_TTL'),
 			'checkErrorHelp' => GetMessage('CRM_STAGE_MANAGER_CHECK_ERROR_HELP'),
-			'checkErrorHelpArticleCode' => '9480255'
+			'checkErrorHelpArticleCode' => '8233923'
 		);
 
 		return '<script type="text/javascript">'
-		.'BX.ready(function(){ if(typeof(BX.CrmDealStageManager) === "undefined") return; BX.CrmDealStageManager.infos = '.CUtil::PhpToJSObject($result).'; BX.CrmDealStageManager.messages = '.CUtil::PhpToJSObject($messages).'; });'
-		.'</script>';
+			.'BX.ready(function(){ if(typeof(BX.CrmDealStageManager) === "undefined") return; BX.CrmDealStageManager.infos = '.CUtil::PhpToJSObject($result).'; BX.CrmDealStageManager.messages = '.CUtil::PhpToJSObject($messages).'; });'
+			.'</script>';
 	}
 
 	public static function GetLeadStatusInfos()
@@ -1989,16 +1980,6 @@ class CCrmViewHelper
 
 		self::$LEAD_STATUSES = CCrmLead::GetStatuses();
 
-		$scheme = Bitrix\Crm\Color\LeadStatusColorScheme::getCurrent();
-		foreach(self::$LEAD_STATUSES as $ID => &$item)
-		{
-			$element = $scheme->getElementByName($ID);
-			if($element !== null)
-			{
-				$item['COLOR'] = $element->getColor();
-			}
-		}
-		unset($item);
 		return self::$LEAD_STATUSES;
 	}
 	public static function RenderLeadStatusSettings()
@@ -2043,14 +2024,14 @@ class CCrmViewHelper
 			'selectorTitle' => GetMessage('CRM_LEAD_STATUS_MANAGER_SELECTOR_TTL'),
 			'checkErrorTitle' => GetMessage('CRM_LEAD_STAGE_MANAGER_CHECK_ERROR_TTL'),
 			'checkErrorHelp' => GetMessage('CRM_STAGE_MANAGER_CHECK_ERROR_HELP'),
-			'checkErrorHelpArticleCode' => '9480255',
+			'checkErrorHelpArticleCode' => '8233923',
 			'conversionCancellationTitle' => GetMessage('CRM_CONFIRMATION_DLG_TTL'),
 			'conversionCancellationContent' => GetMessage('CRM_LEAD_STATUS_MANAGER_CONVERSION_CANCEL_CNT')
 		);
 
 		return '<script type="text/javascript">'
-		.'BX.ready(function(){ if(typeof(BX.CrmLeadStatusManager) === "undefined") return; BX.CrmLeadStatusManager.infos = '.CUtil::PhpToJSObject($result).'; BX.CrmLeadStatusManager.messages = '.CUtil::PhpToJSObject($messages).'; });'
-		.'</script>';
+			.'BX.ready(function(){ if(typeof(BX.CrmLeadStatusManager) === "undefined") return; BX.CrmLeadStatusManager.infos = '.CUtil::PhpToJSObject($result).'; BX.CrmLeadStatusManager.messages = '.CUtil::PhpToJSObject($messages).'; });'
+			.'</script>';
 	}
 
 	public static function GetInvoiceStatusInfos()
@@ -2066,16 +2047,6 @@ class CCrmViewHelper
 
 		self::$INVOICE_STATUSES = CCrmStatus::GetStatus('INVOICE_STATUS');
 
-		$scheme = Bitrix\Crm\Color\InvoiceStatusColorScheme::getCurrent();
-		foreach(self::$INVOICE_STATUSES as $ID => &$item)
-		{
-			$element = $scheme->getElementByName($ID);
-			if($element !== null)
-			{
-				$item['COLOR'] = $element->getColor();
-			}
-		}
-		unset($item);
 		return self::$INVOICE_STATUSES;
 	}
 	public static function RenderInvoiceStatusSettings()
@@ -2175,6 +2146,67 @@ class CCrmViewHelper
 
 		return $html;
 	}
+
+	public static function RenderDealOrderStageControl($stage)
+	{
+		$cssPostfix = '';
+
+		if ($stage === Order\OrderStage::PAID)
+		{
+			$cssPostfix = 'paid';
+		}
+		elseif ($stage === Order\OrderStage::SENT_NO_VIEWED)
+		{
+			$cssPostfix = 'send';
+		}
+		elseif ($stage === Order\OrderStage::VIEWED_NO_PAID)
+		{
+			$cssPostfix = 'seen';
+		}
+		elseif ($stage === Order\OrderStage::PAYMENT_CANCEL)
+		{
+			$cssPostfix = 'cancel';
+		}
+		elseif ($stage === Order\OrderStage::REFUND)
+		{
+			$cssPostfix = 'refund';
+		}
+
+		$stageList = Order\OrderStage::getList();
+
+		if (!isset($stageList[$stage]))
+		{
+			return '';
+		}
+
+		return '<div class="crm-list-item-status crm-list-item-status-'.$cssPostfix.'">'.$stageList[$stage].'</div>';
+	}
+
+	/**
+	 * @param string $stage
+	 * @return string
+	 */
+	public static function RenderDealDeliveryStageControl($stage)
+	{
+		static $stages;
+
+		if ($stages === null)
+		{
+			$stages = Order\DeliveryStage::getList();
+		}
+
+		if (!isset($stages[$stage]))
+		{
+			return '';
+		}
+
+		$cssPostfix = ($stage === Order\DeliveryStage::SHIPPED)
+			? 'shipped'
+			: 'no-shipped';
+
+		return '<div class="crm-list-item-status crm-list-item-status-'.$cssPostfix.'">'.$stages[$stage].'</div>';
+	}
+
 	public static function RenderDealStageControl($arParams)
 	{
 		if(!is_array($arParams))
@@ -2419,7 +2451,7 @@ class CCrmViewHelper
 				$stepHtml .= '">';
 			}
 
-			$stepHtml .= '<div class="crm-list-stage-bar-block  crm-stage-'.htmlspecialcharsbx(strtolower($ID)).'"><div class="crm-list-stage-bar-btn"></div></div></td>';
+			$stepHtml .= '<div class="crm-list-stage-bar-block  crm-stage-'.htmlspecialcharsbx(mb_strtolower($ID)).'"><div class="crm-list-stage-bar-btn"></div></div></td>';
 		}
 
 		$wrapperStyle = '';
@@ -2701,17 +2733,6 @@ class CCrmViewHelper
 
 		self::$QUOTE_STATUSES = CCrmQuote::GetStatuses();
 
-		$scheme = Bitrix\Crm\Color\QuoteStatusColorScheme::getCurrent();
-		foreach(self::$QUOTE_STATUSES as $ID => &$item)
-		{
-			$element = $scheme->getElementByName($ID);
-			if($element !== null)
-			{
-				$item['COLOR'] = $element->getColor();
-			}
-		}
-		unset($item);
-
 		return self::$QUOTE_STATUSES;
 	}
 	protected static function PrepareOrderStatuses()
@@ -2727,12 +2748,13 @@ class CCrmViewHelper
 		foreach(self::$ORDER_STATUSES as $ID => &$item)
 		{
 			$element = $scheme->getElementByName($ID);
-			if($element !== null)
+			if($element !== null && !isset($item['COLOR']))
 			{
 				$item['COLOR'] = $element->getColor();
 			}
 		}
 		unset($item);
+
 		return self::$ORDER_STATUSES;
 	}
 	protected static function PrepareOrderShipmentStatuses()
@@ -2748,7 +2770,7 @@ class CCrmViewHelper
 		foreach(self::$ORDER_SHIPMENT_STATUSES as $ID => &$item)
 		{
 			$element = $scheme->getElementByName($ID);
-			if($element !== null)
+			if($element !== null && !isset($item['COLOR']))
 			{
 				$item['COLOR'] = $element->getColor();
 			}
@@ -2901,12 +2923,15 @@ class CCrmViewHelper
 		$messages = array(
 			'dialogTitle' => GetMessage('CRM_QUOTE_STATUS_MANAGER_DLG_TTL'),
 			'failureTitle' => GetMessage('CRM_QUOTE_STATUS_MANAGER_FAILURE_TTL'),
-			'selectorTitle' => GetMessage('CRM_QUOTE_STATUS_MANAGER_SELECTOR_TTL')
+			'selectorTitle' => GetMessage('CRM_QUOTE_STATUS_MANAGER_SELECTOR_TTL'),
+			'checkErrorTitle' => GetMessage('CRM_QUOTE_STATUS_MANAGER_CHECK_ERROR_TTL'),
+			'checkErrorHelp' => GetMessage('CRM_STAGE_MANAGER_CHECK_ERROR_HELP'),
+			'checkErrorHelpArticleCode' => '8233923'
 		);
 
 		return '<script type="text/javascript">'
-		.'BX.ready(function(){ if(typeof(BX.CrmQuoteStatusManager) === "undefined") return;  BX.CrmQuoteStatusManager.infos = '.CUtil::PhpToJSObject($result).'; BX.CrmQuoteStatusManager.messages = '.CUtil::PhpToJSObject($messages).'; });'
-		.'</script>';
+			.'BX.ready(function(){ if(typeof(BX.CrmQuoteStatusManager) === "undefined") return;  BX.CrmQuoteStatusManager.infos = '.CUtil::PhpToJSObject($result).'; BX.CrmQuoteStatusManager.messages = '.CUtil::PhpToJSObject($messages).'; });'
+			.'</script>';
 	}
 
 	public static function GetFormFieldNames($formID)
@@ -3044,25 +3069,25 @@ class CCrmViewHelper
 	{
 		echo '<script type="text/javascript">',
 		'BX.ready(function(){', "\n",
-			'var mgr = BX.CrmSipManager.getCurrent();', "\n",
-			'mgr.setServiceUrl(',
-				'"CRM_', CCrmOwnerType::LeadName, '", ',
-				'"/bitrix/components/bitrix/crm.lead.show/ajax.php?', bitrix_sessid_get(), '"',
-			');', "\n",
-			'mgr.setServiceUrl(',
-				'"CRM_', CCrmOwnerType::ContactName, '", ',
-				'"/bitrix/components/bitrix/crm.contact.show/ajax.php?', bitrix_sessid_get(), '"',
-			');', "\n",
-			'mgr.setServiceUrl(',
-				'"CRM_', CCrmOwnerType::CompanyName, '", ',
-				'"/bitrix/components/bitrix/crm.company.show/ajax.php?', bitrix_sessid_get(), '"',
-			');', "\n";
+		'var mgr = BX.CrmSipManager.getCurrent();', "\n",
+		'mgr.setServiceUrl(',
+		'"CRM_', CCrmOwnerType::LeadName, '", ',
+		'"/bitrix/components/bitrix/crm.lead.show/ajax.php?', bitrix_sessid_get(), '"',
+		');', "\n",
+		'mgr.setServiceUrl(',
+		'"CRM_', CCrmOwnerType::ContactName, '", ',
+		'"/bitrix/components/bitrix/crm.contact.show/ajax.php?', bitrix_sessid_get(), '"',
+		');', "\n",
+		'mgr.setServiceUrl(',
+		'"CRM_', CCrmOwnerType::CompanyName, '", ',
+		'"/bitrix/components/bitrix/crm.company.show/ajax.php?', bitrix_sessid_get(), '"',
+		');', "\n";
 
 		echo 'if(typeof(BX.CrmSipManager.messages) === "undefined"){', "\n",
-			'BX.CrmSipManager.messages = {', "\n",
-				'unknownRecipient: "', GetMessageJS('CRM_SIP_MGR_UNKNOWN_RECIPIENT'), '",', "\n",
-				'makeCall: "', GetMessageJS('CRM_SIP_MGR_MAKE_CALL'), '"', "\n",
-			'};', "\n",
+		'BX.CrmSipManager.messages = {', "\n",
+		'unknownRecipient: "', GetMessageJS('CRM_SIP_MGR_UNKNOWN_RECIPIENT'), '",', "\n",
+		'makeCall: "', GetMessageJS('CRM_SIP_MGR_MAKE_CALL'), '"', "\n",
+		'};', "\n",
 		'}', "\n";
 
 		echo '}); </script>';

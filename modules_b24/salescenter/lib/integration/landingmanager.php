@@ -8,8 +8,10 @@ use Bitrix\Landing\Internals\BlockTable;
 use Bitrix\Landing\Landing;
 use Bitrix\Landing\Rights;
 use Bitrix\Landing\Site;
+use Bitrix\Landing\Subtype;
 use Bitrix\Main\Application;
 use Bitrix\Main\Config\Option;
+use Bitrix\Main\Engine\UrlManager;
 use Bitrix\Main\Error;
 use Bitrix\Main\Event;
 use Bitrix\Main\EventResult;
@@ -18,13 +20,18 @@ use Bitrix\Main\ORM\Data\UpdateResult;
 use Bitrix\Main\Result;
 use Bitrix\Main\Web\Uri;
 use Bitrix\SalesCenter\Driver;
+use Bitrix\Sale;
+use Bitrix\Sale\TradingPlatform;
+use Bitrix\Crm\Order;
 use Bitrix\SalesCenter\Model\Meta;
 use Bitrix\SalesCenter\Model\PageTable;
 
 class LandingManager extends Base
 {
-	const SITE_TEMPLATE_CODE = 'store-chats';
-	const OPTION_SALESCENTER_SITE_ID = '~connected_site_id';
+	public const SITE_TEMPLATE_CODE = 'store-chats';
+
+	protected const OPTION_SALESCENTER_SITE_ID = '~connected_site_id';
+	protected const OPTION_SALESCENTER_INSTALL_DEFAULT_SITES_TRIES_COUNT = '~install_default_site_tries_count';
 
 	protected $connectedSite;
 	protected $orderPublicUrlInfo;
@@ -57,12 +64,13 @@ class LandingManager extends Base
 			$landingId = $event->getParameter('id');
 			if($landingId != static::getInstance()->getConnectedSiteId())
 			{
-				static::getInstance()->setConnectedSiteId($landingId);
-				static::getInstance()->createWebFormPages();
 				if(static::getInstance()->isConnectionAvailable())
 				{
 					\Bitrix\Landing\PublicAction\Site::publication($landingId, true);
 				}
+
+				static::getInstance()->createWebFormPages();
+				static::getInstance()->setConnectedSiteId($landingId);
 			}
 		}
 
@@ -150,6 +158,15 @@ class LandingManager extends Base
 						}
 						$content = '<meta property="og:title" content="'.$title.'" />
 						<meta property="og:description" content="'.$description.'" />';
+						if(!$image)
+						{
+							$fields = $hook->getPageFields();
+							if(isset($fields['METAOG_IMAGE']))
+							{
+								$field = $fields['METAOG_IMAGE'];
+								$image = $field->getValue();
+							}
+						}
 						if($image)
 						{
 							$content .= '<meta property="og:image" content="'.$image.'" />';
@@ -298,7 +315,7 @@ class LandingManager extends Base
 	 */
 	public function isSiteExists()
 	{
-		return ($this->isEnabled && $this->getConnectedSite() !== false);
+		return ($this->isEnabled && $this->getConnectedSite() !== null);
 	}
 
 	/**
@@ -309,33 +326,36 @@ class LandingManager extends Base
 	{
 		if(is_string($code))
 		{
-			return strpos($code, static::SITE_TEMPLATE_CODE) === 0;
+			return mb_strpos($code, static::SITE_TEMPLATE_CODE) === 0;
 		}
 
 		return false;
 	}
 
 	/**
-	 * @return array|false
+	 * @return array|null
 	 */
 	protected function getConnectedSite()
 	{
-		if($this->connectedSite === null)
+		if ($this->connectedSite === null)
 		{
-			$this->connectedSite = false;
-
 			$siteId = $this->getConnectedSiteId();
-			if($siteId > 0 && $this->isEnabled)
+			if ($siteId > 0 && $this->isEnabled)
 			{
 				Rights::setOff();
-				Site\Type::clearScope();
-				$this->connectedSite = Site::getList([
+				$site = Site::getList([
 					'select' => ['ID', 'ACTIVE', 'XML_ID'],
 					'filter' => [
 						'=ID' => $siteId,
 						'=DELETED' => 'N',
 					],
 				])->fetch();
+
+				if ($site)
+				{
+					$this->connectedSite = $site;
+				}
+
 				Rights::setOn();
 			}
 		}
@@ -359,6 +379,101 @@ class LandingManager extends Base
 		}
 
 		return false;
+	}
+
+	public function tryInstallDefaultSiteOnce(): void
+	{
+		if(!$this->isEnabled())
+		{
+			return;
+		}
+
+		if(!$this->isTriedInstallDefaultSite())
+		{
+			$this->installDefaultSite();
+			$this->markTriedInstallDefaultSiteStatus();
+		}
+	}
+
+	protected function isTriedInstallDefaultSite(): bool
+	{
+		return (
+			(int) Option::get(
+				Driver::MODULE_ID,
+				static::OPTION_SALESCENTER_INSTALL_DEFAULT_SITES_TRIES_COUNT,
+				0) > 0
+		);
+	}
+
+	protected function markTriedInstallDefaultSiteStatus(): void
+	{
+		Option::set(
+			Driver::MODULE_ID,
+			static::OPTION_SALESCENTER_INSTALL_DEFAULT_SITES_TRIES_COUNT,
+			1
+		);
+	}
+
+	protected function installDefaultSite(): bool
+	{
+		if($this->isSiteExists())
+		{
+			return true;
+		}
+
+		if($this->isEnabled())
+		{
+			$componentName = 'bitrix:landing.demo';
+			$className = \CBitrixComponent::includeComponentClass($componentName);
+			$demoCmp = new $className;
+			/** @var \LandingSiteDemoComponent $demoCmp */
+			$demoCmp->initComponent($componentName);
+			$demoCmp->arParams = [
+				'TYPE' => 'STORE',
+				'DISABLE_REDIRECT' => 'Y'
+			];
+
+			return $demoCmp->actionSelect('store-chats-dark');
+		}
+
+		return false;
+	}
+
+	/**
+	 * Returns last created "CRM + Online Store" active site.
+	 * @return array|null
+	 */
+	public function getCrmStoreSite(): ?array
+	{
+		if (!\Bitrix\Main\Loader::includeModule('sale'))
+		{
+			return null;
+		}
+
+		$filter = [
+			'=CLASS' => '\\' . TradingPlatform\Landing\Landing::class,
+			'=ACTIVE' => 'Y',
+		];
+
+		$tradingPlatforms = TradingPlatform\Manager::getList([
+			'select' => ['CODE'],
+			'filter' => $filter,
+			'order' => ['ID' => 'desc'],
+		]);
+		while ($platformData = $tradingPlatforms->fetch())
+		{
+			$platform = TradingPlatform\Landing\Landing::getInstanceByCode($platformData['CODE']);
+			if ($platform->isOfType(TradingPlatform\Landing\Landing::LANDING_STORE_STORE_V3))
+			{
+				$landingData = $platform->getInfo();
+				if ($landingData['ACTIVE'] === 'Y')
+				{
+					return $landingData;
+				}
+			}
+		}
+
+		return null;
 	}
 	//endregion
 
@@ -543,7 +658,6 @@ class LandingManager extends Base
 	{
 		if($this->orderPublicUrlInfo === null)
 		{
-			$this->orderPublicUrlInfo = false;
 			if($this->isEnabled && $this->isSiteExists())
 			{
 				Rights::setOff();
@@ -566,6 +680,11 @@ class LandingManager extends Base
 			}
 		}
 
+		if (!$this->orderPublicUrlInfo)
+		{
+			return false;
+		}
+
 		$orderPublicUrlInfo = $this->orderPublicUrlInfo;
 
 		if(is_array($orderPublicUrlInfo) && !empty($urlParameters))
@@ -575,7 +694,58 @@ class LandingManager extends Base
 			$orderPublicUrlInfo['url'] = $uri->getLocator();
 		}
 
+		$orderPublicUrlInfo['shortUrl'] = UrlManager::getInstance()->getHostUrl().\CBXShortUri::GetShortUri($orderPublicUrlInfo['url']);
+
 		return $orderPublicUrlInfo;
+	}
+
+	/**
+	 * Get url info by order.
+	 *
+	 * @param Sale\Order $order Order.
+	 * @param array $urlParameters Url parameters.
+	 * @return array|false
+	 */
+	public function getUrlInfoByOrder(Sale\Order $order, array $urlParameters = [])
+	{
+		static $info = [];
+
+		if (!isset($info[$order->getId()]))
+		{
+			$urlInfo = false;
+			if ($this->isOrderPublicUrlAvailable())
+			{
+				$urlParameters = [
+						'orderId' => $order->getId(),
+						'access' => $order->getHash()
+					] + $urlParameters;
+
+				$urlInfo = $this->getOrderPublicUrlInfo($urlParameters);
+			}
+
+			$info[$order->getId()] = $urlInfo;
+		}
+
+		return $info[$order->getId()];
+	}
+
+	/**
+	 * Get url info by orderId.
+	 *
+	 * @param $orderId
+	 * @param array $urlParameters
+	 * @return mixed|null
+	 * @throws \Bitrix\Main\ArgumentNullException
+	 */
+	public function getUrlInfoByOrderId($orderId, array $urlParameters = [])
+	{
+		$order = Order\Order::load($orderId);
+		if (!$order)
+		{
+			return null;
+		}
+
+		return $this->getUrlInfoByOrder($order);
 	}
 
 	/**
@@ -604,44 +774,24 @@ class LandingManager extends Base
 
 	//region webforms
 	/**
-	 * @param array $landingIds
 	 * @return array
 	 */
-	protected function getBlocksWithWebForms(array $landingIds)
+	public function getConnectedWebForms(): array
 	{
-		if(empty($landingIds))
-		{
-			return [];
-		}
-
-		return BlockTable::getList([
-			'select' => ['*'],
-			'filter' => [
-				'=LID' => $landingIds,
-				'CONTENT' => '%data-b24form=%',
-			]
-		])->fetchAll();
-	}
-
-	/**
-	 * @return array
-	 */
-	public function getConnectedWebForms()
-	{
-		if($this->connectedWebForms === null)
+		if ($this->connectedWebForms === null)
 		{
 			$this->connectedWebForms = [];
 			$landings = $this->getLandings();
-			$blocks = $this->getBlocksWithWebForms(array_keys($landings));
-			foreach($blocks as $block)
+			$blocks = Subtype\Form::getLandingFormBlocks(array_keys($landings));
+			foreach ($blocks as $block)
 			{
-				if(preg_match('#data-b24form\=\"(\d+)\|([a-z0-9]{6})\"#', $block['CONTENT'], $matches))
+				$formId = Subtype\Form::getFormByBlock((int)$block['ID']);
+				if ($formId)
 				{
 					$this->connectedWebForms[] = [
-						'blockId' => $block['ID'],
-						'formId' => $matches[1],
-						'landingId' => $block['LID'],
-						'formCode' => $matches[2],
+						'blockId' => (int)$block['ID'],
+						'formId' => (int)$formId,
+						'landingId' => (int)$block['LID'],
 					];
 				}
 			}
@@ -760,7 +910,7 @@ class LandingManager extends Base
 		$previousWebFormPage = $this->getLastCreatedWebFormLanding($webFormPageCode);
 		$component->actionSelect($webFormPageCode);
 		$lastWebFormPage = $this->getLastCreatedWebFormLanding($webFormPageCode);
-		if($lastWebFormPage && !$previousWebFormPage || $lastWebFormPage['ID'] > $previousWebFormPage['ID'])
+		if(($lastWebFormPage && !$previousWebFormPage) || $lastWebFormPage['ID'] > $previousWebFormPage['ID'])
 		{
 			$landingId = $lastWebFormPage['ID'];
 			$result->setData(['landingId' => $landingId]);
@@ -805,64 +955,37 @@ class LandingManager extends Base
 	 * @param $formId
 	 * @return Result
 	 */
-	protected function setPageWebFormId($landingId, $formId)
+	protected function setPageWebFormId($landingId, $formId): Result
 	{
 		$result = new Result();
-		$attributeValue = $this->getWebFormAttributeValue($formId);
-		if(!$attributeValue)
+		$form = CrmManager::getInstance()->getWebForms()[$formId];
+		if (!$form)
 		{
 			return $result->addError(new Error('Form not found'));
 		}
-		$blocks = $this->getBlocksWithWebForms([$landingId]);
-		if(empty($blocks))
+		$blocks = Subtype\Form::getLandingFormBlocks($landingId);
+		if (empty($blocks))
 		{
 			return $result->addError(new Error('Could not found block with form on the page'));
 		}
-		foreach($blocks as $blockData)
+		foreach ($blocks as $blockData)
 		{
-			$block = new Block($blockData['ID'], $blockData);
-			$block->setAttributes([
-				'.bitrix24forms' => [
-					'data-b24form' => $attributeValue,
-				]
-			]);
-			$block->save();
-			if(!$block->getError()->isEmpty())
+			if (!Subtype\Form::setFormIdToBlock((int)$blockData['ID'], (int)$formId))
 			{
-				$result->addErrors($block->getError()->getErrors());
+				return $result->addError(new Error('Error while set form ID to block'));
 			}
-			else
+			if ($this->connectedWebForms !== null)
 			{
-				if($this->connectedWebForms !== null)
-				{
-					$this->connectedWebForms[] = [
-						'blockId' => $blockData['ID'],
-						'formId' => $formId,
-						'landingId' => $landingId,
-						'formCode' => CrmManager::getInstance()->getWebForms()[$formId]['SECURITY_CODE'],
-					];
-				}
+				$this->connectedWebForms[] = [
+					'blockId' => (int)$blockData['ID'],
+					'formId' => (int)$formId,
+					'landingId' => (int)$landingId,
+				];
 			}
 		}
 
 		return $result;
 	}
-
-	/**
-	 * @param $formId
-	 * @return false|string
-	 */
-	protected function getWebFormAttributeValue($formId)
-	{
-		$form = CrmManager::getInstance()->getWebForms()[$formId];
-		if($form)
-		{
-			return $form['ID'].'|'.$form['SECURITY_CODE'];
-		}
-
-		return false;
-	}
-
 	/**
 	 * @param $webFormPageCode
 	 * @return array|false
@@ -931,7 +1054,7 @@ class LandingManager extends Base
 		if($this->isSiteExists())
 		{
 			$xmlId = $this->getConnectedSite()['XML_ID'];
-			list(, $code) = explode('|', $xmlId);
+			[, $code] = explode('|', $xmlId);
 
 			return $code;
 		}

@@ -12,7 +12,7 @@ abstract class CAllMeeting
 
 	const MEETING_ROOM_PREFIX = 'mr';
 
-	abstract public static function GetList($arOrder = array(), $arFilter = array(), $arGroupBy = false, $arNavStartParams = false, $arSelectFields = array());
+	abstract public static function GetList($arOrder = [], $arFilter = [], $arGroupBy = false, $arNavStartParams = false, $arSelectFields = []);
 
 	public static function GetItems($ID, $type = false)
 	{
@@ -35,7 +35,7 @@ ORDER BY ins.INSTANCE_PARENT_ID, ins.SORT
 
 	public static function GetByID($ID)
 	{
-		return CMeeting::GetList(array(), array('ID' => intval($ID)));
+		return CMeeting::GetList([], array('ID' => intval($ID)));
 	}
 
 	public static function Add($arFields)
@@ -98,7 +98,7 @@ ORDER BY ins.INSTANCE_PARENT_ID, ins.SORT
 		$strUpdate = $DB->PrepareUpdate('b_meeting', $arFields);
 		$query = 'UPDATE b_meeting SET '.$strUpdate.' WHERE ID=\''.intval($ID).'\'';
 
-		$arBind = array();
+		$arBind = [];
 		if(isset($arFields['DESCRIPTION']))
 		{
 			$arBind['DESCRIPTION'] = $arFields['DESCRIPTION'];
@@ -141,8 +141,10 @@ ORDER BY ins.INSTANCE_PARENT_ID, ins.SORT
 		if ($bClear)
 		{
 			$query = "DELETE FROM b_meeting_users WHERE MEETING_ID='".$ID."'";
-			if (count($arUsers) > 0)
+			if (is_array($arUsers) && count($arUsers) > 0)
+			{
 				$query .= " AND (USER_ROLE='".self::ROLE_MEMBER."' OR USER_ROLE='".self::ROLE_KEEPER."')";
+			}
 			$DB->Query($query);
 		}
 
@@ -172,7 +174,7 @@ ORDER BY ins.INSTANCE_PARENT_ID, ins.SORT
 	{
 		global $DB;
 
-		$arUsers = array();
+		$arUsers = [];
 
 		$ID = intval($ID);
 		if ($ID > 0)
@@ -240,7 +242,7 @@ ORDER BY ins.INSTANCE_PARENT_ID, ins.SORT
 		{
 			CFile::Delete($arRes['FILE_ID']);
 		}
-		self::SetFiles($ID, array());
+		self::SetFiles($ID, []);
 	}
 
 	public static function DeleteFilesBySrc($FILE_SRC)
@@ -387,9 +389,9 @@ ORDER BY ins.INSTANCE_PARENT_ID, ins.SORT
 
 	public static function CheckPlace($place)
 	{
-		if(strlen($place) > 0)
+		if($place <> '')
 		{
-			$matches = array();
+			$matches = [];
 			if(preg_match('/^'.self::MEETING_ROOM_PREFIX.'_([\d]+)_([\d]+)$/', $place, $matches))
 			{
 				return array(
@@ -407,7 +409,7 @@ ORDER BY ins.INSTANCE_PARENT_ID, ins.SORT
 		return COption::GetOptionString("intranet", "calendar_2", "N") == "Y" && CModule::IncludeModule('calendar');
 	}
 
-	public static function AddEvent($MEETING_ID, $arFields, $arParams = array())
+	public static function AddEvent($MEETING_ID, $arFields, $arParams = [])
 	{
 		global $USER;
 
@@ -436,7 +438,7 @@ ORDER BY ins.INSTANCE_PARENT_ID, ins.SORT
 				$arEventFields['DT_TO'] = MakeTimeStamp($arFields['DATE_FINISH']) > MakeTimeStamp($arFields['DATE_START']) ? $arFields['DATE_FINISH'] : $arEventFields['DT_TO'];
 			}
 
-			$matches = array();
+			$matches = [];
 			if(preg_match('/^mr_([\d]+)_([\d]+)$/', $arFields["PLACE"], $matches))
 			{
 				$location = 'ECMR_'.$matches[2];
@@ -492,7 +494,7 @@ ORDER BY ins.INSTANCE_PARENT_ID, ins.SORT
 
 			$guestCalendarId = false;
 			$guestSection = $obCalendar->GetSectionIDByOwnerId($USER->GetID(), 'USER', $iblockId);
-			$arGuestCalendars = array();
+			$arGuestCalendars = [];
 
 			if(!$guestSection) // Guest does not have any calendars
 			{
@@ -513,7 +515,7 @@ ORDER BY ins.INSTANCE_PARENT_ID, ins.SORT
 			{
 				$arUserSet = $obCalendar->GetUserSettings(array('static' => false, 'userId' => $USER->GetID()));
 				if ($arUserSet && isset($arUserSet['MeetCalId']) && in_array($arUserSet['MeetCalId'], $arGuestCalendars))
-					$guestCalendarId = intVal($arUserSet['MeetCalId']);
+					$guestCalendarId = intval($arUserSet['MeetCalId']);
 				else
 					$guestCalendarId = $arGuestCalendars[0];
 			}
@@ -544,7 +546,7 @@ ORDER BY ins.INSTANCE_PARENT_ID, ins.SORT
 				'dateTo' => $arFields['DATE_FINISH'] ? $arFields['DATE_FINISH'] : ConvertTimeStamp(MakeTimeStamp($arFields['DATE_START']) + $arFields['DURATION'], 'FULL'),
 				'name' => $arFields['TITLE'],
 				'desc' => $arFields['DESCRIPTION'],
-				'prop' => array(),
+				'prop' => [],
 				'isMeeting' => true,
 				'guests' => array_keys($arFields['USERS']),
 				'notDisplayCalendar' => true,
@@ -552,8 +554,8 @@ ORDER BY ins.INSTANCE_PARENT_ID, ins.SORT
 
 			if ($EventID = $obCalendar->SaveEvent($arEventFields))
 			{
-				CEventCalendar::ClearCache('/event_calendar/events/'.$arEventFields['iblockId'].'/');
-				CEventCalendar::ClearCache('/event_calendar/events/'.$arEventFields['userIblockId'].'/');
+				$obCalendar->ClearCache('/event_calendar/events/'.$arEventFields['iblockId'].'/');
+				$obCalendar->ClearCache('/event_calendar/events/'.$arEventFields['userIblockId'].'/');
 			}
 		}
 
@@ -580,7 +582,7 @@ ORDER BY ins.INSTANCE_PARENT_ID, ins.SORT
 	{
 		if (self::IsNewCalendar())
 		{
-			$res = array();
+			$res = [];
 
 			$arAttendees = CCalendarEvent::GetAttendees($eventId);
 
@@ -626,7 +628,7 @@ ORDER BY ins.INSTANCE_PARENT_ID, ins.SORT
 				'ownerType' => 'USER'
 			));
 			if ($event = $arEvents[0])
-				return is_array($event['GUESTS']) ? array_values($event['GUESTS']) : array();
+				return is_array($event['GUESTS']) ? array_values($event['GUESTS']) : [];
 		}
 	}
 
@@ -643,10 +645,10 @@ ORDER BY ins.INSTANCE_PARENT_ID, ins.SORT
 
 	public static function GetFilesData($arInput, $arFrom = null)
 	{
-		$arFiles = array();
+		$arFiles = [];
 		if (is_array($arInput) && count($arInput) > 0)
 		{
-			$dbFiles = CFile::GetList(array(), array("@ID" => implode(",", array_keys($arInput))));
+			$dbFiles = CFile::GetList([], array("@ID" => implode(",", array_keys($arInput))));
 			while ($arFile = $dbFiles->GetNext())
 			{
 				$fileSrc = intval($arInput[$arFile['ID']]);
@@ -713,52 +715,52 @@ ORDER BY ins.INSTANCE_PARENT_ID, ins.SORT
 	protected static function GetFilterOperation($key)
 	{
 		$strNegative = "N";
-		if (substr($key, 0, 1)=="!")
+		if (mb_substr($key, 0, 1) == "!")
 		{
-			$key = substr($key, 1);
+			$key = mb_substr($key, 1);
 			$strNegative = "Y";
 		}
 
 		$strOrNull = "N";
-		if (substr($key, 0, 1)=="+")
+		if (mb_substr($key, 0, 1) == "+")
 		{
-			$key = substr($key, 1);
+			$key = mb_substr($key, 1);
 			$strOrNull = "Y";
 		}
 
-		if (substr($key, 0, 2)==">=")
+		if (mb_substr($key, 0, 2) == ">=")
 		{
-			$key = substr($key, 2);
+			$key = mb_substr($key, 2);
 			$strOperation = ">=";
 		}
-		elseif (substr($key, 0, 1)==">")
+		elseif (mb_substr($key, 0, 1) == ">")
 		{
-			$key = substr($key, 1);
+			$key = mb_substr($key, 1);
 			$strOperation = ">";
 		}
-		elseif (substr($key, 0, 2)=="<=")
+		elseif (mb_substr($key, 0, 2) == "<=")
 		{
-			$key = substr($key, 2);
+			$key = mb_substr($key, 2);
 			$strOperation = "<=";
 		}
-		elseif (substr($key, 0, 1)=="<")
+		elseif (mb_substr($key, 0, 1) == "<")
 		{
-			$key = substr($key, 1);
+			$key = mb_substr($key, 1);
 			$strOperation = "<";
 		}
-		elseif (substr($key, 0, 1)=="@")
+		elseif (mb_substr($key, 0, 1) == "@")
 		{
-			$key = substr($key, 1);
+			$key = mb_substr($key, 1);
 			$strOperation = "IN";
 		}
-		elseif (substr($key, 0, 1)=="~")
+		elseif (mb_substr($key, 0, 1) == "~")
 		{
-			$key = substr($key, 1);
+			$key = mb_substr($key, 1);
 			$strOperation = "LIKE";
 		}
-		elseif (substr($key, 0, 1)=="%")
+		elseif (mb_substr($key, 0, 1) == "%")
 		{
-			$key = substr($key, 1);
+			$key = mb_substr($key, 1);
 			$strOperation = "QUERY";
 		}
 		else
@@ -781,7 +783,7 @@ ORDER BY ins.INSTANCE_PARENT_ID, ins.SORT
 
 		$arGroupByFunct = array("COUNT", "AVG", "MIN", "MAX", "SUM");
 
-		$arAlreadyJoined = array();
+		$arAlreadyJoined = [];
 
 		// GROUP BY -->
 		if (is_array($arGroupBy) && count($arGroupBy)>0)
@@ -789,19 +791,19 @@ ORDER BY ins.INSTANCE_PARENT_ID, ins.SORT
 			$arSelectFields = $arGroupBy;
 			foreach ($arGroupBy as $key => $val)
 			{
-				$val = strtoupper($val);
-				$key = strtoupper($key);
+				$val = mb_strtoupper($val);
+				$key = mb_strtoupper($key);
 				if (array_key_exists($val, $arFields) && !in_array($key, $arGroupByFunct))
 				{
-					if (strlen($strSqlGroupBy) > 0)
+					if ($strSqlGroupBy <> '')
 						$strSqlGroupBy .= ", ";
 					$strSqlGroupBy .= $arFields[$val]["FIELD"];
 
 					if (isset($arFields[$val]["FROM"])
-						&& strlen($arFields[$val]["FROM"]) > 0
+						&& $arFields[$val]["FROM"] <> ''
 						&& !in_array($arFields[$val]["FROM"], $arAlreadyJoined))
 					{
-						if (strlen($strSqlFrom) > 0)
+						if ($strSqlFrom <> '')
 							$strSqlFrom .= " ";
 						$strSqlFrom .= $arFields[$val]["FROM"];
 						$arAlreadyJoined[] = $arFields[$val]["FROM"];
@@ -820,7 +822,7 @@ ORDER BY ins.INSTANCE_PARENT_ID, ins.SORT
 		}
 		else
 		{
-			if (isset($arSelectFields) && !is_array($arSelectFields) && is_string($arSelectFields) && strlen($arSelectFields)>0 && array_key_exists($arSelectFields, $arFields))
+			if (isset($arSelectFields) && !is_array($arSelectFields) && is_string($arSelectFields) && $arSelectFields <> '' && array_key_exists($arSelectFields, $arFields))
 				$arSelectFields = array($arSelectFields);
 
 			if (!isset($arSelectFields)
@@ -837,19 +839,19 @@ ORDER BY ins.INSTANCE_PARENT_ID, ins.SORT
 						continue;
 					}
 
-					if (strlen($strSqlSelect) > 0)
+					if ($strSqlSelect <> '')
 						$strSqlSelect .= ", ";
 
 					if ($arFields[$arFieldsKeys[$i]]["TYPE"] == "datetime")
 					{
-						if ((strtoupper($DB->type)=="ORACLE" || strtoupper($DB->type)=="MSSQL") && (array_key_exists($arFieldsKeys[$i], $arOrder)))
+						if (($DB->type == "ORACLE" || $DB->type == "MSSQL") && (array_key_exists($arFieldsKeys[$i], $arOrder)))
 							$strSqlSelect .= $arFields[$arFieldsKeys[$i]]["FIELD"]." as ".$arFieldsKeys[$i]."_X1, ";
 
 						$strSqlSelect .= $DB->DateToCharFunction($arFields[$arFieldsKeys[$i]]["FIELD"], "FULL")." as ".$arFieldsKeys[$i];
 					}
 					elseif ($arFields[$arFieldsKeys[$i]]["TYPE"] == "date")
 					{
-						if ((strtoupper($DB->type)=="ORACLE" || strtoupper($DB->type)=="MSSQL") && (array_key_exists($arFieldsKeys[$i], $arOrder)))
+						if (($DB->type == "ORACLE" || $DB->type == "MSSQL") && (array_key_exists($arFieldsKeys[$i], $arOrder)))
 							$strSqlSelect .= $arFields[$arFieldsKeys[$i]]["FIELD"]." as ".$arFieldsKeys[$i]."_X1, ";
 
 						$strSqlSelect .= $DB->DateToCharFunction($arFields[$arFieldsKeys[$i]]["FIELD"], "SHORT")." as ".$arFieldsKeys[$i];
@@ -858,10 +860,10 @@ ORDER BY ins.INSTANCE_PARENT_ID, ins.SORT
 						$strSqlSelect .= $arFields[$arFieldsKeys[$i]]["FIELD"]." as ".$arFieldsKeys[$i];
 
 					if (isset($arFields[$arFieldsKeys[$i]]["FROM"])
-						&& strlen($arFields[$arFieldsKeys[$i]]["FROM"]) > 0
+						&& $arFields[$arFieldsKeys[$i]]["FROM"] <> ''
 						&& !in_array($arFields[$arFieldsKeys[$i]]["FROM"], $arAlreadyJoined))
 					{
-						if (strlen($strSqlFrom) > 0)
+						if ($strSqlFrom <> '')
 							$strSqlFrom .= " ";
 						$strSqlFrom .= $arFields[$arFieldsKeys[$i]]["FROM"];
 						$arAlreadyJoined[] = $arFields[$arFieldsKeys[$i]]["FROM"];
@@ -872,11 +874,11 @@ ORDER BY ins.INSTANCE_PARENT_ID, ins.SORT
 			{
 				foreach ($arSelectFields as $key => $val)
 				{
-					$val = strtoupper($val);
-					$key = strtoupper($key);
+					$val = mb_strtoupper($val);
+					$key = mb_strtoupper($key);
 					if (array_key_exists($val, $arFields))
 					{
-						if (strlen($strSqlSelect) > 0)
+						if ($strSqlSelect <> '')
 							$strSqlSelect .= ", ";
 
 						if (in_array($key, $arGroupByFunct))
@@ -887,14 +889,14 @@ ORDER BY ins.INSTANCE_PARENT_ID, ins.SORT
 						{
 							if ($arFields[$val]["TYPE"] == "datetime")
 							{
-								if ((strtoupper($DB->type)=="ORACLE" || strtoupper($DB->type)=="MSSQL") && (array_key_exists($val, $arOrder)))
+								if (($DB->type == "ORACLE" || $DB->type == "MSSQL") && (array_key_exists($val, $arOrder)))
 									$strSqlSelect .= $arFields[$val]["FIELD"]." as ".$val."_X1, ";
 
 								$strSqlSelect .= $DB->DateToCharFunction($arFields[$val]["FIELD"], "FULL")." as ".$val;
 							}
 							elseif ($arFields[$val]["TYPE"] == "date")
 							{
-								if ((strtoupper($DB->type)=="ORACLE" || strtoupper($DB->type)=="MSSQL") && (array_key_exists($val, $arOrder)))
+								if (($DB->type == "ORACLE" || $DB->type == "MSSQL") && (array_key_exists($val, $arOrder)))
 									$strSqlSelect .= $arFields[$val]["FIELD"]." as ".$val."_X1, ";
 
 								$strSqlSelect .= $DB->DateToCharFunction($arFields[$val]["FIELD"], "SHORT")." as ".$val;
@@ -904,10 +906,10 @@ ORDER BY ins.INSTANCE_PARENT_ID, ins.SORT
 						}
 
 						if (isset($arFields[$val]["FROM"])
-							&& strlen($arFields[$val]["FROM"]) > 0
+							&& $arFields[$val]["FROM"] <> ''
 							&& !in_array($arFields[$val]["FROM"], $arAlreadyJoined))
 						{
-							if (strlen($strSqlFrom) > 0)
+							if ($strSqlFrom <> '')
 								$strSqlFrom .= " ";
 							$strSqlFrom .= $arFields[$val]["FROM"];
 							$arAlreadyJoined[] = $arFields[$val]["FROM"];
@@ -916,9 +918,9 @@ ORDER BY ins.INSTANCE_PARENT_ID, ins.SORT
 				}
 			}
 
-			if (strlen($strSqlGroupBy) > 0)
+			if ($strSqlGroupBy <> '')
 			{
-				if (strlen($strSqlSelect) > 0)
+				if ($strSqlSelect <> '')
 					$strSqlSelect .= ", ";
 				$strSqlSelect .= "COUNT(%%_DISTINCT_%% ".$arFields[$arFieldsKeys[0]]["FIELD"].") as CNT";
 			}
@@ -928,10 +930,10 @@ ORDER BY ins.INSTANCE_PARENT_ID, ins.SORT
 		// <-- SELECT
 
 		// WHERE -->
-		$arSqlSearch = Array();
+		$arSqlSearch = [];
 
 		if (!is_array($arFilter))
-			$filter_keys = Array();
+			$filter_keys = [];
 		else
 			$filter_keys = array_keys($arFilter);
 
@@ -953,7 +955,7 @@ ORDER BY ins.INSTANCE_PARENT_ID, ins.SORT
 
 			if (array_key_exists($key, $arFields))
 			{
-				$arSqlSearch_tmp = array();
+				$arSqlSearch_tmp = [];
 				$cVals = count($vals);
 				for ($j = 0; $j < $cVals; $j++)
 				{
@@ -971,16 +973,16 @@ ORDER BY ins.INSTANCE_PARENT_ID, ins.SORT
 					{
 						if ($arFields[$key]["TYPE"] == "int")
 						{
-							if ((IntVal($val) == 0) && (strpos($strOperation, "=") !== False))
+							if ((intval($val) == 0) && (mb_strpos($strOperation, "=") !== False))
 								$arSqlSearch_tmp[] = "(".$arFields[$key]["FIELD"]." IS ".(($strNegative == "Y") ? "NOT " : "")."NULL) ".(($strNegative == "Y") ? "AND" : "OR")." ".(($strNegative == "Y") ? "NOT " : "")."(".$arFields[$key]["FIELD"]." ".$strOperation." 0)";
 							else
-								$arSqlSearch_tmp[] = (($strNegative == "Y") ? " ".$arFields[$key]["FIELD"]." IS NULL OR NOT " : "")."(".$arFields[$key]["FIELD"]." ".$strOperation." ".IntVal($val)." )";
+								$arSqlSearch_tmp[] = (($strNegative == "Y") ? " ".$arFields[$key]["FIELD"]." IS NULL OR NOT " : "")."(".$arFields[$key]["FIELD"]." ".$strOperation." ".intval($val)." )";
 						}
 						elseif ($arFields[$key]["TYPE"] == "double")
 						{
 							$val = str_replace(",", ".", $val);
 
-							if ((DoubleVal($val) == 0) && (strpos($strOperation, "=") !== False))
+							if ((DoubleVal($val) == 0) && (mb_strpos($strOperation, "=") !== False))
 								$arSqlSearch_tmp[] = "(".$arFields[$key]["FIELD"]." IS ".(($strNegative == "Y") ? "NOT " : "")."NULL) ".(($strNegative == "Y") ? "AND" : "OR")." ".(($strNegative == "Y") ? "NOT " : "")."(".$arFields[$key]["FIELD"]." ".$strOperation." 0)";
 							else
 								$arSqlSearch_tmp[] = (($strNegative == "Y") ? " ".$arFields[$key]["FIELD"]." IS NULL OR NOT " : "")."(".$arFields[$key]["FIELD"]." ".$strOperation." ".DoubleVal($val)." )";
@@ -993,7 +995,7 @@ ORDER BY ins.INSTANCE_PARENT_ID, ins.SORT
 							}
 							else
 							{
-								if ((strlen($val) == 0) && (strpos($strOperation, "=") !== False))
+								if (($val == '') && (mb_strpos($strOperation, "=") !== False))
 									$arSqlSearch_tmp[] = "(".$arFields[$key]["FIELD"]." IS ".(($strNegative == "Y") ? "NOT " : "")."NULL) ".(($strNegative == "Y") ? "AND NOT" : "OR")." (".$DB->Length($arFields[$key]["FIELD"])." <= 0) ".(($strNegative == "Y") ? "AND NOT" : "OR")." (".$arFields[$key]["FIELD"]." ".$strOperation." '".$DB->ForSql($val)."' )";
 								else
 									$arSqlSearch_tmp[] = (($strNegative == "Y") ? " ".$arFields[$key]["FIELD"]." IS NULL OR NOT " : "")."(".$arFields[$key]["FIELD"]." ".$strOperation." '".$DB->ForSql($val)."' )";
@@ -1001,14 +1003,14 @@ ORDER BY ins.INSTANCE_PARENT_ID, ins.SORT
 						}
 						elseif ($arFields[$key]["TYPE"] == "datetime")
 						{
-							if (strlen($val) <= 0)
+							if ($val == '')
 								$arSqlSearch_tmp[] = ($strNegative=="Y"?"NOT":"")."(".$arFields[$key]["FIELD"]." IS NULL)";
 							else
 								$arSqlSearch_tmp[] = ($strNegative=="Y"?" ".$arFields[$key]["FIELD"]." IS NULL OR NOT ":"")."(".$arFields[$key]["FIELD"]." ".$strOperation." ".$DB->CharToDateFunction($DB->ForSql($val), "FULL").")";
 						}
 						elseif ($arFields[$key]["TYPE"] == "date")
 						{
-							if (strlen($val) <= 0)
+							if ($val == '')
 								$arSqlSearch_tmp[] = ($strNegative=="Y"?"NOT":"")."(".$arFields[$key]["FIELD"]." IS NULL)";
 							else
 								$arSqlSearch_tmp[] = ($strNegative=="Y"?" ".$arFields[$key]["FIELD"]." IS NULL OR NOT ":"")."(".$arFields[$key]["FIELD"]." ".$strOperation." ".$DB->CharToDateFunction($DB->ForSql($val), "SHORT").")";
@@ -1017,10 +1019,10 @@ ORDER BY ins.INSTANCE_PARENT_ID, ins.SORT
 				}
 
 				if (isset($arFields[$key]["FROM"])
-					&& strlen($arFields[$key]["FROM"]) > 0
+					&& $arFields[$key]["FROM"] <> ''
 					&& !in_array($arFields[$key]["FROM"], $arAlreadyJoined))
 				{
-					if (strlen($strSqlFrom) > 0)
+					if ($strSqlFrom <> '')
 						$strSqlFrom .= " ";
 					$strSqlFrom .= $arFields[$key]["FROM"];
 					$arAlreadyJoined[] = $arFields[$key]["FROM"];
@@ -1036,11 +1038,11 @@ ORDER BY ins.INSTANCE_PARENT_ID, ins.SORT
 				}
 				if ($strOrNull == "Y")
 				{
-					if (strlen($strSqlSearch_tmp) > 0)
+					if ($strSqlSearch_tmp <> '')
 						$strSqlSearch_tmp .= ($strNegative=="Y" ? " AND " : " OR ");
 					$strSqlSearch_tmp .= "(".$arFields[$key]["FIELD"]." IS ".($strNegative=="Y" ? "NOT " : "")."NULL)";
 
-					if (strlen($strSqlSearch_tmp) > 0)
+					if ($strSqlSearch_tmp <> '')
 						$strSqlSearch_tmp .= ($strNegative=="Y" ? " AND " : " OR ");
 					if ($arFields[$key]["TYPE"] == "int" || $arFields[$key]["TYPE"] == "double")
 						$strSqlSearch_tmp .= "(".$arFields[$key]["FIELD"]." ".($strNegative=="Y" ? "<>" : "=")." 0)";
@@ -1058,18 +1060,18 @@ ORDER BY ins.INSTANCE_PARENT_ID, ins.SORT
 		$cntSearch = count($arSqlSearch);
 		for ($i = 0; $i < $cntSearch; $i++)
 		{
-			if (strlen($strSqlWhere) > 0)
+			if ($strSqlWhere <> '')
 				$strSqlWhere .= " AND ";
 			$strSqlWhere .= "(".$arSqlSearch[$i].")";
 		}
 		// <-- WHERE
 
 		// ORDER BY -->
-		$arSqlOrder = Array();
+		$arSqlOrder = [];
 		foreach ($arOrder as $by => $order)
 		{
-			$by = strtoupper($by);
-			$order = strtoupper($order);
+			$by = mb_strtoupper($by);
+			$order = mb_strtoupper($order);
 
 			if ($order != "ASC")
 				$order = "DESC";
@@ -1081,10 +1083,10 @@ ORDER BY ins.INSTANCE_PARENT_ID, ins.SORT
 				$arSqlOrder[] = " ".$arFields[$by]["FIELD"]." ".$order." ";
 
 				if (isset($arFields[$by]["FROM"])
-					&& strlen($arFields[$by]["FROM"]) > 0
+					&& $arFields[$by]["FROM"] <> ''
 					&& !in_array($arFields[$by]["FROM"], $arAlreadyJoined))
 				{
-					if (strlen($strSqlFrom) > 0)
+					if ($strSqlFrom <> '')
 						$strSqlFrom .= " ";
 					$strSqlFrom .= $arFields[$by]["FROM"];
 					$arAlreadyJoined[] = $arFields[$by]["FROM"];
@@ -1097,12 +1099,12 @@ ORDER BY ins.INSTANCE_PARENT_ID, ins.SORT
 		$cntOrder = count($arSqlOrder);
 		for ($i=0; $i<$cntOrder; $i++)
 		{
-			if (strlen($strSqlOrderBy) > 0)
+			if ($strSqlOrderBy <> '')
 				$strSqlOrderBy .= ", ";
 
-			if(strtoupper($DB->type)=="ORACLE")
+			if($DB->type == "ORACLE")
 			{
-				if(substr($arSqlOrder[$i], -3)=="ASC")
+				if(mb_substr($arSqlOrder[$i], -3) == "ASC")
 					$strSqlOrderBy .= $arSqlOrder[$i]." NULLS FIRST";
 				else
 					$strSqlOrderBy .= $arSqlOrder[$i]." NULLS LAST";

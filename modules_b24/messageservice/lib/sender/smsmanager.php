@@ -2,12 +2,15 @@
 namespace Bitrix\MessageService\Sender;
 
 use Bitrix\Main;
+use Bitrix\Main\Event;
 use Bitrix\MessageService\Internal\Entity\MessageTable;
 use Bitrix\MessageService\Message;
 use Bitrix\MessageService\MessageType;
 
 class SmsManager
 {
+	public const ON_MESSAGE_SUCCESSFULLY_SENT_EVENT = 'OnMessageSuccessfullySent';
+
 	private static $senders;
 
 	/**
@@ -31,13 +34,29 @@ class SmsManager
 			{
 				self::$senders[] = new Sms\Twilio();
 			}
+			if (Sms\Twilio2::isSupported())
+			{
+				self::$senders[] = new Sms\Twilio2();
+			}
 			if (Sms\SmsLineBy::isSupported())
 			{
 				self::$senders[] = new Sms\SmsLineBy();
 			}
+			if (Sms\MfmsRu::isSupported())
+			{
+				self::$senders[] = new Sms\MfmsRu();
+			}
 			if (Sms\Rest::isSupported())
 			{
 				self::$senders[] = new Sms\Rest();
+			}
+			if (Sms\SmscUa::isSupported())
+			{
+				self::$senders[] = new Sms\SmscUa();
+			}
+			if (Sms\ISmsCenter::isSupported())
+			{
+				self::$senders[] = new Sms\ISmsCenter();
 			}
 
 			self::fireSendersEvent();
@@ -186,6 +205,12 @@ class SmsManager
 		$message = Message::createFromFields($messageFields, $sender);
 		$message->setType(MessageType::SMS);
 
+		$sender = $message->getSender();
+		if ($sender && !$message->getFrom())
+		{
+			$message->setFrom($sender->getDefaultFrom());
+		}
+
 		return $message;
 	}
 
@@ -198,16 +223,34 @@ class SmsManager
 	public static function sendMessage(array $messageFields, Base $sender = null)
 	{
 		$message = static::createMessage($messageFields, $sender);
-		if (!$message->getFrom())
+
+		$result = $message->send();
+
+		if ($result->isSuccess())
 		{
-			/** @var BaseConfigurable $sender */
-			$sender = $message->getSender();
-			if ($sender && $sender->isConfigurable())
-			{
-				$message->setFrom($sender->getDefaultFrom());
-			}
+			(new Event(
+				'messageservice',
+				static::ON_MESSAGE_SUCCESSFULLY_SENT_EVENT,
+				[
+					'ID' => $result->getId(),
+					'ADDITIONAL_FIELDS' => $messageFields['ADDITIONAL_FIELDS'] ?? [],
+				]
+			))->send();
 		}
-		return $message->send();
+
+		return $result;
+	}
+
+	/**
+	 * @param array $messageFields
+	 * @param Base|null $sender
+	 * @return Main\Entity\AddResult
+	 * @throws Main\ArgumentTypeException
+	 */
+	public static function sendMessageDirectly(array $messageFields, Base $sender = null)
+	{
+		$message = static::createMessage($messageFields, $sender);
+		return $message->sendDirectly();
 	}
 
 	public static function getMessageStatus($messageId)

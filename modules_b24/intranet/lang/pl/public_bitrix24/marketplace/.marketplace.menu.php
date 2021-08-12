@@ -1,6 +1,0 @@
-<?
-$MESS["MARKETPLACE_BEST"] = "Góra";
-$MESS["MARKETPLACE_CATEGORIES"] = "Kategorie";
-$MESS["MARKETPLACE_SHOPPING"] = "Moje aplikacje";
-$MESS["MARKETPLACE_UPDATES"] = "Aktualizacje";
-?>

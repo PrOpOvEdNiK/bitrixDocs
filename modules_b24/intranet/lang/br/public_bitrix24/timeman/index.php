@@ -1,5 +1,0 @@
-<?
-$MESS["TARIFF_RESTRICTION_TEXT"] = "O gráfico de ausência fornece uma apresentação visual rápida da localização de uma pessoa e a razão da sua ausência: licença maternidade, médica ou profissional. O gráfico também é útil ao planejar férias porque todas as férias simultâneas indesejadas de várias pessoas podem ser vistas de uma só vez. É fácil de usar: licenças podem ser adicionadas por um funcionário ou gerente de RH. O sistema também pode adicionar licenças automaticamente com base nos fluxos de trabalho de aprovação de solicitação de licença. <a href=\"javascript:void(0)\" onclick='top.BX.Helper.show(\"redirect=detail&code=5349195\");'>Informações</a>";
-$MESS["TARIFF_RESTRICTION_TEXT2"] = "O gráfico de ausência está disponível nos <a href=\"/settings/license_all.php\" target=\"_blank\">planos comerciais selecionados</a>.";
-$MESS["TITLE"] = "Gráfico de Ausência";
-?>

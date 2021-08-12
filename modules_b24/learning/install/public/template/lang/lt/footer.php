@@ -1,3 +1,0 @@
-<?
-$MESS['LEARNING_TEMPLATE_COPYRIGHT'] = '© 2002 Bitrix, 2007 1C-Bitrix';
-?>

@@ -1,6 +1,0 @@
-<?
-$MESS["CRM_INVOICE_LIST_DESCRIPTION"] = "Faktury";
-$MESS["CRM_INVOICE_LIST_NAME"] = "Faktury";
-$MESS["CRM_INVOICE_NAME"] = "Faktury";
-$MESS["CRM_NAME"] = "CRM";
-?>

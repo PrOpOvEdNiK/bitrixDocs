@@ -64,13 +64,13 @@ class TimeHelper
 		{
 			return 0;
 		}
-		if (strlen($value) > 0)
+		if ($value <> '')
 		{
 			list($hour, $min) = explode(':', $value, 2);
 
 			if ($this->isAmPmMode() && preg_match('/(am|pm)/i', $min, $match))
 			{
-				$ampm = strtolower($match[0]);
+				$ampm = mb_strtolower($match[0]);
 				if ($ampm == 'pm' && $hour < 12)
 				{
 					$hour += 12;
@@ -223,12 +223,34 @@ class TimeHelper
 
 	public function getUserToServerOffset($userId = null)
 	{
-		$key = $userId === null ? -1 : (int)$userId;
-		if ($this->timezoneOffsets[$key] === null)
+		$userId = ($userId === null ? -1 : (int) $userId);
+
+		$cacheTtl = (defined('BX_COMP_MANAGED_CACHE') ? 3153600 : 3600 * 24);
+		$cacheId = 'time_zone_'.$userId;
+		$cacheDir = '/timeman/timezone/'.substr(md5($userId), -2).'/'.$userId;
+
+		$cache = new \CPHPCache;
+		if ($cache->initCache($cacheTtl, $cacheId, $cacheDir))
 		{
-			$this->timezoneOffsets[$key] = (int)\CTimeZone::getOffset($userId, true);
+			$this->timezoneOffsets[$userId] = $cache->getVars();
 		}
-		return $this->timezoneOffsets[$key];
+		else
+		{
+			global $CACHE_MANAGER;
+
+			$cache->startDataCache();
+
+			$CACHE_MANAGER->startTagCache($cacheDir);
+
+			$this->timezoneOffsets[$userId] = (int) \CTimeZone::getOffset($userId, true);
+
+			$CACHE_MANAGER->registerTag('USER_NAME_'. $userId);
+			$CACHE_MANAGER->endTagCache();
+
+			$cache->endDataCache($this->timezoneOffsets[$userId]);
+		}
+
+		return $this->timezoneOffsets[$userId];
 	}
 
 	public function setTimezoneOffsets($offsetsByUserId)
@@ -443,5 +465,17 @@ class TimeHelper
 		}
 
 		return \formatDate($format, $timestamp);
+	}
+
+	/**
+	 * @param \DateTime $from
+	 * @param \DateTime|int $toOrDaysCount
+	 * @return \DatePeriod
+	 * @throws \Exception
+	 */
+	public function buildDatesIterator(\DateTime $from, $toOrDaysCount)
+	{
+		$toOrDaysCount = ($toOrDaysCount === 0 ? $from : $toOrDaysCount);
+		return new \DatePeriod($from, new \DateInterval('P1D'), $toOrDaysCount);
 	}
 }

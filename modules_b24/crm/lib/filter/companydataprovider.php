@@ -10,7 +10,7 @@ use Bitrix\Crm\Counter\EntityCounterType;
 
 Loc::loadMessages(__FILE__);
 
-class CompanyDataProvider extends EntityDataProvider
+class CompanyDataProvider extends Main\Filter\EntityDataProvider
 {
 	/** @var CompanySettings|null */
 	protected $settings = null;
@@ -151,7 +151,7 @@ class CompanyDataProvider extends EntityDataProvider
 				)
 			);
 
-			$regAddressLabels = EntityAddress::getShortLabels(EntityAddress::Registered);
+			$regAddressLabels = EntityAddress::getShortLabels(Crm\EntityAddressType::Registered);
 			$result += array(
 				'ADDRESS_LEGAL' => $this->createField(
 					'ADDRESS_LEGAL',

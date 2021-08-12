@@ -14,6 +14,7 @@ abstract class ComponentBase
 	implements Translate\IErrorable
 {
 	use Translate\Error;
+	use Translate\Warning;
 
 	const STATUS_SUCCESS = 'success';
 	const STATUS_DENIED = 'denied';
@@ -153,6 +154,29 @@ abstract class ComponentBase
 	}
 
 	/**
+	 * Checks some mysql config variables.
+	 * @return boolean
+	 */
+	protected function checkMysqlConfig()
+	{
+		$majorVersion = (int)mb_substr(\Bitrix\Main\Application::getConnection()->getVersion()[0], 0, 1);
+
+		if ($majorVersion >= 8)
+		{
+			$conf = Main\Application::getConnection()->query("SHOW VARIABLES LIKE 'regexp_time_limit'")->fetch();
+			if ($conf['Variable_name'] == 'regexp_time_limit')
+			{
+				if ((int)$conf['Value'] <= 0)
+				{
+					$this->addWarning(new Error(Loc::getMessage('TRANSLATE_MYSQL_CONFIG_ERROR_REGEXP_TIME_LIMIT'), self::STATUS_ERROR));
+				}
+			}
+		}
+
+		return true;
+	}
+
+	/**
 	 * @return void
 	 */
 	protected function prepareParams()
@@ -188,7 +212,26 @@ abstract class ComponentBase
 		$this->arResult['ALLOW_EDIT_SOURCE'] = $this->hasUserPermissionEditSource($this->getUser());
 	}
 
+	/**
+	 * Moves current language to the first position.
+	 *
+	 * @param string[] $languageList
+	 * @param string $currentLangId
+	 *
+	 * @return string[]
+	 */
+	protected function rearrangeLanguages($languageList, $currentLangId)
+	{
+		$inx = array_search($currentLangId, $languageList, true);
+		if ($inx !== false)
+		{
+			unset($languageList[$inx]);
+		}
 
+		array_unshift($languageList, $currentLangId);
+
+		return $languageList;
+	}
 
 	/**
 	 * @return string[]
@@ -285,23 +328,28 @@ abstract class ComponentBase
 	/**
 	 * @return string
 	 */
-	protected function detectStartingPath()
+	protected function detectStartingPath(?string $path = ''): string
 	{
-		static $path;
-		if (empty($path))
+		$home = Translate\Config::getDefaultPath();
+
+		$initPaths = Translate\Config::getInitPath();
+		if (count($initPaths) > 0)
 		{
-			$initPaths = Translate\Config::getInitPath();
-			if (count($initPaths) > 0)
+			$home = $initPaths[0];
+			if (!empty($path))
 			{
-				$path = $initPaths[0];
-			}
-			else
-			{
-				$path = '/'. trim(Translate\Config::getDefaultPath(), '/');
+				foreach ($initPaths as $initPath)
+				{
+					if (mb_strpos($path, $initPath) === 0)
+					{
+						$home = $initPath;
+						break;
+					}
+				}
 			}
 		}
 
-		return $path;
+		return $home;
 	}
 
 
@@ -367,6 +415,8 @@ abstract class ComponentBase
 	{
 		$this->getApplication()->restartBuffer();
 
+		$answer = Main\Application::getInstance()->getContext()->getResponse();
+
 		if ($response instanceof Main\Error)
 		{
 			$this->addError($response);
@@ -376,6 +426,8 @@ abstract class ComponentBase
 		$response['result'] = true;
 		if ($this->hasErrors())
 		{
+			$answer->setStatus('500 Internal Server Error');
+
 			$response['status'] = self::STATUS_ERROR;
 			$errors = array();
 			foreach ($this->getErrors() as $error)
@@ -394,7 +446,7 @@ abstract class ComponentBase
 			$response['status'] = self::STATUS_SUCCESS;
 		}
 
-		header('Content-Type:application/x-javascript; charset=UTF-8');
+		$answer->addHeader('Content-Type', 'application/x-javascript; charset=UTF-8');
 		echo Main\Web\Json::encode($response);
 
 		\CMain::finalActions();
@@ -479,9 +531,9 @@ abstract class ComponentBase
 					{
 						$chain[] = array(
 							'link' => $params['LIST_PATH'].
-									  '?lang='.$params['CURRENT_LANG'].
-									  '&tabId='.$this->tabId.
-									  '&path=/',
+											'?lang='.$params['CURRENT_LANG'].
+											'&tabId='.$this->tabId.
+											'&path=/',
 							'title' => '..'
 						);
 					}
@@ -490,9 +542,9 @@ abstract class ComponentBase
 						$pathList[] = htmlspecialcharsbx($dir);
 						$chain[] = array(
 							'link' => $params['LIST_PATH'].
-									  '?lang='.$params['CURRENT_LANG'].
-									  '&tabId='.$this->tabId.
-									  '&path=/'.implode('/', $pathList).'/',
+											'?lang='.$params['CURRENT_LANG'].
+											'&tabId='.$this->tabId.
+											'&path=/'.implode('/', $pathList).'/',
 							'title' => htmlspecialcharsbx($dir)
 						);
 					}

@@ -1,6 +1,0 @@
-<?
-$MESS["CRM_COMPANY_ACTIVITY_STATUS_STAT_ANSWERED_QTY"] = "Nombre de demandes avec réponse";
-$MESS["CRM_COMPANY_ACTIVITY_STATUS_STAT_GROUP_BY_STATUS"] = "Statut d'activité";
-$MESS["CRM_COMPANY_ACTIVITY_STATUS_STAT_TOTAL"] = "Nombre de demandes";
-$MESS["CRM_COMPANY_ACTIVITY_STATUS_STAT_UNANSWERED_QTY"] = "Nombre de demandes sans réponse";
-?>

@@ -9,7 +9,7 @@ class CUserCounter extends CAllUserCounter
 
 		$value = intval($value);
 		$user_id = intval($user_id);
-		if ($user_id < 0 || strlen($code) <= 0)
+		if ($user_id < 0 || $code == '')
 			return false;
 
 		$rs = $DB->Query("
@@ -82,7 +82,7 @@ class CUserCounter extends CAllUserCounter
 		global $DB, $CACHE_MANAGER;
 
 		$user_id = intval($user_id);
-		if ($user_id < 0 || strlen($code) <= 0)
+		if ($user_id < 0 || $code == '')
 			return false;
 
 		$increment = intval($increment);
@@ -138,7 +138,7 @@ class CUserCounter extends CAllUserCounter
 		global $DB, $CACHE_MANAGER;
 
 		$user_id = intval($user_id);
-		if ($user_id < 0 || strlen($code) <= 0)
+		if ($user_id < 0 || $code == '')
 			return false;
 
 		$decrement = intval($decrement);
@@ -185,7 +185,7 @@ class CUserCounter extends CAllUserCounter
 	{
 		global $DB, $CACHE_MANAGER, $APPLICATION;
 
-		if (strlen($sub_select) > 0)
+		if ($sub_select <> '')
 		{
 			$pullInclude = (
 				$sendPull
@@ -256,7 +256,9 @@ class CUserCounter extends CAllUserCounter
 			if ($pullInclude)
 			{
 				$arSites = Array();
-				$res = CSite::GetList($b = "", $o = "", Array("ACTIVE" => "Y"));
+				$by = '';
+				$order = '';
+				$res = CSite::GetList($by, $order, Array("ACTIVE" => "Y"));
 				while($row = $res->Fetch())
 				{
 					$arSites[] = $row['ID'];
@@ -267,11 +269,10 @@ class CUserCounter extends CAllUserCounter
 					&& is_array($arParams["USERS_TO_PUSH"])
 				)
 				{
-					$db_lock = $DB->Query("SELECT GET_LOCK('".$APPLICATION->GetServerUniqID()."_pull', 0) as L");
-					$ar_lock = $db_lock->Fetch();
-					if($ar_lock["L"] > 0)
+					$connection = \Bitrix\Main\Application::getConnection();
+					if($connection->lock('pull'))
 					{
-						$helper = \Bitrix\Main\Application::getConnection()->getSqlHelper();
+						$helper = $connection->getSqlHelper();
 
 						$strSQL = "
 							SELECT pc.CHANNEL_ID, uc.USER_ID, uc.SITE_ID, uc.CODE, uc.CNT
@@ -290,7 +291,8 @@ class CUserCounter extends CAllUserCounter
 						}
 
 						$DB->Query("UPDATE b_user_counter SET SENT = '1' WHERE SENT = '0' AND CODE NOT LIKE '".CUserCounter::LIVEFEED_CODE."L%'");
-						$DB->Query("SELECT RELEASE_LOCK('".$APPLICATION->GetServerUniqID()."_pull')");
+
+						$connection->unlock('pull');
 
 						if (\CUserCounter::CheckLiveMode())
 						{
@@ -321,7 +323,7 @@ class CUserCounter extends CAllUserCounter
 		$user_id = intval($user_id);
 		if (
 			$user_id < 0
-			|| strlen($code) <= 0
+			|| $code == ''
 		)
 		{
 			return false;
@@ -334,43 +336,42 @@ class CUserCounter extends CAllUserCounter
 
 		if ($bMultiple)
 		{
-			$siteToDelete = "";
-			$strUpsertSQL = "
-				INSERT INTO b_user_counter (USER_ID, SITE_ID, CODE, CNT, LAST_DATE) VALUES ";
-
-			foreach ($site_id as $i => $site_id_tmp)
+			$connection = \Bitrix\Main\Application::getConnection();
+			if($connection->lock('counter_delete'))
 			{
-				if ($i > 0)
+				$siteToDelete = "";
+				$strUpsertSQL = "
+					INSERT INTO b_user_counter (USER_ID, SITE_ID, CODE, CNT, LAST_DATE) VALUES ";
+
+				foreach ($site_id as $i => $site_id_tmp)
 				{
-					$strUpsertSQL .= ",";
-					$siteToDelete .= ",";
+					if ($i > 0)
+					{
+						$strUpsertSQL .= ",";
+						$siteToDelete .= ",";
+					}
+
+					$siteToDelete .= "'".$DB->ForSQL($site_id_tmp)."'";
+					$strUpsertSQL .= " (".$user_id.", '".$DB->ForSQL($site_id_tmp)."', '".$DB->ForSQL($code)."', 0, ".$DB->CurrentTimeFunction().") ";
 				}
+				$strUpsertSQL .= " ON DUPLICATE KEY UPDATE CNT = 0, LAST_DATE = ".$DB->CurrentTimeFunction();
 
-				$siteToDelete .= "'".$DB->ForSQL($site_id_tmp)."'";
-				$strUpsertSQL .= " (".$user_id.", '".$DB->ForSQL($site_id_tmp)."', '".$DB->ForSQL($code)."', 0, ".$DB->CurrentTimeFunction().") ";
-			}
-			$strUpsertSQL .= " ON DUPLICATE KEY UPDATE CNT = 0, LAST_DATE = ".$DB->CurrentTimeFunction();
+				$strDeleteSQL = "
+					DELETE FROM b_user_counter
+					WHERE
+						USER_ID = ".$user_id."
+						".(
+							count($site_id) == 1
+								? " AND SITE_ID = '".$site_id[0]."' "
+								: " AND SITE_ID IN (".$siteToDelete.") "
+						)."
+						AND CODE LIKE '".$DB->ForSQL($code)."L%'
+					";
 
-			$strDeleteSQL = "
-				DELETE FROM b_user_counter
-				WHERE
-					USER_ID = ".$user_id."
-					".(
-						count($site_id) == 1
-							? " AND SITE_ID = '".$site_id[0]."' "
-							: " AND SITE_ID IN (".$siteToDelete.") "
-					)."
-					AND CODE LIKE '".$DB->ForSQL($code)."L%'
-				";
-
-			$db_lock = $DB->Query("SELECT GET_LOCK('".$APPLICATION->GetServerUniqID()."_counter_delete', 25) as L");
-			$ar_lock = $db_lock->Fetch();
-			if($ar_lock["L"] > 0)
-			{
 				$DB->Query($strDeleteSQL, false, "FILE: ".__FILE__."<br> LINE: ".__LINE__);
 				$DB->Query($strUpsertSQL, false, "FILE: ".__FILE__."<br> LINE: ".__LINE__);
 
-				$DB->Query("SELECT RELEASE_LOCK('".$APPLICATION->GetServerUniqID()."_counter_delete')");
+				$connection->unlock('counter_delete');
 			}
 		}
 		else
@@ -421,7 +422,7 @@ class CUserCounter extends CAllUserCounter
 	{
 		global $DB, $APPLICATION, $CACHE_MANAGER;
 
-		if (strlen($code) <= 0)
+		if ($code == '')
 		{
 			return false;
 		}
@@ -429,27 +430,29 @@ class CUserCounter extends CAllUserCounter
 		$pullMessage = Array();
 		$bPullEnabled = false;
 
+		$connection = \Bitrix\Main\Application::getConnection();
+
 		if (self::CheckLiveMode())
 		{
-			$db_lock = $DB->Query("SELECT GET_LOCK('".$APPLICATION->GetServerUniqID()."_pull', 0) as L");
-			$ar_lock = $db_lock->Fetch();
-			if ($ar_lock["L"] > 0)
+			if ($connection->lock('pull'))
 			{
 				$bPullEnabled = true;
 
 				$arSites = array();
-				$res = CSite::GetList($b = "", $o = "", array("ACTIVE" => "Y"));
+				$by = '';
+				$order = '';
+				$res = CSite::GetList($by, $order, array("ACTIVE" => "Y"));
 				while($row = $res->Fetch())
 				{
 					$arSites[] = $row['ID'];
 				}
 
 				$isLF = (
-					substr($code, 0, 2) == CUserCounter::LIVEFEED_CODE
+					mb_substr($code, 0, 2) == CUserCounter::LIVEFEED_CODE
 					&& $code != CUserCounter::LIVEFEED_CODE
 				);
 
-				$helper = \Bitrix\Main\Application::getConnection()->getSqlHelper();
+				$helper = $connection->getSqlHelper();
 				$strSQL = "
 					SELECT pc.CHANNEL_ID, uc.USER_ID, uc.SITE_ID, uc.CODE, uc.CNT
 					FROM b_user_counter uc
@@ -478,7 +481,7 @@ class CUserCounter extends CAllUserCounter
 
 		if ($bPullEnabled)
 		{
-			$DB->Query("SELECT RELEASE_LOCK('".$APPLICATION->GetServerUniqID()."_pull')");
+			$connection->unlock('pull');
 		}
 
 		if (\CUserCounter::CheckLiveMode())
@@ -515,10 +518,9 @@ class CUserCounterPage extends CAllUserCounterPage
 	{
 		global $DB, $USER;
 
-		$uniq = CMain::GetServerUniqID();
-		$db_lock = $DB->Query("SELECT GET_LOCK('".$uniq."_counterpull', 0) as L");
-		$ar_lock = $db_lock->Fetch();
-		if($ar_lock["L"] == "0")
+		$connection = \Bitrix\Main\Application::getConnection();
+
+		if(!$connection->lock('counterpull'))
 		{
 			return;
 		}
@@ -555,13 +557,15 @@ class CUserCounterPage extends CAllUserCounterPage
 		if ($userString <> '')
 		{
 			$arSites = array();
-			$res = CSite::GetList($b = "", $o = "", array("ACTIVE" => "Y"));
+			$by = '';
+			$order = '';
+			$res = CSite::GetList($by, $order, array("ACTIVE" => "Y"));
 			while($row = $res->Fetch())
 			{
 				$arSites[] = $row['ID'];
 			}
 
-			$helper = \Bitrix\Main\Application::getConnection()->getSqlHelper();
+			$helper = $connection->getSqlHelper();
 
 			$strSQL = "
 				SELECT pc.CHANNEL_ID, uc.USER_ID, uc.SITE_ID, uc.CODE, uc.CNT
@@ -594,7 +598,7 @@ class CUserCounterPage extends CAllUserCounterPage
 			$DB->Query("UPDATE b_user_counter SET SENT = '1' WHERE SENT = '0' AND USER_ID IN (".$userString.")");
 		}
 
-		$DB->Query("SELECT RELEASE_LOCK('".$uniq."_counterpull')");
+		$connection->unlock('counterpull');
 
 		if (\CUserCounter::CheckLiveMode())
 		{

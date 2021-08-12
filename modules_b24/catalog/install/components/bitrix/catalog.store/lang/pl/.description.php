@@ -1,6 +1,0 @@
-<?
-$MESS["CP_CATALOG_STORE_CS_DESCRIPTION"] = "Pokaż magazyny";
-$MESS["CP_CATALOG_STORE_CS_NAME"] = "Lista Magazynu";
-$MESS["CP_CATALOG_STORE_MAIN_SECTION"] = "e-Sklep";
-$MESS["CP_CATALOG_STORE_STORE_SECTION"] = "Lista Magazynu";
-?>

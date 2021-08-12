@@ -2,18 +2,21 @@
 namespace Bitrix\Crm\Timeline;
 
 use Bitrix\Crm\Order\OrderStatus;
+use Bitrix\Crm\Order;
 use Bitrix\Main;
-use Bitrix\Crm\Order\Order;
 use Bitrix\Main\Localization\Loc;
-use Bitrix\Crm\Order\DealBinding;
 
 Loc::loadMessages(__FILE__);
 
+/**
+ * Class OrderController
+ * @package Bitrix\Crm\Timeline
+ */
 class OrderController extends EntityController
 {
-	//region Singleton
 	/** @var OrderController|null */
 	protected static $instance = null;
+
 	/**
 	 * @return OrderController
 	 */
@@ -25,113 +28,100 @@ class OrderController extends EntityController
 		}
 		return self::$instance;
 	}
-	//endregion
-	//region EntityController
+
+	/**
+	 * @return int
+	 */
 	public function getEntityTypeID()
 	{
 		return \CCrmOwnerType::Order;
 	}
 
-	public function onCreate($ownerID, array $params)
+	/**
+	 * @param $ownerId
+	 * @param array $params
+	 * @throws Main\ArgumentException
+	 */
+	public function onCreate($ownerId, array $params)
 	{
-		if(!is_int($ownerID))
+		if ($ownerId <= 0)
 		{
-			$ownerID = (int)$ownerID;
-		}
-		if($ownerID <= 0)
-		{
-			throw new Main\ArgumentException('Owner ID must be greater than zero.', 'ownerID');
+			throw new Main\ArgumentException('Owner ID must be greater than zero.');
 		}
 
-		$fields = isset($params['FIELDS']) && is_array($params['FIELDS']) ? $params['FIELDS'] : null;
-		if(!is_array($fields))
+		$orderFields = $params['ORDER_FIELDS'] ?? [];
+		$settings = $params['SETTINGS'] ?? [];
+		$bindings = $params['BINDINGS'] ?? [];
+
+		$entityId = OrderEntry::create([
+			'ENTITY_ID' => $ownerId,
+			'TYPE_CATEGORY_ID' => TimelineType::CREATION,
+			'AUTHOR_ID' => self::resolveCreatorID($orderFields),
+			'SETTINGS' => $settings,
+			'BINDINGS' => $bindings,
+		]);
+
+		foreach($bindings as $binding)
 		{
-			$fields = self::getEntity($ownerID);
-		}
-		if(!is_array($fields))
-		{
-			return;
-		}
-
-		$settingFields = [
-			'PRICE' => $fields['PRICE'],
-			'CURRENCY' => $fields['CURRENCY']
-		];
-
-		if ($fields['DATE_INSERT'] instanceof Main\Type\Date)
-		{
-			$settingFields['DATE_INSERT_TIMESTAMP'] = $fields['DATE_INSERT']->getTimestamp();
-		}
-
-		$settings = ['FIELDS' => $settingFields];
-
-		if(isset($fields['LEAD_ID']) && $fields['LEAD_ID'] > 0)
-		{
-			$settings['BASE'] = array(
-				'ENTITY_TYPE_ID' => \CCrmOwnerType::Lead,
-				'ENTITY_ID' => (int)$fields['LEAD_ID']
-			);
-		}
-
-		if(isset($fields['DEAL_ID']) && $fields['DEAL_ID'] > 0)
-		{
-			$settings['BASE'] = array(
-				'ENTITY_TYPE_ID' => \CCrmOwnerType::Deal,
-				'ENTITY_ID' => (int)$fields['DEAL_ID']
-			);
-		}
-
-		$authorID = self::resolveCreatorID($fields);
-		$historyEntryID = CreationEntry::create(
-			array(
-				'ENTITY_TYPE_ID' => \CCrmOwnerType::Order,
-				'ENTITY_ID' => $ownerID,
-				'AUTHOR_ID' => $authorID,
-				'SETTINGS' => $settings,
-				'BINDINGS' => array(
-					array(
-						'ENTITY_TYPE_ID' => \CCrmOwnerType::Order,
-						'ENTITY_ID' => $ownerID
-					)
-				)
-			)
-		);
-
-		$enableHistoryPush = $historyEntryID > 0;
-		if($enableHistoryPush && Main\Loader::includeModule('pull'))
-		{
-			$pushParams = array();
-			if($enableHistoryPush)
-			{
-				$historyFields = TimelineEntry::getByID($historyEntryID);
-				if(is_array($historyFields))
-				{
-					$pushParams['HISTORY_ITEM'] = $this->prepareHistoryDataModel(
-						$historyFields,
-						array('ENABLE_USER_INFO' => true)
-					);
-				}
-			}
-
-			$tag = $pushParams['TAG'] = TimelineEntry::prepareEntityPushTag(\CCrmOwnerType::Order, $ownerID);
-			\CPullWatch::AddToStack(
-				$tag,
-				array(
-					'module_id' => 'crm',
-					'command' => 'timeline_order_add',
-					'params' => $pushParams,
-				)
-			);
+			$tag = TimelineEntry::prepareEntityPushTag($binding['ENTITY_TYPE_ID'], $binding['ENTITY_ID']);
+			self::pushHistoryEntry($entityId, $tag, 'timeline_activity_add');
 		}
 	}
 
+	/**
+	 * @param $ownerId
+	 * @param array $params
+	 */
+	public function onLandingOrderCreate(int $ownerId, int $dealId, array $params)
+	{
+		if ($ownerId <= 0)
+		{
+			throw new Main\ArgumentException('Owner ID must be greater than zero.');
+		}
+
+		if ($dealId <= 0)
+		{
+			throw new Main\ArgumentException('Deal ID must be greater than zero.');
+		}
+
+		$orderFields = $params['ORDER_FIELDS'] ?? [];
+		$settings = $params['SETTINGS'] ?? [];
+
+		$bindings = [
+			[
+				'ENTITY_TYPE_ID' => \CCrmOwnerType::Deal,
+				'ENTITY_ID' => $dealId
+			]
+		];
+
+		$entityId = OrderEntry::create([
+			'ENTITY_ID' => $ownerId,
+			'CREATED' => Main\Type\DateTime::createFromTimestamp(time() - 60),
+			'TYPE_CATEGORY_ID' => OrderCategoryType::ENCOURAGE_BUY_PRODUCTS,
+			'AUTHOR_ID' => self::resolveCreatorID($orderFields),
+			'SETTINGS' => $settings,
+			'BINDINGS' => $bindings,
+		]);
+
+		foreach($bindings as $binding)
+		{
+			$tag = TimelineEntry::prepareEntityPushTag($binding['ENTITY_TYPE_ID'], $binding['ENTITY_ID']);
+			self::pushHistoryEntry($entityId, $tag, 'timeline_activity_add');
+		}
+	}
+
+	/**
+	 * @param $ownerID
+	 * @param array $params
+	 * @throws Main\ArgumentException
+	 */
 	public function onCancel($ownerID, array $params)
 	{
-		if(!is_int($ownerID))
+		if (!is_int($ownerID))
 		{
 			$ownerID = (int)$ownerID;
 		}
-		if($ownerID <= 0)
+		if ($ownerID <= 0)
 		{
 			throw new Main\ArgumentException('Owner ID must be greater than zero.', 'ownerID');
 		}
@@ -140,16 +130,13 @@ class OrderController extends EntityController
 		$value = ($fields['CANCELED'] === 'Y') ? 'Y' : 'N';
 		$bindings = $params['BINDINGS'] ?? [];
 
-		$historyEntryID = null;
-		$authorID = self::resolveEditorID($params);
-
-		if (!empty($fields['REASON_CANCELED']) && strlen($fields['REASON_CANCELED']) > 0 && $value === 'Y')
+		if (!empty($fields['REASON_CANCELED']) && $fields['REASON_CANCELED'] <> '' && $value === 'Y')
 		{
 			$historyEntryID = ModificationEntry::create(
 				array(
 					'ENTITY_TYPE_ID' => \CCrmOwnerType::Order,
 					'ENTITY_ID' => $ownerID,
-					'AUTHOR_ID' => $authorID,
+					'AUTHOR_ID' => self::resolveEditorID($params),
 					'TEXT' => $fields['REASON_CANCELED'],
 					'SETTINGS' => array(
 						'FIELD' => 'REASON_CANCELED',
@@ -157,43 +144,27 @@ class OrderController extends EntityController
 					'BINDINGS' => $bindings
 				)
 			);
-		}
 
-		$enableHistoryPush = $historyEntryID > 0;
-		if(($enableHistoryPush) && Main\Loader::includeModule('pull'))
-		{
-			$pushParams = array();
-			if($enableHistoryPush)
+			foreach($bindings as $binding)
 			{
-				$historyFields = TimelineEntry::getByID($historyEntryID);
-				if(is_array($historyFields))
-				{
-					$pushParams['HISTORY_ITEM'] = $this->prepareHistoryDataModel(
-						$historyFields,
-						array('ENABLE_USER_INFO' => true)
-					);
-				}
+				$tag = TimelineEntry::prepareEntityPushTag($binding['ENTITY_TYPE_ID'], $binding['ENTITY_ID']);
+				self::pushHistoryEntry($historyEntryID, $tag, 'timeline_activity_add');
 			}
-
-			$tag = $pushParams['TAG'] = TimelineEntry::prepareEntityPushTag(\CCrmOwnerType::Order, $ownerID);
-			\CPullWatch::AddToStack(
-				$tag,
-				array(
-					'module_id' => 'crm',
-					'command' => 'timeline_activity_add',
-					'params' => $pushParams,
-				)
-			);
 		}
 	}
 
+	/**
+	 * @param $ownerID
+	 * @param array $params
+	 * @throws Main\ArgumentException
+	 */
 	public function afterModifyExternalEntity($ownerID, array $params)
 	{
-		if(!is_int($ownerID))
+		if (!is_int($ownerID))
 		{
 			$ownerID = (int)$ownerID;
 		}
-		if($ownerID <= 0)
+		if ($ownerID <= 0)
 		{
 			throw new Main\ArgumentException('Owner ID must be greater than zero.', 'ownerID');
 		}
@@ -208,34 +179,18 @@ class OrderController extends EntityController
 			)
 		);
 
-		$enableHistoryPush = $historyEntryID > 0;
-		if(($enableHistoryPush) && Main\Loader::includeModule('pull'))
+		if($historyEntryID > 0)
 		{
-			$pushParams = array();
-			if($enableHistoryPush)
-			{
-				$historyFields = TimelineEntry::getByID($historyEntryID);
-				if(is_array($historyFields))
-				{
-					$pushParams['HISTORY_ITEM'] = $this->prepareHistoryDataModel(
-						$historyFields,
-						array('ENABLE_USER_INFO' => true)
-					);
-				}
-			}
-
-			$tag = $pushParams['TAG'] = TimelineEntry::prepareEntityPushTag(\CCrmOwnerType::Order, $ownerID);
-			\CPullWatch::AddToStack(
-				$tag,
-				array(
-					'module_id' => 'crm',
-					'command' => 'timeline_activity_add',
-					'params' => $pushParams,
-				)
-			);
+			$tag = TimelineEntry::prepareEntityPushTag(\CCrmOwnerType::Order, $ownerID);
+			self::pushHistoryEntry($historyEntryID, $tag, 'timeline_activity_add');
 		}
 	}
 
+	/**
+	 * @param $ownerID
+	 * @param array $params
+	 * @throws Main\ArgumentException
+	 */
 	public function onModify($ownerID, array $params)
 	{
 		if(!is_int($ownerID))
@@ -252,40 +207,11 @@ class OrderController extends EntityController
 		$previousFields = isset($params['PREVIOUS_FIELDS']) && is_array($params['PREVIOUS_FIELDS'])
 			? $params['PREVIOUS_FIELDS'] : array();
 
-		$bindings = $params['BINDINGS'] ?? [];
-
-		$historyEntryID = null;
+		$bindings = $params['BINDINGS'] ?? ['ENTITY_TYPE_ID' => \CCrmOwnerType::Order, 'ENTITY_ID' => $ownerID];
 
 		if (isset($currentFields['STATUS_ID']))
 		{
-			$historyEntryID = $this->onStatusModify($ownerID, $currentFields, $previousFields, $bindings);
-		}
-
-		$enableHistoryPush = $historyEntryID > 0;
-		if(($enableHistoryPush) && Main\Loader::includeModule('pull'))
-		{
-			$pushParams = array();
-			if($enableHistoryPush)
-			{
-				$historyFields = TimelineEntry::getByID($historyEntryID);
-				if(is_array($historyFields))
-				{
-					$pushParams['HISTORY_ITEM'] = $this->prepareHistoryDataModel(
-						$historyFields,
-						array('ENABLE_USER_INFO' => true)
-					);
-				}
-			}
-
-			$tag = $pushParams['TAG'] = TimelineEntry::prepareEntityPushTag(\CCrmOwnerType::Order, $ownerID);
-			\CPullWatch::AddToStack(
-				$tag,
-				array(
-					'module_id' => 'crm',
-					'command' => 'timeline_activity_add',
-					'params' => $pushParams,
-				)
-			);
+			$this->onStatusModify($ownerID, $currentFields, $previousFields, $bindings);
 		}
 	}
 
@@ -331,20 +257,22 @@ class OrderController extends EntityController
 	 */
 	public function onBindingDealCreation($ownerId, $dealId, array $params)
 	{
-		if(!is_int($ownerId))
+		if (!is_int($ownerId))
 		{
 			$ownerId = (int)$ownerId;
 		}
-		if($ownerId <= 0)
+
+		if ($ownerId <= 0)
 		{
 			throw new Main\ArgumentException('Owner ID must be greater than zero.', 'ownerID');
 		}
 
-		if(!is_int($dealId))
+		if (!is_int($dealId))
 		{
 			$dealId = (int)$dealId;
 		}
-		if($dealId <= 0)
+
+		if ($dealId <= 0)
 		{
 			throw new Main\ArgumentException('Owner ID must be greater than zero.', 'dealID');
 		}
@@ -354,21 +282,23 @@ class OrderController extends EntityController
 
 		if ($params['IS_NEW_ORDER'] === 'Y')
 		{
-			OrderEntry::create([
-				'ENTITY_ID' => $ownerId,
-				'TYPE_CATEGORY_ID' => TimelineType::CREATION,
-				'AUTHOR_ID' => $authorId,
+			$params = [
+				'ORDER_FIELDS' => $orderFields,
 				'SETTINGS' => [
 					'FIELDS' => [
-						'PAID' => $orderFields['PAYED'],
 						'DONE' => ($orderFields['STATUS_ID'] === OrderStatus::getFinalStatus()) ? 'Y' : 'N',
 						'CANCELED' => $orderFields['CANCELED'],
 					]
 				],
 				'BINDINGS' => [
-					['ENTITY_TYPE_ID' => \CCrmOwnerType::Deal, 'ENTITY_ID' => $dealId]
-				],
-			]);
+					[
+						'ENTITY_TYPE_ID' => \CCrmOwnerType::Deal,
+						'ENTITY_ID' => $dealId
+					]
+				]
+			];
+
+			$this->onCreate($ownerId, $params);
 		}
 
 		if ($params['IS_NEW_DEAL'] === 'Y')
@@ -400,6 +330,16 @@ class OrderController extends EntityController
 		}
 	}
 
+	/**
+	 * @param $ownerID
+	 * @param $entryTypeID
+	 * @param array $fields
+	 * @return Main\Result
+	 * @throws Main\ArgumentException
+	 * @throws Main\LoaderException
+	 * @throws Main\ObjectPropertyException
+	 * @throws Main\SystemException
+	 */
 	public function updateSettingFields($ownerID, $entryTypeID, array $fields)
 	{
 		$result = new Main\Result();
@@ -449,9 +389,14 @@ class OrderController extends EntityController
 		return $result;
 	}
 
+	/**
+	 * @param $ID
+	 * @return array|false|null
+	 * @throws Main\ArgumentException
+	 */
 	protected static function getEntity($ID)
 	{
-		$resultDB = Order::getList(
+		$resultDB = Order\Order::getList(
 			array(
 				'filter' => array('=ID' => $ID),
 				'select' => array('ID', 'DATE_INSERT', 'CREATED_BY')
@@ -460,28 +405,35 @@ class OrderController extends EntityController
 		return is_object($resultDB) ? $resultDB->fetch() : null;
 	}
 
+	/**
+	 * @param array $fields
+	 * @return int
+	 */
 	protected static function resolveCreatorID(array $fields)
 	{
-		$authorID = 0;
-		if(isset($fields['CREATED_BY']))
+		$authorId = 0;
+		if (isset($fields['CREATED_BY']))
 		{
-			$authorID = (int)$fields['CREATED_BY'];
+			$authorId = (int)$fields['CREATED_BY'];
 		}
 
-		if($authorID <= 0 && isset($fields['RESPONSIBLE_ID']))
+		if ($authorId <= 0 && isset($fields['RESPONSIBLE_ID']))
 		{
-			$authorID = (int)$fields['RESPONSIBLE_ID'];
+			$authorId = (int)$fields['RESPONSIBLE_ID'];
 		}
 
-		if($authorID <= 0)
+		if ($authorId <= 0)
 		{
-			//Set portal admin as default creator
-			$authorID = 1;
+			$authorId = self::getDefaultAuthorId();
 		}
 
-		return $authorID;
+		return $authorId;
 	}
 
+	/**
+	 * @param array $fields
+	 * @return int
+	 */
 	protected static function resolveEditorID(array $fields)
 	{
 		$authorID = 0;
@@ -508,21 +460,27 @@ class OrderController extends EntityController
 
 		if($authorID <= 0)
 		{
-			//Set portal admin as default editor
-			$authorID = 1;
+			$authorID = self::getDefaultAuthorId();
 		}
 
 		return $authorID;
 	}
+
+	/**
+	 * @param array $data
+	 * @param array|null $options
+	 * @return array
+	 */
 	public function prepareHistoryDataModel(array $data, array $options = null)
 	{
 		$typeID = isset($data['TYPE_ID']) ? (int)$data['TYPE_ID'] : TimelineType::UNDEFINED;
 		$settings = is_array($data['SETTINGS']) ? $data['SETTINGS'] : [];
+		$fields = $settings['FIELDS'];
+
 		if($typeID === TimelineType::CREATION)
 		{
-			$fields = $settings['FIELDS'];
 			$data['TITLE'] = Loc::getMessage('CRM_ORDER_CREATION');
-			$title = htmlspecialcharsbx($data['ASSOCIATED_ENTITY']['TITLE']);
+			$title = htmlspecialcharsbx(\CUtil::JSEscape($data['ASSOCIATED_ENTITY']['TITLE']));
 			if (!empty($fields['DATE_INSERT_TIMESTAMP']))
 			{
 				$dateInsert = \CCrmComponentHelper::TrimDateTimeString(ConvertTimeStamp($fields['DATE_INSERT_TIMESTAMP'],'SHORT'));
@@ -623,6 +581,47 @@ class OrderController extends EntityController
 
 			$data['TITLE'] = \CCrmOwnerType::GetDescription(\CCrmOwnerType::Order);
 			$data = array_merge($data, $settings);
+
+			if (isset($data['FIELDS']['VIEWED']) && $data['FIELDS']['VIEWED'] === 'Y')
+			{
+				$data['TITLE'] = \CCrmOwnerType::GetDescription(\CCrmOwnerType::OrderPayment);
+				$data['ASSOCIATED_ENTITY']['TITLE'] = Loc::getMessage('CRM_PAYMENT_VIEWED_TITLE');
+				$data['ASSOCIATED_ENTITY']['HTML_TITLE'] = Loc::getMessage(
+					'CRM_ORDER_VIEWED_HTML_TITLE_2',
+					[
+						'#ORDER_ID#' => $data['FIELDS']['ORDER_ID'],
+						'#DATE#' => $data['ASSOCIATED_ENTITY']['DATE'],
+						'#SUM#' => $data['ASSOCIATED_ENTITY']['SUM_WITH_CURRENCY'],
+					]
+				);
+				$data['ASSOCIATED_ENTITY']['VIEWED'] = 'Y';
+			}
+			elseif (isset($data['FIELDS']['SENT']) && $data['FIELDS']['SENT'] === 'Y')
+			{
+				if ($fields['DESTINATION'])
+				{
+					$destinationTitle = Loc::getMessage('CRM_ORDER_DESTINATION_TITLE_'.$fields['DESTINATION']);
+					if ($destinationTitle)
+					{
+						$data['ASSOCIATED_ENTITY']['DESTINATION_TITLE'] = $destinationTitle;
+					}
+				}
+
+				$data['TITLE'] = \CCrmOwnerType::GetDescription(\CCrmOwnerType::OrderPayment);
+				$data['ASSOCIATED_ENTITY']['HTML_TITLE'] = Loc::getMessage(
+					'CRM_ORDER_VIEWED_HTML_TITLE_2',
+					[
+						'#ORDER_ID#' => $data['FIELDS']['ORDER_ID'],
+						'#DATE#' => $data['ASSOCIATED_ENTITY']['DATE'],
+						'#SUM#' => $data['ASSOCIATED_ENTITY']['SUM_WITH_CURRENCY'],
+					]
+				);
+				$data['ASSOCIATED_ENTITY']['SENT'] = 'Y';
+			}
+
+			$data['ASSOCIATED_ENTITY']['PAYMENT_ID'] = $fields['PAYMENT_ID'];
+			$data['ASSOCIATED_ENTITY']['SHIPMENT_ID'] = $fields['SHIPMENT_ID'];
+
 			unset($data['SETTINGS']);
 		}
 
@@ -634,7 +633,6 @@ class OrderController extends EntityController
 	 * @param $currentFields
 	 * @param $previousFields
 	 * @param array $bindings
-	 * @return int
 	 * @throws Main\ArgumentException
 	 */
 	protected function onStatusModify($ownerId, $currentFields, $previousFields, $bindings = [])
@@ -662,7 +660,15 @@ class OrderController extends EntityController
 			]
 		);
 
-		return (int)$historyEntryID;
+		$enableHistoryPush = $historyEntryID > 0;
+		if ($enableHistoryPush)
+		{
+			foreach($bindings as $binding)
+			{
+				$tag = TimelineEntry::prepareEntityPushTag($binding['ENTITY_TYPE_ID'], $binding['ENTITY_ID']);
+				self::pushHistoryEntry($historyEntryID, $tag, 'timeline_activity_add');
+			}
+		}
 	}
 
 	/**
@@ -712,29 +718,53 @@ class OrderController extends EntityController
 				'SETTINGS' => $settings
 			]);
 
-			if (Main\Loader::includeModule('pull'))
+			foreach($bindings as $binding)
 			{
-				$pushParams = [];
-
-				$historyFields = TimelineEntry::getByID($entityId);
-				if (is_array($historyFields))
-				{
-					$pushParams['HISTORY_ITEM'] = $this->prepareHistoryDataModel(
-						$historyFields,
-						['ENABLE_USER_INFO' => true]
-					);
-				}
-
-				$tag = $pushParams['TAG'] = TimelineEntry::prepareEntityPushTag(\CCrmOwnerType::Order, $ownerId);
-				\CPullWatch::AddToStack(
-					$tag,
-					[
-						'module_id' => 'crm',
-						'command' => 'timeline_activity_add',
-						'params' => $pushParams,
-					]
-				);
+				$tag = TimelineEntry::prepareEntityPushTag($binding['ENTITY_TYPE_ID'], $binding['ENTITY_ID']);
+				self::pushHistoryEntry($entityId, $tag, 'timeline_activity_add');
 			}
 		}
+	}
+
+	/**
+	 * @param $ownerId
+	 * @param $params
+	 * @throws Main\ArgumentException
+	 * @throws Main\ArgumentNullException
+	 * @throws Main\SystemException
+	 */
+	public function onSend($ownerId, $params)
+	{
+		$this->notifyOrderEntry($ownerId, $params);
+
+		$order = Order\Order::load($ownerId);
+
+		/** @var Order\DealBinding $dealBinding */
+		$dealBinding = $order->getDealBinding();
+		if ($dealBinding)
+		{
+			$this->changeOrderStageDealOnSentNoViewed(
+				$dealBinding->getDealId()
+			);
+		}
+	}
+
+	private function changeOrderStageDealOnSentNoViewed($dealId)
+	{
+		$fields = ['ORDER_STAGE' => Order\OrderStage::SENT_NO_VIEWED];
+
+		$deal = new \CCrmDeal(false);
+		$deal->Update($dealId, $fields);
+	}
+
+	/**
+	 * @param $ownerId
+	 * @param array $params
+	 * @throws Main\ArgumentException
+	 */
+	public function onManualContinuePay($ownerId, array $params)
+	{
+		$params['SETTINGS']['FIELDS']['MANUAL_CONTINUE_PAY'] = 'Y';
+		return $this->notifyOrderEntry($ownerId, $params);
 	}
 }

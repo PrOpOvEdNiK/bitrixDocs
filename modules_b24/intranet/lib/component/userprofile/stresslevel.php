@@ -39,7 +39,7 @@ class StressLevel implements \Bitrix\Main\Errorable
 	{
 		$result = [
 			'AVAILABLE' => (
-				Option::get('intranet', 'stresslevel_available', 'Y') == 'Y'
+				Option::get('intranet', 'stresslevel_available', 'Y') === 'Y'
 				&& (
 					!Loader::includeModule('bitrix24')
 					|| \Bitrix\Bitrix24\Release::isAvailable('stresslevel')
@@ -136,7 +136,7 @@ class StressLevel implements \Bitrix\Main\Errorable
 				: 'unknown'
 		);
 
-		return Loc::getMessage('INTRANET_USER_PROFILE_STRESSLEVEL_TYPE_DESCRIPTION_'.strtoupper($type));
+		return Loc::getMessage('INTRANET_USER_PROFILE_STRESSLEVEL_TYPE_DESCRIPTION_'.mb_strtoupper($type));
 	}
 
 	public static function getTypeTextTitle($type = '', $value = 0)
@@ -162,7 +162,7 @@ class StressLevel implements \Bitrix\Main\Errorable
 				: 'unknown'
 		);
 
-		return Loc::getMessage('INTRANET_USER_PROFILE_STRESSLEVEL_TYPE_TEXT_'.strtoupper($type));
+		return Loc::getMessage('INTRANET_USER_PROFILE_STRESSLEVEL_TYPE_TEXT_'.mb_strtoupper($type));
 	}
 
 	protected function getImageSupport()

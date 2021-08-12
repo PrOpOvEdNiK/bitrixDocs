@@ -32,7 +32,7 @@ class CVoxImplantMain
 	public static function Enable($number = '')
 	{
 		$enable = !IsModuleInstalled('extranet') || CModule::IncludeModule('extranet') && CExtranet::IsIntranetUser();
-		if ($enable && strlen($number) > 0)
+		if ($enable && $number <> '')
 		{
 			if (!CVoxImplantPhone::Normalize($number))
 				$enable = false;
@@ -71,17 +71,17 @@ class CVoxImplantMain
 		}
 		$phone = $phoneNormalize;
 
-		$hrPhoto = Array();
+		$hrPhoto = [];
 
 		$openChat = true;
-		$result = VI\PhoneTable::getList(Array(
-			'select' => Array('USER_ID', 'PHONE_MNEMONIC'),
-			'filter' => Array(
+		$result = VI\PhoneTable::getList([
+			'select' => ['USER_ID', 'PHONE_MNEMONIC'],
+			'filter' => [
 				'=PHONE_NUMBER' => $phone,
 				'=USER.ACTIVE' => 'Y',
-				'!=USER.EXTERNAL_AUTH_ID' => array("bot", "email", "controller", "replica", "imconnector")
-			)
-		));
+				'=USER.IS_REAL_USER' => 'Y'
+			]
+		]);
 
 		$userId = false;
 		while ($row = $result->fetch())
@@ -189,7 +189,7 @@ class CVoxImplantMain
 
 	public function	SendChatMessage($dialogId, $incomingType, $messageText, $attach = null)
 	{
-		if (strlen($dialogId) <= 0 || (strlen($messageText) <= 0 && is_null($attach)))
+		if ($dialogId == '' || ($messageText == '' && is_null($attach)))
 			return false;
 
 		if (CVoxImplantConfig::GetChatAction() == CVoxImplantConfig::INTERFACE_CHAT_NONE)
@@ -201,9 +201,9 @@ class CVoxImplantMain
 		// TODO CHECK NULL USER BEFORE SEND
 
 		$chatId = 0;
-		if (substr($dialogId, 0, 4) == 'chat')
+		if (mb_substr($dialogId, 0, 4) == 'chat')
 		{
-			$chatId = intval(substr($dialogId, 4));
+			$chatId = intval(mb_substr($dialogId, 4));
 
 			$message = Array(
 				"FROM_USER_ID" => ($incomingType == CVoxImplantMain::CALL_OUTGOING ? $this->userId : 0),
@@ -245,9 +245,9 @@ class CVoxImplantMain
 		if(!CModule::IncludeModule('im'))
 			return false;
 
-		if (substr($dialogId, 0, 4) == 'chat')
+		if (mb_substr($dialogId, 0, 4) == 'chat')
 		{
-			$chatId = intval(substr($dialogId, 4));
+			$chatId = intval(mb_substr($dialogId, 4));
 			$fieldValue = $additionalData['CRM'].'|'.$additionalData['CRM_ENTITY_TYPE'].'|'.$additionalData['CRM_ENTITY_ID'];
 
 			$chatFields = array(
@@ -395,6 +395,7 @@ class CVoxImplantMain
 				'showCrmCard' => $params['SHOW_CRM_CARD'],
 				'crmEntityType' => $params['CRM_ENTITY_TYPE'],
 				'crmEntityId' => $params['CRM_ENTITY_ID'],
+				'crmBindings' => $params['CRM_BINDINGS'],
 				'crmActivityId' => $params['CRM_ACTIVITY_ID'],
 				'crmActivityEditUrl' => $params['CRM_ACTIVITY_EDIT_URL'],
 				'config' => $params['CONFIG'],
@@ -470,7 +471,7 @@ class CVoxImplantMain
 		$arMonthlyStat = COption::GetOptionString("voximplant", "telephony_statistic", "");
 		if ($arMonthlyStat)
 		{
-			$arMonthlyStat = unserialize($arMonthlyStat);
+			$arMonthlyStat = unserialize($arMonthlyStat, ['allowed_classes' => false]);
 		}
 
 		if(!$arMonthlyStat)
@@ -481,7 +482,7 @@ class CVoxImplantMain
 		$lastUncountedMonth = COption::GetOptionString("voximplant", "telephony_statistic_last_month", "");  //last month which wasn't counted
 		if ($lastUncountedMonth)
 		{
-			$lastUncountedMonth = unserialize($lastUncountedMonth);
+			$lastUncountedMonth = unserialize($lastUncountedMonth, ['allowed_classes' => false]);
 		}
 		else
 		{
@@ -686,6 +687,33 @@ class CVoxImplantMain
 		return array('TITLE' => $title, 'TEXT' => $text);
 	}
 
+	public static function GetTOS()
+	{
+		$account = new CVoxImplantAccount();
+		if ($account->GetAccountLang(false) !== "ru")
+		{
+			return "";
+		}
+
+		$sanitizer = new \CBXSanitizer();
+		$sanitizer->SetLevel(CBXSanitizer::SECURE_LEVEL_HIGH);
+		$sanitizer->AddTags([
+			"a" => ["href", "target"]
+		]);
+		return $sanitizer->SanitizeHtml(GetMessage("VI_TOS_RU"));
+	}
+
+	public static function GetDemoTopUpWarning()
+	{
+		return GetMessage("VI_DEMO_TOPUP_WARNING", [
+			"#LINK#" => \Bitrix\Main\Loader::includeModule("ui") ? \Bitrix\UI\Util::getArticleUrlByCode("5435221") : ""
+		]);
+	}
+	public static function GetDemoTopUpWarningTitle()
+	{
+		return GetMessage("VI_DEMO_TOPUP_WARNING_TITLE");
+	}
+
 	public static function GetPublicFolder()
 	{
 		return '/telephony/';
@@ -823,7 +851,7 @@ class CVoxImplantMain
 	public static function isDbMySql()
 	{
 		global $DB;
-		return strtolower($DB->type) == 'mysql';
+		return $DB->type == 'MYSQL';
 	}
 
 	public static function getCallTypes()
@@ -862,11 +890,32 @@ class CVoxImplantMain
 
 		if(\Bitrix\Main\Loader::includeModule('currency'))
 		{
-			return CCurrencyLang::CurrencyFormat($amount, $currency);
+			//TODO: temporary fix
+			$result = CCurrencyLang::CurrencyFormat($amount, $currency);
+			if (!\Bitrix\Main\Loader::includeModule('bitrix24'))
+			{
+				$result = htmlspecialcharsEx($result);
+			}
+			return $result;
 		}
 		else
 		{
 			return $amount . ' ' . $currency;
 		}
+	}
+
+	/**
+	 * Returns designated media server address (if found in portal config)
+	 *
+	 * @return string
+	 */
+	public static function getMediaServer(): string
+	{
+		if (defined('VOXIMPLANT_MEDIA_SERVER'))
+		{
+			return VOXIMPLANT_MEDIA_SERVER;
+		}
+
+		return \Bitrix\Main\Config\Option::get('voximplant', 'media_server', '');
 	}
 }

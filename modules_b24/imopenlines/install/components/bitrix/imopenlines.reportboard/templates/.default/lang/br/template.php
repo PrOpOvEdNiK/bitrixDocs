@@ -1,4 +1,0 @@
-<?
-$MESS["IMOPENLINES_REPORT_PAGE_LIMITATION_POPUP_TEXT_1"] = "Tenha acesso aos recursos avançados do Bitrix24";
-$MESS["IMOPENLINES_REPORT_PAGE_LIMITATION_POPUP_TEXT_2_NEW"] = "Relatórios de canal aberto são projetados para ajudar você a melhorar o atendimento ao cliente e a experiência do cliente. Nossos painéis apresentam todas as informações fundamentais em um único local: quais agentes são mais eficientes, quais canais de comunicação têm maior demanda, o grau de satisfação de seus clientes, tempo médio de resposta, horário do dia mais movimentado etc. Você também pode selecionar diferentes tipos de relatórios: valores absolutos, tabelas, gráficos, histogramas e outros.";
-?>

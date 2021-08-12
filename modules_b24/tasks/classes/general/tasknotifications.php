@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Bitrix Framework
  * @package bitrix
@@ -9,6 +10,8 @@
 IncludeModuleLangFile(__FILE__);
 
 use Bitrix\Tasks\Internals\Notification\Task\ThrottleTable;
+use Bitrix\Tasks\Internals\UserOption;
+use Bitrix\Tasks\UI;
 use Bitrix\Tasks\Util\AgentManager;
 use Bitrix\Tasks\Util\User;
 use Bitrix\Main\Localization\Loc;
@@ -51,7 +54,7 @@ class CTaskNotifications
 		if (isset($arFields['DESCRIPTION_IN_BBCODE']) && ($arFields['DESCRIPTION_IN_BBCODE'] === 'N'))
 			$isBbCodeDescription = false;
 
-		if (isset($arFields['XML_ID']) && strlen($arFields['XML_ID']))
+		if (isset($arFields['XML_ID']) && mb_strlen($arFields['XML_ID']))
 		{
 			// Don't send any messages when created built-in tasks
 			if (in_array($arFields['XML_ID'], self::$arBuiltInTasksXmlIds, true))
@@ -119,23 +122,21 @@ class CTaskNotifications
 			$arRecipientsIDs = array_unique($arRecipientsIDs);
 
 			$strResponsible = CTaskNotifications::__Users2String($arFields["RESPONSIBLE_ID"], $arUsers, $arFields["NAME_TEMPLATE"]);
-
-			$invariantDescription = GetMessage("TASKS_MESSAGE_RESPONSIBLE_ID").': [COLOR=#000]'.$strResponsible."[/COLOR]\r\n";
-
+			$invariantDescription = GetMessage("TASKS_MESSAGE_RESPONSIBLE_ID").': '.$strResponsible."\r\n";
 			if ($strAccomplices = CTaskNotifications::__Users2String($arFields["ACCOMPLICES"], $arUsers, $arFields["NAME_TEMPLATE"]))
-				$invariantDescription .= GetMessage("TASKS_MESSAGE_ACCOMPLICES").": [COLOR=#000]".$strAccomplices."[/COLOR]\r\n";
-
+			{
+				$invariantDescription .= GetMessage("TASKS_MESSAGE_ACCOMPLICES").": ".$strAccomplices."\r\n";
+			}
 			if ($strAuditors = CTaskNotifications::__Users2String($arFields["AUDITORS"], $arUsers, $arFields["NAME_TEMPLATE"]))
-				$invariantDescription .= GetMessage("TASKS_MESSAGE_AUDITORS").": [COLOR=#000]".$strAuditors."[/COLOR]\r\n";
+			{
+				$invariantDescription .= GetMessage("TASKS_MESSAGE_AUDITORS").": ".$strAuditors."\r\n";
+			}
 
 			// There is can be different messages for users (caused by differnent users' timezones)
-			$arVolatileDescriptions = array();
+			$arVolatileDescriptions = [];
 
 			// Is there correct deadline (it cause volatile part of message for different timezones)?
-			if (
-				$arFields["DEADLINE"]
-				&& (MakeTimeStamp($arFields['DEADLINE']) > 0)
-			)
+			if ($arFields['DEADLINE'] && MakeTimeStamp($arFields['DEADLINE']) > 0)
 			{
 				// Get unix timestamp for DEADLINE
 				$utsDeadline = MakeTimeStamp($arFields['DEADLINE']) - self::getUserTimeZoneOffset();
@@ -152,11 +153,10 @@ class CTaskNotifications
 
 						$deadlineAsString = \Bitrix\Tasks\UI::formatDateTime($bitrixTsDeadline, '^'.\Bitrix\Tasks\UI::getDateTimeFormat());
 
-						$arVolatileDescriptions[$tzOffset] = array(
-							'recipients'  => array(),
-							'description' => GetMessage('TASKS_MESSAGE_DEADLINE')
-								. ': [COLOR=#000]' . $deadlineAsString . "[/COLOR]\r\n"
-						);
+						$arVolatileDescriptions[$tzOffset] = [
+							'recipients'  => [],
+							'description' => GetMessage('TASKS_MESSAGE_DEADLINE').': '.$deadlineAsString."\r\n",
+						];
 					}
 
 					$arVolatileDescriptions[$tzOffset]['recipients'][] = $userId;
@@ -185,79 +185,40 @@ class CTaskNotifications
 				}
 			}
 
-			$taskName = self::formatTaskName($arFields['ID'], $arFields['TITLE'], $arFields['GROUP_ID'], false);
-			$addMessage = self::getGenderMessage($occurAsUserId, "TASKS_NEW_TASK_MESSAGE");
+			$taskName = self::formatTaskName($arFields['ID'], $arFields['TITLE'], $arFields['GROUP_ID']);
+			$addMessage = self::getGenderMessage($occurAsUserId, 'TASKS_NEW_TASK_MESSAGE');
 
-			$instant = str_replace(
-				array(
-					"#TASK_TITLE#"
-				),
-				array(
-					$taskName
-				),
-				$addMessage
-			);
-
-			$email = str_replace(
-				array(
-					"#TASK_TITLE#"
-				),
-				array(
-					strip_tags($taskName)
-				),
-				$addMessage
-			);
-
-			CTaskNotifications::sendMessageEx($arFields["ID"], $occurAsUserId, $arRecipientsIDs, array(
-				'INSTANT' => $instant,
-				'EMAIL' => $email,
-				'PUSH' => self::makePushMessage('TASKS_NEW_TASK_MESSAGE', $occurAsUserId, $arFields)
-			), array(
+			$messages = [
+				'INSTANT' => str_replace('#TASK_TITLE#', $taskName, $addMessage),
+				'EMAIL' => str_replace('#TASK_TITLE#', strip_tags($taskName), $addMessage),
+				'PUSH' => self::makePushMessage('TASKS_NEW_TASK_MESSAGE', $occurAsUserId, $arFields),
+			];
+			$parameters = [
 				'ENTITY_CODE' => 'TASK',
 				'ENTITY_OPERATION' => 'ADD',
-				'EVENT_DATA' => array(
-					'ACTION'   => 'TASK_ADD',
-					'arFields' => $arFields
-				),
-				'CALLBACK' => array(
-					'BEFORE_SEND' => function($message) use($isBbCodeDescription, $invariantDescription, $descs)
-					{
+				'EVENT_DATA' => [
+					'ACTION' => 'TASK_ADD',
+					'arFields' => $arFields,
+				],
+				'CALLBACK' => [
+					'BEFORE_SEND' => function ($message) use ($isBbCodeDescription, $invariantDescription, $descs) {
 						$description = $invariantDescription.$descs[$message['TO_USER_IDS'][0]];
-
 						$message['MESSAGE']['INSTANT'] = str_replace(
-							array(
-								"#TASK_EXTRA#"
-							),
-							array(
-								$description
-							),
+							'#TASK_EXTRA#',
+							$description,
 							$message['MESSAGE']['INSTANT']
 						);
-
-						if ($isBbCodeDescription)
-						{
-							$parser = new CTextParser();
-							$description = str_replace(
-								"\t",
-								' &nbsp; &nbsp;',
-								$parser->convertText($description)
-							);
-						}
-
 						$message['MESSAGE']['EMAIL'] = str_replace(
-							array(
-								"#TASK_EXTRA#"
-							),
-							array(
-								$description
-							),
+							'#TASK_EXTRA#',
+							$description,
 							$message['MESSAGE']['EMAIL']
 						);
-
 						return $message;
 					}
-				)
-			));
+				],
+			];
+
+			self::sendMessageEx($arFields['ID'], $occurAsUserId, $arRecipientsIDs, $messages, $parameters);
 		}
 
 		// sonet log, not for CRM
@@ -267,12 +228,12 @@ class CTaskNotifications
 				is_array($arFields["UF_CRM_TASK"])
 				&& (
 					!isset($arFields["UF_CRM_TASK"][0])
-					|| strlen($arFields["UF_CRM_TASK"][0]) <= 0
+					|| $arFields["UF_CRM_TASK"][0] == ''
 				)
 			)
 			|| (
 				!is_array($arFields["UF_CRM_TASK"])
-				&& strlen($arFields["UF_CRM_TASK"]) <= 0
+				&& $arFields["UF_CRM_TASK"] == ''
 			)
 		)
 		{
@@ -382,20 +343,56 @@ class CTaskNotifications
 		$arRecipientsIDs = array_unique(CTaskNotifications::GetRecipientsIDs($arFields, $ignoreAuthor, false, $occurAsUserId));
 
 		if (
-			( ! empty($arRecipientsIDs) )
+			!empty($arRecipientsIDs)
 			&& (User::getId() || $arFields["CREATED_BY"])
 		)
 		{
-			$curUserTzOffset = (int) self::getUserTimeZoneOffset();
-			$arInvariantChangesStrs = array();
-			$arVolatileDescriptions = array();
-			$arRecipientsIDsByTimezone = array();
+			$arInvariantChangesStrs = [];
+			$arVolatileDescriptions = [];
+			$arRecipientsIDsByTimezone = [];
 			$i = 0;
 			foreach ($arChanges as $key => $value)
 			{
-				if($key == 'DESCRIPTION')
+				if ($key === 'DESCRIPTION')
 				{
 					$arInvariantChangesStrs[] = GetMessage('TASKS_MESSAGE_DESCRIPTION_UPDATED');
+					continue;
+				}
+
+				if ($key === 'ACCOMPLICES' || $key === 'AUDITORS')
+				{
+					$fromUsers = explode(",", $value["FROM_VALUE"]);
+					$toUsers = explode(",", $value["TO_VALUE"]);
+
+					$addedUsers = array_unique(array_diff($toUsers, $fromUsers));
+					$addedUsers = array_filter(
+						$addedUsers,
+						static function ($id) {
+							return (int)$id > 0;
+						}
+					);
+					$removedUsers = array_unique(array_diff($fromUsers, $toUsers));
+					$removedUsers = array_filter(
+						$removedUsers,
+						static function ($id) {
+							return (int)$id > 0;
+						}
+					);
+
+					if (count($addedUsers) > 0)
+					{
+						$arInvariantChangesStrs[] =
+							GetMessage("TASKS_MESSAGE_{$key}_ADDED")
+							. CTaskNotifications::__Users2String($addedUsers, $arUsers, $arFields['NAME_TEMPLATE'])
+						;
+					}
+					if (count($removedUsers) > 0)
+					{
+						$arInvariantChangesStrs[] =
+							GetMessage("TASKS_MESSAGE_{$key}_REMOVED")
+							. CTaskNotifications::__Users2String($removedUsers, $arUsers, $arFields['NAME_TEMPLATE'])
+						;
+					}
 					continue;
 				}
 
@@ -406,18 +403,18 @@ class CTaskNotifications
 					$actionMessage = $trackedFields[$key]['TITLE'];
 				}
 
-				if (strlen($actionMessage))
+				if($actionMessage <> '')
 				{
 					// here we can display value changed for some fields
 					$changeMessage = $actionMessage;
 					$tmpStr = '';
-					switch ($key)
+					switch($key)
 					{
 						case 'TIME_ESTIMATE':
 							$tmpStr .= self::formatTimeHHMM($value["FROM_VALUE"], true)
-								. " -> "
-								. self::formatTimeHHMM($value["TO_VALUE"], true);
-						break;
+								." -> "
+								.self::formatTimeHHMM($value["TO_VALUE"], true);
+							break;
 
 						case "TITLE":
 							$tmpStr .= $value["FROM_VALUE"]." -> ".$value["TO_VALUE"];
@@ -426,17 +423,8 @@ class CTaskNotifications
 						case "RESPONSIBLE_ID":
 							$tmpStr .=
 								CTaskNotifications::__Users2String($value["FROM_VALUE"], $arUsers, $arFields["NAME_TEMPLATE"])
-								. ' -> '
-								. CTaskNotifications::__Users2String($value["TO_VALUE"], $arUsers, $arFields["NAME_TEMPLATE"]);
-							break;
-
-						case "ACCOMPLICES":
-						case "AUDITORS":
-							$tmpStr .=
-								CTaskNotifications::__Users2String(explode(",", $value["FROM_VALUE"]), $arUsers, $arFields["NAME_TEMPLATE"])
-								. ' -> '
-								. CTaskNotifications::__Users2String(explode(",", $value["TO_VALUE"]), $arUsers, $arFields["NAME_TEMPLATE"])
-								;
+								.' -> '
+								.CTaskNotifications::__Users2String($value["TO_VALUE"], $arUsers, $arFields["NAME_TEMPLATE"]);
 							break;
 
 						case "DEADLINE":
@@ -444,29 +432,31 @@ class CTaskNotifications
 						case "END_DATE_PLAN":
 							// $arChanges ALREADY contains server time, no need to substract user timezone again
 							$utsFromValue = $value['FROM_VALUE'];// - $curUserTzOffset;
-							$utsToValue   = $value['TO_VALUE'];// - $curUserTzOffset;
+							$utsToValue = $value['TO_VALUE'];// - $curUserTzOffset;
 
 							// It will be replaced below to formatted string with correct dates for different timezones
-							$placeholder = '###PLACEHOLDER###' . $i . '###';
+							$placeholder = '###PLACEHOLDER###'.$i.'###';
 							$tmpStr .= $placeholder;
 
 							// Collect recipients' timezones
-							foreach ($arRecipientsIDs as $userId)
+							foreach($arRecipientsIDs as $userId)
 							{
-								$tzOffset = (int) self::getUserTimeZoneOffset($userId);
+								$tzOffset = (int)self::getUserTimeZoneOffset($userId);
 
-								if ( ! isset($arVolatileDescriptions[$tzOffset]) )
+								if(!isset($arVolatileDescriptions[$tzOffset]))
+								{
 									$arVolatileDescriptions[$tzOffset] = array();
+								}
 
-								if ( ! isset($arVolatileDescriptions[$tzOffset][$placeholder]) )
+								if(!isset($arVolatileDescriptions[$tzOffset][$placeholder]))
 								{
 									// Make bitrix timestamps for given user
 									$bitrixTsFromValue = $utsFromValue + $tzOffset;
-									$bitrixTsToValue   = $utsToValue + $tzOffset;
+									$bitrixTsToValue = $utsToValue + $tzOffset;
 
 									$description = '';
 
-									if ($utsFromValue > 360000)		// is correct timestamp?
+									if($utsFromValue > 360000)        // is correct timestamp?
 									{
 										$fromValueAsString = \Bitrix\Tasks\UI::formatDateTime($bitrixTsFromValue, '^'.\Bitrix\Tasks\UI::getDateTimeFormat());
 
@@ -475,14 +465,14 @@ class CTaskNotifications
 
 									$description .= ' --> ';
 
-									if ($utsToValue > 360000)		// is correct timestamp?
+									if($utsToValue > 360000)        // is correct timestamp?
 									{
 										$toValueAsString = \Bitrix\Tasks\UI::formatDateTime($bitrixTsToValue, '^'.\Bitrix\Tasks\UI::getDateTimeFormat());
 
 										$description .= $toValueAsString;
 									}
 
-									$arVolatileDescriptions[$tzOffset][$placeholder] = $description;
+									$arVolatileDescriptions[$tzOffset][$placeholder] = trim($description);
 								}
 
 								$arRecipientsIDsByTimezone[$tzOffset][] = $userId;
@@ -490,7 +480,7 @@ class CTaskNotifications
 							break;
 
 						case "TAGS":
-							$tmpStr .= ($value["FROM_VALUE"] ? str_replace(",", ", ", $value["FROM_VALUE"])." -> " : "").($value["TO_VALUE"] ? str_replace(",", ", ", $value["TO_VALUE"]) : GetMessage("TASKS_MESSAGE_NO_VALUE"));
+							$tmpStr .= ($value["FROM_VALUE"]? str_replace(",", ", ", $value["FROM_VALUE"])." -> " : "").($value["TO_VALUE"]? str_replace(",", ", ", $value["TO_VALUE"]) : GetMessage("TASKS_MESSAGE_NO_VALUE"));
 							break;
 
 						case "PRIORITY":
@@ -498,21 +488,21 @@ class CTaskNotifications
 							break;
 
 						case "GROUP_ID":
-							if ($value["FROM_VALUE"] && self::checkUserCanViewGroup($effectiveUserId, $value["FROM_VALUE"]))
+							if($value["FROM_VALUE"] && self::checkUserCanViewGroup($effectiveUserId, $value["FROM_VALUE"]))
 							{
 								$arGroupFrom = self::getSocNetGroup($value["FROM_VALUE"]);
 								{
-									if ($arGroupFrom)
+									if($arGroupFrom)
 									{
 										$tmpStr .= $arGroupFrom["NAME"]." -> ";
 									}
 								}
 							}
-							if ($value["TO_VALUE"] && self::checkUserCanViewGroup($effectiveUserId, $value["TO_VALUE"]))
+							if($value["TO_VALUE"] && self::checkUserCanViewGroup($effectiveUserId, $value["TO_VALUE"]))
 							{
 								$arGroupTo = self::getSocNetGroup($value["TO_VALUE"]);
 								{
-									if ($arGroupTo)
+									if($arGroupTo)
 									{
 										$tmpStr .= $arGroupTo["NAME"];
 									}
@@ -526,21 +516,21 @@ class CTaskNotifications
 							break;
 
 						case "PARENT_ID":
-							if ($value["FROM_VALUE"])
+							if($value["FROM_VALUE"])
 							{
 								$rsTaskFrom = CTasks::GetList(array(), array("ID" => $value["FROM_VALUE"]), array('ID', 'TITLE'));
 								{
-									if ($arTaskFrom = $rsTaskFrom->GetNext())
+									if($arTaskFrom = $rsTaskFrom->GetNext())
 									{
 										$tmpStr .= $arTaskFrom["TITLE"]." -> ";
 									}
 								}
 							}
-							if ($value["TO_VALUE"])
+							if($value["TO_VALUE"])
 							{
 								$rsTaskTo = CTasks::GetList(array(), array("ID" => $value["TO_VALUE"]), array('ID', 'TITLE'));
 								{
-									if ($arTaskTo = $rsTaskTo->GetNext())
+									if($arTaskTo = $rsTaskTo->GetNext())
 									{
 										$tmpStr .= $arTaskTo["TITLE"];
 									}
@@ -554,32 +544,32 @@ class CTaskNotifications
 
 						case "DEPENDS_ON":
 							$arTasksFromStr = array();
-							if ($value["FROM_VALUE"])
+							if($value["FROM_VALUE"])
 							{
 								$rsTasksFrom = CTasks::GetList(array(), array("ID" => explode(",", $value["FROM_VALUE"])), array('ID', 'TITLE'));
-								while ($arTaskFrom = $rsTasksFrom->GetNext())
+								while($arTaskFrom = $rsTasksFrom->GetNext())
 								{
 									$arTasksFromStr[] = $arTaskFrom["TITLE"];
 								}
 							}
 							$arTasksToStr = array();
-							if ($value["TO_VALUE"])
+							if($value["TO_VALUE"])
 							{
 								$rsTasksTo = CTasks::GetList(array(), array("ID" => explode(",", $value["TO_VALUE"])), array('ID', 'TITLE'));
-								while ($arTaskTo = $rsTasksTo->GetNext())
+								while($arTaskTo = $rsTasksTo->GetNext())
 								{
 									$arTasksToStr[] = $arTaskTo["TITLE"];
 								}
 							}
-							$tmpStr .= ($arTasksFromStr ? implode(", ", $arTasksFromStr)." -> " : "").($arTasksToStr ? implode(", ", $arTasksToStr) : GetMessage("TASKS_MESSAGE_NO_VALUE"));
+							$tmpStr .= ($arTasksFromStr? implode(", ", $arTasksFromStr)." -> " : "").($arTasksToStr? implode(", ", $arTasksToStr) : GetMessage("TASKS_MESSAGE_NO_VALUE"));
 							break;
 
 						case "MARK":
-							$tmpStr .= (!$value["FROM_VALUE"] ? GetMessage("TASKS_MARK_NONE") : GetMessage("TASKS_MARK_".$value["FROM_VALUE"]))." -> ".(!$value["TO_VALUE"] ? GetMessage("TASKS_MARK_NONE") : GetMessage("TASKS_MARK_".$value["TO_VALUE"]));
+							$tmpStr .= (!$value["FROM_VALUE"]? GetMessage("TASKS_MARK_NONE") : GetMessage("TASKS_MARK_".$value["FROM_VALUE"]))." -> ".(!$value["TO_VALUE"]? GetMessage("TASKS_MARK_NONE") : GetMessage("TASKS_MARK_".$value["TO_VALUE"]));
 							break;
 
 						case "ADD_IN_REPORT":
-							$tmpStr .= ($value["FROM_VALUE"] == "Y" ? GetMessage("TASKS_MESSAGE_IN_REPORT_YES") : GetMessage("TASKS_MESSAGE_IN_REPORT_NO"))." -> ".($value["TO_VALUE"] == "Y" ? GetMessage("TASKS_MESSAGE_IN_REPORT_YES") : GetMessage("TASKS_MESSAGE_IN_REPORT_NO"));
+							$tmpStr .= ($value["FROM_VALUE"] == "Y"? GetMessage("TASKS_MESSAGE_IN_REPORT_YES") : GetMessage("TASKS_MESSAGE_IN_REPORT_NO"))." -> ".($value["TO_VALUE"] == "Y"? GetMessage("TASKS_MESSAGE_IN_REPORT_YES") : GetMessage("TASKS_MESSAGE_IN_REPORT_NO"));
 							break;
 
 						case "DELETED_FILES":
@@ -591,9 +581,9 @@ class CTaskNotifications
 							$tmpStr .= $value["TO_VALUE"];
 							break;
 					}
-					if((string) $tmpStr != '')
+					if ($tmpStr !== '')
 					{
-						$changeMessage .= ": [COLOR=#000]".$tmpStr."[/COLOR]";
+						$changeMessage .= ": ".trim($tmpStr);
 					}
 
 					$arInvariantChangesStrs[] = $changeMessage;
@@ -723,68 +713,58 @@ class CTaskNotifications
 		}
 	}
 
-	function SendDeleteMessage($arFields)
+	/**
+	 * @param $arFields
+	 * @param bool $safeDelete
+	 */
+	public static function SendDeleteMessage($arFields, bool $safeDelete = false): void
 	{
 		$cacheWasEnabled = CTaskNotifications::enableStaticCache();
 
-		$arRecipientsIDs = CTaskNotifications::GetRecipientsIDs($arFields);
-		if (sizeof($arRecipientsIDs) && (User::getId() || $arFields["CREATED_BY"]))
+		$recipientIds = CTaskNotifications::GetRecipientsIDs($arFields);
+		if (count($recipientIds) > 0 && (User::getId() || $arFields['CREATED_BY']))
 		{
-			$occurAsUserId = CTasksTools::getOccurAsUserId();
-			if ( ! $occurAsUserId )
-				$occurAsUserId = User::getId() ? User::getId() : $arFields["CREATED_BY"];
+			if (!($occurAsUserId = CTasksTools::getOccurAsUserId()))
+			{
+				$occurAsUserId = (User::getId() ? User::getId() : $arFields['CREATED_BY']);
+			}
 
+			$messageCode = 'TASKS_TASK_DELETED_MESSAGE_V2';
 			$messageInstant = str_replace(
-				"#TASK_TITLE#",
-				self::formatTaskName(
-					$arFields['ID'],
-					$arFields['TITLE'],
-					$arFields['GROUP_ID'],
-					false
-				),
-				self::getGenderMessage($occurAsUserId, 'TASKS_TASK_DELETED_MESSAGE')
+				'#TASK_TITLE#',
+				self::formatTaskName($arFields['ID'], $arFields['TITLE'], $arFields['GROUP_ID']),
+				self::getGenderMessage($occurAsUserId, $messageCode)
 			);
+			$messagePush = CTaskNotifications::makePushMessage($messageCode, $occurAsUserId, $arFields);
 
-			CTaskNotifications::sendMessageEx($arFields["ID"], $occurAsUserId, $arRecipientsIDs, array(
-				'INSTANT' => $messageInstant,
-				//'EMAIL' => $messageEmail,
-				'PUSH' => CTaskNotifications::makePushMessage('TASKS_TASK_DELETED_MESSAGE', $occurAsUserId, $arFields)
-			), array(
-				'EVENT_DATA' => array(
-					'ACTION'   => 'TASK_DELETE',
-					'arFields' => $arFields
-				),
-			));
-
-			/*
-			CTaskNotifications::SendMessage($occurAsUserId, $arRecipientsIDs,
-				$message, $arFields['ID'], null,
-				array(
-					'ACTION'   => 'TASK_DELETE',
-					'arFields' => $arFields
-				)
+			CTaskNotifications::sendMessageEx(
+				$arFields['ID'],
+				$occurAsUserId,
+				$recipientIds,
+				[
+					'INSTANT' => $messageInstant,
+					'PUSH' => $messagePush,
+				],
+				[
+					'EVENT_DATA' => [
+						'ACTION' => 'TASK_DELETE',
+						'arFields' => $arFields,
+					],
+				]
 			);
-			*/
 		}
 
 		// sonet log
-		if (CModule::IncludeModule("socialnetwork"))
+		if ($safeDelete)
 		{
-			$dbRes = CSocNetLog::GetList(
-				array("ID" => "DESC"),
-				array(
-					"EVENT_ID" => "tasks",
-					"SOURCE_ID" => $arFields["ID"]
-				),
-				false,
-				false,
-				array("ID")
-			);
-			while ($arRes = $dbRes->Fetch())
-				CSocNetLog::Delete($arRes["ID"]);
+			\Bitrix\Tasks\Integration\SocialNetwork\Log::hideLogByTaskId((int) $arFields['ID']);
+		}
+		else
+		{
+			\Bitrix\Tasks\Integration\SocialNetwork\Log::deleteLogByTaskId((int) $arFields['ID']);
 		}
 
-		if($cacheWasEnabled)
+		if ($cacheWasEnabled)
 		{
 			CTaskNotifications::disableStaticCache();
 		}
@@ -885,7 +865,7 @@ class CTaskNotifications
 			$arSoFields = array(
 				"TITLE" => $arTask["TITLE"],
 				"=LOG_UPDATE" => (
-					strlen($arTask["CHANGED_DATE"]) > 0?
+					$arTask["CHANGED_DATE"] <> ''?
 						(MakeTimeStamp($arTask["CHANGED_DATE"], CSite::GetDateFormat("FULL", SITE_ID)) > time()+CTimeZone::GetOffset()?
 							$DB->CharToDateFunction($arTask["CHANGED_DATE"], "FULL", SITE_ID) :
 							$DB->CurrentTimeFunction()) :
@@ -916,40 +896,40 @@ class CTaskNotifications
 
 			if (empty($arLogFilter))
 			{
-				return (null);
+				return null;
 			}
 
 			$dbRes = CSocNetLog::GetList(
-				array("ID" => "DESC"),
+				["ID" => "DESC"],
 				$arLogFilter,
 				false,
 				false,
-				array("ID", "ENTITY_TYPE", "ENTITY_ID")
+				["ID", "ENTITY_TYPE", "ENTITY_ID"]
 			);
-
-			while ($arRes = $dbRes->Fetch())
+			while ($log = $dbRes->Fetch())
 			{
-				CSocNetLog::Update($arRes['ID'], $arSoFields);
+				$logId = $log['ID'];
+				$authorId = (int)$arTask['CREATED_BY'];
 
-				$authorUserId = (int) $arTask['CREATED_BY'];
+				CSocNetLog::Update($logId, $arSoFields);
 
 				// Add author to list of users that view log about task in livefeed
 				// But only when some other person change task
-				if ($authorUserId !== $loggedInUserId)
+				if ($authorId !== $loggedInUserId)
 				{
-					$authorGroupCode = 'U' . $authorUserId;
+					$authorGroupCode = 'U'.$authorId;
 
-					$rsRights = CSocNetLogRights::GetList(
-						array(),
-						array(
-							'LOG_ID'     => $arRes['ID'],
-							'GROUP_CODE' => $authorGroupCode
-						)
-					);
+					$rightsResult = CSocNetLogRights::GetList([], [
+						'LOG_ID' => $logId,
+						'GROUP_CODE' => $authorGroupCode,
+					]);
 
 					// If task's author hasn't rights yet, give them
-					if ( ! ($arRights = $rsRights->fetch()) )
-						CSocNetLogRights::Add($arRes["ID"], array($authorGroupCode));
+					if (!$rightsResult->fetch())
+					{
+						$follow = !UserOption::isOptionSet($arTask['ID'], $authorId, UserOption\Option::MUTED);
+						CSocNetLogRights::Add($logId, [$authorGroupCode], false, $follow);
+					}
 				}
 			}
 		}
@@ -960,72 +940,459 @@ class CTaskNotifications
 		}
 	}
 
+	public static function sendExpiredSoonMessage(array $taskData): void
+	{
+		$cacheWasEnabled = self::enableStaticCache();
+
+		$parameters = [
+			'ENTITY_CODE' => 'TASK',
+			'ENTITY_OPERATION' => 'EXPIRED_SOON',
+			'EVENT_DATA' => [
+				'ACTION' => 'TASK_EXPIRED_SOON',
+				'arFields' => $taskData,
+			],
+			'NOTIFY_EVENT' => 'task_expired_soon'
+		];
+
+		self::sendExpiredSoonMessageForResponsible($taskData, $parameters);
+		self::sendExpiredSoonMessageForAccomplices($taskData, $parameters);
+
+		if ($cacheWasEnabled)
+		{
+			self::disableStaticCache();
+		}
+	}
+
+	private static function sendExpiredSoonMessageForResponsible(array $taskData, array $parameters): void
+	{
+		$createdBy = (int)$taskData['CREATED_BY'];
+		$responsibleId = (int)$taskData['RESPONSIBLE_ID'];
+		$sameCreatorMessagePart = 'SAME_CREATOR_';
+
+		$title = self::formatTaskName($taskData['ID'], $taskData['TITLE'], $taskData['GROUP_ID']);
+		/** @var \Bitrix\Tasks\Util\Type\DateTime $deadline */
+		$deadline = clone $taskData['DEADLINE'];
+		$deadline->addSecond(\CTimeZone::GetOffset($responsibleId, true));
+		$formattedDeadline = $deadline->format(UI::getHumanTimeFormat($deadline->getTimestamp()));
+
+		$messageKey = (
+			$responsibleId === $createdBy
+				? "TASKS_TASK_EXPIRED_SOON_RESPONSIBLE_{$sameCreatorMessagePart}MESSAGE"
+				: "TASKS_TASK_EXPIRED_SOON_RESPONSIBLE_MESSAGE"
+		);
+		$messages = [
+			'INSTANT' => str_replace(
+				['#TASK_TITLE#', '#DEADLINE_TIME#'],
+				[$title, $formattedDeadline],
+				self::getGenderMessage(0, $messageKey)
+			),
+			'EMAIL' => str_replace(
+				['#TASK_TITLE#', '#DEADLINE_TIME#'],
+				[strip_tags($title), $formattedDeadline],
+				self::getGenderMessage(0, $messageKey)
+			),
+			'PUSH' => self::makePushMessage($messageKey, $createdBy, $taskData),
+
+		];
+
+		self::sendMessageEx($taskData['ID'], $createdBy, [$responsibleId], $messages, $parameters);
+	}
+
+	private static function sendExpiredSoonMessageForAccomplices(array $taskData, array $parameters): void
+	{
+		$createdBy = (int)$taskData['CREATED_BY'];
+		$responsibleId = (int)$taskData['RESPONSIBLE_ID'];
+		$accomplices = array_map('intval', $taskData['ACCOMPLICES']->export());
+
+		if (empty($accomplices))
+		{
+			return;
+		}
+
+		$title = self::formatTaskName($taskData['ID'], $taskData['TITLE'], $taskData['GROUP_ID']);
+
+		if ($index = array_search($responsibleId, $accomplices, true))
+		{
+			unset($accomplices[$index]);
+		}
+
+		if (in_array($createdBy, $accomplices, true))
+		{
+			/** @var \Bitrix\Tasks\Util\Type\DateTime $deadline */
+			$deadline = clone $taskData['DEADLINE'];
+			$deadline->addSecond(\CTimeZone::GetOffset($createdBy, true));
+			$formattedDeadline = $deadline->format(UI::getHumanTimeFormat($deadline->getTimestamp()));
+
+			$messageKey = 'TASKS_TASK_EXPIRED_SOON_RESPONSIBLE_SAME_CREATOR_MESSAGE';
+			$messages = [
+				'INSTANT' => str_replace(
+					['#TASK_TITLE#', '#DEADLINE_TIME#'],
+					[$title, $formattedDeadline],
+					self::getGenderMessage(0, $messageKey)
+				),
+				'EMAIL' => str_replace(
+					['#TASK_TITLE#', '#DEADLINE_TIME#'],
+					[strip_tags($title), $formattedDeadline],
+					self::getGenderMessage(0, $messageKey)
+				),
+				'PUSH' => self::makePushMessage($messageKey, $createdBy, $taskData),
+			];
+			self::sendMessageEx($taskData['ID'], $createdBy, [$createdBy], $messages, $parameters);
+
+			unset($accomplices[array_search($createdBy, $accomplices, true)]);
+		}
+
+		foreach ($accomplices as $userId)
+		{
+			/** @var \Bitrix\Tasks\Util\Type\DateTime $deadline */
+			$deadline = clone $taskData['DEADLINE'];
+			$deadline->addSecond(\CTimeZone::GetOffset($userId, true));
+			$formattedDeadline = $deadline->format(UI::getHumanTimeFormat($deadline->getTimestamp()));
+
+			$messageKey = 'TASKS_TASK_EXPIRED_SOON_RESPONSIBLE_MESSAGE';
+			$messages = [
+				'INSTANT' => str_replace(
+					['#TASK_TITLE#', '#DEADLINE_TIME#'],
+					[$title, $formattedDeadline],
+					self::getGenderMessage(0, $messageKey)
+				),
+				'EMAIL' => str_replace(
+					['#TASK_TITLE#', '#DEADLINE_TIME#'],
+					[strip_tags($title), $formattedDeadline],
+					self::getGenderMessage(0, $messageKey)
+				),
+				'PUSH' => self::makePushMessage($messageKey, $createdBy, $taskData),
+			];
+
+			self::sendMessageEx($taskData['ID'], $createdBy, [$userId], $messages, $parameters);
+		}
+	}
+
+	public static function sendExpiredMessage(array $taskData): void
+	{
+		$cacheWasEnabled = self::enableStaticCache();
+
+		$parameters = [
+			'ENTITY_CODE' => 'TASK',
+			'ENTITY_OPERATION' => 'EXPIRED',
+			'EVENT_DATA' => [
+				'ACTION' => 'TASK_EXPIRED',
+				'arFields' => $taskData,
+			],
+		];
+
+		self::sendExpiredMessageForResponsible($taskData, $parameters);
+		self::sendExpiredMessageForAccomplices($taskData, $parameters);
+		self::sendExpiredMessageForCreator($taskData, $parameters);
+		self::sendExpiredMessageForAuditors($taskData, $parameters);
+
+		if ($cacheWasEnabled)
+		{
+			self::disableStaticCache();
+		}
+	}
+
+	private static function sendExpiredMessageForResponsible(array $taskData, array $parameters): void
+	{
+		$createdBy = (int)$taskData['CREATED_BY'];
+		$responsibleId = (int)$taskData['RESPONSIBLE_ID'];
+		$sameCreatorMessagePart = 'SAME_CREATOR_';
+
+		$title = self::formatTaskName($taskData['ID'], $taskData['TITLE'], $taskData['GROUP_ID']);
+
+		$messageKey = (
+			$responsibleId === $createdBy
+				? "TASKS_TASK_EXPIRED_RESPONSIBLE_{$sameCreatorMessagePart}MESSAGE"
+				: "TASKS_TASK_EXPIRED_RESPONSIBLE_MESSAGE"
+		);
+		$messages = [
+			'INSTANT' => str_replace(['#TASK_TITLE#'], [$title], self::getGenderMessage(0, $messageKey)),
+			'EMAIL' => str_replace(['#TASK_TITLE#'], [strip_tags($title)], self::getGenderMessage(0, $messageKey)),
+			'PUSH' => self::makePushMessage($messageKey, $createdBy, $taskData),
+		];
+
+		self::sendMessageEx($taskData['ID'], $createdBy, [$responsibleId], $messages, $parameters);
+	}
+
+	private static function sendExpiredMessageForAccomplices(array $taskData, array $parameters): void
+	{
+		$createdBy = (int)$taskData['CREATED_BY'];
+		$responsibleId = (int)$taskData['RESPONSIBLE_ID'];
+		$accomplices = array_map('intval', $taskData['ACCOMPLICES']->export());
+
+		if (empty($accomplices))
+		{
+			return;
+		}
+
+		$title = self::formatTaskName($taskData['ID'], $taskData['TITLE'], $taskData['GROUP_ID']);
+
+		if ($index = array_search($responsibleId, $accomplices, true))
+		{
+			unset($accomplices[$index]);
+		}
+
+		if (in_array($createdBy, $accomplices, true))
+		{
+			$messageKey = 'TASKS_TASK_EXPIRED_RESPONSIBLE_SAME_CREATOR_MESSAGE';
+			$messages = [
+				'INSTANT' => str_replace(['#TASK_TITLE#'], [$title], self::getGenderMessage(0, $messageKey)),
+				'EMAIL' => str_replace(['#TASK_TITLE#'], [strip_tags($title)], self::getGenderMessage(0, $messageKey)),
+				'PUSH' => self::makePushMessage($messageKey, $createdBy, $taskData),
+			];
+			self::sendMessageEx($taskData['ID'], $createdBy, [$createdBy], $messages, $parameters);
+
+			unset($accomplices[array_search($createdBy, $accomplices, true)]);
+		}
+
+		$messageKey = 'TASKS_TASK_EXPIRED_RESPONSIBLE_MESSAGE';
+		$messages = [
+			'INSTANT' => str_replace(['#TASK_TITLE#'], [$title], self::getGenderMessage(0, $messageKey)),
+			'EMAIL' => str_replace(['#TASK_TITLE#'], [strip_tags($title)], self::getGenderMessage(0, $messageKey)),
+			'PUSH' => self::makePushMessage($messageKey, $createdBy, $taskData),
+		];
+
+		self::sendMessageEx($taskData['ID'], $createdBy, $accomplices, $messages, $parameters);
+	}
+
+	private static function sendExpiredMessageForCreator(array $taskData, array $parameters): void
+	{
+		$createdBy = (int)$taskData['CREATED_BY'];
+		$responsibleId = (int)$taskData['RESPONSIBLE_ID'];
+		$accomplices = array_map('intval', $taskData['ACCOMPLICES']->export());
+
+		if ($createdBy === $responsibleId || in_array($createdBy, $accomplices, true))
+		{
+			return;
+		}
+
+		$title = self::formatTaskName($taskData['ID'], $taskData['TITLE'], $taskData['GROUP_ID']);
+
+		$messageKey = 'TASKS_TASK_EXPIRED_CREATOR_MESSAGE';
+		$messages = [
+			'INSTANT' => str_replace(['#TASK_TITLE#'], [$title], self::getGenderMessage(0, $messageKey)),
+			'EMAIL' => str_replace(['#TASK_TITLE#'], [strip_tags($title)], self::getGenderMessage(0, $messageKey)),
+			'PUSH' => self::makePushMessage($messageKey, $createdBy, $taskData),
+		];
+
+		self::sendMessageEx($taskData['ID'], $createdBy, [$createdBy], $messages, $parameters);
+	}
+
+	private static function sendExpiredMessageForAuditors(array $taskData, array $parameters): void
+	{
+		$createdBy = (int)$taskData['CREATED_BY'];
+		$responsibleId = (int)$taskData['RESPONSIBLE_ID'];
+		$accomplices = array_map('intval', $taskData['ACCOMPLICES']->export());
+		$auditors = array_map('intval', $taskData['AUDITORS']->export());
+
+		if (empty($auditors))
+		{
+			return;
+		}
+
+		$title = self::formatTaskName($taskData['ID'], $taskData['TITLE'], $taskData['GROUP_ID']);
+
+		if ($index = array_search($createdBy, $auditors, true))
+		{
+			unset($auditors[$index]);
+		}
+		if ($index = array_search($responsibleId, $auditors, true))
+		{
+			unset($auditors[$index]);
+		}
+		$auditors = array_diff($auditors, $accomplices);
+
+		$messageKey = 'TASKS_TASK_EXPIRED_AUDITOR_MESSAGE';
+		$messages = [
+			'INSTANT' => str_replace(['#TASK_TITLE#'], [$title], self::getGenderMessage(0, $messageKey)),
+			'EMAIL' => str_replace(['#TASK_TITLE#'], [strip_tags($title)], self::getGenderMessage(0, $messageKey)),
+			'PUSH' => self::makePushMessage($messageKey, $createdBy, $taskData),
+		];
+
+		self::sendMessageEx($taskData['ID'], $createdBy, $auditors, $messages, $parameters);
+	}
+
+	public static function sendPingStatusMessage(array $taskData, int $authorId): void
+	{
+		$cacheWasEnabled = self::enableStaticCache();
+
+		$responsibleId = (int)$taskData['RESPONSIBLE_ID'];
+		$accomplices = array_map('intval', $taskData['ACCOMPLICES']);
+		$recipients = array_unique(array_merge([$responsibleId], $accomplices));
+
+		if (in_array($authorId, $recipients, true))
+		{
+			unset($recipients[array_search($authorId, $recipients, true)]);
+		}
+		if (empty($recipients))
+		{
+			if ($cacheWasEnabled)
+			{
+				self::disableStaticCache();
+			}
+			return;
+		}
+
+		$parameters = [
+			'ENTITY_CODE' => 'TASK',
+			'ENTITY_OPERATION' => 'PING_STATUS',
+			'EVENT_DATA' => [
+				'ACTION' => 'TASK_PINGED_STATUS',
+				'arFields' => $taskData,
+			],
+		];
+		$title = self::formatTaskName($taskData['ID'], $taskData['TITLE'], $taskData['GROUP_ID']);
+
+		$messageKey = 'TASKS_TASK_PINGED_STATUS_MESSAGE';
+		$messages = [
+			'INSTANT' => str_replace(['#TASK_TITLE#'], [$title], self::getGenderMessage(0, $messageKey)),
+			'EMAIL' => str_replace(['#TASK_TITLE#'], [strip_tags($title)], self::getGenderMessage(0, $messageKey)),
+			'PUSH' => self::makePushMessage($messageKey, $authorId, $taskData),
+		];
+
+		self::sendMessageEx($taskData['ID'], $authorId, $recipients, $messages, $parameters);
+
+		if ($cacheWasEnabled)
+		{
+			self::disableStaticCache();
+		}
+	}
+
 	############################
 	# low-level action functions
 
-	public static function sendMessageEx($taskId, $fromUser, array $toUsers, array $messages = array(), array $parameters = array())
+	public static function sendMessageEx(
+		$taskId,
+		$fromUser,
+		array $toUsers,
+		array $messages = [],
+		array $parameters = []
+	): bool
 	{
-		if (!(IsModuleInstalled("im") && CModule::IncludeModule("im")))
+		if (!IsModuleInstalled('im') || !CModule::IncludeModule('im'))
 		{
 			return false;
 		}
 
-		if (!$fromUser || empty($toUsers) || (string) $messages['INSTANT'] == '')
+		if (!$fromUser || (string)$messages['INSTANT'] === '')
 		{
-			return (false);
+			return false;
 		}
 
-		if(!isset($messages['EMAIL']))
+		if (
+			!isset($parameters['EXCLUDE_USERS_WITH_MUTE'])
+			|| (isset($parameters['EXCLUDE_USERS_WITH_MUTE']) && $parameters['EXCLUDE_USERS_WITH_MUTE'] === 'Y')
+		)
+		{
+			$toUsers = static::excludeUsersWithMute($toUsers, $taskId);
+		}
+		unset($parameters['EXCLUDE_USERS_WITH_MUTE']);
+
+		if (empty($toUsers))
+		{
+			return false;
+		}
+
+		$entityCode = 'TASK';
+		if ((string)$parameters['ENTITY_CODE'] !== '')
+		{
+			$entityCode = $parameters['ENTITY_CODE'];
+			unset($parameters['ENTITY_CODE']);
+		}
+
+//		$allowNotCommentNotifications = false;
+//		if (
+//			isset($parameters['ENTITY_OPERATION']) &&
+//			$parameters['ENTITY_OPERATION'] == 'ADD' &&
+//			$entityCode == 'TASK'
+//		)
+//		{
+//			$allowNotCommentNotifications = true;
+//		}
+//
+//		// disable all non comments notifications
+//		if (!$allowNotCommentNotifications && $entityCode !== 'COMMENT')
+//		{
+//			return false;
+//		}
+
+		if (!isset($messages['EMAIL']))
 		{
 			$messages['EMAIL'] = $messages['INSTANT'];
 		}
 
 		$eventData = $parameters['EVENT_DATA'];
-		unset($parameters['EVENT_DATA']);
 		$notifyEvent = $parameters['NOTIFY_EVENT'];
-		unset($parameters['NOTIFY_EVENT']);
 		$callbacks = $parameters['CALLBACK'];
-		unset($parameters['CALLBACK']);
 
-		if((string) $parameters['ENTITY_CODE'] != '')
+		unset($parameters['EVENT_DATA'], $parameters['NOTIFY_EVENT'], $parameters['CALLBACK']);
+
+		$notifyType = null;
+		if (array_key_exists('NOTIFY_TYPE', $parameters))
 		{
-			$entityCode = $parameters['ENTITY_CODE'];
-			unset($parameters['ENTITY_CODE']);
-		}
-		else
-		{
-			$entityCode = 'TASK';
+			$notifyType = $parameters['NOTIFY_TYPE'];
+			unset($parameters['NOTIFY_TYPE']);
 		}
 
-		if((string) $parameters['ENTITY_OPERATION'] != '')
+		$pushParams = null;
+		if (array_key_exists('PUSH_PARAMS', $parameters))
+		{
+			$pushParams = $parameters['PUSH_PARAMS'];
+			unset($parameters['PUSH_PARAMS']);
+		}
+
+		$entityOperation = 'ADD';
+		if ((string)$parameters['ENTITY_OPERATION'] !== '')
 		{
 			$entityOperation = $parameters['ENTITY_OPERATION'];
 			unset($parameters['ENTITY_OPERATION']);
 		}
-		else
-		{
-			$entityOperation = 'ADD';
-		}
 
-		self::addToNotificationBuffer(array(
-			'FROM_USER_ID' 	=> $fromUser,
-			'TO_USER_IDS' 	=> $toUsers,
-			'TASK_ID' 		=> intval($taskId),
-			'MESSAGE' 		=> $messages,
-			'EVENT_DATA' 	=> $eventData,
+		$params = [
+			'FROM_USER_ID' => $fromUser,
+			'TO_USER_IDS' => $toUsers,
+			'TASK_ID' => (int)$taskId,
+			'MESSAGE' => $messages,
+			'EVENT_DATA' => $eventData,
 			'NOTIFY_EVENT' => $notifyEvent,
-			'ENTITY_CODE' 	=> $entityCode,
-			'ENTITY_OPERATION' 	=> $entityOperation,
+			'ENTITY_CODE' => $entityCode,
+			'ENTITY_OPERATION' => $entityOperation,
 			'CALLBACK' => $callbacks,
 			'ADDITIONAL_DATA' => $parameters,
-		));
+		];
 
-		if(!self::$bufferize)
+		if ($notifyType)
+		{
+			$params['NOTIFY_TYPE'] = $notifyType;
+		}
+		if ($pushParams)
+		{
+			$params['PUSH_PARAMS'] = $pushParams;
+		}
+
+		self::addToNotificationBuffer($params);
+
+		if (!self::$bufferize)
 		{
 			self::flushNotificationBuffer(false);
 		}
 
 		return true;
+	}
+
+	private static function excludeUsersWithMute(array $users, int $taskId): array
+	{
+		$resultUsers = [];
+
+		foreach ($users as $userId)
+		{
+			if (!UserOption::isOptionSet($taskId, $userId, UserOption\Option::MUTED))
+			{
+				$resultUsers[] = $userId;
+			}
+		}
+
+		return $resultUsers;
 	}
 
 	protected static function SendMessageToSocNet($arFields, $bSpawnedByAgent, $arChanges = null, $arTask = null, array $parameters = array())
@@ -1068,8 +1435,8 @@ class CTaskNotifications
 			$cachedAllSitesIds = array();
 
 			$dbSite = CSite::GetList(
-				$by = 'sort',
-				$order = 'desc',
+				'sort',
+				'desc',
 				array('ACTIVE' => 'Y')
 			);
 
@@ -1081,8 +1448,8 @@ class CTaskNotifications
 		if ( ! in_array( (int) $arFields["CREATED_BY"], $arCheckedUsers, true) )
 		{
 			$rsUser = CUser::GetList(
-				$by = 'ID',
-				$order = 'ASC',
+				'ID',
+				'ASC',
 				array('ID' => $arFields["CREATED_BY"]),
 				array('FIELDS' => array('ID'))
 			);
@@ -1095,60 +1462,53 @@ class CTaskNotifications
 
 		if (is_array($arChanges))
 		{
-			if (
-				count($arChanges) == 0
-				&& !empty($arLogFilter)
-			)
+			if (!empty($arLogFilter) && empty($arChanges))
 			{
 				$rsSocNetLogItems = CSocNetLog::GetList(
-					array("ID" => "DESC"),
+					["ID" => "DESC"],
 					$arLogFilter,
 					false,
 					false,
-					array("ID", "ENTITY_TYPE", "ENTITY_ID")
+					["ID", "ENTITY_TYPE", "ENTITY_ID"]
 				);
-
-				while ($arRes = $rsSocNetLogItems->Fetch())
+				while ($log = $rsSocNetLogItems->Fetch())
 				{
-					$authorUserId = false;
-					if (isset($arFields['CREATED_BY']))
-						$authorUserId = (int) $arFields['CREATED_BY'];
-					elseif (isset($arTask['CREATED_BY']))
-						$authorUserId = (int) $arTask['CREATED_BY'];
+					$logId = (int)$log['ID'];
+					$authorId = (
+						isset($arFields['CREATED_BY']) ? (int)$arFields['CREATED_BY'] : (int)$arTask['CREATED_BY']
+					);
+
+					$oldForumTopicId = $arTask['FORUM_TOPIC_ID'];
+					$newForumTopicId = $arFields['FORUM_TOPIC_ID'];
+					$forumTopicAdded = $oldForumTopicId == 0 && isset($newForumTopicId) && $newForumTopicId > 0;
 
 					// Add author to list of users that view log about task in livefeed
 					// But only when some other person change task
 					// or if added FORUM_TOPIC_ID
-					if (
-						($authorUserId !== $effectiveUserId)
-						|| (
-							($arTask['FORUM_TOPIC_ID'] == 0)
-							&& isset($arFields['FORUM_TOPIC_ID'])
-							&& ($arFields['FORUM_TOPIC_ID'] > 0)
-						)
-					)
+					if (($authorId !== $effectiveUserId) || $forumTopicAdded)
 					{
-						$authorGroupCode = 'U' . $authorUserId;
+						$authorGroupCode = 'U'.$authorId;
 
-						$rsRights = CSocNetLogRights::GetList(
-							array(),
-							array(
-								'LOG_ID'     => $arRes['ID'],
-								'GROUP_CODE' => $authorGroupCode
-							)
-						);
+						$rightsResult = CSocNetLogRights::GetList([], [
+							'LOG_ID' => $logId,
+							'GROUP_CODE' => $authorGroupCode,
+						]);
 
 						// If task's author hasn't rights yet, give them
-						if ( ! ($arRights = $rsRights->fetch()) )
-							CSocNetLogRights::Add($arRes["ID"], array($authorGroupCode));
+						if (!$rightsResult->fetch())
+						{
+							$follow = !UserOption::isOptionSet($arTask['ID'], $authorId, (UserOption\Option::MUTED));
+							CSocNetLogRights::Add($logId, [$authorGroupCode], false, $follow);
+						}
 					}
 				}
 
-				return (null);
+				return null;
 			}
-			elseif ((count($arChanges) == 1) && isset($arChanges['STATUS']))
+
+			if (count($arChanges) === 1 && isset($arChanges['STATUS']))
 			{
-				return (null);	// if only status changes - don't send message, because it will be sent by SendStatusMessage()
+				return null;	// if only status changes - don't send message, because it will be sent by SendStatusMessage()
 			}
 		}
 
@@ -1190,7 +1550,7 @@ class CTaskNotifications
 		// or "add" message otherwise
 		if (is_array($arChanges) && is_array($arTask))
 		{	// Prepare "update" message here
-			if (strlen($arFields["CHANGED_DATE"]) > 0)
+			if ($arFields["CHANGED_DATE"] <> '')
 			{
 				$createdDateTimestamp = MakeTimeStamp(
 					$arFields["CHANGED_DATE"],
@@ -1263,7 +1623,7 @@ class CTaskNotifications
 		}
 		else	// Prepare "add" message here
 		{
-			if (strlen($arFields["CREATED_DATE"]) > 0)
+			if ($arFields["CREATED_DATE"] <> '')
 			{
 				$createdDateTimestamp = MakeTimeStamp(
 					$arFields["CREATED_DATE"],
@@ -1309,14 +1669,7 @@ class CTaskNotifications
 		$arSoFields["RATING_ENTITY_ID"] =  $taskId;
 		$arSoFields["RATING_TYPE_ID"] = "TASK";
 
-		// Do we need add new item to socnet?
-		// We adds new item, if it is not exists.
-		$logID = false;
-
-		if (
-			IsModuleInstalled("webdav")
-			|| IsModuleInstalled("disk")
-		)
+		if (IsModuleInstalled("webdav") || IsModuleInstalled("disk"))
 		{
 			$ufDocID = $GLOBALS["USER_FIELD_MANAGER"]->GetUserFieldValue("TASKS_TASK", "UF_TASK_WEBDAV_FILES", $taskId, LANGUAGE_ID);
 			if ($ufDocID)
@@ -1324,6 +1677,10 @@ class CTaskNotifications
 				$arSoFields["UF_SONET_LOG_DOC"] = $ufDocID;
 			}
 		}
+
+		// Do we need add new item to socnet?
+		// We adds new item, if it is not exists.
+		$logId = false;
 
 		if ($bSocNetAddNewItem)
 		{
@@ -1339,48 +1696,40 @@ class CTaskNotifications
 			// added to task in future. For example, new auditor, etc.
 			$arSoFields['SITE_ID'] = $cachedAllSitesIds;
 
-			$logID = CSocNetLog::Add($arSoFields, false);
-			if (intval($logID) > 0)
+			$logId = (int)CSocNetLog::Add($arSoFields, false);
+			if ($logId > 0)
 			{
-				$logFields = array(
-					"TMP_ID" => $logID,
-					"TAG" => array()
-				);
+				$logFields = [
+					'TMP_ID' => $logId,
+					'TAG' => [],
+				];
 
-				$rsTags = CTaskTags::getList(
-					array(),
-					array('TASK_ID' => $taskId)
-				);
-
-				while ($arTag = $rsTags->fetch())
+				$tagsResult = CTaskTags::getList([], ['TASK_ID' => $taskId]);
+				while ($row = $tagsResult->fetch())
 				{
-					$logFields["TAG"][] = $arTag['NAME'];
+					$logFields['TAG'][] = $row['NAME'];
 				}
 
-				CSocNetLog::Update($logID, $logFields);
-				$arTaskParticipant = CTaskNotifications::GetRecipientsIDs(
-					$arFields,
-					false		// don't exclude current user
-				);
+				CSocNetLog::Update($logId, $logFields);
 
-				// Exclude author by default
-				$arLogCanViewedBy = (
-					!self::$sonetLogNotifyAuthor
-						? array_diff($arTaskParticipant, array($arFields['CREATED_BY']))
-						: $arTaskParticipant
+				$taskMembers = CTaskNotifications::GetRecipientsIDs($arFields, false);
+				$logCanViewedBy = (
+					self::$sonetLogNotifyAuthor
+						? $taskMembers
+						: array_diff($taskMembers, [$arFields['CREATED_BY']])
 				);
-				$arRights = CTaskNotifications::__UserIDs2Rights($arLogCanViewedBy);
+				$rights = CTaskNotifications::__UserIDs2Rights($logCanViewedBy);
 
 				if (isset($arFields['GROUP_ID']))
 				{
-					$arRights = array_merge(
-						$arRights,
-						self::prepareRightsCodesForViewInGroupLiveFeed($logID, $arFields['GROUP_ID'])
+					$rights = array_merge(
+						$rights,
+						self::prepareRightsCodesForViewInGroupLiveFeed($logId, $arFields['GROUP_ID'])
 					);
 				}
 
-				CSocNetLogRights::Add($logID, $arRights);
-				CSocNetLog::SendEvent($logID, "SONET_NEW_EVENT", $logID);
+				CSocNetLogRights::Add($logId, $rights);
+				CSocNetLog::SendEvent($logId, "SONET_NEW_EVENT", $logId);
 			}
 		}
 		elseif (!empty($arLogFilter))	// Update existing log item
@@ -1390,45 +1739,51 @@ class CTaskNotifications
 
 			// All tasks posts in live feed should be from director
 			if (isset($arFields['CREATED_BY']))
+			{
 				$arSoFields['USER_ID'] = $arFields['CREATED_BY'];
-			elseif (isset($arTask['CREATED_BY']))
+			}
+			else if (isset($arTask['CREATED_BY']))
+			{
 				$arSoFields['USER_ID'] = $arTask['CREATED_BY'];
-			elseif ($occurAsUserId)
+			}
+			else if ($occurAsUserId)
+			{
 				$arSoFields['USER_ID'] = $occurAsUserId;
+			}
 			else
-				unset ($arSoFields['USER_ID']);
+			{
+				unset($arSoFields['USER_ID']);
+			}
 
 			$rsSocNetLogItems = CSocNetLog::GetList(
-				array("ID" => "DESC"),
+				["ID" => "DESC"],
 				$arLogFilter,
 				false,
 				false,
-				array("ID", "ENTITY_TYPE", "ENTITY_ID")
+				["ID", "ENTITY_TYPE", "ENTITY_ID"]
 			);
-
-			while ($arRes = $rsSocNetLogItems->Fetch())
+			while ($log = $rsSocNetLogItems->Fetch())
 			{
-				$arSoFields["TAG"] = array();
-				$rsTags = CTaskTags::getList(
-					array(),
-					array('TASK_ID' => $taskId)
-				);
+				$logId = (int)$log['ID'];
 
-				while ($arTag = $rsTags->fetch())
+				$arSoFields['TAG'] = [];
+				$tagsResult = CTaskTags::getList([], ['TASK_ID' => $taskId]);
+				while ($tag = $tagsResult->fetch())
 				{
-					$arSoFields["TAG"][] = $arTag['NAME'];
+					$arSoFields['TAG'][] = $tag['NAME'];
 				}
 
-				CSocNetLog::Update($arRes["ID"], $arSoFields);
+				CSocNetLog::Update($logId, $arSoFields);
 
-				self::setSonetLogRights(array(
-					'LOG_ID' => $arRes['ID'],
-					'EFFECTIVE_USER_ID' => $effectiveUserId
-				), $arFields, $arTask);
+				$params = [
+					'LOG_ID' => $logId,
+					'EFFECTIVE_USER_ID' => $effectiveUserId,
+				];
+				self::setSonetLogRights($params, $arFields, $arTask);
 			}
 		}
 
-		return ($logID);
+		return ($logId);
 	}
 
 	public static function isCrmTask(array $task)
@@ -1441,13 +1796,13 @@ class CTaskNotifications
 					is_array($task["UF_CRM_TASK"])
 					&& (
 						isset($task["UF_CRM_TASK"][0])
-						&& strlen($task["UF_CRM_TASK"][0]) > 0
+						&& $task["UF_CRM_TASK"][0] <> ''
 					)
 				)
 				||
 				(
 					!is_array($task["UF_CRM_TASK"])
-					&& strlen($task["UF_CRM_TASK"]) > 0
+					&& $task["UF_CRM_TASK"] <> ''
 				)
 			)
 		);
@@ -1490,120 +1845,107 @@ class CTaskNotifications
 		return $filter;
 	}
 
-	public static function setSonetLogRights(array $params, array $fields, array $task)
+	public static function setSonetLogRights(array $params, array $fields, array $task): void
 	{
-		if (
-			!isset($params['LOG_ID'])
-			|| intval($params['LOG_ID']) <= 0
-			|| !isset($params['EFFECTIVE_USER_ID'])
-			|| intval($params['EFFECTIVE_USER_ID']) <= 0
-		)
+		$logId = (int)$params['LOG_ID'];
+		$effectiveUserId = (int)$params['EFFECTIVE_USER_ID'];
+
+		if ($logId <= 0 || $effectiveUserId <= 0)
 		{
 			return;
 		}
 
-		$authorMustBeExcluded = false;
-
-		$taskParticipantsList = CTaskNotifications::getRecipientsIDs(
-			$fields,	// Only new tasks' participiants should view log event, fixed due to http://jabber.bx/view.php?id=34504
-			false,		// don't exclude current user
-			true		// exclude additional recipients (because there are previous members of task)
-		);
-
-		$authorUserId = false;
-		if (isset($fields['CREATED_BY']))
-			$authorUserId = (int) $fields['CREATED_BY'];
-		elseif (isset($task['CREATED_BY']))
-			$authorUserId = (int) $task['CREATED_BY'];
-
 		// Get current rights
-		$res = CSocNetLogRights::getList(
-			array(),
-			array('LOG_ID' => intval($params['LOG_ID']))
-		);
-
-		$currentRightsList = array();
-		while ($right = $res->fetch())
+		$currentRights = [];
+		$rightsResult = CSocNetLogRights::getList([], ['LOG_ID' => $logId]);
+		while ($right = $rightsResult->fetch())
 		{
-			$currentRightsList[] = $right['GROUP_CODE'];
+			$currentRights[] = $right['GROUP_CODE'];
 		}
-
-		$effectiveUserId = (int) $params['EFFECTIVE_USER_ID'];
 
 		// If author changes the task and author doesn't have
 		// access to task yet, don't give access to him.
-		if ($authorUserId === $effectiveUserId)
-		{
-			$authorGroupCode = 'U' . $authorUserId;
+		$authorId = (isset($fields['CREATED_BY']) ? (int)$fields['CREATED_BY'] : (int)$task['CREATED_BY']);
+		$authorHasAccess = in_array('U'.$authorId, $currentRights, true);
+		$authorMustBeExcluded = ($authorId === $effectiveUserId) && !$authorHasAccess;
 
-			// If task's author hasn't rights yet, still exclude him
-			if ( ! in_array($authorGroupCode, $currentRightsList, true) )
-				$authorMustBeExcluded = true;
-		}
-
-		$logCanViewedByList = ($authorMustBeExcluded ? array_diff($taskParticipantsList, array($authorUserId)) : $taskParticipantsList);
-
-		$newRightsList = CTaskNotifications::__UserIDs2Rights($logCanViewedByList);
-
-		$groupChanged = (
-			isset($fields['GROUP_ID'], $task['GROUP_ID'])
-			&& ($fields['GROUP_ID'])
-			&& ($fields['GROUP_ID'] != $task['GROUP_ID'])
+		$taskParticipants = CTaskNotifications::getRecipientsIDs(
+			$fields, // Only new tasks' participiants should view log event, fixed due to http://jabber.bx/view.php?id=34504
+			false, // don't exclude current user
+			true // exclude additional recipients (because there are previous members of task)
 		);
+		$logCanViewedBy = ($authorMustBeExcluded ? array_diff($taskParticipants, [$authorId]) : $taskParticipants);
+		$logCanViewedBy = array_unique(array_map('intval', array_filter($logCanViewedBy)));
+		$newRights = CTaskNotifications::__UserIDs2Rights($logCanViewedBy);
+
+		$oldGroupId = $task['GROUP_ID'];
+		$newGroupId = $fields['GROUP_ID'];
+		$groupChanged = (isset($newGroupId, $oldGroupId) && $newGroupId && (int)$newGroupId !== (int)$oldGroupId);
 
 		// If rights really changed, update them
 		if (
-			count(array_diff($currentRightsList, $newRightsList))
-			|| count(array_diff($newRightsList, $currentRightsList))
-			|| $groupChanged
+			$groupChanged
+			|| !empty(array_diff($currentRights, $newRights))
+			|| !empty(array_diff($newRights, $currentRights))
 		)
 		{
-			if (isset($fields['GROUP_ID']))
+			$groupRights = [];
+			if (isset($newGroupId))
 			{
-				$newRightsList = array_merge(
-					$newRightsList,
-					self::prepareRightsCodesForViewInGroupLiveFeed($params['LOG_ID'], $fields['GROUP_ID'])
-				);
+				$groupRights = self::prepareRightsCodesForViewInGroupLiveFeed($logId, $newGroupId);
 			}
-			elseif (isset($task['GROUP_ID']))
+			else if (isset($oldGroupId))
 			{
-				$newRightsList = array_merge(
-					$newRightsList,
-					self::prepareRightsCodesForViewInGroupLiveFeed($params['LOG_ID'], $task['GROUP_ID'])
-				);
+				$groupRights = self::prepareRightsCodesForViewInGroupLiveFeed($logId, $oldGroupId);
 			}
 
-			CSocNetLogRights::deleteByLogID(intval($params['LOG_ID']));
-			CSocNetLogRights::add($params['LOG_ID'], $newRightsList);
+			CSocNetLogRights::deleteByLogID($logId);
+
+			foreach ($logCanViewedBy as $userId)
+			{
+				$code = CTaskNotifications::__UserIDs2Rights([$userId]);
+				$follow = !UserOption::isOptionSet($task['ID'], $userId, UserOption\Option::MUTED);
+
+				CSocNetLogRights::add($logId, $code, false, $follow);
+			}
+			if (!empty($groupRights))
+			{
+				CSocNetLogRights::add($logId, $groupRights);
+			}
 		}
 	}
 
 	########################
 	# throttle functions
 
-	public static function throttleRelease()
+	public static function throttleRelease(): void
 	{
 		$items = ThrottleTable::getUpdateMessages();
-
-		if(is_array($items) && !empty($items))
+		if (is_array($items) && !empty($items))
 		{
-			$cacheAFWasDisabled = \CTasks::disableCacheAutoClear();
-			$notifADWasDisabled = \CTaskNotifications::disableAutoDeliver();
+			$cacheAutoClearingWasDisabled = \CTasks::disableCacheAutoClear();
+			$notificationAutoDeliveryWasDisabled = \CTaskNotifications::disableAutoDeliver();
 
-			// this function may be called on agent, so DO NOT relay on global user as an author, use field AUTHOR_ID instead
-			foreach($items as $item)
+			// this function may be called on agent
+			// DO NOT relay on global user as an author, use field AUTHOR_ID instead
+			foreach ($items as $item)
 			{
-				self::SendUpdateMessage($item['STATE_LAST'], $item['STATE_ORIG'], false, array(
-					'AUTHOR_ID' => $item['AUTHOR_ID'],
-					'IGNORE_AUTHOR' => isset($item['IGNORE_RECEPIENTS'][$item['AUTHOR_ID']])
-				));
+				self::SendUpdateMessage(
+					$item['STATE_LAST'],
+					$item['STATE_ORIG'],
+					false,
+					[
+						'AUTHOR_ID' => $item['AUTHOR_ID'],
+						'IGNORE_AUTHOR' => isset($item['IGNORE_RECIPIENTS'][$item['AUTHOR_ID']]),
+					]
+				);
 			}
 
-			if($notifADWasDisabled)
+			if ($notificationAutoDeliveryWasDisabled)
 			{
 				\CTaskNotifications::enableAutoDeliver();
 			}
-			if($cacheAFWasDisabled)
+			if ($cacheAutoClearingWasDisabled)
 			{
 				\CTasks::enableCacheAutoClear();
 			}
@@ -1623,271 +1965,325 @@ class CTaskNotifications
 		self::$buffer[] = $message;
 	}
 
+	private static function initBuffer()
+	{
+		if (!is_array(self::$buffer) || empty(self::$buffer))
+		{
+			self::$buffer = [];
+		}
+	}
+
+	private static function getUsersFromBuffer(): array
+	{
+		$users = [];
+		foreach(self::$buffer as $i => $message)
+		{
+			if(is_array($message['TO_USER_IDS']))
+			{
+				foreach ($message['TO_USER_IDS'] as $userId)
+				{
+					$users[$userId] = true;
+				}
+			}
+		}
+		return self::getUsers(array_keys($users));
+	}
+
 	private static function flushNotificationBuffer($doGrouping = true)
 	{
-		if(is_array(self::$buffer) && !empty(self::$buffer))
+		self::initBuffer();
+
+		if (empty(self::$buffer))
 		{
-			// get all users
-			$users = array();
-			foreach(self::$buffer as $i => $message)
+			return;
+		}
+
+		// get all users
+		$users = self::getUsersFromBuffer();
+
+		$sites = \Bitrix\Tasks\Util\Site::getPair();
+
+		$byUser = [];
+		$mailed = [];
+
+		foreach(self::$buffer as $i => $message)
+		{
+			if(!is_array($message['TO_USER_IDS']))
 			{
-				if(is_array($message['TO_USER_IDS']))
-				{
-					foreach ($message['TO_USER_IDS'] as $userId)
-					{
-						$users[$userId] = true;
-					}
-				}
+				continue;
 			}
 
-			$users = self::getUsers(array_keys($users));
+			// $skipImPush = false;
+			// if ($message['ENTITY_OPERATION'] == 'ADD' && $message['ENTITY_CODE'] == 'TASK')
+			// {
+			// 	$skipImPush = true;
+			// }
 
-			$sites = \Bitrix\Tasks\Util\Site::getPair();
-			$byUser = array();
-			$mailed = array();
-			foreach(self::$buffer as $i => $message)
+			foreach($message['TO_USER_IDS'] as $userId)
 			{
-				if(is_array($message['TO_USER_IDS']))
+				if(!isset($users[$userId])) // no user found for that id
 				{
-					foreach($message['TO_USER_IDS'] as $userId)
+					continue;
+				}
+
+				// determine notify event here, if it was not given
+				if((string) $message['NOTIFY_EVENT'] == '')
+				{
+					$notifyEvent = 'manage';
+
+					if ($message['ADDITIONAL_DATA']['TASK_ASSIGNED_TO'] !== null)
 					{
-						if(!isset($users[$userId])) // no user found for that id
+						if ($userId == $message['ADDITIONAL_DATA']['TASK_ASSIGNED_TO'])
 						{
-							continue;
-						}
-
-						// determine notify event here, if it was not given
-						if((string) $message['NOTIFY_EVENT'] == '')
-						{
-							$notifyEvent = 'manage';
-
-							if ($message['ADDITIONAL_DATA']['TASK_ASSIGNED_TO'] !== null)
-							{
-								if ($userId == $message['ADDITIONAL_DATA']['TASK_ASSIGNED_TO'])
-								{
-									$notifyEvent = 'task_assigned';
-								}
-							}
-
-							$message['NOTIFY_EVENT'] = $notifyEvent;
-						}
-
-						if(\Bitrix\Tasks\Integration\Mail\User::isEmail($users[$userId])) // must send message to email users separately
-						{
-							if(!isset($mailed[$i]))
-							{
-								$mMessage = $message;
-								$mMessage['TO_USER_IDS'] = array();
-
-								$mailed[$i] = $mMessage;
-							}
-							$mailed[$i]['TO_USER_IDS'][] = $userId;
-						}
-						else
-						{
-							$byUser[$userId][$message['TASK_ID']] = $message;
+							$notifyEvent = 'task_assigned';
 						}
 					}
+
+					$message['NOTIFY_EVENT'] = $notifyEvent;
+				}
+
+				if(\Bitrix\Tasks\Integration\Mail\User::isEmail($users[$userId])) // must send message to email users separately
+				{
+					if(!isset($mailed[$i]))
+					{
+						$mMessage = $message;
+						$mMessage['TO_USER_IDS'] = array();
+
+						$mailed[$i] = $mMessage;
+					}
+					$mailed[$i]['TO_USER_IDS'][] = $userId;
+				}
+				else
+				{
+					// if (!$skipImPush)
+					// {
+					$byUser[$userId][$message['TASK_ID']] = $message;
+					// }
 				}
 			}
+		}
 
-			// send regular messages
-			foreach($byUser as $userId => $messages)
+		// send regular messages
+		foreach($byUser as $userId => $messages)
+		{
+			$unGroupped = array();
+
+			if(
+				count($messages) > 1 && $doGrouping
+			) // new way
 			{
-				$unGroupped = array();
+				// send for each action type, notification type and author separately
+				$deepGrouping = array();
 
-				if(
-					count($messages) > 1 && $doGrouping
-				) // new way
+				foreach($messages as $taskId => $message)
 				{
-					// send for each action type, notification type and author separately
-					$deepGrouping = array();
-
-					foreach($messages as $taskId => $message)
+					// we do not group entities that differ from 'TASK' and NOTIFY_EVENTS that differ from 'manage'
+					if($message['ENTITY_CODE'] != 'TASK' || $message['NOTIFY_EVENT'] != 'manage')
 					{
-						// we do not group entities that differ from 'TASK' and NOTIFY_EVENTS that differ from 'manage'
-						if($message['ENTITY_CODE'] != 'TASK' || $message['NOTIFY_EVENT'] != 'manage')
-						{
-							$unGroupped[$taskId] = $message;
-							continue;
-						}
-
-						// if type is unknown, let it be "update"
-						$type = (string) $message['EVENT_DATA']['ACTION'] !== '' ? $message['EVENT_DATA']['ACTION'] : 'TASK_UPDATE';
-						if($type != 'TASK_ADD' && $type != 'TASK_UPDATE' && $type != 'TASK_DELETE' && $type != 'TASK_STATUS_CHANGED_MESSAGE')
-						{
-							// unknown action type. nothing to report about
-							continue;
-						}
-
-						$fromUserId = $message['FROM_USER_ID'];
-						if((string) $fromUserId == '') // empty author is not allowed
-						{
-							continue;
-						}
-
-						$deepGrouping[$type][$fromUserId][$message['NOTIFY_EVENT']][] = $taskId;
+						$unGroupped[$taskId] = $message;
+						continue;
 					}
 
-					if(!empty($deepGrouping))
+					// if type is unknown, let it be "update"
+					$possibleTypes = [
+						'TASK_ADD',
+						'TASK_UPDATE',
+						'TASK_DELETE',
+						'TASK_STATUS_CHANGED_MESSAGE',
+						'TASK_EXPIRED_SOON',
+						'TASK_EXPIRED',
+						'TASK_PINGED_STATUS',
+					];
+					$type = (string)$message['EVENT_DATA']['ACTION'];
+					$type = ($type !== '' ? $type : 'TASK_UPDATE');
+
+					if (!in_array($type, $possibleTypes, true))
 					{
-						foreach($deepGrouping as $type => $byAuthor)
-						{
-							foreach($byAuthor as $authorId => $byEvent)
-							{
-								foreach($byEvent as $event => $taskIds)
-								{
-									$path = CTaskNotifications::getNotificationPathMultiple($users[$userId], $taskIds, true);
-
-									$instantTemplate = self::getGenderMessage($authorId, 'TASKS_TASKS_'.$type.'_MESSAGE');
-									$emailTemplate = self::getGenderMessage($authorId, 'TASKS_TASKS_'.$type.'_MESSAGE_EMAIL');
-									$pushTemplate = self::getGenderMessage($authorId, 'TASKS_TASKS_'.$type.'_MESSAGE_PUSH');
-
-									$instant = self::placeLinkAnchor($instantTemplate, $path, 'BBCODE');
-									$email = self::placeLinkAnchor($emailTemplate, $path, 'EMAIL');
-									$push = self::placeLinkAnchor($pushTemplate, $path, 'NONE');
-									$push = self::placeUserName($push, $authorId);
-
-									$tag = static::formatImNotificationTag($userId, $taskIds, 'TASKS');
-
-									$arMessageFields = array(
-										"TO_USER_ID" => $userId,
-										"FROM_USER_ID" => $authorId,
-										"NOTIFY_TYPE" => IM_NOTIFY_FROM,
-										"NOTIFY_MODULE" => 'tasks',
-										"NOTIFY_EVENT" => $event,
-										"NOTIFY_MESSAGE" => $instant,
-										"NOTIFY_MESSAGE_OUT" => $email,
-										"NOTIFY_TAG" => $tag,
-
-										// push
-										"PUSH_MESSAGE" => substr($push, 0, self::PUSH_MESSAGE_MAX_LENGTH),
-									);
-
-									\Bitrix\Tasks\Integration\Im::notifyAdd($arMessageFields);
-								}
-							}
-						}
-					}
-				}
-				else // old way
-				{
-					$unGroupped = $messages;
-				}
-
-				// send each message separately
-				foreach($unGroupped as $taskId => $message)
-				{
-					$pathToTask = self::getNotificationPath($users[$userId], $taskId, true, $sites);
-					$pathToTask = self::addParameters($pathToTask, $message['ADDITIONAL_DATA']['TASK_URL']);
-
-					$message['ENTITY_CODE'] = ToUpper($message['ENTITY_CODE']);
-
-					// replace #TASK_URL_BEGIN# placeholder
-					$message['MESSAGE']['INSTANT'] = self::placeLinkAnchor($message['MESSAGE']['INSTANT'], $pathToTask, 'BBCODE');
-					$message['MESSAGE']['EMAIL'] = self::placeLinkAnchor($message['MESSAGE']['EMAIL'], $pathToTask, 'EMAIL');
-					if((string) $message['MESSAGE']['PUSH'] != '')
-					{
-						$message['MESSAGE']['PUSH'] = self::placeLinkAnchor($message['MESSAGE']['PUSH'], $pathToTask, 'NONE');
+						// unknown action type. nothing to report about
+						continue;
 					}
 
-					// replace #TASK_TITLE# placeholder, if any
-					if(is_array($message['ADDITIONAL_DATA']['TASK_DATA']))
-					{
-						$taskData = $message['ADDITIONAL_DATA']['TASK_DATA'];
-						$taskTitle = CTaskNotifications::formatTaskName($taskData["ID"], $taskData["TITLE"], $taskData["GROUP_ID"]);
-
-						$message['MESSAGE']['INSTANT'] = str_replace('#TASK_TITLE#', $taskTitle, $message['MESSAGE']['INSTANT']);
-						$message['MESSAGE']['EMAIL'] = str_replace('#TASK_TITLE#', strip_tags($taskTitle), $message['MESSAGE']['INSTANT']);
-						if((string) $message['MESSAGE']['PUSH'] != '')
-						{
-							$message['MESSAGE']['PUSH'] = str_replace('#TASK_TITLE#', $taskTitle, $message['MESSAGE']['PUSH']);
-						}
-					}
-
-					$message['TO_USER_IDS'] = array($userId);
-
-					// message callbacks here
-					if(is_callable($message['CALLBACK']['BEFORE_SEND']))
-					{
-						$message = call_user_func_array($message['CALLBACK']['BEFORE_SEND'], array($message));
-					}
-
-					// event process here
-					if(!static::fireMessageEvent($message))
+					$fromUserId = $message['FROM_USER_ID'];
+					if((string) $fromUserId == '') // empty author is not allowed
 					{
 						continue;
 					}
 
-					$userId = $message['TO_USER_IDS'][0]; // it may have changed on event
+					$deepGrouping[$type][$fromUserId][$message['NOTIFY_EVENT']][] = $taskId;
+				}
 
-					// make IM parameters
-
-					// todo make tag format more suitable
-					$entityIds = array();
-					if('COMMENT' == $message['ENTITY_CODE'])
+				if(!empty($deepGrouping))
+				{
+					foreach($deepGrouping as $type => $byAuthor)
 					{
-						$entityIds = array(intval($message['EVENT_DATA']['MESSAGE_ID']));
-					}
-					$tag = static::formatImNotificationTag($userId, array($taskId), $message['ENTITY_CODE'], $entityIds);
-					$type = (string) $message['EVENT_DATA']['ACTION'] !== '' ? $message['EVENT_DATA']['ACTION'] : 'TASK_UPDATE';
+						foreach($byAuthor as $authorId => $byEvent)
+						{
+							foreach($byEvent as $event => $taskIds)
+							{
+								$path = CTaskNotifications::getNotificationPathMultiple($users[$userId], $taskIds, true);
 
-					$arMessageFields = array(
-						"TO_USER_ID" => $userId,
-						"FROM_USER_ID" => $message['FROM_USER_ID'],
-						"NOTIFY_TYPE" => IM_NOTIFY_FROM,
-						"NOTIFY_MODULE" => "tasks",
-						"NOTIFY_EVENT" => $message['NOTIFY_EVENT'],
-						"NOTIFY_TAG" => $tag,
-						"NOTIFY_SUB_TAG" => $tag."|".$type,
-						"NOTIFY_MESSAGE" => $message['MESSAGE']['INSTANT'],
-						"NOTIFY_MESSAGE_OUT" => $message['MESSAGE']['EMAIL'],
-						"PARAMS" => array(
-							"taskId" => $message['TASK_ID'],
-							"operation" => $message['ENTITY_OPERATION']
-						)
+								$instantTemplate = self::getGenderMessage($authorId, 'TASKS_TASKS_'.$type.'_MESSAGE');
+								$emailTemplate = self::getGenderMessage($authorId, 'TASKS_TASKS_'.$type.'_MESSAGE_EMAIL');
+								$pushTemplate = self::getGenderMessage($authorId, 'TASKS_TASKS_'.$type.'_MESSAGE_PUSH');
+
+								$instant = self::placeLinkAnchor($instantTemplate, $path, 'BBCODE');
+								$email = self::placeLinkAnchor($emailTemplate, $path, 'EMAIL');
+								$push = self::placeLinkAnchor($pushTemplate, $path, 'NONE');
+								$push = self::placeUserName($push, $authorId);
+
+								$tag = static::formatImNotificationTag($userId, $taskIds, 'TASKS');
+
+								$arMessageFields = array(
+									"TO_USER_ID" => $userId,
+									"FROM_USER_ID" => $authorId,
+									"NOTIFY_TYPE" => IM_NOTIFY_FROM,
+									"NOTIFY_MODULE" => 'tasks',
+									"NOTIFY_EVENT" => $event,
+									"NOTIFY_MESSAGE" => $instant,
+									"NOTIFY_MESSAGE_OUT" => $email,
+									"NOTIFY_TAG" => $tag,
+
+									// push
+									"PUSH_MESSAGE" => mb_substr($push, 0, self::PUSH_MESSAGE_MAX_LENGTH),
+								);
+
+								\Bitrix\Tasks\Integration\Im::notifyAdd($arMessageFields);
+							}
+						}
+					}
+				}
+			}
+			else // old way
+			{
+				$unGroupped = $messages;
+			}
+
+			// send each message separately
+			foreach($unGroupped as $taskId => $message)
+			{
+				$pathToTask = self::getNotificationPath($users[$userId], $taskId, true, $sites);
+				$pathToTask = self::addParameters($pathToTask, $message['ADDITIONAL_DATA']['TASK_URL']);
+
+				$message['ENTITY_CODE'] = ToUpper($message['ENTITY_CODE']);
+
+				// replace #TASK_URL_BEGIN# placeholder
+				$message['MESSAGE']['INSTANT'] = self::placeLinkAnchor($message['MESSAGE']['INSTANT'], $pathToTask, 'BBCODE');
+				$message['MESSAGE']['EMAIL'] = self::placeLinkAnchor($message['MESSAGE']['EMAIL'], $pathToTask, 'EMAIL');
+				if((string) $message['MESSAGE']['PUSH'] != '')
+				{
+					$message['MESSAGE']['PUSH'] = self::placeLinkAnchor($message['MESSAGE']['PUSH'], $pathToTask, 'NONE');
+				}
+
+				// replace #TASK_TITLE# placeholder, if any
+				if(is_array($message['ADDITIONAL_DATA']['TASK_DATA']))
+				{
+					$taskData = $message['ADDITIONAL_DATA']['TASK_DATA'];
+					$taskTitle = CTaskNotifications::formatTaskName($taskData["ID"], $taskData["TITLE"], $taskData["GROUP_ID"]);
+
+					$message['MESSAGE']['INSTANT'] = str_replace('#TASK_TITLE#', $taskTitle, $message['MESSAGE']['INSTANT']);
+					$message['MESSAGE']['EMAIL'] = str_replace('#TASK_TITLE#', strip_tags($taskTitle), $message['MESSAGE']['INSTANT']);
+					if((string) $message['MESSAGE']['PUSH'] != '')
+					{
+						$message['MESSAGE']['PUSH'] = str_replace('#TASK_TITLE#', $taskTitle, $message['MESSAGE']['PUSH']);
+					}
+				}
+
+				$message['TO_USER_IDS'] = array($userId);
+
+				// message callbacks here
+				if(is_callable($message['CALLBACK']['BEFORE_SEND']))
+				{
+					$message = call_user_func_array($message['CALLBACK']['BEFORE_SEND'], array($message));
+				}
+
+				// event process here
+				if(!static::fireMessageEvent($message))
+				{
+					continue;
+				}
+
+				$userId = $message['TO_USER_IDS'][0]; // it may have changed on event
+
+				// make IM parameters
+
+				// todo make tag format more suitable
+				$entityIds = array();
+				if('COMMENT' == $message['ENTITY_CODE'])
+				{
+					$entityIds = array(intval($message['EVENT_DATA']['MESSAGE_ID']));
+				}
+				$tag = static::formatImNotificationTag($userId, array($taskId), $message['ENTITY_CODE'], $entityIds);
+				$type = (string) $message['EVENT_DATA']['ACTION'] !== '' ? $message['EVENT_DATA']['ACTION'] : 'TASK_UPDATE';
+
+				$arMessageFields = array(
+					"TO_USER_ID" => $userId,
+					"FROM_USER_ID" => $message['FROM_USER_ID'],
+					"NOTIFY_TYPE" => isset($message['NOTIFY_TYPE']) ? $message['NOTIFY_TYPE'] : IM_NOTIFY_FROM,
+					"NOTIFY_MODULE" => "tasks",
+					"NOTIFY_EVENT" => $message['NOTIFY_EVENT'],
+					"NOTIFY_TAG" => $tag,
+					"NOTIFY_SUB_TAG" => $tag."|".$type,
+					"NOTIFY_MESSAGE" => $message['MESSAGE']['INSTANT'],
+					"NOTIFY_MESSAGE_OUT" => $message['MESSAGE']['EMAIL'],
+					"PARAMS" => array(
+						"taskId" => $message['TASK_ID'],
+						"operation" => $message['ENTITY_OPERATION']
+					),
+//					"NOTIFY_ONLY_FLASH" => "Y",
+//					"NOTIFY_LINK" => $pathToTask
+				);
+
+				if((string) $message['ADDITIONAL_DATA']['NOTIFY_ANSWER'])
+				{
+					// enabling notify answer for desktop
+					$arMessageFields['NOTIFY_ANSWER'] = 'Y';
+				}
+
+				if((string) $message['MESSAGE']['PUSH'] != '')
+				{
+					// add push message
+					$arMessageFields['PUSH_MESSAGE'] = self::placeLinkAnchor($message['MESSAGE']['PUSH'], $pathToTask, 'NONE');
+
+					// user should be able to open the task window to see the changes ...
+					// see /mobile/install/components/bitrix/mobile.rtc/templates/.default/script.js for handling details
+					$arMessageFields['PUSH_PARAMS'] = array(
+						'ACTION' => 'tasks',
+						'TAG' => $tag,
 					);
 
 					if((string) $message['ADDITIONAL_DATA']['NOTIFY_ANSWER'])
 					{
-						// enabling notify answer for desktop
-						$arMessageFields['NOTIFY_ANSWER'] = 'Y';
+						// ... and open an answer dialog in mobile
+						$arMessageFields['PUSH_PARAMS'] = array_merge($arMessageFields['PUSH_PARAMS'], array(
+							'CATEGORY' => 'ANSWER',
+							'URL' => SITE_DIR.'mobile/ajax.php?mobile_action=task_answer',
+							'PARAMS' => Array(
+								'TASK_ID' => $taskId
+							)
+						));
 					}
 
-					if((string) $message['MESSAGE']['PUSH'] != '')
+					if (array_key_exists('PUSH_PARAMS', $message) && is_string($message['PUSH_PARAMS']['SENDER_NAME']))
 					{
-						// add push message
-						$arMessageFields['PUSH_MESSAGE'] = self::placeLinkAnchor($message['MESSAGE']['PUSH'], $pathToTask, 'NONE');
-
-						// user should be able to open the task window to see the changes ...
-						// see /mobile/install/components/bitrix/mobile.rtc/templates/.default/script.js for handling details
-						$arMessageFields['PUSH_PARAMS'] = array(
-							'ACTION' => 'tasks',
-							'TAG' => $tag,
-						);
-
-						if((string) $message['ADDITIONAL_DATA']['NOTIFY_ANSWER'])
-						{
-							// ... and open an answer dialog in mobile
-							$arMessageFields['PUSH_PARAMS'] = array_merge($arMessageFields['PUSH_PARAMS'], array(
-								'CATEGORY' => 'ANSWER',
-								'URL' => SITE_DIR.'mobile/ajax.php?mobile_action=task_answer',
-								'PARAMS' => Array(
-									'TASK_ID' => $taskId
-								)
-							));
-						}
+						$arMessageFields['PUSH_PARAMS']['ADVANCED_PARAMS'] = [
+							'senderName' => $message['PUSH_PARAMS']['SENDER_NAME'],
+							'senderMessage' => $arMessageFields['PUSH_MESSAGE']
+						];
 					}
-
-					\Bitrix\Tasks\Integration\IM::notifyAdd($arMessageFields);
 				}
-			}
 
-			// send email messages
-			foreach($mailed as $message)
-			{
-				self::notifyByMail($message, $sites["INTRANET"]);
+				\Bitrix\Tasks\Integration\IM::notifyAdd($arMessageFields);
 			}
+		}
+
+		// send email messages
+		foreach($mailed as $message)
+		{
+			if (!is_array($sites["INTRANET"]))
+			{
+				continue;
+			}
+			self::notifyByMail($message, $sites["INTRANET"]);
 		}
 
 		self::$buffer = array();
@@ -1933,7 +2329,15 @@ class CTaskNotifications
 
 			if($oTaskItems[0] instanceof CTaskItem)
 			{
-				$data = $oTaskItems[0]->getData(false);
+				try
+				{
+					$data = $oTaskItems[0]->getData(false);
+				}
+				catch (TasksException $e)
+				{
+					return false;
+				}
+
 				if(intval($data['CREATED_BY']))
 					return intval($data['CREATED_BY']);
 			}
@@ -2027,9 +2431,9 @@ class CTaskNotifications
 							return Loc::getMessage('TASKS_IM_ANSWER_SUCCESS');
 						}
 					}
-					catch(\TasksException $e)
+					catch(\TasksException | CTaskAssertException $e)
 					{
-						$message = unserialize($e->getMessage());
+						$message = unserialize($e->getMessage(), ['allowed_classes' => false]);
 
 						return array(
 							'result' => false,
@@ -2310,7 +2714,7 @@ class CTaskNotifications
 		}
 		else
 		{
-			$left = $length - strlen(preg_replace('/#[a-zA-Z_0-9]+#/', '', $template));
+			$left = $length - mb_strlen(preg_replace('/#[a-zA-Z_0-9]+#/', '', $template));
 			$result = $template;
 
 			// todo: make more clever algorithm here
@@ -2325,13 +2729,13 @@ class CTaskNotifications
 					continue;
 				}
 
-				if(strlen($value) > $left)
+				if(mb_strlen($value) > $left)
 				{
-					$value = substr($value, 0, $left - 3).'...';
+					$value = mb_substr($value, 0, $left - 3).'...';
 				}
 
 				$result = str_replace($placeHolder, $value, $result);
-				$left -= strlen($fullValue);
+				$left -= mb_strlen($fullValue);
 			}
 		}
 
@@ -2513,7 +2917,7 @@ class CTaskNotifications
 				}
 				else
 				{
-					$userDataDb = \CUser::GetList($by, $order, ['ID' => $arUser['ID']], ['FIELDS' => ['ID', 'LID']]);
+					$userDataDb = \CUser::GetList('', '', ['ID' => $arUser['ID']], ['FIELDS' => ['ID', 'LID']]);
 					if ($userData = $userDataDb->Fetch())
 					{
 						$siteID = $userData['LID'];
@@ -2559,7 +2963,7 @@ class CTaskNotifications
 					)
 				);
 				$workgroupsPage = COption::GetOptionString("socialnetwork", "workgroups_page", "/workgroups/", $siteID);
-				$pathTemplate = "#GROUPS_PATH#".substr($pathTemplate, strlen($workgroupsPage), strlen($pathTemplate)-strlen($workgroupsPage));
+				$pathTemplate = "#GROUPS_PATH#".mb_substr($pathTemplate, mb_strlen($workgroupsPage), mb_strlen($pathTemplate) - mb_strlen($workgroupsPage));
 				$processed = CSocNetLogTools::ProcessPath(array("TASK_URL" => $pathTemplate), $arUser['ID'], $siteID);
 				$pathTemplate = $processed['URLS']['TASK_URL'];
 			}
@@ -2799,8 +3203,8 @@ class CTaskNotifications
 		if(!empty($absent))
 		{
 			$res = CUser::GetList(
-				$by = 'ID',
-				$order = 'ASC',
+				'ID',
+				'ASC',
 				array('ID' => implode('|', $absent)),
 				array('FIELDS' => array('NAME', 'LAST_NAME', 'SECOND_NAME', 'LOGIN', 'EMAIL', 'ID', 'PERSONAL_GENDER', 'EXTERNAL_AUTH_ID'))
 			);
@@ -2976,7 +3380,7 @@ class CTaskNotifications
 	/**
 	 * @deprecated
 	 */
-	private function __GetUsers($arFields)
+	private static function __GetUsers($arFields)
 	{
 		$arUsersIDs = array_unique(
 			array_filter(
@@ -2998,7 +3402,7 @@ class CTaskNotifications
 	/**
 	 * @deprecated
 	 */
-	private function __Users2String($arUserIDs, $arUsers, $nameTemplate = "")
+	private static function __Users2String($arUserIDs, $arUsers, $nameTemplate = "")
 	{
 		$arUsersStrs = array();
 		if (!is_array($arUserIDs))
@@ -3017,7 +3421,7 @@ class CTaskNotifications
 	/**
 	 * @deprecated
 	 */
-	function __UserIDs2Rights($arUserIDs)
+	public static function __UserIDs2Rights($arUserIDs)
 	{
 		$arUserIDs = array_unique(array_filter($arUserIDs));
 		$arRights = array();
@@ -3030,7 +3434,7 @@ class CTaskNotifications
 	/**
 	 * @deprecated
 	 */
-	function __Fields2Names($arFields)
+	public static function __Fields2Names($arFields)
 	{
 		$arFields = array_unique(array_filter($arFields));
 		$arNames = array();

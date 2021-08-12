@@ -1,5 +1,0 @@
-<?
-$MESS["TASKS_AUTOMATION_TRIGGER_PASSWORD_COMMENT"] = "Créée par déclencheur";
-$MESS["TASKS_AUTOMATION_TRIGGER_PASSWORD_TITLE"] = "Accès externe à l'automatisation de tâche";
-$MESS["TASKS_AUTOMATION_TRIGGER_WEBHOOK_NAME"] = "Webhook";
-?>

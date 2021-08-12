@@ -66,7 +66,7 @@ class CBPWorkflow
 	*/
 	public function __construct($instanceId, CBPRuntime $runtime)
 	{
-		if (strlen($instanceId) <= 0)
+		if ($instanceId == '')
 			throw new Exception("instanceId");
 		if (!$runtime)
 			throw new Exception("runtime");
@@ -227,10 +227,9 @@ class CBPWorkflow
 		if ($this->GetWorkflowStatus() != CBPWorkflowStatus::Suspended)
 			throw new Exception("CanNotResumeInstance");
 
-		$this->SetWorkflowStatus(CBPWorkflowStatus::Running);
-
 		try
 		{
+			$this->SetWorkflowStatus(CBPWorkflowStatus::Running);
 			$this->RunQueue();
 		}
 		catch (Exception $e)
@@ -306,7 +305,7 @@ class CBPWorkflow
 	*/
 	public function GetActivityByName($activityName)
 	{
-		if (strlen($activityName) <= 0)
+		if ($activityName == '')
 			throw new Exception("activityName");
 
 		$activity = null;
@@ -468,7 +467,7 @@ class CBPWorkflow
 					//analyse robots - Temporary, it is prototype
 					if ($trackingService->isForcedMode($this->GetInstanceId()))
 					{
-						$activityType = substr(get_class($activity), 3);
+						$activityType = mb_substr(get_class($activity), 3);
 						if (!in_array($activityType, [
 							'SequentialWorkflowActivity',
 							'ParallelActivity',
@@ -570,7 +569,15 @@ class CBPWorkflow
 		if ($e != null)
 		{
 			$trackingService = $this->GetService("TrackingService");
-			$trackingService->Write($this->instanceId, CBPTrackingType::FaultActivity, "none", CBPActivityExecutionStatus::Faulting, CBPActivityExecutionResult::Faulted, "Exception", ($e->getCode()? "[".$e->getCode()."] " : '').$e->getMessage());
+			$trackingService->Write(
+				$this->instanceId,
+				CBPTrackingType::FaultActivity,
+				"none",
+				CBPActivityExecutionStatus::Faulting,
+				CBPActivityExecutionResult::Faulted,
+				GetMessage('BPCGWF_EXCEPTION_TITLE'),
+				($e->getCode()? "[".$e->getCode()."] " : '').$e->getMessage()
+			);
 		}
 	}
 

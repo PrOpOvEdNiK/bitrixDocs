@@ -1,3 +1,0 @@
-<?
-$MESS["DISK_PROXY_TYPE_GROUP_TITLE"] = "Диск";
-?>

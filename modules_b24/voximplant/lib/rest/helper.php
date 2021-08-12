@@ -20,6 +20,7 @@ use Bitrix\Voximplant\Model\CallTable;
 use Bitrix\Voximplant\HttpClientFactory;
 use Bitrix\Voximplant\Integration\Im;
 use Bitrix\Voximplant\Model\ExternalLineTable;
+use Bitrix\Voximplant\Model\StatisticMissedTable;
 use Bitrix\Voximplant\PhoneTable;
 use Bitrix\Voximplant\Result;
 use Bitrix\Voximplant\Security;
@@ -76,6 +77,8 @@ class Helper
 	 */
 	public static function registerExternalCall(array $fields)
 	{
+		$fields['USER_ID'] = (int)$fields['USER_ID'];
+
 		$result = new Result();
 		$callId = 'externalCall.'.md5(uniqid($fields['REST_APP_ID'].$fields['USER_ID'].$fields['PHONE_NUMBER'], true)).'.'.time();
 
@@ -83,6 +86,16 @@ class Helper
 		if(!$phoneNumber)
 		{
 			$result->addError(new Error('Unsupported phone number format'));
+			return $result;
+		}
+
+		$userCheck = \Bitrix\Main\UserTable::getRow([
+			'select' => ['ID'],
+			'filter' => ['=ID' => $fields['USER_ID'], '=ACTIVE' => 'Y', '=IS_REAL_USER' => 'Y']
+		]);
+		if(!$userCheck)
+		{
+			$result->addError(new Error('User is not found or is not active'));
 			return $result;
 		}
 
@@ -379,6 +392,19 @@ class Helper
 			return $result;
 		}
 
+		if(isset($fields['USER_ID']))
+		{
+			$userCheck = \Bitrix\Main\UserTable::getRow([
+				'select' => ['ID'],
+				'filter' => ['=ID' => $fields['USER_ID'], '=ACTIVE' => 'Y', '=IS_REAL_USER' => 'Y']
+			]);
+			if(!$userCheck)
+			{
+				$result->addError(new Error('User is not found or is not active'));
+				return $result;
+			}
+		}
+
 		self::hideExternalCall(array(
 			'CALL_ID' => $call->getCallId(),
 			'USER_ID' => isset($fields['USER_ID']) ? (int)$fields['USER_ID'] : $call->getUserId()
@@ -474,6 +500,56 @@ class Helper
 			return $result;
 		}
 		$statisticRecord['ID'] = $insertResult->getId();
+
+		//recording a missed call
+		if (
+			$statisticRecord["CALL_FAILED_CODE"] == 304
+			&& (
+				$call->getIncoming() == \CVoxImplantMain::CALL_INCOMING
+				|| $call->getIncoming() == \CVoxImplantMain::CALL_INCOMING_REDIRECT
+			)
+		)
+		{
+			$missedCall = [
+				'ID' => $statisticRecord['ID'],
+				'CALL_START_DATE' => $statisticRecord['CALL_START_DATE'],
+				'PHONE_NUMBER' => $statisticRecord['PHONE_NUMBER'],
+				'PORTAL_USER_ID' => $statisticRecord['PORTAL_USER_ID']
+			];
+
+			$insertMissedCallResult = StatisticMissedTable::add($missedCall);
+			if(!$insertMissedCallResult->isSuccess())
+			{
+				$result->addError(new Error('Unexpected database error'));
+				$result->addErrors($insertMissedCallResult->getErrors());
+				return $result;
+			}
+		} //if our call answering any missed calls
+		elseif (
+			$statisticRecord["CALL_FAILED_CODE"] == 200
+			&& $call->getIncoming() == \CVoxImplantMain::CALL_OUTGOING
+		)
+		{
+			$missedCalls = StatisticMissedTable::getList([
+				'select' => ['ID'],
+				'filter' => [
+					'=PHONE_NUMBER' => $statisticRecord['PHONE_NUMBER'],
+					'=CALLBACK_ID' => null
+				],
+			])->fetchAll();
+
+			if ($missedCalls)
+			{
+				foreach ($missedCalls as $missedCall)
+				{
+					StatisticMissedTable::update($missedCall['ID'], [
+							'CALLBACK_ID' => $statisticRecord['ID'],
+							'CALLBACK_CALL_START_DATE' => $statisticRecord['CALL_START_DATE']
+						]
+					);
+				}
+			}
+		}
 
 		$hasRecord = ($fields['RECORD_URL'] != '');
 		if($hasRecord)
@@ -576,6 +652,7 @@ class Helper
 			'SHOW_CRM_CARD' => $call->isCrmEnabled(),
 			'CRM_ENTITY_TYPE' => $call->getPrimaryEntityType(),
 			'CRM_ENTITY_ID' => $call->getPrimaryEntityId(),
+			'CRM_BINDINGS' => \CVoxImplantCrmHelper::resolveBindingNames($call->getCrmBindings()),
 			'CRM' => \CVoxImplantCrmHelper::GetDataForPopup($call->getCallId(), $call->getCallerId(), $userId),
 			'CONFIG' => array(
 				'CRM_CREATE' => 'none'
@@ -725,9 +802,9 @@ class Helper
 	{
 		$entityType = $parameters['ENTITY_TYPE'];
 		$entityId = $parameters['ENTITY_ID'];
-		if(strpos($entityType, 'CRM_') === 0)
+		if(mb_strpos($entityType, 'CRM_') === 0)
 		{
-			$entityType = substr($entityType, 4);
+			$entityType = mb_substr($entityType, 4);
 		}
 		else if (isset($parameters['ENTITY_TYPE_NAME']) && isset($parameters['ENTITY_ID']))
 		{
@@ -753,7 +830,7 @@ class Helper
 			$result = new Result();
 			return $result->addError(new Error("Outgoing line is not found", "LINE_NOT_FOUND"));
 		}
-		$lineNumber = substr($line['LINE_NUMBER'], 0, 8) === 'REST_APP' ? '' : $line['LINE_NUMBER'];
+		$lineNumber = mb_substr($line['LINE_NUMBER'], 0, 8) === 'REST_APP' ? '' : $line['LINE_NUMBER'];
 
 		list($extensionSeparator, $extension) = Parser::getInstance()->stripExtension($number);
 		$eventFields = array(
@@ -955,7 +1032,7 @@ class Helper
 		{
 			$tempPath = \CFile::GetTempName('', bx_basename($fileName));
 		}
-		else if ($urlComponents && strlen($urlComponents["path"]) > 0)
+		else if ($urlComponents && $urlComponents["path"] <> '')
 		{
 			$tempPath = \CFile::GetTempName('', bx_basename($urlComponents["path"]));
 		}

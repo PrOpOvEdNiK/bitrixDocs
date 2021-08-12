@@ -1,4 +1,0 @@
-<?php
-$MESS['TM_WORKSHIFT_FORM_WORKDAYS_OPTION_MON_FRI'] = 'Понедельник - пятница';
-$MESS['TM_WORKSHIFT_FORM_WORKDAYS_OPTION_MON_SAT'] = 'Понедельник - суббота';
-$MESS['TM_WORKSHIFT_FORM_WORKDAYS_OPTION_CUSTOM'] = 'Другое';

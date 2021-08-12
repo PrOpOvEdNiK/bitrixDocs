@@ -24,7 +24,7 @@ $crm_default_option = array(
 	'path_to_quote_import' => '/crm/quote/import/',
 	'path_to_quote_kanban' => '/crm/quote/kanban/',
 	'path_to_order_details' => '/shop/orders/details/#order_id#/',
-	'path_to_order_list' => '/crm/order/list/',
+	'path_to_order_list' => '/shop/orders/list/',
 	'path_to_order_check_details' => '/shop/orders/check/details/#check_id#/',
 	'path_to_order_payment_details' => '/shop/orders/payment/details/#payment_id#/',
 	'path_to_order_payment_list' => '/shop/orders/payment/list/',
@@ -61,6 +61,7 @@ $crm_default_option = array(
 	'path_to_activity_show' => '/crm/activity/?ID=#activity_id#&open_view=#activity_id#',
 	'path_to_activity_edit' => '/crm/activity/?ID=#activity_id#&open_edit=#activity_id#',
 	'path_to_deal_category' => '/crm/deal/category/#category_id#/',
+	'path_to_deal_category_kanban' => '/crm/deal/kanban/category/#category_id#/',
 	'path_to_deal_category_list' => '/crm/configs/deal_category/',
 	'path_to_deal_category_edit' => '/crm/configs/deal_category/?open_edit=#category_id#',
 	'path_to_webform_list' => '/crm/webform/list/',
@@ -73,9 +74,20 @@ $crm_default_option = array(
 	'path_to_recycle_bin' => '/crm/recyclebin/',
 
 	'path_to_perm_list' => '/crm/configs/perms/',
+	'path_to_config_checker' => '/crm/configs/checker/',
 	'path_to_user_field_edit' => '/crm/configs/fields/#entity_id#/edit/#field_id#/',
 
 	'email_from' => '',
-	'email_template' => ''
+	'email_template' => '',
+
+	'product_catalog_type_id' => '',
+	'default_product_catalog_id' => 0,
+
+	'selected_catalog_group_id' => 0,
+
+	'product_row_tax_uniform' => 'Y',
+
+	'enable_slider' => 'Y',
+	'enable_simple_time_format' => 'Y',
+	'enable_user_name_sorting' => 'N',
 );
-?>

@@ -10,7 +10,7 @@ use Bitrix\Crm\Tracking;
 Loc::loadMessages(__FILE__);
 Main\Loader::includeModule('sale');
 
-class OrderDataProvider extends EntityDataProvider
+class OrderDataProvider extends Main\Filter\EntityDataProvider
 {
 	/** @var InvoiceSettings|null */
 	protected $settings = null;
@@ -109,6 +109,11 @@ class OrderDataProvider extends EntityDataProvider
 			'COUPON' => $this->createField('COUPON'),
 			'SHIPMENT_TRACKING_NUMBER' => $this->createField('SHIPMENT_TRACKING_NUMBER'),
 			'SHIPMENT_DELIVERY_DOC_DATE' => $this->createField('SHIPMENT_DELIVERY_DOC_DATE', array('type' => 'date')),
+			'CHECK_PRINTED' => $this->createField(
+				'CHECK_PRINTED',
+				['type' => 'checkbox']
+			),
+			'HAS_ASSOCIATED_DEAL' => $this->createField('HAS_ASSOCIATED_DEAL', ['type' => 'checkbox']),
 			'XML_ID' => $this->createField('XML_ID'),
 		);
 
@@ -358,9 +363,13 @@ class OrderDataProvider extends EntityDataProvider
 			{
 				$type = 'list';
 			}
+			elseif ($property['TYPE'] === 'DATE')
+			{
+				$type = 'string';
+			}
 			else
 			{
-				$type = strtolower($property['TYPE']);
+				$type = mb_strtolower($property['TYPE']);
 			}
 
 			$name = htmlspecialcharsbx("{$property['NAME']} ({$property['PERSON_TYPE_NAME']}) [{$property['LID']}]");

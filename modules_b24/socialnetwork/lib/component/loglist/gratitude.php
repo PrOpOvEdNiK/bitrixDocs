@@ -94,31 +94,7 @@ class Gratitude
 
 	public static function getGratitudesIblockId()
 	{
-		static $result = null;
-
-		if ($result === null)
-		{
-			$result = false;
-
-			if (!Loader::includeModule('iblock'))
-			{
-				return $result;
-			}
-
-			$res = \Bitrix\Iblock\IblockTable::getList(array(
-				'filter' => [
-					'=CODE' => 'honour',
-					'=IBLOCK_TYPE_ID' => 'structure',
-				],
-				'select' => [ 'ID' ]
-			));
-			if ($iblockFields = $res->fetch())
-			{
-				$result = intval($iblockFields['ID']);
-			}
-		}
-
-		return $result;
+		return \Bitrix\Socialnetwork\Helper\Gratitude::getIblockId();
 	}
 
 	public static function getGratitudesBlogData(array $params = [])
@@ -207,7 +183,7 @@ class Gratitude
 				'userId' => $userId
 			];
 
-			if (strlen($gratCode) > 0)
+			if ($gratCode <> '')
 			{
 				$filterParams['gratCode'] = $gratCode;
 			}
@@ -216,7 +192,7 @@ class Gratitude
 			$iblockElementsIdList = $gratitudesData['ELEMENT_ID_LIST'];
 			$gratValue = '';
 
-			if (strlen($gratitudesData['GRAT_VALUE']) > 0)
+			if ($gratitudesData['GRAT_VALUE'] <> '')
 			{
 				$gratValue = $gratitudesData['GRAT_VALUE'];
 			}
@@ -236,9 +212,9 @@ class Gratitude
 				$result['RETURN_EMPTY_LIST'] = false;
 			}
 
-			if (strlen($gratUserName) > 0)
+			if ($gratUserName <> '')
 			{
-				$APPLICATION->setTitle(Loc::getMessage(strlen($gratValue) > 0 ? 'SONET_LOG_LIST_TITLE_GRAT2' : 'SONET_LOG_LIST_TITLE_GRAT', [
+				$APPLICATION->setTitle(Loc::getMessage($gratValue <> '' ? 'SONET_LOG_LIST_TITLE_GRAT2' : 'SONET_LOG_LIST_TITLE_GRAT', [
 					'#USER_NAME#' => $gratUserName,
 					'#GRAT_NAME#' => $gratValue
 				]));

@@ -1,4 +1,0 @@
-<?
-$MESS["CRM_SECTION"] = "Histórico";
-$MESS["CRM_SECTION_EVENT"] = "Histórico";
-?>

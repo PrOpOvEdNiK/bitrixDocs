@@ -6,7 +6,7 @@ global $APPLICATION, $USER, $DB;
 if(!empty($_REQUEST['editIn']))
 {
 	$ob->_path = CHTTP::urnDecode($ob->_path);
-	$serviceEditDoc = strtolower($_REQUEST['editIn']);
+	$serviceEditDoc = mb_strtolower($_REQUEST['editIn']);
 	switch($serviceEditDoc)
 	{
 		case 'g':
@@ -82,13 +82,13 @@ if(!empty($_REQUEST['editIn']))
 }
 if(!empty($_REQUEST['createDoc']))
 {
-	$serviceEditDoc = empty($_REQUEST['createIn'])? '' : strtolower($_REQUEST['createIn']);
+	$serviceEditDoc = empty($_REQUEST['createIn'])? '' : mb_strtolower($_REQUEST['createIn']);
 	if(empty($serviceEditDoc) || $serviceEditDoc == CWebDavLogOnlineEditBase::DEFAULT_SERVICE_NAME)
 	{
 		$serviceEditDoc = CWebDavTools::getServiceEditDocForCurrentUser();
 	}
 
-	$serviceEditDoc = strtolower($_REQUEST['createIn']);
+	$serviceEditDoc = mb_strtolower($_REQUEST['createIn']);
 	switch($serviceEditDoc)
 	{
 		case 'g':
@@ -249,7 +249,7 @@ elseif(!empty($_REQUEST['saveToDisk']))
 
 						$savedName = CWebDavIblock::getSavedMetaData();
 						$pathToUserLib = str_replace(array('#USER_ID#', '#user_id#'), array($USER->GetID(), $USER->GetID()), CWebDavIblock::LibOptions('lib_paths', true, $data['IBLOCK_ID']));
-						$pathToUserLib = strstr($pathToUserLib, 'files/element', true) . 'files/lib';
+						$pathToUserLib = mb_strstr($pathToUserLib, 'files/element', true).'files/lib';
 						$pathToUserLib = $pathToUserLib . '/' . $savedName['alias'] . '?result=doc' . $fileData['extra']['id'];
 
 						$response = array(
@@ -286,7 +286,7 @@ elseif(!empty($_REQUEST['downloadHistory']) && !empty($_REQUEST['id']))
 }
 elseif(!empty($_REQUEST['wdaction']))
 {
-	$wdAction = strtolower($_REQUEST['wdaction']);
+	$wdAction = mb_strtolower($_REQUEST['wdaction']);
 	if($wdAction == 'connect' || $wdAction == 'disconnect')
 	{
 		$attachObjectType = null;

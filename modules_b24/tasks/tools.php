@@ -64,11 +64,11 @@ class TasksException extends \Bitrix\Tasks\Exception
 		// exception extra data goes to log
 		if($this->checkOfType(self::TE_FLAG_SERIALIZED_ERRORS_IN_MESSAGE) && $message !== false)
 		{
-			$parameters['AUX']['ERROR'] = unserialize($message);
+			$parameters['AUX']['ERROR'] = unserialize($message, ['allowed_classes' => false]);
 		}
 
 		parent::__construct(
-			$message, 
+			$message,
 			$parameters,
 			array(
 				'CODE' => $code
@@ -91,7 +91,7 @@ class TasksException extends \Bitrix\Tasks\Exception
 			foreach (self::$errSymbolsMap as $symbol => $code)
 			{
 				if ($code & $errCode)
-					$strErrCode .= '/' . substr($symbol, 3);
+					$strErrCode .= '/'.mb_substr($symbol, 3);
 			}
 		}
 		elseif ($e instanceof CTaskAssertException)
@@ -232,9 +232,9 @@ function tasksFormatName($name, $lastName, $login, $secondName = "", $nameTempla
 {
 	if ($nameTemplate != "")
 	{
-		$result = CUser::FormatName($nameTemplate, array(	"NAME" 			=> $name, 
-															"LAST_NAME" 	=> $lastName, 
-															"SECOND_NAME" 	=> $secondName, 
+		$result = CUser::FormatName($nameTemplate, array(	"NAME" 			=> $name,
+															"LAST_NAME" 	=> $lastName,
+															"SECOND_NAME" 	=> $secondName,
 															"LOGIN"			=> $login),
 			true,
 			$bEscapeSpecChars);
@@ -261,9 +261,9 @@ function tasksFormatNameShort($name, $lastName, $login, $secondName = "", $nameT
 {
 	if ($nameTemplate != "")
 	{
-		$result = CUser::FormatName($nameTemplate, array(	"NAME" 			=> $name, 
-															"LAST_NAME" 	=> $lastName, 
-															"SECOND_NAME" 	=> $secondName, 
+		$result = CUser::FormatName($nameTemplate, array(	"NAME" 			=> $name,
+															"LAST_NAME" 	=> $lastName,
+															"SECOND_NAME" 	=> $secondName,
 															"LOGIN"			=> $login),
 			true,
 			$bEscapeSpecChars);
@@ -274,9 +274,9 @@ function tasksFormatNameShort($name, $lastName, $login, $secondName = "", $nameT
 	if ($name && $lastName)
 	{
 		if ( ! $bEscapeSpecChars )
-			$rc = $lastName." ".substr(htmlspecialcharsBack($name), 0, 1).".";
+			$rc = $lastName." ".mb_substr(htmlspecialcharsBack($name), 0, 1).".";
 		else
-			$rc = $lastName." ".substr($name, 0, 1).".";
+			$rc = $lastName." ".mb_substr($name, 0, 1).".";
 	}
 	elseif ($lastName)
 	{
@@ -322,11 +322,11 @@ function tasksTimeCutZeros($time)
 {
 	if (IsAmPmMode())
 	{
-		return trim(substr($time, 11, 11) == "12:00:00 am" ? substr($time, 0, 10) : substr($time, 0, 22));
+		return trim(mb_substr($time, 11, 11) == "12:00:00 am"? mb_substr($time, 0, 10) : mb_substr($time, 0, 22));
 	}
 	else
 	{
-		return substr($time, 11, 8) == "00:00:00" ? substr($time, 0, 10) : substr($time, 0, 16);
+		return mb_substr($time, 11, 8) == "00:00:00"? mb_substr($time, 0, 10) : mb_substr($time, 0, 16);
 	}
 
 }
@@ -359,7 +359,7 @@ function tasksGetItemMenu($task, $arPaths, $site_id = SITE_ID, $bGantt = false, 
 	$editUrl = CComponentEngine::makePathFromTemplate($arPaths["PATH_TO_TASKS_TASK"], array("task_id" => $task["ID"], 'user_id'=>$userId, 'group_id'=>$task['GROUP_ID'], "action" => "edit"));
 	$copyUrl = CComponentEngine::makePathFromTemplate($arPaths["PATH_TO_TASKS_TASK"], array("task_id" => 0, "action" => "edit", 'user_id'=>$userId, 'group_id'=>$task['GROUP_ID']));
 	$createUrl = CComponentEngine::makePathFromTemplate($arPaths["PATH_TO_TASKS_TASK"], array("task_id" => 0, "action" => "edit", 'user_id'=>$userId, 'group_id'=>$task['GROUP_ID']));
-	$createUrl = $createUrl.(strpos($createUrl, "?") === false ? "?" : "&")."PARENT_ID=".$task["ID"];
+	$createUrl = $createUrl.(mb_strpos($createUrl, "?") === false ? "?" : "&")."PARENT_ID=".$task["ID"];
 
 	$inFavorite = false;
 	if(is_array($params['VIEW_STATE']) && $params['VIEW_STATE']['SECTION_SELECTED']['CODENAME'] == 'VIEW_SECTION_ADVANCED_FILTER' && $params['VIEW_STATE']['SPECIAL_PRESET_SELECTED']['CODENAME'] == 'FAVORITE')
@@ -642,7 +642,7 @@ function tasksGetItemMenu($task, $arPaths, $site_id = SITE_ID, $bGantt = false, 
 			text : "<?=GetMessage("TASKS_COPY_TASK")?>",
 			title : "<?=GetMessage("TASKS_COPY_TASK_EX")?>",
 			className : "menu-popup-item-copy",
-			href : "<? echo $copyUrl.(strpos($copyUrl, "?") === false ? "?" : "&")."COPY=".$task["ID"]?>"
+			href : "<? echo $copyUrl.(mb_strpos($copyUrl, "?") === false ? "?" : "&")."COPY=".$task["ID"]?>"
 			<?
 			if ($bGantt)
 			{
@@ -713,10 +713,10 @@ function tasksGetItemMenu($task, $arPaths, $site_id = SITE_ID, $bGantt = false, 
 }
 
 
-function tasksRenderListItem($task, $childrenCount, $arPaths, $depth = 0, 
-	$plain = false, $defer = false, $site_id = SITE_ID, $updatesCount = 0, 
-	$projectExpanded = true, $taskAdded = false, 
-	$componentName = "bitrix:tasks.list.item", $componentTemplate = ".default", 
+function tasksRenderListItem($task, $childrenCount, $arPaths, $depth = 0,
+	$plain = false, $defer = false, $site_id = SITE_ID, $updatesCount = 0,
+	$projectExpanded = true, $taskAdded = false,
+	$componentName = "bitrix:tasks.list.item", $componentTemplate = ".default",
 	$userNameTemplate = "", $arAllowedTaskActions = null, $ynIframe = 'N'
 )
 {
@@ -744,7 +744,7 @@ function tasksRenderListItem($task, $childrenCount, $arPaths, $depth = 0,
 function templatesGetListItemActions($template, $arPaths)
 {
 	$addTaskUrl = CComponentEngine::MakePathFromTemplate($arPaths["PATH_TO_TASKS_TASK_ADD_BY_TEMPLATE"], array("task_id" => 0, "action" => "edit"));
-	$addTaskUrl .= (strpos($addTaskUrl, "?") === false ? "?" : "&")."TEMPLATE=".$template["ID"];
+	$addTaskUrl .= (mb_strpos($addTaskUrl, "?") === false ? "?" : "&")."TEMPLATE=".$template["ID"];
 
 	$viewUrl = CComponentEngine::MakePathFromTemplate($arPaths["PATH_TO_TEMPLATES_TEMPLATE"], array("template_id" => $template["ID"], "action" => "view"));
 	$editUrl = CComponentEngine::MakePathFromTemplate($arPaths["PATH_TO_TEMPLATES_TEMPLATE"], array("template_id" => $template["ID"], "action" => "edit"));
@@ -779,7 +779,7 @@ function templatesRenderListItem($template, $arPaths, $depth = 0, $plain = false
 	$anchor_id = RandString(8);
 
 	$addUrl = CComponentEngine::MakePathFromTemplate($arPaths["PATH_TO_TASKS_TASK"], array("task_id" => 0, "action" => "edit"));
-	$addUrl .= (strpos($addUrl, "?") === false ? "?" : "&")."TEMPLATE=".$template["ID"];
+	$addUrl .= (mb_strpos($addUrl, "?") === false ? "?" : "&")."TEMPLATE=".$template["ID"];
 	$editUrl = CComponentEngine::MakePathFromTemplate($arPaths["PATH_TO_TEMPLATES_TEMPLATE"], array("template_id" => $template["ID"], "action" => "edit"));
 	?>
 	<script type="text/javascript"<?php echo $defer ? "  defer=\"defer\"" : ""?>>
@@ -824,7 +824,7 @@ function templatesRenderListItem($template, $arPaths, $depth = 0, $plain = false
  *
  */
 function tasksRenderJSON(
-	$arTask, $childrenCount, $arPaths, $bParent = false, $bGant = false, 
+	$arTask, $childrenCount, $arPaths, $bParent = false, $bGant = false,
 	$top = false, $nameTemplate = "", $arAdditionalFields = array(), $bSkipJsMenu = false, array $params = array()
 )
 {
@@ -981,14 +981,14 @@ function tasksRenderJSON(
 				echo 'false';
 		?>,
 		childrenCount : <?php echo (int) $childrenCount; ?>,
-		canEditDeadline : <?php 
+		canEditDeadline : <?php
 			if ($arAllowedTaskActions['ACTION_CHANGE_DEADLINE'])
 				echo 'true';
 			else
 				echo 'false';
 		?>,
 		canStartTimeTracking : <?php if ($arAllowedTaskActions['ACTION_START_TIME_TRACKING']):?>true<?php else:?>false<?php endif?>,
-		ALLOW_TIME_TRACKING : <?php 
+		ALLOW_TIME_TRACKING : <?php
 			if (isset($arTask['ALLOW_TIME_TRACKING']) && ($arTask['ALLOW_TIME_TRACKING'] === 'Y'))
 				echo 'true';
 			else
@@ -1034,12 +1034,12 @@ function tasksJSDateObject($date, $top = false)
 {
 	$ts = MakeTimeStamp($date);
 	?>
-	new <?php if ($top):?>top.<?php endif?>Date(<?php 
+	new <?php if ($top):?>top.<?php endif?>Date(<?php
 		echo date("Y", $ts); ?>, <?php
-		echo date("n", $ts) - 1; ?>, <?php 
-		echo date("j", $ts); ?>, <?php 
-		echo date("G", $ts); ?>, <?php 
-		echo (date("i", $ts) + 0); ?>, <?php 
+		echo date("n", $ts) - 1; ?>, <?php
+		echo date("j", $ts); ?>, <?php
+		echo date("G", $ts); ?>, <?php
+		echo (date("i", $ts) + 0); ?>, <?php
 		echo (date("s", $ts) + 0); ?>)
 	<?php
 }
@@ -1083,8 +1083,8 @@ function tasksServerName($server_name = false)
 	}
 
 	if (
-		(substr(strtolower($server_name), 0, 8) !== 'https://')
-		&& (substr(strtolower($server_name), 0, 7) !== 'http://')
+		(mb_substr(mb_strtolower($server_name), 0, 8) !== 'https://')
+		&& (mb_substr(mb_strtolower($server_name), 0, 7) !== 'http://')
 	)
 	{
 		if (CMain::IsHTTPS())
@@ -1095,27 +1095,27 @@ function tasksServerName($server_name = false)
 
 	$server_name_wo_protocol = str_replace(
 		array('http://', 'https://', 'HTTP://', 'HTTPS://'), 	// Yeah, I know: 'hTtpS://', ...
-		array('', '', '', ''), 
+		array('', '', '', ''),
 		$server_name
 	);
 
 	// Cutoff all what is after '/' (include '/' itself)
-	$slashPos = strpos($server_name_wo_protocol, '/');
+	$slashPos = mb_strpos($server_name_wo_protocol, '/');
 	if ($slashPos >= 1)
 	{
 		$length = $slashPos;
-		$server_name_wo_protocol = substr(0, $length);
+		$server_name_wo_protocol = mb_substr(0, $length);
 	}
 
 	$isServerPortAlreadyGiven = false;
-	if (strpos($server_name_wo_protocol, ':') !== false)
+	if (mb_strpos($server_name_wo_protocol, ':') !== false)
 		$isServerPortAlreadyGiven = true;
 
 	$server_port = '';
 
 	if (
 		( ! $isServerPortAlreadyGiven )
-		&& (strlen($_SERVER['SERVER_PORT']) > 0)
+		&& ($_SERVER['SERVER_PORT'] <> '')
 		&& ($_SERVER['SERVER_PORT'] != '80')
 		&& ($_SERVER['SERVER_PORT'] != '443')
 	)
@@ -1144,7 +1144,7 @@ function tasksGetLastSelected($arManagers, $bSubordinateOnly = false, $nameTempl
 			include_once($_SERVER['DOCUMENT_ROOT']."/bitrix/modules/main/classes/".$GLOBALS['DBType']."/favorites.php");
 
 		$arLastSelected = CUserOptions::GetOption("tasks", "user_search", array());
-		if (is_array($arLastSelected) && strlen($arLastSelected['last_selected']) > 0)
+		if (is_array($arLastSelected) && $arLastSelected['last_selected'] <> '')
 			$arLastSelected = array_unique(explode(',', $arLastSelected['last_selected']));
 		else
 			$arLastSelected = false;
@@ -1173,7 +1173,7 @@ function tasksGetLastSelected($arManagers, $bSubordinateOnly = false, $nameTempl
 			$arFilter['!UF_DEPARTMENT'] = false;
 		}
 		$arFilter['ID'] = is_array($arLastSelected) ? implode('|', array_slice($arLastSelected, 0, 10)) : '-1';
-		$dbRes = CUser::GetList($by = 'last_name', $order = 'asc', $arFilter, array('SELECT' => array('UF_DEPARTMENT')));
+		$dbRes = CUser::GetList('last_name', 'asc', $arFilter, array('SELECT' => array('UF_DEPARTMENT')));
 		$arLastUsers = array();
 		while ($arRes = $dbRes->GetNext())
 		{
@@ -1309,9 +1309,9 @@ function ShowInFrame(&$component, $bShowError = false, $errText = '')
 							else
 								$component->IncludeComponentTemplate();
 						?></td>
-						<?php if (strlen($APPLICATION->GetViewContent("sidebar_tools_1"))):?>
+						<?php if($APPLICATION->GetViewContent("sidebar_tools_1") <> ''): ?>
 							<td width="10"></td>
-							<td valign="top" width="230"><?php $APPLICATION->ShowViewContent("sidebar_tools_1")?></td>
+							<td valign="top" width="230"><?php $APPLICATION->ShowViewContent("sidebar_tools_1") ?></td>
 						<?php endif?>
 					</tr>
 				</table>
@@ -1350,7 +1350,7 @@ function __checkForum($forumID)
 	if (CModule::IncludeModule("forum") && $forumID && COption::GetOptionString("tasks", "forum_checked", false))
 	{
 		$arGroups = array();
-		$rs = CGroup::GetList($order = 'id', $by = 'asc', array());
+		$rs = CGroup::GetList('id', 'asc');
 		while($ar = $rs->Fetch())
 			$arGroups[$ar['ID']] = 'A';
 
@@ -1362,7 +1362,7 @@ function __checkForum($forumID)
 
 /**
  * This function is deprecated. See CTaskFiles::removeTemporaryFile()
- * 
+ *
  * @deprecated
  */
 function deleteUploadedFiles($arFileIDs)
@@ -1381,7 +1381,7 @@ function deleteUploadedFiles($arFileIDs)
 
 /**
  * This function is deprecated. See CTaskFiles::saveFileTemporary()
- * 
+ *
  * @deprecated
  */
 function addUploadedFiles($arFileIDs)
@@ -1395,7 +1395,7 @@ function addUploadedFiles($arFileIDs)
 
 /**
  * This function is deprecated.
- * 
+ *
  * @deprecated
  */
 function cleanupUploadedFiles()

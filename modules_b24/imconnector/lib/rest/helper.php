@@ -38,7 +38,7 @@ class Helper
 			));
 
 			$changeParams = array(
-				'ID_CONNECTOR' => strtolower($params['ID']),
+				'ID_CONNECTOR' => mb_strtolower($params['ID']),
 				'NAME' => $params['NAME'],
 				'ICON' => $params['ICON'],
 				'COMPONENT' => $params['COMPONENT'],
@@ -130,7 +130,7 @@ class Helper
 
 			if(!empty($params['ID']))
 			{
-				$filter['ID_CONNECTOR'] = strtolower($params['ID']);
+				$filter['ID_CONNECTOR'] = mb_strtolower($params['ID']);
 			}
 
 			$raw = StatusConnectorsTable::getList([
@@ -256,9 +256,6 @@ class Helper
 	/**
 	 * @param array $filter
 	 * @return array
-	 * @throws \Bitrix\Main\ArgumentException
-	 * @throws \Bitrix\Main\ObjectPropertyException
-	 * @throws \Bitrix\Main\SystemException
 	 */
 	public static function listRestConnector($filter = array())
 	{
@@ -279,7 +276,7 @@ class Helper
 		while ($row = $raw->fetch())
 		{
 			$result[$row['ID_CONNECTOR']] = array(
-				'ID' => strtolower($row['ID_CONNECTOR']),
+				'ID' => mb_strtolower($row['ID_CONNECTOR']),
 				'NAME' => $row['NAME'],
 				'COMPONENT' => $row['COMPONENT'],
 				'ICON' => $row['ICON'],

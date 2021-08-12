@@ -1,5 +1,0 @@
-<?
-$MESS["LANDING_TABLE_FIELD_LANDING_ID"] = "ID de aterrizaje";
-$MESS["LANDING_TABLE_FIELD_SITE_ID"] = "ID del Sitio24";
-$MESS["LANDING_TABLE_FIELD_TYPE"] = "Tipo de página";
-?>

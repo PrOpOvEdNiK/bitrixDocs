@@ -154,7 +154,7 @@ class CDavResource
 						{
 							$ns = $xmlnsHash[$arSubProp['xmlns']];
 						}
-						if (strpos($extraXmlns, $extra = ' xmlns:'.$ns.'="'.$arSubProp['xmlns'].'"') === false)
+						if (mb_strpos($extraXmlns, $extra = ' xmlns:'.$ns.'="'.$arSubProp['xmlns'].'"') === false)
 							$extraXmlns .= $extra;
 						$ns .= ':';
 					}
@@ -201,7 +201,7 @@ class CDavResource
 	}
 
 	// Encode a hierarchical properties
-	public function EncodeHierarchicalProp(array $arProps, $parentXmlns, &$xmlnsDefs, array &$xmlnsHash, &$response, &$request)
+	public static function EncodeHierarchicalProp(array $arProps, $parentXmlns, &$xmlnsDefs, array &$xmlnsHash, &$response, &$request)
 	{
 		$result = '';
 

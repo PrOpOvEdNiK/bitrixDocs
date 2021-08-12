@@ -1,7 +1,7 @@
-<?
-use Bitrix\Main\Config\Option;
+<?php
 
 IncludeModuleLangFile(__FILE__);
+
 class blogTextParser extends CTextParser
 {
 	public $bPublic = false;
@@ -37,17 +37,17 @@ class blogTextParser extends CTextParser
 
 	public function convert($text, $bPreview = True, $arImages = array(), $allow = array("HTML" => "N", "ANCHOR" => "Y", "BIU" => "Y", "IMG" => "Y", "QUOTE" => "Y", "CODE" => "Y", "FONT" => "Y", "LIST" => "Y", "SMILES" => "Y", "NL2BR" => "N", "VIDEO" => "Y", "TABLE" => "Y", "CUT_ANCHOR" => "N", "SHORT_ANCHOR" => "N"), $arParams = Array())
 	{
-		if(!is_array($arParams) && strlen($arParams) > 0)
+		if(!is_array($arParams) && $arParams <> '')
 			$type = $arParams;
 		elseif(is_array($arParams))
 			$type = $arParams["type"];
-		if(IntVal($arParams["imageWidth"]) > 0)
-			$this->imageWidth = IntVal($arParams["imageWidth"]);
-		if(IntVal($arParams["imageHeight"]) > 0)
-			$this->imageHeight = IntVal($arParams["imageHeight"]);
-		if(strlen($arParams["pathToUser"]) > 0)
+		if(intval($arParams["imageWidth"]) > 0)
+			$this->imageWidth = intval($arParams["imageWidth"]);
+		if(intval($arParams["imageHeight"]) > 0)
+			$this->imageHeight = intval($arParams["imageHeight"]);
+		if($arParams["pathToUser"] <> '')
 			$this->pathToUser = $arParams["pathToUser"];
-		if(!empty($arParams["pathToUserEntityType"]) && strlen($arParams["pathToUserEntityType"]) > 0)
+		if(!empty($arParams["pathToUserEntityType"]) && $arParams["pathToUserEntityType"] <> '')
 			$this->pathToUserEntityType = $arParams["pathToUserEntityType"];
 		if(intval($arParams["pathToUserEntityId"]) > 0)
 			$this->pathToUserEntityId = intval($arParams["pathToUserEntityId"]);
@@ -75,6 +75,7 @@ class blogTextParser extends CTextParser
 			"USER" => ($allow["USER"] == "N" ? "N" : "Y"),
 			"USER_LINK" => ($allow["USER_LINK"] == "N" ? "N" : "Y"),
 			"TAG" => ($allow["TAG"] == "N" ? "N" : "Y"),
+			'SPOILER' => ($allow['SPOILER'] === 'N' ? 'N' : 'Y'),
 			"USERFIELDS" => (is_array($allow["USERFIELDS"]) ? $allow["USERFIELDS"] : array())
 		);
 		if (!empty($this->arUserfields))
@@ -99,7 +100,7 @@ class blogTextParser extends CTextParser
 		return trim($text);
 	}
 
-	public function ParserCut(&$text, &$obj)
+	public static function ParserCut(&$text, &$obj)
 	{
 		if ($obj->bPreview)
 		{
@@ -111,7 +112,7 @@ class blogTextParser extends CTextParser
 			$text = preg_replace("#<cut[\s]*(/>|>)#is", "[cut]", $text);
 		}
 	}
-	public function ParserCutAfter(&$text, &$obj)
+	public static function ParserCutAfter(&$text, &$obj)
 	{
 		if (!$obj->bPreview)
 		{
@@ -119,12 +120,12 @@ class blogTextParser extends CTextParser
 		}
 	}
 	
-	public function ParserBlogImageBefore(&$text, &$obj = null)
+	public static function ParserBlogImageBefore(&$text, &$obj = null)
 	{
 		$text = preg_replace("/\[img([^\]]*)id\s*=\s*([0-9]+)([^\]]*)\]/is".BX_UTF_PCRE_MODIFIER, "[imag id=\\1 \\2 \\3]", $text);
 	}
 	
-	public function ParserBlogImage(&$text, &$obj)
+	public static function ParserBlogImage(&$text, &$obj)
 	{
 		if(is_callable(array($obj, 'convert_blog_image')))
 		{
@@ -146,7 +147,7 @@ class blogTextParser extends CTextParser
 		return $this->convert_blog_image('', $matches[2], '', 'mail');
 	}
 
-	public function ParserTag(&$text, &$obj)
+	public static function ParserTag(&$text, &$obj)
 	{
 		if($obj->allow["TAG"] != "N" && is_callable(array($obj, 'convert_blog_tag')))
 		{
@@ -165,48 +166,36 @@ class blogTextParser extends CTextParser
 
 	private function convert_blog_tag($name = "")
 	{
-		if(strlen($name) <= 0)
+		if($name == '')
 			return;
 		return "TAG [".$name."]";
 	}
-	
-	function convert4im($text, $arImages = Array())
+
+	function convert4im($text, $arImages = [])
 	{
 		$text = preg_replace(
-			array(
-				"/\[(\/?)(code|quote)([^\]]*)\]/is".BX_UTF_PCRE_MODIFIER,
-				"/\\[url\\s*=\\s*(\\S+?)\\s*\\](.*?)\\[\\/url\\]/is".BX_UTF_PCRE_MODIFIER,
-				"/\\[(table)(.*?)\\]/is".BX_UTF_PCRE_MODIFIER,
-				"/\\[\\/table(.*?)\\]/is".BX_UTF_PCRE_MODIFIER
-			),
-			array(
-				"",
-				"\\1",
+			[
+				"/\[(\/?)(code|quote)([^\]]*)\]/is" . BX_UTF_PCRE_MODIFIER,
+				"/\\[url\\s*=\\s*(\\S+?)\\s*\\](.*?)\\[\\/url\\]/is" . BX_UTF_PCRE_MODIFIER,
+				"/\\[(table)(.*?)\\]/is" . BX_UTF_PCRE_MODIFIER,
+				"/\\[\\/table(.*?)\\]/is" . BX_UTF_PCRE_MODIFIER
+			],
+			[
+				'',
+				"\\2",
 				"\n",
 				"\n",
-			),
+			],
 			$text
 		);
 
 		return $this->convert4mail($text, $arImages);
 	}
-	
+
 	public function convert4mail($text, $arImages = Array())
 	{
 		$text = parent::convert4mail($text);
-/*
-		$serverName = (
-			(defined("SITE_SERVER_NAME") && strlen(SITE_SERVER_NAME) > 0)
-				? SITE_SERVER_NAME
-				: COption::GetOptionString("main", "server_name", "")
-		);
-		if (strlen($serverName) <=0 )
-		{
-			$serverName = $_SERVER["SERVER_NAME"];
-		}
 
-		$this->serverName = $serverName;
-*/
 		$this->arImages = $arImages;
 
 		$text = preg_replace_callback(
@@ -220,12 +209,12 @@ class blogTextParser extends CTextParser
 
 	private function convert_blog_image($p1 = "", $imageId = "", $p2 = "", $type = "html")
 	{
-		$imageId = IntVal($imageId);
+		$imageId = intval($imageId);
 		if($imageId <= 0)
 			return;
 		
 		$res = "";
-		if(IntVal($this->arImages[$imageId]) > 0)
+		if(intval($this->arImages[$imageId]) > 0)
 		{
 			$this->showedImages[] = $imageId;
 			if($f = CBlogImage::GetByID($imageId))
@@ -234,7 +223,7 @@ class blogTextParser extends CTextParser
 				{
 					if($db_img_arr = CFile::GetFileArray($this->arImages[$imageId]))
 					{
-						if(substr($db_img_arr["SRC"], 0, 1) == "/")
+						if(mb_substr($db_img_arr["SRC"], 0, 1) == "/")
 							$strImage = $this->serverName.$db_img_arr["SRC"];
 						else
 							$strImage = $db_img_arr["SRC"];
@@ -256,9 +245,9 @@ class blogTextParser extends CTextParser
 							$height = intval($height[1]);
 						}
 
-						if(IntVal($width) <= 0)
+						if(intval($width) <= 0)
 							$width = $db_img_arr["WIDTH"];
-						if(IntVal($height) <= 0)
+						if(intval($height) <= 0)
 							$height= $db_img_arr["HEIGHT"];
 
 						if($width > $this->imageWidth || $height > $this->imageHeight)
@@ -269,7 +258,7 @@ class blogTextParser extends CTextParser
 								BX_RESIZE_IMAGE_PROPORTIONAL,
 								true
 							);
-							if(substr($arFileTmp["src"], 0, 1) == "/")
+							if(mb_substr($arFileTmp["src"], 0, 1) == "/")
 								$strImage = $this->serverName.$arFileTmp["src"];
 							else
 								$strImage = $arFileTmp["src"];
@@ -288,7 +277,7 @@ class blogTextParser extends CTextParser
 						$strImage = preg_replace("'(?<!:)/+'s", "/", $strImage);
 						$sourceImage = preg_replace("'(?<!:)/+'s", "/", $sourceImage);
 
-						if(strlen($this->authorName) > 0)
+						if($this->authorName <> '')
 							$strPar .= " data-bx-title=\"".$this->authorName."\"";
 
 						if ($this->isSonetLog)
@@ -324,9 +313,9 @@ class blogTextParser extends CTextParser
 						$height = intval($height[1]);
 					}
 
-					if(IntVal($width) <= 0)
+					if(intval($width) <= 0)
 						$width = $this->imageWidth;
-					if(IntVal($height) <= 0)
+					if(intval($height) <= 0)
 						$height = $this->imageHeight;
 
 					if($width > $this->imageWidth)
@@ -358,7 +347,7 @@ class blogTextParser extends CTextParser
 						else
 						{
 							$strPar = ' width="'.$arDestinationSize["width"].'" height="'.$arDestinationSize["height"].'"';
-							if(strlen($this->authorName) > 0)
+							if($this->authorName <> '')
 								$strPar .= " data-bx-title=\"".$this->authorName."\"";
 
 							$res = '<img src="'.$strImage.'" title="" alt="'.htmlspecialcharsbx($f["TITLE"]).'" border="0" data-bx-image="'.$sourceImage.'"'.$strPar.' />';
@@ -385,14 +374,14 @@ class blogTextParser extends CTextParser
 
 	function convert_open_tag($marker = "quote")
 	{
-		$marker = (strToLower($marker) == "code" ? "code" : "quote");
+		$marker = (mb_strtolower($marker) == "code" ? "code" : "quote");
 		$this->{$marker."_open"}++;
 		if ($this->type == "rss")
 			return "\n====".$marker."====\n";
 		return "<div class='blog-post-".$marker."' title=\"".GetMessage("BLOG_".ToUpper($marker))."\"><table class='blog".$marker."'><tr><td>";
 	}
 
-	function blogConvertVideo(&$arParams)
+	public static function blogConvertVideo(&$arParams)
 	{
 		$video = "";
 		$bEvents = false;
@@ -555,35 +544,43 @@ class blogTextParser extends CTextParser
 		return $result;
 	}
 	
-	public function getEditorButtons($blog, $arResult)
+	public static function getEditorButtons($blog, $arResult)
 	{
 		$result = array();
 		
-//		IMAGES or FILES
+		// IMAGES or FILES
 		if(
-			(
+			is_array($arResult["COMMENT_PROPERTIES"]["DATA"])
+			&& (
 				array_key_exists("UF_BLOG_COMMENT_FILE", $arResult["COMMENT_PROPERTIES"]["DATA"])
 				|| array_key_exists("UF_BLOG_COMMENT_DOC", $arResult["COMMENT_PROPERTIES"]["DATA"])
 			)
-			&& array_key_exists('EDITOR_USE_IMAGE', $blog) && $blog["EDITOR_USE_IMAGE"] == "Y"
+			&& array_key_exists('EDITOR_USE_IMAGE', $blog) && $blog["EDITOR_USE_IMAGE"] === "Y"
 		)
+		{
 			$result[] = "UploadFile";
+		}
 		
-//		VIDEO
-		if($arResult["allowVideo"] && (isset($blog["EDITOR_USE_VIDEO"]) && $blog["EDITOR_USE_VIDEO"] == "Y"))
+		// VIDEO
+		if($arResult["allowVideo"] && (isset($blog["EDITOR_USE_VIDEO"]) && $blog["EDITOR_USE_VIDEO"] === "Y"))
+		{
 			$result[] = "InputVideo";
+		}
 		
-//		LINK
-		if(!$arResult["NoCommentUrl"] && (isset($blog["EDITOR_USE_LINK"]) && $blog["EDITOR_USE_LINK"] == "Y"))
+		// LINK
+		if(!$arResult["NoCommentUrl"] && (isset($blog["EDITOR_USE_LINK"]) && $blog["EDITOR_USE_LINK"] === "Y"))
+		{
 			$result[] = 'CreateLink';
+		}
 		
-//		OTHER for all
+		// OTHER for all
 		$result[] = "Quote";
 		$result[] = "BlogTag";
 		
 		return $result;
 	}
 }
+
 class CBlogTools
 {
 	public static function htmlspecialcharsExArray($array)
@@ -614,7 +611,7 @@ class CBlogTools
 		return $res;
 	}
 
-	function ResizeImage($aFile, $sizeX, $sizeY)
+	public static function ResizeImage($aFile, $sizeX, $sizeY)
 	{
 		$arFile = CFile::ResizeImageGet($aFile, array("width"=>$sizeX, "height"=>$sizeY));
 
@@ -624,7 +621,7 @@ class CBlogTools
 			return false;
 	}
 
-	function GetDateTimeFormat()
+	public static function GetDateTimeFormat()
 	{
 		$timestamp = mktime(7,30,45,2,22,2007);
 		return array(
@@ -645,28 +642,28 @@ class CBlogTools
 
 	public static function DeleteDoubleBR($text)
 	{
-		if(strpos($text, "<br />\r<br />") !== false)
+		if(mb_strpos($text, "<br />\r<br />") !== false)
 		{
 			$text = str_replace("<br />\r<br />", "<br />", $text);
 			return CBlogTools::DeleteDoubleBR($text);
 		}
-		if(strpos($text, "<br /><br />") !== false)
+		if(mb_strpos($text, "<br /><br />") !== false)
 		{
 			$text = str_replace("<br /><br />", "<br />", $text);
 			return CBlogTools::DeleteDoubleBR($text);
 		}
 
-		if(strpos($text, "<br />") == 0 && strpos($text, "<br />") !== false)
+		if(mb_strpos($text, "<br />") == 0 && mb_strpos($text, "<br />") !== false)
 		{
-			$text = substr($text, 6);
+			$text = mb_substr($text, 6);
 		}
 		return $text;
 	}
 
-	function blogUFfileEdit($arResult, $arParams)
+	public static function blogUFfileEdit($arResult, $arParams)
 	{
 		$result = false;
-		if (strpos($arParams['arUserField']['FIELD_NAME'], CBlogPost::UF_NAME) === 0 || strpos($arParams['arUserField']['FIELD_NAME'], 'UF_BLOG_COMMENT_DOC') === 0)
+		if (mb_strpos($arParams['arUserField']['FIELD_NAME'], CBlogPost::UF_NAME) === 0 || mb_strpos($arParams['arUserField']['FIELD_NAME'], 'UF_BLOG_COMMENT_DOC') === 0)
 		{
 			$componentParams = array(
 				'INPUT_NAME' => $arParams["arUserField"]["FIELD_NAME"],
@@ -685,10 +682,10 @@ class CBlogTools
 		return $result;
 	}
 
-	function blogUFfileShow($arResult, $arParams)
+	public static function blogUFfileShow($arResult, $arParams)
 	{
 		$result = false;
-		if ($arParams['arUserField']['FIELD_NAME'] == CBlogPost::UF_NAME || strpos($arParams['arUserField']['FIELD_NAME'], 'UF_BLOG_COMMENT_DOC') === 0)
+		if ($arParams['arUserField']['FIELD_NAME'] == CBlogPost::UF_NAME || mb_strpos($arParams['arUserField']['FIELD_NAME'], 'UF_BLOG_COMMENT_DOC') === 0)
 		{
 			if (sizeof($arResult['VALUE']) > 0)
 			{
@@ -705,10 +702,10 @@ class CBlogTools
 				{
 					$name = $arFile['ORIGINAL_NAME'];
 					$ext = '';
-					$dotpos = strrpos($name, ".");
-					if (($dotpos !== false) && ($dotpos+1 < strlen($name)))
-						$ext = substr($name, $dotpos+1);
-					if (strlen($ext) < 3 || strlen($ext) > 5)
+					$dotpos = mb_strrpos($name, ".");
+					if (($dotpos !== false) && ($dotpos + 1 < mb_strlen($name)))
+						$ext = mb_substr($name, $dotpos + 1);
+					if (mb_strlen($ext) < 3 || mb_strlen($ext) > 5)
 						$ext = '';
 					$arFile['EXTENSION'] = $ext;
 					$arFile['LINK'] = "/bitrix/components/bitrix/blog/show_file.php?bp_fid=".$fileID;
@@ -736,4 +733,3 @@ class CBlogTools
 		return $result;
 	}
 }
-?>

@@ -1,5 +1,0 @@
-<?
-$MESS["LEARNING_ADMIN_TAB3"] = "توضیحات";
-$MESS["LEARNING_ADMIN_TAB1"] = "سوال";
-$MESS["LEARNING_QUESTION_NAME"] = "سوال";
-?>

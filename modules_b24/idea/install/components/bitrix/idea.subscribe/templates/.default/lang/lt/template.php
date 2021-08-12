@@ -1,7 +1,0 @@
-<?
-$MESS["IDEA_SUBSCRIBE_TITLE"] = "Pavadinimas";
-$MESS["IDEA_SUBSCRIBE_STATUS"] = "Statusas";
-$MESS["IDEA_SUBSCRIBE_AUTHOR"] = "Sukūrė";
-$MESS["IDEA_SUBSCRIBE_PUBLISHED"] = "Paskelbta";
-$MESS["IDEA_SUBSCRIBE_TOTAL"] = "Prenumeratos";
-?>

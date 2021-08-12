@@ -202,6 +202,7 @@ class Form
 			), 'CLIENT FORM CRM');
 
 			$chat = new Chat($this->chatId);
+			//TODO: Replace with the method \Bitrix\ImOpenLines\Chat::parseLinesChatEntityId or \Bitrix\ImOpenLines\Chat::parseLiveChatEntityId
 			list($configId) = explode('|', $chat->getData('ENTITY_ID'));
 
 			$resultChatLoad = $chat->load(Array(
@@ -254,10 +255,10 @@ class Form
 					}
 					if (isset($fields['EMAIL']) &&
 						Tools\Email::validate($fields['EMAIL']) &&
-						Tools\Email::normalize($fields['EMAIL']) &&
 						!Tools\Email::isSame($user->getEmail(), $fields['EMAIL'])
 					)
 					{
+						$fields['EMAIL'] = Tools\Email::normalize($fields['EMAIL']);
 						$userUpdate['EMAIL'] = $fields['EMAIL'];
 					}
 					if (isset($fields['PHONE']) && Tools\Phone::validate($fields['PHONE']) && !Tools\Phone::isSame($user->getPhone(ImUser::PHONE_MOBILE), $fields['PHONE']))
@@ -298,6 +299,16 @@ class Form
 				}
 				else if ($type == self::FORM_HISTORY)
 				{
+					//TODO: fix 0134384
+					if(
+						isset($fields['EMAIL']) &&
+						$user->getEmail() &&
+						!Tools\Email::isSame($user->getEmail(), $fields['EMAIL'])
+					)
+					{
+						return $result;
+					}
+
 					$userUpdate = Array();
 					if (isset($fields['EMAIL']) && Tools\Email::validate($fields['EMAIL']) && !$user->getEmail())
 					{
@@ -439,10 +450,7 @@ class Form
 								}
 							}
 
-							if($session->getConfig('CRM_CREATE') != Config::CRM_CREATE_LEAD)
-							{
-								$crmManager->setSkipCreate();
-							}
+							$crmManager->setModeCreate($session->getConfig('CRM_CREATE'));
 
 							$crmManager->search();
 							$crmFieldsManager->setTitle($session->getChat()->getData('TITLE'));
@@ -466,7 +474,7 @@ class Form
 					if ($sessionStart)
 					{
 						$session->update(Array(
-							'SEND_FORM' => strtolower($type)
+							'SEND_FORM' => mb_strtolower($type)
 						));
 					}
 				}

@@ -3,10 +3,12 @@
 namespace Bitrix\Main\UserField\Types;
 
 use Bitrix\Main\Localization\Loc;
+use Bitrix\Main\Text\HtmlFilter;
 use CLang;
 use CUserTypeManager;
 use Bitrix\Main;
 use Bitrix\Main\Type;
+use Bitrix\Main\Context;
 
 Loc::loadMessages(__FILE__);
 
@@ -72,6 +74,7 @@ class DateTimeType extends DateType
 		return [
 			'DEFAULT_VALUE' => $def,
 			'USE_SECOND' => ($userField['SETTINGS']['USE_SECOND'] === 'N' ? 'N' : 'Y'),
+			'USE_TIMEZONE' => ($userField['SETTINGS']['USE_TIMEZONE'] === 'Y' ? 'Y' : 'N'),
 		];
 	}
 
@@ -110,9 +113,9 @@ class DateTimeType extends DateType
 					'id' => $userField['FIELD_NAME'],
 					'text' => Loc::GetMessage('USER_TYPE_DT_ERROR',
 						[
-							'#FIELD_NAME#' => ($userField['EDIT_FORM_LABEL'] <> '' ?
-								$userField['EDIT_FORM_LABEL'] :
-								$userField['FIELD_NAME']
+							'#FIELD_NAME#' => HtmlFilter::encode(
+								$userField['EDIT_FORM_LABEL'] <> ''
+									? $userField['EDIT_FORM_LABEL'] : $userField['FIELD_NAME']
 							),
 						]
 					),
@@ -135,7 +138,7 @@ class DateTimeType extends DateType
 		if($userField['MULTIPLE'] === 'Y' && !($value instanceof Type\DateTime))
 		{
 			//Invalid value
-			if(strlen($value) <= 1)
+			if(mb_strlen($value) <= 1)
 			{
 				//will be ignored by the caller
 				return null;
@@ -162,7 +165,21 @@ class DateTimeType extends DateType
 			}
 		}
 
-		return (string)$value;
+		$isFieldWithoutTimeZone = static::isFieldWithoutTimeZone($userField);
+
+		if ($isFieldWithoutTimeZone)
+		{
+			\CTimeZone::Disable();
+		}
+
+		$value = (string)$value;
+
+		if ($isFieldWithoutTimeZone)
+		{
+			\CTimeZone::Enable();
+		}
+
+		return $value;
 	}
 
 
@@ -174,9 +191,21 @@ class DateTimeType extends DateType
 	 */
 	public static function onBeforeSave(?array $userField, $value)
 	{
-		if($value !== '' && !($value instanceof Type\DateTime))
+		if($value != '' && !($value instanceof Type\DateTime))
 		{
+			$isFieldWithoutTimeZone = static::isFieldWithoutTimeZone($userField);
+
+			if ($isFieldWithoutTimeZone)
+			{
+				\CTimeZone::Disable();
+			}
+
 			$value = Type\DateTime::createFromUserTime($value);
+
+			if ($isFieldWithoutTimeZone)
+			{
+				\CTimeZone::Enable();
+			}
 		}
 
 		return $value;
@@ -187,7 +216,7 @@ class DateTimeType extends DateType
 	 * @param array $userField
 	 * @return string
 	 */
-	public function getFormat(string $value, array $userField): string
+	public static function getFormat(string $value, array $userField): string
 	{
 		$format = CLang::GetDateFormat(static::FORMAT_TYPE_FULL);
 
@@ -206,7 +235,108 @@ class DateTimeType extends DateType
 	 */
 	public static function formatField(?array $userField, string $fieldName): string
 	{
+		$isFieldWithoutTimeZone = static::isFieldWithoutTimeZone($userField);
+
+		if ($isFieldWithoutTimeZone)
+		{
+			\CTimeZone::Disable();
+		}
+
 		global $DB;
-		return $DB->dateToCharFunction($fieldName, static::FORMAT_TYPE_FULL);
+		$date = $DB->dateToCharFunction($fieldName, static::FORMAT_TYPE_FULL);
+
+		if ($isFieldWithoutTimeZone)
+		{
+			\CTimeZone::Enable();
+		}
+
+		return $date;
+	}
+
+	/**
+	 * @param array|null $userField
+	 * @return bool
+	 */
+	protected static function isFieldWithoutTimeZone(?array $userField): bool
+	{
+		return (
+			isset($userField['SETTINGS']['USE_TIMEZONE'])
+			&&
+			$userField['SETTINGS']['USE_TIMEZONE']==='N'
+			&&
+			\CTimeZone::Enabled()
+		);
+	}
+
+	/**
+	 * @param array $userField
+	 * @param Type\DateTime $dateTime
+	 * @return string
+	 */
+	public static function charToDate(array $userField, Type\DateTime $dateTime): string
+	{
+		$isFieldWithoutTimeZone = static::isFieldWithoutTimeZone($userField);
+
+		if ($isFieldWithoutTimeZone)
+		{
+			\CTimeZone::Disable();
+		}
+
+		global $DB;
+		$value = $DB->CharToDateFunction($dateTime);
+
+		if ($isFieldWithoutTimeZone)
+		{
+			\CTimeZone::Enable();
+		}
+
+		return (string) $value;
+	}
+
+	public static function getFieldValue(array $userField, array $additionalParameters = [])
+	{
+		if(!$additionalParameters['bVarsFromForm'])
+		{
+			if(
+				isset($userField['ENTITY_VALUE_ID'])
+				&&
+				$userField['ENTITY_VALUE_ID'] <= 0
+			)
+			{
+				if($userField['SETTINGS']['DEFAULT_VALUE']['TYPE'] === self::TYPE_NOW)
+				{
+					$value = \ConvertTimeStamp(
+						time() + \CTimeZone::getOffset(),
+						self::FORMAT_TYPE_FULL
+					);
+				}
+				else
+				{
+					$value = str_replace(
+						' 00:00:00',
+						'',
+						\CDatabase::formatDate(
+							$userField['SETTINGS']['DEFAULT_VALUE']['VALUE'],
+							'YYYY-MM-DD HH:MI:SS',
+							\CLang::getDateFormat(self::FORMAT_TYPE_FULL)
+						)
+					);
+				}
+			}
+			else
+			{
+				$value = $userField['VALUE'];
+			}
+		}
+		elseif(isset($additionalParameters['VALUE']))
+		{
+			$value = $additionalParameters['VALUE'];
+		}
+		else
+		{
+			$value = Context::getCurrent()->getRequest()->get($userField['FIELD_NAME']);
+		}
+
+		return $value;
 	}
 }

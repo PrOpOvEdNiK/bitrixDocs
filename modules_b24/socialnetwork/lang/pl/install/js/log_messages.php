@@ -1,4 +1,0 @@
-<?
-$MESS["LM_POPUP_TAB_LAST_STRUCTURE"] = "Działy";
-$MESS["LM_POPUP_TITLE"] = "Tytuł";
-?>

@@ -1,6 +1,0 @@
-<?
-$MESS["DISK_UF_LOCAL_DOC_CONTROLLER_ERROR_COULD_NOT_FIND_ATTACHED_OBJECT"] = "Prisegtas objektas nerastas.";
-$MESS["DISK_UF_LOCAL_DOC_CONTROLLER_ERROR_BAD_RIGHTS"] = "Neužtenka prieigos teisių tvarkyti failą.";
-$MESS["DISK_UF_LOCAL_DOC_CONTROLLER_UPLOAD_NEW_VERSION_IN_COMMENT_M"] = "įkeltas naujas failas";
-$MESS["DISK_UF_LOCAL_DOC_CONTROLLER_UPLOAD_NEW_VERSION_IN_COMMENT_F"] = "įkeltas naujas failas";
-?>

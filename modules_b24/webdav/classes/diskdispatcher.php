@@ -97,7 +97,7 @@ class CWebDavDiskDispatcher
 	{
 		if(isset($_SERVER['HTTP_USER_AGENT']) && preg_match('%Bitrix24.Disk/([0-9\.]+)%i', $_SERVER['HTTP_USER_AGENT'], $m))
 		{
-			if($strictDisk && strpos($_SERVER['HTTP_USER_AGENT'], 'Chrome') !== false)
+			if($strictDisk && mb_strpos($_SERVER['HTTP_USER_AGENT'], 'Chrome') !== false)
 			{
 				return 0;
 			}
@@ -290,7 +290,7 @@ class CWebDavDiskDispatcher
 		$success = true;
 		foreach ($required as $item)
 		{
-			if(!isset($target[$item]) || (!$target[$item] && !(is_string($target[$item]) && strlen($target[$item]))))
+			if(!isset($target[$item]) || (!$target[$item] && !(is_string($target[$item]) && mb_strlen($target[$item]))))
 			{
 				$success = false;
 				break;
@@ -330,7 +330,7 @@ class CWebDavDiskDispatcher
 		{
 			throw new Exception('Where are options "user_files"?');
 		}
-		$userFilesOptions = unserialize($userFilesOptions);
+		$userFilesOptions = unserialize($userFilesOptions, ['allowed_classes' => false]);
 		$iblockId = $userFilesOptions[CSite::getDefSite()]['id'];
 		$userSectionId = CWebDavIblock::getRootSectionIdForUser($iblockId, $this->getUser()->getId());
 		if(!$userSectionId)
@@ -355,9 +355,9 @@ class CWebDavDiskDispatcher
 	//todo version is long int
 	public static function convertFromExternalVersion($version)
 	{
-		if(substr($version, -3, 3) === '000')
+		if(mb_substr($version, -3, 3) === '000')
 		{
-			return substr($version, 0, -3);
+			return mb_substr($version, 0, -3);
 		}
 		return $version;
 	}
@@ -1334,9 +1334,9 @@ class CWebDavDiskDispatcher
 			$headers = array();
 			foreach ($_SERVER as $name => $value)
 			{
-				if (substr($name, 0, 5) == 'HTTP_')
+				if (mb_substr($name, 0, 5) == 'HTTP_')
 				{
-					$headerName = str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))));
+					$headerName = str_replace(' ', '-', ucwords(mb_strtolower(str_replace('_', ' ', mb_substr($name, 5)))));
 					$headers[$headerName] = $value;
 				}
 			}

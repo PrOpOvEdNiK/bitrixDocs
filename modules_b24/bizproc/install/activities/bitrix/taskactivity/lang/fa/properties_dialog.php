@@ -1,8 +1,0 @@
-<?
-$MESS["BPTA1A_TASK_TYPE_U"] = "کاربر";
-$MESS["BPTA1A_TASK_TYPE_G"] = "گروه";
-$MESS["BPTA1A_TASKOWNERID"] = "مالک";
-$MESS["BPTA1A_TASKASSIGNEDTO"] = "پاسخگو";
-$MESS["BPTA1A_TASKACTIVEFROM"] = "شروع";
-$MESS["BPTA1A_TASKNAME"] = "نام کار";
-?>

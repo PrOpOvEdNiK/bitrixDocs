@@ -1,9 +1,0 @@
-<?
-$MESS["CRM_MODULE_NOT_INSTALLED"] = "CRM modulis nėra įdiegtas.";
-$MESS["CRM_PERMISSION_DENIED"] = "Negalima įeiti. ";
-$MESS["M_CRM_ACTIVITY_LIST_PRESET_MY"] = "Mano veikla";
-$MESS["M_CRM_ACTIVITY_LIST_PRESET_MY_NOT_COMPLETED"] = "Mano neatlikti veilksmai";
-$MESS["M_CRM_ACTIVITY_LIST_PRESET_MY_COMPLETED"] = "Mano atlikti veilksmai";
-$MESS["M_CRM_ACTIVITY_LIST_PRESET_NOT_COMPLETED"] = "Neatlikti";
-$MESS["M_CRM_ACTIVITY_LIST_PRESET_COMPLETED"] = "Atlikti";
-?>

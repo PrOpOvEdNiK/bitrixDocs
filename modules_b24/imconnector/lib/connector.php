@@ -1,17 +1,21 @@
 <?php
 namespace Bitrix\ImConnector;
 
-use \Bitrix\Main\Loader,
-	\Bitrix\Main\Context,
-	\Bitrix\Main\Page\Asset,
-	\Bitrix\Main\Data\Cache,
-	\Bitrix\Main\Config\Option,
-	\Bitrix\Main\Web\Json,
-	\Bitrix\Main\UserTable,
-	\Bitrix\Main\Localization\Loc;
-use \Bitrix\ImOpenLines\Network,
-	\Bitrix\ImOpenLines\LiveChatManager;
-use \Bitrix\ImConnector\Model\InfoConnectorsTable;
+use Bitrix\Main\Loader;
+use Bitrix\Main\Web\Uri;
+use Bitrix\Main\Context;
+use Bitrix\Main\Web\Json;
+use Bitrix\Main\UserTable;
+use Bitrix\Main\Page\Asset;
+use Bitrix\Main\Data\Cache;
+use Bitrix\Main\Type\DateTime;
+use Bitrix\Main\Config\Option;
+use Bitrix\Main\Localization\Loc;
+use Bitrix\Main\DI\ServiceLocator;
+
+use Bitrix\ImOpenLines\LiveChatManager;
+use Bitrix\ImConnector\Connectors\WeChat;
+use Bitrix\ImConnector\Connectors\Notifications;
 
 Loc::loadMessages(__FILE__);
 Library::loadMessages();
@@ -25,111 +29,93 @@ class Connector
 	const ERROR_CHOICE_DOMAIN_FOR_FEEDBACK = 'CHOICE_DOMAIN_FOR_FEEDBACK';
 
 	/**
-	 * @return bool
-	 * @throws \Bitrix\Main\LoaderException
+	 * @param string $idConnector
+	 * @return Connectors\Base|Connectors\BotFramework|Connectors\Facebook|Connectors\|Connectors\FacebookComments|Connectors\FbInstagram|Connectors\IMessage|Connectors\Olx|Connectors\Viber|Connectors\Yandex|Connectors\Network
 	 */
-	public static function isLocationRussia()
+	public static function initConnectorHandler($idConnector = '')
 	{
-		$result = false;
+		$class = 'Bitrix\\ImConnector\\Connectors\\Base';
 
 		if(
-			(Loader::includeModule('bitrix24') && \CBitrix24::getPortalZone() === 'ru') ||
-			(!Loader::includeModule('bitrix24') && Loader::includeModule('intranet') && \CIntranetUtils::getPortalZone() === "ru")
+			!empty($idConnector) &&
+			self::isConnector($idConnector)
 		)
 		{
-			$result = true;
-		}
-
-		return $result;
-	}
-
-	/**
-	 * @return bool
-	 * @throws \Bitrix\Main\LoaderException
-	 */
-	public static function isLocationUkraine()
-	{
-		$result = false;
-
-		if(
-			(!Loader::includeModule('bitrix24') && Loader::includeModule('intranet') && \CIntranetUtils::getPortalZone() === "ua") ||
-			(Loader::includeModule('bitrix24') && \CBitrix24::getPortalZone() === 'ua')
-		)
-		{
-			$result = true;
-		}
-
-		return $result;
-	}
-
-	/**
-	 * List of connectors, available on the client. connector id => connector Name.
-	 * @param bool|integer $reduced To shorten the channel names.
-	 * @param bool $customConnectors Return custom connectors
-	 *
-	 * @return array.
-	 * @throws \Bitrix\Main\LoaderException
-	 */
-	public static function getListConnector($reduced = false, $customConnectors = true)
-	{
-		$connectors['livechat'] = Loc::getMessage('IMCONNECTOR_NAME_CONNECTOR_LIVECHAT');
-		$connectors['whatsappbytwilio'] = Loc::getMessage('IMCONNECTOR_NAME_CONNECTOR_WHATSAPPBYTWILIO');
-		// avito available only in Russia
-		if (self::isLocationRussia())
-		{
-			$connectors['avito'] = Loc::getMessage('IMCONNECTOR_NAME_CONNECTOR_AVITO');
-		}
-		// disabled in UA
-		if(!self::isLocationUkraine())
-		{
-			$connectors["yandex"] = Loc::getMessage('IMCONNECTOR_NAME_CONNECTOR_YANDEX');
-		}
-		$connectors['viber'] = Loc::getMessage('IMCONNECTOR_NAME_CONNECTOR_VIBER_BOT');
-		$connectors['telegrambot'] = Loc::getMessage('IMCONNECTOR_NAME_CONNECTOR_TELEGRAM_BOT');
-		$connectors['wechat'] = Loc::getMessage('IMCONNECTOR_NAME_CONNECTOR_WECHAT');
-		// disabled in UA
-		if(!self::isLocationUkraine())
-		{
-			$connectors["vkgroup"] = Loc::getMessage('IMCONNECTOR_NAME_CONNECTOR_VK_GROUP');
-		}
-		$connectors['facebook'] = Loc::getMessage('IMCONNECTOR_NAME_CONNECTOR_FACEBOOK_PAGE');
-		$connectors['facebookcomments'] = Loc::getMessage('IMCONNECTOR_NAME_CONNECTOR_FACEBOOK_COMMENTS_PAGE');
-		$connectors['fbinstagram'] = Loc::getMessage('IMCONNECTOR_NAME_CONNECTOR_FBINSTAGRAM');
-		//TODO: del
-		$connectors['instagram'] = Loc::getMessage('IMCONNECTOR_NAME_CONNECTOR_INSTAGRAM');
-		$connectors['network'] = Loc::getMessage('IMCONNECTOR_NAME_CONNECTOR_NETWORK');
-		//Virtual connectors.
-		$connectors['botframework.skype'] = Loc::getMessage('IMCONNECTOR_NAME_CONNECTOR_BOTFRAMEWORK_SKYPE');
-		$connectors['botframework.slack'] = Loc::getMessage('IMCONNECTOR_NAME_CONNECTOR_BOTFRAMEWORK_SLACK');
-		$connectors['botframework.kik'] = Loc::getMessage('IMCONNECTOR_NAME_CONNECTOR_BOTFRAMEWORK_KIK');
-		$connectors['botframework.groupme'] = Loc::getMessage('IMCONNECTOR_NAME_CONNECTOR_BOTFRAMEWORK_GROUPME');
-		$connectors['botframework.twilio'] = Loc::getMessage('IMCONNECTOR_NAME_CONNECTOR_BOTFRAMEWORK_TWILIO');
-		$connectors['botframework.msteams'] = Loc::getMessage('IMCONNECTOR_NAME_CONNECTOR_BOTFRAMEWORK_MSTEAMS');
-		$connectors['botframework.webchat'] = Loc::getMessage('IMCONNECTOR_NAME_CONNECTOR_BOTFRAMEWORK_WEBCHAT');
-		$connectors['botframework.emailoffice365'] = Loc::getMessage('IMCONNECTOR_NAME_CONNECTOR_BOTFRAMEWORK_EMAILOFFICE365');
-		$connectors['botframework.telegram'] = Loc::getMessage('IMCONNECTOR_NAME_CONNECTOR_BOTFRAMEWORK_TELEGRAM');
-		$connectors['botframework.facebookmessenger'] = Loc::getMessage('IMCONNECTOR_NAME_CONNECTOR_BOTFRAMEWORK_FACEBOOKMESSENGER');
-		$connectors['botframework.directline'] = Loc::getMessage('IMCONNECTOR_NAME_CONNECTOR_BOTFRAMEWORK_DIRECTLINE');
-
-		if($customConnectors === true)
-		{
-			$customConnectors = CustomConnectors::getListConnector();
-
-			if(!empty($customConnectors))
-				$connectors = array_merge($customConnectors, $connectors);
-		}
-
-		if(!empty($reduced))
-		{
-			if($reduced>5)
-				$number = $reduced;
-			else
-				$number = 30;
-
-			foreach ($connectors as $cell=>$connector)
+			$realIdConnector = self::getConnectorRealId($idConnector);
+			$className = 'Bitrix\\ImConnector\\Connectors\\' . $realIdConnector;
+			if(class_exists($className))
 			{
-				if(strlen($connector) > $number)
-					$connectors[$cell] = substr($connector, 0, ($number-3)) . '...';
+				$class = $className;
+			}
+		}
+
+		return new $class($idConnector);
+	}
+
+	/**
+	 * @param $connector
+	 * @return bool
+	 * @throws \Bitrix\Main\LoaderException
+	 */
+	protected static function isConnectorZoneEnable($connector): bool
+	{
+		$result = true;
+
+		if(!empty(Library::connectorPortalZoneLimit[$connector]))
+		{
+			$allow = Library::connectorPortalZoneLimit[$connector]['allow'];
+			$deny = Library::connectorPortalZoneLimit[$connector]['deny'];
+
+			$zone = '';
+			if(Loader::includeModule('bitrix24'))
+			{
+				$zone = \CBitrix24::getPortalZone();
+			}
+			elseif(Loader::includeModule('intranet'))
+			{
+				$portalZone = \CIntranetUtils::getPortalZone();
+
+				if(in_array($portalZone, Library::portalZoneNotCloud, false))
+				{
+					$zone = $portalZone;
+				}
+			}
+
+			if(
+				!empty($zone)
+			)
+			{
+				if(
+					(
+						!empty($deny) &&
+						in_array($zone, $deny, false)
+					) ||
+					(
+						!empty($allow) &&
+						!in_array($zone, $allow, false)
+					)
+				)
+				{
+					$result = false;
+				}
+			}
+		}
+
+		return $result;
+	}
+
+	/**
+	 * @param array $connectors
+	 * @return array
+	 * @throws \Bitrix\Main\LoaderException
+	 */
+	public static function removeConnectorsZonesPortal($connectors = []): array
+	{
+		foreach ($connectors as $connector => $name)
+		{
+			if(!self::isConnectorZoneEnable($connector))
+			{
+				unset($connectors[$connector]);
 			}
 		}
 
@@ -137,65 +123,158 @@ class Connector
 	}
 
 	/**
-	 * Real list of connectors, available on the client. connector id => connector Name.
+	 * @return array
+	 */
+	protected static function getListConnectorBase(): array
+	{
+		$serviceLocator = ServiceLocator::getInstance();
+
+		$connectors['livechat'] = Loc::getMessage('IMCONNECTOR_NAME_CONNECTOR_LIVECHAT');
+		$connectors['whatsappbytwilio'] = Loc::getMessage('IMCONNECTOR_NAME_CONNECTOR_WHATSAPPBYTWILIO');
+		$connectors['avito'] = Loc::getMessage('IMCONNECTOR_NAME_CONNECTOR_AVITO');
+		$connectors['viber'] = Loc::getMessage('IMCONNECTOR_NAME_CONNECTOR_VIBER_BOT');
+		$connectors['telegrambot'] = Loc::getMessage('IMCONNECTOR_NAME_CONNECTOR_TELEGRAM_BOT');
+		$connectors['imessage'] = Loc::getMessage('IMCONNECTOR_NAME_CONNECTOR_IMESSAGE');
+		if (WeChat::isEnabled())
+		{
+			$connectors['wechat'] = Loc::getMessage('IMCONNECTOR_NAME_CONNECTOR_WECHAT');
+		}
+		$connectors['yandex'] = Loc::getMessage('IMCONNECTOR_NAME_CONNECTOR_YANDEX');
+		$connectors['vkgroup'] = Loc::getMessage('IMCONNECTOR_NAME_CONNECTOR_VK_GROUP');
+		$connectors['ok'] = Loc::getMessage('IMCONNECTOR_NAME_CONNECTOR_OK');
+		$connectors['olx'] = Loc::getMessage('IMCONNECTOR_NAME_CONNECTOR_OLX');
+		$connectors['facebook'] = Loc::getMessage('IMCONNECTOR_NAME_CONNECTOR_FACEBOOK_PAGE');
+		$connectors['facebookcomments'] = Loc::getMessage('IMCONNECTOR_NAME_CONNECTOR_FACEBOOK_COMMENTS_PAGE');
+		$connectors[Library::ID_FBINSTAGRAMDIRECT_CONNECTOR] =
+			Loc::getMessage('IMCONNECTOR_NAME_CONNECTOR_FBINSTAGRAMDIRECT');
+		$connectors['fbinstagram'] = Loc::getMessage('IMCONNECTOR_NAME_CONNECTOR_FBINSTAGRAM');
+		$connectors['network'] = Loc::getMessage('IMCONNECTOR_NAME_CONNECTOR_NETWORK');
+		if (Loader::includeModule('notifications') && \Bitrix\Notifications\Limit::isAvailable())
+		{
+			$connectors[Notifications::CONNECTOR_ID] = Loc::getMessage('IMCONNECTOR_NAME_CONNECTOR_NOTIFICATIONS');
+		}
+
+		return $connectors;
+	}
+
+	/**
+	 * @param bool $virtual
+	 * @return array
+	 */
+	protected static function getListVirtualConnectorBase($virtual = false): array
+	{
+		if($virtual === true)
+		{
+			$connectors['botframework.skype'] = Loc::getMessage('IMCONNECTOR_NAME_CONNECTOR_BOTFRAMEWORK_SKYPE');
+			$connectors['botframework.slack'] = Loc::getMessage('IMCONNECTOR_NAME_CONNECTOR_BOTFRAMEWORK_SLACK');
+			$connectors['botframework.kik'] = Loc::getMessage('IMCONNECTOR_NAME_CONNECTOR_BOTFRAMEWORK_KIK');
+			$connectors['botframework.groupme'] = Loc::getMessage('IMCONNECTOR_NAME_CONNECTOR_BOTFRAMEWORK_GROUPME');
+			$connectors['botframework.twilio'] = Loc::getMessage('IMCONNECTOR_NAME_CONNECTOR_BOTFRAMEWORK_TWILIO');
+			$connectors['botframework.msteams'] = Loc::getMessage('IMCONNECTOR_NAME_CONNECTOR_BOTFRAMEWORK_MSTEAMS');
+			$connectors['botframework.webchat'] = Loc::getMessage('IMCONNECTOR_NAME_CONNECTOR_BOTFRAMEWORK_WEBCHAT');
+			$connectors['botframework.emailoffice365'] = Loc::getMessage('IMCONNECTOR_NAME_CONNECTOR_BOTFRAMEWORK_EMAILOFFICE365');
+			$connectors['botframework.telegram'] = Loc::getMessage('IMCONNECTOR_NAME_CONNECTOR_BOTFRAMEWORK_TELEGRAM');
+			$connectors['botframework.facebookmessenger'] = Loc::getMessage('IMCONNECTOR_NAME_CONNECTOR_BOTFRAMEWORK_FACEBOOKMESSENGER');
+			$connectors['botframework.directline'] = Loc::getMessage('IMCONNECTOR_NAME_CONNECTOR_BOTFRAMEWORK_DIRECTLINE');
+		}
+		else
+		{
+			$connectors['botframework'] = Loc::getMessage('IMCONNECTOR_NAME_CONNECTOR_BOTFRAMEWORK');
+		}
+
+		return $connectors;
+	}
+
+	/**
+	 * @return array
+	 */
+	protected static function getListCustomConnectorBase(): array
+	{
+		return CustomConnectors::getListConnector();
+	}
+
+	/**
 	 * @param bool|integer $reduced To shorten the channel names.
-	 * @param bool $customConnectors Return custom connectors
+	 * @param array $connectors
+	 * @return array
+	 */
+	protected static function getListReducedConnectorBase($reduced = false, $connectors = []): array
+	{
+		if(!empty($reduced))
+		{
+			if($reduced>5)
+			{
+				$number = $reduced;
+			}
+			else
+			{
+				$number = 30;
+			}
+
+			foreach ($connectors as $cell=>$connector)
+			{
+				if(mb_strlen($connector) > $number)
+				{
+					$connectors[$cell] = mb_substr($connector, 0, ($number - 3)).'...';
+				}
+			}
+		}
+
+		return $connectors;
+	}
+
+	/**
+	 * List of connectors, available on the client. connector id => connector Name.
+	 * @param bool|integer $reduced To shorten the channel names.
+	 * @param bool $customConnectorsEnable Return custom connectors
 	 *
 	 * @return array.
 	 * @throws \Bitrix\Main\LoaderException
 	 */
-	public static function getListConnectorReal($reduced = false, $customConnectors = true)
+	public static function getListConnector($reduced = false, $customConnectorsEnable = true): array
 	{
-		$connectors['livechat'] = Loc::getMessage('IMCONNECTOR_NAME_CONNECTOR_LIVECHAT');
-		$connectors['whatsappbytwilio'] = Loc::getMessage('IMCONNECTOR_NAME_CONNECTOR_WHATSAPPBYTWILIO');
-		// avito available only in Russia
-		if (self::isLocationRussia())
-		{
-			$connectors['avito'] = Loc::getMessage('IMCONNECTOR_NAME_CONNECTOR_AVITO');
-		}
-		// disabled in UA
-		if(!self::isLocationUkraine())
-		{
-			$connectors["yandex"] = Loc::getMessage('IMCONNECTOR_NAME_CONNECTOR_YANDEX');
-		}
-		$connectors['viber'] = Loc::getMessage('IMCONNECTOR_NAME_CONNECTOR_VIBER_BOT');
-		$connectors['telegrambot'] = Loc::getMessage('IMCONNECTOR_NAME_CONNECTOR_TELEGRAM_BOT');
-		$connectors['wechat'] = Loc::getMessage('IMCONNECTOR_NAME_CONNECTOR_WECHAT');
-		// disabled in UA
-		if(!self::isLocationUkraine())
-		{
-			$connectors["vkgroup"] = Loc::getMessage('IMCONNECTOR_NAME_CONNECTOR_VK_GROUP');
-		}
-		$connectors['facebook'] = Loc::getMessage('IMCONNECTOR_NAME_CONNECTOR_FACEBOOK_PAGE');
-		$connectors['facebookcomments'] = Loc::getMessage('IMCONNECTOR_NAME_CONNECTOR_FACEBOOK_COMMENTS_PAGE');
-		$connectors['fbinstagram'] = Loc::getMessage('IMCONNECTOR_NAME_CONNECTOR_FBINSTAGRAM');
-		//TODO: del
-		$connectors['instagram'] = Loc::getMessage('IMCONNECTOR_NAME_CONNECTOR_INSTAGRAM');
-		$connectors['network'] = Loc::getMessage('IMCONNECTOR_NAME_CONNECTOR_NETWORK');
-		//Virtual connectors.
-		$connectors['botframework'] = Loc::getMessage('IMCONNECTOR_NAME_CONNECTOR_BOTFRAMEWORK');
+		$connectors = self::getListConnectorBase();
+		$virtualConnector = self::getListVirtualConnectorBase(true);
+		$customConnectors = [];
 
-		if($customConnectors === true)
+		if($customConnectorsEnable === true)
 		{
-			$customConnectors = CustomConnectors::getListConnector();
-
-			if(!empty($customConnectors))
-				$connectors = array_merge($customConnectors, $connectors);
+			$customConnectors = self::getListCustomConnectorBase();
 		}
 
-		if(!empty($reduced))
-		{
-			if($reduced>5)
-				$number = $reduced;
-			else
-				$number = 30;
+		$connectors = array_merge($connectors, $virtualConnector, $customConnectors);
 
-			foreach ($connectors as $cell=>$connector)
-			{
-				if(strlen($connector) > $number)
-					$connectors[$cell] = substr($connector, 0, ($number-3)) . '...';
-			}
+		$connectors = self::removeConnectorsZonesPortal($connectors);
+
+		$connectors = self::getListReducedConnectorBase($reduced, $connectors);
+
+		return $connectors;
+	}
+
+	/**
+	 * Real list of connectors, available on the client. connector id => connector Name.
+	 * @param bool|integer $reduced To shorten the channel names.
+	 * @param bool $customConnectorsEnable Return custom connectors
+	 *
+	 * @return array.
+	 * @throws \Bitrix\Main\LoaderException
+	 */
+	public static function getListConnectorReal($reduced = false, $customConnectorsEnable = true): array
+	{
+		$connectors = self::getListConnectorBase();
+		$virtualConnector = self::getListVirtualConnectorBase(false);
+		$customConnectors = [];
+
+		if($customConnectorsEnable === true)
+		{
+			$customConnectors = self::getListCustomConnectorBase();
 		}
+
+		$connectors = array_merge($connectors, $virtualConnector, $customConnectors);
+
+		$connectors = self::removeConnectorsZonesPortal($connectors);
+
+		$connectors = self::getListReducedConnectorBase($reduced, $connectors);
 
 		return $connectors;
 	}
@@ -208,8 +287,8 @@ class Connector
 	 */
 	public static function getListConnectorActive($customConnectors = true)
 	{
-		$connectors = strtolower(Option::get(Library::MODULE_ID, "list_connector"));
-		$connectors = explode(",", $connectors);
+		$connectors = mb_strtolower(Option::get(Library::MODULE_ID, 'list_connector'));
+		$connectors = explode(',', $connectors);
 
 		if($customConnectors === true)
 			$connectors = array_merge(CustomConnectors::getListConnectorId(), $connectors);
@@ -217,6 +296,11 @@ class Connector
 		return $connectors;
 	}
 
+	/**
+	 * TODO: Not relevant
+	 *
+	 * @return array
+	 */
 	public static function getListConnectorNoServer()
 	{
 		return array_merge(Library::$noServerConnectors, CustomConnectors::getListConnectorId());
@@ -237,46 +321,35 @@ class Connector
 	 * @return array.
 	 * @throws \Bitrix\Main\LoaderException
 	 */
-	public static function getListComponentConnector()
+	public static function getListComponentConnector(): array
 	{
-		$components = array(
-			'livechat' => 'bitrix:imconnector.livechat',
-			'whatsappbytwilio' => 'bitrix:imconnector.whatsappbytwilio',
-		);
-
-		// avito available only in Russia
-		if (!Loader::includeModule('bitrix24') || \CBitrix24::getPortalZone() === 'ru')
-		{
-			$components['avito'] = 'bitrix:imconnector.avito';
-		}
-
-		// disabled in b24.ua
-		if(!Loader::includeModule('bitrix24') || \CBitrix24::getPortalZone() !== 'ua')
-			$components["yandex"] = 'bitrix:imconnector.yandex';
-
-		$components = array_merge($components, array(
-			'viber' => 'bitrix:imconnector.viber',
-			'telegrambot' => 'bitrix:imconnector.telegrambot',
-			'wechat' => 'bitrix:imconnector.wechat'
-		));
-
-		// disabled in b24.ua
-		if(!Loader::includeModule('bitrix24') || \CBitrix24::getPortalZone() !== 'ua')
-			$components["vkgroup"] = 'bitrix:imconnector.vkgroup';
-
-		$components = array_merge($components, array(
-			'facebook' => 'bitrix:imconnector.facebook',
-			'facebookcomments' => 'bitrix:imconnector.facebookcomments',
-			'fbinstagram' => 'bitrix:imconnector.fbinstagram',
-			'instagram' => 'bitrix:imconnector.instagram',
-			'network' => 'bitrix:imconnector.network',
-			'botframework' => 'bitrix:imconnector.botframework',
-		));
+		$components['livechat'] = 'bitrix:imconnector.livechat';
+		$components['whatsappbytwilio'] = 'bitrix:imconnector.whatsappbytwilio';
+		$components['avito'] = 'bitrix:imconnector.avito';
+		$components['viber'] = 'bitrix:imconnector.viber';
+		$components['telegrambot'] = 'bitrix:imconnector.telegrambot';
+		$components['wechat'] = 'bitrix:imconnector.wechat';
+		$components['imessage'] = 'bitrix:imconnector.imessage';
+		$components['yandex'] = 'bitrix:imconnector.yandex';
+		$components['vkgroup'] = 'bitrix:imconnector.vkgroup';
+		$components['ok'] = 'bitrix:imconnector.ok';
+		$components['olx'] = 'bitrix:imconnector.olx';
+		$components['facebook'] = 'bitrix:imconnector.facebook';
+		$components['facebookcomments'] = 'bitrix:imconnector.facebookcomments';
+		$components[Library::ID_FBINSTAGRAMDIRECT_CONNECTOR] = 'bitrix:imconnector.fbinstagramdirect';
+		$components['fbinstagram'] = 'bitrix:imconnector.fbinstagram';
+		$components['network'] = 'bitrix:imconnector.network';
+		$components['botframework'] = 'bitrix:imconnector.botframework';
+		$components[Notifications::CONNECTOR_ID] = 'bitrix:imconnector.notifications';
 
 		$customComponents = CustomConnectors::getListComponentConnector();
 
 		if(!empty($customComponents))
+		{
 			$components = array_merge($customComponents, $components);
+		}
+
+		$components = self::removeConnectorsZonesPortal($components);
 
 		return $components;
 	}
@@ -383,14 +456,16 @@ class Connector
 	 * @param string $id ID connector
 	 * @return bool
 	 */
-	public static function isNeedSignature($id)
+	public static function isNeedSignature($id): bool
 	{
 		$listNotNeedSignature = Library::$listNotNeedSignature;
 
 		$customNotNeedSignature = CustomConnectors::getListNotNeedSignature();
 
 		if(!empty($customNotNeedSignature))
+		{
 			$listNotNeedSignature = array_unique(array_merge($customNotNeedSignature, $listNotNeedSignature));
+		}
 
 		return !in_array($id, $listNotNeedSignature);
 	}
@@ -585,13 +660,13 @@ class Connector
 	 */
 	public static function getConnectorRealId($id)
 	{
-		$id = strtolower($id);
+		$id = mb_strtolower($id);
 
-		$positionSeparator = strpos($id, '.');
+		$positionSeparator = mb_strpos($id, '.');
 
 		if($positionSeparator != false)
 		{
-			$id = substr($id, 0, $positionSeparator);
+			$id = mb_substr($id, 0, $positionSeparator);
 		}
 
 		return $id;
@@ -603,7 +678,6 @@ class Connector
 	 * @param string $id ID connector.
 	 * @param bool $local Not to check on a remote server.
 	 * @return bool
-	 * @throws \Bitrix\Main\ArgumentNullException
 	 */
 	public static function isConnector($id, $local = false)
 	{
@@ -611,8 +685,7 @@ class Connector
 
 		$connectors = self::getListConnectorActive();
 
-		/*$noServerConnectors = self::getListConnectorNoServer();*/
-		if(in_array($id, $connectors)/* && (in_array($id, $noServerConnectors) || $local || Output::isConnector($id)->isSuccess())*/)
+		if(in_array($id, $connectors))
 			return true;
 		else
 			return false;
@@ -622,12 +695,10 @@ class Connector
 	 * Returns the domain by default of the current client.
 	 *
 	 * @return string
-	 * @throws \Bitrix\Main\ArgumentNullException
-	 * @throws \Bitrix\Main\ArgumentOutOfRangeException
 	 */
 	public static function getDomainDefault()
 	{
-		$uriOption = Option::get(Library::MODULE_ID, "uri_client");
+		$uriOption = Option::get(Library::MODULE_ID, 'uri_client');
 
 		if(!empty($uriOption))
 		{
@@ -644,63 +715,6 @@ class Connector
 
 		return $uri;
 	}
-
-	/**
-	 * Returns information about all connected connectors specific open line.
-	 *
-	 * @param string $id ID open line.
-	 * @return array.
-	 */
-	/*public static function infoConnectorsLine($id)
-	{
-		$result = array();
-		$cache = Cache::createInstance();
-
-		if ($cache->initCache(Library::CACHE_TIME_INFO_CONNECTORS_LINE, $id, Library::CACHE_DIR_INFO_CONNECTORS_LINE))
-		{
-			$result = $cache->getVars();
-		}
-		elseif ($cache->startDataCache())
-		{
-			$rawInfo = Output::infoConnectorsLine($id);
-
-			$infoConnectors = $rawInfo->getData();
-
-			if(!empty($infoConnectors))
-			{
-				$result = array();
-
-				$connectors = self::getListActiveConnector();
-
-				foreach ($connectors as $idConnector=>$value)
-				{
-					if(!empty($infoConnectors[$idConnector]))
-					{
-						$result[$idConnector] = $infoConnectors[$idConnector];
-						if(empty($result[$idConnector]['name']))
-							$result[$idConnector]['name'] = $value;
-
-						$result[$idConnector]['connector_name'] = $value;
-					}
-				}
-
-				if(empty($result))
-				{
-					$cache->abortDataCache();
-				}
-				else
-				{
-					$cache->endDataCache($result);
-				}
-			}
-			else
-			{
-				$cache->abortDataCache();
-			}
-		}
-
-		return $result;
-	}*/
 
 	/**
 	 * Returns information about all connected connectors specific open line.
@@ -845,28 +859,31 @@ class Connector
 	}
 
 	/**
-	 * Return map "connector id" - "icon name" for UI-lib icon classes
+	 * Return map 'connector id' - 'icon name' for UI-lib icon classes
 	 * Not an actual connector list - it's just a list of various names of actual connectors
 	 *
 	 * @return array
 	 */
-	public static function getConnectorIconMap()
+	public static function getConnectorIconMap(): array
 	{
-		return array(
+		return [
 			'livechat' => 'livechat',
 			'yandex' => 'ya-dialogs',
 			'viber' => 'viber',
 			'telegrambot' => 'telegram',
 			'telegram' => 'telegram',
+			'imessage' => 'imessage', //apple
 			'vkgroup' => 'vk',
 			'vkgrouporder' => 'vk-order',
+			'ok' => 'ok',
 			'facebook' => 'fb',
+			Library::ID_FBINSTAGRAMDIRECT_CONNECTOR => 'instagram-direct',
 			'wechat' => 'wechat',
 			'facebookcomments' => 'fb-comments',
 			'facebookmessenger' => 'fb-messenger',
-			'instagram' => 'instagram',
 			'fbinstagram' => 'instagram-fb',
 			'network' => 'bitrix24',
+			Notifications::CONNECTOR_ID => 'bitrix24-sms',
 			'botframework' => 'microsoft',
 			'skypebot' => 'skype',
 			'skype' => 'skype',
@@ -879,6 +896,7 @@ class Connector
 			'msteams' => 'envelope',
 			'whatsappbytwilio' => 'whatsapp',
 			'avito' => 'avito',
+			'olx' => 'olx',
 			'directline' => 'directline',
 			'botframework.skype' => 'skype',
 			'botframework.slack' => 'slack',
@@ -891,7 +909,7 @@ class Connector
 			'botframework.webchat' => 'webchat',
 			'botframework.msteams' => 'envelope',
 			'botframework.directline' => 'directline'
-		);
+		];
 	}
 
 	/**
@@ -925,7 +943,7 @@ class Connector
 	 */
 	public static function initIconCss()
 	{
-		\Bitrix\Main\UI\Extension::load("ui.icons");
+		\Bitrix\Main\UI\Extension::load('ui.icons');
 
 		$iconStyle = self::getAdditionalStyles();
 
@@ -945,7 +963,7 @@ class Connector
 		$style = '';
 		$cssFile = (file_exists($_SERVER['DOCUMENT_ROOT'].'/bitrix/js/ui/icons/service/ui.icons.service.css') ?
 			'/bitrix/js/ui/icons/service/ui.icons.service.css' : '/bitrix/js/ui/icons/ui.icons.css');
-		$cssFilePath = $_SERVER["DOCUMENT_ROOT"] . $cssFile;
+		$cssFilePath = $_SERVER['DOCUMENT_ROOT'] . $cssFile;
 		$cssFile = file_get_contents($cssFilePath);
 
 		if (!empty($cssFile))
@@ -978,7 +996,7 @@ class Connector
 	 */
 	public static function initIconDisabledCss()
 	{
-		\Bitrix\Main\UI\Extension::load("ui.icons");
+		\Bitrix\Main\UI\Extension::load('ui.icons');
 
 		$iconStyle = CustomConnectors::getStyleCssDisabled();
 
@@ -1038,12 +1056,19 @@ class Connector
 						case 'network':
 							if(Loader::includeModule(Library::MODULE_ID_OPEN_LINES))
 							{
-								$network = new Network();
-								$resultRegister = $network->registerConnector($line, $params);
-								if (!$resultRegister)
-									$result->addError(new Error(Loc::getMessage('IMCONNECTOR_FAILED_TO_ADD_CONNECTOR'), Library::ERROR_FAILED_TO_ADD_CONNECTOR, __METHOD__, $connector));
+								$output = new Output($connector, $line);
+								$resultRegister = $output->register($params);
+
+								if ($resultRegister->isSuccess())
+								{
+									$status->setData($resultRegister->getResult());
+								}
 								else
-									$status->setData($resultRegister);
+								{
+									$result->addError(new Error(Loc::getMessage('IMCONNECTOR_FAILED_TO_ADD_CONNECTOR'), Library::ERROR_FAILED_TO_ADD_CONNECTOR, __METHOD__, $connector));
+									$result->addErrors($resultRegister->getErrors());
+								}
+
 							}
 							else
 							{
@@ -1053,6 +1078,7 @@ class Connector
 
 						case 'telegrambot':
 						case 'botframework':
+						case 'ok':
 							$output = new Output($connector, $line);
 							$saved = $output->saveSettings($params);
 
@@ -1087,9 +1113,9 @@ class Connector
 
 						case 'vkgroup':
 						case 'facebook':
+						case Library::ID_FBINSTAGRAMDIRECT_CONNECTOR:
 						case 'facebookcomments':
-						case 'fbinstagram':
-						case 'instagram':
+						case Library::ID_FBINSTAGRAM_CONNECTOR:
 						default:
 							$result->addError(new Error(Loc::getMessage('IMCONNECTOR_FEATURE_IS_NOT_SUPPORTED'), Library::ERROR_FEATURE_IS_NOT_SUPPORTED, __METHOD__, $connector));
 							break;
@@ -1169,16 +1195,19 @@ class Connector
 						case 'network':
 							if(Loader::includeModule(Library::MODULE_ID_OPEN_LINES))
 							{
-								$network = new Network();
-								if (!$network->updateConnector($line, $params))
-								{
-									$result->addError(new Error(Loc::getMessage('IMCONNECTOR_FAILED_TO_UPDATE_CONNECTOR'), Library::ERROR_FAILED_TO_UPDATE_CONNECTOR, __METHOD__, $connector));
-								}
-								else
+								$output = new Output($connector, $line);
+								$resultUpdate = $output->update($params);
+
+								if ($resultUpdate->isSuccess())
 								{
 									$dataStatus = $status->getData();
 									$dataStatus = array_merge($dataStatus, $params);
 									$status->setData($dataStatus);
+								}
+								else
+								{
+									$result->addError(new Error(Loc::getMessage('IMCONNECTOR_FAILED_TO_UPDATE_CONNECTOR'), Library::ERROR_FAILED_TO_UPDATE_CONNECTOR, __METHOD__, $connector));
+									$result->addErrors($resultUpdate->getErrors());
 								}
 							}
 							else
@@ -1195,6 +1224,7 @@ class Connector
 
 						case 'telegrambot':
 						case 'botframework':
+						case 'ok':
 							$output = new Output($connector, $line);
 							$saved = $output->saveSettings($params);
 
@@ -1234,9 +1264,9 @@ class Connector
 
 						case 'vkgroup':
 						case 'facebook':
+						case Library::ID_FBINSTAGRAMDIRECT_CONNECTOR:
 						case 'facebookcomments':
-						case 'fbinstagram':
-						case 'instagram':
+						case Library::ID_FBINSTAGRAM_CONNECTOR:
 						default:
 							$result->addError(new Error(Loc::getMessage('IMCONNECTOR_FEATURE_IS_NOT_SUPPORTED'), Library::ERROR_FEATURE_IS_NOT_SUPPORTED, __METHOD__, $connector));
 							break;
@@ -1311,9 +1341,18 @@ class Connector
 						case 'network':
 							if(Loader::includeModule(Library::MODULE_ID_OPEN_LINES))
 							{
-								$network = new Network();
-								if (!$network->unRegisterConnector($line))
-									$result->addError(new Error(Loc::getMessage('IMCONNECTOR_FAILED_TO_DELETE_CONNECTOR'), Library::ERROR_FAILED_TO_DELETE_CONNECTOR, __METHOD__, $connector));
+								$output = new Output($connector, $line);
+								$resultDelete = $output->delete();
+								if (!$resultDelete->isSuccess())
+								{
+									$result->addError(new Error(
+										Loc::getMessage('IMCONNECTOR_FAILED_TO_DELETE_CONNECTOR'),
+										Library::ERROR_FAILED_TO_DELETE_CONNECTOR,
+										__METHOD__,
+										$connector
+									));
+									$result->addErrors($resultDelete->getErrors());
+								}
 							}
 							else
 							{
@@ -1322,14 +1361,16 @@ class Connector
 							break;
 
 						case 'facebook':
+						case Library::ID_FBINSTAGRAMDIRECT_CONNECTOR:
 						case 'vkgroup':
+						case 'ok':
 						case 'telegrambot':
 						case 'botframework':
 						case 'facebookcomments':
-						case 'fbinstagram':
-						case 'instagram':
+						case Library::ID_FBINSTAGRAM_CONNECTOR:
 						case 'avito':
 						case 'wechat':
+						case 'imessage':
 							$output = new Output($connector, $line);
 							$rawDelete = $output->deleteConnector();
 							if(!$rawDelete->isSuccess())
@@ -1362,11 +1403,6 @@ class Connector
 	 * @param array $user
 	 * @param string $connector
 	 * @return Result
-	 * @throws \Bitrix\Main\ArgumentException
-	 * @throws \Bitrix\Main\ArgumentNullException
-	 * @throws \Bitrix\Main\ArgumentOutOfRangeException
-	 * @throws \Bitrix\Main\ObjectPropertyException
-	 * @throws \Bitrix\Main\SystemException
 	 */
 	public static function getUserByUserCode(array $user, string $connector): Result
 	{
@@ -1386,6 +1422,7 @@ class Connector
 			$raw = UserTable::getList([
 					'select' => [
 						'ID',
+						'MD5' => 'UF_CONNECTOR_MD5'
 					],
 					'filter' => [
 						'=EXTERNAL_AUTH_ID' => Library::NAME_EXTERNAL_USER,
@@ -1401,15 +1438,140 @@ class Connector
 			}
 			else
 			{
-				$result->addError(new Error(Loc::getMessage(
-					'IMCONNECTOR_PROXY_NO_USER_IM'),
-					Library::ERROR_CONNECTOR_PROXY_NO_USER_IM,
-					__METHOD__,
-					$user
-				));
+				//user record does not yet exist, it will be created on next step.
+				$result->addError(new \Bitrix\Main\Error('User does not yet exist'));
 			}
 		}
 
 		return $result;
+	}
+
+	/**
+	 * Get reply limit for connector, if the limit exists.
+	 *
+	 * @param string $connectorId Connector ID.
+	 * @return array|null
+	 * @throws \Bitrix\Main\ObjectException
+	 */
+	public static function getReplyLimit(string $connectorId): ?array
+	{
+		$result = null;
+
+		if (
+			isset(Library::TIME_LIMIT_RESTRICTIONS[$connectorId])
+			&& Library::TIME_LIMIT_RESTRICTIONS[$connectorId]['LIMIT_START_DATE'] < (new DateTime())->getTimestamp()
+		)
+		{
+			$result = Library::TIME_LIMIT_RESTRICTIONS[$connectorId];
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Returns true if we need to delete block after incoming message.
+	 *
+	 * @param string $connectorId
+	 * @return bool
+	 */
+	public static function isNeedToAutoDeleteBlock(string $connectorId): bool
+	{
+		if (in_array($connectorId, Library::AUTO_DELETE_BLOCK, true))
+		{
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Prepares attachments data to send.
+	 *
+	 * @param array $message
+	 * @return array|null
+	 * @throws \Bitrix\Main\ArgumentException
+	 * @throws \Bitrix\Main\ArgumentNullException
+	 * @throws \Bitrix\Main\ArgumentOutOfRangeException
+	 */
+	public static function sendMessageProcessing(array $message): array
+	{
+		$richData = [];
+		if (!empty($message['message']['attachments']) && is_array($message['message']['attachments']))
+		{
+			foreach ($message['message']['attachments'] as $attachment)
+			{
+				$attachment = \Bitrix\Main\Web\Json::decode($attachment);
+				if (isset($attachment['BLOCKS']) && is_array($attachment['BLOCKS']))
+				{
+					foreach ($attachment['BLOCKS'] as $block)
+					{
+						if (isset($block['RICH_LINK']) && is_array($block['RICH_LINK']))
+						{
+							foreach ($block['RICH_LINK'] as $richData)
+							{
+								if (!empty($richData))
+								{
+									if ($richData['LINK'])
+									{
+										$richData['richData']['url'] = $richData['LINK'];
+									}
+
+									if ($richData['NAME'])
+									{
+										$richData['richData']['title'] = $richData['NAME'];
+									}
+
+									if ($richData['DESC'])
+									{
+										$richData['richData']['description'] = $richData['DESC'];
+									}
+
+									if ($richData['PREVIEW'])
+									{
+										$uri = new Uri($richData['PREVIEW']);
+										if ($uri->getHost())
+										{
+											$richData['richData']['image'] = $richData['PREVIEW'];
+										}
+										else
+										{
+											$richData['richData']['image'] = self::getDomainDefault() .'/'. $richData['PREVIEW'];
+										}
+									}
+									elseif($richData['EXTRA_IMAGE'])
+									{
+										$richData['richData']['image'] = $richData['EXTRA_IMAGE'];
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		$message['message']['attachments'] = $richData;
+
+		return $message;
+	}
+
+	/**
+	 * Temporary method to check if WeChat can be shown for the portal, based on "wechat_enabled" option,
+	 * which has been set in the updater, only if portal has active WeChat connection.
+	 * Remove this method and its usage when WeChat will be available again.
+	 * https://helpdesk.bitrix24.com/open/10225886/
+	 *
+	 * @return bool
+	 * @throws \Bitrix\Main\ArgumentNullException
+	 * @throws \Bitrix\Main\ArgumentOutOfRangeException
+	 */
+	private static function isWeChatEnabled(): bool
+	{
+		if (Option::get(Library::MODULE_ID, 'wechat_enabled'))
+		{
+			return true;
+		}
+
+		return false;
 	}
 }

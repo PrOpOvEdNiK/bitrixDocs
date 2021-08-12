@@ -2,9 +2,11 @@
 if(!CModule::IncludeModule('rest'))
 	return;
 
+use Bitrix\Main\Loader;
 use Bitrix\Voximplant\Security;
 use Bitrix\Voximplant\Rest;
 use Bitrix\Voximplant\Integration;
+use Bitrix\Voximplant\StatisticTable;
 
 \Bitrix\Main\Localization\Loc::loadMessages(__FILE__);
 
@@ -119,7 +121,8 @@ class CVoxImplantRestService extends IRestService
 					Rest\Helper::EVENT_START_EXTERNAL_CALLBACK => array('voximplant', 'onExternalCallBackStart', array(__CLASS__, 'filterApp'), array("category" => \Bitrix\Rest\Sqs::CATEGORY_TELEPHONY)),
 				),
 				CRestUtil::PLACEMENTS => array(
-					Rest\Helper::PLACEMENT_CALL_CARD => array()
+					Rest\Helper::PLACEMENT_CALL_CARD => array(),
+					Bitrix\Voximplant\Integration\Rest\AppPlacement::ANALYTICS_MENU => array()
 				)
 			),
 			'call' => array(
@@ -234,7 +237,7 @@ class CVoxImplantRestService extends IRestService
 
 		$viSip = new CVoxImplantSip();
 		$configId = $viSip->Add(Array(
-			'TYPE' => strtolower($arParams['TYPE']),
+			'TYPE' => mb_strtolower($arParams['TYPE']),
 			'PHONE_NAME' => $arParams['TITLE'],
 			'SERVER' => $arParams['SERVER'],
 			'LOGIN' => $arParams['LOGIN'],
@@ -517,17 +520,30 @@ class CVoxImplantRestService extends IRestService
 					switch ($field)
 					{
 						case 'CALL_START_DATE':
-							$arFilter[$key] = CRestUtil::unConvertDateTime($value);
+							$value = CRestUtil::unConvertDateTime($value);
 							break;
-
 						case 'CALL_TYPE':
-							$arFilter[$operation.'INCOMING'] = $value;
-							unset($arFilter[$key]);
+							$field = 'INCOMING';
 							break;
-
-						default:
+						case 'CRM_BINDINGS.ENTITY_TYPE':
+						case 'CRM_BINDINGS.ENTITY_ID':
+							if ($operation == '')
+							{
+								$operation = '=';
+							}
 							break;
 					}
+					if($operation == '' && StatisticTable::getEntity()->hasField($field))
+					{
+						$operation = '=';
+					}
+
+					$newKey = $operation . $field;
+					if($key != $newKey)
+					{
+						unset($arFilter[$key]);
+					}
+					$arFilter[$newKey] = $value;
 				}
 			}
 			else
@@ -666,8 +682,8 @@ class CVoxImplantRestService extends IRestService
 		);
 
 		$cursor = CUser::GetList(
-			($sort_by = ''),
-			($dummy = ''),
+			'',
+			'',
 			array('ID' => join(' | ', $userIds)),
 			$arExtParams
 		);
@@ -750,8 +766,15 @@ class CVoxImplantRestService extends IRestService
 	 */
 	public static function getAuthorization($params, $n, $server)
 	{
-		if ($server->getAuthType() !== \Bitrix\Rest\SessionAuth\Auth::AUTH_TYPE)
+		$allowedAuthTypes = [\Bitrix\Rest\SessionAuth\Auth::AUTH_TYPE => true];
+		if(Loader::includeModule('im') && class_exists('\Bitrix\Im\Call\Auth'))
+		{
+			$allowedAuthTypes[\Bitrix\Im\Call\Auth::AUTH_TYPE] = true;
+		}
+		if (!isset($allowedAuthTypes[$server->getAuthType()]))
+		{
 			throw new \Bitrix\Rest\RestException("This method is only available for internal usage.", "WRONG_AUTH_TYPE", \CRestServer::STATUS_FORBIDDEN);
+		}
 
 		$userId = static::getCurrentUserId();
 		$viUser = new CVoxImplantUser();
@@ -776,8 +799,15 @@ class CVoxImplantRestService extends IRestService
 	 */
 	public static function signOneTimeKey($params, $n, $server)
 	{
-		if ($server->getAuthType() !== \Bitrix\Rest\SessionAuth\Auth::AUTH_TYPE)
+		$allowedAuthTypes = [\Bitrix\Rest\SessionAuth\Auth::AUTH_TYPE => true];
+		if(Loader::includeModule('im') && class_exists('\Bitrix\Im\Call\Auth'))
+		{
+			$allowedAuthTypes[\Bitrix\Im\Call\Auth::AUTH_TYPE] = true;
+		}
+		if (!isset($allowedAuthTypes[$server->getAuthType()]))
+		{
 			throw new \Bitrix\Rest\RestException("This method is only available for internal usage.", "WRONG_AUTH_TYPE", \CRestServer::STATUS_FORBIDDEN);
+		}
 
 		$voxMain = new CVoxImplantMain(static::getCurrentUserId());
 		$result = $voxMain->GetOneTimeKey($_POST['KEY']);
@@ -797,8 +827,15 @@ class CVoxImplantRestService extends IRestService
 	 */
 	public static function onAuthorizationError($params, $n, $server)
 	{
-		if ($server->getAuthType() !== \Bitrix\Rest\SessionAuth\Auth::AUTH_TYPE)
+		$allowedAuthTypes = [\Bitrix\Rest\SessionAuth\Auth::AUTH_TYPE => true];
+		if(Loader::includeModule('im') && class_exists('\Bitrix\Im\Call\Auth'))
+		{
+			$allowedAuthTypes[Bitrix\Im\Call\Auth::AUTH_TYPE] = true;
+		}
+		if (!isset($allowedAuthTypes[$server->getAuthType()]))
+		{
 			throw new \Bitrix\Rest\RestException("This method is only available for internal usage.", "WRONG_AUTH_TYPE", \CRestServer::STATUS_FORBIDDEN);
+		}
 
 		$voxMain = new CVoxImplantMain(static::getCurrentUserId());
 		$voxMain->ClearUserInfo();
@@ -1258,10 +1295,20 @@ class CVoxImplantRestService extends IRestService
 		if(!in_array($params['TYPE'], CVoxImplantMain::getCallTypes()))
 			throw new \Bitrix\Rest\RestException('Unknown TYPE');
 
-		if(isset($params['CALL_START_DATE']))
-			$startDate = new \Bitrix\Main\Type\DateTime(CRestUtil::unConvertDateTime($params['CALL_START_DATE']));
+		if(isset($params['CALL_START_DATE']) && $params['CALL_START_DATE'] !== '')
+		{
+			$parsedDate = CRestUtil::unConvertDateTime($params['CALL_START_DATE']);
+			if ($parsedDate === false)
+			{
+				throw new \Bitrix\Rest\RestException('CALL_START_DATE should be in the ISO-8601 format');
+			}
+
+			$startDate = new \Bitrix\Main\Type\DateTime($parsedDate);
+		}
 		else
+		{
 			$startDate = new \Bitrix\Main\Type\DateTime();
+		}
 
 		$result = Rest\Helper::registerExternalCall(array(
 			'USER_ID' => $userId,
@@ -1282,6 +1329,18 @@ class CVoxImplantRestService extends IRestService
 
 		if(!$result->isSuccess())
 			throw new \Bitrix\Rest\RestException(implode('; ', $result->getErrorMessages()));
+
+		$code = $row['CODE'] ? : 'webHook' . $server->getPasswordId();
+		if ($code)
+		{
+			AddEventToStatFile(
+				'voximplant',
+				'callRegister',
+				uniqid($code, true),
+				$code,
+				'type' . $params['TYPE']
+			);
+		}
 
 		return $result->getData();
 	}
@@ -1409,9 +1468,9 @@ class CVoxImplantRestService extends IRestService
 			{
 				throw new \Bitrix\Rest\RestException('MESSAGES['.$k.'][SIDE] should be either Client or User');
 			}
-			if((int)$messageFields['START_TIME'] <= 0)
+			if((int)$messageFields['START_TIME'] < 0)
 			{
-				throw new \Bitrix\Rest\RestException('MESSAGES['.$k.'][START_TIME] should be greater than zero');
+				throw new \Bitrix\Rest\RestException('MESSAGES['.$k.'][START_TIME] should be greater or equal to zero');
 			}
 			if((int)$messageFields['STOP_TIME'] <= 0)
 			{
@@ -1486,6 +1545,17 @@ class CVoxImplantRestService extends IRestService
 		if(!$result->isSuccess())
 			throw new \Bitrix\Rest\RestException(implode('; ', $result->getErrorMessages()));
 
+		$code = $row['CODE'] ? : 'webHook' . $server->getPasswordId();
+		if ($code)
+		{
+			AddEventToStatFile(
+				'voximplant',
+				'addExternalLine',
+				uniqid($code, true),
+				$code,
+				'type' . $params['TYPE']
+			);
+		}
 		return $result->getData();
 	}
 
@@ -1575,6 +1645,38 @@ class CVoxImplantRestService extends IRestService
 		/** @var \Bitrix\Main\Event $event */
 		$event = $arParams[0];
 		$eventData = $event->getParameters();
+
+		$eventName = mb_strtoupper($arHandler['EVENT_NAME']);
+		$events = [
+			mb_strtoupper(Rest\Helper::EVENT_START_EXTERNAL_CALL),
+			mb_strtoupper(Rest\Helper::EVENT_START_EXTERNAL_CALLBACK)
+		];
+		if (in_array($eventName, $events, true))
+		{
+			if ((int) $arHandler['APP_ID'] > 0)
+			{
+				$app = \Bitrix\Rest\AppTable::getByClientId((int) $arHandler['APP_ID']);
+				if ($app['CODE'])
+				{
+					$code = $app['CODE'];
+				}
+				else
+				{
+					$code = 'app_'.$arHandler['ID'];
+				}
+			}
+			else
+			{
+				$code = 'event_'.$arHandler['ID'];
+			}
+
+			AddEventToStatFile(
+				'voximplant',
+				'event' . $eventName,
+				uniqid($code, true),
+				$code
+			);
+		}
 
 		if($eventData['APP_ID'] == $arHandler['APP_ID'])
 		{

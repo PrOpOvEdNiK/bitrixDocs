@@ -104,7 +104,7 @@ class Livefeed extends Landing\Source\DataLoader
 
 		$result[] = [
 			'SOURCE_ID' => 'livefeed',
-			'TITLE' => Loc::getMessage('SONET_LANDING_DYNAMIC_BLOCK_LIVEFEED_TITLE'),
+			'TITLE' => Loc::getMessage('SONET_LANDING_DYNAMIC_BLOCK_LIVEFEED_TITLE2'),
 			'TYPE' => Landing\Source\Selector::SOURCE_TYPE_COMPONENT,
 			'SETTINGS' => [
 				'COMPONENT_NAME' => 'bitrix:socialnetwork.landing.livefeed.selector',
@@ -521,7 +521,7 @@ class Livefeed extends Landing\Source\DataLoader
 						$inlineAttachmentsList[] = [
 							'ID' => $value,
 							'KEY' => ($matches[1][$key] === 'n' ? 'OBJECT_ID' : 'ID'),
-							'POSITION' => strpos($detailTextInOneString, $matches[0][$key])
+							'POSITION' => mb_strpos($detailTextInOneString, $matches[0][$key])
 						];
 					}
 				}
@@ -553,12 +553,7 @@ class Livefeed extends Landing\Source\DataLoader
 
 				$imgPattern = '/\[IMG\s+WIDTH\s*=\s*\d+\s+HEIGHT\s*=\s*\d+\s*\](.+?)\[\/IMG\]/is'.BX_UTF_PCRE_MODIFIER;
 				$videoPattern = '/\[VIDEO[^\]]*](.+?)\[\/VIDEO\]/is'.BX_UTF_PCRE_MODIFIER;
-
-				$detailText = preg_replace(
-					'/\[USER\s*=\s*([^\]]*)\](.+?)\[\/USER\]/is'.BX_UTF_PCRE_MODIFIER,
-					'\\2',
-					$row["DETAIL_TEXT"]
-				);
+				$detailText = \Bitrix\Socialnetwork\Helper\Mention::clear($row['DETAIL_TEXT']);
 
 				if (
 					preg_match_all($imgPattern, $detailText, $matches)
@@ -568,7 +563,7 @@ class Livefeed extends Landing\Source\DataLoader
 				{
 					if (
 						$diskPicturePosition === false
-						|| strpos($detailTextInOneString, $matches[0][0]) < $diskPicturePosition
+						|| mb_strpos($detailTextInOneString, $matches[0][0]) < $diskPicturePosition
 					)
 					{
 						$picture = [
@@ -600,12 +595,12 @@ class Livefeed extends Landing\Source\DataLoader
 					$clearedText
 				);
 				$clearedText = preg_replace(
-					'/\[URL(.*?)]((?:[^\ ]{1,19}\s+)+)\[\/URL\]/is'.BX_UTF_PCRE_MODIFIER,
+					'/\[URL(.*?)]((?:[^\]\s]{1,19}\s+)+)\[\/URL\]/is'.BX_UTF_PCRE_MODIFIER,
 					'\\2',
 					$clearedText
 				);
 				$clearedText = preg_replace(
-					'/\[URL(.*?)]((?:[^\ ]{1,19}\s+)+)\[\/URL\]/is'.BX_UTF_PCRE_MODIFIER,
+					'/\[URL(.*?)]((?:[^\]\s]{1,19}\s+)+)\[\/URL\]/is'.BX_UTF_PCRE_MODIFIER,
 					'\\2',
 					$clearedText
 				);
@@ -679,7 +674,7 @@ class Livefeed extends Landing\Source\DataLoader
 
 		if (
 			defined("BX_COMP_MANAGED_CACHE")
-			&& strlen($code) > 0
+			&& $code <> ''
 			&& preg_match('/^SG(\d+)$/i', $code, $matches)
 			&& Main\ModuleManager::isModuleInstalled('landing')
 		)

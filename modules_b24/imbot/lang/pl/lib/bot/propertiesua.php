@@ -1,3 +1,0 @@
-<?
-$MESS["IMBOT_PROPERTIESUA_SHOW_MORE"] = "Więcej...";
-?>

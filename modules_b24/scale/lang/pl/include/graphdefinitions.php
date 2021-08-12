@@ -1,4 +1,0 @@
-<?
-$MESS["SCALE_GDEF_CATEGORY_PROCESSES"] = "Procesy";
-$MESS["SCALE_GDEF_CATEGORY_SYSTEM"] = "system";
-?>

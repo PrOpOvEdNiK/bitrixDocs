@@ -48,6 +48,22 @@ abstract class BasketItemBase extends Internals\CollectableEntity
 	}
 
 	/**
+	 * @param $xmlId
+	 * @return $this|null
+	 * @throws Main\ArgumentNullException
+	 * @throws Main\ArgumentOutOfRangeException
+	 */
+	public function findItemByXmlId($xmlId)
+	{
+		if ((string)$this->getField('XML_ID') === (string)$xmlId)
+		{
+			return $this;
+		}
+
+		return null;
+	}
+
+	/**
 	 * @return string|void
 	 */
 	public static function getRegistryEntity()
@@ -125,9 +141,9 @@ abstract class BasketItemBase extends Internals\CollectableEntity
 		if ($basketCode !== null)
 		{
 			$basketItem->internalId = $basketCode;
-			if (strpos($basketCode, 'n') === 0)
+			if (mb_strpos($basketCode, 'n') === 0)
 			{
-				$internalId = intval(substr($basketCode, 1));
+				$internalId = intval(mb_substr($basketCode, 1));
 				if ($internalId > static::$idBasket)
 				{
 					static::$idBasket = $internalId;
@@ -223,7 +239,11 @@ abstract class BasketItemBase extends Internals\CollectableEntity
 	 */
 	public static function getCustomizableFields() : array
 	{
-		return ['PRICE' => 'PRICE'];
+		return [
+			'PRICE' => 'PRICE',
+			'VAT_INCLUDED' => 'VAT_INCLUDED',
+			'VAT_RATE' => 'VAT_RATE'
+		];
 	}
 
 	/**
@@ -704,13 +724,28 @@ abstract class BasketItemBase extends Internals\CollectableEntity
 			{
 				if ($deltaQuantity > 0)
 				{
-					$mess = Localization\Loc::getMessage(
-						'SALE_BASKET_AVAILABLE_FOR_PURCHASE_QUANTITY',
-						[
-							'#PRODUCT_NAME#' => $this->getField('NAME'),
-							'#AVAILABLE_QUANTITY#' => $availableQuantity
-						]
-					);
+					$canAddCount = $availableQuantity - $oldValue;
+					if ($canAddCount > 0)
+					{
+						$mess = Localization\Loc::getMessage(
+							'SALE_BASKET_AVAILABLE_FOR_ADDING_QUANTITY_IS_LESS',
+							[
+								'#PRODUCT_NAME#' => $this->getField('NAME'),
+								'#QUANTITY#' => $oldValue,
+								'#ADD#' => $canAddCount,
+							]
+						);
+					}
+					else
+					{
+						$mess = Localization\Loc::getMessage(
+							'SALE_BASKET_AVAILABLE_FOR_ADDING_QUANTITY_IS_ZERO',
+							[
+								'#PRODUCT_NAME#' => $this->getField('NAME'),
+								'#QUANTITY#' => $oldValue,
+							]
+						);
+					}
 				}
 				else
 				{
@@ -802,7 +837,10 @@ abstract class BasketItemBase extends Internals\CollectableEntity
 				$result->addWarnings($r->getWarnings());
 			}
 
-			if (($name === 'BASE_PRICE') || ($name === 'DISCOUNT_PRICE'))
+			if (
+				$name === 'BASE_PRICE'
+				|| $name === 'DISCOUNT_PRICE'
+			)
 			{
 				if (!$this->isCustomPrice())
 				{
@@ -927,21 +965,12 @@ abstract class BasketItemBase extends Internals\CollectableEntity
 	}
 
 	/**
-	 * @return int|null|string
-	 * @throws Main\ArgumentNullException
-	 */
-	public function getId()
-	{
-		return (int)$this->getField('ID');
-	}
-
-	/**
 	 * @return float|null|string
 	 * @throws Main\ArgumentNullException
 	 */
 	public function getProductId()
 	{
-		return $this->getField('PRODUCT_ID');
+		return (int)$this->getField('PRODUCT_ID');
 	}
 
 	/**
@@ -1632,6 +1661,30 @@ abstract class BasketItemBase extends Internals\CollectableEntity
 	}
 
 	/**
+	 * @return null|string
+	 * @internal
+	 *
+	 */
+	public static function getEntityEventName()
+	{
+		return 'SaleBasketItem';
+	}
+
+	/**
+	 * @return array
+	 * @throws Main\ArgumentException
+	 * @throws Main\SystemException
+	 */
+	public function toArray() : array
+	{
+		$result = parent::toArray();
+
+		$result['PROPERTIES'] = $this->getPropertyCollection()->toArray();
+
+		return $result;
+	}
+
+	/**
 	 * @deprecated
 	 *
 	 * @return float
@@ -1641,15 +1694,5 @@ abstract class BasketItemBase extends Internals\CollectableEntity
 	public function getDefaultPrice()
 	{
 		return (float)$this->getField('DEFAULT_PRICE');
-	}
-
-	/**
-	 * @return null|string
-	 * @internal
-	 *
-	 */
-	public static function getEntityEventName()
-	{
-		return 'SaleBasketItem';
 	}
 }

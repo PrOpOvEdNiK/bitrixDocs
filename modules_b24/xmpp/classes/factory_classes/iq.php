@@ -1,4 +1,4 @@
-<?
+<?php
 $className = "CXMPPReceiveIQ";
 $classVersion = 2;
 
@@ -17,7 +17,7 @@ if (!class_exists("CXMPPReceiveIQ"))
 		{
 			if (!$senderClient->IsAuthenticated())
 				return false;
-			if (strlen($senderJId) <= 0)
+			if ($senderJId == '')
 				return false;
 
 			if (!array_key_exists("iq", $arMessage))
@@ -27,7 +27,7 @@ if (!class_exists("CXMPPReceiveIQ"))
 			if (array_key_exists("to", $arMessage["iq"]["."]))
 				$to = $arMessage["iq"]["."]["to"];
 
-			if (strlen($to) > 0 && strpos($to, "@") !== false)
+			if ($to <> '' && mb_strpos($to, "@") !== false)
 			{
 				$arResult = true;
 
@@ -88,4 +88,3 @@ if (!class_exists("CXMPPReceiveIQ"))
 		}
 	}
 }
-?>

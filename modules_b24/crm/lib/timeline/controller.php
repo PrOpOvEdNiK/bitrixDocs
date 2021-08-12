@@ -35,7 +35,7 @@ class Controller
 	}
 	public static function prepareAuthorInfoBulk(array &$items)
 	{
-		$userProfilePath = \COption::GetOptionString('crm', strtolower('PATH_TO_USER_PROFILE'), '');
+		$userProfilePath = \COption::GetOptionString('crm', mb_strtolower('PATH_TO_USER_PROFILE'), '');
 		if($userProfilePath === '')
 		{
 			$userProfilePath = '/company/personal/user/#user_id#/';
@@ -67,8 +67,8 @@ class Controller
 		{
 			$userIDs = array_keys($userMap);
 			$dbResultUser = \CUser::GetList(
-				($by = 'id'),
-				($order = 'asc'),
+				'id',
+				'asc',
 				array('ID' => implode('|', $userIDs)),
 				array('FIELDS' => array('ID', 'NAME', 'LAST_NAME', 'SECOND_NAME', 'LOGIN', 'TITLE', 'PERSONAL_PHOTO'))
 			);

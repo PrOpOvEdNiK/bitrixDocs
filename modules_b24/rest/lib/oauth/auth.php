@@ -12,6 +12,8 @@ namespace Bitrix\Rest\OAuth;
 use Bitrix\Rest\Application;
 use Bitrix\Rest\AppTable;
 use Bitrix\Rest\AuthStorageInterface;
+use Bitrix\Rest\Engine\Access;
+use Bitrix\Rest\Engine\Access\HoldEntity;
 use Bitrix\Rest\Event\Session;
 use Bitrix\Rest\OAuthService;
 
@@ -76,6 +78,33 @@ class Auth
 					$error = true;
 				}
 
+				if (!$error && HoldEntity::is(HoldEntity::TYPE_APP, $tokenInfo['client_id']))
+				{
+					$tokenInfo = [
+						'error' => 'OVERLOAD_LIMIT',
+						'error_description' => 'REST API is blocked due to overload.'
+					];
+					$error = true;
+				}
+
+				if (
+					!$error
+					&& (
+						!Access::isAvailable($tokenInfo['client_id'])
+						|| (
+							Access::needCheckCount()
+							&& !Access::isAvailableCount(Access::ENTITY_TYPE_APP, $tokenInfo['client_id'])
+						)
+					)
+				)
+				{
+					$tokenInfo = [
+						'error' => 'ACCESS_DENIED',
+						'error_description' => 'REST is available only on commercial plans.'
+					];
+					$error = true;
+				}
+
 				if(!$error)
 				{
 					$clientInfo = AppTable::getByClientId($tokenInfo['client_id']);
@@ -100,6 +129,7 @@ class Auth
 				if(!$error && $scope !== \CRestUtil::GLOBAL_SCOPE && isset($tokenInfo['scope']))
 				{
 					$tokenScope = explode(',', $tokenInfo['scope']);
+					$tokenScope = \Bitrix\Rest\Engine\RestManager::fillAlternativeScope($scope, $tokenScope);
 					if(!in_array($scope, $tokenScope))
 					{
 						$tokenInfo = array('error' => 'insufficient_scope', 'error_description' => 'The request requires higher privileges than provided by the access token');

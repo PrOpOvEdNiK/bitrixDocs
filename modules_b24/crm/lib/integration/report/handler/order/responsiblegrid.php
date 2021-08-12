@@ -121,7 +121,7 @@ class ResponsibleGrid extends BaseGrid
 				{
 					$orderCount = $responsible[self::WHAT_WILL_CALCULATE_ORDER_COUNT];
 					$wonOrderCount = $responsible[self::WHAT_WILL_CALCULATE_ORDER_WON_COUNT];
-					$value = round(($wonOrderCount / $orderCount) * 100,	2);
+					$value = $orderCount > 0 ? round(($wonOrderCount / $orderCount) * 100, 2) : 0;
 					$resultItem['postfix'] = '%';
 					$amountCount += $wonOrderCount;
 				}

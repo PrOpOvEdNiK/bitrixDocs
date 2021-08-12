@@ -300,17 +300,21 @@ class Ad
 			$result = $result['EXPENSES'];
 			/** @var $result Seo\Analytics\Internals\Expenses  */
 
+			$currencyId = $result->getCurrency();
+			if ($currencyId === 'BYN' && \CCrmCurrency::getAccountCurrencyID() === 'BYR')
+			{
+				$currencyId = 'BYR';
+			}
 			$expenses = [
 				'impressions' => $result->getImpressions(),
 				'actions' => $result->getActions(),
-				'spend' => ($result->getSpend() && $result->getCurrency()) ?
-					\CCrmCurrency::convertMoney(
+				'spend' => ($result->getSpend() && $result->getCurrency())
+					? \CCrmCurrency::convertMoney(
 						$result->getSpend(),
-						$result->getCurrency(),
+						$currencyId,
 						\CCrmCurrency::GetAccountCurrencyID()
 					)
-					:
-					$result->getSpend(),
+					: $result->getSpend(),
 				'currency' => \CCrmCurrency::GetAccountCurrencyID(),
 			];
 		}
@@ -322,5 +326,94 @@ class Ad
 		}
 
 		return $expenses;
+	}
+
+	/**
+	 * Return true if it support expenses report.
+	 *
+	 * @return bool
+	 */
+	public function isSupportExpensesReport()
+	{
+		if ($this->isConnected())
+		{
+			return $this->account->hasExpensesReport();
+		}
+
+		return false;
+	}
+
+	/**
+	 * Get expenses report.
+	 *
+	 * @param Main\Type\Date|null $dateFrom Date from.
+	 * @param Main\Type\Date|null $dateTo Date to.
+	 * @return Main\Result
+	 */
+	public function getExpensesReport(Main\Type\Date $dateFrom = null, Main\Type\Date $dateTo = null)
+	{
+		$checkResult = $this->checkDetalizationSupporting();
+		if ($checkResult)
+		{
+			return $checkResult;
+		}
+
+		return $this->account->getExpensesReport($this->accountId, $dateFrom, $dateTo);
+	}
+
+	public function manageKeyword($groupId, $id, $active = true)
+	{
+		$checkResult = $this->checkDetalizationSupporting();
+		if ($checkResult)
+		{
+			return $checkResult;
+		}
+
+		return $this->account->manageAdKeyword($this->accountId, $groupId, $id, $active);
+	}
+
+	public function manageGroup($id, $active = true)
+	{
+		$checkResult = $this->checkDetalizationSupporting();
+		if ($checkResult)
+		{
+			return $checkResult;
+		}
+
+		return $this->account->manageAdGroup($this->accountId, $id, $active);
+	}
+
+	public function manageCampaign($id, $active = true)
+	{
+		$checkResult = $this->checkDetalizationSupporting();
+		if ($checkResult)
+		{
+			return $checkResult;
+		}
+
+		return $this->account->manageAdCampaign($this->accountId, $id, $active);
+	}
+
+	protected function checkDetalizationSupporting()
+	{
+		if (!$this->isConnected())
+		{
+			return (new Main\Result())->addError(new Main\Error('Ads account not connected.'));
+		}
+
+		if (!$this->isSupportExpensesReport())
+		{
+			return (new Main\Result())->addError(new Main\Error('Detalization not supported.'));
+		}
+
+		if ($this->account->hasAccounts())
+		{
+			if (!$this->accountId)
+			{
+				return (new Main\Result())->addError(new Main\Error('Ads account not selected.'));
+			}
+		}
+
+		return null;
 	}
 }

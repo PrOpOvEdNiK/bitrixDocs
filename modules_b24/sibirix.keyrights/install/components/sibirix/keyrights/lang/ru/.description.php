@@ -1,7 +1,0 @@
-<?
-
-$MESS ['SIBIRIX_KEYRIGHTS_NAME'] = 'KeyRights';
-
-$MESS ['SIBIRIX_KEYRIGHTS_DESCRIPTION'] = 'KeyRights';
-
-$MESS ['SIBIRIX_KEYRIGHTS'] = 'KeyRights';

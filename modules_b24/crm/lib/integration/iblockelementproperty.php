@@ -42,7 +42,10 @@ class IBlockElementProperty
 			'ConvertFromDB' => array($className, 'convertFromDB'),
 			'GetValuePrintable' => array($className, 'getValuePrintable'),
 			'AddFilterFields' => array($className, 'addFilterFields'),
-			'GetUIFilterProperty' => array($className, 'getUIFilterProperty')
+			'GetUIFilterProperty' => array($className, 'getUIFilterProperty'),
+			'GetUIEntityEditorProperty' => array($className, 'GetUIEntityEditorProperty'),
+			'GetUIEntityEditorPropertyViewHtml' => array($className, 'GetUIEntityEditorPropertyViewHtml'),
+			'GetUIEntityEditorPropertyEditHtml' => array($className, 'GetUIEntityEditorPropertyEditHtml'),
 		);
 	}
 
@@ -400,11 +403,11 @@ class IBlockElementProperty
 		{
 			$value['VALUE'] = array_diff($value['VALUE'], array(''));
 			$value['VALUE'] = implode(',', $value['VALUE']);
-			return strlen(trim($value['VALUE'], "\n\r\t"));
+			return mb_strlen(trim($value['VALUE'], "\n\r\t"));
 		}
 		else
 		{
-			return strlen(trim($value['VALUE'], "\n\r\t"));
+			return mb_strlen(trim($value['VALUE'], "\n\r\t"));
 		}
 	}
 
@@ -431,7 +434,7 @@ class IBlockElementProperty
 	 */
 	public static function convertFromDB($property, $value)
 	{
-		$unserialize = unserialize($value['VALUE']);
+		$unserialize = unserialize($value['VALUE'], ['allowed_classes' => false]);
 		if($unserialize !== false)
 			$value['VALUE'] = $unserialize;
 		return $value;
@@ -557,13 +560,13 @@ class IBlockElementProperty
 			$entityName = \CCrmOwnerType::getCaption(
 				\CCrmOwnerType::resolveID(\CCrmOwnerTypeAbbr::resolveName($parts[0])), $parts[1], false);
 
-			$defaultType = strtolower(static::$listDefaultEntityKey[$parts[0]]);
+			$defaultType = mb_strtolower(static::$listDefaultEntityKey[$parts[0]]);
 			$entityUrl = \CComponentEngine::makePathFromTemplate(
 				Option::get('crm', 'path_to_'.$defaultType.'_show'), array(''.$defaultType.'_id' => $parts[1]));
 
-			$valueView[strtoupper($defaultType)][] = '[url='.$entityUrl.']'.$entityName.'[/url]';
+			$valueView[mb_strtoupper($defaultType)][] = '[url='.$entityUrl.']'.$entityName.'[/url]';
 		}
-		elseif($defaultType !== '')
+		elseif($value && $defaultType !== '')
 		{
 			$entityName = \CCrmOwnerType::getCaption(
 				\CCrmOwnerType::resolveID($defaultType),
@@ -571,11 +574,11 @@ class IBlockElementProperty
 				false
 			);
 
-			$defaultType = strtolower($defaultType);
+			$defaultType = mb_strtolower($defaultType);
 			$entityUrl = \CComponentEngine::makePathFromTemplate(
 				Option::get('crm', 'path_to_'.$defaultType.'_show'), array(''.$defaultType.'_id' => $value));
 
-			$valueView[strtoupper($defaultType)][] = '[url='.$entityUrl.']'.$entityName.'[/url]';
+			$valueView[mb_strtoupper($defaultType)][] = '[url='.$entityUrl.']'.$entityName.'[/url]';
 		}
 	}
 
@@ -706,5 +709,39 @@ class IBlockElementProperty
 		}
 
 		return true;
+	}
+
+	public static function GetUIEntityEditorProperty($settings, $value)
+	{
+		return [
+			'type' => 'custom'
+		];
+	}
+
+	public static function GetUIEntityEditorPropertyViewHtml(array $params = [])
+	{
+		if (!empty($params['VALUE']))
+		{
+			return static::getPublicViewHTML($params['SETTINGS'], ['VALUE' => $params['VALUE']], ['VALUE' => $params['FIELD_NAME']]);
+		}
+
+		return '';
+	}
+
+	public static function GetUIEntityEditorPropertyEditHtml(array $params = [])
+	{
+		if (is_array($params['VALUE']))
+		{
+			$value = [];
+			foreach ($params['VALUE'] as $element)
+			{
+				$value[] = ['VALUE' => $element];
+			}
+		}
+		else
+		{
+			$value = ['VALUE' => $params['VALUE']];
+		}
+		return static::getPublicEditHTML($params['SETTINGS'], $value, ['VALUE' => $params['FIELD_NAME']]);
 	}
 }

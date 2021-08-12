@@ -1,4 +1,0 @@
-<?
-$MESS["SALE_DELIVERY_HELPER_ANY_LEVEL"] = "Wszystko";
-$MESS["SALE_DELIVERY_HELPER_DELETE"] = "Usuń";
-?>

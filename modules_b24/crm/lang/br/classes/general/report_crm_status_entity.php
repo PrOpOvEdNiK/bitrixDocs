@@ -1,5 +1,0 @@
-<?
-$MESS["CRM_STATUS_ENTITY_ENTITY_ID"] = "ID da Entidade";
-$MESS["CRM_STATUS_ENTITY_NAME"] = "Título";
-$MESS["CRM_STATUS_ENTITY_STATUS_ID"] = "ID de status";
-?>

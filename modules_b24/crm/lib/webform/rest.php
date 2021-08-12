@@ -9,6 +9,7 @@
 namespace Bitrix\Crm\WebForm;
 
 use Bitrix\Rest\RestException;
+use Bitrix\Crm\UI\Webpack;
 
 /**
  * Class Rest
@@ -23,36 +24,53 @@ class Rest
 	 */
 	public static function onRestServiceBuildDescription()
 	{
-		return array(
-			'crm' => array(
-				'crm.webform.list' => array(__CLASS__, 'getFormList'),
-				'crm.webform.result.add' => array(__CLASS__, 'addFormResult'),
-			)
-		);
+		return [
+			'crm' => [
+				'crm.webform.list' => [__CLASS__, 'getFormList'],
+				'crm.webform.result.add' => [__CLASS__, 'addFormResult'],
+			]
+		];
 	}
 
 	/**
 	 * Get form list.
 	 *
+	 * @param array $params
 	 * @return array
+	 * @throws \Bitrix\Main\ArgumentException
+	 * @throws \Bitrix\Main\ObjectPropertyException
+	 * @throws \Bitrix\Main\SystemException
 	 */
-	public static function getFormList()
+	public static function getFormList(array $params = [])
 	{
-		$result = array();
-		$res = Internals\FormTable::getList(array(
-			'select' => array(
-				'ID', 'NAME', 'SECURITY_CODE', 'IS_CALLBACK_FORM'
-			),
-			'filter' => array(
-				'ACTIVE' => 'Y'
-			),
-			'order' => array(
-				'ID' => 'DESC'
-			)
-		));
-		while ($row = $res->fetch())
+		$result = [];
+
+		$filter = ['ACTIVE' => 'Y'];
+		if(!empty($params) && $params['GET_INACTIVE'] === 'Y')
 		{
-			$result[] = $row;
+			unset($filter['ACTIVE']);
+		}
+
+		$res = Internals\FormTable::getList([
+			'select' => [
+				'ID', 'NAME', 'SECURITY_CODE', 'IS_CALLBACK_FORM', 'ACTIVE', 'XML_ID'
+			],
+			'filter' => $filter,
+			'order' => [
+				'ID' => 'DESC'
+			]
+		]);
+		while ($form = $res->fetch())
+		{
+			$webpack = Webpack\Form::instance($form['ID']);
+			if (!$webpack->isBuilt())
+			{
+				$webpack->build();
+				$webpack = Webpack\Form::instance($form['ID']);
+			}
+			$url = $webpack->getEmbeddedFileUrl();
+
+			$result[] = array_merge($form, ['URL' => $url]);
 		}
 
 		return $result;

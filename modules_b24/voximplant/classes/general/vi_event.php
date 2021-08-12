@@ -1,17 +1,18 @@
-<?
+<?php
+
 IncludeModuleLangFile(__FILE__);
 
 use Bitrix\Voximplant as VI;
 
 class CVoxImplantEvent
 {
-	public function OnBeforeUserAdd(&$arFields)
+	public static function OnBeforeUserAdd(&$arFields)
 	{
 		global $APPLICATION;
 		$error = false;
 		if(is_set($arFields, "WORK_PHONE"))
 		{
-			if (strlen($arFields["WORK_PHONE"])>0)
+			if ($arFields["WORK_PHONE"] <> '')
 			{
 				$arCorrectPhones["WORK_PHONE"] = CVoxImplantPhone::Normalize($arFields["WORK_PHONE"]);
 				if (!$arCorrectPhones["WORK_PHONE"])
@@ -27,7 +28,7 @@ class CVoxImplantEvent
 		}
 		if(is_set($arFields, "PERSONAL_PHONE"))
 		{
-			if (strlen($arFields["PERSONAL_PHONE"])>0)
+			if ($arFields["PERSONAL_PHONE"] <> '')
 			{
 				$arCorrectPhones["PERSONAL_PHONE"] = CVoxImplantPhone::Normalize($arFields["PERSONAL_PHONE"]);
 				if (!$arCorrectPhones["PERSONAL_PHONE"])
@@ -43,7 +44,7 @@ class CVoxImplantEvent
 		}
 		if(is_set($arFields, "PERSONAL_MOBILE"))
 		{
-			if (strlen($arFields["PERSONAL_MOBILE"])>0)
+			if ($arFields["PERSONAL_MOBILE"] <> '')
 			{
 				$arCorrectPhones["PERSONAL_MOBILE"] = CVoxImplantPhone::Normalize($arFields["PERSONAL_MOBILE"]);
 				if (!$arCorrectPhones["PERSONAL_MOBILE"])
@@ -60,37 +61,22 @@ class CVoxImplantEvent
 		
 		if(is_set($arFields, "UF_PHONE_INNER"))
 		{
-			if (strlen($arFields["UF_PHONE_INNER"])>0)
+			if ($arFields["UF_PHONE_INNER"] <> '')
 			{
-				$phoneInner = intval(preg_replace("/[^0-9]/i", "", $arFields["UF_PHONE_INNER"]));
-				if ($phoneInner > 0 && $phoneInner < 10000)
+				$phoneInner = preg_replace("/\D/", "", $arFields["UF_PHONE_INNER"]);
+				$phoneLength = mb_strlen($phoneInner);
+				if ($phoneLength > 0 && $phoneLength < 5)
 				{
-					$result = \Bitrix\Main\UserTable::getList(array(
-						'select' => array('COUNT'),
-						'filter' => array(
-							'!=ID' => intval($arFields['ID']),
-							'=UF_PHONE_INNER' => $phoneInner,
-							'=ACTIVE' => 'Y'
-						),
-						'runtime' => array(
-							'COUNT' => array(
-								'data_type' => 'integer',
-								'expression' => array('COUNT(1)')
-							)
-						)
-					));
-					$data = $result->fetch();
-					CVoxImplantHistory::WriteToLog($data);
-					if ($data['COUNT'] > 0)
+					$existingEntity = CVoxImplantIncoming::getByInternalPhoneNumber($phoneInner);
+					if ($existingEntity && !($existingEntity['ENTITY_TYPE'] === 'user' && $existingEntity['ENTITY_ID'] == $arFields['ID']))
 					{
-						$APPLICATION->throwException(GetMessage('ERROR_PHONE_INNER'));
+						$APPLICATION->throwException(GetMessage('ERROR_PHONE_INNER_IN_USAGE'));
 						$error = true;
 					}
 					else
 					{
 						$arFields["UF_PHONE_INNER"] = $phoneInner;
 					}
-
 				}
 				else
 				{
@@ -105,7 +91,7 @@ class CVoxImplantEvent
 			return false;
 	}
 
-	public function OnBeforeUserUpdate(&$arFields)
+	public static function OnBeforeUserUpdate(&$arFields)
 	{
 		if ($arFields["ID"] > 0)
 		{
@@ -117,7 +103,7 @@ class CVoxImplantEvent
 			));
 			while ($phone = $dbViPhone->fetch())
 			{
-				if (strlen($phone['PHONE_MNEMONIC']) > 0)
+				if ($phone['PHONE_MNEMONIC'] <> '')
 				{
 					$arPhones[$phone['PHONE_MNEMONIC']] = $phone;
 				}
@@ -126,7 +112,7 @@ class CVoxImplantEvent
 			$error = false;
 			if(is_set($arFields, "WORK_PHONE"))
 			{
-				if (strlen($arFields["WORK_PHONE"])>0)
+				if ($arFields["WORK_PHONE"] <> '')
 				{
 					$arCorrectPhones["WORK_PHONE"] = CVoxImplantPhone::Normalize($arFields["WORK_PHONE"]);
 					if (!$arCorrectPhones["WORK_PHONE"])
@@ -142,7 +128,7 @@ class CVoxImplantEvent
 			}
 			if(is_set($arFields, "PERSONAL_PHONE"))
 			{
-				if (strlen($arFields["PERSONAL_PHONE"])>0)
+				if ($arFields["PERSONAL_PHONE"] <> '')
 				{
 					$arCorrectPhones["PERSONAL_PHONE"] = CVoxImplantPhone::Normalize($arFields["PERSONAL_PHONE"]);
 					if (!$arCorrectPhones["PERSONAL_PHONE"])
@@ -158,7 +144,7 @@ class CVoxImplantEvent
 			}
 			if(is_set($arFields, "PERSONAL_MOBILE"))
 			{
-				if (strlen($arFields["PERSONAL_MOBILE"])>0)
+				if ($arFields["PERSONAL_MOBILE"] <> '')
 				{
 					$arCorrectPhones["PERSONAL_MOBILE"] = CVoxImplantPhone::Normalize($arFields["PERSONAL_MOBILE"]);
 					if (!$arCorrectPhones["PERSONAL_MOBILE"])
@@ -174,29 +160,16 @@ class CVoxImplantEvent
 			}
 			if(is_set($arFields, "UF_PHONE_INNER"))
 			{
-				if (strlen($arFields["UF_PHONE_INNER"])>0)
+				if ($arFields["UF_PHONE_INNER"] <> '')
 				{
-					$phoneInner = intval(preg_replace("/[^0-9]/i", "", $arFields["UF_PHONE_INNER"]));
-					if ($phoneInner > 0 && $phoneInner < 10000)
+					$phoneInner = preg_replace("/\D/", "", $arFields["UF_PHONE_INNER"]);
+					$phoneLength = mb_strlen($phoneInner);
+					if ($phoneLength > 0 && $phoneLength < 5)
 					{
-						$result = \Bitrix\Main\UserTable::getList(array(
-							'select' => array('COUNT'),
-							'filter' => array(
-								'!=ID' => intval($arFields['ID']),
-								'=UF_PHONE_INNER' => $phoneInner,
-								'=ACTIVE' => 'Y'
-							),
-							'runtime' => array(
-								'COUNT' => array(
-									'data_type' => 'integer',
-									'expression' => array('COUNT(1)')
-								)
-							)
-						));
-						$data = $result->fetch();
-						if ($data['COUNT'] > 0)
+						$existingEntity = CVoxImplantIncoming::getByInternalPhoneNumber($phoneInner);
+						if ($existingEntity && !($existingEntity['ENTITY_TYPE'] === 'user' && $existingEntity['ENTITY_ID'] == $arFields['ID']))
 						{
-							$APPLICATION->throwException(GetMessage('ERROR_PHONE_INNER'));
+							$APPLICATION->throwException(GetMessage('ERROR_PHONE_INNER_IN_USAGE'));
 							$error = true;
 						}
 						else
@@ -204,7 +177,6 @@ class CVoxImplantEvent
 							$arFields["UF_PHONE_INNER"] = $phoneInner;
 							$arCorrectPhones["UF_PHONE_INNER"] = $phoneInner;
 						}
-
 					}
 					else
 					{
@@ -218,7 +190,7 @@ class CVoxImplantEvent
 				}
 			}
 
-			if ($arFields["ACTIVE"] == 'N' && CVoximplantUser::GetPhoneActive($arFields['ID']))
+			if ($arFields["ACTIVE"] === 'N' && CVoximplantUser::GetPhoneActive($arFields['ID']))
 			{
 				$viUser = new CVoximplantUser();
 				$viUser->UpdateUserPassword($arFields['ID'], CVoxImplantUser::MODE_PHONE);
@@ -233,7 +205,7 @@ class CVoxImplantEvent
 					{
 						if ($phone != $arPhones[$mnemonic]['PHONE_NUMBER'])
 						{
-							if (strlen($phone) == 0)
+							if ($phone == '')
 							{
 								VI\PhoneTable::delete($arPhones[$mnemonic]['ID']);
 							}
@@ -243,9 +215,9 @@ class CVoxImplantEvent
 							}
 						}
 					}
-					else if (strlen($phone) > 0)
+					else if ($phone <> '')
 					{
-						VI\PhoneTable::add(Array('USER_ID' => intval($arFields['ID']), 'PHONE_NUMBER' => $phone, 'PHONE_MNEMONIC' => $mnemonic));
+						VI\PhoneTable::add(Array('USER_ID' => (int)$arFields['ID'], 'PHONE_NUMBER' => $phone, 'PHONE_MNEMONIC' => $mnemonic));
 					}
 				}
 			}
@@ -256,11 +228,11 @@ class CVoxImplantEvent
 		}
 	}
 
-	public function OnAfterUserUpdate(&$fields)
+	public static function OnAfterUserUpdate(&$fields)
 	{
 		if ($fields['RESULT'] && isset($fields['ACTIVE']))
 		{
-			if ($fields['ACTIVE'] == 'N')
+			if ($fields['ACTIVE'] === 'N')
 			{
 				$userId = (int)$fields['ID'];
 				if($userId > 0)
@@ -269,7 +241,7 @@ class CVoxImplantEvent
 		}
 	}
 
-	public function OnUserDelete($ID)
+	public static function OnUserDelete($ID)
 	{
 		VI\PhoneTable::deleteByUser($ID);
 
@@ -309,4 +281,3 @@ class CVoxImplantEvent
 		);
 	}
 }
-?>

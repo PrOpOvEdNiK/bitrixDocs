@@ -1,6 +1,0 @@
-<?
-$MESS["CRM_INVOICE_LIST_REBUILD_STATISTICS_COMPLETED_SUMMARY"] = "Przetworzono dane statystyczne dla faktur. Faktury przetworzone: #PROCESSED_ITEMS#.";
-$MESS["CRM_INVOICE_LIST_REBUILD_STATISTICS_NOT_REQUIRED_SUMMARY"] = "Dane statystyczne dla faktur są aktualne.";
-$MESS["CRM_INVOICE_LIST_REBUILD_STATISTICS_PROGRESS_SUMMARY"] = "Faktury przetworzone: #PROCESSED_ITEMS# z #TOTAL_ITEMS#.";
-$MESS["CRM_INVOICE_LIST_ROW_COUNT"] = "Suma: #ROW_COUNT#";
-?>

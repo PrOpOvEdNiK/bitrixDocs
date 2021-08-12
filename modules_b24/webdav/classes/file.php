@@ -51,7 +51,7 @@ class CWebDavFile extends CWebDavBase
 		"UNDELETE"	=> array("rights" => "W", "min_rights" => "W"),
 	);
 
-	function CWebDavFile($arParams, $base_url)
+	public function __construct($arParams, $base_url)
 	{
 		$io = self::GetIo();
 		$arParams = (is_array($arParams) ? $arParams : array());
@@ -61,7 +61,7 @@ class CWebDavFile extends CWebDavBase
 		$this->real_path = $arParams["FOLDER"];
 		$this->real_path_full = $io->CombinePath($_SERVER['DOCUMENT_ROOT'], $arParams["FOLDER"]);
 
-		$this->CWebDavBase($base_url);
+		parent::__construct($base_url);
 
 		if (! $io->DirectoryExists($this->real_path_full))
 		{
@@ -69,7 +69,7 @@ class CWebDavFile extends CWebDavBase
 				"id" => "folder is not exists",
 				"text" => GetMessage("WD_FILE_ERROR1"));
 		}
-		elseif (substr($this->real_path, 0, 7) == "/bitrix")
+		elseif (mb_substr($this->real_path, 0, 7) == "/bitrix")
 		{
 			$this->arError[] = array(
 				"id" => "forbidden folder",
@@ -123,25 +123,25 @@ class CWebDavFile extends CWebDavBase
 		{
 			if (defined('BX_UTF'))
 				$bxLang = "utf-8";
-			elseif (defined("SITE_CHARSET") && (strlen(SITE_CHARSET) > 0))
+			elseif (defined("SITE_CHARSET") && (SITE_CHARSET <> ''))
 				$bxLang = SITE_CHARSET;
-			elseif (defined("LANG_CHARSET") && (strlen(LANG_CHARSET) > 0))
+			elseif (defined("LANG_CHARSET") && (LANG_CHARSET <> ''))
 				$bxLang = LANG_CHARSET;
 			else
 				$bxLang = "windows-1251";
 
-			$bxLang = strtolower($bxLang);
+			$bxLang = mb_strtolower($bxLang);
 		}
 
 		if (
 			isset($arParams['original'])
-			&& (strpos($arParams['original'], $this->real_path_full) === 0)
+			&& (mb_strpos($arParams['original'], $this->real_path_full) === 0)
 			&& ($arParams['converted'] !== $arParams['original'])
 		)
 		{
 			if (!isset($resultCache[$arParams['original']]))
 			{
-				$libPath = substr($arParams['original'], strlen($this->real_path_full)+1);
+				$libPath = mb_substr($arParams['original'], mb_strlen($this->real_path_full) + 1);
 				$libPath = explode('/', $libPath);
 
 				$pathLength = sizeof($libPath);
@@ -324,8 +324,8 @@ class CWebDavFile extends CWebDavBase
 				{
 					$by = "NAME"; $order = "ASC";
 				}
-				$by = strtoupper($by);
-				$order = strtoupper($order);
+				$by = mb_strtoupper($by);
+				$order = mb_strtoupper($order);
 
 				if ($res1["~TYPE"] == "FOLDER" && $res2["~TYPE"] == "FILE")
 					return -1;
@@ -411,7 +411,7 @@ class CWebDavFile extends CWebDavBase
 							{
 								if (! $node->IsDirectory())
 								{
-									$ext = strtolower(strrchr($filename , '.'));
+									$ext = mb_strtolower(strrchr($filename, '.'));
 									if (in_array($ext, $this->arFileForbiddenExtentions["READ"]))
 										continue;
 
@@ -453,7 +453,7 @@ class CWebDavFile extends CWebDavBase
 											$rsUser = CUser::GetByLogin($arLock['owner']);
 											$arUser = $rsUser->GetNext();
 											$res['LOCKED_USER_NAME'] = '('.$arUser['LOGIN'].')';
-											if (strlen($arUser['NAME']) > 0 && strlen($arUser['LAST_NAME']) > 0)
+											if ($arUser['NAME'] <> '' && $arUser['LAST_NAME'] <> '')
 												$res['LOCKED_USER_NAME'] .= ' '.$arUser['NAME'].' '.$arUser['LAST_NAME'];
 											break;
 										}
@@ -486,7 +486,7 @@ class CWebDavFile extends CWebDavBase
 
 				if (
 					isset($options["FILTER"]["content"])
-					&& strlen($options["FILTER"]["content"])>0
+					&& $options["FILTER"]["content"] <> ''
 				)
 				{
 					$arSearchParams += array(
@@ -516,7 +516,7 @@ class CWebDavFile extends CWebDavBase
 
 					$filename = GetFileName($file);
 					$sFullFileName = $io->CombinePath($_SERVER['DOCUMENT_ROOT'], $file);
-					if (strpos($sFullFileName, $this->real_path_full) === 0)
+					if (mb_strpos($sFullFileName, $this->real_path_full) === 0)
 					{
 						$filePath = CWebDavBase::ConvertPathToRelative($sFullFileName, $this->real_path_full);
 					}
@@ -539,7 +539,7 @@ class CWebDavFile extends CWebDavBase
 						"NAME" => $filename,
 						"TIMESTAMP_X" => $oFile->GetModificationTime() + $tzOffset,
 						"PERMISSION" => $this->permission,
-						"PATH" => substr($file, strlen($this->real_path)),
+						"PATH" => mb_substr($file, mb_strlen($this->real_path)),
 						"REAL_PATH" => $filePath,
 						"FILE_SIZE" => 0
 					);
@@ -547,12 +547,12 @@ class CWebDavFile extends CWebDavBase
 
 					if ($this->MetaNames($res))
 					{
-						$res["PROPS"] = $this->_get_props(substr($file, strlen($this->real_path)));
+						$res["PROPS"] = $this->_get_props(mb_substr($file, mb_strlen($this->real_path)));
 						if (!isset($res["PROPS"]["UNDELETEBX:"]))
 						{
 							if ($oFile->IsExists())
 							{
-								$ext = strtolower(strrchr($filename , '.'));
+								$ext = mb_strtolower(strrchr($filename, '.'));
 								if (in_array($ext, $this->arFileForbiddenExtentions["READ"]))
 									continue;
 
@@ -617,7 +617,7 @@ class CWebDavFile extends CWebDavBase
 			//$fspath = $this->arParams["item_id"];
 			//$fspath = $io->CombinePath($this->real_path_full, $this->arParams["item_id"]);
 		//}
-		if (strpos($fspath, $this->real_path_full) === 0)
+		if (mb_strpos($fspath, $this->real_path_full) === 0)
 		{
 			$fspath = CWebDavBase::ConvertPathToRelative($fspath, $this->real_path_full);
 		}
@@ -780,14 +780,14 @@ class CWebDavFile extends CWebDavBase
 		if (CModule::IncludeModule('search'))
 		{
 			$path = $file;
-			if (strpos($file, $this->real_path_full) !== false)
+			if (mb_strpos($file, $this->real_path_full) !== false)
 			{
-				$path = substr($file, strlen($this->real_path_full)+1);
+				$path = mb_substr($file, mb_strlen($this->real_path_full) + 1);
 			}
 			$path = $io->CombinePath($this->real_path, $path);
-			$url = $this->base_url . substr($file, strlen($this->real_path_full));
+			$url = $this->base_url.mb_substr($file, mb_strlen($this->real_path_full));
 
-			if (strpos(strtolower(PHP_OS), 'win') !== false)
+			if (mb_strpos(mb_strtolower(PHP_OS), 'win') !== false)
 				usleep(1000); // pass thru windows write cache
 			clearstatcache();
 
@@ -808,7 +808,7 @@ class CWebDavFile extends CWebDavBase
 			$file = $io->CombinePath($this->real_path_full, $file);
 		}*/
 
-		if (strpos($file, $this->real_path_full) === 0)
+		if (mb_strpos($file, $this->real_path_full) === 0)
 		{
 			$file = CWebDavBase::ConvertPathToRelative($file, $this->real_path_full);
 		}
@@ -892,8 +892,8 @@ class CWebDavFile extends CWebDavBase
 			if (
 				array_key_exists("LOCK", $arProps) &&
 				array_key_exists($token, $arProps["LOCK"]) &&
-				(array_key_exists("owner", $arProps["LOCK"][$token]) && strlen($arProps["LOCK"][$token]["owner"]) > 0) &&
-				(array_key_exists("exclusivelock", $arProps["LOCK"][$token]) && strlen($arProps["LOCK"][$token]["exclusivelock"]) > 0)
+				(array_key_exists("owner", $arProps["LOCK"][$token]) && $arProps["LOCK"][$token]["owner"] <> '') &&
+				(array_key_exists("exclusivelock", $arProps["LOCK"][$token]) && $arProps["LOCK"][$token]["exclusivelock"] <> '')
 				)
 			{
 				$arProps["LOCK"][$token]["expires"] = $options["timeout"];
@@ -1034,8 +1034,8 @@ class CWebDavFile extends CWebDavBase
 			}
 		}
 
-		$__from = preg_replace("/\/+/is", "/", strtolower($from_ID)."/");
-		$__to = preg_replace("/\/+/is", "/", strtolower(substr($options["dest_url"], 0, strlen($from_ID) + 1)."/"));
+		$__from = preg_replace("/\/+/is", "/", mb_strtolower($from_ID)."/");
+		$__to = preg_replace("/\/+/is", "/", mb_strtolower(mb_substr($options["dest_url"], 0, mb_strlen($from_ID) + 1)."/"));
 		if ($is_dir && $__from == $__to):
 			$GLOBALS["APPLICATION"]->ThrowException(GetMessage("WD_FILE_ERROR100"), "SECTION_IS_NOT_UPDATED");
 			return "400 Bad Request";
@@ -1297,7 +1297,7 @@ class CWebDavFile extends CWebDavBase
 				)
 			);
 			$this->PROPPATCH($arUndeleteOptions);
-			$destName = substr($arTo['base_name'], 0, -strlen($arTo['file_extention'])) . " " . $this->CorrectName(ConvertTimeStamp(time(), "FULL")) . $arTo['file_extention'];
+			$destName = mb_substr($arTo['base_name'], 0, -mb_strlen($arTo['file_extention']))." " . $this->CorrectName(ConvertTimeStamp(time(), "FULL")) . $arTo['file_extention'];
 		}
 
 		$options['dest_url'] = $io->CombinePath("/", $this->meta_names['TRASH']['name'], $destName);
@@ -1458,7 +1458,7 @@ class CWebDavFile extends CWebDavBase
 		elseif (is_set($options, "element_id"))
 			$path = $options["element_id"];
 
-		if (substr($path, 0, 1) != "/")
+		if (mb_substr($path, 0, 1) != "/")
 			$path = "/".$path;
 
 		$path = $this->MetaNamesReverse(explode("/", $path));
@@ -1483,7 +1483,7 @@ class CWebDavFile extends CWebDavBase
 			"is_dir" => false,
 			"is_file" => false,
 			"parent_id" => false,
-			"base_name" => substr(strrchr($path , '/'), 1)
+			"base_name" => mb_substr(strrchr($path, '/'), 1)
 		);
 
 		$res = array_filter(explode("/", $path_copy));
@@ -1513,14 +1513,14 @@ class CWebDavFile extends CWebDavBase
 				"TIMESTAMP_X" => $ioFile->GetModificationTime() + CTimeZone::GetOffset()
 			);
 
-			$params["element_array"]["EXTENTION"] = strtolower(strrchr($params["element_array"]["NAME"] , '.'));
+			$params["element_array"]["EXTENTION"] = mb_strtolower(strrchr($params["element_array"]["NAME"], '.'));
 			if ($params["element_array"]["EXTENTION"] == $params["element_array"]["NAME"])
 				$params["element_array"]["EXTENTION"] = "";
 
 			$params["parent_id"] = implode("/", $res);
 			$params["element_name"] = $params["element_array"]["NAME"];
 			$params["file_name"] = $params["element_array"]["NAME"];
-			$params["file_extention"] = strtolower(strrchr($params["element_array"]["NAME"] , '.'));
+			$params["file_extention"] = mb_strtolower(strrchr($params["element_array"]["NAME"], '.'));
 		}
 		else
 		{
@@ -1745,7 +1745,7 @@ class CWebDavFile extends CWebDavBase
 			$io = CBXVirtualIo::GetInstance();
 			$path = $io->CombinePath($this->_udecode($path));
 			$strFileName = GetFileName($path);
-			$extention = ".".strtolower(GetFileExtension($strFileName));
+			$extention = ".".mb_strtolower(GetFileExtension($strFileName));
 			if (in_array($method, array("COPY", "MOVE", "PUT")))
 			{
 				if (!$GLOBALS["USER"]->IsAdmin() && HasScriptExtension($strFileName))
@@ -1787,7 +1787,7 @@ class CWebDavFile extends CWebDavBase
 			CheckDirPath($GLOBALS["WEBDAV"]["PATH"]);
 			$bDirPathChecked = true;
 		}
-		if (substr($ID, 0, 1) !== '/')
+		if (mb_substr($ID, 0, 1) !== '/')
 			$ID = '/'.$ID;
 		$id = md5(rtrim(($oldMode ? $this->base_url_full : $this->base_url).$ID, "/"));
 		$file = $GLOBALS["WEBDAV"]["PATH"]."props".$id;
@@ -1801,7 +1801,7 @@ class CWebDavFile extends CWebDavBase
 		if ($res == false)
 			$res = @file_get_contents($this->__prop_file_name($ID, true));
 
-		$res = @unserialize($res);
+		$res = @unserialize($res, ['allowed_classes' => false]);
 		$res = (is_array($res) ? $res : array());
 		return $res;
 	}
@@ -1871,7 +1871,7 @@ class CWebDavFile extends CWebDavBase
 	function _get_fileinfo($path)
 	{
 		$io = self::GetIo();
-		if (strpos($path, $this->real_path_full) === 0)
+		if (mb_strpos($path, $this->real_path_full) === 0)
 		{
 			$path = CWebDavBase::ConvertPathToRelative($path, $this->real_path_full);
 		}
@@ -1944,9 +1944,9 @@ class CWebDavFile extends CWebDavBase
 
 class CDBResultWebDAVFiles extends CDBResult
 {
-	function CDBResultWebDAVFiles($res)
+	public function __construct($res)
 	{
-		parent::CDBResult($res);
+		parent::__construct($res);
 	}
 
 	function Fetch()
@@ -1968,10 +1968,10 @@ class CDBResultWebDAVFiles extends CDBResult
 			$result = $res;
 			foreach ($res as $key => $val)
 			{
-				if (substr($key, 0, 2) == "~~")
+				if (mb_substr($key, 0, 2) == "~~")
 				{
 					unset($result[$key]);
-					$result[substr($key, 1)] = $val;
+					$result[mb_substr($key, 1)] = $val;
 				}
 			}
 		}

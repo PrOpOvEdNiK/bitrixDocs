@@ -1,3 +1,0 @@
-<?
-$MESS["ADV_CAMPAIGN_ENTITY_CAMPAIGN_ID_FIELD"] = "ID de campaña";
-?>

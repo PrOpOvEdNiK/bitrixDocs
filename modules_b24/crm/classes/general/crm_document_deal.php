@@ -43,7 +43,7 @@ class CCrmDocumentDeal extends CCrmDocument
 
 		foreach ($referenceFields as $id => $field)
 		{
-			if (strpos($id, '.') !== false)
+			if (mb_strpos($id, '.') !== false)
 			{
 				continue;
 			}
@@ -93,7 +93,7 @@ class CCrmDocumentDeal extends CCrmDocument
 	public static function getEntityFields($entityType)
 	{
 		\Bitrix\Main\Localization\Loc::loadMessages($_SERVER['DOCUMENT_ROOT'].BX_ROOT.'/components/bitrix/crm.'.
-			strtolower($entityType).'.edit/component.php');
+			mb_strtolower($entityType).'.edit/component.php');
 
 		$printableFieldNameSuffix = ' ('.GetMessage('CRM_FIELD_BP_TEXT').')';
 
@@ -104,6 +104,10 @@ class CCrmDocumentDeal extends CCrmDocument
 				'Filterable' => true,
 				'Editable' => false,
 				'Required' => false,
+			),
+			'CRM_ID' => array(
+				'Name' => GetMessage('CRM_DOCUMENT_FIELD_CRM_ID'),
+				'Type' => 'string',
 			),
 			'TITLE' => array(
 				'Name' => GetMessage('CRM_FIELD_TITLE_DEAL'),
@@ -302,6 +306,14 @@ class CCrmDocumentDeal extends CCrmDocument
 				"Required" => false,
 				"Multiple" => true,
 			),
+			"OBSERVER_IDS" => array(
+				"Name" => GetMessage("CRM_FIELD_OBSERVER_IDS"),
+				"Type" => "user",
+				"Filterable" => true,
+				"Editable" => false,
+				"Required" => false,
+				"Multiple" => true,
+			),
 			"COMPANY_ID" => array(
 				"Name" => GetMessage("CRM_FIELD_COMPANY_ID"),
 				"Type" => "UF:crm",
@@ -353,6 +365,25 @@ class CCrmDocumentDeal extends CCrmDocument
 				'Type' => 'bool',
 				'Editable' => false,
 			),
+			"ORDER_IDS" => array(
+				"Name" => GetMessage("CRM_FIELD_ORDER_IDS"),
+				"Type" => "int",
+				"Multiple" => true,
+			),
+			'IS_REPEATED_APPROACH' => array(
+				'Name' => GetMessage('CRM_DOCUMENT_DEAL_IS_REPEATED_APPROACH'),
+				'Type' => 'bool',
+				'Editable' => false,
+			),
+			"PRODUCT_IDS" => array(
+				"Name" => GetMessage("CRM_DOCUMENT_FIELD_PRODUCT_IDS"),
+				"Type" => "int",
+				"Multiple" => true,
+			),
+			"PRODUCT_IDS_PRINTABLE" => array(
+				"Name" => GetMessage("CRM_DOCUMENT_FIELD_PRODUCT_IDS") . $printableFieldNameSuffix,
+				"Type" => "text",
+			),
 		);
 
 		$arResult += static::getCommunicationFields();
@@ -380,6 +411,33 @@ class CCrmDocumentDeal extends CCrmDocument
 
 		$arFields['CONTACT_IDS'] = Crm\Binding\DealContactTable::getDealContactIDs($arFields['ID']);
 
+		$orderIds = Crm\Binding\OrderDealTable::getList([
+			'select' => ['ORDER_ID'],
+			'filter' => [
+				'=DEAL_ID' => $arFields['ID'],
+			],
+			'order' => ['ORDER_ID' => 'DESC']
+		])->fetchAll();
+
+		$arFields['ORDER_IDS'] = array_column($orderIds, 'ORDER_ID');
+
+		$productRows = Crm\ProductRowTable::getList([
+			'select' => ['ID', 'PRODUCT_ID', 'CP_PRODUCT_NAME', 'SUM_ACCOUNT'],
+			'filter' => [
+				'=OWNER_TYPE' => \CCrmOwnerTypeAbbr::Deal,
+				'=OWNER_ID' => $arFields['ID'],
+			],
+			'order' => ['SORT' => 'ASC']
+		])->fetchAll();
+
+		$arFields['PRODUCT_IDS'] = array_column($productRows, 'ID');
+		$arFields['PRODUCT_IDS_PRINTABLE'] = '';
+
+		if (!empty($arFields['PRODUCT_IDS']))
+		{
+			$arFields['PRODUCT_IDS_PRINTABLE'] = self::getProductRowsPrintable($productRows);
+		}
+
 		if ($arFields['COMPANY_ID'] <= 0)
 		{
 			//set empty value instead "0"
@@ -391,6 +449,28 @@ class CCrmDocumentDeal extends CCrmDocument
 			//set empty value instead "0"
 			$arFields['CONTACT_ID'] = null;
 		}
+	}
+
+	private static function getProductRowsPrintable(array $rows): string
+	{
+		$text = sprintf(
+			'[table][tr][th]%s[/th][th]%s[/th][/tr]',
+			GetMessage('CRM_DOCUMENT_FIELD_PRODUCT_NAME'),
+			GetMessage('CRM_DOCUMENT_FIELD_PRODUCT_SUM')
+		);
+
+		$currencyId = \CCrmCurrency::GetAccountCurrencyID();
+
+		foreach ($rows as $row)
+		{
+			$text .= sprintf(
+				'[tr][td]%s[/td][td]%s[/td][/tr]',
+				$row['CP_PRODUCT_NAME'],
+				\CCrmCurrency::MoneyToString($row['SUM_ACCOUNT'], $currencyId)
+			);
+		}
+
+		return $text . '[/table]';
 	}
 
 	static public function CreateDocument($parentDocumentId, $arFields)
@@ -424,9 +504,9 @@ class CCrmDocumentDeal extends CCrmDocument
 				$ar = array();
 				foreach ($arFields[$key] as $v1)
 				{
-					if (substr($v1, 0, strlen("user_")) == "user_")
+					if (mb_substr($v1, 0, mb_strlen("user_")) == "user_")
 					{
-						$ar[] = substr($v1, strlen("user_"));
+						$ar[] = mb_substr($v1, mb_strlen("user_"));
 					}
 					else
 					{
@@ -438,7 +518,7 @@ class CCrmDocumentDeal extends CCrmDocument
 
 				$arFields[$key] = $ar;
 			}
-			elseif ($arDocumentFields[$key]["Type"] == "select" && substr($key, 0, 3) == "UF_")
+			elseif ($arDocumentFields[$key]["Type"] == "select" && mb_substr($key, 0, 3) == "UF_")
 			{
 				self::InternalizeEnumerationField('CRM_DEAL', $arFields, $key);
 			}
@@ -567,7 +647,8 @@ class CCrmDocumentDeal extends CCrmDocument
 		}
 
 		//Region automation
-		Crm\Automation\Factory::runOnAdd(\CCrmOwnerType::Deal, $id);
+		$starter = new Crm\Automation\Starter(\CCrmOwnerType::Deal, $id);
+		$starter->setContextToBizproc()->runOnAdd();
 		//End region
 
 		if ($id && $id > 0 && $useTransaction)
@@ -581,6 +662,11 @@ class CCrmDocumentDeal extends CCrmDocument
 	public static function UpdateDocument($documentId, $arFields, $modifiedById = null)
 	{
 		global $DB;
+
+		if(empty($arFields))
+		{
+			return;
+		}
 
 		$arDocumentID = self::GetDocumentInfo($documentId);
 		if (empty($arDocumentID))
@@ -617,9 +703,9 @@ class CCrmDocumentDeal extends CCrmDocument
 				$ar = array();
 				foreach ($arFields[$key] as $v1)
 				{
-					if (substr($v1, 0, strlen("user_")) == "user_")
+					if (mb_substr($v1, 0, mb_strlen("user_")) == "user_")
 					{
-						$ar[] = substr($v1, strlen("user_"));
+						$ar[] = mb_substr($v1, mb_strlen("user_"));
 					}
 					else
 					{
@@ -631,7 +717,7 @@ class CCrmDocumentDeal extends CCrmDocument
 
 				$arFields[$key] = $ar;
 			}
-			elseif ($arDocumentFields[$key]["Type"] == "select" && substr($key, 0, 3) == "UF_")
+			elseif ($arDocumentFields[$key]["Type"] == "select" && mb_substr($key, 0, 3) == "UF_")
 			{
 				self::InternalizeEnumerationField('CRM_DEAL', $arFields, $key);
 			}
@@ -642,10 +728,25 @@ class CCrmDocumentDeal extends CCrmDocument
 				{
 					//Issue #40380. Secure URLs and file IDs are allowed.
 					$file = false;
-					CCrmFileProxy::TryResolveFile($value, $file, $arFileOptions);
+					if (\CCrmFileProxy::TryResolveFile($value, $file, $arFileOptions))
+					{
+						global $USER_FIELD_MANAGER;
+						if ($USER_FIELD_MANAGER instanceof \CUserTypeManager)
+						{
+							$prevValue = $USER_FIELD_MANAGER->GetUserFieldValue(
+								\CCrmOwnerType::ResolveUserFieldEntityID(\CCrmOwnerType::Deal),
+								$key,
+								$arDocumentID['ID']
+							);
+							if ($prevValue)
+							{
+								$file['old_id'] = $prevValue;
+							}
+						}
+					}
 					$value = $file;
 				}
-				unset($value);
+				unset($value, $prevValue);
 			}
 			elseif ($arDocumentFields[$key]["Type"] == "S:HTML")
 			{
@@ -685,7 +786,6 @@ class CCrmDocumentDeal extends CCrmDocument
 		}
 
 		//region Category & Stage
-		$stageChanged = false;
 		$categoryID = isset($arPresentFields['CATEGORY_ID']) ? (int)$arPresentFields['CATEGORY_ID'] : 0;
 		if(isset($arFields['CATEGORY_ID']) && $arFields['CATEGORY_ID'] != $categoryID)
 		{
@@ -715,8 +815,6 @@ class CCrmDocumentDeal extends CCrmDocument
 						)
 					);
 				}
-				elseif ($arPresentFields['STAGE_ID'] !== $stageID)
-					$stageChanged = true;
 			}
 		}
 		//endregion
@@ -776,10 +874,8 @@ class CCrmDocumentDeal extends CCrmDocument
 			}
 		}
 		//Region automation
-		if ($stageChanged)
-		{
-			Crm\Automation\Factory::runOnStatusChanged(\CCrmOwnerType::Deal, $arDocumentID['ID']);
-		}
+		$starter = new Crm\Automation\Starter(\CCrmOwnerType::Deal, $arDocumentID['ID']);
+		$starter->setContextToBizproc()->runOnUpdate($arFields, $arPresentFields);
 		//End region
 
 		if ($res && $useTransaction)
@@ -788,7 +884,7 @@ class CCrmDocumentDeal extends CCrmDocument
 		}
 	}
 
-	public function getDocumentName($documentId)
+	public static function getDocumentName($documentId)
 	{
 		$arDocumentID = self::GetDocumentInfo($documentId);
 		$dbRes = CCrmDeal::GetListEx([], ['=ID' => $arDocumentID['ID'], 'CHECK_PERMISSIONS' => 'N'],

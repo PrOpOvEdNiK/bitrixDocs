@@ -1,18 +1,15 @@
 <?php
-/**
- * Bitrix Framework
- * @package bitrix
- * @subpackage tasks
- * @copyright 2001-2013 Bitrix
- */
 
+use Bitrix\Tasks\Internals\TaskTable;
 
 class CTaskPlannerMaintance
 {
 	const PLANNER_COUNTER_CODE = 'planner_tasks';
 	const PLANNER_OPTION_CURRENT_TASKS = 'current_tasks_list';
 
-	private static $arTaskStatusOpened = array(4,5,7);
+	private const PLANNER_MAX_TASKS_COUNT = 30;
+
+	private static $arTaskStatusOpened = [4, 5, 7];
 
 	private static $SITE_ID = SITE_ID;
 	private static $USER_ID = null;
@@ -40,37 +37,25 @@ class CTaskPlannerMaintance
 			$tasksCount = 0;
 		}
 
-		if ($params['FULL'])
+		if (
+			$params['FULL']
+			&& self::$USER_ID > 0
+			&& is_array($taskIds)
+			&& !empty($taskIds)
+		)
 		{
-			if (self::$USER_ID > 0)
-			{
-				if (is_array($taskIds) && !empty($taskIds))
-				{
-					$tasks = self::getTasks($taskIds);
-				}
-			}
-		}
-		else
-		{
-			$APPLICATION->IncludeComponent(
-				"bitrix:tasks.iframe.popup",
-				".default",
-				array(
-					"ON_TASK_ADDED"   => "BX.DoNothing",
-					"ON_TASK_CHANGED" => "BX.DoNothing",
-					"ON_TASK_DELETED" => "BX.DoNothing",
-				),
-				null,
-				array("HIDE_ICONS" => "Y")
-			);
+			$tasks = self::getTasks($taskIds);
 		}
 
-		CJSCore::RegisterExt('tasks_planner_handler', array(
-			'js'   => '/bitrix/js/tasks/core_planner_handler.js',
-			'css'  => '/bitrix/js/tasks/css/tasks.css',
+		CJSCore::RegisterExt('tasks_planner_handler', [
+			'js' => [
+				'/bitrix/js/tasks/core_planner_handler.js',
+				'/bitrix/js/tasks/task-iframe-popup.js',
+			],
+			'css' => '/bitrix/js/tasks/css/tasks.css',
 			'lang' => BX_ROOT.'/modules/tasks/lang/'.LANGUAGE_ID.'/core_planner_handler.php',
-			'rel'  => array('popup', 'tooltip')
-		));
+			'rel' => ['popup', 'tooltip'],
+		]);
 
 		if (self::$USER_ID > 0)
 		{
@@ -113,18 +98,23 @@ class CTaskPlannerMaintance
 			$taskOnTimer = false;
 		}
 
-		$arResult = array(
-			'DATA' => array(
+		$pathTemplate = \Bitrix\Tasks\Integration\Socialnetwork\UI\Task::getActionPath();
+		$taskAddUrl = \Bitrix\Tasks\UI\Task::makeActionUrl($pathTemplate, 0, 'edit', self::$USER_ID);
+		$taskAddUrl .= '?'.http_build_query(['ADD_TO_TIMEMAN' => 'Y']);
+
+		$arResult = [
+			'DATA' => [
 				'TASKS_ENABLED' => true,
 				'TASKS' => $tasks,
 				'TASKS_COUNT' => $tasksCount,
 				'TASKS_TIMER' => $lastTimer,
 				'TASK_ON_TIMER' => $taskOnTimer,
-				'MANDATORY_UFS' => (CTasksRarelyTools::isMandatoryUserFieldExists() ? 'Y' : 'N')
-			),
-			'STYLES' => array('/bitrix/js/tasks/css/tasks.css'),
-			'SCRIPTS' => array('CJSTask', 'taskQuickPopups', 'tasks_planner_handler', '/bitrix/js/tasks/task-iframe-popup.js')
-		);
+				'MANDATORY_UFS' => (CTasksRarelyTools::isMandatoryUserFieldExists() ? 'Y' : 'N'),
+				'TASK_ADD_URL' => $taskAddUrl,
+			],
+			'STYLES' => ['/bitrix/js/tasks/css/tasks.css'],
+			'SCRIPTS' => ['CJSTask', 'taskQuickPopups', 'tasks_planner_handler'],
+		];
 
 		return ($arResult);
 	}
@@ -247,7 +237,7 @@ class CTaskPlannerMaintance
 		if (!is_array($arTasks))
 			$arTasks = array();
 
-		if (strlen($arActions['name']) > 0)
+		if ($arActions['name'] <> '')
 		{
 			$ID = false;
 			try
@@ -325,9 +315,9 @@ class CTaskPlannerMaintance
 	{
 		$res = null;
 
-		if  (!is_array($arIDs) && strlen($arIDs) > 0)
+		if  (!is_array($arIDs) && $arIDs <> '')
 		{
-			$arIDs = unserialize($arIDs);
+			$arIDs = unserialize($arIDs, ['allowed_classes' => false]);
 		}
 
 		$arIDs = array_values($arIDs);
@@ -409,73 +399,80 @@ class CTaskPlannerMaintance
 		return $res;
 	}
 
-	private static function getTasksCount($arTasks)
+	private static function getTasksCount($taskIds): int
 	{
-		$cnt = 0;
-		if (is_array($arTasks) && count($arTasks) > 0)
+		$count = 0;
+
+		if (is_array($taskIds) && count($taskIds) > 0)
 		{
-			$dbRes = CTasks::GetCount(array(
-				'ID' => $arTasks,
+			$result = CTasks::GetCount([
+				'ID' => $taskIds,
 				'RESPONSIBLE_ID' => self::$USER_ID,
-				'!STATUS' => self::$arTaskStatusOpened
-			));
-			if ($arRes = $dbRes->Fetch())
+				'!STATUS' => self::$arTaskStatusOpened,
+			]);
+			if ($row = $result->Fetch())
 			{
-				$cnt = $arRes['CNT'];
+				$count = $row['CNT'];
 			}
 		}
 
-		return $cnt;
+		return $count;
 	}
 
 	public static function getCurrentTasksList()
 	{
 		static $checked;
 
-		$list = CUserOptions::GetOption('tasks', self::PLANNER_OPTION_CURRENT_TASKS, null);
+		$list = CUserOptions::GetOption(
+			'tasks',
+			self::PLANNER_OPTION_CURRENT_TASKS,
+			null
+		);
 		// current user hasn't already used tasks list or has list in timeman
-		if($list === null)
+		if ($list === null)
 		{
-			if(CModule::IncludeModule('timeman'))
+			$list = [];
+
+			if (CModule::IncludeModule('timeman') && $timeManUser = CTimeManUser::instance())
 			{
-				$TMUSER = CTimeManUser::instance();
-				$arInfo = $TMUSER->GetCurrentInfo();
-				if(is_array($arInfo['TASKS']))
+				$info = $timeManUser->GetCurrentInfo();
+				if (is_array($info['TASKS']))
 				{
-					$list = $arInfo['TASKS'];
+					$list = $info['TASKS'];
 				}
-			}
-			else
-			{
-				$list = array();
 			}
 
 			if ($list !== null)
+			{
 				self::setCurrentTasksList($list);
+			}
 		}
 
-		if(!is_array($list))
+		if (!is_array($list))
 		{
-			$list = array();
+			$list = [];
 		}
 
 		$list = array_unique(array_filter($list, 'intval'));
 
-		if(!empty($list) && !$checked)
+		if (!empty($list) && !$checked)
 		{
-			$items = array();
-			$res = \Bitrix\Tasks\Internals\TaskTable::getList(array(
-				'filter' => array('ID' => $list, '!ZOMBIE' => 'Y'),
-				'select' => array('ID')
-			));
-			while($item = $res->fetch())
+			$items = [];
+			$res = TaskTable::getList([
+				'select' => ['ID'],
+				'filter' => [
+					'ID' => array_slice($list, 0, self::PLANNER_MAX_TASKS_COUNT),
+					'!ZOMBIE' => 'Y',
+				],
+			]);
+			while ($item = $res->fetch())
 			{
-				$items[] = intval($item['ID']);
+				$items[] = (int)$item['ID'];
 			}
 
 			$newList = array_intersect($list, $items);
 
-			if(count($list) != count($newList))
+			if (count($list) !== count($newList))
 			{
 				self::setCurrentTasksList($newList);
 				$list = $newList;

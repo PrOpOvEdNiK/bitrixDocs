@@ -352,7 +352,7 @@ class CPullChannel
 			}
 		}
 
-		if (strlen($channelType) <= 0)
+		if ($channelType == '')
 			$channelTypeSql = "(CHANNEL_TYPE = '' OR CHANNEL_TYPE IS NULL)";
 		else
 			$channelTypeSql = "CHANNEL_TYPE = '".$DB->ForSQL($channelType)."'";
@@ -460,7 +460,7 @@ class CPullChannel
 
 		$channelId = implode('/', array_unique($channelId));
 
-		if (strlen($channelId) <=0 || strlen($message) <= 0)
+		if ($channelId == '' || $message == '')
 			return false;
 
 		$defaultOptions = array(
@@ -477,7 +477,7 @@ class CPullChannel
 		$nginx_error = COption::GetOptionString("pull", "nginx_error", "N");
 		if ($nginx_error != "N")
 		{
-			$nginx_error = unserialize($nginx_error);
+			$nginx_error = unserialize($nginx_error, ["allowed_classes" => false]);
 			if (intval($nginx_error['date'])+120 < time())
 			{
 				COption::SetOptionString("pull", "nginx_error", "N");
@@ -568,12 +568,12 @@ class CPullChannel
 	{
 		global $DB;
 		$sqlDateFunction = null;
-		$dbType = strtolower($DB->type);
-		if ($dbType== "mysql")
+
+		if ($DB->type == "MYSQL")
 			$sqlDateFunction = "DATE_SUB(NOW(), INTERVAL 13 HOUR)";
-		else if ($dbType == "mssql")
+		elseif ($DB->type == "MSSQL")
 			$sqlDateFunction = "dateadd(HOUR, -13, getdate())";
-		else if ($dbType == "oracle")
+		elseif ($DB->type == "ORACLE")
 			$sqlDateFunction = "SYSDATE-1/13";
 
 		if (!is_null($sqlDateFunction))

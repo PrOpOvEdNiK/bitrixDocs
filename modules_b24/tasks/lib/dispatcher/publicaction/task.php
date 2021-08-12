@@ -12,6 +12,8 @@
 
 namespace Bitrix\Tasks\Dispatcher\PublicAction;
 
+use Bitrix\Tasks\Comments\Task\CommentPoster;
+use Bitrix\Tasks\Internals\UserOption;
 use Bitrix\Tasks\Item;
 use Bitrix\Tasks\Manager;
 use Bitrix\Tasks\Util;
@@ -278,7 +280,14 @@ final class Task extends \Bitrix\Tasks\Dispatcher\RestrictedAction
 			$result['ID' ] = $id;
 
 			$task = \CTaskItem::getInstance($id, Util\User::getId());
-			$arTask = $task->getData(false);
+			try
+			{
+				$arTask = $task->getData(false);
+			}
+			catch (\TasksException $e)
+			{
+				return [];
+			}
 
 			if (empty($arTask['DEADLINE']))
 			{
@@ -523,7 +532,14 @@ final class Task extends \Bitrix\Tasks\Dispatcher\RestrictedAction
 		$result = array();
 
 		$task = \CTaskItem::getInstance($id, Util\User::getId());
-		$arTask = $task->getData(false);
+		try
+		{
+			$arTask = $task->getData(false);
+		}
+		catch (\TasksException $e)
+		{
+			return [];
+		}
 		$arTask['AUDITORS'][] = $auditorId;
 		$task->update(array('AUDITORS' => $arTask['AUDITORS']));
 
@@ -535,7 +551,15 @@ final class Task extends \Bitrix\Tasks\Dispatcher\RestrictedAction
 		$result = array();
 
 		$task = \CTaskItem::getInstance($id, Util\User::getId());
-		$arTask = $task->getData(false);
+		try
+		{
+			$arTask = $task->getData(false);
+		}
+		catch (\TasksException $e)
+		{
+			return [];
+		}
+
 		$arTask['ACCOMPLICES'][] = $accompliceId;
 		$task->update(array('ACCOMPLICES' => $arTask['ACCOMPLICES']));
 
@@ -568,6 +592,57 @@ final class Task extends \Bitrix\Tasks\Dispatcher\RestrictedAction
 
 		$task = \CTaskItem::getInstance($id, Util\User::getId());
 		$task->update(array('CREATED_BY' => $originatorId));
+
+		return $result;
+	}
+
+	public function mute($id)
+	{
+		return UserOption::add($id, Util\User::getId(), UserOption\Option::MUTED);
+	}
+
+	public function unmute($id)
+	{
+		return UserOption::delete($id, Util\User::getId(), UserOption\Option::MUTED);
+	}
+
+	public function pin($id, $groupId = 0)
+	{
+		$option = UserOption\Option::PINNED;
+		$groupId = (int)$groupId;
+		if ($groupId)
+		{
+			$option = UserOption\Option::PINNED_IN_GROUP;
+		}
+		return UserOption::add($id, Util\User::getId(), $option);
+	}
+
+	public function unpin($id, $groupId = 0)
+	{
+		$option = UserOption\Option::PINNED;
+		$groupId = (int)$groupId;
+		if ($groupId)
+		{
+			$option = UserOption\Option::PINNED_IN_GROUP;
+		}
+		return UserOption::delete($id, Util\User::getId(), $option);
+	}
+
+	public function ping($id): array
+	{
+		$result = [];
+
+		$userId = Util\User::getId();
+		$task = \CTaskItem::getInstance($id, $userId);
+		$taskData = $task->getData(false);
+
+		if ($taskData)
+		{
+			$commentPoster = CommentPoster::getInstance($id, $userId);
+			$commentPoster && $commentPoster->postCommentsOnTaskStatusPinged($taskData);
+
+			\CTaskNotifications::sendPingStatusMessage($taskData, $userId);
+		}
 
 		return $result;
 	}

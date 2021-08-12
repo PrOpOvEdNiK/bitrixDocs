@@ -24,7 +24,7 @@ class CAllCurrencyRates
 		if (!isset($arFields["CURRENCY"]))
 			$arMsg[] = array('id' => 'CURRENCY','text' => GetMessage('BT_MOD_CURR_ERR_RATE_CURRENCY_ABSENT'));
 		else
-			$arFields["CURRENCY"] = substr($arFields["CURRENCY"],0,3);
+			$arFields["CURRENCY"] = mb_substr($arFields["CURRENCY"], 0, 3);
 
 		if (empty($arFields['DATE_RATE']))
 			$arMsg[] = array('id' => 'DATE_RATE','text' => GetMessage('BT_MOD_CURR_ERR_RATE_DATE_ABSENT'));
@@ -116,7 +116,7 @@ class CAllCurrencyRates
 		{
 			$stackCacheManager->Clear("currency_rate");
 
-			$isMsSql = strtolower($DB->type) == 'mssql';
+			$isMsSql = $DB->type == 'MSSQL';
 			if ($isMsSql)
 				CTimeZone::Disable();
 			$ID = $DB->Add("b_catalog_currency_rate", $arFields);
@@ -168,7 +168,7 @@ class CAllCurrencyRates
 		}
 		else
 		{
-			$isMsSql = strtolower($DB->type) == 'mssql';
+			$isMsSql = $DB->type == 'MSSQL';
 			if ($isMsSql)
 				CTimeZone::Disable();
 			$strUpdate = $DB->PrepareUpdate("b_catalog_currency_rate", $arFields);
@@ -251,11 +251,11 @@ class CAllCurrencyRates
 		return false;
 	}
 
-	public static function GetList(&$by, &$order, $arFilter=array())
+	public static function GetList($by = 'date', $order = 'asc', $arFilter = [])
 	{
 		global $DB;
 
-		$mysqlEdition = strtolower($DB->type) === 'mysql';
+		$mysqlEdition = $DB->type === 'MYSQL';
 		$arSqlSearch = array();
 
 		if(!is_array($arFilter))
@@ -280,12 +280,12 @@ class CAllCurrencyRates
 
 			switch(strtoupper($key))
 			{
-			case "CURRENCY":
-				$arSqlSearch[] = "C.CURRENCY = '".$val."'";
-				break;
-			case "DATE_RATE":
-				$arSqlSearch[] = "(C.DATE_RATE ".($bInvert?"<":">=")." ".($mysqlEdition ? "CAST(" : "" ).$DB->CharToDateFunction($DB->ForSql($val), "SHORT").($mysqlEdition ? " AS DATE)" : "" ).($bInvert?"":" OR C.DATE_RATE IS NULL").")";
-				break;
+				case "CURRENCY":
+					$arSqlSearch[] = "C.CURRENCY = '".$val."'";
+					break;
+				case "DATE_RATE":
+					$arSqlSearch[] = "(C.DATE_RATE ".($bInvert? "<" : ">=")." ".($mysqlEdition? "CAST(" : "").$DB->CharToDateFunction($DB->ForSql($val), "SHORT").($mysqlEdition? " AS DATE)" : "").($bInvert? "" : " OR C.DATE_RATE IS NULL").")";
+					break;
 			}
 		}
 
@@ -308,13 +308,10 @@ class CAllCurrencyRates
 		else
 		{
 			$strSqlOrder = " ORDER BY C.DATE_RATE ";
-			$by = "date";
 		}
 
-		if (strtolower($order)=="desc")
+		if (strtolower($order) == "desc")
 			$strSqlOrder .= " desc ";
-		else
-			$order = "asc";
 
 		$strSql .= $strSqlOrder;
 		$res = $DB->Query($strSql, false, "File: ".__FILE__."<br>Line: ".__LINE__);

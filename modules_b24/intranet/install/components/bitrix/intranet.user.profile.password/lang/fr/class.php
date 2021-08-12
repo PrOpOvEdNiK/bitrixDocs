@@ -1,7 +1,0 @@
-<?
-$MESS["INTRANET_USER_PROFILE_ACCESS_DENIED"] = "Accès refusé";
-$MESS["INTRANET_USER_PROFILE_FIELD_CONFIRM_PASSWORD"] = "Confirmer le nouveau mot de passe";
-$MESS["INTRANET_USER_PROFILE_FIELD_PASSWORD"] = "Nouveau mot de passe";
-$MESS["INTRANET_USER_PROFILE_NOTHING_TO_SAVE"] = "Le champ est vide";
-$MESS["INTRANET_USER_PROFILE_SECTION_PASSWORD"] = "Modifier le mot de passe";
-?>

@@ -66,7 +66,7 @@ class PhaseColorScheme
 		return self::PROCESS_COLORS[$offset];
 	}
 	/**
-	 * Check if scheme is persistent.
+	 * @deprecated
 	 * @return bool
 	 */
 	public function isPersistent()
@@ -152,7 +152,9 @@ class PhaseColorScheme
 	public function load()
 	{
 		$s = Main\Config\Option::get('crm', $this->optionName, '', '');
-		$params = $s !== '' ? unserialize($s) : null;
+		$params = $s !== '' ? unserialize($s, [
+			'allowed_classes' => false,
+		]) : null;
 		if(!is_array($params))
 		{
 			return false;
@@ -216,5 +218,27 @@ class PhaseColorScheme
 	protected static function removeByName($optionName)
 	{
 		Main\Config\Option::delete('crm', array('name' => $optionName));
+	}
+
+	public static function fillDefaultColors(array $stages): array
+	{
+		$offset = -1;
+		foreach($stages as &$stage)
+		{
+			$semantics = $stage['SEMANTICS'] ?? '';
+			if(!PhaseSemantics::isFinal($semantics))
+			{
+				$offset++;
+			}
+			$color = $stage['COLOR'] ?? '';
+			if(empty($color) || mb_strlen($stage['COLOR']) < 4)
+			{
+				$stage['COLOR'] = static::getDefaultColorBySemantics($semantics, [
+					'offset' => $offset,
+				]);
+			}
+		}
+
+		return $stages;
 	}
 }

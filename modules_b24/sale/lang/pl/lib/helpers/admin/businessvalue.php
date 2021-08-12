@@ -1,4 +1,0 @@
-<?
-$MESS["BIZVAL_DOMAIN_COMMON"] = "Domyślne";
-$MESS["BIZVAL_PAGE_DELETE_MAPPING"] = "Domyślne";
-?>

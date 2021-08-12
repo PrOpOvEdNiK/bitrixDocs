@@ -16,7 +16,7 @@ final class Manager extends Sale\Domain\Verification\BaseManager
 	/**
 	 * @inheritDoc
 	 */
-	protected static function getPathPrefix(): string
+	public static function getPathPrefix(): string
 	{
 		return "/.well-known/";
 	}

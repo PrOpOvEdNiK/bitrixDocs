@@ -1,4 +1,0 @@
-<?
-$MESS["SCALE_ACTIONSDATA_ACTION_ERROR"] = "Action a échoué.";
-$MESS["SCALE_ACTIONSDATA_ACTION_FINISHED"] = "Action réussie.";
-?>

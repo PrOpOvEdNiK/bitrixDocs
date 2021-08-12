@@ -1,4 +1,0 @@
-<?
-$MESS["MOBILEAPP_EDIT_APP"] = "Edytuj";
-$MESS["MOBILEAPP_REMOVE_APP"] = "Usuń";
-?>

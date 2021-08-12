@@ -1,3 +1,0 @@
-<?
-$MESS["CRM_REPORT_FILTER_REPEATED_LEAD_LAST_30_DAYS_PRESET_TITLE"] = "Repetido nos últimos 30 dias";
-?>

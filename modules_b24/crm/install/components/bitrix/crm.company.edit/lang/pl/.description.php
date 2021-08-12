@@ -1,6 +1,0 @@
-<?
-$MESS["CRM_COMPANY_EDIT_DESCRIPTION"] = "Edytuj Firmę";
-$MESS["CRM_COMPANY_EDIT_NAME"] = "Edytuj Firmę";
-$MESS["CRM_COMPANY_NAME"] = "Firmy";
-$MESS["CRM_NAME"] = "CRM";
-?>

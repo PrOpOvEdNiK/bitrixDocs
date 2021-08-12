@@ -1,7 +1,0 @@
-<script type="text/ejs" id="kanbanResponsiblesBlock">
-    <p><?= $this->t('RESPONSIBLES') ?></p>
-    <% for (var indAcc=0; indAcc < accompliceList.length; indAcc++) { %>
-        <%== $.View('taskAccompliceItem', accompliceList[indAcc]) %>
-    <% } %>
-    <div title="<?= $this->t('ADD_A_MEMBER') ?>" class="add"></div>
-</script>

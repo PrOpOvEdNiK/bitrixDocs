@@ -1,4 +1,0 @@
-<?
-$MESS["IMOL_HELPER_TEMPLATE_COLORED"] = "Coloré";
-$MESS["IMOL_HELPER_TEMPLATE_TRANSPARENT"] = "Transparent";
-?>

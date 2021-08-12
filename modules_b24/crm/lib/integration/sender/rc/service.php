@@ -149,7 +149,7 @@ class Service
 						$fields,
 						function ($field) use ($categoryId)
 						{
-							return strlen($field['VALUE']) && $field['VALUE'] == $categoryId;
+							return mb_strlen($field['VALUE']) && $field['VALUE'] == $categoryId;
 						}
 					)
 				: $fields

@@ -1,6 +1,8 @@
 <?php
 namespace Bitrix\Crm\Automation;
 
+use Bitrix\Crm\Service\Container;
+use Bitrix\Crm\Settings\QuoteSettings;
 use Bitrix\Main\Loader;
 use Bitrix\Main\Localization\Loc;
 
@@ -22,26 +24,26 @@ class Helper
 
 	public static function getNavigationBarItems($entityTypeId, $categoryId = 0)
 	{
-		$categoryId = max(0, $categoryId);
-		if (Factory::isAutomationAvailable($entityTypeId))
+		if (!Factory::isAutomationAvailable($entityTypeId))
 		{
-			$url = '/crm/'.strtolower(\CCrmOwnerType::ResolveName($entityTypeId)).'/automation/'.$categoryId.'/';
-			if ($entityTypeId === \CCrmOwnerType::Order)
-			{
-				//TODO: crazy shop
-				$url = '/shop/orders/automation/0/';
-			}
-
-			return [
-				[
-					'id' => 'automation',
-					'name' => Loc::getMessage('CRM_AUTOMATION_HELPER_ROBOT_TITLE'),
-					'active' => false,
-					'url' => $url
-				]
-			];
+			return [];
 		}
-		return [];
+		if ($entityTypeId === \CCrmOwnerType::Quote && !QuoteSettings::getCurrent()->isFactoryEnabled())
+		{
+			return [];
+		}
+
+		$categoryId = max(0, $categoryId);
+		$url = Container::getInstance()->getRouter()->getAutomationUrl($entityTypeId, $categoryId);
+
+		return [
+			[
+				'id' => 'automation',
+				'name' => Loc::getMessage('CRM_AUTOMATION_HELPER_ROBOT_TITLE'),
+				'active' => false,
+				'url' => $url
+			]
+		];
 	}
 
 	public static function __callStatic($name, $arguments)

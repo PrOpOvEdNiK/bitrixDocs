@@ -6,7 +6,7 @@ use Bitrix\Main\Error;
 use Bitrix\Main\Localization\Loc;
 use Bitrix\Main\ModuleManager;
 
-class Important extends \Bitrix\Main\Engine\Controller
+class Important extends \Bitrix\Socialnetwork\Controller\Base
 {
 	public function getUsersAction(array $params = [])
 	{
@@ -21,11 +21,12 @@ class Important extends \Bitrix\Main\Engine\Controller
 
 		$pageSize = 10;
 		$postId = (isset($params['POST_ID']) && intval($params['POST_ID']) > 0 ? intval($params['POST_ID']) : 0);
-		$propertyName = (isset($params['NAME']) && strlen($params['NAME']) > 0 ? trim($params['NAME']) : 'BLOG_POST_IMPRTNT');
-		$propertyValue = (isset($params['VALUE']) && strlen($params['VALUE']) > 0 ? trim($params['VALUE']) : 'Y');
-		$pathToUser = (isset($params['PATH_TO_USER']) && strlen($params['PATH_TO_USER']) > 0 ? $params['PATH_TO_USER'] : SITE_DIR.'company/personal/user/#USER_ID#/');
-		$nameTemplate = (isset($params['NAME_TEMPLATE']) && strlen($params['NAME_TEMPLATE']) > 0 ? $params['NAME_TEMPLATE'] :  \CSite::getNameFormat(false));
+		$propertyName = (isset($params['NAME']) && $params['NAME'] <> '' ? trim($params['NAME']) : 'BLOG_POST_IMPRTNT');
+		$propertyValue = (isset($params['VALUE']) && $params['VALUE'] <> '' ? trim($params['VALUE']) : 'Y');
+		$pathToUser = (isset($params['PATH_TO_USER']) && $params['PATH_TO_USER'] <> '' ? $params['PATH_TO_USER'] : SITE_DIR.'company/personal/user/#USER_ID#/');
+		$nameTemplate = (isset($params['NAME_TEMPLATE']) && $params['NAME_TEMPLATE'] <> '' ? $params['NAME_TEMPLATE'] :  \CSite::getNameFormat(false));
 		$pageNumber = (isset($params['PAGE_NUMBER']) && intval($params['PAGE_NUMBER']) > 0 ? intval($params['PAGE_NUMBER']) : 1);
+		$avatarSize = (isset($params['AVATAR_SIZE']) && (int)$params['AVATAR_SIZE'] > 0 ? (int)$params['AVATAR_SIZE'] : 21);
 
 		if ($postId <= 0)
 		{
@@ -43,7 +44,8 @@ class Important extends \Bitrix\Main\Engine\Controller
 			$pageNumber,
 			$propertyValue,
 			$nameTemplate,
-			$pathToUser
+			$pathToUser,
+			$avatarSize
 		]);
 
 		$cachePath = $CACHE_MANAGER->getCompCachePath(\CComponentEngine::makeComponentPath('socialnetwork.blog.blog')).'/'.$postId;
@@ -131,9 +133,11 @@ class Important extends \Bitrix\Main\Engine\Controller
 						{
 							$fileFields = \CFile::resizeImageGet(
 								$userOptionFields['USER_PERSONAL_PHOTO'],
-								[ 'width' => 21, 'height' => 21 ],
+								[ 'width' => $avatarSize, 'height' => $avatarSize ],
 								BX_RESIZE_IMAGE_EXACT,
-								false
+								false,
+								false,
+								true
 							);
 							$userFields['PHOTO_SRC'] = ($fileFields['src'] ? $fileFields['src'] : '');
 							$userFields["PHOTO"] = \CFile::showImage($fileFields['src'], 21, 21, 'border=0');
@@ -159,8 +163,8 @@ class Important extends \Bitrix\Main\Engine\Controller
 						}
 
 						$res = \CUser::getList(
-							($by = "ID"),
-							($order = "ASC"),
+							"ID",
+							"ASC",
 							[ 'ID' => implode("|", $userIdList) ],
 							$select
 						);

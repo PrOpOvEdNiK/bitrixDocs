@@ -1,8 +1,0 @@
-<script type='text/ejs' id='filterPanelPriorities'>
-    <% for (i=0; i<window.SCRUMBAN.priority.length; i++) { %>
-    <% var selectedId = parseInt(window.SCRUMBAN.priority[i].id, 10); %>
-        <option value="<%= window.SCRUMBAN.priority[i].id %>" data-class="<%= window.SCRUMBAN.priority[i].cssClass %>" <% if (this.selected && this.selected.indexOf(selectedId) != -1) { %> selected <% } %> >
-            <%= window.SCRUMBAN.priority[i].title %>
-        </option>
-    <% } %>
-</script>

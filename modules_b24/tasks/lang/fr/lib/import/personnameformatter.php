@@ -1,3 +1,0 @@
-<?
-$MESS["TASKS_PERSON_NAME_FORMAT_DEFAULT"] = "Par défaut";
-?>

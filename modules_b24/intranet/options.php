@@ -1,4 +1,5 @@
-<?
+<?php
+
 if(!$USER->IsAdmin())
 	return;
 
@@ -43,7 +44,7 @@ $arDefaultValues = array(
 	'BLOCK_NEW_USER_LF_SITE' => 'N',
 );
 
-$dbSites = CSite::GetList($by = 'sort', $order = 'asc', array('ACTIVE' => 'Y'));
+$dbSites = CSite::GetList('sort', 'asc', array('ACTIVE' => 'Y'));
 $arSites = array();
 $default_site = '';
 while ($arRes = $dbSites->GetNext())
@@ -70,9 +71,9 @@ $childTabControl = new CAdminViewTabControl("childTabControl", $aSubTabs);
 $childTabControl_1 = new \CAdminViewTabControl('childTabControl_1', $aSubTabs_1);
 $childTabControl_2 = new \CAdminViewTabControl('childTabControl_2', $aSubTabs_2);
 
-if($REQUEST_METHOD=="POST" && strlen($Update.$Apply.$RestoreDefaults)>0 && check_bitrix_sessid())
+if($REQUEST_METHOD=="POST" && $Update.$Apply.$RestoreDefaults <> '' && check_bitrix_sessid())
 {
-	if(strlen($RestoreDefaults)>0)
+	if($RestoreDefaults <> '')
 	{
 		COption::RemoveOption("intranet");
 		COption::SetOptionString('intranet', 'options_restore', date('c'));
@@ -96,7 +97,7 @@ if($REQUEST_METHOD=="POST" && strlen($Update.$Apply.$RestoreDefaults)>0 && check
 			}
 		}
 
-		$first_week_day = substr($_REQUEST['first_week_day'], 0, 2);
+		$first_week_day = mb_substr($_REQUEST['first_week_day'], 0, 2);
 		COption::SetOptionString('intranet', 'first_week_day', $first_week_day);
 
 		$tz_transition = $_REQUEST['tz_transition'] == 'Y' ? 'Y' : 'N';
@@ -164,7 +165,7 @@ if($REQUEST_METHOD=="POST" && strlen($Update.$Apply.$RestoreDefaults)>0 && check
 		while(array_key_exists("search_file_extension_".$i, $_REQUEST))
 		{
 			$ext = trim($_REQUEST["search_file_extension_".$i]);
-			if(strlen($ext) > 0)
+			if($ext <> '')
 			{
 				$ar[$ext] = $ext;
 				COption::SetOptionString("intranet", "search_file_extension_".$ext, $ext);
@@ -179,7 +180,7 @@ if($REQUEST_METHOD=="POST" && strlen($Update.$Apply.$RestoreDefaults)>0 && check
 		COption::SetOptionInt('intranet', 'mail_check_period', intval($_REQUEST['mail_check_period']));
 	}
 
-	if(strlen($Update)>0 && strlen($_REQUEST["back_url_settings"])>0)
+	if($Update <> '' && $_REQUEST["back_url_settings"] <> '')
 	{
 		LocalRedirect($_REQUEST["back_url_settings"]);
 	}
@@ -207,6 +208,17 @@ $dbIBlock = CIBlock::GetList(array('SORT' => 'ASC'), array('ACTIVE' => 'Y'));
 while ($arIBlock = $dbIBlock->Fetch())
 {
 	$arIB[$arIBlock['IBLOCK_TYPE_ID']][$arIBlock['ID']] = ($arIBlock['CODE'] ? '['.$arIBlock['CODE'].'] ' : '').$arIBlock['NAME'];
+}
+
+$hideBlockNewUserLFCommon = true;
+foreach ($arSites as $site => $site_name)
+{
+	$val = \Bitrix\Main\Config\Option::get('intranet', 'BLOCK_NEW_USER_LF_SITE', false, $site);
+	if ($val === false)
+	{
+		$hideBlockNewUserLFCommon = false;
+		break;
+	}
 }
 
 foreach ($arSiteSettings as $param_name)
@@ -333,6 +345,7 @@ $tabControl->BeginNextTab();
 <?
 if ($current_ib_structure || $current_ibtype):
 ?>
+	<option value=""><?echo GetMessage('INTR_OPTION_NOT_SET')?></option>
 	<?foreach ($arIB[$current_ibtype] as $iblock_id => $iblock):?><option value="<?echo $iblock_id?>"<?echo $iblock_id == $current_ib_structure ? ' selected="selected"' : ''?>><?=htmlspecialcharsbx($iblock) ?></option><?endforeach;?>
 <?
 else:
@@ -348,6 +361,7 @@ endif;
 <?
 if ($current_ib_honour || $current_ibtype):
 ?>
+	<option value=""><?echo GetMessage('INTR_OPTION_NOT_SET')?></option>
 	<?foreach ($arIB[$current_ibtype] as $iblock_id => $iblock):?><option value="<?echo $iblock_id?>"<?echo $iblock_id == $current_ib_honour ? ' selected="selected"' : ''?>><?=htmlspecialcharsbx($iblock) ?></option><?endforeach;?>
 <?
 else:
@@ -363,6 +377,7 @@ endif;
 <?
 if ($current_ib_state_history || $current_ibtype):
 ?>
+	<option value=""><?echo GetMessage('INTR_OPTION_NOT_SET')?></option>
 	<?foreach ($arIB[$current_ibtype] as $iblock_id => $iblock):?><option value="<?echo $iblock_id?>"<?echo $iblock_id == $current_ib_state_history ? ' selected="selected"' : ''?>><?=htmlspecialcharsbx($iblock) ?></option><?endforeach;?>
 <?
 else:
@@ -402,16 +417,27 @@ endif;
 	<tr class="heading">
 		<td colspan="2"><?echo GetMessage('INTR_OPT_OTHER')?></td>
 	</tr>
-	<tr>
-		<td valign="top" width="50%"><?php echo GetMessage("INTR_OPTION_BLOCK_NEW_USER_LF")?></td>
-		<td valign="top" width="50%"><input type="checkbox" name="BLOCK_NEW_USER_LF" value="Y" <?php echo ($block_new_user_lf == "Y" ? " checked" : "")?> /></td>
-	</tr>
+	<?php
+	if ($hideBlockNewUserLFCommon)
+	{
+		?><input type="hidden" name="BLOCK_NEW_USER_LF" value="<?= ($block_new_user_lf === 'Y' ? "Y" : 'N') ?>" /><?php
+	}
+	else
+	{
+		?>
+		<tr>
+			<td valign="top" width="50%"><?php echo GetMessage('INTR_OPTION_BLOCK_NEW_USER_LF')?></td>
+			<td valign="top" width="50%"><input type="checkbox" name="BLOCK_NEW_USER_LF" value="Y" <?= ($block_new_user_lf === 'Y' ? ' checked' : '') ?> /></td>
+		</tr>
+		<?php
+	}
+	?>
 	<tr>
 		<td valign="top" width="50%"><?php echo GetMessage("INTR_OPTION_VACATION_TYPES")?></td>
 		<td valign="top" width="50%">
 			<select name="VACATION_TYPES[]" multiple size="4">
 			<?foreach($vacationTypes as $type):?>
-				<option value="<?=$type['ID']?>" <?=($type['ACTIVE']?' selected':'')?>><?='['.strtolower($type['ID']).'] '.$type['NAME']?></option>
+				<option value="<?=$type['ID']?>" <?=($type['ACTIVE']?' selected':'')?>><?= '['.mb_strtolower($type['ID']).'] '.$type['NAME']?></option>
 			<?endforeach;?>
 			</select>
 		</td>
@@ -496,7 +522,8 @@ foreach ($arSites as $SITE_ID => $SITE_NAME):
 		?>
 		<tr id="block_new_user_lf_site_row_<?=$SITE_ID?>">
 			<td valign="top" width="50%"><?php echo GetMessage("INTR_OPTION_BLOCK_NEW_USER_LF")?></td>
-			<td valign="top" width="50%"><input type="checkbox" name="BLOCK_NEW_USER_LF_SITE_<?echo $SITE_ID?>" value="Y" <?php echo ($BLOCK_NEW_USER_LF_SITE[$SITE_ID] == "Y" ? " checked" : "")?> /></td>
+			<td valign="top" width="50%"><?
+				?><input type="checkbox" name="BLOCK_NEW_USER_LF_SITE_<?echo $SITE_ID?>" value="Y" <?php echo ($BLOCK_NEW_USER_LF_SITE[$SITE_ID] == "Y" ? " checked" : "")?> /></td>
 		</tr>
 		<?
 	endif;
@@ -514,7 +541,7 @@ $tabControl->BeginNextTab();
 
 $arSites = array();
 $siteDefault = false;
-$dbRes = CSite::GetList($by = 'sort', $order = 'asc', array('active' => 'Y'));
+$dbRes = CSite::GetList('sort', 'asc', array('active' => 'Y'));
 while ($arSite = $dbRes->Fetch())
 {
 	$arSites[$arSite['ID']] = '[' . $arSite['ID'] . '] ' . $arSite['NAME'];
@@ -523,7 +550,7 @@ while ($arSite = $dbRes->Fetch())
 }
 
 $arUGroupsEx = Array();
-$dbUGroups = CGroup::GetList($by = 'c_sort', $order = 'asc');
+$dbUGroups = CGroup::GetList();
 while ($arUGroups = $dbUGroups->Fetch())
 	$arUGroupsEx[$arUGroups['ID']] = $arUGroups['NAME'];
 
@@ -552,7 +579,7 @@ if (!empty($arRes))
 {
 	foreach ($arRes as $key => $val)
 	{
-		$userProp[$val['FIELD_NAME']] = strlen($val['EDIT_FORM_LABEL']) > 0
+		$userProp[$val['FIELD_NAME']] = $val['EDIT_FORM_LABEL'] <> ''
 			? $val['EDIT_FORM_LABEL']
 			: $val['FIELD_NAME'];
 	}
@@ -709,7 +736,7 @@ $arParamsGroup['HRXML'] = array(
 			case 'LIST':
 				$bMultiple = $arParam['MULTIPLE'] == 'Y';
 				if ($bMultiple && $value && !is_array($value))
-					$value = unserialize($value); ?>
+					$value = unserialize($value, ["allowed_classes" => false]); ?>
 				<select name="IMPORT[<?=$key; ?>]<? if ($bMultiple) { ?>[]<? } ?>"<? if ($bMultiple) { ?> multiple="multiple" size="10"<? } ?>>
 				<? foreach ($arParam['VALUES'] as $val => $title) { ?>
 				<option value="<?=htmlspecialcharsbx($val); ?>"<? if (in_array($val, (array) $value)) { ?> selected="selected"<? } ?>><?=htmlspecialcharsbx($title); ?></option>
@@ -814,7 +841,7 @@ endforeach;
 foreach ($arVariants as $var):
 ?>
 	<tr>
-		<td valign="top"><?echo GetMessage('INTR_OPTION_TZ_TO_'.strtoupper($var).'_DATE')?>: </td>
+		<td valign="top"><?echo GetMessage('INTR_OPTION_TZ_TO_'.mb_strtoupper($var).'_DATE')?>: </td>
 		<td>
 			<select name="tz_transition_<?echo $var?>_tpl" onchange="check_other(this, '<?echo $var?>')" <?echo $tz_transition == 'N' ? 'disabled="disabled"' : ''?>>
 				<option value=""><?echo GetMessage('INTR_OPTION_NOT_SET')?></option>
@@ -825,7 +852,7 @@ foreach ($arTZRules[$var] as $id => $rule):
 	$bFound |= ($rule === ${'tz_transition_'.$var});
 	if ($firstRule == '') $firstRule = $rule;
 ?>
-	<option value="<?echo htmlspecialcharsbx($rule)?>" <?echo ($rule === ${'tz_transition_'.$var} || (!$bFound && $rule == 'other' && ${'tz_transition_'.$var} != '')) ? 'selected="selected"' : ''?>><?echo GetMessage('INTR_OPTION_TZ_TO_'.strtoupper($var).'_DATE_'.$id)?></option>
+	<option value="<?echo htmlspecialcharsbx($rule)?>" <?echo ($rule === ${'tz_transition_'.$var} || (!$bFound && $rule == 'other' && ${'tz_transition_'.$var} != '')) ? 'selected="selected"' : ''?>><?echo GetMessage('INTR_OPTION_TZ_TO_'.mb_strtoupper($var).'_DATE_'.$id)?></option>
 <?
 endforeach;
 ?>
@@ -981,7 +1008,7 @@ $childTabControl_1->End();
 <?$tabControl->Buttons();?>
 	<input type="submit" name="Update" value="<?=GetMessage("MAIN_SAVE")?>" title="<?=GetMessage("MAIN_OPT_SAVE_TITLE")?>" />
 	<input type="submit" name="Apply" value="<?=GetMessage("MAIN_APPLY")?>" title="<?=GetMessage("MAIN_OPT_APPLY_TITLE")?>">
-	<?if(strlen($_REQUEST["back_url_settings"])>0):?>
+	<?if($_REQUEST["back_url_settings"] <> ''):?>
 		<input type="button" name="Cancel" value="<?=GetMessage("MAIN_OPT_CANCEL")?>" title="<?=GetMessage("MAIN_OPT_CANCEL_TITLE")?>" onclick="window.location='<?echo htmlspecialcharsbx(CUtil::addslashes($_REQUEST["back_url_settings"]))?>'">
 		<input type="hidden" name="back_url_settings" value="<?=htmlspecialcharsbx($_REQUEST["back_url_settings"])?>">
 	<?endif?>

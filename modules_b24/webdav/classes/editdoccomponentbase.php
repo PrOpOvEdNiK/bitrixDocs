@@ -284,7 +284,7 @@ abstract class CWebDavEditDocComponentBase extends CBitrixComponent
 		$order   = "desc";
 		$history = new CBPHistoryService();
 		$dbDocumentHistory = $history->GetHistoryList(
-			array(strtoupper($by) => strtoupper($order)),
+			array(mb_strtoupper($by) => mb_strtoupper($order)),
 			$filter,
 			false,
 			array('nTopCount' => 1),
@@ -321,7 +321,7 @@ abstract class CWebDavEditDocComponentBase extends CBitrixComponent
 	protected static function getEntityType($iblockCode)
 	{
 		$entityType = explode('_', $iblockCode);
-		$entityType = strtolower(array_shift($entityType));
+		$entityType = mb_strtolower(array_shift($entityType));
 
 		return $entityType;
 	}
@@ -363,7 +363,7 @@ abstract class CWebDavEditDocComponentBase extends CBitrixComponent
 	 */
 	protected function generateCidForFile($fileId)
 	{
-		$cid = substr(md5(rand(100,999999)), 0, 5);
+		$cid = mb_substr(md5(rand(100, 999999)), 0, 5);
 		if (!isset($_SESSION["MFI_UPLOADED_FILES_".$cid]))
 		{
 			$_SESSION["MFI_UPLOADED_FILES_".$cid] = array($fileId);
@@ -563,7 +563,7 @@ abstract class CWebDavEditDocComponentBase extends CBitrixComponent
 		}
 		else
 		{
-			if(substr($this->getWebdav()->arParams['file_array']['SRC'], 0, 1) == "/")
+			if(mb_substr($this->getWebdav()->arParams['file_array']['SRC'], 0, 1) == "/")
 			{
 				//from us server
 			}
@@ -664,7 +664,7 @@ abstract class CWebDavEditDocComponentBase extends CBitrixComponent
 
 	public function onPrepareComponentParams($arParams)
 	{
-		$arParams['createType'] = !empty($arParams['createType'])? strtolower($arParams['createType']) : null;
+		$arParams['createType'] = !empty($arParams['createType'])? mb_strtolower($arParams['createType']) : null;
 		$arParams['newFileName'] = !empty($arParams['newFileName'])? $arParams['newFileName'] : '';
 		$arParams['commitDoc'] = !empty($arParams['commitDoc']);
 
@@ -683,7 +683,7 @@ abstract class CWebDavEditDocComponentBase extends CBitrixComponent
 
 	protected function isRenameFile()
 	{
-		return strtolower($this->getAction()) == 'rename';
+		return mb_strtolower($this->getAction()) == 'rename';
 	}
 
 	protected function isCreationFile()
@@ -757,7 +757,7 @@ abstract class CWebDavEditDocComponentBase extends CBitrixComponent
 			else
 			{
 				//todo hack. SocServ set backurl!
-				if(strpos($_SERVER['HTTP_REFERER'], 'tools/oauth'))
+				if(mb_strpos($_SERVER['HTTP_REFERER'], 'tools/oauth'))
 				{
 					$curPath = CHTTP::urlDeleteParams($_SERVER['REQUEST_URI'], array("proccess", "sessid",));
 					$curPath = CHTTP::urlAddParams($curPath, array('sessid' => bitrix_sessid()));

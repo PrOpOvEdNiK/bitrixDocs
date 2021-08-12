@@ -18,7 +18,7 @@ class Forum extends \Bitrix\Main\Update\Stepper
 	public function execute(array &$option)
 	{
 		$res = Option::get("forum", "stat.forum.recalc", "");
-		$res = empty($res) ? [] : unserialize($res);
+		$res = empty($res) ? [] : unserialize($res, ["allowed_classes" => false]);
 		if (empty($res) || !is_array($res))
 		{
 			return self::FINISH_EXECUTION;
@@ -45,10 +45,10 @@ class Forum extends \Bitrix\Main\Update\Stepper
 	{
 		$res = Option::get("forum", "stat.forum.recalc", "");
 		if (!empty($res))
-			$res = unserialize($res);
+			$res = unserialize($res, ["allowed_classes" => false]);
 		$res = is_array($res) ? $res : [];
 		$res[$forumId] = [];
 		Option::set("forum", "stat.forum.recalc", serialize($res));
-		self::bind(0);
+		static::bind(0);
 	}
 }

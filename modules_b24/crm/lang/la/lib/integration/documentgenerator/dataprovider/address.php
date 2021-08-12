@@ -1,3 +1,0 @@
-<?
-$MESS["CRM_DOCGEN_DATAPROVIDER_ADDRESS_TEXT_TITLE"] = "Dirección completa";
-?>

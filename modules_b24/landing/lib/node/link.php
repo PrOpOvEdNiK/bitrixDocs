@@ -1,6 +1,8 @@
 <?php
 namespace Bitrix\Landing\Node;
 
+use \Bitrix\Main\Application;
+
 class Link extends \Bitrix\Landing\Node
 {
 	/**
@@ -32,6 +34,23 @@ class Link extends \Bitrix\Landing\Node
 	}
 
 	/**
+	 * Detects if we are in iframe.
+	 * @return bool
+	 */
+	protected static function isFrame(): bool
+	{
+		static $isIframe = null;
+
+		if ($isIframe === null)
+		{
+			$request = Application::getInstance()->getContext()->getRequest();
+			$isIframe = $request->get('IFRAME') == 'Y';
+		}
+
+		return $isIframe;
+	}
+
+	/**
 	 * Save data for this node.
 	 * @param \Bitrix\Landing\Block $block Block instance.
 	 * @param string $selector Selector.
@@ -40,16 +59,31 @@ class Link extends \Bitrix\Landing\Node
 	 */
 	public static function saveNode(\Bitrix\Landing\Block $block, $selector, array $data)
 	{
+		$manifest = $block->getManifest();
+		$globalSkipContent = false;
+		if ($manifest['nodes'][$selector]['skipContent'] ?? false)
+		{
+			$globalSkipContent = true;
+		}
+
 		$doc = $block->getDom();
 		$resultList = $doc->querySelectorAll($selector);
+		$isIframe = self::isFrame();
 
 		foreach ($data as $pos => $value)
 		{
 			$text = (isset($value['text']) && is_string($value['text'])) ? trim($value['text']) : '';
 			$href = (isset($value['href']) && is_string($value['href'])) ? trim($value['href']) : '';
-			$target = (isset($value['target']) && is_string($value['target'])) ? trim(strtolower($value['target'])) : '';
+			$query = (isset($value['query']) && is_string($value['query'])) ? trim($value['query']) : '';
+			$target = (isset($value['target']) && is_string($value['target'])) ? trim(mb_strtolower($value['target'])) : '';
 			$attrs = isset($value['attrs']) ? (array)$value['attrs'] : array();
-			$skipContent = isset($value['skipContent']) ? (boolean)$value['skipContent'] : false;
+			$skipContent = $globalSkipContent || (isset($value['skipContent']) ? (boolean)$value['skipContent'] : false);
+
+			if ($query)
+			{
+				$href .= (mb_strpos($href, '?') === false && !$isIframe) ? '?' : '&';
+				$href .= $query;
+			}
 
 			if (isset($value['text']) && !$text)
 			{
@@ -137,7 +171,7 @@ class Link extends \Bitrix\Landing\Node
 
 	/**
 	 * This node may participate in searching.
-	 * @param \Bitrix\Landing\Block &$block Block instance.
+	 * @param \Bitrix\Landing\Block $block Block instance.
 	 * @param string $selector Selector.
 	 * @return array
 	 */

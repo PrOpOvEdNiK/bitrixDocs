@@ -36,6 +36,11 @@ class FieldDependenceTable extends Entity\DataManager
 				'data_type' => 'integer',
 				'required' => true,
 			),
+			'GROUP_ID' => array(
+				'data_type' => 'integer',
+				'required' => true,
+				'default_value' => 0,
+			),
 			'IF_FIELD_CODE' => array(
 				'required' => true,
 				'data_type' => 'integer',
@@ -77,7 +82,7 @@ class FieldDependenceTable extends Entity\DataManager
 		);
 	}
 
-	public function validateAction()
+	public static function validateAction()
 	{
 		return array(
 			new Entity\Validator\Enum(),

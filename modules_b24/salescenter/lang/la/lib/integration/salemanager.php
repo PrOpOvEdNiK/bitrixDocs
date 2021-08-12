@@ -1,3 +1,0 @@
-<?
-$MESS["SALESCENTER_SALEMANAGER_SYSTEM_ORDER_PAID_TEXT"] = "Se pagó utilizando \"#PAYSYSTEM#\" el #DATE#";
-?>

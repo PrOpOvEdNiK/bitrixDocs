@@ -1,11 +1,16 @@
 <?php
 namespace Bitrix\Crm\Synchronization;
+use Bitrix\Crm\Entity\Traits\VisibilityConfig;
+use Bitrix\Crm\UserField\Visibility\VisibilityManager;
 use Bitrix\Main;
 use Bitrix\Main\Type\DateTime;
 use Bitrix\Crm\UserField\UserFieldHistory;
+use Bitrix\Main\UserField\Access\Permission\PermissionDictionary;
 
 class UserFieldSynchronizer
 {
+	use VisibilityConfig;
+
 	/** @var DateTime[]|null $items*/
 	private static $timestamps = null;
 	/** @var array|null $history*/
@@ -120,9 +125,9 @@ class UserFieldSynchronizer
 			return array();
 		}
 
-		/** @var \CAllUserTypeManager $USER_FIELD_MANAGER */
+		/** @var \CUserTypeManager $USER_FIELD_MANAGER */
 		global $USER_FIELD_MANAGER;
-		$srcFields = $USER_FIELD_MANAGER->GetUserFields($srcUfEntityID, 0, $languageID);
+
 		$dstFields = $USER_FIELD_MANAGER->GetUserFields($dstUfEntityID, 0, $languageID);
 
 		$map = array();
@@ -140,14 +145,25 @@ class UserFieldSynchronizer
 				$map[$typeID] = array();
 			}
 
-			if(!isset($map[$typeID][$label]))
+			$isMultiple = $field['MULTIPLE'] === 'Y' ? 'Y' : 'N';
+			if(!isset($map[$typeID][$isMultiple]))
 			{
-				$map[$typeID][$label] = $field['FIELD_NAME'];
+				$map[$typeID][$isMultiple] = array();
+			}
+
+			if(!isset($map[$typeID][$isMultiple][$label]))
+			{
+				$map[$typeID][$isMultiple][$label] = $field['FIELD_NAME'];
 			}
 		}
 
 		self::$existedFieldNameMap = array();
 		$results = array();
+
+		$srcFields = VisibilityManager::getVisibleUserFields(
+			$USER_FIELD_MANAGER->GetUserFields($srcUfEntityID, 0, $languageID)
+		);
+
 		foreach($srcFields as $field)
 		{
 			$label = self::getFieldComplianceCode($field);
@@ -162,13 +178,14 @@ class UserFieldSynchronizer
 				continue;
 			}
 
-			if(!(isset($map[$typeID]) && isset($map[$typeID][$label])))
+			$isMultiple = $field['MULTIPLE'] === 'Y' ? 'Y' : 'N';
+			if( !(isset($map[$typeID]) && isset($map[$typeID][$isMultiple]) && isset($map[$typeID][$isMultiple][$label])) )
 			{
 				$results[] = $field;
 			}
 			else
 			{
-				self::$existedFieldNameMap[$field['FIELD_NAME']] = $map[$typeID][$label];
+				self::$existedFieldNameMap[$field['FIELD_NAME']] = $map[$typeID][$isMultiple][$label];
 			}
 		}
 
@@ -210,6 +227,19 @@ class UserFieldSynchronizer
 
 		$synchronizedFieldNameMap = array();
 		$entity = new \CUserTypeEntity();
+
+		if(isset($options['ENABLE_TRIM']) && $options['ENABLE_TRIM'] === true)
+		{
+			$fieldsToDelete = self::getSynchronizationFields($dstEntityTypeID, $srcEntityTypeID, $languageID, true);
+			foreach($fieldsToDelete as $field)
+			{
+				if(self::isUserFieldTypeSupported($field['USER_TYPE_ID']))
+				{
+					$entity->Delete($field['ID']);
+				}
+			}
+		}
+
 		$entityID = \CCrmOwnerType::ResolveUserFieldEntityID($dstEntityTypeID);
 		$fieldsToCreate = self::getSynchronizationFields($srcEntityTypeID, $dstEntityTypeID, $languageID, true);
 
@@ -249,7 +279,7 @@ class UserFieldSynchronizer
 
 			do
 			{
-				$fieldName = 'UF_CRM_'.strtoupper(uniqid());
+				$fieldName = 'UF_CRM_'.mb_strtoupper(uniqid());
 				$dbResult = $entity->GetList(
 					array(),
 					array('ENTITY_ID' => $entityID, 'FIELD_NAME' => $fieldName)
@@ -306,6 +336,26 @@ class UserFieldSynchronizer
 				);
 			}
 
+			//region UserField visible access settings
+			$visibilityConfig = self::getInstance()
+				->prepareEntityFieldvisibilityConfigs($srcEntityTypeID);
+			if (isset($visibilityConfig[$srcField['FIELD_NAME']]))
+			{
+				$accessCodesKeys = array_keys($visibilityConfig[$srcField['FIELD_NAME']]['accessCodes'] ?? []);
+				$accessCodes = array_map(
+					static function($accessCode){
+						return ['ID' => $accessCode];
+					}, $accessCodesKeys
+				);
+				VisibilityManager::saveEntityConfiguration(
+					$accessCodes,
+					$dstField['FIELD_NAME'],
+					$dstEntityTypeID,
+					PermissionDictionary::USER_FIELD_VIEW
+					);
+			}
+			// endregion
+
 			if($typeID === 'enumeration')
 			{
 				if (is_callable(array($field['USER_TYPE']['CLASS_NAME'], 'GetList')))
@@ -328,17 +378,6 @@ class UserFieldSynchronizer
 			$synchronizedFieldNameMap[$srcField['FIELD_NAME']] = $fieldName;
 		}
 
-		if(isset($options['ENABLE_TRIM']) && $options['ENABLE_TRIM'] === true)
-		{
-			$fieldsToDelete = self::getSynchronizationFields($dstEntityTypeID, $srcEntityTypeID, $languageID, true);
-			foreach($fieldsToDelete as $field)
-			{
-				if(self::isUserFieldTypeSupported($field['USER_TYPE_ID']))
-				{
-					$entity->Delete($field['ID']);
-				}
-			}
-		}
 
 		$historyItem = self::getHistoryItem($srcEntityTypeID, $dstEntityTypeID);
 		if($historyItem === null)
@@ -372,7 +411,7 @@ class UserFieldSynchronizer
 	* @param int $srcEntityTypeID Source Entity Type ID
 	* @param int $dstEntityTypeID Destination Entity Type ID
 	* @param string $languageID Language
-	* @return Array
+	* @return array
 	*/
 	public static function getIntersection($srcEntityTypeID, $dstEntityTypeID, $languageID = '')
 	{
@@ -407,9 +446,15 @@ class UserFieldSynchronizer
 				$map[$typeID] = array();
 			}
 
-			if(!isset($map[$typeID][$label]))
+			$isMultiple = $field['MULTIPLE'] === 'Y' ? 'Y' : 'N';
+			if(!isset($map[$typeID][$isMultiple]))
 			{
-				$map[$typeID][$label] = array('NAME' => $field['FIELD_NAME'], 'IS_BUSY' => false);
+				$map[$typeID][$isMultiple] = array();
+			}
+
+			if(!isset($map[$typeID][$isMultiple][$label]))
+			{
+				$map[$typeID][$isMultiple][$label] = array('NAME' => $field['FIELD_NAME'], 'IS_BUSY' => false);
 			}
 		}
 
@@ -428,10 +473,16 @@ class UserFieldSynchronizer
 			}
 
 			$typeID = $field['USER_TYPE_ID'];
-			if(isset($map[$typeID]) && isset($map[$typeID][$label]) && !$map[$typeID][$label]['IS_BUSY'])
+			$isMultiple = $field['MULTIPLE'] === 'Y' ? 'Y' : 'N';
+			if(isset($map[$typeID]) && isset($map[$typeID][$isMultiple]) && isset($map[$typeID][$isMultiple][$label])
+				&& !$map[$typeID][$label]['IS_BUSY'])
 			{
-				$results[$label] = array('LABEL' => $label, 'SRC_FIELD_NAME' => $field['FIELD_NAME'], 'DST_FIELD_NAME' => $map[$typeID][$label]['NAME']);
-				$map[$typeID][$label]['IS_BUSY'] = true;
+				$results[$label] = array(
+					'LABEL' => $label,
+					'SRC_FIELD_NAME' => $field['FIELD_NAME'],
+					'DST_FIELD_NAME' => $map[$typeID][$isMultiple][$label]['NAME']
+				);
+				$map[$typeID][$isMultiple][$label]['IS_BUSY'] = true;
 			}
 		}
 
@@ -480,23 +531,26 @@ class UserFieldSynchronizer
 		$dstMap = self::prepareFieldMap($dstFields);
 
 		$result = array();
-		foreach($srcMap as $typeID => $fieldMap)
+		foreach($srcMap as $typeID => $fieldMapByMultiple)
 		{
-			if(!isset($dstMap[$typeID]))
+			foreach ($fieldMapByMultiple as $isMultiple => $fieldMap)
 			{
-				foreach($fieldMap as $label => $fieldName)
+				if (!isset($dstMap[$typeID][$isMultiple]))
 				{
-					$result[$label] = array('LABEL' => $label, 'SRC_FIELD_NAME' => $fieldName);
+					foreach ($fieldMap as $label => $fieldName)
+					{
+						$result[$label] = array('LABEL' => $label, 'SRC_FIELD_NAME' => $fieldName);
+					}
+					continue;
 				}
-				continue;
-			}
 
-			$diffMap = array_diff_key($fieldMap, $dstMap[$typeID]);
-			if(!empty($diffMap))
-			{
-				foreach($diffMap as $label => $fieldName)
+				$diffMap = array_diff_key($fieldMap, $dstMap[$typeID][$isMultiple]);
+				if (!empty($diffMap))
 				{
-					$result[$label] = array('LABEL' => $label, 'SRC_FIELD_NAME' => $fieldName);
+					foreach ($diffMap as $label => $fieldName)
+					{
+						$result[$label] = array('LABEL' => $label, 'SRC_FIELD_NAME' => $fieldName);
+					}
 				}
 			}
 		}
@@ -519,9 +573,15 @@ class UserFieldSynchronizer
 				$result[$typeID] = array();
 			}
 
-			if(!isset($result[$typeID][$label]))
+			$isMultiple = $field['MULTIPLE'] === 'Y' ? 'Y' : 'N';
+			if(!isset($result[$typeID][$isMultiple]))
 			{
-				$result[$typeID][$label] = $field['FIELD_NAME'];
+				$result[$typeID][$isMultiple] = array();
+			}
+
+			if(!isset($result[$typeID][$isMultiple][$label]))
+			{
+				$result[$typeID][$isMultiple][$label] = $field['FIELD_NAME'];
 			}
 		}
 		return $result;
@@ -534,7 +594,7 @@ class UserFieldSynchronizer
 			$label = $field['LIST_COLUMN_LABEL'];
 		}
 
-		return $label !== '' ? strtolower(str_replace(' ', '', $label)) : '';
+		return $label !== ''? mb_strtolower(str_replace(' ', '', $label)) : '';
 	}
 	public static function getFieldLabel(array $field)
 	{
@@ -581,7 +641,7 @@ class UserFieldSynchronizer
 
 		self::$history = array();
 		$s = Main\Config\Option::get('crm', 'crm_uf_sync_history', '', '');
-		$ary = $s !== '' ? unserialize($s) : null;
+		$ary = $s !== '' ? unserialize($s, ['allowed_classes' => false]) : null;
 		if(is_array($ary))
 		{
 			foreach($ary as $item)

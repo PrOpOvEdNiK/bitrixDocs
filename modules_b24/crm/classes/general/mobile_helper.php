@@ -1,8 +1,23 @@
 <?php
-IncludeModuleLangFile(__FILE__);
+
+use Bitrix\Crm\ContactAddress;
+use Bitrix\Crm\EntityAddressType;
+use Bitrix\Crm\Format\AddressFormatter;
+use Bitrix\Crm\LeadAddress;
+use Bitrix\Crm\UserField\Visibility\VisibilityManager;
+use Bitrix\Main\Localization\Loc;
+use Bitrix\Main\Loader;
+use Bitrix\Main\LoaderException;
+use Bitrix\Main\Text\HtmlFilter;
+use Bitrix\Ui\EntityForm\Scope;
+use Bitrix\UI\Form\EntityEditorConfigScope;
+
+Loc::loadMessages(__FILE__);
 
 class CCrmMobileHelper
 {
+	private const USER_OPTION_CATEGORY = 'crm.entity.editor';
+
 	private static $LEAD_STATUSES = null;
 	private static $DEAL_STAGES = null;
 	private static $INVOICE_STATUSES = null;
@@ -1197,7 +1212,7 @@ class CCrmMobileHelper
 				array('company_id' => $companyID)
 			);
 
-			$item['COMPANY'] = "<span class='mobile-grid-field-link' onclick=\"BX.Mobile.Crm.loadPageBlank('".$url."');\">".htmlspecialcharsbx($item['COMPANY_TITLE'])."</span>";
+			$item['COMPANY'] = "<span class='mobile-grid-field-link' onclick=\"BX.Mobile.Crm.loadPageBlank('".$url."');\">".HtmlFilter::encode($item['~COMPANY_TITLE'])."</span>";
 		}
 
 		if(!isset($item['~COMPANY_TITLE']))
@@ -1469,7 +1484,7 @@ class CCrmMobileHelper
 		$item['FORMATTED_NAME'] = htmlspecialcharsbx($item['~FORMATTED_NAME']);
 
 		$lastName = $item['~LAST_NAME'];
-		$item['CLASSIFIER'] = $lastName !== '' ? strtoupper(substr($lastName, 0, 1)) : '';
+		$item['CLASSIFIER'] = $lastName !== ''? mb_strtoupper(mb_substr($lastName, 0, 1)) : '';
 
 		if(!isset($item['~POST']))
 		{
@@ -1518,17 +1533,19 @@ class CCrmMobileHelper
 			$item['~POST'] = $item['POST'] = '';
 		}
 
-		$item['FULL_ADDRESS'] = Bitrix\Crm\Format\ContactAddressFormatter::format(
-			array(
-				'ADDRESS' => $item['~ADDRESS'],
-				'ADDRESS_2' => $item['~ADDRESS_2'],
-				'ADDRESS_CITY' => $item['~ADDRESS_CITY'],
-				'ADDRESS_REGION' => $item['~ADDRESS_REGION'],
-				'ADDRESS_PROVINCE' => $item['~ADDRESS_PROVINCE'],
-				'ADDRESS_POSTAL_CODE' => $item['~ADDRESS_POSTAL_CODE'],
-				'ADDRESS_COUNTRY' => $item['~ADDRESS_COUNTRY']
-			),
-			array('SEPARATOR' => Bitrix\Crm\Format\AddressSeparator::HtmlLineBreak)
+		$item['FULL_ADDRESS'] = AddressFormatter::getSingleInstance()->formatHtmlMultiline(
+			ContactAddress::mapEntityFields(
+				[
+					'ADDRESS' => $item['~ADDRESS'],
+					'ADDRESS_2' => $item['~ADDRESS_2'],
+					'ADDRESS_CITY' => $item['~ADDRESS_CITY'],
+					'ADDRESS_REGION' => $item['~ADDRESS_REGION'],
+					'ADDRESS_PROVINCE' => $item['~ADDRESS_PROVINCE'],
+					'ADDRESS_POSTAL_CODE' => $item['~ADDRESS_POSTAL_CODE'],
+					'ADDRESS_COUNTRY' => $item['~ADDRESS_COUNTRY'],
+					'ADDRESS_LOC_ADDR_ID' => $item['~ADDRESS_LOC_ADDR_ID']
+				]
+			)
 		);
 
 		if(!isset($item['~COMMENTS']))
@@ -1677,7 +1694,7 @@ class CCrmMobileHelper
 	public static function getCompanySortFields()
 	{
 		$addressLabels = Bitrix\Crm\EntityAddress::getShortLabels();
-		$regAddressLabels = Bitrix\Crm\EntityAddress::getShortLabels(Bitrix\Crm\EntityAddress::Registered);
+		$regAddressLabels = Bitrix\Crm\EntityAddress::getShortLabels(EntityAddressType::Registered);
 
 		$fields = array(
 			'ID' => array('id' => 'ID', 'name' => GetMessage('CRM_COLUMN_COMPANY_ID'), 'sort' => 'id'),
@@ -1766,7 +1783,7 @@ class CCrmMobileHelper
 	public static function getCompanyFields($includeUserFields = true)
 	{
 		$addressLabels = Bitrix\Crm\EntityAddress::getShortLabels();
-		$regAddressLabels = Bitrix\Crm\EntityAddress::getShortLabels(Bitrix\Crm\EntityAddress::Registered);
+		$regAddressLabels = Bitrix\Crm\EntityAddress::getShortLabels(EntityAddressType::Registered);
 
 		$fields = array(
 			'ID' => array('id' => 'ID', 'name' => GetMessage('CRM_COLUMN_COMPANY_ID')),
@@ -1778,7 +1795,7 @@ class CCrmMobileHelper
 			'ASSIGNED_BY' => array('id' => 'ASSIGNED_BY', 'name' => GetMessage('CRM_COLUMN_COMPANY_ASSIGNED_BY')),
 
 			'FULL_ADDRESS' => array('id' => 'FULL_ADDRESS', 'name' => Bitrix\Crm\EntityAddress::getFullAddressLabel()),
-			'FULL_REG_ADDRESS' => array('id' => 'FULL_REG_ADDRESS', 'name' => Bitrix\Crm\EntityAddress::getFullAddressLabel(Bitrix\Crm\EntityAddress::Registered)),
+			'FULL_REG_ADDRESS' => array('id' => 'FULL_REG_ADDRESS', 'name' => Bitrix\Crm\EntityAddress::getFullAddressLabel(EntityAddressType::Registered)),
 
 			'BANKING_DETAILS' => array('id' => 'BANKING_DETAILS', 'name' => GetMessage('CRM_COLUMN_COMPANY_BANKING_DETAILS')),
 			'INDUSTRY' => array('id' => 'INDUSTRY', 'name' => GetMessage('CRM_COLUMN_COMPANY_INDUSTRY')),
@@ -2077,6 +2094,14 @@ class CCrmMobileHelper
 		{
 			$arStatuses[$code] = $name;
 		}
+
+		$resSources = ["" => GetMessage("M_CRM_NOT_SELECTED")];
+		$sources = self::GetStatusList('SOURCE');
+		foreach($sources as $code => $name)
+		{
+			$resSources[$code] = $name;
+		}
+
 		$filterFields = array(
 			array(
 				"type" => "text",
@@ -2107,7 +2132,7 @@ class CCrmMobileHelper
 				"type" => "select",
 				"id" => "SOURCE_ID",
 				"name" => GetMessage('CRM_COLUMN_LEAD_SOURCE'),
-				"items" => array_merge(array("" => GetMessage("M_CRM_NOT_SELECTED")), self::GetStatusList('SOURCE')),
+				"items" => $resSources,
 				"value" => ""
 			)
 		);
@@ -2218,17 +2243,19 @@ class CCrmMobileHelper
 
 		if (is_array($enums["FIELDS"]) && in_array("FULL_ADDRESS", $enums["FIELDS"]))
 		{
-			$item['FULL_ADDRESS'] = Bitrix\Crm\Format\LeadAddressFormatter::format(
-				array(
-					'ADDRESS' => $item['ADDRESS'],
-					'ADDRESS_2' => $item['ADDRESS_2'],
-					'ADDRESS_CITY' => $item['ADDRESS_CITY'],
-					'ADDRESS_REGION' => $item['ADDRESS_REGION'],
-					'ADDRESS_PROVINCE' => $item['ADDRESS_PROVINCE'],
-					'ADDRESS_POSTAL_CODE' => $item['ADDRESS_POSTAL_CODE'],
-					'ADDRESS_COUNTRY' => $item['ADDRESS_COUNTRY']
-				),
-				array('SEPARATOR' => Bitrix\Crm\Format\AddressSeparator::HtmlLineBreak)
+			$item['FULL_ADDRESS'] = AddressFormatter::getSingleInstance()->formatHtmlMultiline(
+				LeadAddress::mapEntityFields(
+					[
+						'ADDRESS' => $item['ADDRESS'],
+						'ADDRESS_2' => $item['ADDRESS_2'],
+						'ADDRESS_CITY' => $item['ADDRESS_CITY'],
+						'ADDRESS_REGION' => $item['ADDRESS_REGION'],
+						'ADDRESS_PROVINCE' => $item['ADDRESS_PROVINCE'],
+						'ADDRESS_POSTAL_CODE' => $item['ADDRESS_POSTAL_CODE'],
+						'ADDRESS_COUNTRY' => $item['ADDRESS_COUNTRY'],
+						'ADDRESS_LOC_ADDR_ID' => $item['ADDRESS_LOC_ADDR_ID']
+					]
+				)
 			);
 		}
 		if (isset($item["DATE_CREATE"]))
@@ -2652,7 +2679,7 @@ class CCrmMobileHelper
 		{
 			$infoData = $entity->GetRecordDescription($type, $item['DATA']);
 			$descr = isset($infoData['INFO']) ? strip_tags($infoData['INFO'], '<br>') : '';
-			if(strlen($descr) <= 128)
+			if(mb_strlen($descr) <= 128)
 			{
 				$item['DESCRIPTION_HTML'] = $descr;
 			}
@@ -2662,7 +2689,7 @@ class CCrmMobileHelper
 				$fullWrapperID = "invoice_event_descr_full_{$ID}";
 
 				$item['DESCRIPTION_HTML'] = '<div id="'.$cutWrapperID.'">'
-					.substr($descr, 0, 128).'...<a href="#more" onclick="BX(\''.$cutWrapperID.'\').style.display=\'none\'; BX(\''.$fullWrapperID.'\').style.display=\'\'; return false;">'
+					.mb_substr($descr, 0, 128).'...<a href="#more" onclick="BX(\''.$cutWrapperID.'\').style.display=\'none\'; BX(\''.$fullWrapperID.'\').style.display=\'\'; return false;">'
 					.GetMessage('CRM_EVENT_DESC_MORE').'</a></div>'
 					.'<div id="'.$fullWrapperID.'" style="display:none;">'.$descr.'</div>';
 			}
@@ -2992,7 +3019,7 @@ class CCrmMobileHelper
 		}
 		$finalSort = is_array($finalInfo) && isset($finalInfo['SORT']) ? intval($finalInfo['SORT']) : -1;
 
-		$layout = isset($params['LAYOUT']) ? strtolower($params['LAYOUT']) : 'small';
+		$layout = isset($params['LAYOUT'])? mb_strtolower($params['LAYOUT']) : 'small';
 
 		$wrapperClass = "crm-list-stage-bar-{$layout}";
 		if($currentSort === $finalSort)
@@ -3027,7 +3054,7 @@ class CCrmMobileHelper
 
 			echo '<td class="crm-list-stage-bar-part',
 			($sort <= $currentSort ? ' crm-list-stage-passed' : ''), '">',
-				'<div class="crm-list-stage-bar-block" data-progress-step-id="'.htmlspecialcharsbx(strtolower($ID)).'"><div class="crm-list-stage-bar-btn"></div></div>',
+				'<div class="crm-list-stage-bar-block" data-progress-step-id="'.htmlspecialcharsbx(mb_strtolower($ID)).'"><div class="crm-list-stage-bar-btn"></div></div>',
 			'<input class="crm-list-stage-bar-block-sort" type="hidden" value="', $sort ,'" />',
 			'</td>';
 		}
@@ -3131,10 +3158,10 @@ class CCrmMobileHelper
 		}
 
 		$text = $src;
-		if(strlen($text) > 128)
+		if(mb_strlen($text) > 128)
 		{
-			$cut = substr($text, 128);
-			$text = substr($text, 0, 128);
+			$cut = mb_substr($text, 128);
+			$text = mb_substr($text, 0, 128);
 		}
 
 		return true;
@@ -3174,7 +3201,7 @@ class CCrmMobileHelper
 			$ownerTypeID = CCrmOwnerType::Undefined;
 		}
 		$ownerID = isset($options['OWNER_ID']) ? max(intval($options['OWNER_ID']), 0) : 0;
-		$scope = isset($options['SCOPE']) ? strtoupper($options['SCOPE']) : '';
+		$scope = isset($options['SCOPE'])? mb_strtoupper($options['SCOPE']) : '';
 		if(!in_array($scope, array('I', 'A', 'F'), true))
 		{
 			$scope = '';
@@ -3370,72 +3397,244 @@ class CCrmMobileHelper
 		return $result;
 	}
 
-	public function PrepareUserFields(&$arFields, $sEntityID, $ID, $bVarsFromForm = false)
+	/**
+	 * @param array $fields
+	 * @param string $entityId
+	 * @param int|sting $id
+	 * @param bool $varsFromForm
+	 * @param string|null $scopePrefix
+	 * @param int|null $userId
+	 * @throws LoaderException
+	 */
+	public function prepareUserFields(&$fields, $entityId, $id, $varsFromForm = false, $scopePrefix = null, ?int $userId = null)
 	{
 		try
 		{
-			$arUserFields = $this->GetUserFields($sEntityID, $ID, LANGUAGE_ID);
-		}
-		catch (\Bitrix\Main\ObjectException $e)
+			$userFields = $this->GetUserFields($entityId, $id, LANGUAGE_ID);
+		} catch(\Bitrix\Main\ObjectException $e)
 		{
-			$arUserFields = array();
+			$userFields = [];
 		}
 
-		foreach($arUserFields as $FIELD_NAME => &$arUserField)
+		if ($userId)
 		{
-			if(!isset($arUserField['ENTITY_VALUE_ID']))
+			$userFields = VisibilityManager::getVisibleUserFields($userFields, $userId);
+		}
+
+		foreach($userFields as $FIELD_NAME => &$userField)
+		{
+			if(!isset($userField['ENTITY_VALUE_ID']))
 			{
-				$arUserField['ENTITY_VALUE_ID'] = intval($ID);
+				$userField['ENTITY_VALUE_ID'] = (int)$id;
 			}
 
-			$userTypeID = $arUserField['USER_TYPE']['USER_TYPE_ID'];
+			$userTypeId = $userField['USER_TYPE']['USER_TYPE_ID'];
 
-				if ($bVarsFromForm)
-				{
-					$value = $_REQUEST[$arUserField["FIELD_NAME"]];
-				}
-				else
-				{
-					$value = isset($arUserField['VALUE']) ? $arUserField['VALUE'] : '';
-				}
+			if($varsFromForm)
+			{
+				$value = $_REQUEST[$userField['FIELD_NAME']];
+			}
+			else
+			{
+				$value = ($userField['VALUE'] ?? '');
+			}
 
-				if($userTypeID === 'string' || $userTypeID === 'double')
-				{
-					$fieldType = 'text';
-				}
-				elseif($userTypeID === 'boolean')
-				{
-					$fieldType = 'checkbox';
-					$value = intval($value) > 0 ? 'Y' : 'N';
-				}
-				elseif($userTypeID === 'datetime')
-				{
-					$fieldType = 'date';
-				}
-				else
-				{
-					$fieldType = $userTypeID;
-				}
+			if($userTypeId === 'string' || $userTypeId === 'double')
+			{
+				$fieldType = 'text';
+			}
+			elseif($userTypeId === 'boolean')
+			{
+				$fieldType = 'checkbox';
+				$value = ((int)$value > 0 ? 'Y' : 'N');
+			}
+			elseif($userTypeId === 'datetime')
+			{
+				$fieldType = 'date';
+			}
+			else
+			{
+				$fieldType = $userTypeId;
+			}
 
-					$arField = array(
-						'id' => $FIELD_NAME,
-						'params' => array(),
-						'type' => $fieldType,
-						'value' => $value,
-						'required' => $arUserField["MANDATORY"] == "Y" ? true : false,
-						'userField' => $arUserField
-					);
+			$field = [
+				'id' => $FIELD_NAME,
+				'params' => [],
+				'type' => $fieldType,
+				'value' => $value,
+				'required' => ($userField['MANDATORY'] === 'Y'),
+				'userField' => $userField
+			];
 
-					if ($fieldType != 'checkbox')
-						$arField['name'] = ('' != $arUserField['EDIT_FORM_LABEL'] ? $arUserField['EDIT_FORM_LABEL'] : $arUserField['FIELD_NAME']);
-					else
-						$arField['items'] = array(
-							"Y" => ('' != $arUserField['EDIT_FORM_LABEL'] ? $arUserField['EDIT_FORM_LABEL'] : $arUserField['FIELD_NAME'])
-						);
+			if($fieldType !== 'checkbox')
+			{
+				$field['name'] = (
+				!empty($userField['EDIT_FORM_LABEL'])
+					? $userField['EDIT_FORM_LABEL']
+					: $userField['FIELD_NAME']
+				);
+			}
+			else
+			{
+				$field['items'] = [
+					'Y' => (
+					!empty($userField['EDIT_FORM_LABEL'])
+						? $userField['EDIT_FORM_LABEL']
+						: $userField['FIELD_NAME']
+					)
+				];
+			}
 
-					$arFields[] = $arField;
+			$fields[] = $field;
 		}
-		unset($arUserField);
+		unset($userField);
+
+		$fields = $this->getVisibleUserFields($fields, $scopePrefix);
+	}
+
+	/**
+	 * Get settings from b_user_options with config of visibilities uf fields in crm entities
+	 * and return array of uf fields according to this config
+	 * @param array $userFields
+	 * @param string|null $scopePrefix
+	 * @return array
+	 * @throws LoaderException
+	 */
+	private function getVisibleUserFields(array $userFields, ?string $scopePrefix): array
+	{
+		$visibleUserFields = [];
+
+		if(
+			!empty($scopePrefix)
+			&&
+			Loader::includeModule('ui')
+			&&
+			count($userFields)
+		)
+		{
+			$configScope = CUserOptions::GetOption(
+				self::USER_OPTION_CATEGORY,
+				"{$scopePrefix}_scope",
+				EntityEditorConfigScope::UNDEFINED
+			);
+
+			$config = [];
+
+			if(isset($configScope['scope']) && $configScope['scope'] === EntityEditorConfigScope::UNDEFINED)
+			{
+				$config = CUserOptions::GetOption(
+					self::USER_OPTION_CATEGORY,
+					$scopePrefix,
+					null
+				);
+
+				if(!is_array($config) || empty($config))
+				{
+					$config = CUserOptions::GetOption(
+						self::USER_OPTION_CATEGORY,
+						"{$scopePrefix}_common",
+						null,
+						0
+					);
+				}
+			}
+			elseif(isset($configScope['scope']) && $configScope['scope'] === EntityEditorConfigScope::COMMON)
+			{
+				$config = CUserOptions::GetOption(
+					self::USER_OPTION_CATEGORY,
+					"{$scopePrefix}_common",
+					null,
+					0
+				);
+			}
+			elseif(isset($configScope['scope']) && $configScope['scope'] === EntityEditorConfigScope::CUSTOM)
+			{
+				$config = Scope::getInstance()->getScopeById($configScope['userScopeId']);
+			}
+
+			if (!is_array($config) || empty($config))
+			{
+				$config = CUserOptions::GetOption(
+					self::USER_OPTION_CATEGORY,
+					$scopePrefix,
+					null
+				);
+			}
+
+			if($config && count($config))
+			{
+				$this->prepareVisibleUserFieldsSection($config, $userFields, $visibleUserFields);
+			}
+		}
+
+		if (!count($visibleUserFields))
+		{
+			return [[
+				'id' => 'main',
+				'fields' => $userFields
+			]];
+		}
+
+		return $visibleUserFields;
+	}
+
+	private function prepareVisibleUserFieldsSection(array $config, array $userFields, array &$visibleUserFields): array
+	{
+		$fieldNameMap = [
+			'CONTACT_ID' => ['CLIENT', 'CONTACT'],
+			'COMPANY_ID' => ['CLIENT', 'COMPANY'],
+			'PRODUCT_ROWS' => ['PRODUCT_ROW_SUMMARY'],
+			'OPPORTUNITY' => ['OPPORTUNITY_WITH_CURRENCY'],
+			'CURRENCY_ID' => ['OPPORTUNITY_WITH_CURRENCY'],
+			'STATUS_DESCRIPTION' => ['STATUS_ID'],
+			'CONTACT_NAME_PHOTO' => ['PHOTO'],
+			'REVENUE' => ['REVENUE_WITH_CURRENCY'],
+			'ADDRESS_LEGAL' => ['ADDRESS'],
+		];
+		foreach ($config as $configCategory)
+		{
+			$categoryFields = [];
+			if ($configCategory['type'] === 'column' && isset($configCategory['elements']))
+			{
+				$visibleUserFields = array_merge(
+					$categoryFields,
+					$this->prepareVisibleUserFieldsSection($configCategory['elements'], $userFields, $visibleUserFields)
+				);
+			}
+			elseif ($configCategory['type'] === 'section' && isset($configCategory['elements']))
+			{
+				foreach($configCategory['elements'] as $element)
+				{
+					array_walk(
+						$userFields,
+						static function($item, $key) use (&$categoryFields, $element, $fieldNameMap)
+						{
+							if(
+								$item['id'] === $element['name']
+								|| (
+									isset($fieldNameMap[$item['id']])
+									&& is_array($fieldNameMap[$item['id']])
+									&& in_array($element['name'], $fieldNameMap[$item['id']], true)
+								)
+							)
+							{
+								$categoryFields[] = $item;
+							}
+						});
+				}
+				if(count($categoryFields))
+				{
+					$visibleUserFields[] = [
+						'id' => $configCategory['name'],
+						'fields' => $categoryFields,
+						'title' => $configCategory['title'],
+					];
+				}
+				unset($categoryFields);
+			}
+		}
+
+		return $visibleUserFields;
 	}
 
 	public static function PrepareAddressFormFields($arFields)

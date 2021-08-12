@@ -71,7 +71,7 @@ class CAppleMessage extends CPushMessage
 		{
 			$aPayload[self::APPLE_RESERVED_NAMESPACE]['badge'] = (int)$this->badge;
 		}
-		if (isset($this->sound) && strlen($this->sound) > 0)
+		if (isset($this->sound) && $this->sound <> '')
 		{
 			$aPayload[self::APPLE_RESERVED_NAMESPACE]['sound'] = (string)$this->sound;
 		}
@@ -94,7 +94,7 @@ class CAppleMessage extends CPushMessage
 			'"' . self::APPLE_RESERVED_NAMESPACE . '":{}',
 			json_encode($this->_getPayload(), static::JSON_OPTIONS)
 		);
-		$nJSONPayloadLen = CUtil::BinStrlen($sJSONPayload);
+		$nJSONPayloadLen = \Bitrix\Main\Text\BinaryString::getLength($sJSONPayload);
 		if ($nJSONPayloadLen <= $this->payloadMaxSize)
 		{
 			return $sJSONPayload;
@@ -111,15 +111,15 @@ class CAppleMessage extends CPushMessage
 			$useSenderText = true;
 			$text = $this->customProperties["senderMessage"];
 		}
-		$nMaxTextLen = $nTextLen = CUtil::BinStrlen($text) - ($nJSONPayloadLen - $this->payloadMaxSize);
+		$nMaxTextLen = $nTextLen = \Bitrix\Main\Text\BinaryString::getLength($text) - ($nJSONPayloadLen - $this->payloadMaxSize);
 		if ($nMaxTextLen <= 0)
 		{
 			return false;
 		}
 
-		while (CUtil::BinStrlen($text) > $nMaxTextLen)
+		while (\Bitrix\Main\Text\BinaryString::getLength($text) > $nMaxTextLen)
 		{
-			$text = CUtil::BinSubstr($text, 0, --$nTextLen);
+			$text = \Bitrix\Main\Text\BinaryString::getSubstring($text, 0, --$nTextLen);
 		}
 		if($useSenderText)
 		{
@@ -142,12 +142,11 @@ class CAppleMessage extends CPushMessage
 			return false;
 		}
 
-		$nPayloadLength = CUtil::BinStrlen($sPayload);
+		$nPayloadLength = \Bitrix\Main\Text\BinaryString::getLength($sPayload);
 		$totalBatch = "";
-		for ($i = 0; $i < count($arTokens); $i++)
+		foreach ($arTokens as $token)
 		{
-			$sDeviceToken = $arTokens[$i];
-			$nTokenLength = strlen($sDeviceToken);
+			$sDeviceToken = $token;
 
 			$sRet = pack('CNNnH*',
 				1,
@@ -158,7 +157,7 @@ class CAppleMessage extends CPushMessage
 			;
 			$sRet .= pack('n', $nPayloadLength);
 			$sRet .= $sPayload;
-			if (strlen($totalBatch) > 0)
+			if ($totalBatch <> '')
 			{
 				$totalBatch .= ";";
 			}
@@ -244,7 +243,7 @@ class CApplePush extends CPushService
 	public static function shouldBeSent($messageRowData)
 	{
 		$params = $messageRowData["ADVANCED_PARAMS"];
-		return !($params && !$params["senderName"] && $params["senderMessage"]);
+		return !($params && !$params["senderName"] && mb_strlen($params["senderMessage"]) > 0);
 	}
 }
 

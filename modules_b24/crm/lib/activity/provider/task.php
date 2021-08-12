@@ -15,8 +15,9 @@ class Task extends Activity\Provider\Base
 	private static $creationParams = array();
 	private static $deletionParams = array();
 
-	const LOCK_TYPE_UPDATE = 'U';
-	const LOCK_TYPE_DELETE = 'D';
+	private const LOCK_TYPE_UPDATE   = 'U';
+	private const LOCK_TYPE_DELETE   = 'D';
+	private const LOCK_TYPE_COMPLETE = 'C';
 
 	private static $locked = array();
 
@@ -106,10 +107,14 @@ class Task extends Activity\Provider\Base
 			return false;
 		}
 
+		$itemIterator = \CTasks::getByID($entityId, false);
+		$task = $itemIterator->fetch();
+
 		$taskFields = array();
-		if (isset($activity['SUBJECT']))
+		if (isset($activity['SUBJECT']) && $activity['SUBJECT'] !== $task['TITLE'])
 		{
 			$taskFields['TITLE'] = $activity['SUBJECT'];
+			$taskFields['DESCRIPTION'] = $task['DESCRIPTION']; //for TAGS save
 		}
 		if (isset($activity['END_TIME'] ))
 		{
@@ -127,9 +132,11 @@ class Task extends Activity\Provider\Base
 			$task = new \CTasks();
 			$result = $task->update($entityId, $taskFields);
 		}
+		self::unlockTask($entityId);
 
 		if (isset($activity['COMPLETED']))
 		{
+			self::lockTask($entityId, self::LOCK_TYPE_COMPLETE);
 			try
 			{
 				$currentUser = isset($options['CURRENT_USER'])
@@ -151,8 +158,8 @@ class Task extends Activity\Provider\Base
 			{
 				$result = false;
 			}
+			self::unlockTask($entityId);
 		}
-		self::unlockTask($entityId);
 
 		$updateResult = new Main\Result();
 
@@ -358,6 +365,7 @@ class Task extends Activity\Provider\Base
 			return false;
 		}
 
+		$isStatusChanged = (isset($currentTaskFields['STATUS']) && (string)$currentTaskFields['STATUS'] !== (string)$previousTaskFields['STATUS']);
 		$listIterator = \CCrmActivity::getList(
 			array(),
 			array(
@@ -367,7 +375,23 @@ class Task extends Activity\Provider\Base
 			)
 		);
 
+		if (self::isTaskLocked($taskId, self::LOCK_TYPE_COMPLETE))
+		{
+			if ($isStatusChanged && $activity = $listIterator->fetch())
+			{
+				self::setFromTask($taskId, $task, $activity);
+				if (isset($activity['BINDINGS']) && count($activity['BINDINGS']) > 0)
+				{
+					Crm\Automation\Trigger\TaskStatusTrigger::execute($activity['BINDINGS'], ['TASK' => $task]);
+				}
+			}
+
+			return false;
+		}
+
 		$isFound = false;
+		$taskBindings = [];
+
 		while($activity = $listIterator->fetch())
 		{
 			$isFound = true;
@@ -378,6 +402,7 @@ class Task extends Activity\Provider\Base
 				$activity['COMMUNICATIONS'] = self::prepareCommunications($activity);
 				\CCrmActivity::update($activity['ID'], $activity, false, true, array('SKIP_ASSOCIATED_ENTITY' => true, 'REGISTER_SONET_EVENT' => true));
 				\CCrmLiveFeed::syncTaskEvent($activity, $task);
+				$taskBindings = $activity['BINDINGS'];
 			}
 			else
 			{
@@ -428,7 +453,13 @@ class Task extends Activity\Provider\Base
 					true,
 					array_merge($creationParams, array('SKIP_ASSOCIATED_ENTITY' => true, 'REGISTER_SONET_EVENT' => true))
 				);
+				$taskBindings = $activity['BINDINGS'];
 			}
+		}
+
+		if ($isStatusChanged && $taskBindings)
+		{
+			Crm\Automation\Trigger\TaskStatusTrigger::execute($taskBindings, ['TASK' => $task]);
 		}
 
 		return true;

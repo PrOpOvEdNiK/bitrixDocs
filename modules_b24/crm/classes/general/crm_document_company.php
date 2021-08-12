@@ -1,4 +1,9 @@
 <?
+
+use Bitrix\Crm\CompanyAddress;
+use Bitrix\Crm\EntityAddressType;
+use Bitrix\Crm\Format\AddressFormatter;
+
 if (!CModule::IncludeModule('bizproc'))
 	return;
 
@@ -20,8 +25,8 @@ class CCrmDocumentCompany extends CCrmDocument
 
 	public static function getEntityFields($entityType)
 	{
-		\Bitrix\Main\Localization\Loc::loadMessages($_SERVER['DOCUMENT_ROOT'].BX_ROOT.'/components/bitrix/crm.' .
-			strtolower($entityType).'.edit/component.php');
+		\Bitrix\Main\Localization\Loc::loadMessages($_SERVER['DOCUMENT_ROOT'].BX_ROOT.'/components/bitrix/crm.'.
+			mb_strtolower($entityType).'.edit/component.php');
 
 		$printableFieldNameSuffix = ' ('.GetMessage('CRM_FIELD_BP_TEXT').')';
 
@@ -32,6 +37,10 @@ class CCrmDocumentCompany extends CCrmDocument
 				'Filterable' => true,
 				'Editable' => false,
 				'Required' => false,
+			),
+			'CRM_ID' => array(
+				'Name' => GetMessage('CRM_DOCUMENT_FIELD_CRM_ID'),
+				'Type' => 'string',
 			),
 			'TITLE' => array(
 				'Name' => GetMessage('CRM_FIELD_TITLE_COMPANY'),
@@ -293,7 +302,7 @@ class CCrmDocumentCompany extends CCrmDocument
 			$fieldType = $arDocumentFields[$key]["Type"];
 			if (in_array($fieldType, array("phone", "email", "im", "web"), true))
 			{
-				CCrmDocument::PrepareEntityMultiFields($arFields, strtoupper($fieldType));
+				CCrmDocument::PrepareEntityMultiFields($arFields, mb_strtoupper($fieldType));
 				continue;
 			}
 
@@ -303,9 +312,9 @@ class CCrmDocumentCompany extends CCrmDocument
 				$ar = array();
 				foreach ($arFields[$key] as $v1)
 				{
-					if (substr($v1, 0, strlen("user_")) == "user_")
+					if (mb_substr($v1, 0, mb_strlen("user_")) == "user_")
 					{
-						$ar[] = substr($v1, strlen("user_"));
+						$ar[] = mb_substr($v1, mb_strlen("user_"));
 					}
 					else
 					{
@@ -317,7 +326,7 @@ class CCrmDocumentCompany extends CCrmDocument
 
 				$arFields[$key] = $ar;
 			}
-			elseif ($fieldType == "select" && substr($key, 0, 3) == "UF_")
+			elseif ($fieldType == "select" && mb_substr($key, 0, 3) == "UF_")
 			{
 				self::InternalizeEnumerationField('CRM_COMPANY', $arFields, $key);
 			}
@@ -436,6 +445,11 @@ class CCrmDocumentCompany extends CCrmDocument
 	{
 		global $DB;
 
+		if(empty($arFields))
+		{
+			return;
+		}
+
 		$arDocumentID = self::GetDocumentInfo($documentId);
 		if (empty($arDocumentID))
 			throw new CBPArgumentNullException('documentId');
@@ -465,7 +479,7 @@ class CCrmDocumentCompany extends CCrmDocument
 			$fieldType = $arDocumentFields[$key]["Type"];
 			if (in_array($fieldType, array("phone", "email", "im", "web"), true))
 			{
-				CCrmDocument::PrepareEntityMultiFields($arFields, strtoupper($fieldType));
+				CCrmDocument::PrepareEntityMultiFields($arFields, mb_strtoupper($fieldType));
 				continue;
 			}
 
@@ -475,9 +489,9 @@ class CCrmDocumentCompany extends CCrmDocument
 				$ar = array();
 				foreach ($arFields[$key] as $v1)
 				{
-					if (substr($v1, 0, strlen("user_")) == "user_")
+					if (mb_substr($v1, 0, mb_strlen("user_")) == "user_")
 					{
-						$ar[] = substr($v1, strlen("user_"));
+						$ar[] = mb_substr($v1, mb_strlen("user_"));
 					}
 					else
 					{
@@ -489,7 +503,7 @@ class CCrmDocumentCompany extends CCrmDocument
 
 				$arFields[$key] = $ar;
 			}
-			elseif ($fieldType == "select" && substr($key, 0, 3) == "UF_")
+			elseif ($fieldType == "select" && mb_substr($key, 0, 3) == "UF_")
 			{
 				self::InternalizeEnumerationField('CRM_COMPANY', $arFields, $key);
 			}
@@ -500,10 +514,25 @@ class CCrmDocumentCompany extends CCrmDocument
 				{
 					//Issue #40380. Secure URLs and file IDs are allowed.
 					$file = false;
-					CCrmFileProxy::TryResolveFile($value, $file, $arFileOptions);
+					if (\CCrmFileProxy::TryResolveFile($value, $file, $arFileOptions))
+					{
+						global $USER_FIELD_MANAGER;
+						if ($USER_FIELD_MANAGER instanceof \CUserTypeManager)
+						{
+							$prevValue = $USER_FIELD_MANAGER->GetUserFieldValue(
+								\CCrmOwnerType::ResolveUserFieldEntityID(\CCrmOwnerType::Company),
+								$key,
+								$arDocumentID['ID']
+							);
+							if ($prevValue)
+							{
+								$file['old_id'] = $prevValue;
+							}
+						}
+					}
 					$value = $file;
 				}
-				unset($value);
+				unset($value, $prevValue);
 			}
 			elseif ($fieldType == "S:HTML")
 			{
@@ -601,10 +630,16 @@ class CCrmDocumentCompany extends CCrmDocument
 
 	static public function PrepareDocument(array &$arFields)
 	{
+		$arFields['ADDRESS'] = AddressFormatter::getSingleInstance()->formatTextComma(
+			CompanyAddress::mapEntityFields($arFields, ['TYPE' => EntityAddressType::Delivery])
+		);
+		$arFields['ADDRESS_LEGAL'] = AddressFormatter::getSingleInstance()->formatTextComma(
+			CompanyAddress::mapEntityFields($arFields, ['TYPE' => EntityAddressType::Registered])
+		);
 		$arFields['CONTACT_ID'] = \Bitrix\Crm\Binding\ContactCompanyTable::getCompanyContactIDs($arFields['ID']);
 	}
 
-	public function getDocumentName($documentId)
+	public static function getDocumentName($documentId)
 	{
 		$arDocumentID = self::GetDocumentInfo($documentId);
 		$dbRes = CCrmCompany::GetListEx([], ['=ID' => $arDocumentID['ID'], 'CHECK_PERMISSIONS' => 'N'],

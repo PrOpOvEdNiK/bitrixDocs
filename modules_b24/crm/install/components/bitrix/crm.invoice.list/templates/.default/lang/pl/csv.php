@@ -1,9 +1,0 @@
-<?
-$MESS["CRM_COLUMN_COMPANY"] = "Firma";
-$MESS["CRM_COLUMN_CONTACT"] = "Kontakt";
-$MESS["CRM_COLUMN_DEAL"] = "Deal";
-$MESS["CRM_COLUMN_PRODUCT_NAME"] = "Produkt";
-$MESS["CRM_COLUMN_PRODUCT_PRICE"] = "Cena";
-$MESS["CRM_COLUMN_PRODUCT_QUANTITY"] = "Ilość";
-$MESS["ERROR_INVOICE_IS_EMPTY_2"] = "Nie ma faktur na liście.";
-?>

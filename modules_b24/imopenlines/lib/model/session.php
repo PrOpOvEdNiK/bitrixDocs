@@ -216,15 +216,19 @@ class SessionTable extends DataManager
 			new DatetimeField('DATE_OPERATOR_CLOSE', [
 				'title' => Loc::getMessage('SESSION_ENTITY_DATE_OPERATOR_CLOSE_FIELD_NEW'),
 			]),
-			new DatetimeField('DATE_CLOSE', [
-				'title' => Loc::getMessage('SESSION_ENTITY_DATE_CLOSE_FIELD'),
-			]),
 			new DatetimeField('DATE_FIRST_ANSWER', [
 				'title' => Loc::getMessage('SESSION_ENTITY_DATE_FIRST_ANSWER_FIELD_NEW'),
 			]),
 			new DatetimeField('DATE_LAST_MESSAGE', [
 				'title' => Loc::getMessage('SESSION_ENTITY_DATE_LAST_MESSAGE_FIELD'),
 			]),
+			new DatetimeField('DATE_FIRST_LAST_USER_ACTION', [
+				'title' => Loc::getMessage('SESSION_ENTITY_DATE_FIRST_LAST_USER_ACTION_FIELD'),
+			]),
+			new DatetimeField('DATE_CLOSE', [
+				'title' => Loc::getMessage('SESSION_ENTITY_DATE_CLOSE_FIELD'),
+			]),
+			new DatetimeField('DATE_CLOSE_VOTE'),
 			new IntegerField('TIME_BOT', [
 				'title' => Loc::getMessage('SESSION_ENTITY_TIME_BOT_FIELD'),
 				'default_value' => '0',
@@ -434,10 +438,10 @@ class SessionTable extends DataManager
 			}
 			if (
 				$field instanceof ExpressionField &&
-				substr($key, -7) === '_SINGLE'
+				mb_substr($key, -7) === '_SINGLE'
 			)
 			{
-				$ufMultiName = substr($key, 0, -7);
+				$ufMultiName = mb_substr($key, 0, -7);
 
 				if(self::getEntity()->hasField($ufMultiName) && self::getEntity()->getField($ufMultiName) instanceof UserTypeField)
 				{
@@ -461,7 +465,7 @@ class SessionTable extends DataManager
 	 */
 	public static function getList(array $parameters = [])
 	{
-		if(!empty($parameters['select']) && in_array('CHAT', array_map('strtoupper', $parameters['select'])))
+		if(!empty($parameters['select']) && in_array('CHAT', array_map('mb_strtoupper', $parameters['select'])))
 		{
 			Loader::includeModule('im');
 		}
@@ -578,9 +582,9 @@ class SessionTable extends DataManager
 
 			$transcriptLines = implode(" ", $transcriptLines);
 			$transcriptLines = Im\Text::removeBbCodes($transcriptLines);
-			if (strlen($transcriptLines) > 5000000)
+			if (mb_strlen($transcriptLines) > 5000000)
 			{
-				$transcriptLines = substr($transcriptLines, 0, 5000000);
+				$transcriptLines = mb_substr($transcriptLines, 0, 5000000);
 			}
 		}
 		else

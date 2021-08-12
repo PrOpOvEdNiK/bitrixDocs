@@ -8,13 +8,11 @@
 
 namespace Bitrix\Sender\Integration\Seo\Ads;
 
-use Bitrix\Main\Localization\Loc;
 use Bitrix\Main\Error;
+use Bitrix\Main\Localization\Loc;
 use Bitrix\Main\Result;
-
-use Bitrix\Sender\Message;
 use Bitrix\Sender\Entity;
-
+use Bitrix\Sender\Message;
 use Bitrix\Sender\Message\iLookalikeAds;
 use Bitrix\Seo\Retargeting;
 
@@ -51,7 +49,7 @@ abstract class MessageBase implements Message\iBase, Message\iAds
 	 */
 	public function getName()
 	{
-		return Loc::getMessage('SENDER_INTEGRATION_SEO_MESSAGE_NAME_' . strtoupper($this->getCode()));
+		return Loc::getMessage('SENDER_INTEGRATION_SEO_MESSAGE_NAME_'.mb_strtoupper($this->getCode()));
 	}
 
 	public function getCode()

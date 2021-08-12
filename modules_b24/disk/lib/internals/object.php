@@ -47,7 +47,20 @@ Loc::loadMessages(__FILE__);
  * </ul>
  *
  * @package Bitrix\Disk
- **/
+ *
+ * DO NOT WRITE ANYTHING BELOW THIS
+ *
+ * <<< ORMENTITYANNOTATION
+ * @method static EO_Object_Query query()
+ * @method static EO_Object_Result getByPrimary($primary, array $parameters = array())
+ * @method static EO_Object_Result getById($id)
+ * @method static EO_Object_Result getList(array $parameters = array())
+ * @method static EO_Object_Entity getEntity()
+ * @method static \Bitrix\Disk\Internals\EO_Object createObject($setDefaultValues = true)
+ * @method static \Bitrix\Disk\Internals\EO_Object_Collection createCollection()
+ * @method static \Bitrix\Disk\Internals\EO_Object wakeUpObject($row)
+ * @method static \Bitrix\Disk\Internals\EO_Object_Collection wakeUpCollection($rows)
+ */
 
 Loc::loadMessages(__FILE__);
 
@@ -283,6 +296,13 @@ class ObjectTable extends DataManager
 					'IF(%%TABLE_ALIAS.SEARCH_INDEX IS NOT NULL, TRUE, FALSE)'
 				],
 			),
+			'TRACKED_OBJECT' => array(
+				'data_type' => '\Bitrix\Disk\Internals\TrackedObjectTable',
+				'reference' => array(
+					'=this.ID' => 'ref.OBJECT_ID'
+				),
+				'join_type' => 'INNER',
+			),
 		);
 	}
 
@@ -301,7 +321,7 @@ class ObjectTable extends DataManager
 		return array(
 			new Entity\Validator\Length(null, 255),
 			new CallableValidator(function($value, $primary, array $row, Entity\Field $field){
-				if($value && !IO\Path::validateFilename($value))
+				if($value && !Path::validateFilename($value))
 				{
 					return Loc::getMessage(
 						"DISK_OBJECT_ENTITY_ERROR_FIELD_NAME_HAS_INVALID_CHARS",

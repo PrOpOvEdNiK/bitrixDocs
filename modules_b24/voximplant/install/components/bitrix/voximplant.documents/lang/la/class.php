@@ -1,5 +1,0 @@
-<?
-$MESS["VOX_DOCUMENT_STATUS_DECLINED"] = "Rechazado";
-$MESS["VOX_DOCUMENT_STATUS_IN_PROGRESS"] = "Verificación en progreso";
-$MESS["VOX_DOCUMENT_STATUS_VERIFIED"] = "Confirmado";
-?>

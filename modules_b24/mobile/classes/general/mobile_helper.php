@@ -401,6 +401,7 @@ class CMobileHelper
 
 		$arUF = $GLOBALS["USER_FIELD_MANAGER"]->GetUserFields($arParams["ENTITY_TYPE"], $arParams["ENTITY_ID"], LANGUAGE_ID);
 		$ufCode = $arParams["UF_CODE"];
+		$previewImageSize = (isset($arParams['PREVIEW_IMAGE_SIZE']) && (int)$arParams['PREVIEW_IMAGE_SIZE'] > 0 ? (int)$arParams['PREVIEW_IMAGE_SIZE'] : 144);
 
 		if (
 			!empty($arUF[$ufCode])
@@ -415,7 +416,6 @@ class CMobileHelper
 				)
 				{
 					$userFieldManager = \Bitrix\Disk\Driver::getInstance()->getUserFieldManager();
-					$urlManager = \Bitrix\Disk\Driver::getInstance()->getUrlManager();
 					$userFieldManager->loadBatchAttachedObject($arUF[$ufCode]["VALUE"]);
 
 					foreach($arUF[$ufCode]["VALUE"] as $attachedId)
@@ -424,26 +424,30 @@ class CMobileHelper
 						if($attachedObject)
 						{
 							$file = $attachedObject->getObject();
+							if (!$file)
+							{
+								continue;
+							}
 
 							$fileName = $file->getName();
 
-							$fileUrl = $urlManager->getUrlUfController('download', array('attachedId' => $attachedId));
+							$fileUrl = \Bitrix\Disk\UrlManager::getUrlUfController('download', array('attachedId' => $attachedId));
 							$fileUrl = str_replace("/bitrix/tools/disk/uf.php", SITE_DIR."mobile/ajax.php", $fileUrl);
-							$fileUrl = $fileUrl.(strpos($fileUrl, "?") === false ? "?" : "&")."mobile_action=disk_uf_view&filename=".$fileName;
+							$fileUrl = $fileUrl.(mb_strpos($fileUrl, "?") === false ? "?" : "&")."mobile_action=disk_uf_view&filename=".$fileName;
 
 							if (
 								\Bitrix\Disk\TypeFile::isImage($file)
 								&& ($realFile = $file->getFile())
 							)
 							{
-								$previewImageUrl = $urlManager->getUrlUfController(
+								$previewImageUrl = \Bitrix\Disk\UrlManager::getUrlUfController(
 									'show',
 									array(
 										'attachedId' => $attachedId,
-										'width' => 144,
-										'height' => 144,
+										'width' => $previewImageSize,
+										'height' => $previewImageSize,
 										'exact' => 'Y',
-										'signature' => \Bitrix\Disk\Security\ParameterSigner::getImageSignature($attachedId, 144, 144)
+										'signature' => \Bitrix\Disk\Security\ParameterSigner::getImageSignature($attachedId, $previewImageSize, $previewImageSize)
 									)
 								);
 							}
@@ -500,8 +504,8 @@ class CMobileHelper
 									$imageResized = CFile::ResizeImageGet(
 										$arFile["ID"],
 										array(
-											"width" => 144,
-											"height" => 144
+											"width" => $previewImageSize,
+											"height" => $previewImageSize
 										),
 										BX_RESIZE_IMAGE_EXACT,
 										false,
@@ -552,8 +556,8 @@ class CMobileHelper
 						$imageResized = CFile::ResizeImageGet(
 							$arFile["ID"],
 							array(
-								"width" => 144,
-								"height" => 144
+								"width" => $previewImageSize,
+								"height" => $previewImageSize
 							),
 							BX_RESIZE_IMAGE_EXACT,
 							false,
@@ -614,9 +618,9 @@ class CMobileHelper
 			'mpeg' => 'movie.png',
 			'mp4' => 'movie.png',
 		];
-		$ext = strtolower(getFileExtension($name));
+		$ext = mb_strtolower(getFileExtension($name));
 
-		return isset($icons[strtolower($ext)]) ? $icons[$ext] : 'blank.png';
+		return isset($icons[mb_strtolower($ext)]) ? $icons[$ext] : 'blank.png';
 	}
 
 	public static function getDeviceResizeWidth()
@@ -657,14 +661,14 @@ class CMobileHelper
 		foreach ($arCSSListNew as $i => $css_path)
 		{
 			if(
-				strtolower(substr($css_path, 0, 7)) != 'http://'
-				&& strtolower(substr($css_path, 0, 8)) != 'https://'
+				mb_strtolower(mb_substr($css_path, 0, 7)) != 'http://'
+				&& mb_strtolower(mb_substr($css_path, 0, 8)) != 'https://'
 			)
 			{
 				$css_file = (
-					($p = strpos($css_path, "?")) > 0
-						? substr($css_path, 0, $p)
-						: $css_path
+				($p = mb_strpos($css_path, "?")) > 0
+					? mb_substr($css_path, 0, $p)
+					: $css_path
 				);
 
 				if(file_exists($_SERVER["DOCUMENT_ROOT"].$css_file))
@@ -714,19 +718,19 @@ class CMobileHelper
 		$uniqueParams = "{}";
 
 		if (
-			substr($tag, 0, 10) == 'BLOG|POST|'
-			|| substr($tag, 0, 18) == 'BLOG|POST_MENTION|'
-			|| substr($tag, 0, 11) == 'BLOG|SHARE|'
-			|| substr($tag, 0, 17) == 'BLOG|SHARE2USERS|'
-			|| substr($tag, 0, 25) == 'RATING_MENTION|BLOG_POST|'
+			mb_substr($tag, 0, 10) == 'BLOG|POST|'
+			|| mb_substr($tag, 0, 18) == 'BLOG|POST_MENTION|'
+			|| mb_substr($tag, 0, 11) == 'BLOG|SHARE|'
+			|| mb_substr($tag, 0, 17) == 'BLOG|SHARE2USERS|'
+			|| mb_substr($tag, 0, 25) == 'RATING_MENTION|BLOG_POST|'
 		)
 		{
 			$params = explode("|", $tag);
 			$result = $link."&ENTITY_TYPE_ID=BLOG_POST&ENTITY_ID=".$params[2];
 		}
 		elseif (
-			substr($tag, 0, 13) == 'BLOG|COMMENT|'
-			|| substr($tag, 0, 21) == 'BLOG|COMMENT_MENTION|'
+			mb_substr($tag, 0, 13) == 'BLOG|COMMENT|'
+			|| mb_substr($tag, 0, 21) == 'BLOG|COMMENT_MENTION|'
 		)
 		{
 			$params = explode("|", $tag);
@@ -739,27 +743,85 @@ class CMobileHelper
 				$result = $link."&ENTITY_TYPE_ID=BLOG_POST&ENTITY_ID=".$params[2];
 			}
 		}
-		else if (substr($tag, 0, 28) == 'RATING_MENTION|BLOG_COMMENT|')
+		else if (mb_substr($tag, 0, 28) == 'RATING_MENTION|BLOG_COMMENT|')
 		{
 			$params = explode("|", $tag);
 			$result = $link."&ENTITY_TYPE_ID=BLOG_COMMENT&ENTITY_ID=".$params[2];
 		}
-		else if (substr($tag, 0, 10) == 'RATING|IM|')
+		else if (mb_substr($tag, 0, 10) == 'RATING|IM|')
 		{
 			$params = explode("|", $tag);
 			return "BX.MobileTools.openChat(".($params[2] == 'P'? $params[3]: "'chat".$params[3]."'").");";
 		}
-		else if (substr($tag, 0, 11) == 'IM|MENTION|')
+		else if (mb_substr($tag, 0, 11) == 'IM|MENTION|')
 		{
 			$params = explode("|", $tag);
 			return "BX.MobileTools.openChat('chat".$params[2]."');";
 		}
-		else if (substr($tag, 0, 10) == 'RATING|DL|')
+		else if (mb_substr($tag, 0, 10) == 'RATING|DL|')
 		{
 			$params = explode("|", $tag);
 			$result = $link."&ENTITY_TYPE_ID=".$params[2]."&ENTITY_ID=".$params[3];
 		}
-		else if (substr($tag, 0, 7) == 'RATING|')
+		else if (
+			mb_substr($tag, 0, 13) === 'FORUM|COMMENT'
+			|| mb_substr($tag, 0, 26) === 'RATING_MENTION|FORUM_POST|'
+			|| mb_substr($tag, 0, 18) === 'RATING|FORUM_POST|'
+		)
+		{
+			$params = explode("|", $tag);
+			if (
+				!empty($params[1])
+				&& !empty($params[2])
+				&& Loader::includeModule('socialnetwork')
+			)
+			{
+				$liveFeedEntity = Bitrix\SocialNetwork\Livefeed\Provider::init([
+					'ENTITY_TYPE' => \Bitrix\Socialnetwork\Livefeed\Provider::DATA_ENTITY_TYPE_FORUM_POST,
+					'ENTITY_ID' => $params[2]
+				]);
+
+				$suffix = $liveFeedEntity->getSuffix();
+				if ($suffix === 'TASK')
+				{
+					$res = LogTable::getList(array(
+						'filter' => array(
+							'ID' => $liveFeedEntity->getLogId()
+						),
+						'select' => [ 'ENTITY_ID', 'EVENT_ID', 'SOURCE_ID' ]
+					));
+					if($logEntryFields = $res->fetch())
+					{
+						if ($logEntryFields['EVENT_ID'] === 'crm_activity_add')
+						{
+							if (
+								Loader::includeModule('crm')
+								&& ($activityFields = \CCrmActivity::getById($logEntryFields['ENTITY_ID'], false))
+								&& $activityFields['TYPE_ID'] == \CCrmActivityType::Task
+							)
+							{
+								$taskId = (int)$activityFields['ASSOCIATED_ENTITY_ID'];
+							}
+						}
+						else
+						{
+							$taskId = (int)$logEntryFields['SOURCE_ID'];
+						}
+
+						if ($taskId > 0)
+						{
+							return self::getTaskLink($taskId);
+						}
+					}
+				}
+			}
+
+			if (!$result)
+			{
+				$result = $link."&ENTITY_TYPE_ID=FORUM_POST&ENTITY_ID=".$params[2];
+			}
+		}
+		else if (mb_substr($tag, 0, 7) == 'RATING|')
 		{
 			$params = explode("|", $tag);
 			if ($params[1] == 'TASK')
@@ -778,9 +840,9 @@ class CMobileHelper
 				$result = $link."&ENTITY_TYPE_ID=".$params[1]."&ENTITY_ID=".$params[2];
 			}
 		}
-		else if (substr($tag, 0, 15) == 'CALENDAR|INVITE' ||
-			substr($tag, 0, 16) == 'CALENDAR|COMMENT' ||
-			substr($tag, 0, 15) == 'CALENDAR|STATUS'
+		else if (mb_substr($tag, 0, 15) == 'CALENDAR|INVITE' ||
+			mb_substr($tag, 0, 16) == 'CALENDAR|COMMENT' ||
+			mb_substr($tag, 0, 15) == 'CALENDAR|STATUS'
 		)
 		{
 			$params = explode("|", $tag);
@@ -789,80 +851,42 @@ class CMobileHelper
 			else
 				$result = SITE_DIR.'mobile/calendar/view_event.php?event_id='.$params[2];
 		}
-		else if (substr($tag, 0, 21) == 'FORUM|COMMENT_MENTION')
+		else if (mb_substr($tag, 0, 21) == 'FORUM|COMMENT_MENTION')
 		{
 			$params = explode("|", $tag);
 			$result = $link."&ENTITY_TYPE_ID=LOG_COMMENT&ENTITY_ID=".$params[2];
 		}
-		else if (
-			substr($tag, 0, 13) == 'FORUM|COMMENT'
-			|| substr($tag, 0, 26) == 'RATING_MENTION|FORUM_POST|'
-		)
-		{
-			$params = explode("|", $tag);
-			if (
-				!empty($params[1])
-				&& !empty($params[2])
-				&& Loader::includeModule('socialnetwork')
-			)
-			{
-				$liveFeedEntity = Bitrix\SocialNetwork\Livefeed\Provider::init([
-					'ENTITY_TYPE' => \Bitrix\Socialnetwork\Livefeed\Provider::DATA_ENTITY_TYPE_FORUM_POST,
-					'ENTITY_ID' => $params[2]
-				]);
-
-				$suffix = $liveFeedEntity->getSuffix();
-				if ($suffix == 'TASK')
-				{
-					$res = LogTable::getList(array(
-						'filter' => array(
-							'ID' => $liveFeedEntity->getLogId()
-						),
-						'select' => array('SOURCE_ID')
-					));
-					if($logEntryFields = $res->fetch())
-					{
-						return self::getTaskLink($logEntryFields['SOURCE_ID']);
-					}
-				}
-			}
-
-			if (!$result)
-			{
-				$result = $link."&ENTITY_TYPE_ID=FORUM_POST&ENTITY_ID=".$params[2];
-			}
-		}
-		else if (substr($tag, 0, 7) == 'VOTING|')
+		else if (mb_substr($tag, 0, 7) == 'VOTING|')
 		{
 			$params = explode("|", $tag);
 			$result = $link."&ENTITY_TYPE_ID=VOTING&ENTITY_ID=".$params[1];
 		}
 		else if (
-			substr($tag, 0, 13) == 'PHOTO|COMMENT'
-			|| substr($tag, 0, 12) == 'WIKI|COMMENT'
+			mb_substr($tag, 0, 13) == 'PHOTO|COMMENT'
+			|| mb_substr($tag, 0, 12) == 'WIKI|COMMENT'
 		)
 		{
 			$params = explode("|", $tag);
 			$result = $link."&ENTITY_TYPE_ID=IBLOCK_ELEMENT&ENTITY_ID=".$params[2];
 		}
 		else if (
-			substr($tag, 0, 34) == 'INTRANET_NEW_USER|COMMENT_MENTION|'
-			|| substr($tag, 0, 22) == 'LISTS|COMMENT_MENTION|'
-			|| substr($tag, 0, 27) == 'RATING_MENTION|LOG_COMMENT|'
+			mb_substr($tag, 0, 34) == 'INTRANET_NEW_USER|COMMENT_MENTION|'
+			|| mb_substr($tag, 0, 22) == 'LISTS|COMMENT_MENTION|'
+			|| mb_substr($tag, 0, 27) == 'RATING_MENTION|LOG_COMMENT|'
 		)
 		{
 			$params = explode("|", $tag);
 			$result = $link."&ENTITY_TYPE_ID=LOG_COMMENT&ENTITY_ID=".$params[2];
 		}
 		else if (
-			substr($tag, 0, 12) == 'SONET|EVENT|'
+			mb_substr($tag, 0, 12) == 'SONET|EVENT|'
 		)
 		{
 			$params = explode("|", $tag);
 			$result = $link."&ENTITY_TYPE_ID=LOG_ENTRY&ENTITY_ID=".$params[2];
 		}
 		else if (
-			substr($tag, 0, 11) == 'TASKS|TASK|' || substr($tag, 0, 14) == 'TASKS|COMMENT|'
+			mb_substr($tag, 0, 11) == 'TASKS|TASK|' || mb_substr($tag, 0, 14) == 'TASKS|COMMENT|'
 		)
 		{
 			// the format is:
@@ -883,14 +907,14 @@ class CMobileHelper
 			//$unique = true;
 		}
 		else if (
-			substr($tag, 0, 6) == 'ROBOT|'
+			mb_substr($tag, 0, 6) == 'ROBOT|'
 		)
 		{
 			$params = explode("|", $tag);
 			if ($params[1] == 'CRM' && isset($params[3]))
 			{
 				list($entityTypeName, $entityId) = explode('_', $params[3]);
-				$entityTypeName = strtolower($entityTypeName);
+				$entityTypeName = mb_strtolower($entityTypeName);
 				$entityId = (int)$entityId;
 
 				if ($entityTypeName === 'lead' || $entityTypeName === 'deal')
@@ -900,7 +924,7 @@ class CMobileHelper
 			}
 		}
 		else if (
-			strpos($tag, 'BIZPROC|TASK|') === 0
+			mb_strpos($tag, 'BIZPROC|TASK|') === 0
 		)
 		{
 			$params = explode("|", $tag);
@@ -912,7 +936,7 @@ class CMobileHelper
 
 		if ($result)
 		{
-		    if ($unique)
+			if ($unique)
 			{
 				$result = "BXMobileApp.PageManager.loadPageUnique({'url' : '".$result."','bx24ModernStyle' : true, 'data': ".$uniqueParams."});";
 			}
@@ -929,7 +953,7 @@ class CMobileHelper
 		if (!intval($userId))
 			return;
 
-		$dbUser = CUser::GetList($by="", $order="", array("ID_EQUAL_EXACT" => $userId), array("FIELDS" => array("NAME", "LAST_NAME", "SECOND_NAME", "LOGIN", "PERSONAL_PHOTO")));
+		$dbUser = CUser::GetList("", "", array("ID_EQUAL_EXACT" => $userId), array("FIELDS" => array("NAME", "LAST_NAME", "SECOND_NAME", "LOGIN", "PERSONAL_PHOTO")));
 		if ($arUser = $dbUser->Fetch())
 		{
 			$userPhoto = CFile::ResizeImageGet(
@@ -996,6 +1020,55 @@ class CMobileHelper
 	}
 
 	/**
+	 * @param int $taskId
+	 *
+	 * @return string
+	 * @throws CTaskAssertException
+	 * @throws \Bitrix\Main\ArgumentException
+	 * @throws \Bitrix\Main\LoaderException
+	 */
+	public static function getParamsToCreateTaskLink(int $taskId): string
+	{
+		try
+		{
+			if (!\Bitrix\Main\Loader::includeModule('tasks'))
+			{
+				return '';
+			}
+			$taskData = \CTaskItem::getInstanceFromPool($taskId, $GLOBALS["USER"]->GetID())->getData(false);
+
+			$creatorIcon = \Bitrix\Tasks\UI\Avatar::getPerson($taskData['CREATED_BY_PHOTO']);
+			$responsibleIcon = \Bitrix\Tasks\UI\Avatar::getPerson($taskData['RESPONSIBLE_PHOTO']);
+			$title = addslashes(htmlspecialcharsbx($taskData['TITLE']));
+
+			$taskDataParams = [
+				[
+					'id' => $taskId,
+					'title' => 'TASK',
+					'taskInfo' => [
+						'title' => $title,
+						'creatorIcon' => $creatorIcon,
+						'responsibleIcon' => $responsibleIcon,
+					],
+				],
+				$taskId,
+				[
+					'taskId' => $taskId,
+					'getTaskInfo' => true,
+				]
+			];
+
+			$taskDataParams = \Bitrix\Main\Web\Json::encode($taskDataParams);
+
+			return $taskDataParams;
+		}
+		catch (\TasksException $exception)
+		{
+			return '';
+		}
+	}
+
+	/**
 	 * @param $text
 	 * @param $tag
 	 * @return string
@@ -1004,7 +1077,7 @@ class CMobileHelper
 	{
 		$preparedText = $text;
 
-		if (strpos($tag, 'TASKS|TASK|') === 0 || strpos($tag, 'TASKS|COMMENT|') === 0)
+		if (mb_strpos($tag, 'TASKS|TASK|') === 0 || mb_strpos($tag, 'TASKS|COMMENT|') === 0)
 		{
 			$preparedText = strip_tags($text, '<br>');
 		}

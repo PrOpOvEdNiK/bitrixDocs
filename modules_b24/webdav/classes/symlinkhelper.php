@@ -372,7 +372,7 @@ final class CWebDavSymlinkHelper
 			return false;
 		}
 
-		$typeLibrary = strtolower($typeLibrary);
+		$typeLibrary = mb_strtolower($typeLibrary);
 		if($typeLibrary != self::ENTITY_TYPE_USER && $typeLibrary != self::ENTITY_TYPE_GROUP && $typeLibrary != self::ENTITY_TYPE_SHARED)
 		{
 			return false;
@@ -396,7 +396,7 @@ final class CWebDavSymlinkHelper
 			return false;
 		}
 
-		$typeLibrary = strtolower($typeLibrary);
+		$typeLibrary = mb_strtolower($typeLibrary);
 		if($typeLibrary != self::ENTITY_TYPE_USER && $typeLibrary != self::ENTITY_TYPE_GROUP && $typeLibrary != self::ENTITY_TYPE_SHARED)
 		{
 			return false;
@@ -418,7 +418,7 @@ final class CWebDavSymlinkHelper
 			return false;
 		}
 
-		$typeLibrary = strtolower($typeLibrary);
+		$typeLibrary = mb_strtolower($typeLibrary);
 		if($typeLibrary != self::ENTITY_TYPE_USER && $typeLibrary != self::ENTITY_TYPE_GROUP && $typeLibrary != self::ENTITY_TYPE_SHARED)
 		{
 			return false;
@@ -467,7 +467,7 @@ final class CWebDavSymlinkHelper
 			return false;
 		}
 
-		$typeLibrary = strtolower($typeLibrary);
+		$typeLibrary = mb_strtolower($typeLibrary);
 		if($typeLibrary != self::ENTITY_TYPE_USER && $typeLibrary != self::ENTITY_TYPE_GROUP && $typeLibrary != self::ENTITY_TYPE_SHARED)
 		{
 			return false;
@@ -572,7 +572,7 @@ final class CWebDavSymlinkHelper
 			return false;
 		}
 
-		$typeLibrary = strtolower($typeLibrary);
+		$typeLibrary = mb_strtolower($typeLibrary);
 		if($typeLibrary != self::ENTITY_TYPE_USER && $typeLibrary != self::ENTITY_TYPE_GROUP && $typeLibrary != self::ENTITY_TYPE_SHARED)
 		{
 			return false;
@@ -772,7 +772,7 @@ final class CWebDavSymlinkHelper
 
 	public static function sendNotify(array $folderInvite)
 	{
-		$serverName = (CMain::IsHTTPS() ? "https" : "http")."://".((defined("SITE_SERVER_NAME") && strlen(SITE_SERVER_NAME) > 0) ? SITE_SERVER_NAME : COption::GetOptionString("main", "server_name", ""));
+		$serverName = (CMain::IsHTTPS() ? "https" : "http")."://".((defined("SITE_SERVER_NAME") && SITE_SERVER_NAME <> '') ? SITE_SERVER_NAME : COption::GetOptionString("main", "server_name", ""));
 		if(empty($folderInvite['IS_DELETED']) && !empty($folderInvite['IS_APPROVED']) && $folderInvite['USER_ID'] != $folderInvite['INVITE_USER_ID'] && \Bitrix\Main\Loader::includeModule('im'))
 		{
 			$sectionToShare = CIBlockSection::getList(array(), array(

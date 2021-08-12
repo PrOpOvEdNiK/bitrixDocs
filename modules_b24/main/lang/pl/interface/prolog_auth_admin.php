@@ -1,3 +1,0 @@
-<?
-$MESS["MAIN_PROLOG_ADMIN_AUTH_TITLE"] = "Zaloguj";
-?>

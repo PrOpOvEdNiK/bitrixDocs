@@ -4,24 +4,26 @@ namespace Bitrix\Rest\Configuration;
 
 use Bitrix\Main\Event;
 use Bitrix\Main\EventManager;
+use Bitrix\Main\Loader;
 
 class Manifest
 {
-
-	const ON_REST_APP_CONFIGURATION_GET_MANIFEST = 'OnRestApplicationConfigurationGetManifest';
-	const ON_REST_APP_CONFIGURATION_GET_MANIFEST_SETTING = 'OnRestApplicationConfigurationGetManifestSetting';
+	public const ACCESS_TYPE_IMPORT = 'import';
+	public const ACCESS_TYPE_EXPORT = 'export';
+	public const ON_REST_APP_CONFIGURATION_GET_MANIFEST = 'OnRestApplicationConfigurationGetManifest';
+	public const ON_REST_APP_CONFIGURATION_GET_MANIFEST_SETTING = 'OnRestApplicationConfigurationGetManifestSetting';
 	private static $manifestList = [];
 
 	public static function getList()
 	{
-		if(empty(static::$manifestList))
+		if (empty(static::$manifestList))
 		{
 			$event = new Event('rest', static::ON_REST_APP_CONFIGURATION_GET_MANIFEST);
 			EventManager::getInstance()->send($event);
 			foreach ($event->getResults() as $eventResult)
 			{
 				$manifestList = $eventResult->getParameters();
-				if(is_array($manifestList))
+				if (is_array($manifestList))
 				{
 					static::$manifestList = array_merge(static::$manifestList, $manifestList);
 				}
@@ -36,12 +38,13 @@ class Manifest
 		$result = [];
 		$manifest = static::get($code);
 
-		if($manifest !== false && isset($params['TYPE']))
+		if ($manifest !== false && isset($params['TYPE']) && isset($params['CONTEXT_USER']))
 		{
 			$step = intval($params['STEP']);
-			if($step === 0)
+			$setting = new Setting($params['CONTEXT_USER']);
+			if ($step === 0)
 			{
-				Helper::getInstance()->deleteSetting();
+				$setting->delete(Setting::SETTING_MANIFEST);
 			}
 
 			$event = new Event(
@@ -51,20 +54,21 @@ class Manifest
 					'CODE' => $manifest['CODE'],
 					'MANIFEST' => $manifest,
 					'TYPE' => $params['TYPE'],
-					'CONTEXT' => $params['CONTEXT'] ? : [],
+					'CONTEXT' => $params['CONTEXT'] ? : false,
+					'CONTEXT_USER' => $params['CONTEXT_USER'],
 					'STEP' => $step,
 					'NEXT' => isset($params['NEXT']) ? $params['NEXT'] : null,
 					'ITEM_CODE' => $params['ITEM_CODE'] ? : null,
-					'SETTING' => Helper::getInstance()->getSetting()
+					'SETTING' => $setting->get(Setting::SETTING_MANIFEST)
 				]
 			);
 			EventManager::getInstance()->send($event);
 			foreach ($event->getResults() as $eventResult)
 			{
 				$parameters = $eventResult->getParameters();
-				if(isset($parameters['SETTING']))
+				if (isset($parameters['SETTING']))
 				{
-					Helper::getInstance()->saveSetting($parameters['SETTING']);
+					$setting->set(Setting::SETTING_MANIFEST, $parameters['SETTING']);
 				}
 
 				$result[] = [
@@ -80,16 +84,95 @@ class Manifest
 	public static function get($code)
 	{
 		$result = null;
-		if($code != '')
+		if ($code != '')
 		{
 			$manifestList = static::getList();
 			$key = array_search($code, array_column($manifestList, 'CODE'));
-			if($key !== false)
+			if ($key !== false)
 			{
 				$result = $manifestList[$key];
 			}
 		}
 
 		return $result;
+	}
+
+	/**
+	 * Check user access to action in manifest
+	 *
+	 * @param $type string static::ACCESS_TYPE_IMPORT | static::ACCESS_TYPE_EXPORT
+	 * @param $manifestCode mixed
+	 *
+	 * @return array
+	 */
+	public static function checkAccess(string $type, $manifestCode = ''): array
+	{
+		$result = [
+			'result' => false,
+			'message' => '',
+		];
+
+		if (\CRestUtil::isAdmin())
+		{
+			$result['result'] = true;
+		}
+		elseif (!empty($manifestCode))
+		{
+			$manifest = static::get($manifestCode);
+			try
+			{
+				if (
+					!empty($manifest['ACCESS']['MODULE_ID'])
+					&& is_array($manifest['ACCESS']['CALLBACK'])
+					&& Loader::includeModule($manifest['ACCESS']['MODULE_ID'])
+					&& is_callable($manifest['ACCESS']['CALLBACK'])
+				)
+				{
+					$access = call_user_func($manifest['ACCESS']['CALLBACK'], $type, $manifest);
+					$result['result'] = $access['result'] === true;
+					$result['message'] = (is_string($access['message']) && $access['message'] !== '') ? $access['message'] : '';
+				}
+			}
+			catch (\Exception $exception)
+			{
+			}
+		}
+
+		return $result;
+	}
+
+	/**
+	 * check Event manifest[USES] intersect current entity[USES]
+	 *
+	 * @param string $entityCode
+	 * @param array $option all event parameters
+	 * @param array $uses all access uses in current entity
+	 *
+	 * @return bool
+	 */
+	public static function isEntityAvailable(string $entityCode, array $option, $uses = []) : bool
+	{
+		$manifest = [];
+		if (!empty($option['IMPORT_MANIFEST']['USES']))
+		{
+			$manifest = $option['IMPORT_MANIFEST'];
+		}
+		elseif (!empty($option['MANIFEST']['USES']))
+		{
+			$manifest = $option['MANIFEST'];
+		}
+
+		if (empty($manifest['USES']))
+		{
+			return false;
+		}
+
+		$access = array_intersect($manifest['USES'], $uses);
+		if (!$access)
+		{
+			return false;
+		}
+
+		return true;
 	}
 }
